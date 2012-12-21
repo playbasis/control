@@ -78,6 +78,18 @@
 		<p>The corresponding controller for this page is found at:</p>
 		<code>application/controllers/welcome.php</code>
 
+
+		<p>And this is the REST api example that you need ;)</p>
+		<code>
+			<ul>
+				<li><a href="<?php echo site_url('api/example/users');?>">Users</a> - defaulting to XML</li>
+				<li><a href="<?php echo site_url('api/example/users/format/csv');?>">Users</a> - get it in CSV</li>
+				<li><a href="<?php echo site_url('api/example/user/id/1');?>">User #1</a> - defaulting to XML</li>
+				<li><a href="<?php echo site_url('api/example/user/id/1/format/json');?>">User #1</a> - get it in JSON</li>
+				<li><a id="ajax" href="<?php echo site_url('api/example/users/format/json');?>">Users</a> - get it in JSON (AJAX request)</li>
+			</ul>
+		</code>
+
 		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">User Guide</a>.</p>
 	</div>
 
