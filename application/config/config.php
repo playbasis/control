@@ -14,7 +14,11 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/~Piya/api/';
+// $config['base_url']	= 'http://localhost/~Piya/api/';
+// $config['base_url']	= 'http://localhost/api/';
+
+//production
+$config['base_url']	= 'https://www.dev.pbapp.net/api/';
 
 /*
 |--------------------------------------------------------------------------
