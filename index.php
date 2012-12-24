@@ -214,4 +214,4 @@ require_once BASEPATH.'core/CodeIgniter.php';
 | none is set on the server.
 |
 */
-date_default_timezone_set('GMT');
+//date_default_timezone_set('GMT');
