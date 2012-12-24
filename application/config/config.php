@@ -18,7 +18,7 @@
 // $config['base_url']	= 'http://localhost/api/';
 
 //production
-$config['base_url']	= 'https://www.dev.pbapp.net/api/';
+$config['base_url']	= 'https://dev.pbapp.net/api/';
 
 /*
 |--------------------------------------------------------------------------
