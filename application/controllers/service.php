@@ -34,8 +34,9 @@ class Service extends REST_Controller{
 			'status'	=> true,
 			'time'		=> date('r e'),
 			'timestamp'	=> time(),
-
-			$this->response($data,200);
 		);
+
+		$this->response($data,200);
+
 	}
 }
