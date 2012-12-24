@@ -12,8 +12,8 @@ class Service extends REST_Controller{
 		$data = array(
 			'status'	=> true,
 			'message'	=> 'simple REST service',
-			'time'		=> date('r e'),
-			'timestamp'	=> time(),
+			//'time'		=> date('r e'),
+			'timestamp'	=> now(),
 		);
 
 		$this->response($data,200);
@@ -32,8 +32,8 @@ class Service extends REST_Controller{
 				),
 			),
 			'status'	=> true,
-			'time'		=> date('r e'),
-			'timestamp'	=> time(),
+			//'time'		=> date('r e'),
+			'timestamp'	=> now(),
 		);
 
 		$this->response($data,200);
