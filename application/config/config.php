@@ -14,7 +14,11 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/~Piya/api/';
+// $config['base_url']	= 'http://localhost/~Piya/api/';
+// $config['base_url']	= 'http://localhost/api/';
+
+//production
+$config['base_url']	= 'https://dev.pbapp.net/api/';
 
 /*
 |--------------------------------------------------------------------------
@@ -328,7 +332,7 @@ $config['compress_output'] = FALSE;
 | regarding date handling.
 |
 */
-$config['time_reference'] = 'local';
+$config['time_reference'] = 'gmt';
 
 
 /*
