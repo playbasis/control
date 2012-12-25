@@ -39,4 +39,17 @@ class Service extends REST_Controller{
 		$this->response($data,200);
 
 	}
+
+	public function test_post(){
+		
+		$data = array(
+			'status'	=> true,
+			'time'		=> date('r e');
+			'timestamp'	=> now(),
+		);
+
+		$data['post_data'] = $this->input->post();
+
+		$this->response($data,200);
+	}
 }
