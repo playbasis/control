@@ -44,7 +44,7 @@ class Service extends REST_Controller{
 		
 		$data = array(
 			'status'	=> true,
-			'time'		=> date('r e');
+			'time'		=> date('r e'),
 			'timestamp'	=> now(),
 		);
 
