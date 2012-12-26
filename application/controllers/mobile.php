@@ -26,6 +26,8 @@ class Mobile extends REST_Controller{
 			$data['status']		= false;
 			$data['message']	= 'keyword required';
 			$data['data']		= null;
+		}else{
+			$data['data']['post'] = $post;
 		}
 
 		switch ($post['keyword']) {
