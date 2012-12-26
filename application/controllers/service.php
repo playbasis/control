@@ -8,6 +8,17 @@ class Service extends REST_Controller{
 		parent::__construct();
 	}
 
+	public function index(){
+		$data = array(
+			'status'	=> true,
+			'message'	=> 'REST service BY PB ENGINE',
+			'time'		=> date('r e'),
+			'timestamp'	=> now(),
+		);
+
+		$this->response($data,200);
+	}
+
 	public function test_get(){
 		$data = array(
 			'status'	=> true,
