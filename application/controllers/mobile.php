@@ -42,7 +42,6 @@ class Mobile extends REST_Controller{
 			'status'	=> false,
 			'message'	=> 'this service not available for GET method. Try POST method instead',
 			'data'		=> null,
-			),
 		);
 
 		//response
