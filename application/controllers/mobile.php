@@ -35,4 +35,17 @@ class Mobile extends REST_Controller{
 		//response
 		$this->response($data,200);
 	}
+
+	public function checkin_get(){
+		
+		$data = array(
+			'status'	=> false,
+			'message'	=> 'this service not available for GET method. Try POST method instead',
+			'data'		=> null,
+			),
+		);
+
+		//response
+		$this->response($data,200);
+	}
 }
