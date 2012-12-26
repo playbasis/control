@@ -14,9 +14,9 @@ class Mobile extends REST_Controller{
 			'status'	=> true,
 			'message'	=> 'success',
 			'data'		=> array(
-				'image'		=>,
+				'image'			=>	null,
 				'text_message'	=> 'some message',
-				'post'		=> ,
+				'post'			=>	null ,
 			),
 		);
 
