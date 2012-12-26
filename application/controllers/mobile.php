@@ -23,17 +23,22 @@ class Mobile extends REST_Controller{
 		$post = $this->input->post();
 
 		if(!isset($post['keyword']) || empty($post['keyword'])){
-			$data['status']		= false;
-			$data['message']	= 'keyword required';
-			$data['data']		= null;
-		}else{
+			$data['message']			= 'default message';
+			$data['data']['image']		= 'default image';
+
+		}
+		else{
+
+			switch ($post['keyword']) {
+				//select image here and message here
+			}
+		}
+
+		if($post)
 			$data['data']['post'] = $post;
-		}
-
-		switch ($post['keyword']) {
-			//select image here
-		}
-
+		else
+			$data['data']['post'] = null;
+		
 		//response
 		$this->response($data,200);
 	}
