@@ -37,7 +37,7 @@ class Mobile extends REST_Controller{
 		if($post)
 			$data['data']['post'] = $post;
 		else
-			$data['data']['post'] = null;
+			$data['data']['post'] = array();
 		
 		//response
 		$this->response($data,200);
