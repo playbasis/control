@@ -19,10 +19,11 @@ class Service extends REST_Controller{
 		$this->response($data,200);
 	}
 
-	public function test_get(){
+	public function test_get($param1,$param2){
 		$data = array(
 			'status'	=> true,
 			'message'	=> 'simple REST service',
+			'data'		=> $param1.$param2,
 			'time'		=> date('r e'),
 			'timestamp'	=> now(),
 		);
