@@ -8,7 +8,7 @@ class Mobile extends REST_Controller{
 	}
 
 	//mock mobile request
-	public function checkin(){
+	public function checkin_post(){
 		
 		$data = array(
 			'status'	=> true,
