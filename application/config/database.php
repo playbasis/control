@@ -45,13 +45,13 @@
 | the active record class
 */
 
-$active_group = 'default';
+$active_group = 'developer';
 $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
-$db['default']['password'] = 'password';
-$db['default']['database'] = 'playbasis';
+$db['default']['password'] = 'root';
+$db['default']['database'] = 'playbasis_v_1';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
@@ -64,6 +64,20 @@ $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
-
+$db['developer']['hostname'] = 'localhost';
+$db['developer']['username'] = 'playbasis_admin';
+$db['developer']['password'] = 'pl@yb@sis';
+$db['developer']['database'] = 'developer';
+$db['developer']['dbdriver'] = 'mysql';
+$db['developer']['dbprefix'] = '';
+$db['developer']['pconnect'] = TRUE;
+$db['developer']['db_debug'] = TRUE;
+$db['developer']['cache_on'] = FALSE;
+$db['developer']['cachedir'] = '';
+$db['developer']['char_set'] = 'utf8';
+$db['developer']['dbcollat'] = 'utf8_general_ci';
+$db['developer']['swap_pre'] = '';
+$db['developer']['autoinit'] = TRUE;
+$db['developer']['stricton'] = FALSE;
 /* End of file database.php */
 /* Location: ./application/config/database.php */
