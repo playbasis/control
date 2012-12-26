@@ -20,6 +20,15 @@ class Example extends REST_Controller
 {
 	function user_get()
     {
+        // Test for Oauth 
+        $this->load->library('oauth_resource_server');
+        if ( ! $this->oauth_resource_server->has_scope(array('user.details', 'another.scope')))
+        {
+            echo 'OAuth 2 Error : not authorize';
+            exit();
+            // Error logic here - "access token does not have correct permission to user this API method"
+        }
+
         if(!$this->get('id'))
         {
         	$this->response(NULL, 400);
@@ -47,6 +56,12 @@ class Example extends REST_Controller
     
     function user_post()
     {
+        // $.post("index.php/api/example/user/id/1/format/json", { "name": "name", "email": "email"},
+        //   function (data) {
+        //       console.log(data);
+        //   }
+        // );
+
         //$this->some_model->updateUser( $this->get('id') );
         $message = array('id' => $this->get('id'), 'name' => $this->post('name'), 'email' => $this->post('email'), 'message' => 'ADDED!');
         
@@ -55,6 +70,17 @@ class Example extends REST_Controller
     
     function user_delete()
     {
+
+        // $.ajax({
+        //   url: 'index.php/api/example/user/id/1',
+        //   type: 'DELETE',
+        //   dataType: 'json',        
+        //   success: function(response) { 
+        //      console.log(response); }
+        //   });
+
+        // Object {id: "1", message: "DELETED!"}
+
     	//$this->some_model->deletesomething( $this->get('id') );
         $message = array('id' => $this->get('id'), 'message' => 'DELETED!');
         
