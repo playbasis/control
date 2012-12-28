@@ -1,0 +1,77 @@
+#game rule format
+
+{
+		"rule_id"			: "(String)",
+		"rule_name" 		: "(String)",
+		"rule_description" 	: "(String)",
+		"active_status" 	: "(TinyInt)",
+		"jigsaws" 			: 
+
+		[	
+			{
+				"jigsaw_id" 	: "(String)",
+				"jigsaw_name" 	: "(String)",
+				"jigsaw_description" : "(String)",
+				"jigsaw_category" : "(String)",
+				"sort_oder"		: "(Int)",
+				"dataset"		: [
+					{
+						"param_name":  "string",
+						"label" 	:  "title",
+						"sortOrder" :  "0",
+						"field_type":  "text",
+						"value"		: 	"String"
+					}
+					,{
+						"param_name":  "string",
+						"label" 	:  "title",
+						"sortOrder" :  "1",
+						"field_type":  "date",
+						"value"		:  "String->12/21/12"
+					},{
+						"param_name":  "string",
+						"label" 	:  "title",
+						"sortOrder" :  "2",
+						"field_type":  "date_tween",
+						"from"		:  "12/21/12",
+						"to"		:  "12/21/12"
+					},{
+						"param_name":  "string",
+						"label" 	:  "title",
+						"sortOrder" :  "3",
+						"field_type":  "cooldown",
+						"value"		:  "time in second unit"
+					},{
+						"param_name":  "string",
+						"label" 	:  "title",
+						"sortOrder" :  "4",
+						"field_type":  "collection",
+						"reward_type" : "(badge/virtual_gift/gift)",
+						"reward_quantity" : "number",
+						"value"		:  "reward_id"
+					}
+				]
+			}
+		]
+	
+	}
+
+
+
+#~~ GAME EDITOR API ~~#
+
+API PATH :: dev.pbapp.net/api/Geditor/
+
+== API NAME ==						== METHOD == 	  	== parameter ==											== description ==
+
+rules/{site_id}{[/rule_id]} 		GET 			  	N.A.													get rules array for each site of any client
+									  																			if rule_id was defined you will get specific rule
+
+rules/{rule_id}/jigsaws 			GET 				N.A.													get game jigsaws relate to specific rule_id 
+
+rules/{rule_id}/update				POST				POST{#game rule format}									update rules data include game jigsaws which 
+																												relate to that rule
+
+rules/{rule_id}/update/status 		POST 				N.A. 													toggle rule status between active/inactive
+
+rules/add 							POST 				POST{client_id,site_id,rule_name,rule_description}		create new game rule

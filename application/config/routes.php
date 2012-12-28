@@ -39,6 +39,12 @@
 */
 
 $route['default_controller'] = "welcome";
+$route['Geditor/rules'] = 'Geditor/rules';
+$route['Geditor/rules/([0-9]+)'] = 'Geditor/rules/$1';							#get all rule for each site
+$route['Geditor/rules/([0-9]+)/([0-9]+)'] = 'Geditor/rules/$1/$2';   			#get specific rule for each site 
+$route['Geditor/rules/([0-9]+)/jigsaws'] = 'Geditor/jigsaws/$1';				#get ganme jigsaws relate to each rule
+$route['Geditor/rules/([0-9]+)/update/status'] = 'Geditor/ruleStatus/$1';		#update rules status
+$route['Geditor/rules/add'] = 'Geditor/addRule';								#add new rule
 $route['404_override'] = '';
 
 
