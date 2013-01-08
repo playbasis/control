@@ -39,12 +39,24 @@
 */
 
 $route['default_controller'] = "welcome";
+
+//Game Editor
 $route['Geditor/rules'] = 'Geditor/rules';
 $route['Geditor/rules/([0-9]+)'] = 'Geditor/rules/$1';							#get all rule for each site
 $route['Geditor/rules/([0-9]+)/([0-9]+)'] = 'Geditor/rules/$1/$2';   			#get specific rule for each site 
 $route['Geditor/rules/([0-9]+)/jigsaws'] = 'Geditor/jigsaws/$1';				#get ganme jigsaws relate to each rule
 $route['Geditor/rules/([0-9]+)/update/status'] = 'Geditor/ruleStatus/$1';		#update rules status
 $route['Geditor/rules/add'] = 'Geditor/addRule';								#add new rule
+
+//API
+#client
+$route['Auth'] = 'auth';						#request token
+
+#player
+$route['Player/([0-9]+)'] = 'player/index/$1';						#get player information
+$route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';	#register player to playbasis system
+$route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';			#login player to playbasis system
+
 $route['404_override'] = '';
 
 
