@@ -4,7 +4,7 @@ class Respond extends CI_Model{
 		parent::__construct();
 	}
 
-	public function setRespond($data){
+	public function setRespond($data=array()){
 		$respondData  = array();
 
 		$respondData['success'] 	= true;
