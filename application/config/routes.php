@@ -53,7 +53,7 @@ $route['Geditor/rules/add'] = 'Geditor/addRule';								#add new rule
 $route['Auth'] = 'auth';						#request token
 
 #player
-$route['Player/([0-9]+)'] = 'player/index/$1';						#get player information
+$route['Player/([a-zA-Z0-9]+)'] = 'player/index/$1';						#get player information
 $route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';	#register player to playbasis system
 $route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';			#login player to playbasis system
 
