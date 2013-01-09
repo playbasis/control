@@ -1,60 +1,132 @@
-#game rule format
-
 {
-		"rule_id"			: "(String)",
-		"rule_name" 		: "(String)",
-		"rule_description" 	: "(String)",
-		"active_status" 	: "(TinyInt)",
-		"jigsaws" 			: 
+    "rule": {
+        "id": "{string}",
+        "name": "{string}",
+        "description": "{string}",
+        "active_status": "{boolean}",
+        "jigsaws": [
+            {
+                "id": "{string}",
+                "name": "{string}",
+                "description": "{string}",
+                "category": "{string}",
+                "sort_order": "{int}",
+                "datasets": [
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "0",
+                        "field_type": "text",
+                        "value": "String"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "1",
+                        "field_type": "date",
+                        "value": "String->12/21/12"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "2",
+                        "field_type": "date_tween",
+                        "from": "12/21/12",
+                        "to": "12/21/12"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "3",
+                        "field_type": "cooldown",
+                        "value": "time in second unit"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "4",
+                        "field_type": "collection",
+                        "reward_type": "(badge/virtual_gift/gift)",
+                        "reward_quantity": "number",
+                        "value": "reward_id"
+                    }
+                ],
+                "input": {
+                    "key1": "val1",
+                    "key2": "val2",
+                    "key3": "val3",
+                    "key4": "val4",
+                    "key5": "val5"
+                }
+            },
+            {
+                "id": "{string}",
+                "name": "{string}",
+                "description": "{string}",
+                "category": "{string}",
+                "sort_order": "{int}",
+                "datasets": [
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "0",
+                        "field_type": "text",
+                        "value": "String"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "1",
+                        "field_type": "date",
+                        "value": "String->12/21/12"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "2",
+                        "field_type": "date_tween",
+                        "from": "12/21/12",
+                        "to": "12/21/12"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "3",
+                        "field_type": "cooldown",
+                        "value": "time in second unit"
+                    },
+                    {
+                        "param_name": "string",
+                        "label": "title",
+                        "sortOrder": "4",
+                        "field_type": "collection",
+                        "reward_type": "(badge/virtual_gift/gift)",
+                        "reward_quantity": "number",
+                        "value": "reward_id"
+                    }
+                ],
+                "input": {
+                    "key1": "val1",
+                    "key2": "val2",
+                    "key3": "val3",
+                    "key4": "val4",
+                    "key5": "val5"
+                }
+            }
+        ]
+    }
+}
 
-		[	
-			{
-				"jigsaw_id" 	: "(String)",
-				"jigsaw_name" 	: "(String)",
-				"jigsaw_description" : "(String)",
-				"jigsaw_category" : "(String)",
-				"sort_oder"		: "(Int)",
-				"dataset"		: [
-					{
-						"param_name":  "string",
-						"label" 	:  "title",
-						"sortOrder" :  "0",
-						"field_type":  "text",
-						"value"		: 	"String"
-					}
-					,{
-						"param_name":  "string",
-						"label" 	:  "title",
-						"sortOrder" :  "1",
-						"field_type":  "date",
-						"value"		:  "String->12/21/12"
-					},{
-						"param_name":  "string",
-						"label" 	:  "title",
-						"sortOrder" :  "2",
-						"field_type":  "date_tween",
-						"from"		:  "12/21/12",
-						"to"		:  "12/21/12"
-					},{
-						"param_name":  "string",
-						"label" 	:  "title",
-						"sortOrder" :  "3",
-						"field_type":  "cooldown",
-						"value"		:  "time in second unit"
-					},{
-						"param_name":  "string",
-						"label" 	:  "title",
-						"sortOrder" :  "4",
-						"field_type":  "collection",
-						"reward_type" : "(badge/virtual_gift/gift)",
-						"reward_quantity" : "number",
-						"value"		:  "reward_id"
-					}
-				]
-			}
-		]
-	
-	}
+
+JIGSAW :: {ACTION}
+"input":{
+            "action_id"		: "{int} 	:: action id ",
+            "url"			: "{string}	:: specify url for any action {blank = global match},{ / = only index page match},{ :: any url path :: = match specific url path}",
+            "regex"			: "{boolean}:: use for match url by regex",
+            "action_target"	: "{string}	:: use for indicate trigger element ",
+            "object_target" : "{string} :: use for indicate object element"
+		} 
+
 
 
 
