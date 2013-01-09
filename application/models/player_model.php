@@ -1,13 +1,20 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 class Player_model extends CI_Model{
+
+	public function __construct(){
+		parent::__construct();
+	}
 	//CRUD
 	public function createPlayer($data){
+
+
 		$this->db->insert('playbasis_player',array(
 			'client_id'=>$data['client_id'],
 			'site_id'=>$data['site_id'],
 			'cl_player_id'=>$data['player_id'],
 			'first_name'=>$data['first_name'],
 			'last_name'=>$data['last_name'],
+			'image'=>$data['image'],
 			'email' =>$data['email'],
 			'date_added' =>date('Y-m-d H:i:s'),
 			'date_modified' =>date('Y-m-d H:i:s'),
