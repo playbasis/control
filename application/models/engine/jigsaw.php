@@ -9,20 +9,83 @@ class jigsaw extends CI_Model{
 	}
 	
 	//action jigsaw
-	public function action($input,$option){
+	public function action($config,$input){
 		
-		assert($input != false);
-		assert(unserialize($input));
-		assert(isset($option['url']));
-
-		//unserialize input
-		$inputSet = unserialize($input);
+		assert($config != false);
+		assert(is_array($config));		
+		assert(isset($config['url']));
 		
 		//validate url
-		if($inputSet['url']){
-
+		if($config['url']){
+			return (boolean) $this->matchUrl($input['url'],$config['url'],$config['regex']);
+		}
+		else{
+			return true;
 		}
 	}
+
+	//reward jigsaw
+	public function reward($config,$input){
+		assert($config != false);
+		assert(is_array($config));		
+		assert(isset($config['reward_id']));
+		assert(isset($config['reward_name']));
+		assert(isset($config['item_id']));
+		assert(isset($config['quantity']));
+
+		assert($input != false);
+		assert(is_array($input));
+		assert($input['pb_player_id']);
+
+		//always true if reward type is point
+		if(is_null($config['item_id']))
+			return true;
+
+
+		//if reward type is badge
+		switch ($config['reward_name']) {
+			case 'badge':
+				//return function to process badge
+				break;
+			default:
+				return false;
+				break;
+		}
+
+	}
+
+	//util :: badge checker
+	public function checkbadge($badgeId,$pb_player_id){
+		//get badge properties
+		$this->db->select('stackable,substract,quantity');
+		$this->db->where(array('badge_id'=>$badgeId));
+		$result = $this->db->get('playbasis_badge');
+
+		$badgeInfo = $result->row_array();
+		#not finish yet
+
+		//search badge own by player
+		$this->db->where(array('badge_id'=>$badgeId,'pb_player_id'=>$pb_player_id));
+		$this->db->from('playbasis_badge_to_player');
+		$haveBadge = $this->db->count_all_results();
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//util :: url matching
 	public function matchUrl($inputUrl,$compareUrl,$isRegEx){
@@ -51,12 +114,19 @@ class jigsaw extends CI_Model{
 
 
 			//compare url
-
-			input domain/forum/hello-my-new-notebook
-			input domain/forum/test1234
+			$match;
+			if($isRegEx){
+				$match = preg_match($compareUrl, $inputUrl);
+			}
+			else{
+				$match = (string)$compareUrl === (string)$inputUrl;
+			}
 			
-
-			url = domain/forum/(a-zA-Z0-9\_\-)+
+			return $match;
+			//e.g.
+			//inputurl domain/forum/hello-my-new-notebook
+			//input domain/forum/test1234
+			//url = domain/forum/(a-zA-Z0-9\_\-)+
 	}
 
 
