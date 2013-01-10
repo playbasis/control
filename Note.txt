@@ -127,8 +127,18 @@ JIGSAW :: {ACTION}
             "object_target" : "{string} :: use for indicate object element"
 		} 
 
+JIGSAW :: {REWARD}
+"input":{
+           "reward_id"      : "{int}            :: reward id [type of reward]",
+           "reward_name"    : "{string}         :: name's type of reward e.g. badge , gift , exp , point , etc",
+           "item_id"        : "{int}|{null}"    :: id of item for none point reward e.g. badge id,gift id or null for point reward",
+           "quantity"       : "{int}            :: reward's quantity"
+        }
 
-
+JIGSAW :: {CONDITION} > COUNTER
+"input":{
+            ""
+        }
 
 #~~ GAME EDITOR API ~~#
 
