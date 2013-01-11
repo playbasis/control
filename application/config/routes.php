@@ -57,6 +57,9 @@ $route['Player/([a-zA-Z0-9]+)'] = 'player/index/$1';						#get player informatio
 $route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';	#register player to playbasis system
 $route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';			#login player to playbasis system
 
+#engine
+$route['PBEngine/init']	= 'engine/init';	
+$route['PBEngine/rule']	= 'engine/rule';	
 $route['404_override'] = '';
 
 
