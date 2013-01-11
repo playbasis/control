@@ -120,23 +120,23 @@ class jigsaw extends CI_Model{
 		assert($input['rule_id']);
 		assert($input['jigsaw_id']);
 
-		// $this->db->select('input,date_added');
-		// $this->db->where($input);
-		// $this->db->order_by('date_added','desc');
-		// $result = $this->db->get('playbasis_history');
+		$this->db->select('input,date_added');
+		$this->db->where($input);
+		$this->db->order_by('date_added','desc');
+		$result = $this->db->get('playbasis_history');
 
-		// if(!$result->row_array()){
-		// 	$exInfo['remaining_cooldown'] = (int)$config['cooldown'];
-		// 	return false;
-		// }
+		if(!$result->row_array()){
+			$exInfo['remaining_cooldown'] = (int)$config['cooldown'];
+			return false;
+		}
 
-		$result = array(
-			'input'			=> 'a:2:{s:8:"cooldown";i:180;s:18:"remaining_cooldown";i:100;}',
-			'date_added'	=> '2013-01-01 08:00:00',
-		);
+		// $result = array(
+		// 	'input'			=> 'a:2:{s:8:"cooldown";i:180;s:18:"remaining_cooldown";i:100;}',
+		// 	'date_added'	=> '2013-01-01 08:00:00',
+		// );
 
-		//$result = $result->row_array();
-		$timeNow = '2013-01-01 08:03:00'; //date('Y-m-d H:i:s');	
+		$result = $result->row_array();
+		$timeNow = /*'2013-01-01 08:03:00';*/ date('Y-m-d H:i:s');	
 		$log 		= unserialize($result['input']);
 		$lastTime	= $result['date_added'];	
 
