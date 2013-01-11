@@ -66,9 +66,23 @@ class Service extends REST_Controller{
 		$this->response($data,200);
 	}
 
-	public function testAssert_get(){
-		$this->load->model('engine/jigsaw','game_jigsaw');
+	public function testCounter_get(){
+		$this->load->model('engine/jigsaw','jg');
+		
+		$exInfo = array();
+		$status = $this->jg->counter(array('counter_value'=>5,'interval'=>2,'interval_unit'=>'day'),array('pb_player_id'=>1,'rule_id'=>1,'jigsaw_id'=>1),$exInfo);
 
-		$this->game_jigsaw->action('s:1:"1";',array('url'=>'asdf.com'));
+		var_dump($exInfo);
+		var_dump($status);
+	}
+
+	public function testCooldown_get(){
+		$this->load->model('engine/jigsaw','jg');
+		
+		$exInfo = array();
+		$status = $this->jg->cooldown(array('cooldown'=>180),array('pb_player_id'=>1,'rule_id'=>1,'jigsaw_id'=>1),$exInfo);
+
+		var_dump($exInfo);
+		var_dump($status);
 	}
 }
