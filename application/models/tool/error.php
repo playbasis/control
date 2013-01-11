@@ -46,6 +46,7 @@ class Error extends CI_Model{
 				$errorData['message']	= "Can\'t Access ,Permission Denied";				
 				$errorData['error_code']	= '0002';
 				break;
+			
 			case 'USER_NOT_EXIST':
 				$errorData['message']	= "User doesn't exist";				
 				$errorData['error_code']	= '0200';
@@ -58,7 +59,11 @@ class Error extends CI_Model{
 				$errorData['message']	= "User registeration limit exceed";				
 				$errorData['error_code']	= '0202';
 				break;
-		
+			
+			case 'ACTION_NOT_FOUND':
+				$errorData['message']	= "Action not available";				
+				$errorData['error_code']	= '0301';
+				break;
 			default:
 				$errorData['message']	= "Unknow";
 				$errorData['error_code']	= '9999';				

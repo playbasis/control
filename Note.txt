@@ -51,7 +51,7 @@
                         "value": "reward_id"
                     }
                 ],
-                "input": {
+                "config": {
                     "key1": "val1",
                     "key2": "val2",
                     "key3": "val3",
@@ -105,7 +105,7 @@
                         "value": "reward_id"
                     }
                 ],
-                "input": {
+                "config": {
                     "key1": "val1",
                     "key2": "val2",
                     "key3": "val3",
@@ -119,8 +119,9 @@
 
 
 JIGSAW :: {ACTION}
-"input":{
+"config":{
             "action_id"		: "{int} 	:: action id ",
+			"action_name"	: "{string} :: action name",
             "url"			: "{string}	:: specify url for any action {blank = global match},{ / = only index page match},{ :: any url path :: = match specific url path}",
             "regex"			: "{boolean}:: use for match url by regex",
             "action_target"	: "{string}	:: use for indicate trigger element ",
@@ -128,7 +129,7 @@ JIGSAW :: {ACTION}
 		} 
 
 JIGSAW :: {REWARD}
-"input":{
+"config":{
            "reward_id"      : "{int}            :: reward id [type of reward]",
            "reward_name"    : "{string}         :: name's type of reward e.g. badge , gift , exp , point , etc",
            "item_id"        : "{int}|{null}"    :: id of item for none point reward e.g. badge id,gift id or null for point reward",
@@ -136,9 +137,24 @@ JIGSAW :: {REWARD}
         }
 
 JIGSAW :: {CONDITION} > COUNTER
-"input":{
-            ""
+"config":{
+            "counter_value"		: "{int}		:: counter amount",
+			"interval"			: "{int}		:: how long before the counter is reset",
+			"interval_unit"		: "{string}		::  unit of interval (second or day),
         }
+
+JIGSAW :: {CONDITION} > COOLDOWN
+"config":{
+            "cooldown"         : "{int}        :: cooldown time in second",
+        }
+
+
+
+
+
+
+
+
 
 #~~ GAME EDITOR API ~~#
 

@@ -85,4 +85,10 @@ class Service extends REST_Controller{
 		var_dump($exInfo);
 		var_dump($status);
 	}
+	
+	public function testUpdateReward_get(){
+		$this->load->model('client_model');
+		
+		$this->client_model->updatePlayerpointReward(1,1,1);
+	}
 }

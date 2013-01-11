@@ -95,7 +95,7 @@ class Player extends REST_Controller{
 	}
 
 	//log-in player
-	public function login_post($player_id){
+	public function login_get($player_id){
 		$required = $this->input->checkParam(array('token'));
 
 		if($required)
@@ -110,7 +110,9 @@ class Player extends REST_Controller{
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
-
+		
+		//$validToken = array('client_id'=>1,'site_id'=>1); //for debugging
+		
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken,array('cl_player_id'=>$player_id)));
 

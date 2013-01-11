@@ -68,7 +68,10 @@ class Player_model extends CI_Model{
 		if(!$clientData)
 			return -1;
 
-		$this->db->where(array('client_id'=>$clientData['client_id'],'site_id'=>$clientData['site_id'],'cl_player_id'=>$clientData['cl_player_id']));
+		$this->db->where(array('client_id'=>$clientData['client_id'],
+								'site_id'=>$clientData['site_id'],
+								'cl_player_id'=>$clientData['cl_player_id']));
+						
 		$this->db->select('pb_player_id');
 
 		$result = $this->db->get('playbasis_player');
@@ -76,9 +79,8 @@ class Player_model extends CI_Model{
 		if(!$result->row_array())
 			return -1;
 
-		//$id = $result->row_array();
-		
-		return $result->row_array()['pb_player_id']; 
+		$id = $result->row_array();
+		return $id['pb_player_id'];
 	}
 }
 ?>

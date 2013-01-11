@@ -9,11 +9,11 @@ class jigsaw extends CI_Model{
 	}
 	
 	//action jigsaw
-	public function action($config,$input){
+	public function action($config,$input,&$exInfo=array()){
 		
 		assert($config != false);
 		assert(is_array($config));		
-		assert(isset($config['url']));
+		//assert(isset($config['url']));
 		
 		//validate url
 		if($config['url']){
@@ -25,7 +25,7 @@ class jigsaw extends CI_Model{
 	}
 
 	//reward jigsaw
-	public function reward($config,$input){
+	public function reward($config,$input,&$exInfo=array()){
 		assert($config != false);
 		assert(is_array($config));		
 		assert(isset($config['reward_id']));
@@ -54,7 +54,7 @@ class jigsaw extends CI_Model{
 	
 	//condition jigsaw : counter
 	//if return true 
-	public function counter($config,$input,&$exInfo){
+	public function counter($config,$input,&$exInfo=array()){
 		assert($config != false);
 		assert(is_array($config));		
 		assert(isset($config['counter_value']));
@@ -109,7 +109,7 @@ class jigsaw extends CI_Model{
 	}
 
 	
-	public function cooldown($config,$input,&$exInfo){
+	public function cooldown($config,$input,&$exInfo=array()){
 		assert($config != false);
 		assert(is_array($config));		
 		assert(isset($config['cooldown']));
