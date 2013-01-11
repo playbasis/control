@@ -65,4 +65,10 @@ class Service extends REST_Controller{
 
 		$this->response($data,200);
 	}
+
+	public function testAssert_get(){
+		$this->load->model('engine/jigsaw','game_jigsaw');
+
+		$this->game_jigsaw->action('s:1:"1";',array('url'=>'asdf.com'));
+	}
 }
