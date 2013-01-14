@@ -49,6 +49,7 @@ class Player_model extends CI_Model{
 	public function updatePlayer($id,$fieldData){
 		if(!$id)
 			return false;
+		$fieldData['date_modified'] = date('Y-m-d H:i:s');
 		
 		$this->db->where('pb_player_id',$id);
 		$this->db->update('playbasis_player',$fieldData);
