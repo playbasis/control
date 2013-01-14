@@ -149,11 +149,21 @@ JIGSAW :: {CONDITION} > COOLDOWN
         }
 
 
+JIGSAW :: {CONDITION} > BEFORE
+"config":{
+            "timestamp"         : "{int}        :: date time in unix timestamp",
+        }
 
+JIGSAW :: {CONDITION} > AFTER
+"config":{
+            "timestamp"         : "{int}        :: date time in unix timestamp",
+        }
 
-
-
-
+JIGSAW :: {CONDITION} > BETWEEN
+"config":{
+            "start_time"         : "{string}		:: time in 24hr format {00:00 - 23:59}",
+			"end_time"			 : "{string}		:: time in 24hr format {00:00 - 23:59}"
+         }
 
 
 #~~ GAME EDITOR API ~~#
