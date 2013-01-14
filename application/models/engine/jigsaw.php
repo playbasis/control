@@ -17,6 +17,8 @@ class jigsaw extends CI_Model{
 		
 		//validate url
 		if($config['url']){
+			$input['url'] = urldecode($input['url']);
+			$exInfo['input_url'] = $input['url'];			
 			return (boolean) $this->matchUrl($input['url'],$config['url'],$config['regex']);
 		}
 		else{
@@ -30,7 +32,7 @@ class jigsaw extends CI_Model{
 		assert(is_array($config));		
 		assert(isset($config['reward_id']));
 		assert(isset($config['reward_name']));
-		assert(isset($config['item_id']));
+		assert($config["item_id"] == null || isset($config["item_id"]));
 		assert(isset($config['quantity']));
 
 		assert($input != false);
@@ -69,7 +71,7 @@ class jigsaw extends CI_Model{
 		
 		//reset consider
 		$this->db->select('input,date_added');
-		$this->db->where($input);
+		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
 		$this->db->order_by('date_added','desc');
 		$result = $this->db->get('playbasis_history');
 		
@@ -86,24 +88,28 @@ class jigsaw extends CI_Model{
 
 		$timeDiff = ($log['interval_unit']) == 'second' ? (int)(strtotime($timeNow)-strtotime($lastTime)) : (int)(date_diff( new DateTime() , new DateTime($lastTime))->d);
 
-		$resetUnit = ($log['interval_unit'] != $config['interval_unit']); 
-		$reset = $timeDiff > (int)$log['remaining_time'];
+		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
+		$remainingTime = $log['remaining_time']; 
+		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
 
-		if($resetUnit || $reset)
+		if($resetUnit || $reset)	//if reset start counter time and decrease counter  1 time
 		{
-			$exInfo['remaining_counter'] = (int)$config['counter_value'] - 1;
+			$exInfo['remaining_counter'] = (int)$config['counter_value']-1;
 			$exInfo['remaining_time'] = (int)$config['interval'];
 			return false;
 		}
-		
+		$log['remaining_counter'] = (int)$log['remaining_counter'] - 1;
 		if((int)$log['remaining_counter'] == 0){
-			$exInfo['remaining_counter'] = (int)$config['counter_value'] - 1;
-			$exInfo['remaining_time'] = (int)$config['interval'];
+			$exInfo['remaining_counter'] = (int)$config['counter_value'];
+			$exInfo['remaining_time'] = -1;	//reset timer, timer won't go down until counter triggers again
 			return true;
 		}
 		else{
-			$exInfo['remaining_counter'] = (int)$log['remaining_counter'] - 1;
-			$exInfo['remaining_time'] = (int)$log['remaining_time'] - $timeDiff;
+			$exInfo['remaining_counter'] = $log['remaining_counter'];
+			if($remainingTime<0)
+				$exInfo['remaining_time'] = (int)$config['interval'];
+			else
+				$exInfo['remaining_time'] = $remainingTime - $timeDiff;
 			return false;	
 		}
 	}
@@ -121,13 +127,13 @@ class jigsaw extends CI_Model{
 		assert($input['jigsaw_id']);
 
 		$this->db->select('input,date_added');
-		$this->db->where($input);
+		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
 		$this->db->order_by('date_added','desc');
 		$result = $this->db->get('playbasis_history');
 
 		if(!$result->row_array()){
 			$exInfo['remaining_cooldown'] = (int)$config['cooldown'];
-			return false;
+			return true;
 		}
 
 		// $result = array(
