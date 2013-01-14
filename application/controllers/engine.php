@@ -117,6 +117,7 @@ class Engine extends REST_Controller{
 		//get rule related to action id
 		$ruleSet = $this->client_model->getRuleSetByActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_id'=>$actionId));
 		
+		//misc data  : use for log and process any jigsaws
 		$input = array_merge($this->input->post(),$validToken,array('pb_player_id'=>1/*$pb_player_id*/));
 		//var_dump($ruleSet);	
 		foreach($ruleSet as $rule){
@@ -132,8 +133,13 @@ class Engine extends REST_Controller{
 				if($processor($jigsaw['config'],$input,$exInfo)){
 					if($jigsaw['category'] == 'REWARD'){
 						if(is_null($jigsaw['config']['item_id'])){
-							//update reward [type point]
-							$this->client_model->updatePlayerpointReward($jigsaw['config']['reward_id'],$jigsaw['config']['quantity'],$input['pb_player_id']);
+							if($jigsaw['config']['reward_name'] == 'exp' ) {
+								#got level here if player level up
+								$lv = $this->client_info->updateExpAndLevel($jigsaw['config']['quantity'],$input['pb_player_id']);
+							}
+							else{
+								$this->client_model->updatePlayerpointReward($jigsaw['config']['reward_id'],$jigsaw['config']['quantity'],$input['pb_player_id']);
+							}//update reward [type point]
 						}
 						else{
 							switch($jigsaw['config']['reward_name']){
@@ -145,9 +151,11 @@ class Engine extends REST_Controller{
 							}
 						}
 						//log
+						$this->client_model->log($input);
 					}
 					else{
 						//log
+						$this->client_model->log($input);
 						continue;
 					}
 				}
@@ -157,6 +165,7 @@ class Engine extends REST_Controller{
 					}
 					else{
 						//log
+						$this->client_model->log($input);
 						break;
 					}
 				}
