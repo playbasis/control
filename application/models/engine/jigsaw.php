@@ -158,6 +158,45 @@ class jigsaw extends CI_Model{
 		}
 	}
 
+	public function before($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));		
+		assert(isset($config['timestamp']));
+
+		assert($input != false);
+		assert(is_array($input));
+		
+		return ($config['timestamp'] > time());
+	}
+	
+	public function after($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));		
+		assert(isset($config['timestamp']));
+
+		assert($input != false);
+		assert(is_array($input));
+		
+		return ($config['timestamp'] < time());
+	}
+	
+	public function between($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));		
+		assert(isset($config['timestamp']));
+
+		assert($input != false);
+		assert(is_array($input));
+		$start	= $config['start_time'];
+		$end	= $config['end_time'];
+		
+		$start	= strtotime("1970-01-01 $start:00");
+		$end	= strtotime("1970-01-01 $end:00");
+		$now	= strtotime("1970-01-01 ".date('H:i').":00");
+		
+		return ($start < $now && $now < $end);
+	}
+	
 
 
 
@@ -180,9 +219,7 @@ class jigsaw extends CI_Model{
 
 
 
-
-
-
+	
 
 	//util :: badge checker
 	public function checkbadge($badgeId,$pb_player_id){
