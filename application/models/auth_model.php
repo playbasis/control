@@ -22,7 +22,7 @@ class Auth_model extends CI_model{
 		$result = $this->db->query($sql,$bindData);
 		*/
 
-		$this->db->select('site_id,client_id,domain_name');
+		$this->db->select('site_id,client_id,domain_name,site_name');
 		
 		$this->db->where(array('api_key'=>$data['key'],'api_secret'=>$data['secret'],'date_expire >='=>date('Y-m-d H:i:s'),'status'=>'1'));
 
