@@ -10,6 +10,7 @@ class Engine extends REST_Controller{
 		$this->load->model('player_model');
 		$this->load->model('engine/jigsaw','jigsaw_model');
 		$this->load->model('client_model');
+		$this->load->model('tracker_model');
 		$this->load->model('tool/error','error');
 		$this->load->model('tool/respond','resp');
 
@@ -116,11 +117,17 @@ class Engine extends REST_Controller{
 		//get input data from POST
 		
 		//misc data  : use for log and process any jigsaws
-		$input = array_merge($this->input->post(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->post('action')));
+		$input = array_merge(/*$this->input->get()*/$this->input->post(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->post('action')));
 		
+		
+
+
+		//track action
+		$this->tracker_model->trackAction($input);
+		
+
 		//get rule related to action id
 		$ruleSet = $this->client_model->getRuleSetByActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_id'=>$actionId));
-		
 		
 			
 		//result array
