@@ -73,7 +73,7 @@ class jigsaw extends CI_Model{
 		$this->db->select('input,date_added');
 		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
 		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_history');
+		$result = $this->db->get('playbasis_jigsaw_log');
 		
 		if(!$result->row_array()){
 			$exInfo['remaining_counter'] = (int)$config['counter_value'] - 1;
@@ -129,7 +129,7 @@ class jigsaw extends CI_Model{
 		$this->db->select('input,date_added');
 		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
 		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_history');
+		$result = $this->db->get('playbasis_jigsaw_log');
 
 		if(!$result->row_array()){
 			$exInfo['remaining_cooldown'] = (int)$config['cooldown'];
@@ -211,7 +211,7 @@ class jigsaw extends CI_Model{
 		$this->db->select('date_added');
 		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
 		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_history');
+		$result = $this->db->get('playbasis_jigsaw_log');
 		
 		if(!$result->num_rows()){
 			
@@ -258,7 +258,7 @@ class jigsaw extends CI_Model{
 		$this->db->select('input');
 		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
 		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_history');
+		$result = $this->db->get('playbasis_jigsaw_log');
 		
 		if(!$result->num_rows()){
 			$exInfo['next_trigger'] = strtotime("next ".$config['day_of_week']." ".$config['time_of_day']);
@@ -289,7 +289,7 @@ class jigsaw extends CI_Model{
 		$this->db->select('input');
 		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
 		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_history');
+		$result = $this->db->get('playbasis_jigsaw_log');
 		
 		if(!$result->num_rows()){
 			

@@ -20,7 +20,7 @@ class Tracker_model extends CI_Model{
 			$this->db->set('location',$input['position']);
 
 
-		$this->db->insert('playbasis_action_tracker',array('pb_player_id'=>$input['pb_player_id'],'action_id'=>$input['action_id'],'object_Info'=>serialize($objectInfo),'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
+		$this->db->insert('playbasis_action_log',array('pb_player_id'=>$input['pb_player_id'],'action_id'=>$input['action_id'],'object_Info'=>serialize($objectInfo),'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
 	}
 }
 ?>

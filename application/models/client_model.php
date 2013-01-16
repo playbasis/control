@@ -218,7 +218,7 @@ class Client_model extends CI_Model{
 		$this->db->set('date_added',date('Y-m-d H:i:s'));
 		$this->db->set('date_modified',date('Y-m-d H:i:s'));
 		
-		$this->db->insert('playbasis_history');
+		$this->db->insert('playbasis_jigsaw_log');
 		
 	}
 	
