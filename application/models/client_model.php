@@ -67,7 +67,7 @@ class Client_model extends CI_Model{
 	}
 	
 	//update point reward
-	public function updatePlayerpointReward($rewardId,$quantity,$pbPlayerId){
+	public function updatePlayerPointReward($rewardId,$quantity,$pbPlayerId){
 		assert(isset($rewardId));
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
@@ -177,11 +177,11 @@ class Client_model extends CI_Model{
 		assert('$logData["domain_name"]');
 		
 		//get player info 
-		$this->db->select('first_name,last_name');
-		$this->db->where('pb_player_id',$logData['pb_player_id']);
-		$result = $this->db->get('playbasis_player');
+		//$this->db->select('first_name,last_name');
+		//$this->db->where('pb_player_id',$logData['pb_player_id']);
+		//$result = $this->db->get('playbasis_player');
 		
-		$result = $result->row_array();
+		//$result = $result->row_array();
 		
 		if(isset($logData['input']))
 			$logData['input'] = serialize(array_merge($logData['input'],$jigsawOptionData));
@@ -189,8 +189,8 @@ class Client_model extends CI_Model{
 			$logData['input'] = 'NO-INPUT';
 		
 		$this->db->set('pb_player_id',$logData['pb_player_id']);
-		$this->db->set('first_name',$result['first_name']);
-		$this->db->set('last_name',$result['last_name']);
+		//$this->db->set('first_name',$result['first_name']);
+		//$this->db->set('last_name',$result['last_name']);
 		if(isset($logData['action_id']))
 			$this->db->set('action_id',$logData['action_id']);
 		if(isset($logData['action_name']))
