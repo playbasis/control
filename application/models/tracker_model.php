@@ -20,7 +20,34 @@ class Tracker_model extends CI_Model{
 			$this->db->set('location',$input['position']);
 
 
-		$this->db->insert('playbasis_action_log',array('pb_player_id'=>$input['pb_player_id'],'action_id'=>$input['action_id'],'object_Info'=>serialize($objectInfo),'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
+		$this->db->insert('playbasis_action_log',array(	'pb_player_id'=>$input['pb_player_id'],
+														'action_id'=>$input['action_id'],
+														'action_name'=>$input['action_name'],
+														'object_Info'=>serialize($objectInfo),
+														'date_added'=>date('Y-m-d H:i:s'),
+														'date_modified'=>date('Y-m-d H:i:s')
+														)
+						);
+		
+		return $this->db->insert_id();
+	}
+	
+	public function trackEvent($type,$message,$input){
+		$this->db->set('pb_player_id',$input['pb_player_id']);
+		$this->db->set('event_type',$type);
+		if(isset($input['reward_id']))
+			$this->db->set('reward_id',$input['reward_id']);
+		if(isset($input['reward_name']))
+			$this->db->set('reward_name',$input['reward_name']);
+		if(isset($input['item_id']))
+			$this->db->set('item_id',$input['item_id']);
+		$this->db->set('amount',$input['amount']);
+		$this->db->set('action_log_id',$input['action_log_id']);
+		$this->db->set('message',$message);
+		$this->db->set('date_added',date('Y-m-d H:i:s'));
+		$this->db->set('date_modified',date('Y-m-d H:i:s'));
+		
+		$this->db->insert('playbasis_event_log');
 	}
 }
 ?>

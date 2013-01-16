@@ -12,6 +12,7 @@ class Engine extends REST_Controller{
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
 		$this->load->model('tool/error','error');
+		$this->load->model('tool/utility','utility');
 		$this->load->model('tool/respond','resp');
 
 
@@ -103,6 +104,7 @@ class Engine extends REST_Controller{
 		
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken,array('cl_player_id'=>$this->input->post('player_id'))));
+		//$pb_player_id = 1; //for debugging
 
 		if($pb_player_id < 0){
 			$this->response($this->error->setError('USER_NOT_EXIST'),200);
@@ -110,6 +112,7 @@ class Engine extends REST_Controller{
 		 
 		//get action id by action name
 		$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->post('action')));
+		//$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->get('action')));  //for debugging
 		if(!$actionId){
 			$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
 		}
@@ -117,13 +120,14 @@ class Engine extends REST_Controller{
 		//get input data from POST
 		
 		//misc data  : use for log and process any jigsaws
-		$input = array_merge(/*$this->input->get()*/$this->input->post(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->post('action')));
+		$input = array_merge($this->input->post(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->post('action')));
+		//$input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
 		
 		
 
 
 		//track action
-		$this->tracker_model->trackAction($input);
+		$input['action_log_id'] = $this->tracker_model->trackAction($input);
 		
 
 		//get rule related to action id
@@ -135,7 +139,7 @@ class Engine extends REST_Controller{
 					
 						
 		if(!$ruleSet){
-			//log
+			//log jigsaw
 			$this->client_model->log($input);
 			$this->response($this->resp->setRespond($apiResult),200);
 		}
@@ -170,11 +174,15 @@ class Engine extends REST_Controller{
 										'event_type'	=>  'LEVEL_UP',
 										'value'			=>	$lv,
 									);
-									array_push($apiResult['events'],$event);		
+									array_push($apiResult['events'],$event);
+
+									//log event :: level
+									$this->tracker_model->trackEvent('LEVEL',$this->utility->getEventMessage('level'),array_merge($input,array('amount'=>$lv)));
+
 								}
 							}
 							else{
-								$this->client_model->updatePlayerpointReward($jigsawConfig['reward_id'],$jigsawConfig['quantity'],$input['pb_player_id']);
+								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'],$jigsawConfig['quantity'],$input['pb_player_id']);
 							}//update reward [type point]
 							
 							$event = array(
@@ -183,6 +191,8 @@ class Engine extends REST_Controller{
 								'value'			=>	$jigsawConfig['quantity'],
 							);
 							array_push($apiResult['events'],$event);
+							//log event :: reward > all kind of point
+							$this->tracker_model->trackEvent('REWARD',$this->utility->getEventMessage($jigsawConfig['reward_name']),array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
 						}
 						else{
 							switch($jigsawConfig['reward_name']){
@@ -193,18 +203,21 @@ class Engine extends REST_Controller{
 										'reward_type'	=> 	$jigsawConfig['reward_name'],
 										'reward_data'	=>  $this->client_model->getBadgeById($jigsawConfig['item_id']),
 										'value'			=>	$jigsawConfig['quantity'],
-										);
+									)	;
 									array_push($apiResult['events'],$event);
+									//log event :: reward > badge
+									$this->tracker_model->trackEvent('REWARD',$this->utility->getEventMessage($jigsawConfig['reward_name']),array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'item_id'=>$jigsawConfig['item_id'],'amount'=>$jigsawConfig['quantity'])));
 									break;
 								default :
 									break;
 							}
 						}
-						//log
-						$this->client_model->log(array_merge($input,$exInfo));
+						//log jigsaw :: reward 
+						$this->client_model->log($input);
+						
 					}
 					else{
-						//log
+						//log jigsaw :: condition or action
 						$this->client_model->log($input,$exInfo);
 						continue;
 					}
@@ -214,7 +227,7 @@ class Engine extends REST_Controller{
 						continue;
 					}
 					else{
-						//log
+						//log jigsaw :: condition or action
 						$this->client_model->log($input,$exInfo);
 						break;
 					}
