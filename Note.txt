@@ -184,6 +184,12 @@ JIGSAW :: {CONDITION} > WEEKLY
 			"date_of_month"		 : "{int}{enum}{default : 1}		:: numeric date of month {1-31}"
 		 }
 
+JIGSAW :: {CONDITION} > EVERYNDAYS
+"config":{
+			"time_of_day"		 : "{string} {default : 00:00}		:: time in 24hr format {00:00 - 23:59}",
+			"num_of_days"		 : "{int}{enum}{default : 1}		:: number of days between interval {1-31}"
+		 }
+
 
 #~~ GAME EDITOR API ~~#
 
