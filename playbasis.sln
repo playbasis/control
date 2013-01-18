@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{1863889A-00DF-4350-BA39-669CA949CB81}") = "playbasis", "playbasis.phpproj", "{02E41A72-97AD-439B-B608-CB6540A48D84}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Local|PHP 5.2 = Local|PHP 5.2
+		Production|PHP 5.2 = Production|PHP 5.2
+		Staging|PHP 5.2 = Staging|PHP 5.2
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Local|PHP 5.2.ActiveCfg = Local|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Local|PHP 5.2.Deploy.0 = Local|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Production|PHP 5.2.ActiveCfg = Production|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Production|PHP 5.2.Deploy.0 = Production|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Staging|PHP 5.2.ActiveCfg = Staging|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Staging|PHP 5.2.Deploy.0 = Staging|PHP 5.2
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

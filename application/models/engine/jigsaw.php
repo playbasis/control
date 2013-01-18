@@ -311,6 +311,47 @@ class jigsaw extends CI_Model{
 		$exInfo['next_trigger'] = $logInput['next_trigger'];
 		return false;
 	}
+	
+	public function everyNDays($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));
+
+		assert($input != false);
+		assert(is_array($input));
+		assert(isset($config['time_of_day']));
+		assert(isset($config['num_of_days']));
+		
+		$this->db->select('input');
+		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		$this->db->order_by('date_added','desc');
+		$result = $this->db->get('playbasis_jigsaw_log');
+		
+		if(!$result->num_rows()){
+			$currentDate = new DateTime();
+			$nextTrigger = $currentDate->modify("+".$config['num_of_days']." day");
+			assert($nextTrigger);
+			$time = explode(':',$config['time_of_day']);
+			$nextTrigger->setTime($time[0],$time[1]);
+			assert($nextTrigger);
+			$exInfo['next_trigger'] = $nextTrigger->getTimestamp();
+			return true;
+		}
+		
+		$result = $result->row_array();
+		$logInput = unserialize($result['input']);
+		if(time() >= $logInput['next_trigger']){
+			
+			$nextTrigger = new DateTime();
+			$nextTrigger->setTimestamp($logInput['next_trigger']);
+			assert($nextTrigger);
+			$nextTrigger->modify("+".$config['num_of_days']." day");
+			assert($nextTrigger);
+			$exInfo['next_trigger'] = $nextTrigger->getTimestamp();
+			return true;
+		}
+		$exInfo['next_trigger'] = $logInput['next_trigger'];
+		return false;
+	}
 
 
 

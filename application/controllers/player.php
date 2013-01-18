@@ -97,7 +97,7 @@ class Player extends REST_Controller{
 	}
 
 	//log-in player
-	public function login_get($player_id){
+	public function login_post($player_id){
 		$required = $this->input->checkParam(array('token'));
 
 		if($required)
@@ -125,7 +125,7 @@ class Player extends REST_Controller{
 		## TRIGGER EVENT ##
 
 		#log event
-		$this->tracker_model->trackEvent('OTHER',$this->utility->getEventMessage('login'),array('pb_player_id'=>$pb_player_id,'action_log_id'=>0));
+		$this->tracker_model->trackEvent('OTHER',$this->utility->getEventMessage('login'),array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
 		
 		$this->response($this->resp->setRespond(),200);
 	}

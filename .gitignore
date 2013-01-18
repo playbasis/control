@@ -1,0 +1,7 @@
+/.metadata/
+/*.project
+/*.suo
+/*.puo
+/*.intellisense.cache
+/php.ini
+/.httpd.conf

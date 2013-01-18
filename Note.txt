@@ -178,10 +178,16 @@ JIGSAW :: {CONDITION} > WEEKLY
 			"day_of_week"		 : "{string}{enum}{default : Mon}	:: texual day of week {Mon,Tue,Wed,Thu,Fri,Sat,Sun}"
 		 }
 
-JIGSAW :: {CONDITION} > WEEKLY
+JIGSAW :: {CONDITION} > MONTHLY
 "config":{
 			"time_of_day"		 : "{string} {default : 00:00}		:: time in 24hr format {00:00 - 23:59}",
 			"date_of_month"		 : "{int}{enum}{default : 1}		:: numeric date of month {1-31}"
+		 }
+
+JIGSAW :: {CONDITION} > EVERYNDAYS
+"config":{
+			"time_of_day"		 : "{string} {default : 00:00}		:: time in 24hr format {00:00 - 23:59}",
+			"num_of_days"		 : "{int}{enum}{default : 1}		:: number of days "
 		 }
 
 
