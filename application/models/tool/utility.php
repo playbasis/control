@@ -6,6 +6,7 @@ class Utility extends CI_Model{
 			case 'exp'		:
 			case 'point'	:
 			case 'level'	:
+			case 'login'	:
 			default :
 				return '';
 		}
