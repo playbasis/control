@@ -41,7 +41,8 @@ class Tracker_model extends CI_Model{
 			$this->db->set('reward_name',$input['reward_name']);
 		if(isset($input['item_id']))
 			$this->db->set('item_id',$input['item_id']);
-		$this->db->set('amount',$input['amount']);
+		if(isset($input['amount']))
+			$this->db->set('value',$input['amount']);
 		$this->db->set('action_log_id',$input['action_log_id']);
 		$this->db->set('message',$message);
 		$this->db->set('date_added',date('Y-m-d H:i:s'));

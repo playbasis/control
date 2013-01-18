@@ -25,7 +25,7 @@ class Engine extends REST_Controller{
 	}
 	
 	//get initial information for client site script
-	public function init_post(){
+	public function getActionConfig_post(){
 		
 		$required = $this->input->checkParam(array('token'));
 
