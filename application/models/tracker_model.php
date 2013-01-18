@@ -34,6 +34,8 @@ class Tracker_model extends CI_Model{
 	
 	public function trackEvent($type,$message,$input){
 		$this->db->set('pb_player_id',$input['pb_player_id']);
+		$this->db->set('client_id',$input['client_id']);
+		$this->db->set('site_id',$input['site_id']);
 		$this->db->set('event_type',$type);
 		if(isset($input['reward_id']))
 			$this->db->set('reward_id',$input['reward_id']);

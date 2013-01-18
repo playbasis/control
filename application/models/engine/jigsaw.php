@@ -330,7 +330,8 @@ class jigsaw extends CI_Model{
 			$currentDate = new DateTime();
 			$nextTrigger = $currentDate->modify("+".$config['num_of_days']." day");
 			assert($nextTrigger);
-			$nextTrigger->setTime($config['time_of_day']);
+			$time = explode(':',$config['time_of_day']);
+			$nextTrigger->setTime($time[0],$time[1]);
 			assert($nextTrigger);
 			$exInfo['next_trigger'] = $nextTrigger->getTimestamp();
 			return true;
