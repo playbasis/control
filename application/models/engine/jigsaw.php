@@ -41,7 +41,7 @@ class jigsaw extends CI_Model{
 
 		//always true if reward type is point
 		if(is_null($config['item_id']))
-			return true;
+			return $this->checkReward($config['reward_id'],$input['site_id']);
 
 
 		//if reward type is badge
@@ -399,6 +399,21 @@ class jigsaw extends CI_Model{
 		
 		return true;
 			
+	}
+
+	public function checkReward($rewardId,$siteId){
+		$this->db->select('limit');
+		$this->db->where(array('reward_id'=>$rewardId,'site_id'=>$siteId));
+		$result = $this->db->get('playbasis_reward_to_client');
+		
+		assert($result->row_array());
+
+		$result = $result->row_array();
+		
+		if(is_null($result['limit']))
+			return true;
+
+		return $result['limit'] > 0;
 	}
 
 

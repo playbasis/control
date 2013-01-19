@@ -67,11 +67,12 @@ class Client_model extends CI_Model{
 	}
 	
 	//update point reward
-	public function updatePlayerPointReward($rewardId,$quantity,$pbPlayerId){
+	public function updatePlayerPointReward($rewardId,$quantity,$pbPlayerId,$siteId){
 		assert(isset($rewardId));
+		assert(isset($siteId));
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
-		
+
 		$this->db->where(array('pb_player_id'=>$pbPlayerId,'reward_id'=>$rewardId));
 		$this->db->from('playbasis_reward_to_player');
 		$hasReward = $this->db->count_all_results();
@@ -79,14 +80,27 @@ class Client_model extends CI_Model{
 		if($hasReward){
 			$this->db->where(array('pb_player_id'=>$pbPlayerId,'reward_id'=>$rewardId));
 			$this->db->set('date_modified',date('Y-m-d H:i:s'));
-			$this->db->set('value',"value+$quantity",FALSE);
+			$this->db->set('value',"`value`+$quantity",FALSE);
 			$this->db->update('playbasis_reward_to_player');
 		}
 		else{
 			$this->db->insert('playbasis_reward_to_player',array('pb_player_id'=>$pbPlayerId,'reward_id'=>$rewardId,'value'=>$quantity,'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
 		}
 		
+		//upadte client rewar limit
+		$this->db->select('limit');
+		$this->db->where(array('reward_id'=>$rewardId,'site_id'=>$siteId));
+		$result = $this->db->get('playbasis_reward_to_client');
 		
+		assert($result->row_array());
+
+		$result = $result->row_array();
+		
+		if(!is_null($result['limit'])){
+			$this->db->where(array('reward_id'=>$rewardId,'site_id'=>$siteId));
+			$this->db->set('limit',"`limit`-$quantity",FALSE);
+			$this->db->update('playbasis_reward_to_client');
+		}
 	}
 	
 	public function updateplayerBadge($badgeId,$quantity,$pbPlayerId){
@@ -121,7 +135,7 @@ class Client_model extends CI_Model{
 		if($hasBadge){
 			$this->db->where(array('pb_player_id'=>$pbPlayerId,'badge_id'=>$badgeId));
 			$this->db->set('date_modified',date('Y-m-d H:i:s'));			
-			$this->db->set('amount',"amount+$quantity",FALSE);
+			$this->db->set('amount',"`amount`+$quantity",FALSE);
 			$this->db->update('playbasis_badge_to_player');
 		}
 		else{
@@ -157,7 +171,7 @@ class Client_model extends CI_Model{
 		
 		$this->db->where('pb_player_id',$pb_player_id);
 		$this->db->set('date_modified',date('Y-m-d H:i:s'));		
-		$this->db->set('exp', "exp+$exp", FALSE);
+		$this->db->set('exp', "`exp`+$exp", FALSE);
 		if($level>0)
 			$this->db->set('level', $level);
 		

@@ -99,14 +99,14 @@ class Engine extends REST_Controller{
 
 		//validate token
 		// $validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
-		$validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net",'site_name'=>'playbasis demo site'); //for debugging
+		$validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
 		
 		//get playbasis player id
 		// $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken,array('cl_player_id'=>$this->input->post('player_id'))));
-		$pb_player_id = 1; //for debugging
+		$pb_player_id = $this->input->get('player_id'); //for debugging
 
 		if($pb_player_id < 0){
 			$this->response($this->error->setError('USER_NOT_EXIST'),200);
@@ -184,7 +184,7 @@ class Engine extends REST_Controller{
 								}
 							}
 							else{
-								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'],$jigsawConfig['quantity'],$input['pb_player_id']);
+								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'],$jigsawConfig['quantity'],$input['pb_player_id'],$input['site_id']);
 							}//update reward [type point]
 							
 							$event = array(
