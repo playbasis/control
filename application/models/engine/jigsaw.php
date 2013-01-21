@@ -92,6 +92,12 @@ class jigsaw extends CI_Model{
 		$remainingTime = $log['remaining_time']; 
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
 
+		if($log['remaining_time'] == 0 && $config['interval'] == 0){ //if config time = 0 reduce counter and return true
+			$exInfo['remaining_counter'] = (int)$log['counter_value']-1;
+			$exInfo['remaining_time'] = (int)$config['interval'];
+			return true;	
+		}
+
 		if($resetUnit || $reset)	//if reset start counter time and decrease counter  1 time
 		{
 			$exInfo['remaining_counter'] = (int)$config['counter_value']-1;
@@ -195,6 +201,9 @@ class jigsaw extends CI_Model{
 		
 		$start	= strtotime("1970-01-01 $start:00");
 		$end	= strtotime("1970-01-01 $end:00");
+		#check range across day
+		if($end < $start)
+			$end	= strtotime("1970-01-02 $end:00");
 		$now	= strtotime("1970-01-01 ".date('H:i').":00");
 		
 		return ($start < $now && $now < $end);
