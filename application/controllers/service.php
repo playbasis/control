@@ -97,4 +97,11 @@ class Service extends REST_Controller{
 		//echo date('r',1359417600);
 		
 	}
+
+	public function testUpdateReward_get(){
+		$this->load->model('client_model');
+
+		$this->client_model->updatePlayerPointReward(2,10,1,1);
+
+	}
 }

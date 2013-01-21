@@ -60,6 +60,10 @@ $route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';			#login player to pl
 #engine
 $route['PBEngine/init']	= 'engine/init';	
 $route['PBEngine/rule']	= 'engine/rule';	
+
+#dummy
+$route['dummy/([0-9]+)']	= 'dummy/index/$1';	
+
 $route['404_override'] = '';
 
 

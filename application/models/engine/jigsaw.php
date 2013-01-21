@@ -41,7 +41,7 @@ class jigsaw extends CI_Model{
 
 		//always true if reward type is point
 		if(is_null($config['item_id']))
-			return true;
+			return $this->checkReward($config['reward_id'],$input['site_id']);
 
 
 		//if reward type is badge
@@ -91,6 +91,12 @@ class jigsaw extends CI_Model{
 		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
 		$remainingTime = $log['remaining_time']; 
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
+
+		if($log['remaining_time'] == 0 && $config['interval'] == 0){ //if config time = 0 reduce counter and return true
+			$exInfo['remaining_counter'] = (int)$log['counter_value']-1;
+			$exInfo['remaining_time'] = (int)$config['interval'];
+			return true;	
+		}
 
 		if($resetUnit || $reset)	//if reset start counter time and decrease counter  1 time
 		{
@@ -195,6 +201,9 @@ class jigsaw extends CI_Model{
 		
 		$start	= strtotime("1970-01-01 $start:00");
 		$end	= strtotime("1970-01-01 $end:00");
+		#check range across day
+		if($end < $start)
+			$end	= strtotime("1970-01-02 $end:00");
 		$now	= strtotime("1970-01-01 ".date('H:i').":00");
 		
 		return ($start < $now && $now < $end);
@@ -399,6 +408,21 @@ class jigsaw extends CI_Model{
 		
 		return true;
 			
+	}
+
+	public function checkReward($rewardId,$siteId){
+		$this->db->select('limit');
+		$this->db->where(array('reward_id'=>$rewardId,'site_id'=>$siteId));
+		$result = $this->db->get('playbasis_reward_to_client');
+		
+		assert($result->row_array());
+
+		$result = $result->row_array();
+		
+		if(is_null($result['limit']))
+			return true;
+
+		return $result['limit'] > 0;
 	}
 
 
