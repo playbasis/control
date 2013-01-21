@@ -70,7 +70,7 @@ class Service extends REST_Controller{
 		$this->load->model('engine/jigsaw','jg');
 		
 		$exInfo = array();
-		$status = $this->jg->counter(array('counter_value'=>5,'interval'=>2,'interval_unit'=>'day'),array('pb_player_id'=>1,'rule_id'=>1,'jigsaw_id'=>1),$exInfo);
+		$status = $this->jg->counter(array('counter_value'=>5,'interval'=>0,'interval_unit'=>'second'),array('pb_player_id'=>1,'rule_id'=>1,'jigsaw_id'=>1),$exInfo);
 
 		var_dump($exInfo);
 		var_dump($status);
