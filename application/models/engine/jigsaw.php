@@ -84,6 +84,29 @@ class jigsaw extends CI_Model{
 		$result = $result->row_array();
 		$timeNow = date('Y-m-d H:i:s');		
 		$log 		= unserialize($result['input']);
+		
+		if($config['interval'] == 0){ //if config time = 0 reduce counter and return false
+			
+			$log['remaining_counter']  -= 1;
+			if((int)$log['remaining_counter'] == 0){
+				$exInfo['remaining_counter'] = (int)$config['counter_value'];
+				$exInfo['remaining_time'] = -1;	//reset timer, timer won't go down until counter triggers again
+				return true;
+			}
+
+
+			
+			$exInfo['remaining_counter'] = $log['remaining_counter'];
+			$exInfo['remaining_time'] = $config['interval'];
+			return false;
+		}
+
+		if($config['interval'] != 0 && $log['remaining_time'] == 0){
+			$exInfo['remaining_counter'] = $log['remaining_counter'] - 1;
+			$exInfo['remaining_time'] = (int)$config['interval'];
+			return false;
+		}
+
 		$lastTime	= $result['date_added'];
 
 		$timeDiff = ($log['interval_unit']) == 'second' ? (int)(strtotime($timeNow)-strtotime($lastTime)) : (int)(date_diff( new DateTime() , new DateTime($lastTime))->d);
@@ -98,7 +121,9 @@ class jigsaw extends CI_Model{
 			$exInfo['remaining_time'] = (int)$config['interval'];
 			return false;
 		}
-		$log['remaining_counter'] = (int)$log['remaining_counter'] - 1;
+		
+		$log['remaining_counter']  -= 1;
+		
 		if((int)$log['remaining_counter'] == 0){
 			$exInfo['remaining_counter'] = (int)$config['counter_value'];
 			$exInfo['remaining_time'] = -1;	//reset timer, timer won't go down until counter triggers again
@@ -195,6 +220,9 @@ class jigsaw extends CI_Model{
 		
 		$start	= strtotime("1970-01-01 $start:00");
 		$end	= strtotime("1970-01-01 $end:00");
+		#check range across day
+		if($end < $start)
+			$end	= strtotime("1970-01-02 $end:00");
 		$now	= strtotime("1970-01-01 ".date('H:i').":00");
 		
 		return ($start < $now && $now < $end);
