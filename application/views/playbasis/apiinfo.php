@@ -36,7 +36,7 @@
 <body>
 	<div class="container deco">
 		<h1>Welcome to Playbasis API</h1>
-		<p>This page still develope.Stay tune and keep in touch</p>
+		<p>This page is underconstruction. Stay tuned and keep in touch.</p>
 		<br/>
 	</div>
 </body>

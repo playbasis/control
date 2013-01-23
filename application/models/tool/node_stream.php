@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-define('STREAM_URL', 'http://dev.pbapp.net/activitystream/');
+define('STREAM_URL', 'https://dev.pbapp.net/activitystream/');
 // define('STREAM_URL', 'http://localhost/activitystream/');
 define('STREAM_PORT', 3000);
 define('USERPASS','planescape:torment');
@@ -17,7 +17,7 @@ class Node_stream extends CI_Model{
 		curl_setopt($ch, CURLOPT_URL, STREAM_URL.$chanelName);											# set url
 		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT);													# set port
     	curl_setopt($ch, CURLOPT_HEADER, FALSE); 														# turn off output
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, FALSE);    											# refuse response from called server
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);    											# refuse response from called server
 		// curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));# set Content-Type
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain; charset=utf-8'));			# set Content-Type
     	curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');												# set  agent    	
@@ -64,6 +64,24 @@ class Node_stream extends CI_Model{
 						),
 			'target'	=> array(),
 		);
+		
+		if(isset($data['badge'])){
+			$activityFormat['object']['badge'] = array(
+														'id'	=>	$data['badge']['badge_id'],
+														'name'  =>	$data['badge']['name'],
+														'image'	=>	array(
+																		'url'	=> $data['badge']['image'],
+																		'width'	=> 76,
+																		'height'=> 76	
+																	),
+												);
+		}
+		else{
+			$activityFormat['object']['badge'] = NULL;
+		}
+		$activityFormat['object']['level']  = isset($data['level'])  ? $data['level']  : NULL;
+		$activityFormat['object']['point']  = isset($data['point'])  ? $data['point']  : NULL;
+		$activityFormat['object']['amount'] = isset($data['amount']) ? $data['amount'] : NULL;
 
 		return $activityFormat;
 

@@ -237,14 +237,14 @@
 	<!-- Notification -->
 	<div id="notification-box">
 		<h2>NOTIFICATION DEMO</h2>
-		<div class="notification-node">
+		<!--div class="notification-node">
 			<img class="left" src="" alt="player-image" />
 			<div class="notification-message left">
 				<p class="message"><span class="player-name">playername</span><br/>message</p>
 				<div class="time">time</div>
 			</div>
 			<div class="clear"></div>
-		</div>
+		</div-->
 	</div>
 
 <script type="text/javascript">
@@ -252,16 +252,19 @@
 
 	(function(){
 		//var baseURL = '//api.pbapp.net/',
-		var baseURL = '//localhost/api/',
+		//var baseURL = '//localhost/api/',
+		var baseURL = 'https://dev.pbapp.net/api/index.php/',
 			methodArray = {
 				'Player' : [
-					'{player ID}',
-					'{player ID}/register',
-					'{player ID}/login',
-					'{player ID}/logout',
-					'{player ID}/points',
-					'{player ID}/point/{point name}',
-					'{player ID}/action[/action name]{/time | count}',
+					'[player ID]',
+					'[player ID]/register',
+					'[player ID]/login',
+					'[player ID]/logout',
+					'[player ID]/points',
+					'[player ID]/point[/point name]',
+					'[player ID]/action[/action name][/time | count]',
+					'[player ID]/badge',
+					'rank/[ranked_by][/limit]',
 				],
 				'Badge'	: [
 					'[badge ID]',
@@ -450,13 +453,17 @@
 	})();	
 </script>
 <script type="text/javascript">
-	var socket = io.connect('//pbapp.net:3000');
+	//var socket = io.connect('//pbapp.net:3000');
+	//var socket = io.connect('//localhost:3000');
+	var socket = io.connect('https://dev.pbapp.net:3000');
 	socket.on('connect', function(data){
 		console.log('client connected');
 		socket.emit('subscribe', /*{channel:location.host}*/{channel:'playbasis.com'});
 	});
 	socket.on('message', function(data){
 		data = JSON.parse(data);
+		var url = data.actor.image.url;
+		data.actor.image.url = url.replace(/(\\)/g, '');
 		console.log(data);
 		$('#notification-box').append('<div class="notification-node"><img class="left" src="'+data.actor.image.url+'" alt="name" /><div class="notification-message left"><p class="message"><span class="player-name">'+data.actor.displayName+'</span><br/>'+data.object.message+' via '+data.verb+' action</p><div class="time">'+data.published+'</div></div><div class="clear"></div></div>');
 	});

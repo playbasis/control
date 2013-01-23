@@ -3,6 +3,12 @@ define("CUSTOM_POINT_START_ID",10000);
 	
 class Client_model extends CI_Model{
 	
+	public function __construct(){
+		parent::__construct();
+
+		$this->config->load('playbasis');
+	}
+	
 	//get action configuration from all rule that relate to site id & client id
 	public function getRuleSet($clientData){
 		assert($clientData);
@@ -69,7 +75,7 @@ class Client_model extends CI_Model{
 	}
 	
 	//update point reward
-	public function updatePlayerPointReward($rewardId,$quantity,$pbPlayerId,$clientId,$siteId){
+	public function updatePlayerPointReward($rewardId,$quantity,$pbPlayerId,$clientId,$siteId, $overrideOldValue=FALSE){
 		assert(isset($rewardId));
 		assert(isset($siteId));
 		assert(isset($quantity));
@@ -82,14 +88,17 @@ class Client_model extends CI_Model{
 		if($hasReward){
 			$this->db->where(array('pb_player_id'=>$pbPlayerId,'reward_id'=>$rewardId));
 			$this->db->set('date_modified',date('Y-m-d H:i:s'));
-			$this->db->set('value',"`value`+$quantity",FALSE);
+			if($overrideOldValue)
+				$this->db->set('value', $quantity);
+			else
+				$this->db->set('value',"`value`+$quantity",FALSE);
 			$this->db->update('playbasis_reward_to_player');
 		}
 		else{
 			$this->db->insert('playbasis_reward_to_player',array('pb_player_id'=>$pbPlayerId,'client_id'=>$clientId,'site_id'=>$siteId,'reward_id'=>$rewardId,'value'=>$quantity,'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
 		}
 		
-		//upadte client rewar limit
+		//upadte client reward limit
 		$this->db->select('limit');
 		$this->db->where(array('reward_id'=>$rewardId,'site_id'=>$siteId));
 		$result = $this->db->get('playbasis_reward_to_client');
@@ -181,9 +190,14 @@ class Client_model extends CI_Model{
 		
 	}
 
-	public function updateExpAndLevel($exp,$pb_player_id){
+	public function updateExpAndLevel($exp,$pb_player_id,$clientData){
 		assert($exp);
 		assert($pb_player_id);
+		
+		assert($clientData);
+		assert(is_array($clientData));
+		assert(isset($clientData['client_id']));
+		assert(isset($clientData['site_id']));
 
 		//get player exp
 		$this->db->select('exp,level');
@@ -193,14 +207,23 @@ class Client_model extends CI_Model{
 		$result = $result->row_array();		
 		$playerExp = $result['exp'];
 		$playerLevel = $result['level'];
+		$newExp = $exp+$playerExp;
 		
-		//get level
+		//check if client have their own exp table setup
 		$this->db->select_max('level');
-		$this->db->where("exp <=",$exp+$playerExp);
-		$result = $this->db->get('playbasis_exp_table');
-
+		$this->db->where($clientData);
+		$this->db->where("exp <=",$newExp);
+		$result = $this->db->get('playbasis_client_exp_table');
 		$level = $result->row_array();
-		if($level && $level['level'] > $playerLevel)
+		if(!$level['level']){
+			//get level from default exp table instead
+			$this->db->select_max('level');
+			$this->db->where("exp <=",$newExp);
+			$result = $this->db->get('playbasis_exp_table');
+
+			$level = $result->row_array();
+		}
+		if($level['level'] && $level['level'] > $playerLevel)
 			$level = $level['level'];
 		else
 			$level = -1;
@@ -213,7 +236,15 @@ class Client_model extends CI_Model{
 		
 		$this->db->update('playbasis_player');
 
-		return $level;			
+		//get reward id to update the reward to player table
+		$this->db->select('reward_id');
+		$this->db->where('name', 'exp');
+		$result = $this->db->get('playbasis_reward');
+		$result = $result->row_array();
+		
+		$this->updatePlayerPointReward($result['reward_id'], $newExp, $pb_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
+
+		return $level;
 	}
 
 	public function log($logData,$jigsawOptionData=array()){
@@ -277,6 +308,7 @@ class Client_model extends CI_Model{
 		$this->db->where('badge_id',$badgeId);
 		$result = $this->db->get('playbasis_badge');
 		$badgeImage = $result->row_array();
+		$badgeImage['image'] = $this->config->item('IMG_PATH').$badgeImage['image'];
 		
 		$this->db->select('name,description');
 		$this->db->where('badge_id',$badgeId);
