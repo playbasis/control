@@ -89,7 +89,8 @@ class Dummy extends CI_Controller{
 		//check token
 		if(!$token){
 			//renew token if expire
-			$this->auth_model->generateToken($configArray);
+			$API  = $this->dummy_model->getKeySecret($configArray);
+			$this->auth_model->generateToken($API);
 			//get token again
 			$token = $this->dummy_model->getToken($configArray);
 		}

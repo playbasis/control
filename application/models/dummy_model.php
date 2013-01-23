@@ -43,5 +43,14 @@ class Dummy_model extends CI_Model{
 
 		return 0;
 	}
+
+	public function getKeySecret($data){
+		$this->db->select('api_key as key,api_secret as secret');
+
+		$this->db->where(array('client_id'=>$data['client_id'],'site_id'=>$data['site_id']));
+		$result = $this->db->get('playbasis_client_site');
+
+		return $result->row_array();
+	}
 }
 ?>
