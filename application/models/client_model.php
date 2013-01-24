@@ -67,7 +67,7 @@ class Client_model extends CI_Model{
 	}
 	
 	//update point reward
-	public function updatePlayerPointReward($rewardId,$quantity,$pbPlayerId,$siteId){
+	public function updatePlayerPointReward($rewardId,$quantity,$pbPlayerId,$clientId,$siteId){
 		assert(isset($rewardId));
 		assert(isset($siteId));
 		assert(isset($quantity));
@@ -84,7 +84,7 @@ class Client_model extends CI_Model{
 			$this->db->update('playbasis_reward_to_player');
 		}
 		else{
-			$this->db->insert('playbasis_reward_to_player',array('pb_player_id'=>$pbPlayerId,'reward_id'=>$rewardId,'value'=>$quantity,'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
+			$this->db->insert('playbasis_reward_to_player',array('pb_player_id'=>$pbPlayerId,'client_id'=>$clientId,'site_id'=>$siteId,'reward_id'=>$rewardId,'value'=>$quantity,'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
 		}
 		
 		//upadte client rewar limit

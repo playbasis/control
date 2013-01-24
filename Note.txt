@@ -208,3 +208,56 @@ rules/{rule_id}/update				POST				POST{#game rule format}									update rules d
 rules/{rule_id}/update/status 		POST 				N.A. 													toggle rule status between active/inactive
 
 rules/add 							POST 				POST{client_id,site_id,rule_name,rule_description}		create new game rule
+
+
+
+$test = array(
+    
+    array(
+        "id"            =>1,
+        "name"          => "action",
+        "description"   => "action jigsaw",
+        "category"      =>"ACTION",
+        "sort_order"    =>1,
+        "datasets"      => array(),
+        "config"        => array(
+                            "action_id"     => 4,
+                            "action_name"   => "share",
+                            "url"           => "",
+                            "regex"         => false,
+                            "action_target" => "",
+                            "object_target" => "",
+                        )
+        ),
+    array(
+        "id"            =>3,
+        "name"          => "counter",
+        "description"   => "counter jigsaw",
+        "category"      => "CONDITION",
+        "sort_order"    =>2,
+        "datasets"      => array(),
+        "config"        => array(
+                            "counter_value"     => 5,
+                            "interval"          => 10000,
+                            "interval_unit"     => "day",
+                            "reset_timeout"     => true,
+                        )
+        ),
+    array(
+        "id"            =>2,
+        "name"          => "reward",
+        "description"   => "reward jigsaw",
+        "category"      => "REWARD",
+        "sort_order"    =>3,
+        "datasets"      => array(),
+        "config"        => array(
+                            "reward_id"      =>2,
+                            "reward_name"    =>"point",
+                            "item_id"        =>null,
+                            "quantity"       =>50,
+                        )
+        ),
+);
+
+echo serialize($test);
+ 

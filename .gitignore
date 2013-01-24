@@ -5,3 +5,7 @@
 /*.intellisense.cache
 /php.ini
 /.httpd.conf
+
+# local config
+application/config/database.php
+application/config/config.php

@@ -184,7 +184,7 @@ class Engine extends REST_Controller{
 								}
 							}
 							else{
-								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'],$jigsawConfig['quantity'],$input['pb_player_id'],$input['site_id']);
+								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'],$jigsawConfig['quantity'],$input['pb_player_id'],$input['client_id'],$input['site_id']);
 							}//update reward [type point]
 							
 							$event = array(
