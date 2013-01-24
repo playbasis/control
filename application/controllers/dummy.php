@@ -105,7 +105,9 @@ class Dummy extends CI_Controller{
 	}
 
 	private function makeTime(){
-		$timeStamp = mt_rand(1346457600,1357862399);
+		// $timeStamp = strtotime('2013-01-01');
+		// $timeStamp = mt_rand(strtotime('2013-01-01'),time());
+		$timeStamp = mt_rand(strtotime('2013-01-24 00:00:00'),strtotime('2013-01-25 12:59:59'));
 		$date = date('m-d-Y',$timeStamp);
 		$time = date('H:i:s',$timeStamp);
 		shell_exec("date $date");
