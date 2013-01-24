@@ -21,6 +21,8 @@ class Tracker_model extends CI_Model{
 
 
 		$this->db->insert('playbasis_action_log',array(	'pb_player_id'=>$input['pb_player_id'],
+														'client_id'=>$input['client_id'],
+														'site_id'=>$input['site_id'],
 														'action_id'=>$input['action_id'],
 														'action_name'=>$input['action_name'],
 														'object_Info'=>serialize($objectInfo),
