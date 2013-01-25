@@ -167,7 +167,24 @@ class Engine extends REST_Controller{
 				
 				if($this->jigsaw_model->$processor($jigsawConfig,$input,$exInfo)){
 					if($jigsaw['category'] == 'REWARD'){
-						if(is_null($jigsawConfig['item_id'])){
+						if(isset($exInfo['dynamic'])){
+							//reward is a custom point
+							assert('$exInfo["dynamic"]["reward_name"]');
+							assert('$exInfo["dynamic"]["quantity"]');
+							
+							$this->client_model->updateCustomReward($exInfo['dynamic']['reward_name'],$exInfo['dynamic']['quantity'],$input,$jigsawConfig);
+							
+							$event = array(
+								'event_type'	=>  'REWARD_RECEIVED',
+								'reward_type'	=> 	$jigsawConfig['reward_name'],
+								'value'			=>	$jigsawConfig['quantity'],
+							);
+							array_push($apiResult['events'],$event);
+							//log event :: reward > custom point
+							$this->tracker_model->trackEvent('REWARD',$this->utility->getEventMessage($jigsawConfig['reward_name']),array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
+						}
+						else if(is_null($jigsawConfig['item_id'])){
+							//item_id is null, process standard point-based rewards (exp, point)
 							if($jigsawConfig['reward_name'] == 'exp' ) {
 								#got level here if player level up
 								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'],$input['pb_player_id']);
@@ -193,7 +210,7 @@ class Engine extends REST_Controller{
 								'value'			=>	$jigsawConfig['quantity'],
 							);
 							array_push($apiResult['events'],$event);
-							//log event :: reward > all kind of point
+							//log event :: reward > non-custom point
 							$this->tracker_model->trackEvent('REWARD',$this->utility->getEventMessage($jigsawConfig['reward_name']),array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
 						}
 						else{

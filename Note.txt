@@ -136,6 +136,12 @@ JIGSAW :: {REWARD}
            "quantity"       : "{int}            :: reward's quantity"
         }
 
+JIGSAW :: {REWARD} > CUSTOM POINT REWARD
+"config":{
+           "reward_name"    : "{string}|{null}         :: name's type of reward e.g. badge , gift , exp , point , etc. Leave null to set via request param 'reward'.",
+           "quantity"       : "{int}|{null}            :: reward's quantity. Leave null to set via request param 'quantity'."
+        }
+
 JIGSAW :: {CONDITION} > COUNTER
 "config":{
             "counter_value"		: "{int}		:: counter amount",

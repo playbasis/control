@@ -54,6 +54,27 @@ class jigsaw extends CI_Model{
 
 	}
 	
+	//reward jigsaw :: dynamic reward
+	public function customPointReward($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));
+		
+		$name = $config['reward_name'];
+		$quan = $config['quantity'];
+		
+		if(!$name && isset($input['reward']) && $input['reward']){
+			$name = $input['reward'];
+		}
+		if(!$quan && isset($input['quantity']) && $input['quantity']){
+			$quan = $input['quantity'];			
+		}
+		
+		$exInfo['dynamic']['reward_name'] = $name;	
+		$exInfo['dynamic']['quantity'] = $quan;	
+		
+		return $name && $quan;
+	}
+	
 	//condition jigsaw : counter
 	//if return true 
 	public function counter($config,$input,&$exInfo=array()){

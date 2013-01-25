@@ -1,4 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+define("CUSTOM_POINT_START_ID",10000);
+	
 class Client_model extends CI_Model{
 	
 	//get action configuration from all rule that relate to site id & client id
@@ -102,6 +104,40 @@ class Client_model extends CI_Model{
 			$this->db->update('playbasis_reward_to_client');
 		}
 	}
+	
+	
+	public function updateCustomReward($rewardName,$quantity,$input,&$jigsawConfig){
+		//check reward available
+		$this->db->select('reward_id');
+		$this->db->where(array('client_id'=>$input['client_id'],'site_id'=>$input['site_id'],'name'=>$rewardName));
+		$this->db->from('playbasis_reward_to_client');
+		$result  = $this->db->get();
+		$result = $result->row_array();
+		$customRewardId = isset($result['reward_id'])?$result['reward_id'] : false; 
+		
+		if(!$customRewardId){
+			//check  client custom points
+			$this->db->select_max('reward_id');
+			$this->db->where(array('client_id'=>$input['client_id'],'site_id'=>$input['site_id']));
+			$result = $this->db->get('playbasis_reward_to_client');
+			$result = $result->row_array();
+			$customRewardId = $result['reward_id']+1;
+			
+			if($customRewardId < CUSTOM_POINT_START_ID)
+				$customRewardId = CUSTOM_POINT_START_ID;
+			
+			//update client reward
+			$this->db->insert('playbasis_reward_to_client',array('reward_id'=>$customRewardId,'client_id'=>$input['client_id'],'site_id'=>$input['site_id'],'group'=>'POINT','name'=>$rewardName,'date_added'=>date('Y-m-d H:i:s'),'date_modified'=>date('Y-m-d H:i:s')));
+		}	
+			
+		//update player reward
+		$this->updatePlayerPointReward($customRewardId,$quantity,$input['pb_player_id'],$input['client_id'],$input['site_id']);
+	
+		$jigsawConfig['reward_id'] = $customRewardId;
+		$jigsawConfig['reward_name'] = $rewardName;
+		$jigsawConfig['quantity'] = $quantity;
+	}
+	
 	
 	public function updateplayerBadge($badgeId,$quantity,$pbPlayerId){
 		assert(isset($badgeId));
