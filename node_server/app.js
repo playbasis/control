@@ -8,7 +8,7 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , io = require('socket.io').listen(express)
+  , io = require('socket.io')
   , redis = require('redis');
 
 var app = express();
@@ -32,7 +32,9 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = http.createServer(app);
+io = io.listen(server);
+server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
@@ -43,7 +45,7 @@ redisPubClient.on('error', function(err){
   console.log('redis pub-client err: ' + err);
 });
 
-io.socket.on('connection', function(socket){
+io.sockets.on('connection', function(socket){
 
   socket.on('subscribe', function(data){
 
@@ -57,7 +59,7 @@ io.socket.on('connection', function(socket){
 
       //set callback to emit message to connected clients
       redisSubClients[data.channel].on('message', function(channel, message){
-        io.socket.in(channel).emit('message', message);
+        io.sockets.in(channel).emit('message', message);
       });
     }
     socket.join(data.channel);
