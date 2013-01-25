@@ -3,7 +3,7 @@
 <head>
 <link rel="stylesheet" href="<?php echo base_url();?>resource/css/reset.css" />
 <script type="text/javascript" src="<?php echo base_url();?>resource/js/jQuery-1.9.0.js"></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>node_modules/socket.io/node_modules/socket.io-client/distsocket.io.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>node_server/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
 <title>Playbasis API Test</title>
 <style type="text/css">
 	body{font: 13px/20px normal Helvetica, Arial, sans-serif; color: #4F5155; }
@@ -35,12 +35,14 @@
 		/*min-height: 600px;	*/
 	}
 	.side-panel{
-		background-color: #cff;
+		background-color:#ccf; 
+		/*background-color: #cff;*/
 		width: 30%;
 	}
 	.main-panel{
 		width: 70%;
-		background-color: #ffc;
+		background-color:#ccf; 
+		/*background-color: #ffc;*/
 	}
 	.result-panel{
 		background-color:#fcc;
@@ -48,7 +50,7 @@
 		padding-bottom: 5px; 
 	}
 	.control-panel{
-		background-color: #fff;
+		/*background-color: #fff;*/
 		padding: 15px 0 15px 0;
 	}.control-panel > select:first-child{
 		margin-left:25px; 
@@ -84,6 +86,9 @@
 	}
 	.clear{
 		clear: both;
+	}
+	.option-panel{
+		margin: 15px 0 10px 25px;
 	}
 
 </style>
@@ -144,10 +149,20 @@
 						<option value="">-- METHOD --</option>
 						<option value="register">Register</option>
 						<option value="login">Login</option>
+						<option value="points">Points</option>
+						<option value="point">Point</option>
 					</select>
 					<label for="param">PARAMETER : </label>
 					<input name="param" id="api-parameter" type="text" placeholder="format {key:val,key:val,...}" disabled = "disabled" />
 					<button id="runAPI">TEST</button>
+
+					<div class="option-panel">
+						<div id="player-point-option" style="display:none;">
+							<label for="param">POINT OPTION : </label>
+							<input name="param" id="point-option-parameter" type="text" placeholder="point name e.g. point"/>
+						</div>	
+					</div>
+					
 				</div>
 				<div class="control-process">
 					<div><span>STATUS :</span><span id="url" class="text"></span></div>
@@ -166,8 +181,9 @@
 	</div>
 <script type="text/javascript">
 	(function(){
-		var baseURL = '//api.pbapp.net/',
-			apiKey,apiSecret,token;
+		//var baseURL = '//api.pbapp.net/',
+		var baseURL = '//localhost/api/',
+			apiKey,apiSecret,token,option;
 
 		//bind click set API
 		$('#setAPIData').bind('click',function(e){
@@ -207,6 +223,20 @@
 				$('#method-selector').attr('disabled','disabled');
 		});
 
+		//method selected
+		$('#method-selector').bind('change',function(e){
+			e.preventDefault();
+			var method = $('#method-selector :selected').val(),
+				optionID;
+
+			if(method == 'point'){
+				optionID = '#player-point-option';
+			}
+
+			$('.option-panel '+optionID).toggle({'duration':500,'easing':'swing'});
+		});
+
+		//run api
 		$('#runAPI').bind('click',function(e){
 			e.preventDefault();
 			var	apiName = $('#api-selector :selected').val(),
@@ -243,6 +273,8 @@
 					var method = $('#method-selector :selected').val();
 					if(method)
 						requestUrl += '/'+method;
+					if(method == 'point')
+						requestUrl += '/'.$('point-option-parameter').val();
 					break;					
 				}
 				case 'Engine' :{
@@ -258,7 +290,7 @@
 		function makeRequest(requestUrl,data,apiName){
 			// if('player_id' in data)
 			// 	delete data.player_id;
-
+			console.log(apiName);
 			if(apiName != 'Auth')
 				data['token'] = token;	//add token
 			else{
@@ -282,15 +314,16 @@
 						//update state
 						showHideMessage($('.control-process #url'),'Finish');
 
-						if(resp.success){
+						if(resp.status){
 							//update token
 							if(apiName == 'Auth'){
 								token = resp.response.token;
 								$('#debug-api-token').html(token);
+								console.log(token);
 							}	
 						}
 
-						output(syntaxHighlight(JSON.stringify(resp,undefined,4)));
+						output(syntaxHighlight(JSON.stringify(resp,undefined,5)));
 				},
 				error 		: function(){},
 			});
@@ -334,7 +367,7 @@
 	var socket = io.connect('//dev.pbapp.net:3000');
 	socket.on('connect', function(data){
 		console.log('client connected');
-		socket.emit('subscribe', {channel:location.host});
+		socket.emit('subscribe', /*{channel:location.host}*/'playbasis');
 	});
 	socket.on('message', function(data){
 		//console.log('msgrecv');
