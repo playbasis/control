@@ -97,7 +97,7 @@ class Player extends REST_Controller{
 	}
 
 	//log-in player
-	public function login_post($player_id){
+	public function login_post($player_id=''){
 		$required = $this->input->checkParam(array('token'));
 
 		if($required)
