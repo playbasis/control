@@ -1,28 +1,35 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+require APPPATH.'dummy_player_data.php';
 class Dummy extends CI_Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('dummy_model');
+		$this->load->model('auth_model');
 	}
 
-	public function dummyPlayer(){
-		
-		# need name and picture for process dummy_player_data.txt @ root level of directory 
+	public function dummyPlayer($clientId,$siteId){
+		// var_dump($clientId);
+		// var_dump($siteId);
+		// die();
 
-		//shuffle($name);
+
+		$name 		= $GLOBALS['name'];
+		$picture 	= $GLOBALS['picture'];
+
+
+		shuffle($name);
 		echo "<p>PROGRESS : </p>";
-		for($i=1;$i<=6098;$i++){
+		for($i=1;$i<=100;$i++){
+			
 			$player = array_shift($name);
-			//$player = 'Lonny Edmundo Mooney|M';
+
 			$playerInfo = explode('|',$player);
 			$playerName = explode(' ',$playerInfo[0]);
-			//var_dump($playerInfo);
-			//var_dump($playerName);
-			//die();
+			
 			$date = $this->randomDateApply();
 			$data = array(
-				'client_id'		=> 1,
-				'site_id'		=> 1,
+				'client_id'		=> $clientId,
+				'site_id'		=> $siteId,
 				'cl_player_id'	=> $i,
 				'username'		=> strtolower($playerName[0]),
 				'password'		=> md5($playerName[0]),
@@ -40,7 +47,7 @@ class Dummy extends CI_Controller{
 			//die();
 			$this->dummy_model->dummyAddPlayer($data);
 		}
-		echo "<span>*</span><br/><h3>DONE</h3>";
+		echo "<h3>DONE</h3>";
 	}
 
 	private function randomDateApply(){
@@ -63,29 +70,63 @@ class Dummy extends CI_Controller{
 	}
 
 	
-	public function index($count=1){
+	public function index($record=1,$clientId,$siteId){
 
+		if($record > 2000){
+			die('input Error,Record too big please try 1 - 2000 record.');
+		}
+		if($record < 1){
+			die('input Error,Record can\'t be 0  big please try 1 - 2000 record.');
+		}
+
+		$configArray = array('client_id'=>$clientId,'site_id'=>$siteId,'limit'=>$record);
 		$actionList = array();
 		$playerList = array();
+		$token = $this->dummy_model->getToken($configArray);
+		
+		
+
+		//check token
+		if(!$token){
+			//renew token if expire
+			$this->auth_model->generateToken($configArray);
+			//get token again
+			$token = $this->dummy_model->getToken($configArray);
+		}
+		
 		//curl
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 
-		for($i=0;$i<$count;$i++){
+		for($i=0;$i<$record;$i++){
 			//init
 			if(!$actionList)
-				$actionList = $this->getAction();				
+				$actionList = $this->getAction($configArray);				
 			if(!$playerList)
-				$playerList = $this->getPlayerList();
+				$playerList = $this->getPlayerList($configArray);
+
 
 			$player = array_shift($playerList);
 			//change system time  ## DANGER HABBIT
 			$this->makeTime();
 			
+			$url = base_url()."/index.php/Engine/rule";
+			$postData = array(
+				'player_id'	=> $player['cl_player_id'],
+				'action'	=> $actionList[mt_rand(0,count($actionList)-1)]['name'],
+				'url'		=> urlencode('http://dummysite.pb'),
+				'token'		=> $token,
+			);
+			
 
 			// set URL and other appropriate options
-			curl_setopt($ch, CURLOPT_URL, "http://localhost/api/index.php/Engine/rule?player_id=".$player['cl_player_id']."&action=".$actionList[mt_rand(0,count($actionList)-1)]['name']);
-			
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type : application/x-www-form-urlencoded; charset=utf-8'));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, FALSE);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10); 															
+ 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,3);														
+    		curl_setopt($ch, CURLOPT_POST, TRUE);															
+    		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));			
 
 			// grab URL and pass it to the browser
 			curl_exec($ch);
@@ -94,14 +135,19 @@ class Dummy extends CI_Controller{
 		curl_close($ch);
 	}
 
-	private function getAction(){
-		return $this->dummy_model->getActionToClient(1,1); #(client_id,site_id)
+	# route error exception
+	public function error(){
+		die('Route Error,Please check URL format');
+	}
+
+	private function getAction($configArray){
+		return $this->dummy_model->getActionToClient($configArray); #(client_id,site_id,limit)
 
 		//return $actionList[mt_rand(0,count($actionList)-1)]['name'];
 	}
 
-	private function getPlayerList(){	
-		return $this->dummy_model->getRandomPlayer(1,1); #(client_id,site_id)
+	private function getPlayerList($configArray){	
+		return $this->dummy_model->getRandomPlayer($configArray); #(client_id,site_id,limit)
 
 	}
 
@@ -113,7 +159,15 @@ class Dummy extends CI_Controller{
 		$time = date('H:i:s',$timeStamp);
 		shell_exec("date $date");
 		shell_exec("time $time");	
-	} 		
+	} 	
+
+	//just info
+	public function pathInfo(){
+		var_dump('BASE_PATH : '.BASEPATH);
+		var_dump('APP_PATH : '.APPPATH);
+		var_dump('FC_PATH : '.FCPATH);
+		var_dump('BASE_URL : '.base_url());
+	}	
 }
 ?>
 
