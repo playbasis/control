@@ -21,6 +21,10 @@ class Welcome extends CI_Controller {
 	{
 		$this->load->view('welcome_message');
 	}
+
+	public function playbasis(){
+		$this->load->view('playbasis/apiinfo');
+	}
 }
 
 /* End of file welcome.php */
