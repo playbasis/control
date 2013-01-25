@@ -38,7 +38,7 @@
 |
 */
 
-$route['default_controller'] = "welcome";
+$route['default_controller'] = "welcome/playbasis";
 
 //Game Editor
 $route['Geditor/rules'] = 'Geditor/rules';
@@ -57,9 +57,12 @@ $route['Player/([a-zA-Z0-9]+)'] = 'player/index/$1';						#get player informatio
 $route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';	#register player to playbasis system
 $route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';			#login player to playbasis system
 
+#engine
 $route['PBEngine/actionConfig']	= 'engine/getActionConfig';
 $route['PBEngine/rule']	= 'engine/rule';
 
+#test
+$route['test']	= 'playbasis/test';
 $route['404_override'] = '';
 
 
