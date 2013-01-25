@@ -1,5 +1,17 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	h1= title
+	p Welcome to #{title}
+	script(src='/socket.io/socket.io.js')
+	script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js')
+	script
+		var socket = io.connect('http://localhost:3000');
+		socket.on('connect', function(data){
+			console.log('client connected');
+			socket.emit('subscribe', {channel:'mysite'});
+		});
+		socket.on('message', function(data){
+			console.log('msgrecv');
+			console.log(data);
+		});

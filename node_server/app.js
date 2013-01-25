@@ -54,7 +54,7 @@ io.sockets.on('connection', function(socket){
       
     if(!redisSubClients[data.channel]){
       createRedisSubClient(data.channel);
-      assert(redisSubClients[data.channel]);
+      //assert(redisSubClients[data.channel]);
       redisSubClients[data.channel].subscribe(data.channel);
 
       //set callback to emit message to connected clients
@@ -67,15 +67,15 @@ io.sockets.on('connection', function(socket){
 });
 
 //publish event through get request
-app.get('/publish', function(req, res){
-  redisPubClient.publish(req.params.channel, req.params.msg);
-  res.send(200, 'event published');
+app.get("/publish", function(req, res){
+  redisPubClient.publish(req.query.channel, req.query.msg);//(req.params.channel, req.params.msg);
+  res.send(200);
 });
 
 //create redis sub-client for the specified channel
 function createRedisSubClient(channel){
 
-  assert(!redisSubClients[channel]);
+  //assert(!redisSubClients[channel]);
   redisSubClients[channel] = redis.createClient();
 
   redisSubClients[channel].on('error', function(err){
