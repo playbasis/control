@@ -133,6 +133,9 @@ class Player extends REST_Controller{
 		#log event
 		$this->tracker_model->trackEvent('LOGIN',$this->utility->getEventMessage('login'),array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
 		
+		//node stream
+		$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage('login'))),$input);
+		
 		$this->response($this->resp->setRespond(),200);
 	}
 
@@ -167,6 +170,9 @@ class Player extends REST_Controller{
 		#log event
 		$this->tracker_model->trackEvent('LOGOUT',$this->utility->getEventMessage('logout'),array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
 		
+		//node stream
+		$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage('logout'))),$input);
+
 		$this->response($this->resp->setRespond(),200);
 	}
 
