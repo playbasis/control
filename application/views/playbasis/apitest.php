@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-<link rel="stylesheet" href="<?php base_url();?>resource/css/reset.css" />
-<script type="text/javascript" src="<?php base_url();?>resource/js/jQuery-1.9.0.js"></script>
+<link rel="stylesheet" href="<?php echo base_url();?>resource/css/reset.css" />
+<script type="text/javascript" src="<?php echo base_url();?>resource/js/jQuery-1.9.0.js"></script>
 <title>Playbasis API Test</title>
 <style type="text/css">
 	body{font: 13px/20px normal Helvetica, Arial, sans-serif; color: #4F5155; }
@@ -165,7 +165,7 @@
 	</div>
 <script type="text/javascript">
 	(function(){
-		var baseURL = '//localhost/api/',
+		var baseURL = '//api.pbapp.net/',
 			apiKey,apiSecret,token;
 
 		//bind click set API
