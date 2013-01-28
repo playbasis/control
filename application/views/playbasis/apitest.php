@@ -175,10 +175,10 @@
 			apiSecret 	= $('#apiSecret').val();
 			$('#setting-api input').attr('disabled','disabled');
 			
-			console.log('key = '+apiKey);
-			console.log(typeof apiKey);
-			console.log('secret = '+apiSecret);
-			console.log(typeof apiSecret);
+			// console.log('key = '+apiKey);
+			// console.log(typeof apiKey);
+			// console.log('secret = '+apiSecret);
+			// console.log(typeof apiSecret);
 			$('#debug-api-key').html(apiKey);
 			$('#debug-api-secret').html(apiSecret);
 		});
@@ -293,8 +293,8 @@
 				},
 				error 		: function(){},
 			});
-			console.log(requestUrl);
-			console.log(data);
+			// console.log(requestUrl);
+			// console.log(data);
 		}
 
 		function showHideMessage(obj,message){
