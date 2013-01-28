@@ -38,7 +38,7 @@ class Engine extends REST_Controller{
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
 		
-		//$validToken = array('client_id'=>1,'site_id'=>1); //for debugging
+		// $validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		
 		//get jigsaw set
 		$ruleSet = $this->client_model->getRuleSet(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id']));
@@ -84,37 +84,37 @@ class Engine extends REST_Controller{
 	// public function rule_post(){
 	public function rule_get(){ //for de
 
-		// $required = $this->input->checkParam(array('token'));
+		$required = $this->input->checkParam(array('token'));
 
-		// if($required)
-		// 	$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
+		if($required)
+			$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
 
-		// $required = $this->input->checkParam(array('action','player_id'));
+		$required = $this->input->checkParam(array('action','player_id'));
 		
-		// if($required){
-		// 	$this->response($this->error->setError('PARAMETER_MISSING',$required),200);
-		// }
+		if($required){
+			$this->response($this->error->setError('PARAMETER_MISSING',$required),200);
+		}
 		
 		
 
 		//validate token
-		// $validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
-		$validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
+		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		// $validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
 		
 		//get playbasis player id
-		// $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken,array('cl_player_id'=>$this->input->post('player_id'))));
-		$pb_player_id = $this->input->get('player_id'); //for debugging
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken,array('cl_player_id'=>$this->input->post('player_id'))));
+		// $pb_player_id = $this->input->get('player_id'); //for debugging
 
 		if($pb_player_id < 0){
 			$this->response($this->error->setError('USER_NOT_EXIST'),200);
 		}
 		 
 		//get action id by action name
-		// $actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->post('action')));
-		$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->get('action')));  //for debugging
+		$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->post('action')));
+		// $actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->get('action')));  //for debugging
 		if(!$actionId){
 			$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
 		}
@@ -122,8 +122,8 @@ class Engine extends REST_Controller{
 		//get input data from POST
 		
 		//misc data  : use for log and process any jigsaws
-		// $input = array_merge($this->input->post(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->post('action')));
-		$input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
+		$input = array_merge($this->input->post(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->post('action')));
+		// $input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
 		
 		
 
