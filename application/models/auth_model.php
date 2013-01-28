@@ -27,6 +27,8 @@ class Auth_model extends CI_model{
 		$this->db->where(array('api_key'=>$data['key'],'api_secret'=>$data['secret'],'date_expire >'=>date('Y-m-d H:i:s'),'status'=>'1'));
 
 		$result = $this->db->get('playbasis_client_site');
+
+		var_dump($result);
 		
 		return $result->row_array();	
 	}
