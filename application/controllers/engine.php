@@ -100,7 +100,9 @@ class Engine extends REST_Controller{
 		//validate token
 		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
 		// $validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
-		
+		var_dump($validToken);
+		die();
+
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
 		
