@@ -32,11 +32,6 @@ class Auth extends REST_Controller{
 		#get client relate to api key 
 		$clientInfo = $this->auth_model->getApiInfo($API);
 
-		var_dump($this->input->post());
-		var_dump($clientInfo);
-		// $this->response($clientInfo,200);
-		die();
-		
 		#validate 
 		if($clientInfo){
 			//gen token
