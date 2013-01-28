@@ -28,7 +28,7 @@ class Auth_model extends CI_model{
 
 		$result = $this->db->get('playbasis_client_site');
 
-		var_dump($result);
+		echo $this->db->last_query();
 		
 		return $result->row_array();	
 	}
