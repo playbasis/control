@@ -33,7 +33,6 @@ class Auth extends REST_Controller{
 		$clientInfo = $this->auth_model->getApiInfo($API);
 
 		$this->response($clientInfo,200);
-		die();
 		#validate 
 		if($clientInfo){
 			//gen token
