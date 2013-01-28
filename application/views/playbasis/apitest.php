@@ -255,8 +255,8 @@
 		})
 
 		function makeRequest(requestUrl,data,apiName){
-			if('player_id' in data)
-				delete data.player_id;
+			// if('player_id' in data)
+			// 	delete data.player_id;
 
 			if(apiName != 'Auth')
 				data['token'] = token;	//add token
