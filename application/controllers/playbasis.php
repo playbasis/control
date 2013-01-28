@@ -5,6 +5,7 @@ class Playbasis extends CI_Controller{
 	}
 
 	public function test(){
+		// /$data['base_url'] = base_url();
 		$this->load->view('playbasis/apitest');
 	}
 }
