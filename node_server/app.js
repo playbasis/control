@@ -1,4 +1,7 @@
 
+var REDIS_SERVER_PORT = 6379;
+var REDIS_SERVER_ADDRESS = '127.0.0.1';
+
 /**
  * Module dependencies.
  */
@@ -66,9 +69,10 @@ io.sockets.on('connection', function(socket){
   });
 });
 
-//publish event through get request
-app.get("/publish", function(req, res){
-  redisPubClient.publish(req.query.channel, req.query.msg);//(req.params.channel, req.params.msg);
+//publish event through post request
+app.post('/activitystream/:channel', function(req, res){
+  if(req.body)
+    redisPubClient.publish(req.params.channel, JSON.stringify(req.body));
   res.send(200);
 });
 
@@ -76,7 +80,7 @@ app.get("/publish", function(req, res){
 function createRedisSubClient(channel){
 
   //assert(!redisSubClients[channel]);
-  redisSubClients[channel] = redis.createClient();
+  redisSubClients[channel] = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS);
 
   redisSubClients[channel].on('error', function(err){
     console.log('redis sub-client err: ' + err);
