@@ -59,8 +59,8 @@ $route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';	#register playe
 $route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';			#login player to playbasis system
 
 #engine
-$route['PBEngine/actionConfig']	= 'engine/getActionConfig';
-$route['PBEngine/rule']	= 'engine/rule';
+$route['Engine/actionConfig']	= 'engine/getActionConfig';
+$route['Engine/rule']	= 'engine/rule';
 
 #test
 $route['test']	= 'playbasis/test';
