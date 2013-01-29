@@ -245,7 +245,7 @@
 					break;					
 				}
 				case 'Engine' :{
-					requestUrl = baseURL+'PBEngine/rule/';
+					requestUrl = baseURL+'Engine/rule/';
 					break;					
 				}
 
