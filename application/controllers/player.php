@@ -275,7 +275,7 @@ class Player extends REST_Controller{
 		$required = array();
 		if(!$player_id)
 			array_push($required,'player_id');
-		// if(!$activity)
+		// if(!$action)
 		// 	array_push($required,'action');
 
 		if($required){
@@ -317,8 +317,7 @@ class Player extends REST_Controller{
 			if($option!='time'){
 				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
 			}
-			echo 'adasdasdasd';
-			die();
+
 			$actions['action'] =  $this->player_model->getLastestActionPerform(array_merge($validToken,array('pb_player_id'=>$pb_player_id)));		
 		}
 
