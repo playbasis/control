@@ -1,4 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+//image path
+define('IMG_PATH','//pbapp.net/image/');
+
 class Player_model extends CI_Model{
 
 	public function __construct(){
@@ -82,6 +86,101 @@ class Player_model extends CI_Model{
 
 		$id = $result->row_array();
 		return $id['pb_player_id'];
+	}
+
+	public function getPlayerPoints($data){
+		$this->db->select('reward_id,value');
+		$this->db->where('pb_player_id',$data['pb_player_id']);
+		$result = $this->db->get('playbasis_reward_to_player');
+
+		return $result->result_array();
+	}
+
+	public function getPlayerPoint($data){
+		$this->db->select('reward_id,value');
+		$this->db->where(array('pb_player_id'=>$data['pb_player_id'],'reward_id'=>$data['reward_id']));
+		$result = $this->db->get('playbasis_reward_to_player');
+
+		return $result->result_array();
+	}
+
+	public function getLastestActionPerform($data){
+		$this->db->select('action_id,action_name,date_added AS time');
+		$this->db->where(array('pb_player_id'=>$data['pb_player_id']));
+		$this->db->order_by('date_added','DESC');
+
+		$result = $this->db->get('playbasis_action_log');
+
+		return $result->row_array();
+	}
+
+	public function getActionPerform($data){
+		$this->db->select('action_id,action_name,date_added AS time');
+		$this->db->where(array('pb_player_id'=>$data['pb_player_id'],'action_id'=>$data['action_id']));
+		$this->db->order_by('date_added','DESC');
+		$result = $this->db->get('playbasis_action_log');
+
+		return $result->row_array();
+	}
+
+	public function getActionCount($data){
+		
+		$this->db->where(array('pb_player_id'=>$data['pb_player_id'],'action_id'=>$data['action_id']));
+		$count = $this->db->count_all_results('playbasis_action_log');
+
+		$this->db->select('action_id,action_name');
+		$result = $this->db->get('playbasis_action_log');
+
+
+		$result = $result->row_array();
+		$result['count'] = $count;
+		
+		return $result;
+	}
+
+	public function getBadge($data){
+		$this->db->select('badge_id,amount');
+		$this->db->where('pb_player_id',$data['pb_player_id']);
+
+		$result = $this->db->get('playbasis_badge_to_player');
+
+		$badges = $result->result_array();
+
+		if(!$badges)
+			return array();
+
+		//badge data
+		foreach ($badges as &$badge) {
+			$this->db->select('name,description');
+			$this->db->where('badge_id',$badge['badge_id']);
+
+			$result = $this->db->get('playbasis_badge_description');
+			$badge = array_merge($badge,$result->row_array());
+
+			//badge image
+			$this->db->select('image');
+			$this->db->where('badge_id',$badge['badge_id']);
+
+			$result = $this->db->get('playbasis_badge');
+			$result = $result->row_array();
+
+			$badge['image']	= IMG_PATH.$result['image'];
+	
+		}
+
+		return $badges;
+	}
+
+	public function getLastLogIn($pb_player_id){
+		$this->db->select('date_added');
+		$this->db->where(array('pb_player_id'=>$pb_player_id,'event_type'=>'LOGIN'));
+		$this->db->order_by('date_added','DESC');
+
+		$result = $this->db->get('playbasis_event_log');
+
+		$result = $result->row_array();
+
+		return $result['date_added'];
 	}
 }
 ?>
