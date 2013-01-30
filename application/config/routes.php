@@ -78,8 +78,8 @@ $route['Player/([a-zA-Z0-9]+)/action/(time|count)'] = 'player/action/$1/0/$2';		
 
 $route['Player/action'] = 'player/action/';																#get player action
 
-$route['Player/([a-zA-Z0-9]+)/badge'] = 'player/badge/$1';												#get player action
-$route['Player/badge'] = 'player/badge/0';																#get player action
+$route['Player/([a-zA-Z0-9]+)/badge'] = 'player/badge/$1';												#get player badge
+$route['Player/badge'] = 'player/badge/0';																#get player badge
 
 #engine
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
