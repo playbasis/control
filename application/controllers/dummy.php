@@ -44,12 +44,12 @@ class Dummy extends CI_Controller{
 	}
 
 	private function randomDateApply(){
-		$timeStamp = mt_rand(1349049600,1358294399);
+		$timeStamp = mt_rand(strtotime('2013-01-24 00:00:00'),strtotime('2013-01-25 12:59:59'));
 		return date('Y-m-d H:i:s',$timeStamp);
 	}
 
 	private function randomBirthDate(){
-		$timeStamp = mt_rand(315532800,978307199);
+		$timeStamp = mt_rand(strtotime('2013-01-24 00:00:00'),strtotime('2013-01-25 12:59:59'));
 		return date('Y-m-d',$timeStamp);
 	}
 
@@ -84,7 +84,7 @@ class Dummy extends CI_Controller{
 			
 
 			// set URL and other appropriate options
-			curl_setopt($ch, CURLOPT_URL, "http://localhost/api/index.php/PBEngine/rule?player_id=".$player['cl_player_id']."&action=".$actionList[mt_rand(0,count($actionList)-1)]['name']);
+			curl_setopt($ch, CURLOPT_URL, "http://localhost/api/index.php/Engine/rule?player_id=".$player['cl_player_id']."&action=".$actionList[mt_rand(0,count($actionList)-1)]['name']);
 			
 
 			// grab URL and pass it to the browser
@@ -101,7 +101,8 @@ class Dummy extends CI_Controller{
 	}
 
 	private function getPlayerList(){	
-		return $this->dummy_model->getRandomPlayer(1,1);
+		return $this->dummy_model->getRandomPlayer(1,1); #(client_id,site_id)
+
 	}
 
 	private function makeTime(){
