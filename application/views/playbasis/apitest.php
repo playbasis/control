@@ -3,6 +3,7 @@
 <head>
 <link rel="stylesheet" href="<?php echo base_url();?>resource/css/reset.css" />
 <script type="text/javascript" src="<?php echo base_url();?>resource/js/jQuery-1.9.0.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <title>Playbasis API Test</title>
 <style type="text/css">
 	body{font: 13px/20px normal Helvetica, Arial, sans-serif; color: #4F5155; }
@@ -327,8 +328,18 @@
 			});
 		}
 
-	})();
-	
+	})();	
+</script>
+<script type="text/javascript">
+	var socket = io.connect('//dev.pbapp.net:3000');
+	socket.on('connect', function(data){
+		console.log('client connected');
+		socket.emit('subscribe', {channel:location.host});
+	});
+	socket.on('message', function(data){
+		//console.log('msgrecv');
+		console.log(data);
+	});
 </script>
 </body>
 </html>
