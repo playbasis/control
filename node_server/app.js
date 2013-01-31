@@ -32,7 +32,7 @@ function feedParser(req, res, next){
 }
 
 var auth = express.basicAuth(function(user, pass){
-	return true;
+	return user === 'planescape' && pass === 'torment';
 });
 
 app.configure(function(){
@@ -90,7 +90,7 @@ io.sockets.on('connection', function(socket){
 });
 
 //publish event through post request
-app.post(METHOD_PUBLISH_FEED + '/:channel', function(req, res){
+app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 	if(req.body)
 		redisPubClient.publish(req.params.channel, req.body);
 	res.send(200);
