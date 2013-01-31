@@ -13,6 +13,5 @@ block content
 				socket.emit('subscribe', {channel:'mysite'});
 			});
 			socket.on('message', function(data){
-				console.log('msgrecv');
-				console.log(data);
+				console.log('msg:' + data);
 			});
