@@ -104,4 +104,13 @@ class Service extends REST_Controller{
 		$this->client_model->updatePlayerPointReward(2,10,1,1);
 
 	}
+
+	public function testActivityStream_get($input){
+		$this->load->model('tool/node_stream','activity_stream');
+
+		$info['domain_name'] = 'localhost';
+		
+		$data = array('test'=>$input);
+		$this->activity_stream->publish($data,$info);
+	}
 }
