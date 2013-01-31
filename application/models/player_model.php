@@ -180,7 +180,10 @@ class Player_model extends CI_Model{
 
 		$result = $result->row_array();
 
-		return $result['date_added'];
+		if($result)
+			return $result['date_added'];
+
+		return '0000-00-00 00:00:00';
 	}
 }
 ?>
