@@ -31,7 +31,9 @@ function feedParser(req, res, next){
 	})
 }
 
-var auth = express.basicAuth('planescape', 'torment');
+var auth = express.basicAuth(function(user, pass){
+	return true;
+});
 
 app.configure(function(){
 	app.set('port', process.env.PORT || 3000);
