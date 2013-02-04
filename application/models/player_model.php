@@ -1,12 +1,11 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-//image path
-define('IMG_PATH','//pbapp.net/image/');
-
 class Player_model extends CI_Model{
 
 	public function __construct(){
 		parent::__construct();
+
+		$this->config->load('playbasis');
 	}
 	//CRUD
 	public function createPlayer($data){
@@ -164,7 +163,7 @@ class Player_model extends CI_Model{
 			$result = $this->db->get('playbasis_badge');
 			$result = $result->row_array();
 
-			$badge['image']	= IMG_PATH.$result['image'];
+			$badge['image']	= $this->config->item('IMG_PATH').$result['image'];
 	
 		}
 
