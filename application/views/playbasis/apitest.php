@@ -252,7 +252,8 @@
 
 	(function(){
 		//var baseURL = '//api.pbapp.net/',
-		var baseURL = '//localhost/api/',
+		//var baseURL = '//localhost/api/',
+		var baseURL = '//dev.pbapp.net/api/index.php/',
 			methodArray = {
 				'Player' : [
 					'{player ID}',
