@@ -113,4 +113,16 @@ class Service extends REST_Controller{
 		$data = array('test'=>$input);
 		$this->activity_stream->publish($data,$info);
 	}
+
+	public function testGetbadges_get($cid,$sid){
+		$this->load->model('badge_model');
+
+		var_dump($this->badge_model->getAllBadges(array('client_id'=>$cid,'site_id'=>$sid)));
+	}
+
+	public function testGetcollections_get($cid,$sid){
+		$this->load->model('badge_model');
+
+		var_dump($this->badge_model->getAllCollection(array('client_id'=>$cid,'site_id'=>$sid)));
+	}
 }
