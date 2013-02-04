@@ -156,7 +156,7 @@
 <body>
 	<div class="container">
 		<div class="debug-window">
-			<h1>DEBUG</h1>
+			<h1>1-DEBUG</h1>
 			<div class="section left" id="debug-api">
 				<table>
 					<tr>
@@ -252,7 +252,8 @@
 
 	(function(){
 		//var baseURL = '//api.pbapp.net/',
-		var baseURL = '//localhost/api/',
+		//var baseURL = '//localhost/api/',
+		var baseURL = '//dev.pbapp.net/api/index.php/',
 			methodArray = {
 				'Player' : [
 					'{player ID}',
