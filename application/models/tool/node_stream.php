@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-// define('STREAM_URL', 'http://dev.pbapp.net/activitystream/');
-define('STREAM_URL', 'http://localhost/activitystream/');
+define('STREAM_URL', 'http://dev.pbapp.net/activitystream/');
+// define('STREAM_URL', 'http://localhost/activitystream/');
 define('STREAM_PORT', 3000);
 define('USERPASS','planescape:torment');
 
@@ -16,6 +16,7 @@ class Node_stream extends CI_Model{
 		//set curl option
 		curl_setopt($ch, CURLOPT_URL, STREAM_URL.$chanelName);											# set url
 		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT);													# set port
+    	curl_setopt($ch, CURLOPT_HEADER, FALSE); 														# turn off output
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, FALSE);    											# refuse response from called server
 		// curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));# set Content-Type
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain; charset=utf-8'));			# set Content-Type
