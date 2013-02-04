@@ -81,6 +81,13 @@ $route['Player/action'] = 'player/action/';																#get player action
 $route['Player/([a-zA-Z0-9]+)/badge'] = 'player/badge/$1';												#get player badge
 $route['Player/badge'] = 'player/badge/0';																#get player badge
 
+#badge
+$route['Badge/collection/([0-9]+)'] = 'badge/getcollection/$1';											# get customer badge collection by id	
+$route['Badge/collection'] = 'badge/getcollection';													# get all customer badge collection
+$route['Badge/([0-9]+)'] = 'badge/index/$1';															# get all customer badge 
+$route['Badge'] = 'badge/index';																		# get customer badge by id 
+
+
 #engine
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
 $route['Engine/rule']	= 'engine/rule';
