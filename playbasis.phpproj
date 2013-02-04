@@ -142,6 +142,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\badge.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\dummy.php"
     {
     "ProjRelPath" = "T"
@@ -166,6 +170,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\playbasis.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\player.php"
     {
     "ProjRelPath" = "T"
@@ -183,6 +191,10 @@
     "ProjRelPath" = "T"
     }
     "application\\core\\index.html"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\dummy_player_data.php"
     {
     "ProjRelPath" = "T"
     }
@@ -278,7 +290,15 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\models\\action_model.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\models\\auth_model.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\models\\badge_model.php"
     {
     "ProjRelPath" = "T"
     }
@@ -310,11 +330,19 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\models\\point_model.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\models\\tool"
     {
     "ProjRelPath" = "T"
     }
     "application\\models\\tool\\error.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\models\\tool\\node_stream.php"
     {
     "ProjRelPath" = "T"
     }
@@ -363,6 +391,18 @@
     "ProjRelPath" = "T"
     }
     "application\\views\\oauth_auth_server\\sign_out.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\views\\playbasis"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\views\\playbasis\\apiinfo.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\views\\playbasis\\apitest.php"
     {
     "ProjRelPath" = "T"
     }
