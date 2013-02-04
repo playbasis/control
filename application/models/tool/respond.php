@@ -7,7 +7,7 @@ class Respond extends CI_Model{
 	public function setRespond($data=array()){
 		$respondData  = array();
 
-		$respondData['success'] 	= true;
+		$respondData['status'] 	= true;
 		$respondData['error_core'] 	= '0000';
 		$respondData['message'] 	= 'Success';
 		$respondData['response'] 	= $data;

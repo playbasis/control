@@ -1,3 +1,4 @@
+<?php
 $name = array(
 			'Agnes Hilda Reid|F',
 			'Alice Thelma Stevenson|F',
@@ -12198,3 +12199,4 @@ $picture = array(
 			'http:\/\/farm9.staticflickr.com\/8351\/8337931326_6f761239ac_q.jpg',
 			'http:\/\/farm9.staticflickr.com\/8351\/8337931326_6f761239ac_q.jpg',
 		);
+?>

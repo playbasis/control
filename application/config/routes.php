@@ -50,13 +50,43 @@ $route['Geditor/rules/add'] = 'Geditor/addRule';								#add new rule
 
 //API
 #client
-$route['Auth'] = 'auth';						#request token
+$route['Auth'] = 'auth';														#request token
 
 #player
-$route['Player'] = 'player/index/';						#get player information
-$route['Player/([a-zA-Z0-9]+)'] = 'player/index/$1';						#get player information
-$route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';	#register player to playbasis system
-$route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';			#login player to playbasis system
+$route['Player/([a-zA-Z0-9]+)'] = 'player/index/$1';							#get player information
+$route['Player'] = 'player/index/';												#get player information
+$route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';				#register player to playbasis system
+$route['Player/register'] = 'player/register';									#register player to playbasis system
+$route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';						#login player to playbasis system
+$route['Player/login'] = 'player/login';										#login player to playbasis system
+$route['Player/([a-zA-Z0-9]+)/logout'] = 'player/logout/$1';					#logout  player to playbasis system
+$route['Player/logout'] = 'player/logout';										#logout  player to playbasis system
+$route['Player/([a-zA-Z0-9]+)/points'] = 'player/points/$1';					#get player points 
+$route['Player/points'] = 'player/points';										#get player points 
+$route['Player/([a-zA-Z0-9]+)/point/([a-zA-Z]+)'] = 'player/point/$1/$2';		#get player point
+$route['Player/point/([a-zA-Z]+)'] = 'player/point/0/$1';						#get player point
+$route['Player/([a-zA-Z0-9]+)/point'] = 'player/point/$1/0';					#get player point
+$route['Player/point'] = 'player/point/';										#get player point
+
+$route['Player/([a-zA-Z0-9]+)/action/([a-zA-Z0-9]+)/(time|count)'] = 'player/action/$1/$2/$3';			#get player action
+$route['Player/action/([a-zA-Z0-9]+)/(time|count)'] = 'player/action/0/$1/$2';							#get player action
+$route['Player/([a-zA-Z0-9]+)/action/(time|count)'] = 'player/action/$1/0/$2';							#get player action
+
+// $route['Player/([a-zA-Z0-9]+)/action/([a-zA-Z0-9]+)/:any|null'] = 'player/action/$1/$2/time';			#get player action
+// $route['Player/action/([a-zA-Z0-9]+)/:any|null'] = 'player/action/0/$1/time';							#get player action
+// $route['Player/([a-zA-Z0-9]+)/action/:any|null'] = 'player/action/$1/0/time';							#get player action
+
+$route['Player/action'] = 'player/action/';																#get player action
+
+$route['Player/([a-zA-Z0-9]+)/badge'] = 'player/badge/$1';												#get player badge
+$route['Player/badge'] = 'player/badge/0';																#get player badge
+
+#badge
+$route['Badge/collection/([0-9]+)'] = 'badge/getcollection/$1';											# get customer badge collection by id	
+$route['Badge/collection'] = 'badge/getcollection';													# get all customer badge collection
+$route['Badge/([0-9]+)'] = 'badge/index/$1';															# get all customer badge 
+$route['Badge'] = 'badge/index';																		# get customer badge by id 
+
 
 #engine
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
@@ -64,8 +94,13 @@ $route['Engine/rule']	= 'engine/rule';
 
 #test
 $route['test']	= 'playbasis/test';
+
+#dummy 
+$route['dummy/dummyPlayer/([0-9]+)/([0-9]+)']	= 'dummy/dummyPlayer/$1/$2/$3';
+$route['dummy/([0-9]+)/([0-9]+)/([0-9]+)']	= 'dummy/index/$1/$2/$3';
+
+$route['dummy/:any']	= 'dummy/error';
+
 $route['404_override'] = '';
-
-
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
