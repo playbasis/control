@@ -65,9 +65,9 @@ $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
 $db['developer']['hostname'] = 'localhost';
-$db['developer']['username'] = 'playbasis_admin';
-$db['developer']['password'] = 'pl@yb@sis';
-$db['developer']['database'] = 'core';
+$db['developer']['username'] = 'root';
+$db['developer']['password'] = 'r0b3rt21play';
+$db['developer']['database'] = 'developer';
 $db['developer']['dbdriver'] = 'mysql';
 $db['developer']['dbprefix'] = '';
 $db['developer']['pconnect'] = TRUE;
