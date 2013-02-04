@@ -156,7 +156,7 @@
 <body>
 	<div class="container">
 		<div class="debug-window">
-			<h1>1-DEBUG</h1>
+			<h1>DEBUG</h1>
 			<div class="section left" id="debug-api">
 				<table>
 					<tr>
