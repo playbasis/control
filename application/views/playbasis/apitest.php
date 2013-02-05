@@ -460,6 +460,8 @@
 	});
 	socket.on('message', function(data){
 		data = JSON.parse(data);
+		var url = data.actor.image.url;
+		data.actor.image.url = url.replace(/(\\)/g, '');
 		console.log(data);
 		$('#notification-box').append('<div class="notification-node"><img class="left" src="'+data.actor.image.url+'" alt="name" /><div class="notification-message left"><p class="message"><span class="player-name">'+data.actor.displayName+'</span><br/>'+data.object.message+' via '+data.verb+' action</p><div class="time">'+data.published+'</div></div><div class="clear"></div></div>');
 	});
