@@ -12,7 +12,7 @@ var express = require('express')
 	, http = require('http')
 	, path = require('path')
 	, io = require('socket.io')
-	, redis = require('redis');
+	, redis = require('redis')
 	, fs = require('fs');
 
 var options = {
