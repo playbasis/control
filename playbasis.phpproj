@@ -102,6 +102,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\config\\playbasis.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\config\\profiler.php"
     {
     "ProjRelPath" = "T"
