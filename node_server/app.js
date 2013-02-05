@@ -9,7 +9,7 @@ var METHOD_PUBLISH_FEED = '/activitystream';
 var express = require('express')
 	, routes = require('./routes')
 	, user = require('./routes/user')
-	, http = require('http')
+	, https = require('https')
 	, path = require('path')
 	, io = require('socket.io')
 	, redis = require('redis')
@@ -22,10 +22,8 @@ var options = {
 	//requestCert: false,
 	//rejectUnauthorized: false
 };
-console.log(options.key);
-console.log(options.cert);
-console.log(options.ca);
-var app = express(options);
+
+var app = express();
 
 //special parser for the activity feed
 function feedParser(req, res, next){
@@ -66,7 +64,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-var server = http.createServer(app);
+var server = https.createServer(options, app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
