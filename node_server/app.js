@@ -19,11 +19,13 @@ var options = {
 	key:  fs.readFileSync('pbapp.net.key'),
 	cert: fs.readFileSync('pbapp.net.crt'),
 	ca:   fs.readFileSync('gd_bundle.crt'),
-	requestCert: false,
-	rejectUnauthorized: false
+	//requestCert: false,
+	//rejectUnauthorized: false
 };
 console.log(options.key);
-var app = express.createServer(options);
+console.log(options.cert);
+console.log(options.ca);
+var app = express(options);
 
 //special parser for the activity feed
 function feedParser(req, res, next){
