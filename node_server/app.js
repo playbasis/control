@@ -16,11 +16,11 @@ var express = require('express')
 	, fs = require('fs');
 
 var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-	requestCert: false,
-	rejectUnauthorized: false
+	key:  fs.readFileSync('./pbapp.net.key'),
+	cert: fs.readFileSync('./pbapp.net.crt'),
+	ca:   fs.readFileSync('./gd_bundle.crt'),
+	//requestCert: false,
+	//rejectUnauthorized: false
 };
 var app = express(options);
 
