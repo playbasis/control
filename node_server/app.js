@@ -18,7 +18,7 @@ var express = require('express')
 var options = {
 	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt')
+	//ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt')
 	//requestCert: true,
 	//rejectUnauthorized: true
 };
