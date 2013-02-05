@@ -19,8 +19,8 @@ var options = {
 	key:  fs.readFileSync('pbapp.net.key'),
 	cert: fs.readFileSync('pbapp.net.crt'),
 	ca:   fs.readFileSync('gd_bundle.crt'),
-	//requestCert: false,
-	//rejectUnauthorized: false
+	requestCert: true,
+	rejectUnauthorized: true
 };
 
 var app = express();
@@ -45,7 +45,7 @@ var auth = express.basicAuth(function(user, pass){
 });
 
 app.configure(function(){
-	app.set('port', process.env.PORT || 433); //3000);
+	app.set('port', process.env.PORT || 443); //3000);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.favicon());
