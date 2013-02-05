@@ -13,8 +13,16 @@ var express = require('express')
 	, path = require('path')
 	, io = require('socket.io')
 	, redis = require('redis');
+	, fs = require('fs');
 
-var app = express();
+var options = {
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt')
+	//requestCert: true,
+	//rejectUnauthorized: true
+};
+var app = express.createServer(options);
 
 //special parser for the activity feed
 function feedParser(req, res, next){
