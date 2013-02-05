@@ -9,7 +9,7 @@ var METHOD_PUBLISH_FEED = '/activitystream';
 var express = require('express')
 	, routes = require('./routes')
 	, user = require('./routes/user')
-	, http = require('http')
+	, https = require('https')
 	, path = require('path')
 	, io = require('socket.io')
 	, redis = require('redis');
@@ -55,7 +55,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-var server = http.createServer(app);
+var server = https.createServer(app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
