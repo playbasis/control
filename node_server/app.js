@@ -22,7 +22,7 @@ var options = {
 	requestCert: false,
 	rejectUnauthorized: false
 };
-console.log(key);
+console.log(options.key);
 var app = express.createServer(options);
 
 //special parser for the activity feed
