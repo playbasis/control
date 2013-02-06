@@ -23,8 +23,6 @@ var options = {
 	rejectUnauthorized: true
 };
 
-var app = express();
-
 //special parser for the activity feed
 function feedParser(req, res, next){
 	if(req.originalUrl.substr(0, METHOD_PUBLISH_FEED.length).toLowerCase() != METHOD_PUBLISH_FEED)
@@ -40,9 +38,7 @@ function feedParser(req, res, next){
 	})
 }
 
-var auth = express.basicAuth(function(user, pass){
-	return user === 'planescape' && pass === 'torment';
-});
+var app = express();
 
 app.configure(function(){
 	app.set('port', process.env.PORT || 3000);
@@ -96,6 +92,10 @@ io.sockets.on('connection', function(socket){
 		}
 		socket.join(data.channel);
 	});
+});
+
+var auth = express.basicAuth(function(user, pass){
+	return user === 'planescape' && pass === 'torment';
 });
 
 //publish event through post request
