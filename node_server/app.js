@@ -20,7 +20,7 @@ var options = {
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
 	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
-	rejectUnauthorized: true
+	rejectUnauthorized: false
 };
 
 //special parser for the activity feed
@@ -73,6 +73,17 @@ redisPubClient.on('error', function(err){
 	console.log('redis pub-client err: ' + err);
 });
 
+//create redis sub-client for the specified channel
+function createRedisSubClient(channel){
+
+	//assert(!redisSubClients[channel]);
+	redisSubClients[channel] = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS);
+
+	redisSubClients[channel].on('error', function(err){
+		console.log('redis sub-client err: ' + err);
+	});
+}
+
 io.sockets.on('connection', function(socket){
 
 	socket.on('subscribe', function(data){
@@ -104,14 +115,3 @@ app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 		redisPubClient.publish(req.params.channel, req.body);
 	res.send(200);
 });
-
-//create redis sub-client for the specified channel
-function createRedisSubClient(channel){
-
-	//assert(!redisSubClients[channel]);
-	redisSubClients[channel] = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS);
-
-	redisSubClients[channel].on('error', function(err){
-		console.log('redis sub-client err: ' + err);
-	});
-}
