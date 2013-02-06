@@ -17,7 +17,7 @@ class Node_stream extends CI_Model{
 		curl_setopt($ch, CURLOPT_URL, STREAM_URL.$chanelName);											# set url
 		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT);													# set port
     	curl_setopt($ch, CURLOPT_HEADER, FALSE); 														# turn off output
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, FALSE);    											# refuse response from called server
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);    											# refuse response from called server
 		// curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));# set Content-Type
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain; charset=utf-8'));			# set Content-Type
     	curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');												# set  agent    	
