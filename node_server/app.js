@@ -23,11 +23,6 @@ var options = {
 	rejectUnauthorized: true
 };
 
-console.log("----ssl----");
-console.log(options.key);
-console.log(options.cert);
-console.log(options.ca);
-
 var app = express();
 
 //special parser for the activity feed
