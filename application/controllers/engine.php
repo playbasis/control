@@ -187,7 +187,7 @@ class Engine extends REST_Controller{
 							$this->tracker_model->trackEvent('REWARD',$eventMessage,array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
 							
 							//node stream
-							$this->node->publish(array_merge($input,array('message'=>$eventMessage)),$input);
+							$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'amount'=>$jigsawConfig['quantity'], 'point'=>$jigsawConfig['reward_name'])),$input);
 						}
 						else if(is_null($jigsawConfig['item_id'])){
 							//item_id is null, process standard point-based rewards (exp, point)
@@ -207,7 +207,7 @@ class Engine extends REST_Controller{
 									$this->tracker_model->trackEvent('LEVEL',$eventMessage,array_merge($input,array('amount'=>$lv)));
 
 									//node stream
-									$this->node->publish(array_merge($input,array('message'=>$eventMessage)),$input);
+									$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'level'=>$lv)),$input);
 								}
 							}
 							else{
@@ -221,13 +221,13 @@ class Engine extends REST_Controller{
 							);
 							array_push($apiResult['events'],$event);
 							
-							$eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], $jigsawConfig['quantity']);
+							$eventMessage = $this->utility->getEventMessage('point', $jigsawConfig['quantity'], $jigsawConfig['reward_name']);
 							
 							//log event :: reward > non-custom point
 							$this->tracker_model->trackEvent('REWARD',$eventMessage,array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
 
 							//node stream
-							$this->node->publish(array_merge($input,array('message'=>$eventMessage)),$input);
+							$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'amount'=>$jigsawConfig['quantity'], 'point'=>$jigsawConfig['reward_name'])),$input);
 						}
 						else{
 							switch($jigsawConfig['reward_name']){

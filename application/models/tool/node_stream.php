@@ -82,7 +82,6 @@ class Node_stream extends CI_Model{
 		$activityFormat['object']['level']  = isset($data['level'])  ? $data['level']  : NULL;
 		$activityFormat['object']['point']  = isset($data['point'])  ? $data['point']  : NULL;
 		$activityFormat['object']['amount'] = isset($data['amount']) ? $data['amount'] : NULL;
-		$activityFormat['object']['exp']    = isset($data['exp'])    ? $data['exp']	   : NULL;
 
 		return $activityFormat;
 
