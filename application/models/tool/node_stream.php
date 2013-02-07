@@ -64,6 +64,25 @@ class Node_stream extends CI_Model{
 						),
 			'target'	=> array(),
 		);
+		
+		if(isset($data['badge'])){
+			$activityFormat['object']['badge'] = array(
+														'id'	=>	$data['badge']['badge_id'],
+														'name'  =>	$data['badge']['name'],
+														'image'	=>	array(
+																		'url'	=> $data['badge']['image'],
+																		'width'	=> 76,
+																		'height'=> 76	
+																	),
+												);
+		}
+		else{
+			$activityFormat['object']['badge'] = NULL;
+		}
+		$activityFormat['object']['level']  = isset($data['level'])  ? $data['level']  : NULL;
+		$activityFormat['object']['point']  = isset($data['point'])  ? $data['point']  : NULL;
+		$activityFormat['object']['amount'] = isset($data['amount']) ? $data['amount'] : NULL;
+		$activityFormat['object']['exp']    = isset($data['exp'])    ? $data['exp']	   : NULL;
 
 		return $activityFormat;
 
