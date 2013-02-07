@@ -193,7 +193,7 @@ class Engine extends REST_Controller{
 							//item_id is null, process standard point-based rewards (exp, point)
 							if($jigsawConfig['reward_name'] == 'exp' ) {
 								#got level here if player level up
-								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'],$input['pb_player_id']);
+								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'],$input['pb_player_id'], array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id']));
 								if($lv > 0){
 									$event = array(
 										'event_type'	=>  'LEVEL_UP',
