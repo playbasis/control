@@ -131,11 +131,13 @@ class Player extends REST_Controller{
 
 		## TRIGGER EVENT ##
 
-		#log event
-		$this->tracker_model->trackEvent('LOGIN',$this->utility->getEventMessage('login'),array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
+		$eventMessage = $this->utility->getEventMessage('login');
+
+			#log event
+			$this->tracker_model->trackEvent('LOGIN',$eventMessage,array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
 		
 		//node stream
-		$this->node->publish(array('pb_player_id'=>$pb_player_id, 'action_name'=>'login', 'message'=>$this->utility->getEventMessage('login')), $validToken);
+		$this->node->publish(array('pb_player_id'=>$pb_player_id, 'action_name'=>'login', 'message'=>$eventMessage), $validToken);
 		
 		$this->response($this->resp->setRespond(),200);
 	}
@@ -168,11 +170,13 @@ class Player extends REST_Controller{
 
 		## TRIGGER EVENT ##
 
+		$eventMessage = $this->utility->getEventMessage('logout');
+
 		#log event
-		$this->tracker_model->trackEvent('LOGOUT',$this->utility->getEventMessage('logout'),array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
+		$this->tracker_model->trackEvent('LOGOUT',$eventMessage,array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
 		
 		//node stream
-		$this->node->publish(array('pb_player_id'=>$pb_player_id, 'action_name'=>'logout', 'message'=>$this->utility->getEventMessage('logout')), $validToken);
+		$this->node->publish(array('pb_player_id'=>$pb_player_id, 'action_name'=>'logout', 'message'=>$eventMessage), $validToken);
 
 		$this->response($this->resp->setRespond(),200);
 	}
