@@ -9,12 +9,19 @@ var METHOD_PUBLISH_FEED = '/activitystream';
 var express = require('express')
 	, routes = require('./routes')
 	, user = require('./routes/user')
-	, http = require('http')
+	, https = require('https')
 	, path = require('path')
 	, io = require('socket.io')
-	, redis = require('redis');
+	, redis = require('redis')
+	, fs = require('fs');
 
-var app = express();
+var options = {
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+	requestCert: true,
+	rejectUnauthorized: false
+};
 
 //special parser for the activity feed
 function feedParser(req, res, next){
@@ -31,9 +38,7 @@ function feedParser(req, res, next){
 	})
 }
 
-var auth = express.basicAuth(function(user, pass){
-	return user === 'planescape' && pass === 'torment';
-});
+var app = express();
 
 app.configure(function(){
 	app.set('port', process.env.PORT || 3000);
@@ -55,7 +60,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-var server = http.createServer(app);
+var server = https.createServer(options, app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
@@ -67,6 +72,17 @@ var redisPubClient = redis.createClient(); //redis client for publishing feeds
 redisPubClient.on('error', function(err){
 	console.log('redis pub-client err: ' + err);
 });
+
+//create redis sub-client for the specified channel
+function createRedisSubClient(channel){
+
+	//assert(!redisSubClients[channel]);
+	redisSubClients[channel] = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS);
+
+	redisSubClients[channel].on('error', function(err){
+		console.log('redis sub-client err: ' + err);
+	});
+}
 
 io.sockets.on('connection', function(socket){
 
@@ -89,20 +105,13 @@ io.sockets.on('connection', function(socket){
 	});
 });
 
+var auth = express.basicAuth(function(user, pass){
+	return user === 'planescape' && pass === 'torment';
+});
+
 //publish event through post request
 app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 	if(req.body)
 		redisPubClient.publish(req.params.channel, req.body);
 	res.send(200);
 });
-
-//create redis sub-client for the specified channel
-function createRedisSubClient(channel){
-
-	//assert(!redisSubClients[channel]);
-	redisSubClients[channel] = redis.createClient(REDIS_SERVER_PORT, REDIS_SERVER_ADDRESS);
-
-	redisSubClients[channel].on('error', function(err){
-		console.log('redis sub-client err: ' + err);
-	});
-}

@@ -1,15 +1,14 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); 
 class Utility extends CI_Model{
-	public function getEventMessage($eventType){
+	public function getEventMessage($eventType, $amount='some', $pointName='points', $badgeName='a', $newLevel=''){
 		switch($eventType){
-			case 'badge'	:	return 'earned new badge'; break;
-			case 'exp'		:   return 'earned some exp'; break;
-			case 'point'	:	return 'earned some point'; break;
-			case 'level'	:	return 'earned new level'; break;
-			case 'login'	:   return 'logged in'; break;
-			case 'logout'	:   return 'logged out'; break;
+			case 'badge'	:	return "earned $badgeName badge";
+			case 'point'	:	return "earned $amount $pointName";
+			case 'level'	:	return ($newLevel) ? "is now level $newLevel" : 'gained a level';
+			case 'login'	:   return 'logged in';
+			case 'logout'	:   return 'logged out';
 			default :
-				return 'this is default message';
+				return 'did a thing';
 		}
 	}
 }

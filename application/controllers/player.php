@@ -2,7 +2,7 @@
 
 require APPPATH.'/libraries/REST_Controller.php';
 class Player extends REST_Controller{
-	public function __Construct(){
+	public function __construct(){
 		parent::__construct();
 
 		//model
@@ -14,6 +14,7 @@ class Player extends REST_Controller{
 		$this->load->model('tool/error','error');
 		$this->load->model('tool/utility','utility');
 		$this->load->model('tool/respond','resp');
+		$this->load->model('tool/node_stream','node');
 
 		//library
 
@@ -130,11 +131,13 @@ class Player extends REST_Controller{
 
 		## TRIGGER EVENT ##
 
-		#log event
-		$this->tracker_model->trackEvent('LOGIN',$this->utility->getEventMessage('login'),array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
+		$eventMessage = $this->utility->getEventMessage('login');
+
+			#log event
+			$this->tracker_model->trackEvent('LOGIN',$eventMessage,array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
 		
 		//node stream
-		$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage('login'))),$input);
+		$this->node->publish(array('pb_player_id'=>$pb_player_id, 'action_name'=>'login', 'message'=>$eventMessage), $validToken);
 		
 		$this->response($this->resp->setRespond(),200);
 	}
@@ -167,11 +170,13 @@ class Player extends REST_Controller{
 
 		## TRIGGER EVENT ##
 
+		$eventMessage = $this->utility->getEventMessage('logout');
+
 		#log event
-		$this->tracker_model->trackEvent('LOGOUT',$this->utility->getEventMessage('logout'),array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
+		$this->tracker_model->trackEvent('LOGOUT',$eventMessage,array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'pb_player_id'=>$pb_player_id,'action_log_id'=>0));
 		
 		//node stream
-		$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage('logout'))),$input);
+		$this->node->publish(array('pb_player_id'=>$pb_player_id, 'action_name'=>'logout', 'message'=>$eventMessage), $validToken);
 
 		$this->response($this->resp->setRespond(),200);
 	}

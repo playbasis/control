@@ -180,11 +180,14 @@ class Engine extends REST_Controller{
 								'value'			=>	$jigsawConfig['quantity'],
 							);
 							array_push($apiResult['events'],$event);
+							
+							$eventMessage = $this->utility->getEventMessage('point', $jigsawConfig['quantity'], $jigsawConfig['reward_name']);
+							
 							//log event :: reward > custom point
-							$this->tracker_model->trackEvent('REWARD',$this->utility->getEventMessage($jigsawConfig['reward_name']),array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
+							$this->tracker_model->trackEvent('REWARD',$eventMessage,array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
 							
 							//node stream
-							$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage($jigsawConfig['reward_name']))),$input);
+							$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'amount'=>$jigsawConfig['quantity'], 'point'=>$jigsawConfig['reward_name'])),$input);
 						}
 						else if(is_null($jigsawConfig['item_id'])){
 							//item_id is null, process standard point-based rewards (exp, point)
@@ -198,11 +201,13 @@ class Engine extends REST_Controller{
 									);
 									array_push($apiResult['events'],$event);
 
+									$eventMessage = $this->utility->getEventMessage('level','','','',$lv);
+									
 									//log event :: level
-									$this->tracker_model->trackEvent('LEVEL',$this->utility->getEventMessage('level'),array_merge($input,array('amount'=>$lv)));
+									$this->tracker_model->trackEvent('LEVEL',$eventMessage,array_merge($input,array('amount'=>$lv)));
 
 									//node stream
-									$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage('level'))),$input);
+									$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'level'=>$lv)),$input);
 								}
 							}
 							else{
@@ -215,11 +220,14 @@ class Engine extends REST_Controller{
 								'value'			=>	$jigsawConfig['quantity'],
 							);
 							array_push($apiResult['events'],$event);
+							
+							$eventMessage = $this->utility->getEventMessage('point', $jigsawConfig['quantity'], $jigsawConfig['reward_name']);
+							
 							//log event :: reward > non-custom point
-							$this->tracker_model->trackEvent('REWARD',$this->utility->getEventMessage($jigsawConfig['reward_name']),array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
+							$this->tracker_model->trackEvent('REWARD',$eventMessage,array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'amount'=>$jigsawConfig['quantity'])));
 
 							//node stream
-							$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage($jigsawConfig['reward_name']))),$input);
+							$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'amount'=>$jigsawConfig['quantity'], 'point'=>$jigsawConfig['reward_name'])),$input);
 						}
 						else{
 							switch($jigsawConfig['reward_name']){
@@ -232,10 +240,13 @@ class Engine extends REST_Controller{
 										'value'			=>	$jigsawConfig['quantity'],
 									)	;
 									array_push($apiResult['events'],$event);
+									
+									$eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '','', $event['reward_data']['name']);
+									
 									//log event :: reward > badge
-									$this->tracker_model->trackEvent('REWARD',$this->utility->getEventMessage($jigsawConfig['reward_name']),array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'item_id'=>$jigsawConfig['item_id'],'amount'=>$jigsawConfig['quantity'])));
+									$this->tracker_model->trackEvent('REWARD',$eventMessage,array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'item_id'=>$jigsawConfig['item_id'],'amount'=>$jigsawConfig['quantity'])));
 									//node stream
-									$this->node->publish(array_merge($input,array('message'=>$this->utility->getEventMessage($jigsawConfig['reward_name']))),$input);
+									$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'badge'=>$event['reward_data'])),$input);
 									break;
 								default :
 									break;

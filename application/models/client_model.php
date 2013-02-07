@@ -3,6 +3,12 @@ define("CUSTOM_POINT_START_ID",10000);
 	
 class Client_model extends CI_Model{
 	
+	public function __construct(){
+		parent::__construct();
+
+		$this->config->load('playbasis');
+	}
+	
 	//get action configuration from all rule that relate to site id & client id
 	public function getRuleSet($clientData){
 		assert($clientData);
@@ -277,6 +283,7 @@ class Client_model extends CI_Model{
 		$this->db->where('badge_id',$badgeId);
 		$result = $this->db->get('playbasis_badge');
 		$badgeImage = $result->row_array();
+		$badgeImage['image'] = $this->config->item('IMG_PATH').$badgeImage['image'];
 		
 		$this->db->select('name,description');
 		$this->db->where('badge_id',$badgeId);

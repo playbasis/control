@@ -128,6 +128,7 @@ class Player_model extends CI_Model{
 		$count = $this->db->count_all_results('playbasis_action_log');
 
 		$this->db->select('action_id,action_name');
+		$this->db->where(array('pb_player_id'=>$data['pb_player_id'],'action_id'=>$data['action_id']));
 		$result = $this->db->get('playbasis_action_log');
 
 
