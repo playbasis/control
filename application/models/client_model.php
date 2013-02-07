@@ -187,9 +187,14 @@ class Client_model extends CI_Model{
 		
 	}
 
-	public function updateExpAndLevel($exp,$pb_player_id){
+	public function updateExpAndLevel($exp,$pb_player_id,$clientData){
 		assert($exp);
 		assert($pb_player_id);
+		
+		assert($clientData);
+		assert(is_array($clientData));
+		assert(isset($clientData['client_id']));
+		assert(isset($clientData['site_id']));
 
 		//get player exp
 		$this->db->select('exp,level');
@@ -200,13 +205,21 @@ class Client_model extends CI_Model{
 		$playerExp = $result['exp'];
 		$playerLevel = $result['level'];
 		
-		//get level
+		//check if client have their own exp table setup
 		$this->db->select_max('level');
+		$this->db->where($clientData);
 		$this->db->where("exp <=",$exp+$playerExp);
-		$result = $this->db->get('playbasis_exp_table');
-
+		$result = $this->db->get('playbasis_client_exp_table');
 		$level = $result->row_array();
-		if($level && $level['level'] > $playerLevel)
+		if(!$level['level']){
+			//get level from default exp table instead
+			$this->db->select_max('level');
+			$this->db->where("exp <=",$exp+$playerExp);
+			$result = $this->db->get('playbasis_exp_table');
+
+			$level = $result->row_array();
+		}
+		if($level['level'] && $level['level'] > $playerLevel)
 			$level = $level['level'];
 		else
 			$level = -1;
