@@ -246,7 +246,7 @@ class Engine extends REST_Controller{
 									//log event :: reward > badge
 									$this->tracker_model->trackEvent('REWARD',$eventMessage,array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'item_id'=>$jigsawConfig['item_id'],'amount'=>$jigsawConfig['quantity'])));
 									//node stream
-									$this->node->publish(array_merge($input,array('message'=>$eventMessage)),$input);
+									$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'badge'=>$event['reward_data'])),$input);
 									break;
 								default :
 									break;
