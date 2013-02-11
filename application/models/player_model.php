@@ -185,5 +185,33 @@ class Player_model extends CI_Model{
 
 		return '0000-00-00 00:00:00';
 	}
+	
+	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id){
+		
+		//get reward id
+		$this->db->select('reward_id');
+		$this->db->where('name', $ranked_by);
+		$result = $this->db->get('playbasis_reward');
+		$result = $result->row_array();
+		
+		//get points for the reward id
+		
+		//SELECT pb_player_id, value
+		//FROM core.playbasis_reward_to_player
+		//WHERE reward_id=2
+		//ORDER BY value DESC
+		//LIMIT 0,10;
+		
+		$this->db->select('cl_player_id,value');
+		$this->db->from('playbasis_reward_to_player,playbasis_player');
+		$this->db->where(array('reward_id' => $result['reward_id'], 'playbasis_reward_to_player.client_id' => $client_id, 'playbasis_reward_to_player.site_id' => $site_id));
+		$this->db->where('playbasis_reward_to_player.pb_player_id = playbasis_player.pb_player_id');
+		$this->db->order_by('value', 'DESC');
+		$this->db->limit($limit);
+		$result = $this->db->get();
+		$result =  $result->result_array();
+		
+		return $result;
+	}	
 }
 ?>
