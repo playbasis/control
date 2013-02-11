@@ -256,13 +256,15 @@
 		var baseURL = 'https://dev.pbapp.net/api/index.php/',
 			methodArray = {
 				'Player' : [
-					'{player ID}',
-					'{player ID}/register',
-					'{player ID}/login',
-					'{player ID}/logout',
-					'{player ID}/points',
-					'{player ID}/point/{point name}',
-					'{player ID}/action[/action name]{/time | count}',
+					'[player ID]',
+					'[player ID]/register',
+					'[player ID]/login',
+					'[player ID]/logout',
+					'[player ID]/points',
+					'[player ID]/point[/point name]',
+					'[player ID]/action[/action name][/time | count]',
+					'[player ID]/badge',
+					'rank/[ranked_by][/limit]',
 				],
 				'Badge'	: [
 					'[badge ID]',
