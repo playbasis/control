@@ -367,6 +367,26 @@ class Player extends REST_Controller{
 
 		$this->response($this->resp->setRespond($badgeList),200);
 	}
+	
+	public function rank_post($ranked_by, $limit=20){
+		$required = $this->input->checkParam(array('token'));
+
+		if($required)
+			$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
+		
+		if(!$ranked_by)
+			$this->response($this->error->setError('PARAMETER_MISSING',array('ranked_by')),200);
+		
+		//validate token
+		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_TOKEN'),200);
+		
+		$leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $validToken['client_id'], $validToken['site_id']);
+		
+		$this->response($this->resp->setRespond($leaderboard),200);
+	}
 }
 
 ?>
