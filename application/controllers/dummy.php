@@ -84,8 +84,6 @@ class Dummy extends CI_Controller{
 		$actionList = array();
 		$playerList = array();
 		$token = $this->dummy_model->getToken($configArray);
-		
-		echo 'Token:' . $token;
 
 		//check token
 		if(!$token){
