@@ -260,8 +260,8 @@ class Player extends REST_Controller{
 			$this->response($this->error->setError('REWARD_NOT_FOUND'),200);
 		}
 
-		$point['points'] = $this->player_model->getPlayerPoint(array_merge($input,array('reward_id'=>$haspoint),array('pb_player_id'=>$pb_player_id)));
-		$point['points'][0]['reward_name'] = $reward;
+		$point['point'] = $this->player_model->getPlayerPoint(array_merge($input,array('reward_id'=>$haspoint),array('pb_player_id'=>$pb_player_id)));
+		$point['point'][0]['reward_name'] = $reward;
 		ksort($point);
 
 		//response
