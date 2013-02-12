@@ -453,9 +453,9 @@
 	})();	
 </script>
 <script type="text/javascript">
-	//var socket = io.connect('//pbapp.net:3000');
+	var socket = io.connect('https://pbapp.net:3000');
 	//var socket = io.connect('//localhost:3000');
-	var socket = io.connect('https://dev.pbapp.net:3000');
+	//var socket = io.connect('https://dev.pbapp.net:3000');
 	socket.on('connect', function(data){
 		console.log('client connected');
 		socket.emit('subscribe', /*{channel:location.host}*/{channel:'playbasis.com'});
