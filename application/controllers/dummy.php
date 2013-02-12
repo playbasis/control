@@ -80,6 +80,9 @@ class Dummy extends CI_Controller{
 		}
 
 		$configArray = array('client_id'=>$clientId,'site_id'=>$siteId,'limit'=>$record);
+
+		var_dump($configArray);
+		
 		$actionList = array();
 		$playerList = array();
 		$token = $this->dummy_model->getToken($configArray);
