@@ -106,7 +106,7 @@ io.sockets.on('connection', function(socket){
 });
 
 var auth = express.basicAuth(function(user, pass){
-	return user === 'planescape' && pass === 'torment';
+	return user === 'planes' && pass === 'capetorment852456';
 });
 
 //publish event through post request
