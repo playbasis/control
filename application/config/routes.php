@@ -63,8 +63,8 @@ $route['Player/([a-zA-Z0-9]+)/logout'] = 'player/logout/$1';					#logout  player
 $route['Player/logout'] = 'player/logout';										#logout  player to playbasis system
 $route['Player/([a-zA-Z0-9]+)/points'] = 'player/points/$1';					#get player points 
 $route['Player/points'] = 'player/points';										#get player points 
-$route['Player/([a-zA-Z0-9]+)/point/([a-zA-Z]+)'] = 'player/point/$1/$2';		#get player point
-$route['Player/point/([a-zA-Z]+)'] = 'player/point/0/$1';						#get player point
+$route['Player/([a-zA-Z0-9]+)/point/([a-zA-Z0-9]+)'] = 'player/point/$1/$2';	#get player point
+$route['Player/point/([a-zA-Z0-9]+)'] = 'player/point/0/$1';					#get player point
 $route['Player/([a-zA-Z0-9]+)/point'] = 'player/point/$1/0';					#get player point
 $route['Player/point'] = 'player/point/';										#get player point
 
@@ -80,6 +80,10 @@ $route['Player/action'] = 'player/action/';																#get player action
 
 $route['Player/([a-zA-Z0-9]+)/badge'] = 'player/badge/$1';												#get player badge
 $route['Player/badge'] = 'player/badge/0';																#get player badge
+
+$route['Player/rank/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)'] = 'player/rank/$1/$2';
+$route['Player/rank/([a-zA-Z0-9]+)'] = 'player/rank/$1/20';
+$route['Player/rank'] = 'player/rank/0/0';
 
 #badge
 $route['Badge/collection/([0-9]+)'] = 'badge/getcollection/$1';											# get customer badge collection by id	
