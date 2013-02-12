@@ -202,7 +202,7 @@ class Player_model extends CI_Model{
 		//ORDER BY value DESC
 		//LIMIT 0,10;
 		
-		$this->db->select('cl_player_id,value');
+		$this->db->select("cl_player_id AS player_id,value AS $ranked_by");
 		$this->db->from('playbasis_reward_to_player,playbasis_player');
 		$this->db->where(array('reward_id' => $result['reward_id'], 'playbasis_reward_to_player.client_id' => $client_id, 'playbasis_reward_to_player.site_id' => $site_id));
 		$this->db->where('playbasis_reward_to_player.pb_player_id = playbasis_player.pb_player_id');
