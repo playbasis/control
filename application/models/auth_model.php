@@ -24,7 +24,7 @@ class Auth_model extends CI_model{
 
 		$this->db->select('site_id,client_id,domain_name,site_name');
 		
-		$this->db->where(array('api_key'=>$data['api_key'],'api_secret'=>$data['secret'],'date_expire >'=>date('Y-m-d H:i:s'),'status'=>'1'));
+		$this->db->where(array('api_key'=>$data['key'],'api_secret'=>$data['secret'],'date_expire >'=>date('Y-m-d H:i:s'),'status'=>'1'));
 
 		$result = $this->db->get('playbasis_client_site');
 		
@@ -52,7 +52,7 @@ class Auth_model extends CI_model{
 		$token = $token->row_array();
 
 		if(!$token){
-			$token['token'] = hash('sha1',$data['api_key'].time().$data['secret']);
+			$token['token'] = hash('sha1',$data['key'].time().$data['secret']);
 			$expire = date('Y-m-d H:i:s',time()+TOKEN_EXPIRE); 
 			
 			
