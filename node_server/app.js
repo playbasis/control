@@ -1,6 +1,6 @@
 
 var REDIS_SERVER_PORT = 6379;
-var REDIS_SERVER_ADDRESS = '127.0.0.1';
+var REDIS_SERVER_ADDRESS = '46.137.248.96';//'127.0.0.1';
 var METHOD_PUBLISH_FEED = '/activitystream';
 /**
  * Module dependencies.
