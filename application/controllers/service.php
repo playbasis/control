@@ -65,7 +65,7 @@ class Service extends REST_Controller{
 
 		$this->response($data,200);
 	}
-
+/*
 	public function testCounter_get(){
 		$this->load->model('engine/jigsaw','jg');
 		
@@ -125,4 +125,51 @@ class Service extends REST_Controller{
 
 		var_dump($this->badge_model->getAllCollection(array('client_id'=>$cid,'site_id'=>$sid)));
 	}
+	
+	public function uploadUsers_get(){
+		
+		if(!$handle = fopen("users.csv", "r"))
+			return;
+		
+		$this->load->model('player_model');
+		
+		$fields = fgetcsv($handle, 1000, ',');
+		var_dump($fields);
+		
+		$fieldIndex = array();
+		foreach($fields as $key => $value){
+			$fieldIndex[$value] = $key;
+		}
+		
+		while($data = fgetcsv($handle, 1000, ',')){
+			
+			//var_dump($data);
+			$genderStr = $data[$fieldIndex['gender']];
+			$gender = 0;
+			if($genderStr == 'Male')
+				$gender = 1;
+			else if($genderStr == 'Female')
+				$gender = 2;
+			
+			$playerInfo = array(
+				'client_id'		=>	3,
+				'site_id'		=>	15,
+				'email'			=>	$data[$fieldIndex['email']],
+				'first_name'	=>	$data[$fieldIndex['first_name']],
+				'last_name'		=>	$data[$fieldIndex['last_name']],
+				'player_id'		=>	$data[$fieldIndex['user_id']],
+				'gender'		=>	$gender,
+				'username'		=>	$data[$fieldIndex['username']],
+				'image'			=>	$data[$fieldIndex['image_url']],
+			);
+			if($data[$fieldIndex['date_of_birth']]){
+				
+				$timestamp = strtotime($data[$fieldIndex['date_of_birth']]);
+				$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
+			}
+			//var_dump($playerInfo);
+			$this->player_model->createPlayer($playerInfo);
+		}
+	}
+*/
 }

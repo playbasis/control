@@ -66,7 +66,7 @@ class Player extends REST_Controller{
 		if($required)
 			$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
 
-		$required = $this->input->checkParam(array('first_name','last_name','image','email'));
+		$required = $this->input->checkParam(array('first_name','last_name','image','email','username'));
 		
 		if(!$player_id){
 			array_push($required, 'player_id');
@@ -94,8 +94,17 @@ class Player extends REST_Controller{
 			'last_name'		=>	$this->input->post('last_name'),
 			'email'			=>	$this->input->post('email'),
 			'image'			=>	$this->input->post('image'),
+			'username'		=>	$this->input->post('username'),
 			'player_id'		=>	$player_id,
 		);
+		$gender = $this->input->post('gender');
+		if($gender){
+			$playerInfo['gender'] = $gender;
+		}
+		$birthdate = $this->input->post('birth_date');
+		if($birthdate){
+			$playerInfo['birth_date'] = $birthdate;
+		}
 		
 		$this->player_model->createPlayer(array_merge($validToken,$playerInfo));
 

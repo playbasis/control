@@ -198,6 +198,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\core\\MY_Input.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\dummy_player_data.php"
     {
     "ProjRelPath" = "T"
