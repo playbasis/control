@@ -141,9 +141,15 @@ class Service extends REST_Controller{
 			$fieldIndex[$value] = $key;
 		}
 		
+		$count = 0;
+		$startCount = 4882;
 		while($data = fgetcsv($handle, 1000, ',')){
 			
 			//var_dump($data);
+			$count++;
+			if($count <= $startCount)
+				continue;
+			
 			$genderStr = $data[$fieldIndex['gender']];
 			$gender = 0;
 			if($genderStr == 'Male')
@@ -167,7 +173,7 @@ class Service extends REST_Controller{
 				$timestamp = strtotime($data[$fieldIndex['date_of_birth']]);
 				$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 			}
-			//var_dump($playerInfo);
+			var_dump($playerInfo['player_id']);
 			$this->player_model->createPlayer($playerInfo);
 		}
 	}
