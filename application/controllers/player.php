@@ -66,7 +66,7 @@ class Player extends REST_Controller{
 		if($required)
 			$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
 
-		$required = $this->input->checkParam(array('first_name','last_name','image','email'));
+		$required = $this->input->checkParam(array('image','email','username'));
 		
 		if(!$player_id){
 			array_push($required, 'player_id');
@@ -90,13 +90,38 @@ class Player extends REST_Controller{
 		}
 		
 		$playerInfo = array(
-			'first_name'	=>	$this->input->post('first_name'),
-			'last_name'		=>	$this->input->post('last_name'),
 			'email'			=>	$this->input->post('email'),
 			'image'			=>	$this->input->post('image'),
+			'username'		=>	$this->input->post('username'),
 			'player_id'		=>	$player_id,
 		);
 		
+		$firstName = $this->input->post('first_name');
+		if($firstName)
+			$playerInfo['first_name'] = $firstName;
+		
+		$lastName = $this->input->post('last_name');
+		if($lastName)
+			$playerInfo['last_name'] = $lastName;
+
+		$nickName = $this->input->post('nickname');
+		if($nickName)
+			$playerInfo['nickname'] = $nickName;		
+
+		$password = $this->input->post('password');
+		if($password)
+			$playerInfo['password'] = $password;
+		
+		$gender = $this->input->post('gender');
+		if($gender)
+			$playerInfo['gender'] = $gender;
+		
+		$birthdate = $this->input->post('birth_date');
+		if($birthdate){
+			$timestamp = strtotime($birthdate);
+			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
+		}
+				
 		$this->player_model->createPlayer(array_merge($validToken,$playerInfo));
 
 		$this->response($this->resp->setRespond(),200);

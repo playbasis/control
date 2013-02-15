@@ -10,19 +10,36 @@ class Player_model extends CI_Model{
 	//CRUD
 	public function createPlayer($data){
 
-
-		$this->db->insert('playbasis_player',array(
+		$inputData = array(
 			'client_id'=>$data['client_id'],
 			'site_id'=>$data['site_id'],
 			'cl_player_id'=>$data['player_id'],
-			'first_name'=>$data['first_name'],
-			'last_name'=>$data['last_name'],
 			'image'=>$data['image'],
 			'email' =>$data['email'],
+			'username' =>$data['username'],
 			'date_added' =>date('Y-m-d H:i:s'),
 			'date_modified' =>date('Y-m-d H:i:s'),
-			)
 		);
+
+		if(isset($data['first_name']))
+			$inputData['first_name'] = $data['first_name'];
+		
+		if(isset($data['last_name']))
+			$inputData['last_name'] = $data['last_name'];
+
+		if(isset($data['nickname']))
+			$inputData['nickname'] = $data['nickname'];
+
+		if(isset($data['password']))
+			$inputData['password'] = $data['password'];
+
+		if(isset($data['gender']))
+			$inputData['gender'] = $data['gender'];
+
+		if(isset($data['birth_date']))
+			$inputData['birth_date'] = $data['birth_date'];
+		
+		$this->db->insert('playbasis_player',$inputData);
 
 		return $this->db->insert_id();
 	}
