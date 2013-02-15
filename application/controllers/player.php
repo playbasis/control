@@ -53,7 +53,8 @@ class Player extends REST_Controller{
 		$player['player']  =  $this->player_model->readPlayer($pb_player_id,array('first_name','last_name','image','exp','level','date_added AS registered'));
 
 		//get ladt login
-		$player['player']['last_login'] = $this->player_model->getLastLogIn($pb_player_id);
+		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, 'LOGIN');
+		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, 'LOGOUT');
 
 		$this->response($this->resp->setRespond($player),200);
 	}
