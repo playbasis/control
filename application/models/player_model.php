@@ -188,9 +188,9 @@ class Player_model extends CI_Model{
 		return $badges;
 	}
 
-	public function getLastLogIn($pb_player_id){
+	public function getLastEventTime($pb_player_id, $eventType){
 		$this->db->select('date_added');
-		$this->db->where(array('pb_player_id'=>$pb_player_id,'event_type'=>'LOGIN'));
+		$this->db->where(array('pb_player_id'=>$pb_player_id,'event_type'=>$eventType));
 		$this->db->order_by('date_added','DESC');
 
 		$result = $this->db->get('playbasis_event_log');

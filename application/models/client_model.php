@@ -118,7 +118,7 @@ class Client_model extends CI_Model{
 	public function updateCustomReward($rewardName,$quantity,$input,&$jigsawConfig){
 		//check reward available
 		$this->db->select('reward_id');
-		$this->db->where(array('client_id'=>$input['client_id'],'site_id'=>$input['site_id'],'name'=>$rewardName));
+		$this->db->where(array('client_id'=>$input['client_id'],'site_id'=>$input['site_id'],'name'=>strtolower($rewardName)));
 		$this->db->from('playbasis_reward_to_client');
 		$result  = $this->db->get();
 		$result = $result->row_array();
