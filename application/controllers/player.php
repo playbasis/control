@@ -35,7 +35,7 @@ class Player extends REST_Controller{
 			$this->response($this->error->setError('PARAMETER_MISSING',array('player_id')),200);
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -78,7 +78,7 @@ class Player extends REST_Controller{
 		}
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -141,7 +141,7 @@ class Player extends REST_Controller{
 			$this->response($this->error->setError('PARAMETER_MISSING',array('player_id')),200);
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -180,7 +180,7 @@ class Player extends REST_Controller{
 			$this->response($this->error->setError('PARAMETER_MISSING',array('player_id')),200);
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -219,7 +219,7 @@ class Player extends REST_Controller{
 			$this->response($this->error->setError('PARAMETER_MISSING',array('player_id')),200);
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -264,7 +264,7 @@ class Player extends REST_Controller{
 		}
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -320,7 +320,7 @@ class Player extends REST_Controller{
 		}
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -374,7 +374,7 @@ class Player extends REST_Controller{
 			$this->response($this->error->setError('PARAMETER_MISSING',array('player_id')),200);
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -404,7 +404,7 @@ class Player extends REST_Controller{
 			$this->response($this->error->setError('PARAMETER_MISSING',array('ranked_by')),200);
 		
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
