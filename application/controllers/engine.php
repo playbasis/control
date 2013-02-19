@@ -33,7 +33,7 @@ class Engine extends REST_Controller{
 			$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'),200);
@@ -98,7 +98,7 @@ class Engine extends REST_Controller{
 		
 
 		//validate token
-		$validToken = $this->auth_model->findToken(array('token'=>$this->input->post('token')));
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		// $validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
 
 		if(!$validToken)

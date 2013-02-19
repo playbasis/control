@@ -68,16 +68,16 @@ class Auth_model extends CI_model{
 	}
 
 	#find token
-	public function findToken($data){
+	public function findToken($token){
 		
 		$this->db->select('client_id,site_id');
-		$this->db->where('token', $data['token']);
+		$this->db->where('token', $token);
 		$result = $this->db->get('playbasis_token');
 
 		$info = $result->row_array();
 
 		if($info){
-			$this->db->select('domain_name','site_name');
+			$this->db->select('domain_name,site_name');
 			$this->db->where($info);
 			$result = $this->db->get('playbasis_client_site');
 
