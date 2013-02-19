@@ -77,7 +77,7 @@ class Auth_model extends CI_model{
 		$info = $result->row_array();
 
 		if($info){
-			$this->db->select('domain_name','site_name');
+			$this->db->select('domain_name,site_name');
 			$this->db->where($info);
 			$result = $this->db->get('playbasis_client_site');
 
