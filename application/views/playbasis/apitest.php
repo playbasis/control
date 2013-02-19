@@ -251,7 +251,7 @@
 	
 
 	(function(){
-		//var baseURL = '//api.pbapp.net/',
+		//var baseURL = 'https://api.pbapp.net/',
 		//var baseURL = '//localhost/api/',
 		var baseURL = 'https://dev.pbapp.net/api/index.php/',
 			methodArray = {
