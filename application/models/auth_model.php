@@ -71,7 +71,7 @@ class Auth_model extends CI_model{
 	public function findToken($token){
 		
 		$this->db->select('client_id,site_id');
-		$this->db->where('token', $token);
+		$this->db->where(array('token' => $token, 'date_expire >'=>date('Y-m-d H:i:s')));
 		$result = $this->db->get('playbasis_token');
 
 		$info = $result->row_array();
