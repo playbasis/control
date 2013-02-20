@@ -397,7 +397,7 @@
 						//update state
 						showHideMessage($('.control-process #url'),'Finish');
 						console.log(resp);
-						if(resp.status){
+						if(resp.success){
 							//update token
 							if(apiName == 'Auth'){
 								token = resp.response.token;
