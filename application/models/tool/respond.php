@@ -8,7 +8,7 @@ class Respond extends CI_Model{
 		$respondData  = array();
 
 		$respondData['status'] 	= true;
-		$respondData['error_core'] 	= '0000';
+		$respondData['error_code'] 	= '0000';
 		$respondData['message'] 	= 'Success';
 		$respondData['response'] 	= $data;
 		$respondData['timestamp'] 	= (int)time();
