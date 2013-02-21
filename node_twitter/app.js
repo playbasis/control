@@ -11,10 +11,10 @@ var options = {
 };
 
 var twitter = require('ntwitter')
-	, app = require('https').createServer(options, handler) //('http').createServer(handler)
+	, app = require('https').createServer(options, handler)
 	, io = require('socket.io').listen(app);
 
-app.listen(8000);
+app.listen(8080);
 
 function handler(req, res) {
 	console.log("server started");
@@ -30,7 +30,6 @@ function handler(req, res) {
 	});
 }
 
-/*
 var twit = new twitter({
 	consumer_key: 'zPUFYp3SERsStcB6lsLjg',
 	consumer_secret: 'QUtQz6ID4BMj5tQZwXHueDOqhByngSQ16Jmm4BprRs',
@@ -67,4 +66,3 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 		io.sockets.emit('rank', rank);
 	});
 });
-*/
