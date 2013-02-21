@@ -1,5 +1,7 @@
 ///<reference path='typescript-node-definitions-master/node.d.ts'/>
 
+var fs = require('fs');
+
 var options = {
 	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
@@ -10,8 +12,7 @@ var options = {
 
 var twitter = require('ntwitter')
 	, app = require('https').createServer(options, handler)
-	, io = require('socket.io').listen(app)
-	, fs = require('fs');
+	, io = require('socket.io').listen(app);
 
 app.listen(8000);
 
