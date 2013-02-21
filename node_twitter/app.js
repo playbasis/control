@@ -49,11 +49,12 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 		console.log('---------- tweet tweet ----------');
 		console.log(data.user.name);
 		console.log(data.user.id_str);
+		console.log(data.user.profile_image_url);
 		console.log(data.text);
 
 		if (userIndex[data.user.id_str] == undefined) {
 			userIndex[data.user.id_str] = rank.length;
-			rank.push({'user': data.user.name, 'id':data.user.id_str, 'score':0});
+			rank.push({'user': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0});
 			console.log('+++++ new player! +++++');
 			io.sockets.emit('totalplayers', {'count':rank.length});
 		}
@@ -61,7 +62,6 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 		rank.sort(rankSort);
 		tweetCount++;
 
-		console.log(rank);
 		console.log('total tweets: ' + tweetCount);
 		io.sockets.emit('rank', rank);
 		io.sockets.emit('totaltweets', {'count':tweetCount});
