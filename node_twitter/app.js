@@ -37,6 +37,7 @@ var twit = new twitter({
 var userIndex = [];
 var rank = [];
 var tracking = '#facebook';
+var tweetCount = 0;
 
 function rankSort(a, b){
 	return b.score - a.score;
@@ -53,13 +54,16 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 		if (userIndex[data.user.id_str] == undefined) {
 			userIndex[data.user.id_str] = rank.length;
 			rank.push({'user': data.user.name, 'id':data.user.id_str, 'score':0});
-			console.log('----- player added -----');
+			console.log('+++++ new player! +++++');
+			io.sockets.emit('totalplayers', {'count':rank.length});
 		}
 		rank[userIndex[data.user.id_str]].score += 1;
-		console.log('score: ' + rank[userIndex[data.user.id_str]].score);
 		rank.sort(rankSort);
-		console.log(rank);
+		tweetCount++;
 
+		console.log(rank);
+		console.log('total tweets: ' + tweetCount);
 		io.sockets.emit('rank', rank);
+		io.sockets.emit('totaltweets', {'count':tweetCount});
 	});
 });
