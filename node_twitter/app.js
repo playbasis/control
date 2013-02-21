@@ -17,14 +17,11 @@ var twitter = require('ntwitter')
 app.listen(8080);
 
 function handler(req, res) {
-	console.log("server started");
 	fs.readFile(__dirname + '/index.html', function (err, data) {
-		console.log("start loading index");
 		if (err) {
 			res.writeHead(500);
 			return res.end('Error loading index.html');
 		}
-		console.log("index loaded");
 		res.writeHead(200);
 		res.end(data);
 	});
