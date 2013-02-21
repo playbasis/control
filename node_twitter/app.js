@@ -36,6 +36,7 @@ var twit = new twitter({
 
 var userIndex = [];
 var rank = [];
+var top10;
 var tracking = '#facebook';
 var tweetCount = 0;
 
@@ -62,8 +63,17 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 		rank.sort(rankSort);
 		tweetCount++;
 
+		top10 = (rank.length > 10) ? rank.slice(0,10) : rank;
+
 		console.log('total tweets: ' + tweetCount);
-		io.sockets.emit('rank', rank);
+		io.sockets.emit('rank', top10);
 		io.sockets.emit('totaltweets', {'count':tweetCount});
+
+		if(tweetCount >= 1000)
+		{
+			tweetCount = 0;
+			userIndex = [];
+			rank = [];
+		}
 	});
 });
