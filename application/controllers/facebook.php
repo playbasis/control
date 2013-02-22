@@ -10,7 +10,7 @@ class Facebook extends REST_Controller{
 		$challenge = $this->input->get('hub_challenge');
 		$verifyToken = $this->input->get('hub_verify_token');
 		
-		$this->response($verifyToken, 200);
+		$this->response($challenge, 200);
 	}
 	
 	public function realtimeupdate_post(){
