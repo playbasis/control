@@ -49,8 +49,8 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 
 		console.log('---------- tweet tweet ----------');
 		console.log(data.user.name);
-		console.log(data.user.id_str);
-		console.log(data.user.profile_image_url);
+		//console.log(data.user.id_str);
+		//console.log(data.user.profile_image_url);
 		console.log(data.text);
 
 		if (userIndex[data.user.id_str] == undefined) {
@@ -61,6 +61,9 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 		}
 		rank[userIndex[data.user.id_str]].score += 1;
 		rank.sort(rankSort);
+		for(var i=0; i<rank.length; ++i){
+			userIndex[rank[i].id] = i;
+		}
 		tweetCount++;
 
 		top10 = (rank.length > 10) ? rank.slice(0,10) : rank;
