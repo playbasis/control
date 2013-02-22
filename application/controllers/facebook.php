@@ -13,6 +13,10 @@ class Facebook extends REST_Controller{
 	}
 	
 	public function realtimeupdate_post(){
-		$this->response('fbrtu', 200);
+		
+		$changedData = $this->input->post();
+		echo $changedData;
+		
+		$this->response($changedData, 200);
 	}
 }
