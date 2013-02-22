@@ -5,13 +5,10 @@ require APPPATH.'/libraries/REST_Controller.php';
 class Facebook extends REST_Controller{
 	
 	public function realtimeupdate_get(){
-		
-		$this->load->helper('string');
-			
-		$mode = $this->input->get('hub_mode');
+					
+		//$mode = $this->input->get('hub_mode');
+		//$verifyToken = $this->input->get('hub_verify_token');
 		$challenge = $this->input->get('hub_challenge');
-		$verifyToken = $this->input->get('hub_verify_token');
-		
 		echo $challenge;
 	}
 	
