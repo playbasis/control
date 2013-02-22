@@ -14,9 +14,17 @@ class Facebook extends REST_Controller{
 	
 	public function realtimeupdate_post(){
 		
-		$changedData = $this->input->post();
-		echo $changedData;
-		
+		$changedData = $this->input->post();		
+		$this->db->insert('playbasis_action_log',
+						  array('pb_player_id'=> 0,
+								'client_id'=> 0,
+								'site_id'=> 0,
+								'action_id'=> 0,
+								'action_name'=> 'fbupdate',
+								'object_Info'=>serialize($changedData),
+								'date_added'=>date('Y-m-d H:i:s'),
+								'date_modified'=>date('Y-m-d H:i:s')));
+						
 		$this->response($changedData, 200);
 	}
 }
