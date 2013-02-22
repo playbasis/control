@@ -158,6 +158,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\facebook.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\geditor.php"
     {
     "ProjRelPath" = "T"
