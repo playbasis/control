@@ -41,7 +41,7 @@ var tweetCount = 0;
 
 var TRACKING = '#facebook,#webwedth,#wwth12';
 var LEADERBOARD_SIZE = 30;
-var RESET_EVERY_N_TWEET = 1000;
+var RESET_EVERY_N_TWEET = 10000;
 
 function rankSort(a, b){
 	return b.score - a.score;
