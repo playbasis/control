@@ -36,15 +36,18 @@ var twit = new twitter({
 
 var userIndex = [];
 var rank = [];
-var top10;
-var tracking = '#facebook';
+var top;
 var tweetCount = 0;
+
+var TRACKING = '#facebook,#webwedth,#wwth12';
+var LEADERBOARD_SIZE = 30;
+var RESET_EVERY_N_TWEET = 1000;
 
 function rankSort(a, b){
 	return b.score - a.score;
 }
 
-twit.stream('statuses/filter', {'track': tracking}, function(stream){
+twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 	stream.on('data', function(data){
 
 		console.log('---------- tweet tweet ----------');
@@ -55,24 +58,24 @@ twit.stream('statuses/filter', {'track': tracking}, function(stream){
 
 		if (userIndex[data.user.id_str] == undefined) {
 			userIndex[data.user.id_str] = rank.length;
-			rank.push({'user': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0});
-			console.log('+++++ new player! +++++');
+			rank.push({'user': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0, 'tweet':data.text});
 			io.sockets.emit('totalplayers', {'count':rank.length});
 		}
 		rank[userIndex[data.user.id_str]].score += 1;
+		rank[userIndex[data.user.id_str]].tweet = data.text;
 		rank.sort(rankSort);
 		for(var i=0; i<rank.length; ++i){
 			userIndex[rank[i].id] = i;
 		}
 		tweetCount++;
 
-		top10 = (rank.length > 10) ? rank.slice(0,10) : rank;
+		top = (rank.length > LEADERBOARD_SIZE) ? rank.slice(0, LEADERBOARD_SIZE) : rank;
 
-		console.log('total tweets: ' + tweetCount);
-		io.sockets.emit('rank', top10);
+		console.log('total tweets: ' + tweetCount + " total players: " + rank.length);
+		io.sockets.emit('rank', top);
 		io.sockets.emit('totaltweets', {'count':tweetCount});
 
-		if(tweetCount >= 1000)
+		if(tweetCount >= RESET_EVERY_N_TWEET)
 		{
 			tweetCount = 0;
 			userIndex = [];
