@@ -87,7 +87,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 });
 
 io.sockets.on('connection', function(socket){
-	socket.emit('rank', top);
 	socket.emit('totaltweets', {'count':tweetCount});
 	socket.emit('totalplayers', {'count':rank.length});
+	socket.emit('rank', top);
 });
