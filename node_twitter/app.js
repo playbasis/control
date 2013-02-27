@@ -39,8 +39,8 @@ var rank = [];
 var top;
 var tweetCount = 0;
 
-// var TRACKING = '#facebook,#webwedth,#wwth12';
-var TRACKING = '#webwedth,#wwth12';
+// var TRACKING = '#facebook,#webwedth,#wwth12,#wwth';
+var TRACKING = '#webwedth,#wwth12,#wwth';
 
 var LEADERBOARD_SIZE = 10;
 var RESET_EVERY_N_TWEET = 10000;
@@ -85,3 +85,9 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 		}
 	});
 });
+
+io.sockets.on('connection', function(socket){
+	socket.emit('rank', top);
+	socket.emit('totaltweets', {'count':tweetCount});
+	socket.emit('totalplayers', {'count':rank.length});
+}
