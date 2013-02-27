@@ -42,7 +42,7 @@ var tweetCount = 0;
 // var TRACKING = '#facebook,#webwedth,#wwth12';
 var TRACKING = '#webwedth,#wwth12';
 
-var LEADERBOARD_SIZE = 30;
+var LEADERBOARD_SIZE = 10;
 var RESET_EVERY_N_TWEET = 10000;
 
 function rankSort(a, b){
