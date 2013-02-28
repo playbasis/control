@@ -86,9 +86,15 @@ class Service extends REST_Controller{
 		var_dump($status);
 	}
 	
-	public function testUpdateReward_get(){
-		$this->load->model('client_model');
+	public function testdate_get(){
+		$datediff = date_diff( new DateTime('2013-01-22 20:00:00') , new DateTime('2013-01-15 20:01:00'));
 		
-		$this->client_model->updatePlayerpointReward(1,1,1);
+		var_dump($datediff->d);
+		var_dump($datediff->h);
+		var_dump($datediff->i);
+		echo date('r',strtotime("first day of next month 15:00")+(25-1)*3600*24);
+		echo date('d',strtotime("last day of next month"));
+		//echo date('r',1359417600);
+		
 	}
 }
