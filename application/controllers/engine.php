@@ -79,7 +79,7 @@ class Engine extends REST_Controller{
 		
 	}
 
-	public function rule_get(){
+	public function rule_post(){
 		$required = $this->input->checkParam(array('token'));
 
 		if($required)
