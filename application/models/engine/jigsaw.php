@@ -106,7 +106,7 @@ class jigsaw extends CI_Model{
 		}
 		else{
 			$exInfo['remaining_counter'] = $log['remaining_counter'];
-			if($remainingTime<0)
+			if(($remainingTime<0) || $config['reset_timeout'])
 				$exInfo['remaining_time'] = (int)$config['interval'];
 			else
 				$exInfo['remaining_time'] = $remainingTime - $timeDiff;
@@ -183,10 +183,13 @@ class jigsaw extends CI_Model{
 	public function between($config,$input,&$exInfo=array()){
 		assert($config != false);
 		assert(is_array($config));		
-		assert(isset($config['timestamp']));
 
 		assert($input != false);
 		assert(is_array($input));
+		assert(isset($config['start_time']));
+		assert(isset($config['end_time']));
+		
+		
 		$start	= $config['start_time'];
 		$end	= $config['end_time'];
 		
@@ -197,8 +200,117 @@ class jigsaw extends CI_Model{
 		return ($start < $now && $now < $end);
 	}
 	
+	public function daily($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));		
 
+		assert($input != false);
+		assert(is_array($input));
+		assert(isset($config['time_of_day']));
+		
+		$this->db->select('date_added');
+		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		$this->db->order_by('date_added','desc');
+		$result = $this->db->get('playbasis_history');
+		
+		if(!$result->num_rows()){
+			
+			return true;
+			
+			/*$settingTime = $config['time_of_day'];
+			$settingTime = strtotime("1970-01-01 $settingTime:00");
+			$currentTime = strtotime("1970-01-01 ".date('H:i').":00");
+			
+			return $currentTime > $settingTime; */
+		}
+		
+		$result = $result->row_array();
+		$lastTime = $result['date_added'];
+				
+		$datediff = date_diff( new DateTime() , new DateTime($lastTime));
+		
+		//more than 2 day
+		if($datediff->d > 1)
+			return true;
+		
+		//same day
+		if($datediff->d <=0)
+			return false;
+		
+		//more than 1 day judge by time
+		$settingTime = $config['time_of_day'];
+		$settingTime = strtotime("1970-01-01 $settingTime:00");
+		$currentTime = strtotime("1970-01-01 ".date('H:i').":00");
+		
+		return $currentTime > $settingTime;
+		
+	}
+	
+	public function weekly($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));		
 
+		assert($input != false);
+		assert(is_array($input));
+		assert(isset($config['time_of_day']));
+		assert(isset($config['day_of_week']));
+		
+		$this->db->select('input');
+		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		$this->db->order_by('date_added','desc');
+		$result = $this->db->get('playbasis_history');
+		
+		if(!$result->num_rows()){
+			$exInfo['next_trigger'] = strtotime("next ".$config['day_of_week']." ".$config['time_of_day']);
+			return true;
+		}	
+		
+		$result = $result->row_array();
+		$logInput = unserialize($result['input']);
+		if(strtotime('now') >= $logInput['next_trigger']){
+			$exInfo['next_trigger'] = strtotime("next ".$config['day_of_week']." ".$config['time_of_day']);			
+			return true;
+		}
+		
+		$exInfo['next_trigger'] = $logInput['next_trigger'];
+		return false;
+	}	
+	
+	
+	public function monthly($config,$input,&$exInfo=array()){
+		assert($config != false);
+		assert(is_array($config));		
+
+		assert($input != false);
+		assert(is_array($input));
+		assert(isset($config['time_of_day']));
+		assert(isset($config['date_of_month']));
+		
+		$this->db->select('input');
+		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		$this->db->order_by('date_added','desc');
+		$result = $this->db->get('playbasis_history');
+		
+		if(!$result->num_rows()){
+			
+			$lastDateOfMonth = date('d',strtotime("last day of next month"));
+			$exInfo['next_trigger'] = $config['date_of_month']  > $lastDateOfMonth?	strtotime("last day of next month".$config['time_of_day']) :
+																					strtotime("first day of next month ".$config['time_of_day'])+($config['date_of_month']-1)*3600*24;
+			return true;
+		}	
+		
+		$result = $result->row_array();
+		$logInput = unserialize($result['input']);
+		if(strtotime('now') >= $logInput['next_trigger']){
+			$lastDateOfMonth = date('d',strtotime("last day of next month"));
+			$exInfo['next_trigger'] = $config['date_of_month']  > $lastDateOfMonth?	strtotime("last day of next month".$config['time_of_day']) :
+																					strtotime("first day of next month ".$config['time_of_day'])+($config['date_of_month']-1)*3600*24;		
+			return true;
+		}
+		
+		$exInfo['next_trigger'] = $logInput['next_trigger'];
+		return false;
+	}
 
 
 
