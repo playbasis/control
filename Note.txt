@@ -140,7 +140,8 @@ JIGSAW :: {CONDITION} > COUNTER
 "config":{
             "counter_value"		: "{int}		:: counter amount",
 			"interval"			: "{int}		:: how long before the counter is reset",
-			"interval_unit"		: "{string}		::  unit of interval (second or day),
+			"interval_unit"		: "{string}		:: unit of interval (second or day),
+			"reset_timeout"		: "{boolean}	:: set to true to reset time-out when counter is triggered (can be used to implement day-in-a-row logic)"
         }
 
 JIGSAW :: {CONDITION} > COOLDOWN
@@ -164,6 +165,24 @@ JIGSAW :: {CONDITION} > BETWEEN
             "start_time"         : "{string}		:: time in 24hr format {00:00 - 23:59}",
 			"end_time"			 : "{string}		:: time in 24hr format {00:00 - 23:59}"
          }
+JIGSAW :: {CONDITION} > DAILY
+"config":{
+			"time_of_day"		 : "{string} {default : 00:00}		:: time in 24hr format {00:00 - 23:59}",
+
+		 }
+
+
+JIGSAW :: {CONDITION} > WEEKLY
+"config":{
+			"time_of_day"		 : "{string} {default : 00:00}		:: time in 24hr format {00:00 - 23:59}",
+			"day_of_week"		 : "{string}{enum}{default : Mon}	:: texual day of week {Mon,Tue,Wed,Thu,Fri,Sat,Sun}"
+		 }
+
+JIGSAW :: {CONDITION} > WEEKLY
+"config":{
+			"time_of_day"		 : "{string} {default : 00:00}		:: time in 24hr format {00:00 - 23:59}",
+			"date_of_month"		 : "{int}{enum}{default : 1}		:: numeric date of month {1-31}"
+		 }
 
 
 #~~ GAME EDITOR API ~~#
