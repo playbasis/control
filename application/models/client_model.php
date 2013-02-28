@@ -59,7 +59,7 @@ class Client_model extends CI_Model{
 		$this->db->where(array('jigsaw_id'=>$jigsawId));
 		$this->db->select('class_path');
 		
-		$result = $this->db->get('playbasis_game_jigsaw');
+		$result = $this->db->get('playbasis_game_jigsaw_to_client');
 		
 		$jigsawProcessor = $result->row_array();
 		
@@ -136,23 +136,24 @@ class Client_model extends CI_Model{
 		assert($pb_player_id);
 
 		//get player exp
-		$this->db->select('exp');
+		$this->db->select('exp,level');
 		$this->db->where('pb_player_id',$pb_player_id);
 		$result = $this->db->get('playbasis_player');
 		
-		$playerExp = $result->row_array();		
-		$playerExp = $playerExp['exp'];
+		$result = $result->row_array();		
+		$playerExp = $result['exp'];
+		$playerLevel = $result['level'];
 		
 		//get level
 		$this->db->select_max('level');
 		$this->db->where("exp <=",$exp+$playerExp);
 		$result = $this->db->get('playbasis_exp_table');
 
-		$level = -1;
-		if($result->num_rows()){
-			$level = $result->row_array();
+		$level = $result->row_array();
+		if($level && $level['level'] > $playerLevel)
 			$level = $level['level'];
-		}
+		else
+			$level = -1;
 		
 		$this->db->where('pb_player_id',$pb_player_id);
 		$this->db->set('date_modified',date('Y-m-d H:i:s'));		
