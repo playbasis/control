@@ -81,10 +81,6 @@ class Social_model extends CI_Model{
 				}
 			}
 		}
-		
-		if(!$pb_player_id || !$action)
-			return false;
-		
 		return array('pb_player_id' => $pb_player_id, 
 					 'client_id' => $client_id,
 					 'site_id' => $site_id,
