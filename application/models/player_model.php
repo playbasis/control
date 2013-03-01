@@ -216,7 +216,8 @@ class Player_model extends CI_Model{
 		$this->db->where('name', $ranked_by);
 		$result = $this->db->get('playbasis_reward');
 		$result = $result->row_array();
-		
+		if(!$result)
+			return array();
 		//get points for the reward id
 		
 		//SELECT pb_player_id, value
