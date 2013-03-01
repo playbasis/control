@@ -95,6 +95,15 @@ class Engine extends REST_Controller{
 		$fbData = null;
 		if($option == 'facebook'){
 			$fbData = $this->social_model->processFacebookData($this->request->body);
+			
+			if(!$fbData['pb_player_id']){
+				$this->response($this->error->setError('USER_NOT_EXIST'),200);
+				$fbData = false;
+			}
+			else if(!$fbData['action']){
+				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
+				$fbData = false;
+			}
 		}
 		
 		if(!$fbData){
