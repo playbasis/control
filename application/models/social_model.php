@@ -54,7 +54,7 @@ class Social_model extends CI_Model{
 						$senderId = $data['from_id'];
 						$message = $data['message'];
 						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
-						$action = 'fbstatus';
+						$action = 'fb' . $item;
 					}
 					else if($item == 'post' && $verb == 'add'){
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
@@ -62,7 +62,7 @@ class Social_model extends CI_Model{
 						$senderId = $data['from_id'];
 						$message = $data['message'];
 						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
-						$action = 'fbpost';
+						$action = 'fb' . $item;
 					}
 					else if($item == 'comment' && $verb == 'add'){
 						$senderId = $value['sender_id'];
@@ -70,13 +70,13 @@ class Social_model extends CI_Model{
 						$data = $this->getFacebookCommentData($commentId);
 						$message = $data['message'];
 						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
-						$action = 'fbcomment';
+						$action = 'fb' . $item;
 					}
 					else if($item == 'like' && $verb == 'add'){
 						$senderId = $value['sender_id'];
 						$parentId = $value['parent_id'];
 						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
-						$action = 'fblike';
+						$action = 'fb' . $item;
 					}
 				}
 			}

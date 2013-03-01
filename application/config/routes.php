@@ -38,6 +38,9 @@
 |
 */
 
+//define('ANY_STRING','([a-zA-Z0-9-_]+)');
+//define('ANY_NUMBER','([0-9]+)');
+
 $route['default_controller'] = "welcome/playbasis";
 
 //Game Editor
@@ -53,36 +56,36 @@ $route['Geditor/rules/add'] = 'Geditor/addRule';								#add new rule
 $route['Auth'] = 'auth';														#request token
 
 #player
-$route['Player/([a-zA-Z0-9]+)'] = 'player/index/$1';							#get player information
+$route['Player/([a-zA-Z0-9-_]+)'] = 'player/index/$1';							#get player information
 $route['Player'] = 'player/index/';												#get player information
-$route['Player/([a-zA-Z0-9]+)/register'] = 'player/register/$1';				#register player to playbasis system
+$route['Player/([a-zA-Z0-9-_]+)/register'] = 'player/register/$1';				#register player to playbasis system
 $route['Player/register'] = 'player/register';									#register player to playbasis system
-$route['Player/([a-zA-Z0-9]+)/login'] = 'player/login/$1';						#login player to playbasis system
+$route['Player/([a-zA-Z0-9-_]+)/login'] = 'player/login/$1';						#login player to playbasis system
 $route['Player/login'] = 'player/login';										#login player to playbasis system
-$route['Player/([a-zA-Z0-9]+)/logout'] = 'player/logout/$1';					#logout  player to playbasis system
+$route['Player/([a-zA-Z0-9-_]+)/logout'] = 'player/logout/$1';					#logout  player to playbasis system
 $route['Player/logout'] = 'player/logout';										#logout  player to playbasis system
-$route['Player/([a-zA-Z0-9]+)/points'] = 'player/points/$1';					#get player points 
+$route['Player/([a-zA-Z0-9-_]+)/points'] = 'player/points/$1';					#get player points 
 $route['Player/points'] = 'player/points';										#get player points 
-$route['Player/([a-zA-Z0-9]+)/point/([a-zA-Z0-9]+)'] = 'player/point/$1/$2';	#get player point
-$route['Player/point/([a-zA-Z0-9]+)'] = 'player/point/0/$1';					#get player point
-$route['Player/([a-zA-Z0-9]+)/point'] = 'player/point/$1/0';					#get player point
+$route['Player/([a-zA-Z0-9-_]+)/point/([a-zA-Z0-9-_]+)'] = 'player/point/$1/$2';	#get player point
+$route['Player/point/([a-zA-Z0-9-_]+)'] = 'player/point/0/$1';					#get player point
+$route['Player/([a-zA-Z0-9-_]+)/point'] = 'player/point/$1/0';					#get player point
 $route['Player/point'] = 'player/point/';										#get player point
 
-$route['Player/([a-zA-Z0-9]+)/action/([a-zA-Z0-9]+)/(time|count)'] = 'player/action/$1/$2/$3';			#get player action
-$route['Player/action/([a-zA-Z0-9]+)/(time|count)'] = 'player/action/0/$1/$2';							#get player action
-$route['Player/([a-zA-Z0-9]+)/action/(time|count)'] = 'player/action/$1/0/$2';							#get player action
+$route['Player/([a-zA-Z0-9-_]+)/action/([a-zA-Z0-9-_]+)/(time|count)'] = 'player/action/$1/$2/$3';			#get player action
+$route['Player/action/([a-zA-Z0-9-_]+)/(time|count)'] = 'player/action/0/$1/$2';							#get player action
+$route['Player/([a-zA-Z0-9-_]+)/action/(time|count)'] = 'player/action/$1/0/$2';							#get player action
 
-// $route['Player/([a-zA-Z0-9]+)/action/([a-zA-Z0-9]+)/:any|null'] = 'player/action/$1/$2/time';			#get player action
-// $route['Player/action/([a-zA-Z0-9]+)/:any|null'] = 'player/action/0/$1/time';							#get player action
-// $route['Player/([a-zA-Z0-9]+)/action/:any|null'] = 'player/action/$1/0/time';							#get player action
+// $route['Player/([a-zA-Z0-9-_]+)/action/([a-zA-Z0-9-_]+)/:any|null'] = 'player/action/$1/$2/time';			#get player action
+// $route['Player/action/([a-zA-Z0-9-_]+)/:any|null'] = 'player/action/0/$1/time';							#get player action
+// $route['Player/([a-zA-Z0-9-_]+)/action/:any|null'] = 'player/action/$1/0/time';							#get player action
 
 $route['Player/action'] = 'player/action/';																#get player action
 
-$route['Player/([a-zA-Z0-9]+)/badge'] = 'player/badge/$1';												#get player badge
+$route['Player/([a-zA-Z0-9-_]+)/badge'] = 'player/badge/$1';												#get player badge
 $route['Player/badge'] = 'player/badge/0';																#get player badge
 
-$route['Player/rank/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)'] = 'player/rank/$1/$2';
-$route['Player/rank/([a-zA-Z0-9]+)'] = 'player/rank/$1/20';
+//$route['Player/rank/([a-zA-Z0-9-_]+)/([0-9]+)'] = 'player/rank/$1/$2';
+$route['Player/rank/([a-zA-Z0-9-_]+)'] = 'player/rank/$1/20';
 $route['Player/rank'] = 'player/rank/0/0';
 
 #badge
@@ -94,7 +97,8 @@ $route['Badge'] = 'badge/index';																		# get customer badge by id
 
 #engine
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
-$route['Engine/rule']	= 'engine/rule';
+$route['Engine/rule/([a-zA-Z0-9-_]+)'] = 'engine/rule/$1';
+$route['Engine/rule']	= 'engine/rule/0';
 
 #test
 $route['test']	= 'playbasis/test';
