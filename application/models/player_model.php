@@ -30,6 +30,12 @@ class Player_model extends CI_Model{
 		if(isset($data['nickname']))
 			$inputData['nickname'] = $data['nickname'];
 
+		if(isset($data['facebook_id']))
+			$inputData['facebook_id'] = $data['facebook_id'];
+		
+		if(isset($data['twitter_id']))
+			$inputData['twitter_id'] = $data['twitter_id'];
+
 		if(isset($data['password']))
 			$inputData['password'] = $data['password'];
 
@@ -229,6 +235,6 @@ class Player_model extends CI_Model{
 		$result =  $result->result_array();
 		
 		return $result;
-	}	
+	}
 }
 ?>
