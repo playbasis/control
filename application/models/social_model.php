@@ -120,7 +120,7 @@ class Social_model extends CI_Model{
 		$this->db->where('facebook_id', $facebook_id);
 		$result = $this->db->get('playbasis_player');
 		$result = $result->row_array();
-		return $result['pb_player_id'];
+		return ($result) ? $result['pb_player_id'] : false;
 	}
 	
 	public function getPBPlayerIdFromTwitterId($twitter_id){
@@ -129,7 +129,7 @@ class Social_model extends CI_Model{
 		$this->db->where('twitter_id', $twitter_id);
 		$result = $this->db->get('playbasis_player');
 		$result = $result->row_array();
-		return $result['pb_player_id'];
+		return ($result) ? $result['pb_player_id'] : false;
 	}
 	
 	private function formatFacebookPostId($postId, $pageId){
