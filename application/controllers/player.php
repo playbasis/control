@@ -107,7 +107,15 @@ class Player extends REST_Controller{
 
 		$nickName = $this->input->post('nickname');
 		if($nickName)
-			$playerInfo['nickname'] = $nickName;		
+			$playerInfo['nickname'] = $nickName;
+		
+		$facebookId = $this->input->post('facebook_id');
+		if($facebookId)
+			$playerInfo['facebook_id'] = $facebookId;
+		
+		$twitterId = $this->input->post('twitter_id');
+		if($twitterId)
+			$playerInfo['twitter_id'] = $twitterId;
 
 		$password = $this->input->post('password');
 		if($password)
