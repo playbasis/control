@@ -30,6 +30,12 @@ class Player_model extends CI_Model{
 		if(isset($data['nickname']))
 			$inputData['nickname'] = $data['nickname'];
 
+		if(isset($data['facebook_id']))
+			$inputData['facebook_id'] = $data['facebook_id'];
+		
+		if(isset($data['twitter_id']))
+			$inputData['twitter_id'] = $data['twitter_id'];
+
 		if(isset($data['password']))
 			$inputData['password'] = $data['password'];
 
@@ -210,7 +216,8 @@ class Player_model extends CI_Model{
 		$this->db->where('name', $ranked_by);
 		$result = $this->db->get('playbasis_reward');
 		$result = $result->row_array();
-		
+		if(!$result)
+			return array();
 		//get points for the reward id
 		
 		//SELECT pb_player_id, value
@@ -229,6 +236,6 @@ class Player_model extends CI_Model{
 		$result =  $result->result_array();
 		
 		return $result;
-	}	
+	}
 }
 ?>

@@ -34,16 +34,6 @@ class Auth_model extends CI_model{
 	#generate token and update token in database
 	public function generateToken($data){
 
-		// $sql = "INSERT INTO `playbasis_token` SET `client_id` = ? , `site_id` = ? , `token` = ?";
-
-		// $bindData = array(
-		// 	$data['client_id'],
-		// 	$data['site_id'],
-		// 	$token,
-		// );
-
-		// $result = $this->db->query($sql,$bindData);
-
 		$this->db->select('token');
 		
 		$this->db->where(array('site_id'=>$data['site_id'],'client_id'=>$data['client_id'],'date_expire >'=>date('Y-m-d H:i:s')));
@@ -85,6 +75,17 @@ class Auth_model extends CI_model{
 		}
 
 		return array();
+	}
+	
+	public function createToken($client_id, $site_id){
+		
+		$info = array('client_id'=>$client_id, 'site_id'=>$site_id);
+		
+		$this->db->select('domain_name,site_name');
+		$this->db->where($info);
+		$result = $this->db->get('playbasis_client_site');
+
+		return array_merge($info,$result->row_array());
 	}
 }
 ?>

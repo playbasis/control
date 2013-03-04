@@ -15,7 +15,8 @@ class Engine extends REST_Controller{
 		$this->load->model('tool/utility','utility');
 		$this->load->model('tool/respond','resp');
 		$this->load->model('tool/node_stream','node');
-
+		$this->load->model('social_model');
+		
 
 		//library
 
@@ -81,48 +82,81 @@ class Engine extends REST_Controller{
 		
 	}
 
-	 public function rule_post(){
-	//public function rule_get(){ //for debug
+	public function rule_get($option=0){
+		if($option != 'facebook'){
+			$this->response($this->error->setError('ACCESS_DENIED'),200);
+		}
+		$challenge = $this->input->get('hub_challenge');
+		echo $challenge;
+	}
 
-		$required = $this->input->checkParam(array('token'));
+	public function rule_post($option=0){
 
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
-
-		$required = $this->input->checkParam(array('action','player_id'));
-		
-		if($required){
-			$this->response($this->error->setError('PARAMETER_MISSING',$required),200);
+		$fbData = null;
+		if($option == 'facebook'){
+			$fbData = $this->social_model->processFacebookData($this->request->body);
+			
+			if(!$fbData['pb_player_id']){
+				$this->response($this->error->setError('USER_NOT_EXIST'),200);
+				$fbData = false;
+			}
+			else if(!$fbData['action']){
+				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
+				$fbData = false;
+			}
 		}
 		
-		
+		if(!$fbData){
+			$required = $this->input->checkParam(array('token'));
+			if($required)
+				$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
 
-		//validate token
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		// $validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
+			$required = $this->input->checkParam(array('action','player_id'));
+			if($required)
+				$this->response($this->error->setError('PARAMETER_MISSING',$required),200);
 
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'),200);
-		
-		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken,array('cl_player_id'=>$this->input->post('player_id'))));
-		// $pb_player_id = $this->input->get('player_id'); //for debugging
-
-		if($pb_player_id < 0){
-			$this->response($this->error->setError('USER_NOT_EXIST'),200);
+			//validate token
+			$validToken = $this->auth_model->findToken($this->input->post('token'));
+			// $validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
+			if(!$validToken)
+				$this->response($this->error->setError('INVALID_TOKEN'),200);
+			
+			//get playbasis player id
+			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken,array('cl_player_id'=>$this->input->post('player_id'))));
+			// $pb_player_id = $this->input->get('player_id'); //for debugging
+			if($pb_player_id < 0)
+				$this->response($this->error->setError('USER_NOT_EXIST'),200);
+			
+			//get action id by action name
+			$actionName = $this->input->post('action');
+			$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$actionName));
+			// $actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->get('action')));  //for debugging
+			if(!$actionId)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
+			
+			$postData = $this->input->post();
 		}
-		 
-		//get action id by action name
-		$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->post('action')));
-		// $actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->get('action')));  //for debugging
-		if(!$actionId){
-			$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
+		else{
+			
+			$validToken = $this->auth_model->createToken($fbData['client_id'], $fbData['site_id']);
+			if(!$validToken)
+				$this->response($this->error->setError('INVALID_TOKEN'),200);
+			
+			$pb_player_id = $fbData['pb_player_id'];
+			if($pb_player_id < 0)
+				$this->response($this->error->setError('USER_NOT_EXIST'),200);
+			
+			$actionName = $fbData['action'];
+			$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$actionName));
+			if(!$actionId)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
+
+			$postData = array();
 		}
-		
 		//get input data from POST
 		
 		//misc data  : use for log and process any jigsaws
-		$input = array_merge($this->input->post(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->post('action')));
+		$input = array_merge($postData,$validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));
 		// $input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
 		
 		
