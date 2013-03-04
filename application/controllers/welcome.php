@@ -38,7 +38,7 @@ class Welcome extends CI_Controller {
 
 		// decode the data
 		$sig = $this->base64_url_decode($encoded_sig);
-		$data = json_decode(base64_url_decode($payload), true);
+		$data = json_decode($this->base64_url_decode($payload), true);
 
 		return $data;
 	}
