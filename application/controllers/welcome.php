@@ -45,6 +45,8 @@ class Welcome extends CI_Controller {
 			return null;
 		}
 
+		$secret = '6544951f29daa3afe9c7ad4da7b3d88b';
+
 		// Adding the verification of the signed_request below
 		$expected_sig = hash_hmac('sha256', $payload, $secret, $raw = true);
 		if ($sig !== $expected_sig) {
