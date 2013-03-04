@@ -37,7 +37,7 @@ class Welcome extends CI_Controller {
 		list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
 
 		// decode the data
-		$sig = base64_url_decode($encoded_sig);
+		$sig = $this->base64_url_decode($encoded_sig);
 		$data = json_decode(base64_url_decode($payload), true);
 
 		return $data;
