@@ -34,6 +34,59 @@
 </style>
 </head>
 <body>
+	<div id="fb-root"></div>
+	<script>
+		
+		function login() {
+			FB.login(function(response) {
+				if (response.authResponse) {
+					// connected
+					testAPI();
+				} else {
+					// cancelled
+				}
+			});
+		}
+
+		function testAPI() {
+			console.log('Welcome!  Fetching your information.... ');
+			FB.api('/me', function(response) {
+				console.log('Good to see you, ' + response.name + '.');
+			});
+		}
+
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId      : '421530621269210', // App ID
+				channelUrl : '//api.pbapp.net/channel.html', // Channel File
+				status     : true, // check login status
+				cookie     : true, // enable cookies to allow the server to access the session
+				xfbml      : true  // parse XFBML
+			});
+
+			FB.getLoginStatus(function(response) {
+				if (response.status === 'connected') {
+					// connected
+				} else if (response.status === 'not_authorized') {
+					// not_authorized
+					login();
+				} else {
+					// not_logged_in
+					login();
+				}
+			});
+		};
+
+		// Load the SDK Asynchronously
+		(function(d){
+			ar js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement('script'); js.id = id; js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			ref.parentNode.insertBefore(js, ref);
+		}(document));
+
+	</script>
 	<div class="container deco">
 		<h1>This facebook page is powered by Playbasis Gamification Engine.</h1>
 		<p>This page is underconstruction. Stay tuned and keep in touch.</p>
