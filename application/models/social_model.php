@@ -2,6 +2,9 @@
 
 require APPPATH.'/libraries/facebook-php-sdk/facebook.php';
 
+define('APP_ID','421530621269210');
+define('APP_SECRET','6544951f29daa3afe9c7ad4da7b3d88b');
+
 class Social_model extends CI_Model{
 	
 	private $facebook = null;
@@ -13,8 +16,8 @@ class Social_model extends CI_Model{
 		$this->load->model('client_model');
 		
 		$config = array();
-		$config['appId'] = '421530621269210';
-		$config['secret'] = '6544951f29daa3afe9c7ad4da7b3d88b';
+		$config['appId'] = APP_ID;
+		$config['secret'] = APP_SECRET;
 		$config['fileUpload'] = false; // optional
 
 		$this->facebook = new Facebook($config);
@@ -127,7 +130,7 @@ class Social_model extends CI_Model{
 		$result = $result->row_array();
 		return ($result) ? $result['pb_player_id'] : false;
 	}
-	
+		
 	private function formatFacebookPostId($postId, $pageId){
 		
 		if(!is_string($postId))
@@ -180,6 +183,34 @@ class Social_model extends CI_Model{
 	private function bigIntToString($number){
 		$numStr = serialize($number);
 		return substr($numStr, 2,-1);
+	}
+	
+	///// from facebook doc
+	
+	public function parse_signed_request($signed_request) {
+		list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
+
+		// decode the data
+		$sig = $this->base64_url_decode($encoded_sig);
+		$data = json_decode($this->base64_url_decode($payload), true);
+
+		if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') {
+			error_log('Unknown algorithm. Expected HMAC-SHA256');
+			return null;
+		}
+
+		// Adding the verification of the signed_request below
+		$expected_sig = hash_hmac('sha256', $payload, APP_SECRET, $raw = true);
+		if ($sig !== $expected_sig) {
+			error_log('Bad Signed JSON signature!');
+			return null;
+		}
+
+		return $data;
+	}
+
+	private function base64_url_decode($input) {
+		return base64_decode(strtr($input, '-_', '+/'));
 	}
 }
 
