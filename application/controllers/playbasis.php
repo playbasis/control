@@ -13,6 +13,8 @@ class Playbasis extends CI_Controller{
 	
 	public function fb(){
 		$this->load->view('playbasis/fb');
+
+		/*////// Test handling signed_request ///////
 		
 		if ($_REQUEST) {
 			$signed_request = $_REQUEST['signed_request'];
@@ -33,6 +35,7 @@ class Playbasis extends CI_Controller{
 		} else {
 			echo '$_REQUEST is empty';
 		}
+		*/
 	}
 }
 ?>
