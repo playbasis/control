@@ -93,6 +93,34 @@ class Social_model extends CI_Model{
 					 'message' => $message);
 	}
 	
+	public function sendFacebookNotification($facebook_id, $message, $href)
+	{
+		$accountsData = null;
+		try{
+			$accountsData = $this->facebook->api('/' . $facebook_id . '/accounts');
+		}catch(FacebookApiException $e){
+			return null;
+		}
+		if(!$accountsData)
+			return null;
+		
+		foreach($accountsData['data'] as $account){
+			if($account['id'] != APP_ID)
+				continue;
+			
+			$accessToken = $account['access_token'];
+			$this->facebook->setAccessToken();
+			try{
+				$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', 
+					array('access_token' => $accessToken, 'href' => $href, 'template' => $message));
+			}catch(FacebookApiException $e){
+				return null;
+			}
+			return $result;
+		}
+		return null;
+	}
+	
 	public function getClientFromFacebookPageId($facebook_page_id){
 		
 		if(!is_string($facebook_page_id))
