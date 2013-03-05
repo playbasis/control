@@ -4,6 +4,8 @@ require APPPATH.'/libraries/facebook-php-sdk/facebook.php';
 
 define('APP_ID','421530621269210');
 define('APP_SECRET','6544951f29daa3afe9c7ad4da7b3d88b');
+define('APP_NAMESPACE','api_pbapp');
+define('APP_PERMISSION','publish_actions,manage_notifications');
 
 class Social_model extends CI_Model{
 	
@@ -211,6 +213,17 @@ class Social_model extends CI_Model{
 
 	private function base64_url_decode($input) {
 		return base64_decode(strtr($input, '-_', '+/'));
+	}
+	
+	public function get_oauth_url(){
+		
+		$base_url	  = 'https://www.facebook.com/dialog/oauth/';
+		$client_id	  = '?client_id=' . APP_ID;
+		$redirect_uri = '&redirect_uri=' . rawurlencode('https://apps.facebook.com/' . APP_NAMESPACE . '/');
+		$scope		  = '&scope=' . APP_PERMISSION;
+		
+		$oauth_url = $base_url . $client_id . $redirect_uri . $scope;
+		return $oauth_url;
 	}
 }
 
