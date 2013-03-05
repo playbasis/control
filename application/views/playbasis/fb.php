@@ -36,7 +36,25 @@
 <body>
 	<div id="fb-root"></div>
 	<script>
-		// Additional JS functions here
+		
+		function login() {
+			FB.login(function(response) {
+				if (response.authResponse) {
+					// connected
+					testAPI();
+				} else {
+					// cancelled
+				}
+			});
+		}
+
+		function testAPI() {
+			console.log('Welcome!  Fetching your information.... ');
+			FB.api('/me', function(response) {
+				console.log('Good to see you, ' + response.name + '.');
+			});
+		}
+
 		window.fbAsyncInit = function() {
 			FB.init({
 				appId      : '421530621269210', // App ID
@@ -46,7 +64,6 @@
 				xfbml      : true  // parse XFBML
 			});
 
-			// Additional init code here
 			FB.getLoginStatus(function(response) {
 				if (response.status === 'connected') {
 					// connected
@@ -68,24 +85,6 @@
 			js.src = "//connect.facebook.net/en_US/all.js";
 			ref.parentNode.insertBefore(js, ref);
 		}(document));
-
-		function login() {
-			FB.login(function(response) {
-				if (response.authResponse) {
-					// connected
-					testAPI();
-				} else {
-					// cancelled
-				}
-			});
-		}
-
-		function testAPI() {
-			console.log('Welcome!  Fetching your information.... ');
-			FB.api('/me', function(response) {
-			console.log('Good to see you, ' + response.name + '.');
-		});
-}
 
 	</script>
 	<div class="container deco">
