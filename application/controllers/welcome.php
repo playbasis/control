@@ -24,41 +24,6 @@ class Welcome extends CI_Controller {
 
 	public function playbasis(){
 		$this->load->view('playbasis/apiinfo');
-		
-		if ($_REQUEST) {
-			$signed_request = $_REQUEST['signed_request'];
-			echo json_encode($this->parse_signed_request($signed_request));
-		} else {
-			echo '$_REQUEST is empty';
-		}
-	}
-	
-	private function parse_signed_request($signed_request) {
-		list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
-
-		// decode the data
-		$sig = $this->base64_url_decode($encoded_sig);
-		$data = json_decode($this->base64_url_decode($payload), true);
-
-		if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') {
-			error_log('Unknown algorithm. Expected HMAC-SHA256');
-			return null;
-		}
-
-		$secret = '6544951f29daa3afe9c7ad4da7b3d88b';
-
-		// Adding the verification of the signed_request below
-		$expected_sig = hash_hmac('sha256', $payload, $secret, $raw = true);
-		if ($sig !== $expected_sig) {
-			error_log('Bad Signed JSON signature!');
-			return null;
-		}
-
-		return $data;
-	}
-
-	private function base64_url_decode($input) {
-		return base64_decode(strtr($input, '-_', '+/'));
 	}
 }
 
