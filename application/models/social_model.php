@@ -219,7 +219,7 @@ class Social_model extends CI_Model{
 		
 		$base_url	  = 'https://www.facebook.com/dialog/oauth/';
 		$client_id	  = '?client_id=' . APP_ID;
-		$redirect_uri = '&redirect_uri=' . rawurlencode('www.facebook.com/privatesandbox/app_421530621269210'); //'https://apps.facebook.com/' . APP_NAMESPACE . '/');
+		$redirect_uri = '&redirect_uri=' . rawurlencode('https://apps.facebook.com/' . APP_NAMESPACE . '/');
 		$scope		  = '&scope=' . APP_PERMISSION;
 		
 		$oauth_url = $base_url . $client_id . $redirect_uri . $scope;
