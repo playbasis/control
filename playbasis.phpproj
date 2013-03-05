@@ -422,6 +422,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\views\\playbasis\\fb.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\views\\welcome_message.php"
     {
     "ProjRelPath" = "T"
