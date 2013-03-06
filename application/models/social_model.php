@@ -107,7 +107,7 @@ class Social_model extends CI_Model{
 			echo 'token: ' . $this->facebook->getAccessToken();
 			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => $message));
 		}catch(FacebookApiException $e){
-			echo 'cant send notification';
+			echo 'cant send notification: ' . jason_encode($e);
 			return null;
 		}
 		echo 'sent';
