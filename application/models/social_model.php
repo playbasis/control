@@ -121,7 +121,7 @@ class Social_model extends CI_Model{
 		try{
 			$appAccessToken = $this->getAppAccessToken();
 			$this->facebook->setAccessToken($appAccessToken);
-			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => $message));
+			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => '@[' . $facebook_id . '] ' . $message));
 		}catch(FacebookApiException $e){
 			echo 'cant send notification: ' . json_encode($e->getResult());
 			return null;
