@@ -111,23 +111,22 @@ class Social_model extends CI_Model{
 	
 	public function sendFacebookNotification($facebook_id, $message, $href)
 	{
-		$userId = $this->facebook->getUser();
-		if($facebook_id != $userId){
-			echo 'wrong user';
-			return null; //user isn't logged in... need to cache access token and renew expired ones to send notification to offline users
-		}
+		//$userId = $this->facebook->getUser();
+		//if($facebook_id != $userId){
+		//	echo 'wrong user';
+		//	return null;
+		//}
+		
 		$result = null;
 		try{
 			$appAccessToken = $this->getAppAccessToken();
-			echo 'tokenA: ' . $appAccessToken;
 			$this->facebook->setAccessToken($appAccessToken);
-			echo 'tokenB: ' . $this->facebook->getAccessToken();
 			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => $message));
 		}catch(FacebookApiException $e){
 			echo 'cant send notification: ' . json_encode($e->getResult());
 			return null;
 		}
-		echo 'sent';
+		echo 'sent: ' . $message;
 		return $result;
 		
 		/*
