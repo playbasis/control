@@ -222,6 +222,9 @@ class Engine extends REST_Controller{
 							
 							//node stream
 							$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'amount'=>$jigsawConfig['quantity'], 'point'=>$jigsawConfig['reward_name'])),$input);
+							if($fbData){
+								$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+							}
 						}
 						else if(is_null($jigsawConfig['item_id'])){
 							//item_id is null, process standard point-based rewards (exp, point)
@@ -242,6 +245,9 @@ class Engine extends REST_Controller{
 
 									//node stream
 									$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'level'=>$lv)),$input);
+									if($fbData){
+										$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+									}
 								}
 							}
 							else{
@@ -262,6 +268,9 @@ class Engine extends REST_Controller{
 
 							//node stream
 							$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'amount'=>$jigsawConfig['quantity'], 'point'=>$jigsawConfig['reward_name'])),$input);
+							if($fbData){
+								$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+							}
 						}
 						else{
 							switch($jigsawConfig['reward_name']){
@@ -281,6 +290,9 @@ class Engine extends REST_Controller{
 									$this->tracker_model->trackEvent('REWARD',$eventMessage,array_merge($input,array('reward_id'=>$jigsawConfig['reward_id'],'reward_name'=>$jigsawConfig['reward_name'],'item_id'=>$jigsawConfig['item_id'],'amount'=>$jigsawConfig['quantity'])));
 									//node stream
 									$this->node->publish(array_merge($input,array('message'=>$eventMessage, 'badge'=>$event['reward_data'])),$input);
+									if($fbData){
+										$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+									}
 									break;
 								default :
 									break;
