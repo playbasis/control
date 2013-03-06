@@ -102,7 +102,17 @@ class Social_model extends CI_Model{
 			echo 'offline player';
 			return null;
 		}
+		$result = null;
+		try{
+			echo $this->facebook->getAccessToken();
+			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => $message));
+		}catch(FacebookApiException $e){
+			echo 'failed to send notification: ' . json_encode($e);
+			return null;
+		}
+		return $result;
 		
+		/*
 		$accountsData = null;
 		try{
 			$accountsData = $this->facebook->api('/' . $facebook_id . '/accounts');
@@ -131,6 +141,7 @@ class Social_model extends CI_Model{
 		}
 		echo 'failed to find token for app';
 		return null;
+		*/
 	}
 	
 	public function getClientFromFacebookPageId($facebook_page_id){
