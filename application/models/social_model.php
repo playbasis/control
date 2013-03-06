@@ -111,54 +111,16 @@ class Social_model extends CI_Model{
 	
 	public function sendFacebookNotification($facebook_id, $message, $href)
 	{
-		//$userId = $this->facebook->getUser();
-		//if($facebook_id != $userId){
-		//	echo 'wrong user';
-		//	return null;
-		//}
-		
 		$result = null;
 		try{
 			$appAccessToken = $this->getAppAccessToken();
 			$this->facebook->setAccessToken($appAccessToken);
 			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => '@[' . $facebook_id . '] ' . $message));
 		}catch(FacebookApiException $e){
-			echo 'cant send notification: ' . json_encode($e->getResult());
+			error_log(json_encode($e->getResult()));
 			return null;
 		}
-		echo 'sent: ' . $message;
 		return $result;
-		
-		/*
-		$accountsData = null;
-		try{
-			$accountsData = $this->facebook->api('/' . $facebook_id . '/accounts');
-		}catch(FacebookApiException $e){
-			echo 'failed to get access token: ' . json_encode($e->getResult());
-			return null;
-		}
-		if(!$accountsData){
-			echo 'failed to get account data';
-			return null;
-		}
-		foreach($accountsData['data'] as $account){
-			if($account['id'] != APP_ID)
-				continue;
-			
-			$accessToken = $account['access_token'];
-			$this->facebook->setAccessToken();
-			try{
-				$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', 
-					array('access_token' => $accessToken, 'href' => $href, 'template' => $message));
-			}catch(FacebookApiException $e){
-				echo 'failed to send notification: ' . json_encode($e->getResult());
-				return null;
-			}
-			return $result;
-		}
-		echo 'failed to find token for app';
-		return null;
-		*/
 	}
 	
 	public function getClientFromFacebookPageId($facebook_page_id){
