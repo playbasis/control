@@ -95,6 +95,20 @@ class Social_model extends CI_Model{
 					 'message' => $message);
 	}
 	
+	public function getAppAccessToken()
+	{
+		$app_token_url = "https://graph.facebook.com/oauth/access_token?"
+			. "client_id=" . APP_ID
+			. "&client_secret=" . APP_SECRET 
+			. "&grant_type=client_credentials";
+
+		$response = file_get_contents($app_token_url);
+		$params = null;
+		parse_str($response, $params);
+
+		return $params['access_token'];
+	}
+	
 	public function sendFacebookNotification($facebook_id, $message, $href)
 	{
 		$userId = $this->facebook->getUser();
@@ -104,7 +118,10 @@ class Social_model extends CI_Model{
 		}
 		$result = null;
 		try{
-			echo 'token: ' . $this->facebook->getAccessToken();
+			$appAccessToken = $this->getAppAccessToken();
+			echo 'tokenA: ' . $appAccessToken;
+			$this->facebook->setAccessToken($appAccessToken);
+			echo 'tokenB: ' . $this->facebook->getAccessToken();
 			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => $message));
 		}catch(FacebookApiException $e){
 			echo 'cant send notification: ' . json_encode($e->getResult());
