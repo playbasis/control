@@ -99,15 +99,12 @@ class Social_model extends CI_Model{
 	{
 		$userId = $this->facebook->getUser();
 		if($facebook_id != $userId){
-			echo 'offline player';
-			return null;
+			return null; //user isn't logged in... need to cache access token and renew expired ones to send notification to offline users
 		}
 		$result = null;
 		try{
-			echo $this->facebook->getAccessToken();
 			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => $message));
 		}catch(FacebookApiException $e){
-			echo 'failed to send notification: ' . json_encode($e);
 			return null;
 		}
 		return $result;
