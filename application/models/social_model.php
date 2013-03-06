@@ -28,6 +28,7 @@ class Social_model extends CI_Model{
 	public function processFacebookData($changedData){
 		
 		$pb_player_id = 0;
+		$facebook_id = 0;
 		$client_id = 0;
 		$site_id = 0;
 		$action = '';
@@ -56,37 +57,38 @@ class Social_model extends CI_Model{
 					if($item == 'status' && $verb == 'add'){
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
 						$data = $this->getFacebookPostData($postId);
-						$senderId = $data['from_id'];
+						$facebook_id = $data['from_id'];
 						$message = $data['message'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
+						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
 						$action = 'fb' . $item;
 					}
 					else if($item == 'post' && $verb == 'add'){
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
 						$data = $this->getFacebookPostData($postId);
-						$senderId = $data['from_id'];
+						$facebook_id = $data['from_id'];
 						$message = $data['message'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
+						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
 						$action = 'fb' . $item;
 					}
 					else if($item == 'comment' && $verb == 'add'){
-						$senderId = $value['sender_id'];
+						$facebook_id = $value['sender_id'];
 						$commentId = $this->formatFacebookCommentId($value['comment_id'], $value['parent_id'], $id);
 						$data = $this->getFacebookCommentData($commentId);
 						$message = $data['message'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
+						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
 						$action = 'fb' . $item;
 					}
 					else if($item == 'like' && $verb == 'add'){
-						$senderId = $value['sender_id'];
+						$facebook_id = $value['sender_id'];
 						$parentId = $value['parent_id'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($senderId);
+						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
 						$action = 'fb' . $item;
 					}
 				}
 			}
 		}
-		return array('pb_player_id' => $pb_player_id, 
+		return array('pb_player_id' => $pb_player_id,
+					 'facebook_id' => $facebook_id,
 					 'client_id' => $client_id,
 					 'site_id' => $site_id,
 					 'action' => $action,
