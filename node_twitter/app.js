@@ -3,7 +3,7 @@
 var fs = require('fs');
 
 var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+    key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
 	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
@@ -36,7 +36,7 @@ var twit = new twitter({
 
 var userIndex = [];
 var rank = [];
-var top;
+var topPlayers = [];
 var tweetCount = 0;
 
 // var TRACKING = '#facebook,#webwedth,#wwth12,#wwth';
@@ -58,7 +58,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 		//console.log(data.user.profile_image_url);
 		console.log(data.text);
 
-		if (userIndex[data.user.id_str] == undefined) {
+		if (userIndex[data.user.id_str] === undefined) {
 			userIndex[data.user.id_str] = rank.length;
 			rank.push({'user': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0, 'tweet':data.text});
 			io.sockets.emit('totalplayers', {'count':rank.length});
@@ -71,10 +71,10 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 		}
 		tweetCount++;
 
-		top = (rank.length > LEADERBOARD_SIZE) ? rank.slice(0, LEADERBOARD_SIZE) : rank;
+		topPlayers = (rank.length > LEADERBOARD_SIZE) ? rank.slice(0, LEADERBOARD_SIZE) : rank;
 
 		console.log('total tweets: ' + tweetCount + " total players: " + rank.length);
-		io.sockets.emit('rank', top);
+		io.sockets.emit('rank', topPlayers);
 		io.sockets.emit('totaltweets', {'count':tweetCount});
 
 		if(tweetCount >= RESET_EVERY_N_TWEET)
@@ -89,5 +89,5 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 io.sockets.on('connection', function(socket){
 	socket.emit('totaltweets', {'count':tweetCount});
 	socket.emit('totalplayers', {'count':rank.length});
-	socket.emit('rank', top);
+	socket.emit('rank', topPlayers);
 });
