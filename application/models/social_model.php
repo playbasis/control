@@ -97,11 +97,17 @@ class Social_model extends CI_Model{
 	
 	public function sendFacebookNotification($facebook_id, $message, $href)
 	{
+		$userId = $this->facebook->getUser();
+		if($facebook_id != $userId){
+			echo 'offline player';
+			return null;
+		}
+		
 		$accountsData = null;
 		try{
 			$accountsData = $this->facebook->api('/' . $facebook_id . '/accounts');
 		}catch(FacebookApiException $e){
-			echo 'failed to get access token';
+			echo 'failed to get access token: ' . json_encode($e);
 			return null;
 		}
 		if(!$accountsData){
@@ -118,7 +124,7 @@ class Social_model extends CI_Model{
 				$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', 
 					array('access_token' => $accessToken, 'href' => $href, 'template' => $message));
 			}catch(FacebookApiException $e){
-				echo 'failed to send notification';
+				echo 'failed to send notification: ' . json_encode($e);
 				return null;
 			}
 			return $result;
