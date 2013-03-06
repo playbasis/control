@@ -107,7 +107,7 @@ class Social_model extends CI_Model{
 			echo 'token: ' . $this->facebook->getAccessToken();
 			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => $message));
 		}catch(FacebookApiException $e){
-			echo 'cant send notification: ' . json_encode($e);
+			echo 'cant send notification: ' . json_encode($e->getResult());
 			return null;
 		}
 		echo 'sent';
@@ -118,7 +118,7 @@ class Social_model extends CI_Model{
 		try{
 			$accountsData = $this->facebook->api('/' . $facebook_id . '/accounts');
 		}catch(FacebookApiException $e){
-			echo 'failed to get access token: ' . json_encode($e);
+			echo 'failed to get access token: ' . json_encode($e->getResult());
 			return null;
 		}
 		if(!$accountsData){
@@ -135,7 +135,7 @@ class Social_model extends CI_Model{
 				$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', 
 					array('access_token' => $accessToken, 'href' => $href, 'template' => $message));
 			}catch(FacebookApiException $e){
-				echo 'failed to send notification: ' . json_encode($e);
+				echo 'failed to send notification: ' . json_encode($e->getResult());
 				return null;
 			}
 			return $result;
