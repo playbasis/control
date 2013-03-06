@@ -14,6 +14,8 @@ class Playbasis extends CI_Controller{
 	public function fb(){
 		$this->load->view('playbasis/fb');
 
+		$this->social_model->sendFacebookNotification('802465011', 'notified', '');
+
 		/*////// Test handling signed_request ///////
 		
 		if ($_REQUEST) {
