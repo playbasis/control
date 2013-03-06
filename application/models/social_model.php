@@ -101,11 +101,13 @@ class Social_model extends CI_Model{
 		try{
 			$accountsData = $this->facebook->api('/' . $facebook_id . '/accounts');
 		}catch(FacebookApiException $e){
+			echo 'failed to get access token';
 			return null;
 		}
-		if(!$accountsData)
+		if(!$accountsData){
+			echo 'failed to get account data';
 			return null;
-		
+		}
 		foreach($accountsData['data'] as $account){
 			if($account['id'] != APP_ID)
 				continue;
@@ -116,10 +118,12 @@ class Social_model extends CI_Model{
 				$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', 
 					array('access_token' => $accessToken, 'href' => $href, 'template' => $message));
 			}catch(FacebookApiException $e){
+				echo 'failed to send notification';
 				return null;
 			}
 			return $result;
 		}
+		echo 'failed to find token for app';
 		return null;
 	}
 	
