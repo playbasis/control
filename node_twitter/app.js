@@ -54,13 +54,14 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 
 		console.log('---------- tweet tweet ----------');
 		console.log(data.user.name);
+		console.log(data.user.screen_name);
 		//console.log(data.user.id_str);
 		//console.log(data.user.profile_image_url);
 		console.log(data.text);
 
 		if (userIndex[data.user.id_str] === undefined) {
 			userIndex[data.user.id_str] = rank.length;
-			rank.push({'user': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0, 'tweet':data.text});
+			rank.push({'user': data.user.screen_name, 'name': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0, 'tweet':data.text});
 			io.sockets.emit('totalplayers', {'count':rank.length});
 		}
 		rank[userIndex[data.user.id_str]].score += 1;
