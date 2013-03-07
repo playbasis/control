@@ -27,6 +27,18 @@ class Social_model extends CI_Model{
 	
 	public function processFacebookData($changedData){
 		
+		
+		$this->db->insert('playbasis_action_log',
+			array ( 'pb_player_id'=> 0,
+					'client_id'=> 0,
+					'site_id'=> 0,
+					'action_id'=> 0,
+					'action_name'=> 'fb',
+					'object_Info'=> json_encode($changedData),
+					'date_added'=>date('Y-m-d H:i:s'),
+					'date_modified'=>date('Y-m-d H:i:s')));
+		
+		
 		$pb_player_id = 0;
 		$facebook_id = 0;
 		$client_id = 0;
