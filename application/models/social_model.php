@@ -561,9 +561,9 @@ sample data from facebook
 {
     "id_str": "309585986453639169",
     "user": {
-        "screen_name": "vipulananda",
-        "name": "Vipulananda",
-        "id_str": "9909452",
+        "screen_name": "eddieplaybasis",
+        "name": "eddie.playbasis",
+        "id_str": "1223610780",
         "profile_image_url": "http://a0.twimg.com/profile_images/2189725547/vipul03-light_normal.jpg"
     },
     "text": "#Facebook News Feed Draws More Criticism http://t.co/WvjPpfvWpf"
