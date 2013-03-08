@@ -3,17 +3,17 @@
 var fs = require('fs');
 
 var options = {
-	//key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	//cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	//ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
 	rejectUnauthorized: false
 };
 
 var twitter = require('ntwitter')
 ,	request = require('request')
-//,	app = require('https').createServer(options, handler)
-,	app = require('http').createServer(handler);
+,	app = require('https').createServer(options, handler)
+//,	app = require('http').createServer(handler);
 
 app.listen(8080);
 
@@ -35,9 +35,9 @@ var twit = new twitter({
 	access_token_secret: '66Tmt1uAObidzLUS86rwjnCrkT4n0l9w5XcklizOQ'
 });
 
-var TRACKING = '#pbapp';
-var engineUrl = 'http://localhost/api/Engine/rule/twitter';
-//var engineUrl = 'https://api.pbapp.net/Engine/rule/twitter';
+var TRACKING = '#pbapp,#playbasis';
+//var engineUrl = 'http://localhost/api/Engine/rule/twitter';
+var engineUrl = 'https://api.pbapp.net/Engine/rule/twitter';
 
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 	stream.on('data', function(data){
