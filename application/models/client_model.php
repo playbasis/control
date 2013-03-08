@@ -36,11 +36,9 @@ class Client_model extends CI_Model{
 		$this->db->where(array('client_id'=>$clientData['client_id'],'site_id'=>$clientData['site_id'],'name'=>$clientData['action_name']));
 		
 		$result = $this->db->get('playbasis_action_to_client');
-		
-		assert(count($result) == 1);
 		$id = $result->row_array();
-		
-		return $id['action_id'];
+
+		return ($id) ? $id['action_id'] : 0;
 	}
 	
 	//get action configuration from all rule that relate to site id & client id
