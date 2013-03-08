@@ -25,6 +25,42 @@ class Social_model extends CI_Model{
 		$this->facebook = new Facebook($config);
 	}
 	
+	public function processTwitterData($tweetData){
+		
+		$twitter_id = $tweetData['user']['id_str'];
+		$action = 'tweet';
+		$message = $tweetData['text'];
+		
+		$pb_player_id = 0;
+		$client_id = 0;
+		$site_id = 0;
+		$sites = array();
+		$dupeSites = array();
+
+		preg_match_all("/(#\w+)/", $message, $matches);
+		foreach($matches[0] as $hashtag){
+			
+			$client = $this->getClientFromHashTag($hashtag);
+			if(!$client)
+				continue;
+			
+			$client_id = $client['client_id'];
+			$site_id = $client['site_id'];
+			$pb_player_id = $this->getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id);
+			
+			if(!$pb_player_id || isset($dupeSites[$site_id]))
+				continue;
+			$dupeSites[$site_id] = true;
+			array_push($sites, array('pb_player_id' => $pb_player_id,
+									 'client_id' => $client_id,
+									 'site_id' => $site_id));
+		}
+		return array('twitter_id' => $twitter_id,
+					 'action' => $action,
+					 'message' => $message,
+					 'sites' => $sites);
+	}
+	
 	public function processFacebookData($changedData){
 		
 		
@@ -54,6 +90,8 @@ class Social_model extends CI_Model{
 				$changes = $entry['changes'];
 				$id = $entry['id'];
 				$client = $this->getClientFromFacebookPageId($id);
+				if(!$client)
+					continue;
 				$client_id = $client['client_id'];
 				$site_id = $client['site_id'];
 				
@@ -69,31 +107,37 @@ class Social_model extends CI_Model{
 					if($item == 'status' && $verb == 'add'){
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
 						$data = $this->getFacebookPostData($postId);
-						$facebook_id = $data['from_id'];
-						$message = $data['message'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
+						if($data){	
+							$facebook_id = $data['from_id'];
+							$message = $data['message'];
+							$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
+						}
 						$action = 'fb' . $item;
 					}
 					else if($item == 'post' && $verb == 'add'){
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
 						$data = $this->getFacebookPostData($postId);
-						$facebook_id = $data['from_id'];
-						$message = $data['message'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
+						if($data){
+							$facebook_id = $data['from_id'];
+							$message = $data['message'];
+							$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
+						}
 						$action = 'fb' . $item;
 					}
 					else if($item == 'comment' && $verb == 'add'){
 						$facebook_id = $value['sender_id'];
 						$commentId = $this->formatFacebookCommentId($value['comment_id'], $value['parent_id'], $id);
 						$data = $this->getFacebookCommentData($commentId);
-						$message = $data['message'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
+						if($data){
+							$message = $data['message'];
+						}
+						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
 						$action = 'fb' . $item;
 					}
 					else if($item == 'like' && $verb == 'add'){
 						$facebook_id = $value['sender_id'];
 						$parentId = $value['parent_id'];
-						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id);
+						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
 						$action = 'fb' . $item;
 					}
 				}
@@ -154,25 +198,25 @@ class Social_model extends CI_Model{
 		return $result->row_array();
 	}
 	
-	public function getPBPlayerIdFromFacebookId($facebook_id){
+	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id){
 		
 		if(!is_string($facebook_id))
 			$facebook_id = $this->bigIntToString($facebook_id);
 		
 		$this->db->select('pb_player_id');
-		$this->db->where('facebook_id', $facebook_id);
+		$this->db->where(array('facebook_id' => $facebook_id, 'client_id' => $client_id, 'site_id' => $site_id));
 		$result = $this->db->get('playbasis_player');
 		$result = $result->row_array();
-		return ($result) ? $result['pb_player_id'] : false;
+		return ($result) ? $result['pb_player_id'] : 0;
 	}
 	
-	public function getPBPlayerIdFromTwitterId($twitter_id){
+	public function getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id){
 		assert(is_string($twitter_id));
 		$this->db->select('pb_player_id');
-		$this->db->where('twitter_id', $twitter_id);
+		$this->db->where(array('twitter_id' => $twitter_id, 'client_id' => $client_id, 'site_id' => $site_id));
 		$result = $this->db->get('playbasis_player');
 		$result = $result->row_array();
-		return ($result) ? $result['pb_player_id'] : false;
+		return ($result) ? $result['pb_player_id'] : 0;
 	}
 		
 	private function formatFacebookPostId($postId, $pageId){
@@ -511,6 +555,18 @@ sample data from facebook
   "created_time": "2013-02-22T12:26:09+0000", 
   "like_count": 0, 
   "user_likes": false
+}
+
+//data from a tweet (partial)
+{
+    "id_str": "309585986453639169",
+    "user": {
+        "screen_name": "vipulananda",
+        "name": "Vipulananda",
+        "id_str": "9909452",
+        "profile_image_url": "http://a0.twimg.com/profile_images/2189725547/vipul03-light_normal.jpg"
+    },
+    "text": "#Facebook News Feed Draws More Criticism http://t.co/WvjPpfvWpf"
 }
 
 */

@@ -93,20 +93,70 @@ class Engine extends REST_Controller{
 	public function rule_post($option=0){
 
 		$fbData = null;
+		$twData = null;
+		
 		if($option == 'facebook'){
 			$fbData = $this->social_model->processFacebookData($this->request->body);
 			
-			if(!$fbData['pb_player_id']){
+			if(!$fbData['pb_player_id'])
 				$this->response($this->error->setError('USER_NOT_EXIST'),200);
-				$fbData = false;
-			}
-			else if(!$fbData['action']){
+
+			if(!$fbData['action'])
 				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
-				$fbData = false;
-			}
+		}
+		else if($option == 'twitter'){
+			$twData = $this->social_model->processTwitterData($this->request->body);
 		}
 		
-		if(!$fbData){
+		if($fbData){
+			
+			//process facebook data
+			$validToken = $this->auth_model->createToken($fbData['client_id'], $fbData['site_id']);
+			if(!$validToken)
+				$this->response($this->error->setError('INVALID_TOKEN'),200);
+			
+			$pb_player_id = $fbData['pb_player_id'];
+			if($pb_player_id < 0)
+				$this->response($this->error->setError('USER_NOT_EXIST'),200);
+			
+			$actionName = $fbData['action'];
+			$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$actionName));
+			if(!$actionId)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
+
+			$postData = array();
+		}
+		else if($twData){
+			
+			//proces twitter data
+			$apiResult = null;
+			foreach($twData['sites'] as $site){
+				
+				$validToken = $this->auth_model->createToken($site['client_id'], $site['site_id']);
+				if(!$validToken)
+					continue;
+				
+				$pb_player_id = $site['pb_player_id'];
+				if($pb_player_id < 0)
+					continue;
+				
+				$actionName = $twData['action'];
+				$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$actionName));
+				if(!$actionId)
+					continue;
+				
+				$postData = array();
+				
+				//misc data  : use for log and process any jigsaws
+				$input = array_merge($postData,$validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));
+				// $input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
+				
+				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+			}
+			$this->response($this->resp->setRespond($apiResult),200);
+		}
+		else{
+			//process regular data
 			$required = $this->input->checkParam(array('token'));
 			if($required)
 				$this->response($this->error->setError('TOKEN_REQUIRED',$required),200);
@@ -136,51 +186,32 @@ class Engine extends REST_Controller{
 			
 			$postData = $this->input->post();
 		}
-		else{
-			
-			$validToken = $this->auth_model->createToken($fbData['client_id'], $fbData['site_id']);
-			if(!$validToken)
-				$this->response($this->error->setError('INVALID_TOKEN'),200);
-			
-			$pb_player_id = $fbData['pb_player_id'];
-			if($pb_player_id < 0)
-				$this->response($this->error->setError('USER_NOT_EXIST'),200);
-			
-			$actionName = $fbData['action'];
-			$actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$actionName));
-			if(!$actionId)
-				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
-
-			$postData = array();
-		}
-		//get input data from POST
 		
 		//misc data  : use for log and process any jigsaws
 		$input = array_merge($postData,$validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));
 		// $input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
-		
-		
-
+	
+		$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+		$this->response($this->resp->setRespond($apiResult),200);
+	}
+	
+	private function processRule($input, $validToken, $fbData, $twData){
 
 		//track action
 		$input['action_log_id'] = $this->tracker_model->trackAction($input);
-		
 
 		//get rule related to action id
-		$ruleSet = $this->client_model->getRuleSetByActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_id'=>$actionId));
-		
+		$ruleSet = $this->client_model->getRuleSetByActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_id'=>$input['action_id']));
 			
 		//result array
-		$apiResult = array('events'=>array());		
-					
-						
+		$apiResult = array('events'=>array());
+
 		if(!$ruleSet){
 			//log jigsaw
 			$this->client_model->log($input);
-			$this->response($this->resp->setRespond($apiResult),200);
+			return $apiResult; //$this->response($this->resp->setRespond($apiResult),200);
 		}
 			
-		//var_dump($ruleSet);	
 		foreach($ruleSet as $rule){
 			$input['rule_id'] = $rule['rule_id'];
 			$input['rule_name'] = $rule['name'];
@@ -318,11 +349,9 @@ class Engine extends REST_Controller{
 						break;
 					}
 				}
-				
-			}//foreach jigsaw
-			
-		}//foreach rule
-		$this->response($this->resp->setRespond($apiResult),200);	
+			}
+		}
+		return $apiResult; //$this->response($this->resp->setRespond($apiResult),200);	
 	}
 	
 }
