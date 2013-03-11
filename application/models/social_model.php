@@ -23,9 +23,13 @@ class Social_model extends CI_Model{
 		$config['fileUpload'] = false; // optional
 
 		$this->facebook = new Facebook($config);
+		
+		$this->load->library('mongo_db');
 	}
 	
 	public function processTwitterData($tweetData){
+		
+		$this->mongo_db->insert('twitter_log', array_merge($tweetData, array('date_added'=>date('Y-m-d H:i:s'), 'date_modified'=>date('Y-m-d H:i:s'))));
 		
 		$twitter_id = $tweetData['user']['id_str'];
 		$action = 'tweet';
@@ -63,17 +67,7 @@ class Social_model extends CI_Model{
 	
 	public function processFacebookData($changedData){
 		
-		
-		//$this->db->insert('playbasis_action_log',
-		//	array ( 'pb_player_id'=> 0,
-		//			'client_id'=> 0,
-		//			'site_id'=> 0,
-		//			'action_id'=> 0,
-		//			'action_name'=> 'fb',
-		//			'object_Info'=> json_encode($changedData),
-		//			'date_added'=>date('Y-m-d H:i:s'),
-		//			'date_modified'=>date('Y-m-d H:i:s')));
-		
+		$this->mongo_db->insert('facebook_log', array_merge($changedData, array('date_added'=>date('Y-m-d H:i:s'), 'date_modified'=>date('Y-m-d H:i:s'))));
 		
 		$pb_player_id = 0;
 		$facebook_id = 0;
