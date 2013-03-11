@@ -22,21 +22,6 @@ class Facebook extends REST_Controller{
 	}
 	
 	public function realtimeupdate_post(){
-		
-		$rawFacebookData = $this->request->body;
-		$data = $this->social_model->processFacebookData($rawFacebookData);
-		$objectInfo = array('message' => $data['message'],
-							'raw_data' => $rawFacebookData);
-		$this->db->insert('playbasis_action_log',
-						  array('pb_player_id'=> $data['pb_player_id'],
-								'client_id'=> $data['client_id'],
-								'site_id'=> $data['site_id'],
-								'action_id'=> 0,
-								'action_name'=> $data['action'],
-								'object_Info'=> serialize($objectInfo),
-								'date_added'=>date('Y-m-d H:i:s'),
-								'date_modified'=>date('Y-m-d H:i:s')));
-						
-		$this->response($data, 200);
+		echo $this->request->body;
 	}
 }
