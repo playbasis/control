@@ -363,7 +363,7 @@ class Player extends REST_Controller{
 				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
 			}
 
-			$actions['action'] =  $this->player_model->getLastestActionPerform(array_merge($validToken,array('pb_player_id'=>$pb_player_id)));		
+			$actions['action'] =  $this->player_model->getLastActionPerform(array_merge($validToken,array('pb_player_id'=>$pb_player_id)));		
 		}
 
 		$this->response($this->resp->setRespond($actions),200);
