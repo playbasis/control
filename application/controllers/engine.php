@@ -19,7 +19,7 @@ class Engine extends REST_Controller{
 		
 
 		//library
-
+		$this->load->library('mongo_db');
 
 
 		//config
@@ -93,6 +93,8 @@ class Engine extends REST_Controller{
 	public function rule_post($option=0){
 
 		$this->benchmark->mark('engine_rule_start');
+		
+		$this->mongo_db->insert('rule_log', array('option'=>$option, 'date_added'=>date('Y-m-d H:i:s'), 'date_modified'=>date('Y-m-d H:i:s')));
 		
 		$fbData = null;
 		$twData = null;
