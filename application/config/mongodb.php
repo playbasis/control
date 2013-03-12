@@ -18,8 +18,8 @@
 
 $config['default']['mongo_hostbase'] = '46.137.248.96:27017';
 $config['default']['mongo_database'] = 'pbapp';
-$config['default']['mongo_username'] = '';//'admin';
-$config['default']['mongo_password'] = '';//'pl@yb@sis';
+$config['default']['mongo_username'] = 'admin';
+$config['default']['mongo_password'] = 'adminplaybasis';
 $config['default']['mongo_persist']  = TRUE;
 $config['default']['mongo_persist_key']	 = 'ci_persist';
 $config['default']['mongo_replica_set']  = FALSE;
