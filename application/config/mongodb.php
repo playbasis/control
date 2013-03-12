@@ -16,7 +16,7 @@
  * ['mongo_host_db_flag']   If running in auth mode and the user does not have global read/write then set this to true
  */
 
-$config['default']['mongo_hostbase'] = 'pbapp.net:27017';
+$config['default']['mongo_hostbase'] = '46.137.248.96:27017';
 $config['default']['mongo_database'] = 'pbapp';
 $config['default']['mongo_username'] = 'admin';
 $config['default']['mongo_password'] = 'pl@yb@sis';
