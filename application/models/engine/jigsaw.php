@@ -4,8 +4,7 @@ class jigsaw extends CI_Model{
 	public function __construct(){
 		parent::__construct();
 
-		//load model
-
+		$this->config->load('playbasis');
 	}
 	
 	//action jigsaw
@@ -91,18 +90,19 @@ class jigsaw extends CI_Model{
 		assert($input['jigsaw_id']);
 		
 		//reset consider
-		$this->db->select('input,date_added');
-		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_jigsaw_log');
+		//$this->db->select('input,date_added');
+		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		//$this->db->order_by('date_added','desc');
+		//$result = $this->db->get('playbasis_jigsaw_log');
+		$result = $this->getMostRecentJigsaw($input, array('input','date_added'), 'input,date_added');
 		
-		if(!$result->row_array()){
+		if(!$result){//->row_array()){
 			$exInfo['remaining_counter'] = (int)$config['counter_value'] - 1;
 			$exInfo['remaining_time'] = (int)$config['interval'];
 			return false;
 		}
 
-		$result = $result->row_array();
+		//$result = $result->row_array();
 		$timeNow = date('Y-m-d H:i:s');		
 		$log 		= unserialize($result['input']);
 		
@@ -172,12 +172,13 @@ class jigsaw extends CI_Model{
 		assert($input['rule_id']);
 		assert($input['jigsaw_id']);
 
-		$this->db->select('input,date_added');
-		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_jigsaw_log');
+		//$this->db->select('input,date_added');
+		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		//$this->db->order_by('date_added','desc');
+		//$result = $this->db->get('playbasis_jigsaw_log');
+		$result = $this->getMostRecentJigsaw($input, array('input','date_added'), 'input,date_added');
 
-		if(!$result->row_array()){
+		if(!$result){//->row_array()){
 			$exInfo['remaining_cooldown'] = (int)$config['cooldown'];
 			return true;
 		}
@@ -187,7 +188,7 @@ class jigsaw extends CI_Model{
 		// 	'date_added'	=> '2013-01-01 08:00:00',
 		// );
 
-		$result = $result->row_array();
+		//$result = $result->row_array();
 		$timeNow = /*'2013-01-01 08:03:00';*/ date('Y-m-d H:i:s');	
 		$log 		= unserialize($result['input']);
 		$lastTime	= $result['date_added'];	
@@ -257,12 +258,13 @@ class jigsaw extends CI_Model{
 		assert(is_array($input));
 		assert(isset($config['time_of_day']));
 		
-		$this->db->select('date_added');
-		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_jigsaw_log');
+		//$this->db->select('date_added');
+		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		//$this->db->order_by('date_added','desc');
+		//$result = $this->db->get('playbasis_jigsaw_log');
+		$result = $this->getMostRecentJigsaw($input, array('date_added'), 'date_added');
 		
-		if(!$result->num_rows()){
+		if(!$result){//->num_rows()){
 			
 			return true;
 			
@@ -273,7 +275,7 @@ class jigsaw extends CI_Model{
 			return $currentTime > $settingTime; */
 		}
 		
-		$result = $result->row_array();
+		//$result = $result->row_array();
 		$lastTime = $result['date_added'];
 				
 		$datediff = date_diff( new DateTime() , new DateTime($lastTime));
@@ -304,17 +306,18 @@ class jigsaw extends CI_Model{
 		assert(isset($config['time_of_day']));
 		assert(isset($config['day_of_week']));
 		
-		$this->db->select('input');
-		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_jigsaw_log');
+		//$this->db->select('input');
+		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		//$this->db->order_by('date_added','desc');
+		//$result = $this->db->get('playbasis_jigsaw_log');
+		$result = $this->getMostRecentJigsaw($input, array('input'), 'input');
 		
-		if(!$result->num_rows()){
+		if(!$result){//->num_rows()){
 			$exInfo['next_trigger'] = strtotime("next ".$config['day_of_week']." ".$config['time_of_day']);
 			return true;
 		}	
 		
-		$result = $result->row_array();
+		//$result = $result->row_array();
 		$logInput = unserialize($result['input']);
 		if(strtotime('now') >= $logInput['next_trigger']){
 			$exInfo['next_trigger'] = strtotime("next ".$config['day_of_week']." ".$config['time_of_day']);			
@@ -335,12 +338,13 @@ class jigsaw extends CI_Model{
 		assert(isset($config['time_of_day']));
 		assert(isset($config['date_of_month']));
 		
-		$this->db->select('input');
-		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_jigsaw_log');
+		//$this->db->select('input');
+		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		//$this->db->order_by('date_added','desc');
+		//$result = $this->db->get('playbasis_jigsaw_log');
+		$result = $this->getMostRecentJigsaw($input, array('input'), 'input');
 		
-		if(!$result->num_rows()){
+		if(!$result){//->num_rows()){
 			
 			$lastDateOfMonth = date('d',strtotime("last day of next month"));
 			$exInfo['next_trigger'] = $config['date_of_month']  > $lastDateOfMonth?	strtotime("last day of next month".$config['time_of_day']) :
@@ -348,7 +352,7 @@ class jigsaw extends CI_Model{
 			return true;
 		}	
 		
-		$result = $result->row_array();
+		//$result = $result->row_array();
 		$logInput = unserialize($result['input']);
 		if(strtotime('now') >= $logInput['next_trigger']){
 			$lastDateOfMonth = date('d',strtotime("last day of next month"));
@@ -370,12 +374,13 @@ class jigsaw extends CI_Model{
 		assert(isset($config['time_of_day']));
 		assert(isset($config['num_of_days']));
 		
-		$this->db->select('input');
-		$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		$this->db->order_by('date_added','desc');
-		$result = $this->db->get('playbasis_jigsaw_log');
+		//$this->db->select('input');
+		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		//$this->db->order_by('date_added','desc');
+		//$result = $this->db->get('playbasis_jigsaw_log');
+		$result = $this->getMostRecentJigsaw($input, array('input'), 'input');
 		
-		if(!$result->num_rows()){
+		if(!$result){//->num_rows()){
 			$currentDate = new DateTime();
 			$nextTrigger = $currentDate->modify("+".$config['num_of_days']." day");
 			assert($nextTrigger);
@@ -386,7 +391,7 @@ class jigsaw extends CI_Model{
 			return true;
 		}
 		
-		$result = $result->row_array();
+		//$result = $result->row_array();
 		$logInput = unserialize($result['input']);
 		if(time() >= $logInput['next_trigger']){
 			
@@ -402,7 +407,25 @@ class jigsaw extends CI_Model{
 		return false;
 	}
 
-
+	private function getMostRecentJigsaw($input, $fields, $fields_str){
+		
+		//$this->db->select($fields_str);
+		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+		//$this->db->order_by('date_added','desc');
+		//$result = $this->db->get('playbasis_jigsaw_log');
+		//$result = $result->row_array();
+		
+		//if($this->config->item('TEST_MONGO')){
+			
+			$this->mongo_db->select($fields);
+			$this->mongo_db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
+			$this->mongo_db->order_by(array('date_added'=>'desc'));
+			$result = $this->mongo_db->get('jigsaw_log');
+			return ($result) ? $result[0] : $result;
+				
+		//}
+		//return $result;
+	}
 
 
 
