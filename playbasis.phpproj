@@ -182,6 +182,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\pipedrive.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\playbasis.php"
     {
     "ProjRelPath" = "T"
