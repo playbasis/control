@@ -34,8 +34,8 @@ class Pipedrive extends REST_Controller{
 		if(!$person)
 			$this->response('pipedrive err: unable create person', 200);
 
-		$title = "Deal: $orgName : $userSize : $budget";
-		$result = $this->createDeal($token, $title, $person, $org);
+		$title = "Deal: $orgName : $userSize users";
+		$result = $this->createDeal($token, $title, $person, $org, $budget);
 		$this->response($result, 200);
 	}
 	
@@ -90,9 +90,16 @@ class Pipedrive extends REST_Controller{
 		return $obj['data']['id'];
 	}
 	
-	private function createDeal($token, $title, $personId, $orgId){
+	private function createDeal($token, $title, $personId, $orgId, $value){
 		
-		$data = array ('title' => $title, 'person_id' => $personId, 'org_id' => $orgId);
+		$value = $value * 30;
+		$data = array (
+					'title' => $title, 
+					'value' => $value,
+					'currency' => 'THB',
+					'user_id' => 98788,
+					'person_id' => $personId,
+					'org_id' => $orgId);
 		$opts = array (
 			'http' => array (
 					'method' => 'POST',
