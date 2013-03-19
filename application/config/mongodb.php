@@ -17,7 +17,7 @@
  */
 
 $config['default']['mongo_hostbase'] = 'pbapp.net:27017';
-$config['default']['mongo_database'] = 'pbapp';
+$config['default']['mongo_database'] = 'pbapp_prod';
 $config['default']['mongo_username'] = 'admin';
 $config['default']['mongo_password'] = 'adminplaybasis';
 $config['default']['mongo_persist']  = TRUE;
