@@ -19,7 +19,7 @@ class Auth extends REST_Controller{
 	public function index_post(){
 		
 		$required = $this->input->checkParam(array('api_key','api_secret'));
-        //test
+
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING',$required),200);
 

@@ -251,6 +251,7 @@
 	
 
 	(function(){
+        console.log('test git update');
 		//var baseURL = 'https://api.pbapp.net/',
 		//var baseURL = '//localhost/api/',
 		var baseURL = 'https://dev.pbapp.net/api/index.php/',
