@@ -19,7 +19,7 @@ class Engine extends REST_Controller{
 		
 
 		//library
-
+		$this->load->library('mongo_db');
 
 
 		//config
@@ -92,6 +92,10 @@ class Engine extends REST_Controller{
 
 	public function rule_post($option=0){
 
+		$this->benchmark->mark('engine_rule_start');
+		
+		$this->mongo_db->insert('rule_log', array('option'=>$option, 'date_added'=>date('Y-m-d H:i:s'), 'date_modified'=>date('Y-m-d H:i:s')));
+		
 		$fbData = null;
 		$twData = null;
 		
@@ -124,7 +128,8 @@ class Engine extends REST_Controller{
 			if(!$actionId)
 				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
 
-			$postData = array();
+			$input = array_merge($validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));	
+			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 		}
 		else if($twData){
 			
@@ -145,15 +150,9 @@ class Engine extends REST_Controller{
 				if(!$actionId)
 					continue;
 				
-				$postData = array();
-				
-				//misc data  : use for log and process any jigsaws
-				$input = array_merge($postData,$validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));
-				// $input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
-				
+				$input = array_merge($validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));				
 				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 			}
-			$this->response($this->resp->setRespond($apiResult),200);
 		}
 		else{
 			//process regular data
@@ -185,13 +184,13 @@ class Engine extends REST_Controller{
 				$this->response($this->error->setError('ACTION_NOT_FOUND'),200);
 			
 			$postData = $this->input->post();
+			$input = array_merge($postData,$validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));	
+			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 		}
 		
-		//misc data  : use for log and process any jigsaws
-		$input = array_merge($postData,$validToken,array('pb_player_id'=>$pb_player_id,'action_id'=>$actionId,'action_name'=>$actionName));
-		// $input = array_merge($this->input->get(),$validToken,array('pb_player_id'=>$pb_player_id),array('action_id'=>$actionId,'action_name'=>$this->input->get('action'))); //for debugging
-	
-		$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+		$this->benchmark->mark('engine_rule_end');
+		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
+
 		$this->response($this->resp->setRespond($apiResult),200);
 	}
 	

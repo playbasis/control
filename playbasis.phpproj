@@ -102,6 +102,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\config\\mongodb.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\config\\playbasis.php"
     {
     "ProjRelPath" = "T"
@@ -175,6 +179,10 @@
     "ProjRelPath" = "T"
     }
     "application\\controllers\\oauth.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\controllers\\pipedrive.php"
     {
     "ProjRelPath" = "T"
     }
@@ -275,6 +283,10 @@
     "ProjRelPath" = "T"
     }
     "application\\libraries\\index.html"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\libraries\\Mongo_db.php"
     {
     "ProjRelPath" = "T"
     }

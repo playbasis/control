@@ -126,7 +126,7 @@ class Player_model extends CI_Model{
 		return $result->result_array();
 	}
 
-	public function getLastestActionPerform($data){
+	public function getLastActionPerform($data){
 		$this->db->select('action_id,action_name,date_added AS time');
 		$this->db->where(array('pb_player_id'=>$data['pb_player_id']));
 		$this->db->order_by('date_added','DESC');
