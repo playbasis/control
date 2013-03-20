@@ -103,6 +103,7 @@ $route['Engine/rule']	= 'engine/rule/0';
 #test
 $route['test']	= 'playbasis/test';
 $route['fb'] = 'playbasis/fb';
+$route['login'] = 'playbasis/login';
 
 #dummy 
 $route['dummy/dummyPlayer/([0-9]+)/([0-9]+)']	= 'dummy/dummyPlayer/$1/$2/$3';
