@@ -506,11 +506,11 @@ class jigsaw extends CI_Model{
 			 	$inputUrl = '/';
 
 			//check query
-			if($urlFragment['query'])
+			if(isset($urlFragment['query']) && $urlFragment['query'])
 				$inputUrl.= '?'.$urlFragment['query'];
 
 			//check fragment
-			if($urlFragment['fragment'])
+			if(isset($urlFragment['fragment']) && $urlFragment['fragment'])
 				$inputUrl.= '#'.$urlFragment['fragment'];
 
 
