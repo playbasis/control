@@ -22,6 +22,7 @@ class Janrain extends REST_Controller{
 		
 		var_dump($this->input->post());
 		$host = $this->input->server('HTTP_HOST');
+		var_dump($host);
 		$client = $this->social_model->getClientFromHost($host);
 		if(!$client)
 			$this->response($this->error->setError('ACCESS_DENIED',$required),200);
