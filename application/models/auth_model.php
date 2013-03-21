@@ -74,7 +74,7 @@ class Auth_model extends CI_model{
 			return array_merge($info,$result->row_array());
 		}
 
-		return array();
+		return null;
 	}
 	
 	public function createToken($client_id, $site_id){
