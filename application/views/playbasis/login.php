@@ -6,7 +6,8 @@
     if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
     
-    janrain.settings.tokenUrl = 'https://api.pbapp.net/janrain/token';
+    //janrain.settings.tokenUrl = 'https://api.pbapp.net/janrain/token';
+	janrain.settings.tokenUrl = 'https://dev.pbapp.net/api/janrain/token';
 	//janrain.settings.tokenUrl = 'http://localhost/api/janrain/token';
 
     function isReady() { janrain.ready = true; };
