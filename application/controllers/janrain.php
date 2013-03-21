@@ -15,6 +15,7 @@ class Janrain extends REST_Controller{
 		$this->load->model('tracker_model');
 		$this->load->model('tool/utility','utility');
 		$this->load->model('tool/node_stream','node');
+		$this->load->model('tool/error','error');
 	}
 		
 	public function token_post(){
