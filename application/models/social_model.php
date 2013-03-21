@@ -1,86 +1,81 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
-
-require APPPATH.'/libraries/facebook-php-sdk/facebook.php';
-
-define('APP_ID','421530621269210');
-define('APP_SECRET','6544951f29daa3afe9c7ad4da7b3d88b');
-define('APP_NAMESPACE','api_pbapp');
-define('APP_PERMISSION','publish_actions,manage_notifications');
-
-class Social_model extends CI_Model{
-	
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+require APPPATH . '/libraries/facebook-php-sdk/facebook.php';
+define('APP_ID', '421530621269210');
+define('APP_SECRET', '6544951f29daa3afe9c7ad4da7b3d88b');
+define('APP_NAMESPACE', 'api_pbapp');
+define('APP_PERMISSION', 'publish_actions,manage_notifications');
+class Social_model extends CI_Model
+{
 	private $facebook = null;
-	
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
-
 		$this->load->model('player_model');
 		$this->load->model('client_model');
-		
 		$config = array();
 		$config['appId'] = APP_ID;
 		$config['secret'] = APP_SECRET;
 		$config['fileUpload'] = false; // optional
-
 		$this->facebook = new Facebook($config);
-		
 		$this->load->library('mongo_db');
 	}
-	
-	public function processTwitterData($tweetData){
-		
-		$this->mongo_db->insert('twitter_log', array_merge($tweetData, array('date_added'=>date('Y-m-d H:i:s'), 'date_modified'=>date('Y-m-d H:i:s'))));
-		
+	public function processTwitterData($tweetData)
+	{
+		$this->mongo_db->insert('twitter_log', array_merge($tweetData, array(
+			'date_added' => date('Y-m-d H:i:s'),
+			'date_modified' => date('Y-m-d H:i:s')
+			)));
 		$twitter_id = $tweetData['user']['id_str'];
 		$action = 'tweet';
 		$message = $tweetData['text'];
-		
 		$pb_player_id = 0;
 		$client_id = 0;
 		$site_id = 0;
 		$sites = array();
 		$dupeSites = array();
-
 		preg_match_all("/(#\w+)/", $message, $matches);
-		foreach($matches[0] as $hashtag){
-			
+		foreach($matches[0] as $hashtag)
+		{
 			$client = $this->getClientFromHashTag($hashtag);
 			if(!$client)
 				continue;
-			
 			$client_id = $client['client_id'];
 			$site_id = $client['site_id'];
 			$pb_player_id = $this->getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id);
-			
 			if(!$pb_player_id || isset($dupeSites[$site_id]))
 				continue;
 			$dupeSites[$site_id] = true;
-			array_push($sites, array('pb_player_id' => $pb_player_id,
-									 'client_id' => $client_id,
-									 'site_id' => $site_id));
+			array_push($sites, array(
+				'pb_player_id' => $pb_player_id,
+				'client_id' => $client_id,
+				'site_id' => $site_id
+				));
 		}
-		return array('twitter_id' => $twitter_id,
-					 'action' => $action,
-					 'message' => $message,
-					 'sites' => $sites);
+		return array(
+			'twitter_id' => $twitter_id,
+			'action' => $action,
+			'message' => $message,
+			'sites' => $sites
+			);
 	}
-	
-	public function processFacebookData($changedData){
-		
-		$this->mongo_db->insert('facebook_log', array_merge($changedData, array('date_added'=>date('Y-m-d H:i:s'), 'date_modified'=>date('Y-m-d H:i:s'))));
-		
+	public function processFacebookData($changedData)
+	{
+		$this->mongo_db->insert('facebook_log', array_merge($changedData, array(
+			'date_added' => date('Y-m-d H:i:s'),
+			'date_modified' => date('Y-m-d H:i:s')
+			)));
 		$pb_player_id = 0;
 		$facebook_id = 0;
 		$client_id = 0;
 		$site_id = 0;
 		$action = '';
 		$message = '';
-		
-		if($changedData['object'] == "page"){
-			
+		if($changedData['object'] == "page")
+		{
 			$entries = $changedData['entry'];
-			foreach($entries as $entry){
-				
+			foreach($entries as $entry)
+			{
 				$changes = $entry['changes'];
 				$id = $entry['id'];
 				$client = $this->getClientFromFacebookPageId($id);
@@ -88,47 +83,51 @@ class Social_model extends CI_Model{
 					continue;
 				$client_id = $client['client_id'];
 				$site_id = $client['site_id'];
-				
-				foreach($changes as $changed){
-					
+				foreach($changes as $changed)
+				{
 					if($changed['field'] != 'feed')
 						continue;
-					
 					$value = $changed['value'];
 					$item = $value['item'];
 					$verb = $value['verb'];
-					
-					if($item == 'status' && $verb == 'add'){
+					if($item == 'status' && $verb == 'add')
+					{
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
 						$data = $this->getFacebookPostData($postId);
-						if($data){	
+						if($data)
+						{
 							$facebook_id = $data['from_id'];
 							$message = $data['message'];
 							$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
 						}
 						$action = 'fb' . $item;
 					}
-					else if($item == 'post' && $verb == 'add'){
+					else if($item == 'post' && $verb == 'add')
+					{
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
 						$data = $this->getFacebookPostData($postId);
-						if($data){
+						if($data)
+						{
 							$facebook_id = $data['from_id'];
 							$message = $data['message'];
 							$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
 						}
 						$action = 'fb' . $item;
 					}
-					else if($item == 'comment' && $verb == 'add'){
+					else if($item == 'comment' && $verb == 'add')
+					{
 						$facebook_id = $value['sender_id'];
 						$commentId = $this->formatFacebookCommentId($value['comment_id'], $value['parent_id'], $id);
 						$data = $this->getFacebookCommentData($commentId);
-						if($data){
+						if($data)
+						{
 							$message = $data['message'];
 						}
 						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
 						$action = 'fb' . $item;
 					}
-					else if($item == 'like' && $verb == 'add'){
+					else if($item == 'like' && $verb == 'add')
+					{
 						$facebook_id = $value['sender_id'];
 						$parentId = $value['parent_id'];
 						$pb_player_id = $this->getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id);
@@ -137,127 +136,133 @@ class Social_model extends CI_Model{
 				}
 			}
 		}
-		return array('pb_player_id' => $pb_player_id,
-					 'facebook_id' => $facebook_id,
-					 'client_id' => $client_id,
-					 'site_id' => $site_id,
-					 'action' => $action,
-					 'message' => $message);
+		return array(
+			'pb_player_id' => $pb_player_id,
+			'facebook_id' => $facebook_id,
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'action' => $action,
+			'message' => $message
+			);
 	}
-	
 	public function getAppAccessToken()
 	{
-		$app_token_url = "https://graph.facebook.com/oauth/access_token?"
-			. "client_id=" . APP_ID
-			. "&client_secret=" . APP_SECRET 
-			. "&grant_type=client_credentials";
-
+		$app_token_url = "https://graph.facebook.com/oauth/access_token?" . "client_id=" . APP_ID . "&client_secret=" . APP_SECRET . "&grant_type=client_credentials";
 		$response = file_get_contents($app_token_url);
 		$params = null;
 		parse_str($response, $params);
-
 		return $params['access_token'];
 	}
-	
 	public function sendFacebookNotification($facebook_id, $message, $href)
 	{
 		$result = null;
-		try{
+		try
+		{
 			$appAccessToken = $this->getAppAccessToken();
 			$this->facebook->setAccessToken($appAccessToken);
-			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array('href' => $href, 'template' => '@[' . $facebook_id . '] ' . $message));
-		}catch(FacebookApiException $e){
+			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array(
+				'href' => $href,
+				'template' => '@[' . $facebook_id . '] ' . $message
+				));
+		}
+		catch(FacebookApiException $e)
+		{
 			error_log(json_encode($e->getResult()));
 			return null;
 		}
 		return $result;
 	}
-	
-	public function getClientFromFacebookPageId($facebook_page_id){
-		
+	public function getClientFromFacebookPageId($facebook_page_id)
+	{
 		if(!is_string($facebook_page_id))
 			$facebook_page_id = $this->bigIntToString($facebook_page_id);
-		
 		$this->db->select('client_id,site_id');
 		$this->db->where('facebook_page_id', $facebook_page_id);
 		$result = $this->db->get('playbasis_facebook_page_to_client');
 		return $result->row_array();
 	}
-	
-	public function getClientFromHashTag($hashtag){
+	public function getClientFromHashTag($hashtag)
+	{
 		assert(is_string($hashtag));
 		$this->db->select('client_id,site_id');
 		$this->db->where('hashtag', $hashtag);
 		$result = $this->db->get('playbasis_hashtag_to_client');
 		return $result->row_array();
 	}
-	
-	public function getClientFromHost($host){
+	public function getClientFromHost($host)
+	{
 		assert(is_string($host));
 		$this->db->select('client_id,site_id');
 		$this->db->where('host', $host);
 		$result = $this->db->get('playbasis_hosts_to_client');
 		return $result->row_array();
 	}
-	
-	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id){
-		
+	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id)
+	{
 		if(!is_string($facebook_id))
 			$facebook_id = $this->bigIntToString($facebook_id);
-		
 		$this->db->select('pb_player_id');
-		$this->db->where(array('facebook_id' => $facebook_id, 'client_id' => $client_id, 'site_id' => $site_id));
+		$this->db->where(array(
+			'facebook_id' => $facebook_id,
+			'client_id' => $client_id,
+			'site_id' => $site_id
+			));
 		$result = $this->db->get('playbasis_player');
 		$result = $result->row_array();
 		return ($result) ? $result['pb_player_id'] : 0;
 	}
-	
-	public function getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id){
+	public function getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id)
+	{
 		assert(is_string($twitter_id));
 		$this->db->select('pb_player_id');
-		$this->db->where(array('twitter_id' => $twitter_id, 'client_id' => $client_id, 'site_id' => $site_id));
+		$this->db->where(array(
+			'twitter_id' => $twitter_id,
+			'client_id' => $client_id,
+			'site_id' => $site_id
+			));
 		$result = $this->db->get('playbasis_player');
 		$result = $result->row_array();
 		return ($result) ? $result['pb_player_id'] : 0;
 	}
-		
-	private function formatFacebookPostId($postId, $pageId){
-		
+	private function formatFacebookPostId($postId, $pageId)
+	{
 		if(!is_string($postId))
 			$postId = $this->bigIntToString($postId);
 		if(!is_string($pageId))
 			$pageId = $this->bigIntToString($pageId);
-		
 		$postIds = explode("_", $postId);
-		if(count($postIds) == 1){
+		if(count($postIds) == 1)
+		{
 			$postId = $pageId . '_' . $postId;
 		}
 		return $postId;
 	}
-	
-	private function formatFacebookCommentId($commentId, $postId, $pageId){
-		
+	private function formatFacebookCommentId($commentId, $postId, $pageId)
+	{
 		if(!is_string($commentId))
 			$commentId = $this->bigIntToString($commentId);
 		if(!is_string($postId))
 			$postId = $this->bigIntToString($postId);
 		if(!is_string($pageId))
 			$pageId = $this->bigIntToString($pageId);
-		
 		$commentIds = explode("_", $commentId);
-		if(count($commentIds) == 1){
+		if(count($commentIds) == 1)
+		{
 			$parentId = formatPostId($postId, $pageId);
 			$commentId = $parentId . '_' . $commentId;
 		}
 		return $commentId;
 	}
-	
-	private function getFacebookPostData($postId){
+	private function getFacebookPostData($postId)
+	{
 		assert(is_string($postId));
 		$result = array();
-		try {
+		try
+		{
 			$postData = $this->facebook->api('/' . $postId);
-		} catch(FacebookApiException $e) {
+		}
+		catch(FacebookApiException $e)
+		{
 			return $result;
 		}
 		$result['from_name'] = $postData['from']['name'];
@@ -265,56 +270,50 @@ class Social_model extends CI_Model{
 		$result['message'] = $postData['message'];
 		return $result;
 	}
-	
-	private function getFacebookCommentData($commentId){
+	private function getFacebookCommentData($commentId)
+	{
 		return $this->getFacebookPostData($commentId);
 	}
-	
-	private function bigIntToString($number){
+	private function bigIntToString($number)
+	{
 		$numStr = serialize($number);
-		return substr($numStr, 2,-1);
+		return substr($numStr, 2, -1);
 	}
-	
 	///// from facebook doc
-	
-	public function parse_signed_request($signed_request) {
-		list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
-
+	public function parse_signed_request($signed_request)
+	{
+		list($encoded_sig, $payload) = explode('.', $signed_request, 2);
 		// decode the data
 		$sig = $this->base64_url_decode($encoded_sig);
 		$data = json_decode($this->base64_url_decode($payload), true);
-
-		if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') {
+		if(strtoupper($data['algorithm']) !== 'HMAC-SHA256')
+		{
 			error_log('Unknown algorithm. Expected HMAC-SHA256');
 			return null;
 		}
-
 		// Adding the verification of the signed_request below
 		$expected_sig = hash_hmac('sha256', $payload, APP_SECRET, $raw = true);
-		if ($sig !== $expected_sig) {
+		if($sig !== $expected_sig)
+		{
 			error_log('Bad Signed JSON signature!');
 			return null;
 		}
-
 		return $data;
 	}
-
-	private function base64_url_decode($input) {
+	private function base64_url_decode($input)
+	{
 		return base64_decode(strtr($input, '-_', '+/'));
 	}
-	
-	public function get_oauth_url(){
-		
-		$base_url	  = 'https://www.facebook.com/dialog/oauth/';
-		$client_id	  = '?client_id=' . APP_ID;
+	public function get_oauth_url()
+	{
+		$base_url = 'https://www.facebook.com/dialog/oauth/';
+		$client_id = '?client_id=' . APP_ID;
 		$redirect_uri = '&redirect_uri=' . rawurlencode('https://apps.facebook.com/' . APP_NAMESPACE . '/');
-		$scope		  = '&scope=' . APP_PERMISSION;
-		
+		$scope = '&scope=' . APP_PERMISSION;
 		$oauth_url = $base_url . $client_id . $redirect_uri . $scope;
 		return $oauth_url;
 	}
 }
-
 
 /*
 sample data from facebook
