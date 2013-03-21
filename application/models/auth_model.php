@@ -84,8 +84,11 @@ class Auth_model extends CI_model{
 		$this->db->select('domain_name,site_name');
 		$this->db->where($info);
 		$result = $this->db->get('playbasis_client_site');
-
-		return array_merge($info,$result->row_array());
+		$result = $result->row_array();
+		if($result){
+			return array_merge($info, $result);
+		}
+		return null;
 	}
 }
 ?>

@@ -192,6 +192,14 @@ class Social_model extends CI_Model{
 		return $result->row_array();
 	}
 	
+	public function getClientFromHost($host){
+		assert(is_string($host));
+		$this->db->select('client_id,site_id');
+		$this->db->where('host', $host);
+		$result = $this->db->get('playbasis_hosts_to_client');
+		return $result->row_array();
+	}
+	
 	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id){
 		
 		if(!is_string($facebook_id))
