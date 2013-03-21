@@ -83,7 +83,7 @@ class Janrain extends REST_Controller{
 		if($provider == 'Twitter'){
 			$identifier = explode('=', $profile['identifier']);
 			$identifier = $identifier[1];
-			$input['facebook_id'] = $identifier;
+			$input['twitter_id'] = $identifier;
 			echo 'twitter id: ';
 			var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromTwitterId($identifier, $client_id, $site_id);
@@ -100,6 +100,9 @@ class Janrain extends REST_Controller{
 			$input['gender'] = 0;
 			if(isset($profile['gender'])){
 				$input['gender'] = ($profile['gender'] == 'male') ? 1 : 2;
+			}
+			if(isset($profile['birthday'])){
+				$input['birth_date'] = $profile['birthday'];
 			}
 			$pb_player_id = $this->player_model->createPlayer($input);
 		}
