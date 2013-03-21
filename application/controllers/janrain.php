@@ -71,14 +71,16 @@ class Janrain extends REST_Controller{
 		
 		$input = array();
 		if($provider == 'Facebook'){
-			$identifier = explode('=', $profile['identifier'])[1];
+			$identifier = explode('=', $profile['identifier']);
+			$identifier = $identifier[1];
 			$input['facebook_id'] = $identifier;
 			echo 'facebook id: ';
 			var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromFacebookId($identifier, $client_id, $site_id);
 		}
 		if($provider == 'Twitter'){
-			$identifier = explode('=', $profile['identifier'])[1];
+			$identifier = explode('=', $profile['identifier']);
+			$identifier = $identifier[1];
 			$input['facebook_id'] = $identifier;
 			echo 'twitter id: ';
 			var_dump($identifier);
