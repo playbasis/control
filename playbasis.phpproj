@@ -162,23 +162,11 @@
     {
     "ProjRelPath" = "T"
     }
-    "application\\controllers\\facebook.php"
-    {
-    "ProjRelPath" = "T"
-    }
-    "application\\controllers\\geditor.php"
-    {
-    "ProjRelPath" = "T"
-    }
     "application\\controllers\\index.html"
     {
     "ProjRelPath" = "T"
     }
     "application\\controllers\\janrain.php"
-    {
-    "ProjRelPath" = "T"
-    }
-    "application\\controllers\\mobile.php"
     {
     "ProjRelPath" = "T"
     }
@@ -335,10 +323,6 @@
     "ProjRelPath" = "T"
     }
     "application\\models\\dummy_model.php"
-    {
-    "ProjRelPath" = "T"
-    }
-    "application\\models\\editor.php"
     {
     "ProjRelPath" = "T"
     }
