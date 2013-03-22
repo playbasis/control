@@ -8,7 +8,6 @@ class Client_model extends CI_Model
 		parent::__construct();
 		$this->config->load('playbasis');
 	}
-	//get action configuration from all rule that relate to site id & client id
 	public function getRuleSet($clientData)
 	{
 		assert($clientData);
@@ -20,7 +19,6 @@ class Client_model extends CI_Model
 		$result = $this->db->get('playbasis_rule');
 		return $result->result_array();
 	}
-	//get action id use action name
 	public function getActionId($clientData)
 	{
 		assert($clientData);
@@ -38,7 +36,6 @@ class Client_model extends CI_Model
 		$id = $result->row_array();
 		return ($id) ? $id['action_id'] : 0;
 	}
-	//get action configuration from all rule that relate to site id & client id
 	public function getRuleSetByActionId($clientData)
 	{
 		assert($clientData);
@@ -52,7 +49,6 @@ class Client_model extends CI_Model
 		$result = $this->db->get('playbasis_rule');
 		return $result->result_array();
 	}
-	//get class path relate to jigsaw
 	public function getJigsawProcessor($jigsawId)
 	{
 		assert($jigsawId);
@@ -64,7 +60,6 @@ class Client_model extends CI_Model
 		$jigsawProcessor = $result->row_array();
 		return $jigsawProcessor['class_path'];
 	}
-	//update point reward
 	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clientId, $siteId, $overrideOldValue = FALSE)
 	{
 		assert(isset($rewardId));
@@ -123,7 +118,7 @@ class Client_model extends CI_Model
 	}
 	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig)
 	{
-		//check reward available
+		//get reward id
 		$this->db->select('reward_id');
 		$this->db->where(array(
 			'client_id' => $input['client_id'],
@@ -136,7 +131,7 @@ class Client_model extends CI_Model
 		$customRewardId = isset($result['reward_id']) ? $result['reward_id'] : false;
 		if(!$customRewardId)
 		{
-			//check  client custom points
+			//reward does not exist, add new custom point where id is max(reward_id)+1
 			$this->db->select_max('reward_id');
 			$this->db->where(array(
 				'client_id' => $input['client_id'],
@@ -147,7 +142,6 @@ class Client_model extends CI_Model
 			$customRewardId = $result['reward_id'] + 1;
 			if($customRewardId < CUSTOM_POINT_START_ID)
 				$customRewardId = CUSTOM_POINT_START_ID;
-			//update client reward
 			$this->db->insert('playbasis_reward_to_client', array(
 				'reward_id' => $customRewardId,
 				'client_id' => $input['client_id'],
@@ -189,6 +183,7 @@ class Client_model extends CI_Model
 			$this->db->where('badge_id', $badgeId);
 			$this->db->update('playbasis_badge');
 		}
+		//update player badge table
 		$this->db->where(array(
 			'pb_player_id' => $pbPlayerId,
 			'badge_id' => $badgeId
@@ -274,11 +269,6 @@ class Client_model extends CI_Model
 		assert($logData['client_id']);
 		assert($logData['site_id']);
 		assert('$logData["domain_name"]');
-		//get player info 
-		//$this->db->select('first_name,last_name');
-		//$this->db->where('pb_player_id',$logData['pb_player_id']);
-		//$result = $this->db->get('playbasis_player');
-		//$result = $result->row_array();
 		if(isset($logData['input']))
 			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
 		else
