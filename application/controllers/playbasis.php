@@ -14,7 +14,7 @@ class Playbasis extends CI_Controller
 	public function fb()
 	{
 		$this->load->view('playbasis/fb');
-		/* ////// Test handling signed_request ///////
+		/*////// Test handling signed_request ///////
 		if ($_REQUEST) {
 			$signed_request = $_REQUEST['signed_request'];
 			$signed_obj = $this->social_model->parse_signed_request($signed_request);
