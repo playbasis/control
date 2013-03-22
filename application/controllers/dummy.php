@@ -11,9 +11,6 @@ class Dummy extends CI_Controller
 	}
 	public function dummyPlayer($clientId, $siteId)
 	{
-		// var_dump($clientId);
-		// var_dump($siteId);
-		// die();
 		$name = $GLOBALS['name'];
 		$picture = $GLOBALS['picture'];
 		shuffle($name);
@@ -40,7 +37,6 @@ class Dummy extends CI_Controller
 				'date_added' => $date,
 				'date_modified' => $date
 			);
-			//die();
 			$this->dummy_model->dummyAddPlayer($data);
 		}
 		echo "<h3>DONE</h3>";
@@ -81,27 +77,24 @@ class Dummy extends CI_Controller
 		$actionList = array();
 		$playerList = array();
 		$token = $this->dummy_model->getToken($configArray);
-		//check token
+		//check token, also renew token if expire
 		if(!$token)
 		{
-			//renew token if expire
 			$API = $this->dummy_model->getKeySecret($configArray);
 			$this->auth_model->generateToken(array_merge($API, $configArray));
-			//get token again
 			$token = $this->dummy_model->getToken($configArray);
 		}
-		//curl
+		//start curl
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		for($i = 0; $i < $record; $i++)
 		{
-			//init
 			if(!$actionList)
 				$actionList = $this->getAction($configArray);
 			if(!$playerList)
 				$playerList = $this->getPlayerList($configArray);
 			$player = array_shift($playerList);
-			//change system time  ## DANGER HABBIT
+			//change system time  ## DANGER ##
 			$this->makeTime();
 			$url = base_url() . "/index.php/Engine/rule";
 			$postData = array(
@@ -110,7 +103,7 @@ class Dummy extends CI_Controller
 				'url' => urlencode('http://dummysite.pb'),
 				'token' => $token
 			);
-			// set URL and other appropriate options
+			// set URL and other options
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Content-Type : application/x-www-form-urlencoded; charset=utf-8'
@@ -120,7 +113,6 @@ class Dummy extends CI_Controller
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
 			curl_setopt($ch, CURLOPT_POST, TRUE);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
-			// grab URL and pass it to the browser
 			curl_exec($ch);
 		}
 		curl_close($ch);
@@ -128,28 +120,24 @@ class Dummy extends CI_Controller
 	// route error exception
 	public function error()
 	{
-		die('Route Error,Please check URL format');
+		die('Route error, please check URL format.');
 	}
 	private function getAction($configArray)
 	{
-		return $this->dummy_model->getActionToClient($configArray); //(client_id,site_id,limit)
-		//return $actionList[mt_rand(0,count($actionList)-1)]['name'];
+		return $this->dummy_model->getActionToClient($configArray);
 	}
 	private function getPlayerList($configArray)
 	{
-		return $this->dummy_model->getRandomPlayer($configArray); //(client_id,site_id,limit)
+		return $this->dummy_model->getRandomPlayer($configArray);
 	}
 	private function makeTime()
 	{
-		// $timeStamp = strtotime('2013-01-01');
-		// $timeStamp = mt_rand(strtotime('2013-01-01'),time());
 		$timeStamp = mt_rand(strtotime('2013-01-24 00:00:00'), strtotime('2013-01-25 12:59:59'));
 		$date = date('m-d-Y', $timeStamp);
 		$time = date('H:i:s', $timeStamp);
 		shell_exec("date $date");
 		shell_exec("time $time");
 	}
-	//just info
 	public function pathInfo()
 	{
 		var_dump('BASE_PATH : ' . BASEPATH);

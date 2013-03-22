@@ -18,11 +18,9 @@ class Badge extends REST_Controller
 		));
 		if($required)
 			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		// $validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		if($badgeId)
 		{
 			//get badge by specific id
@@ -45,11 +43,9 @@ class Badge extends REST_Controller
 		));
 		if($required)
 			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		// $validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		if($collectionId)
 		{
 			//get collection by id
