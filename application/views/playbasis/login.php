@@ -44,7 +44,7 @@
     janrain.settings.share.message = "Playbasis <3 Janrain\n";
     janrain.settings.share.title = "Playbasis";
     janrain.settings.share.url = "www.playbasis.com";
-    janrain.settings.share.description = "gamifying south-east asia";
+    janrain.settings.share.description = "gamifying asia";
 
     /* _______________ can edit above this line _______________ */
 
