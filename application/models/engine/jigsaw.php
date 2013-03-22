@@ -7,15 +7,13 @@ class jigsaw extends CI_Model
 		parent::__construct();
 		$this->config->load('playbasis');
 	}
-	//action jigsaw
 	public function action($config, $input, &$exInfo = array())
 	{
 		assert($config != false);
 		assert(is_array($config));
-		//assert(isset($config['url']));
-		//validate url
 		if($config['url'])
 		{
+			//validate url
 			$input['url'] = urldecode($input['url']);
 			$exInfo['input_url'] = $input['url'];
 			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
@@ -25,7 +23,6 @@ class jigsaw extends CI_Model
 			return true;
 		}
 	}
-	//reward jigsaw
 	public function reward($config, $input, &$exInfo = array())
 	{
 		assert($config != false);
@@ -49,7 +46,6 @@ class jigsaw extends CI_Model
 				return false;
 		}
 	}
-	//reward jigsaw :: dynamic reward
 	public function customPointReward($config, $input, &$exInfo = array())
 	{
 		assert($config != false);
@@ -82,22 +78,16 @@ class jigsaw extends CI_Model
 		assert($input['pb_player_id']);
 		assert($input['rule_id']);
 		assert($input['jigsaw_id']);
-		//reset consider
-		//$this->db->select('input,date_added');
-		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		//$this->db->order_by('date_added','desc');
-		//$result = $this->db->get('playbasis_jigsaw_log');
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input',
 			'date_added'
 			), 'input,date_added');
-		if(!$result) //->row_array()){
+		if(!$result)
 		{
 			$exInfo['remaining_counter'] = (int) $config['counter_value'] - 1;
 			$exInfo['remaining_time'] = (int) $config['interval'];
 			return false;
 		}
-		//$result = $result->row_array();
 		$timeNow = date('Y-m-d H:i:s');
 		$log = unserialize($result['input']);
 		if($config['interval'] == 0) //if config time = 0 reduce counter and return false
@@ -124,7 +114,7 @@ class jigsaw extends CI_Model
 		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
 		$remainingTime = $log['remaining_time'];
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
-		if($resetUnit || $reset) //if reset start counter time and decrease counter  1 time
+		if($resetUnit || $reset) //if reset, start counter timer and decrease counter by 1
 		{
 			$exInfo['remaining_counter'] = (int) $config['counter_value'] - 1;
 			$exInfo['remaining_time'] = (int) $config['interval'];
@@ -157,25 +147,16 @@ class jigsaw extends CI_Model
 		assert($input['pb_player_id']);
 		assert($input['rule_id']);
 		assert($input['jigsaw_id']);
-		//$this->db->select('input,date_added');
-		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		//$this->db->order_by('date_added','desc');
-		//$result = $this->db->get('playbasis_jigsaw_log');
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input',
 			'date_added'
 			), 'input,date_added');
-		if(!$result) //->row_array()){
+		if(!$result)
 		{
 			$exInfo['remaining_cooldown'] = (int) $config['cooldown'];
 			return true;
 		}
-		// $result = array(
-		// 	'input'			=> 'a:2:{s:8:"cooldown";i:180;s:18:"remaining_cooldown";i:100;}',
-		// 	'date_added'	=> '2013-01-01 08:00:00',
-		// );
-		//$result = $result->row_array();
-		$timeNow = /*'2013-01-01 08:03:00';*/ date('Y-m-d H:i:s');
+		$timeNow = date('Y-m-d H:i:s');
 		$log = unserialize($result['input']);
 		$lastTime = $result['date_added'];
 		$timeDiff = (int) (strtotime($timeNow) - strtotime($lastTime));
@@ -220,7 +201,7 @@ class jigsaw extends CI_Model
 		$end = $config['end_time'];
 		$start = strtotime("1970-01-01 $start:00");
 		$end = strtotime("1970-01-01 $end:00");
-		//check range across day
+		//check time range that crosses to the next day
 		if($end < $start)
 			$end = strtotime("1970-01-02 $end:00");
 		$now = strtotime("1970-01-01 " . date('H:i') . ":00");
@@ -233,32 +214,20 @@ class jigsaw extends CI_Model
 		assert($input != false);
 		assert(is_array($input));
 		assert(isset($config['time_of_day']));
-		//$this->db->select('date_added');
-		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		//$this->db->order_by('date_added','desc');
-		//$result = $this->db->get('playbasis_jigsaw_log');
 		$result = $this->getMostRecentJigsaw($input, array(
 			'date_added'
 			), 'date_added');
-		if(!$result) //->num_rows()){
-		{
+		if(!$result)
 			return true;
-			/*$settingTime = $config['time_of_day'];
-			$settingTime = strtotime("1970-01-01 $settingTime:00");
-			$currentTime = strtotime("1970-01-01 ".date('H:i').":00");
-						
-			return $currentTime > $settingTime; */
-		}
-		//$result = $result->row_array();
 		$lastTime = $result['date_added'];
 		$datediff = date_diff(new DateTime(), new DateTime($lastTime));
-		//more than 2 day
+		//if more than 2 day
 		if($datediff->d > 1)
 			return true;
-		//same day
+		//if same day
 		if($datediff->d <= 0)
 			return false;
-		//more than 1 day judge by time
+		//if more than 1 day, according to current time
 		$settingTime = $config['time_of_day'];
 		$settingTime = strtotime("1970-01-01 $settingTime:00");
 		$currentTime = strtotime("1970-01-01 " . date('H:i') . ":00");
@@ -272,19 +241,14 @@ class jigsaw extends CI_Model
 		assert(is_array($input));
 		assert(isset($config['time_of_day']));
 		assert(isset($config['day_of_week']));
-		//$this->db->select('input');
-		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		//$this->db->order_by('date_added','desc');
-		//$result = $this->db->get('playbasis_jigsaw_log');
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
 			), 'input');
-		if(!$result) //->num_rows()){
+		if(!$result)
 		{
 			$exInfo['next_trigger'] = strtotime("next " . $config['day_of_week'] . " " . $config['time_of_day']);
 			return true;
 		}
-		//$result = $result->row_array();
 		$logInput = unserialize($result['input']);
 		if(strtotime('now') >= $logInput['next_trigger'])
 		{
@@ -302,20 +266,15 @@ class jigsaw extends CI_Model
 		assert(is_array($input));
 		assert(isset($config['time_of_day']));
 		assert(isset($config['date_of_month']));
-		//$this->db->select('input');
-		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		//$this->db->order_by('date_added','desc');
-		//$result = $this->db->get('playbasis_jigsaw_log');
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
 			), 'input');
-		if(!$result) //->num_rows()){
+		if(!$result)
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
 			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
 			return true;
 		}
-		//$result = $result->row_array();
 		$logInput = unserialize($result['input']);
 		if(strtotime('now') >= $logInput['next_trigger'])
 		{
@@ -334,14 +293,10 @@ class jigsaw extends CI_Model
 		assert(is_array($input));
 		assert(isset($config['time_of_day']));
 		assert(isset($config['num_of_days']));
-		//$this->db->select('input');
-		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		//$this->db->order_by('date_added','desc');
-		//$result = $this->db->get('playbasis_jigsaw_log');
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
 			), 'input');
-		if(!$result) //->num_rows()){
+		if(!$result)
 		{
 			$currentDate = new DateTime();
 			$nextTrigger = $currentDate->modify("+" . $config['num_of_days'] . " day");
@@ -352,7 +307,6 @@ class jigsaw extends CI_Model
 			$exInfo['next_trigger'] = $nextTrigger->getTimestamp();
 			return true;
 		}
-		//$result = $result->row_array();
 		$logInput = unserialize($result['input']);
 		if(time() >= $logInput['next_trigger'])
 		{
@@ -389,7 +343,6 @@ class jigsaw extends CI_Model
 		//}
 		//return $result;
 	}
-	//util :: badge checker
 	public function checkbadge($badgeId, $pb_player_id)
 	{
 		//get badge properties
@@ -399,7 +352,7 @@ class jigsaw extends CI_Model
 			));
 		$result = $this->db->get('playbasis_badge');
 		$badgeInfo = $result->row_array();
-		//search badge own by player
+		//search badge owned by player
 		$this->db->where(array(
 			'badge_id' => $badgeId,
 			'pb_player_id' => $pb_player_id
@@ -428,7 +381,6 @@ class jigsaw extends CI_Model
 			return true;
 		return $result['limit'] > 0;
 	}
-	//util :: url matching
 	public function matchUrl($inputUrl, $compareUrl, $isRegEx)
 	{
 		$urlFragment = parse_url($inputUrl);
@@ -437,9 +389,9 @@ class jigsaw extends CI_Model
 			$inputUrl = '/';
 		if($urlFragment['path'] == '/')
 			$inputUrl = '/';
-		if(preg_match('/\/index\.[a-zA-Z]{3,}$/', $urlFragment['path'])) // match all  "/index.*" 
+		if(preg_match('/\/index\.[a-zA-Z]{3,}$/', $urlFragment['path'])) // match all "/index.*" 
 			$inputUrl = '/';
-		if(preg_match('/\/index\.[a-zA-Z]{3,}\/$/', $urlFragment['path'])) // match all  "/index.*/" 
+		if(preg_match('/\/index\.[a-zA-Z]{3,}\/$/', $urlFragment['path'])) // match all "/index.*/" 
 			$inputUrl = '/';
 		//check query
 		if(isset($urlFragment['query']) && $urlFragment['query'])
@@ -450,27 +402,14 @@ class jigsaw extends CI_Model
 		//compare url
 		$match;
 		if($isRegEx)
-		{
 			$match = preg_match($compareUrl, $inputUrl);
-		}
 		else
-		{
 			$match = (string) $compareUrl === (string) $inputUrl;
-		}
 		return $match;
 		//e.g.
 		//inputurl domain/forum/hello-my-new-notebook
 		//input domain/forum/test1234
 		//url = domain/forum/(a-zA-Z0-9\_\-)+
 	}
-	// public function findAction($action,$client){
-	// 	assert($action != false);
-	// 	assert('is_array($client)');
-	// 	assert('!empty($client)');
-	// 	$this->db->select('action_id');
-	// 	$this->db->where(array('client_id'=>$client['client_id'],'site_id'=>$client['site_id'],'name'=>$action));
-	// 	$result = $this->db->get('playbasis_action_to_client');
-	// 	return $result->row_array(); 
-	// }
 }
 ?>
