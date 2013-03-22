@@ -6,7 +6,6 @@ class Player extends REST_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		//model
 		$this->load->model('auth_model');
 		$this->load->model('player_model');
 		$this->load->model('tracker_model');
@@ -16,10 +15,7 @@ class Player extends REST_Controller
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
-		//library
-		//config
 	}
-	//get player info
 	public function index_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -31,11 +27,9 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		//$validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
@@ -54,12 +48,11 @@ class Player extends REST_Controller
 			'date_added AS registered',
 			'birth_date'
 		));
-		//get ladt login
+		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, 'LOGOUT');
 		$this->response($this->resp->setRespond($player), 200);
 	}
-	//register player
 	public function register_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -73,14 +66,9 @@ class Player extends REST_Controller
 			'username'
 		));
 		if(!$player_id)
-		{
 			array_push($required, 'player_id');
-		}
 		if($required)
-		{
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		}
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
@@ -89,9 +77,7 @@ class Player extends REST_Controller
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id > 0)
-		{
 			$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
-		}
 		$playerInfo = array(
 			'email' => $this->input->post('email'),
 			'image' => $this->input->post('image'),
@@ -128,7 +114,6 @@ class Player extends REST_Controller
 		$this->player_model->createPlayer(array_merge($validToken, $playerInfo));
 		$this->response($this->resp->setRespond(), 200);
 	}
-	//log-in player
 	public function login_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -140,29 +125,24 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		// $validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id < 0)
-		{
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		}
-		//# TRIGGER EVENT ##
+		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('login');
-		//log event
 		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id'],
 			'pb_player_id' => $pb_player_id,
 			'action_log_id' => 0
 		));
-		//node stream
+		//publish to node stream
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'login',
@@ -170,7 +150,6 @@ class Player extends REST_Controller
 		), $validToken);
 		$this->response($this->resp->setRespond(), 200);
 	}
-	//log-out player
 	public function logout_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -182,29 +161,24 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		//$validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id < 0)
-		{
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		}
-		//# TRIGGER EVENT ##
+		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('logout');
-		//log event
 		$this->tracker_model->trackEvent('LOGOUT', $eventMessage, array(
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id'],
 			'pb_player_id' => $pb_player_id,
 			'action_log_id' => 0
 		));
-		//node stream
+		//publish to node stream
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'logout',
@@ -212,7 +186,6 @@ class Player extends REST_Controller
 		), $validToken);
 		$this->response($this->resp->setRespond(), 200);
 	}
-	//get player points
 	public function points_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -224,19 +197,15 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		// $validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id < 0)
-		{
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		}
 		$input = array_merge($validToken, array(
 			'pb_player_id' => $pb_player_id
 		));
@@ -249,10 +218,8 @@ class Player extends REST_Controller
 			)));
 			ksort($point);
 		}
-		//response
 		$this->response($this->resp->setRespond($points), 200);
 	}
-	//get player point
 	public function point_post($player_id = '', $reward = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -266,31 +233,22 @@ class Player extends REST_Controller
 		if(!$reward)
 			array_push($required, 'reward');
 		if($required)
-		{
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		}
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		// $validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id < 0)
-		{
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		}
-		//check point 
 		$input = array_merge($validToken, array(
 			'reward_name' => $reward
 		));
 		$haspoint = $this->point_model->findPoint($input);
 		if(!$haspoint)
-		{
 			$this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
-		}
 		$point['point'] = $this->player_model->getPlayerPoint(array_merge($input, array(
 			'reward_id' => $haspoint
 		), array(
@@ -298,16 +256,10 @@ class Player extends REST_Controller
 		)));
 		$point['point'][0]['reward_name'] = $reward;
 		ksort($point);
-		//response
 		$this->response($this->resp->setRespond($point), 200);
 	}
-	//get player actions statistics
 	public function action_post($player_id = '', $action = '', $option = 'time')
 	{
-		// var_dump($player_id);
-		// var_dump($action);
-		// var_dump($option);
-		// die();
 		$required = $this->input->checkParam(array(
 			'token'
 		));
@@ -316,39 +268,25 @@ class Player extends REST_Controller
 		$required = array();
 		if(!$player_id)
 			array_push($required, 'player_id');
-		// if(!$action)
-		// 	array_push($required,'action');
 		if($required)
-		{
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		}
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		//$validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id < 0)
-		{
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		}
 		$actions = array();
-		//check action
 		if($action)
 		{
-			//check action
 			$hasAction = $this->action_model->findAction(array_merge($validToken, array(
 				'action_name' => $action
 			)));
-			//var_dump($hasAction);
-			//die();
 			if(!$hasAction)
-			{
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-			}
 			$actions['action'] = ($option == 'time') ? $this->player_model->getActionPerform(array_merge($validToken, array(
 				'pb_player_id' => $pb_player_id
 			), array(
@@ -359,19 +297,16 @@ class Player extends REST_Controller
 				'action_id' => $hasAction
 			)));
 		}
-		else //lastest
+		else //get last action performed
 		{
 			if($option != 'time')
-			{
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-			}
 			$actions['action'] = $this->player_model->getLastActionPerform(array_merge($validToken, array(
 				'pb_player_id' => $pb_player_id
 			)));
 		}
 		$this->response($this->resp->setRespond($actions), 200);
 	}
-	//get player badge
 	public function badge_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -383,19 +318,15 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		//$validToken = array('client_id'=>1,'site_id'=>1); //for debugging
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id < 0)
-		{
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		}
 		//get player badge
 		$badgeList = $this->player_model->getBadge(array_merge($validToken, array(
 			'pb_player_id' => $pb_player_id
@@ -413,7 +344,6 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'ranked_by'
 			)), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
