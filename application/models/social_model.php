@@ -279,7 +279,7 @@ class Social_model extends CI_Model
 		$numStr = serialize($number);
 		return substr($numStr, 2, -1);
 	}
-	///// from facebook doc
+	// code from facebook doc below
 	public function parse_signed_request($signed_request)
 	{
 		list($encoded_sig, $payload) = explode('.', $signed_request, 2);
