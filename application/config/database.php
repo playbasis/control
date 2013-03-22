@@ -65,7 +65,7 @@ $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
 
 
-$db['developer']['hostname'] = 'pbapp.net';
+$db['developer']['hostname'] = 'dev.pbapp.net';
 $db['developer']['username'] = 'playbasis_admin';
 $db['developer']['password'] = 'pl@yb@sis';
 $db['developer']['database'] = 'core';
