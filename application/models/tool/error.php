@@ -71,7 +71,6 @@ class Error extends CI_Model
 			$errorData['error_code'] = '9999';
 			break;
 		}
-		//time
 		$errorData['timestamp'] = (int) time();
 		$errorData['time'] = date('r e');
 		return $errorData;

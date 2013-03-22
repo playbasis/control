@@ -9,40 +9,35 @@ class Node_stream extends CI_Model
 {
 	public function publish($data, $info)
 	{
-		//prepare chanel name
+		//get chanel name
 		$chanelName = preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', $info['domain_name']);
-		//set curl
+		$message = json_encode($this->activityFeedFormatter($data));
 		$ch = curl_init();
-		//set curl option
-		curl_setopt($ch, CURLOPT_URL, STREAM_URL . $chanelName); // set url
-		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT); // set port
-		curl_setopt($ch, CURLOPT_HEADER, FALSE); // turn off output
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE); // refuse response from called server
-		// curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json; charset=utf-8'));# set Content-Type
+		curl_setopt($ch, CURLOPT_URL, STREAM_URL . $chanelName);	// set url
+		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT);				// set port
+		curl_setopt($ch, CURLOPT_HEADER, FALSE);					// turn off output
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);				// refuse response from called server
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: text/plain; charset=utf-8'
-		)); // set Content-Type
-		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT'); // set  agent    	
-		curl_setopt($ch, CURLOPT_TIMEOUT, 10); // time for execute
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // time for try to connect 
-		curl_setopt($ch, CURLOPT_POST, TRUE); // use POST 
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($this->activityFeedFormatter($data))); // wrap data 
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC); // http authen
-		curl_setopt($ch, CURLOPT_USERPWD, USERPASS); // http authrn user password
-		//process 
+			'Content-Type: text/plain; charset=utf-8'				// set Content-Type
+		));
+		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');			// set agent
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10);						// times for execute
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);				// times for try to connect 
+		curl_setopt($ch, CURLOPT_POST, TRUE);						// use POST 
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $message);				// data
+		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);			// http authen
+		curl_setopt($ch, CURLOPT_USERPWD, USERPASS);				// user password
 		curl_exec($ch);
-		//debugging
-		// 	var_dump(curl_errno($ch));
-		// $cinfo = curl_getinfo($ch);
-		// var_dump($cinfo);
-		//close connection
+		//var_dump(curl_errno($ch));
+		//$cinfo = curl_getinfo($ch);
+		//var_dump($cinfo);
 		curl_close($ch);
 	}
 	private function activityFeedFormatter($data)
 	{
 		$playerData = $this->getPlayerInfo($data['pb_player_id']);
 		$activityFormat = array(
-			'published' => date('c'), //rfc3339 , atom , ISO 8601
+			'published' => date('c'), //rfc3339, atom, ISO 8601
 			'actor' => array(
 				'objectType' => 'person',
 				'id' => $playerData['cl_player_id'],
