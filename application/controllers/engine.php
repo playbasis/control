@@ -6,7 +6,6 @@ class Engine extends REST_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		//model
 		$this->load->model('auth_model');
 		$this->load->model('player_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
@@ -17,11 +16,7 @@ class Engine extends REST_Controller
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
 		$this->load->model('social_model');
-		//library
-		$this->load->library('mongo_db');
-		//config
 	}
-	//get initial information for client site script
 	public function getActionConfig_post()
 	{
 		$required = $this->input->checkParam(array(
@@ -29,12 +24,9 @@ class Engine extends REST_Controller
 		));
 		if($required)
 			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
-		//validate token
 		$validToken = $this->auth_model->findToken($this->input->post('token'));
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		// $validToken = array('client_id'=>1,'site_id'=>1); //for debugging
-		//get jigsaw set
 		$ruleSet = $this->client_model->getRuleSet(array(
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id']
@@ -89,11 +81,6 @@ class Engine extends REST_Controller
 	public function rule_post($option = 0)
 	{
 		$this->benchmark->mark('engine_rule_start');
-		$this->mongo_db->insert('rule_log', array(
-			'option' => $option,
-			'date_added' => date('Y-m-d H:i:s'),
-			'date_modified' => date('Y-m-d H:i:s')
-		));
 		$fbData = null;
 		$twData = null;
 		if($option == 'facebook')
@@ -174,16 +161,13 @@ class Engine extends REST_Controller
 			));
 			if($required)
 				$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-			//validate token
 			$validToken = $this->auth_model->findToken($this->input->post('token'));
-			// $validToken = array('client_id'=>1,'site_id'=>1,'domain_name'=>"https://pbapp.net/demo",'site_name'=>'playbasis demo site'); //for debugging
 			if(!$validToken)
 				$this->response($this->error->setError('INVALID_TOKEN'), 200);
-			//get playbasis player id
+			//get playbasis player id from client player id
 			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 				'cl_player_id' => $this->input->post('player_id')
 			)));
-			// $pb_player_id = $this->input->get('player_id'); //for debugging
 			if($pb_player_id < 0)
 				$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 			//get action id by action name
@@ -193,7 +177,6 @@ class Engine extends REST_Controller
 				'site_id' => $validToken['site_id'],
 				'action_name' => $actionName
 			));
-			// $actionId = $this->client_model->getActionId(array('client_id'=>$validToken['client_id'],'site_id'=>$validToken['site_id'],'action_name'=>$this->input->get('action')));  //for debugging
 			if(!$actionId)
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
 			$postData = $this->input->post();
@@ -210,23 +193,19 @@ class Engine extends REST_Controller
 	}
 	private function processRule($input, $validToken, $fbData, $twData)
 	{
-		//track action
-		$input['action_log_id'] = $this->tracker_model->trackAction($input);
-		//get rule related to action id
+		$input['action_log_id'] = $this->tracker_model->trackAction($input); //track action
 		$ruleSet = $this->client_model->getRuleSetByActionId(array(
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id'],
 			'action_id' => $input['action_id']
 		));
-		//result array
 		$apiResult = array(
 			'events' => array()
 		);
 		if(!$ruleSet)
 		{
-			//log jigsaw
-			$this->client_model->log($input);
-			return $apiResult; //$this->response($this->resp->setRespond($apiResult),200);
+			$this->client_model->log($input); //log jigsaw
+			return $apiResult;
 		}
 		foreach($ruleSet as $rule)
 		{
@@ -260,29 +239,28 @@ class Engine extends REST_Controller
 							);
 							array_push($apiResult['events'], $event);
 							$eventMessage = $this->utility->getEventMessage('point', $jigsawConfig['quantity'], $jigsawConfig['reward_name']);
-							//log event :: reward > custom point
+							//log event - reward, custom point
 							$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
 								'reward_id' => $jigsawConfig['reward_id'],
 								'reward_name' => $jigsawConfig['reward_name'],
 								'amount' => $jigsawConfig['quantity']
 							)));
-							//node stream
+							//publish to node stream
 							$this->node->publish(array_merge($input, array(
 								'message' => $eventMessage,
 								'amount' => $jigsawConfig['quantity'],
 								'point' => $jigsawConfig['reward_name']
 							)), $input);
+							//publish to facebook notification
 							if($fbData)
-							{
 								$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
-							}
 						}
 						else if(is_null($jigsawConfig['item_id']))
 						{
 							//item_id is null, process standard point-based rewards (exp, point)
 							if($jigsawConfig['reward_name'] == 'exp')
 							{
-								//got level here if player level up
+								//check if player level up
 								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'], $input['pb_player_id'], array(
 									'client_id' => $validToken['client_id'],
 									'site_id' => $validToken['site_id']
@@ -295,25 +273,25 @@ class Engine extends REST_Controller
 									);
 									array_push($apiResult['events'], $event);
 									$eventMessage = $this->utility->getEventMessage('level', '', '', '', $lv);
-									//log event :: level
+									//log event - level
 									$this->tracker_model->trackEvent('LEVEL', $eventMessage, array_merge($input, array(
 										'amount' => $lv
 									)));
-									//node stream
+									//publish to node stream
 									$this->node->publish(array_merge($input, array(
 										'message' => $eventMessage,
 										'level' => $lv
 									)), $input);
+									//publish to facebook notification
 									if($fbData)
-									{
 										$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
-									}
 								}
 							}
 							else
 							{
+								//update point-based reward
 								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $input['client_id'], $input['site_id']);
-							} //update reward [type point]
+							}
 							$event = array(
 								'event_type' => 'REWARD_RECEIVED',
 								'reward_type' => $jigsawConfig['reward_name'],
@@ -321,22 +299,21 @@ class Engine extends REST_Controller
 							);
 							array_push($apiResult['events'], $event);
 							$eventMessage = $this->utility->getEventMessage('point', $jigsawConfig['quantity'], $jigsawConfig['reward_name']);
-							//log event :: reward > non-custom point
+							//log event - reward, non-custom point
 							$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
 								'reward_id' => $jigsawConfig['reward_id'],
 								'reward_name' => $jigsawConfig['reward_name'],
 								'amount' => $jigsawConfig['quantity']
 							)));
-							//node stream
+							//publish to node stream
 							$this->node->publish(array_merge($input, array(
 								'message' => $eventMessage,
 								'amount' => $jigsawConfig['quantity'],
 								'point' => $jigsawConfig['reward_name']
 							)), $input);
+							//publish to facebook notification
 							if($fbData)
-							{
 								$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
-							}
 						}
 						else
 						{
@@ -352,38 +329,37 @@ class Engine extends REST_Controller
 								);
 								array_push($apiResult['events'], $event);
 								$eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', $event['reward_data']['name']);
-								//log event :: reward > badge
+								//log event - reward, badge
 								$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
-										'reward_id' => $jigsawConfig['reward_id'],
-										'reward_name' => $jigsawConfig['reward_name'],
-										'item_id' => $jigsawConfig['item_id'],
-										'amount' => $jigsawConfig['quantity']
-										)));
-									//node stream
-									$this->node->publish(array_merge($input, array(
-										'message' => $eventMessage,
-										'badge' => $event['reward_data']
-										)), $input);
-									if($fbData)
-									{
-										$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
-									}
-									break;
-								default:
-									break;
+									'reward_id' => $jigsawConfig['reward_id'],
+									'reward_name' => $jigsawConfig['reward_name'],
+									'item_id' => $jigsawConfig['item_id'],
+									'amount' => $jigsawConfig['quantity']
+								)));
+								//publish to node stream
+								$this->node->publish(array_merge($input, array(
+									'message' => $eventMessage,
+									'badge' => $event['reward_data']
+								)), $input);
+								//publish to facebook notification
+								if($fbData)
+									$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+								break;
+							default:
+								break;
 							}
 						}
-						//log jigsaw :: reward 
+						//log jigsaw - reward 
 						$this->client_model->log($input);
 					}
 					else
 					{
-						//log jigsaw :: condition or action
+						//log jigsaw - condition or action
 						$this->client_model->log($input, $exInfo);
 						continue;
 					}
 				}
-				else // jigsaw return false
+				else //jigsaw return false
 				{
 					if($jigsaw['category'] == 'REWARD')
 					{
@@ -391,14 +367,14 @@ class Engine extends REST_Controller
 					}
 					else
 					{
-						//log jigsaw :: condition or action
+						//log jigsaw - condition or action
 						$this->client_model->log($input, $exInfo);
 						break;
 					}
 				}
 			}
 		}
-		return $apiResult; //$this->response($this->resp->setRespond($apiResult),200);	
+		return $apiResult;
 	}
 }
 ?>
