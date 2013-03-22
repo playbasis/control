@@ -9,7 +9,7 @@ class Badge_model extends CI_Model
 	}
 	public function getAllBadges($data)
 	{
-		//select badge
+		//get badge ids
 		$this->db->select('badge_id');
 		$this->db->where(array(
 			'client_id' => $data['client_id'],
@@ -19,7 +19,7 @@ class Badge_model extends CI_Model
 		$badgeSet = $result->result_array();
 		if(!$badgeSet)
 			return array();
-		//get badge information
+		//get data on badges
 		foreach($badgeSet as &$badge)
 		{
 			//get badge data
@@ -40,7 +40,7 @@ class Badge_model extends CI_Model
 	}
 	public function getBadge($data)
 	{
-		//check badge
+		//get badge id
 		$this->db->select('badge_id');
 		$this->db->where(array(
 			'client_id' => $data['client_id'],
@@ -54,6 +54,7 @@ class Badge_model extends CI_Model
 		$badge = array(
 			'badge_id' => $data['badge_id']
 		);
+		//get badge data
 		$this->db->select('name,description,hint');
 		$this->db->where('badge_id', $badge['badge_id']);
 		$result = $this->db->get('playbasis_badge_description');
@@ -70,7 +71,7 @@ class Badge_model extends CI_Model
 	}
 	public function getAllCollection($data)
 	{
-		//select collection
+		//get collection ids
 		$this->db->select('collection_id');
 		$this->db->where(array(
 			'client_id' => $data['client_id'],
@@ -80,7 +81,7 @@ class Badge_model extends CI_Model
 		$collectionSet = $result->result_array();
 		if(!$collectionSet)
 			return array();
-		//get collection information
+		//get data on collections
 		foreach($collectionSet as &$collection)
 		{
 			//get collection data
@@ -96,7 +97,7 @@ class Badge_model extends CI_Model
 			$result = $result->row_array();
 			$result['image'] = $this->config->item('IMG_PATH') . $result['image'];
 			$collection = array_merge($collection, $result);
-			//get badge_id relate to collection
+			//get badge_id related to a collection
 			$this->db->select('badge_id');
 			$this->db->where('collection_id', $collection['collection_id']);
 			$result = $this->db->get('playbasis_badge_to_collection');
@@ -107,7 +108,7 @@ class Badge_model extends CI_Model
 	}
 	public function getCollection($data)
 	{
-		//check collection
+		//get collection id
 		$this->db->select('collection_id');
 		$this->db->where(array(
 			'client_id' => $data['client_id'],
@@ -121,6 +122,7 @@ class Badge_model extends CI_Model
 		$collection = array(
 			'collection_id' => $data['collection_id']
 		);
+		//get collection data
 		$this->db->select('name,description');
 		$this->db->where('collection_id', $collection['collection_id']);
 		$result = $this->db->get('playbasis_badge_collection_description');
@@ -133,7 +135,7 @@ class Badge_model extends CI_Model
 		$result = $result->row_array();
 		$result['image'] = $this->config->item('IMG_PATH') . $result['image'];
 		$collection = array_merge($collection, $result);
-		//get badge_id relate to collection
+		//get badge_id related to the collection
 		$this->db->select('badge_id');
 		$this->db->where('collection_id', $collection['collection_id']);
 		$result = $this->db->get('playbasis_badge_to_collection');

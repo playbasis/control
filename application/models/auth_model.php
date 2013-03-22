@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-//constant
 define('TOKEN_EXPIRE', (3 * 24 * 3600)); // 3 days
 class Auth_model extends CI_model
 {
@@ -8,19 +7,8 @@ class Auth_model extends CI_model
 	{
 		parent::__construct();
 	}
-	//get api key and secret
 	public function getApiInfo($data)
 	{
-		/*
-		$sql = "SELECT `site_id`,`client_id` FROM `playbasis_client_site` WHERE `api_key` = ?  AND `api_secret` = ? AND `date_expire` >= NOW() AND `status` = 1";
-		
-		$bindData = array(
-		$data['key'],
-		$data['secret'],
-		);
-		
-		$result = $this->db->query($sql,$bindData);
-		*/
 		$this->db->select('site_id,client_id,domain_name,site_name');
 		$this->db->where(array(
 			'api_key' => $data['key'],
@@ -31,7 +19,6 @@ class Auth_model extends CI_model
 		$result = $this->db->get('playbasis_client_site');
 		return $result->row_array();
 	}
-	//generate token and update token in database
 	public function generateToken($data)
 	{
 		$this->db->select('token');
@@ -61,7 +48,6 @@ class Auth_model extends CI_model
 		}
 		return $token;
 	}
-	//find token
 	public function findToken($token)
 	{
 		$this->db->select('client_id,site_id');
