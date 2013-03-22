@@ -7,7 +7,6 @@ class Player_model extends CI_Model
 		parent::__construct();
 		$this->config->load('playbasis');
 	}
-	//CRUD
 	public function createPlayer($data)
 	{
 		$inputData = array(
@@ -152,9 +151,9 @@ class Player_model extends CI_Model
 		$badges = $result->result_array();
 		if(!$badges)
 			return array();
-		//badge data
 		foreach($badges as &$badge)
 		{
+			//badge data
 			$this->db->select('name,description');
 			$this->db->where('badge_id', $badge['badge_id']);
 			$result = $this->db->get('playbasis_badge_description');
@@ -192,11 +191,6 @@ class Player_model extends CI_Model
 		if(!$result)
 			return array();
 		//get points for the reward id
-		//SELECT pb_player_id, value
-		//FROM core.playbasis_reward_to_player
-		//WHERE reward_id=2
-		//ORDER BY value DESC
-		//LIMIT 0,10;
 		$this->db->select("cl_player_id AS player_id,value AS $ranked_by");
 		$this->db->from('playbasis_reward_to_player,playbasis_player');
 		$this->db->where(array(
