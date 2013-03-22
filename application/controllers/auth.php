@@ -6,12 +6,9 @@ class Auth extends REST_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		//load model
 		$this->load->model('auth_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/respond', 'resp');
-		//load library
-		//load config
 	}
 	public function index_post()
 	{
@@ -23,13 +20,9 @@ class Auth extends REST_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$API['key'] = $this->input->post('api_key');
 		$API['secret'] = $this->input->post('api_secret');
-		//validate api_key & api_secret
-		//get client relate to api key 
 		$clientInfo = $this->auth_model->getApiInfo($API);
-		//validate 
 		if($clientInfo)
 		{
-			//gen token
 			$token = $this->auth_model->generateToken(array_merge($clientInfo, $API));
 			$this->response($this->resp->setRespond($token), 200);
 		}
