@@ -82,10 +82,10 @@ $db['developer']['autoinit'] = TRUE;
 $db['developer']['stricton'] = FALSE;
 
 
-$db['production']['hostname'] = 'pbapp.net';
+$db['production']['hostname'] = 'www.pbapp.net';
 $db['production']['username'] = 'playbasis_admin';
 $db['production']['password'] = 'pl@yb@sis';
-$db['production']['database'] = 'core_production';
+$db['production']['database'] = 'core';
 $db['production']['dbdriver'] = 'mysql';
 $db['production']['dbprefix'] = '';
 $db['production']['pconnect'] = TRUE;
