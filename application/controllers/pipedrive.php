@@ -16,7 +16,8 @@ class Pipedrive extends REST_Controller
 			'person',
 			'email',
 			'users_size',
-			'budget'
+			'budget',
+			'url'
 		));
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
@@ -25,6 +26,7 @@ class Pipedrive extends REST_Controller
 		$email = $this->input->post('email');
 		$userSize = $this->input->post('users_size');
 		$budget = $this->input->post('budget');
+		$url = $this->input->post('url');
 		$token = $this->auth();
 		if(!$token)
 			$this->response('pipedrive err: unable to login', 200);
@@ -34,7 +36,7 @@ class Pipedrive extends REST_Controller
 		$person = $this->createPerson($token, $personName, $org, $email);
 		if(!$person)
 			$this->response('pipedrive err: unable create person', 200);
-		$title = "Deal: $orgName : $userSize users";
+		$title = "Deal: $orgName - $url - $userSize users";
 		$result = $this->createDeal($token, $title, $person, $org, $budget);
 		$this->response($result, 200);
 	}
