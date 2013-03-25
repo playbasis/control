@@ -71,7 +71,8 @@
 </script>
 </head>
 <body>
-	<div id="janrainEngageEmbed"></div>
+	<a class="janrainEngage" href="#">Sign-In</a>
+	<!--div id="janrainEngageEmbed"></div-->
 	<div id="janrainEngageShare">[Share]</div>
 </body>
 </html>
