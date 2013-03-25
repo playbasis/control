@@ -13,6 +13,8 @@ class jigsaw extends CI_Model
 		assert(is_array($config));
 		if($config['url'])
 		{
+			if(!isset($input['url']))
+				return false;
 			//validate url
 			$input['url'] = urldecode($input['url']);
 			$exInfo['input_url'] = $input['url'];
