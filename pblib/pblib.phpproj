@@ -1,0 +1,38 @@
+"General"
+{
+"ProjectType" = "local"
+"AutoLoadTemplate" = "%s.php;class.%s.php;"
+"IncludeDirs" = ""
+}
+"Configurations"
+{
+    "Local|PHP 5.4"
+    {
+    }
+    "Staging|PHP 5.4"
+    {
+    }
+    "Production|PHP 5.4"
+    {
+    }
+}
+"Files"
+{
+    "index.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "playbasis.php"
+    {
+    "ProjRelPath" = "T"
+    }
+}
+"ProjStartupServices"
+{
+}
+"Globals"
+{
+}
+"References"
+{
+}

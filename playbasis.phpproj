@@ -270,6 +270,22 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\libraries\\facebook-php-sdk"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\libraries\\facebook-php-sdk\\base_facebook.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\libraries\\facebook-php-sdk\\facebook.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\libraries\\facebook-php-sdk\\fb_ca_chain_bundle.crt"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\libraries\\Format.php"
     {
     "ProjRelPath" = "T"

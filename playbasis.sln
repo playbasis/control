@@ -3,19 +3,51 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{1863889A-00DF-4350-BA39-669CA949CB81}") = "playbasis", "playbasis.phpproj", "{02E41A72-97AD-439B-B608-CB6540A48D84}"
 EndProject
+Project("{1863889A-00DF-4350-BA39-669CA949CB81}") = "pblib", "pblib\pblib.phpproj", "{9E33B17F-DC20-4177-9682-C750B4A1B66C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Local|Mixed Platforms = Local|Mixed Platforms
 		Local|PHP 5.2 = Local|PHP 5.2
+		Local|PHP 5.4 = Local|PHP 5.4
+		Production|Mixed Platforms = Production|Mixed Platforms
 		Production|PHP 5.2 = Production|PHP 5.2
+		Production|PHP 5.4 = Production|PHP 5.4
+		Staging|Mixed Platforms = Staging|Mixed Platforms
 		Staging|PHP 5.2 = Staging|PHP 5.2
+		Staging|PHP 5.4 = Staging|PHP 5.4
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Local|Mixed Platforms.ActiveCfg = Local|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Local|Mixed Platforms.Deploy.0 = Local|PHP 5.2
 		{02E41A72-97AD-439B-B608-CB6540A48D84}.Local|PHP 5.2.ActiveCfg = Local|PHP 5.2
 		{02E41A72-97AD-439B-B608-CB6540A48D84}.Local|PHP 5.2.Deploy.0 = Local|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Local|PHP 5.4.ActiveCfg = Local|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Production|Mixed Platforms.ActiveCfg = Production|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Production|Mixed Platforms.Deploy.0 = Production|PHP 5.2
 		{02E41A72-97AD-439B-B608-CB6540A48D84}.Production|PHP 5.2.ActiveCfg = Production|PHP 5.2
 		{02E41A72-97AD-439B-B608-CB6540A48D84}.Production|PHP 5.2.Deploy.0 = Production|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Production|PHP 5.4.ActiveCfg = Production|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Staging|Mixed Platforms.ActiveCfg = Staging|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Staging|Mixed Platforms.Deploy.0 = Staging|PHP 5.2
 		{02E41A72-97AD-439B-B608-CB6540A48D84}.Staging|PHP 5.2.ActiveCfg = Staging|PHP 5.2
 		{02E41A72-97AD-439B-B608-CB6540A48D84}.Staging|PHP 5.2.Deploy.0 = Staging|PHP 5.2
+		{02E41A72-97AD-439B-B608-CB6540A48D84}.Staging|PHP 5.4.ActiveCfg = Staging|PHP 5.2
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Local|Mixed Platforms.ActiveCfg = Local|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Local|Mixed Platforms.Deploy.0 = Local|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Local|PHP 5.2.ActiveCfg = Local|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Local|PHP 5.4.ActiveCfg = Local|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Local|PHP 5.4.Deploy.0 = Local|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Production|Mixed Platforms.ActiveCfg = Production|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Production|Mixed Platforms.Deploy.0 = Production|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Production|PHP 5.2.ActiveCfg = Production|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Production|PHP 5.4.ActiveCfg = Production|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Production|PHP 5.4.Deploy.0 = Production|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Staging|Mixed Platforms.ActiveCfg = Staging|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Staging|Mixed Platforms.Deploy.0 = Staging|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Staging|PHP 5.2.ActiveCfg = Staging|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Staging|PHP 5.4.ActiveCfg = Staging|PHP 5.4
+		{9E33B17F-DC20-4177-9682-C750B4A1B66C}.Staging|PHP 5.4.Deploy.0 = Staging|PHP 5.4
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
