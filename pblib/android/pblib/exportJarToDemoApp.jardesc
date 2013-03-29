@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="MS874" standalone="no"?>
+<jardesc>
+    <jar path="demoApp/libs/pblib.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/pblib/exportJarToDemoApp.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <folder path="/pblib/bin"/>
+        <javaElement handleIdentifier="=pblib/gen"/>
+        <folder path="/pblib/libs"/>
+        <file path="/pblib/.classpath"/>
+        <file path="/pblib/.project"/>
+        <javaElement handleIdentifier="=pblib/src"/>
+        <folder path="/pblib/assets"/>
+        <folder path="/pblib/res"/>
+    </selectedElements>
+</jardesc>
