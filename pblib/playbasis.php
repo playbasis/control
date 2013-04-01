@@ -19,7 +19,7 @@ class Playbasis
 			'api_key' => $apiKey,
 			'api_secret' => $apiSecret
 		));
-		$this->token = $result['token'];
+		$this->token = $result['response']['token'];
 		return $this->token != false && is_string($this->token);
 	}
 	
@@ -134,8 +134,6 @@ class Playbasis
 		$result = curl_exec($ch);
 		$result = json_decode($result, true);
 		curl_close($ch);
-		if(!$result || !isset($result['success']) || !$result['success'])
-			return false;
-		return $result['response'];
+		return $result;
 	}
 }
