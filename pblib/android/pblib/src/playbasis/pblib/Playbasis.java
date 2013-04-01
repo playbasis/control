@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -20,6 +21,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import android.util.JsonReader;
+import android.util.JsonToken;
 
 /**
  * The Playbasis Object
@@ -41,7 +45,7 @@ public class Playbasis
 		instance = this;
 	}
 	
-	public String auth(String apiKey, String apiSecret)
+	public boolean auth(String apiKey, String apiSecret)
 	{
 		String param = "";
 		try
@@ -51,14 +55,77 @@ public class Playbasis
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			return null;
+			return false;
 		}
-		String result = call("Auth", param);
-		token = result;
-		return token;
+		try
+		{
+			JsonReader reader = callJSON("Auth", param);
+			while(true)
+			{
+				JsonToken nextToken = reader.peek();
+				if(nextToken == JsonToken.BEGIN_OBJECT)
+					reader.beginObject();
+				else if(nextToken == JsonToken.BEGIN_ARRAY)
+					reader.beginArray();
+				else if(nextToken == JsonToken.END_DOCUMENT)
+				{
+					reader.close();
+					return false;
+				}
+				else if(nextToken == JsonToken.NAME)
+				{
+					String name = reader.nextName();
+					if(name.equals("token"))
+					{
+						token = reader.nextString();
+						reader.close();
+						return true;
+					}
+				}
+				else
+					reader.skipValue();
+			}
+		}
+		catch (IOException e)
+		{
+			return false;
+		}
 	}
 	
-	public String call(String method, String data)
+	public JsonReader player(String playerId)
+	{
+		return callJSON("Player/"+playerId, "token="+token);
+	}
+	
+	/*
+	 * @param	optionalData	Varargs of String for additional parameters to be sent to the register method.
+	 * 							Each element is a string in the format of key=value, for example: first_name=john  
+	 */
+	public JsonReader register(String playerId, String username, String email, String imageUrl, String... optionalData)
+	{
+		StringBuilder param = new StringBuilder();
+		try
+		{
+			param.append("token=");
+			param.append(token);
+			param.append("&username=");
+			param.append(URLEncoder.encode(username, "UTF-8"));
+			param.append("&email=");
+			param.append(URLEncoder.encode(email, "UTF-8"));
+			param.append("&image=");
+			param.append(URLEncoder.encode(imageUrl, "UTF-8"));
+			
+			for(int i=0; i<optionalData.length; ++i)
+				param.append("&"+optionalData[i]);
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			return null;
+		}
+		return callJSON("Player/"+playerId+"/register", param.toString());
+	}
+	
+	public static String call(String method, String data)
 	{
 		try
 		{
@@ -68,6 +135,11 @@ public class Playbasis
 		{
 			return null;
 		}
+	}
+	
+	public static JsonReader callJSON(String method, String data)
+	{
+		return new JsonReader(new StringReader(call(method, data)));
 	}
 	
 	private static String MakeRequest(URL url, String data)

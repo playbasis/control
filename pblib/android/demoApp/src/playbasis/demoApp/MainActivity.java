@@ -1,10 +1,14 @@
 package playbasis.demoApp;
 
+import java.io.IOException;
+
 import playbasis.pblib.Playbasis;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.JsonReader;
+import android.util.JsonToken;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -101,6 +105,77 @@ class AsyncWebRequestTask extends AsyncTask<String, Void, String>
 		mainActivity = activity;
 	}
 
+	String printJsonReader(JsonReader reader)
+	{
+		StringBuilder str = new StringBuilder();	
+		try
+		{
+			while(true)
+			{
+				JsonToken nextToken = reader.peek();
+				if(nextToken == JsonToken.BEGIN_OBJECT)
+				{
+					reader.beginObject();
+					str.append("{\n");
+				}
+				else if(nextToken == JsonToken.END_OBJECT)
+				{
+					reader.endObject();
+					str.append("}\n");
+				}
+				else if(nextToken == JsonToken.BEGIN_ARRAY)
+				{
+					reader.beginArray();
+					str.append("[\n");
+				}
+				else if(nextToken == JsonToken.END_ARRAY)
+				{
+					reader.endArray();
+					str.append("]\n");
+				}
+				else if(nextToken == JsonToken.NAME)
+				{
+					str.append(reader.nextName());
+					str.append("=");
+				}
+				else if(nextToken == JsonToken.STRING)
+				{
+					str.append(reader.nextString());
+					str.append("\n");
+				}
+				else if(nextToken == JsonToken.BOOLEAN)
+				{
+					str.append(reader.nextBoolean());
+					str.append("\n");
+				}
+				else if(nextToken == JsonToken.NULL)
+				{
+					reader.nextNull();
+					str.append("null\n");
+				}
+				else if(nextToken == JsonToken.NUMBER)
+				{
+					str.append(reader.nextLong());
+					str.append("\n");
+				}
+				else if(nextToken == JsonToken.END_DOCUMENT)
+				{
+					reader.close();
+					return str.toString();
+				}
+				else
+				{
+					reader.close();
+					return "invalid json";
+				}
+			}
+		}
+		catch(IOException e)
+		{
+			return null;
+		}
+	}
+	
 	@Override
 	protected String doInBackground(String... args)
 	{
@@ -108,7 +183,13 @@ class AsyncWebRequestTask extends AsyncTask<String, Void, String>
 		String[] input = req.split("\\s+");
 		if(input.length <= 0)
 			return null;
-		return Playbasis.instance.auth(input[0], input[1]);
+		if(input[0].equals("auth"))
+			return (Playbasis.instance.auth(input[1], input[2])) ? "success" : "failed";
+		else if(input[0].equals("player"))
+			return printJsonReader( Playbasis.instance.player(input[1]));
+		else if(input[0].equals("register"))
+			return printJsonReader( Playbasis.instance.register(input[1], input[2], input[3], input[4], input[5], input[6]));
+		return null;
 	}
 
 	@Override
