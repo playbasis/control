@@ -75,7 +75,7 @@ class Janrain extends REST_Controller
 			var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromFacebookId($identifier, $client_id, $site_id);
 		}
-		if($provider == 'Twitter')
+		else if($provider == 'Twitter')
 		{
 			$identifier = explode('=', $profile['identifier']);
 			$identifier = $identifier[1];
@@ -84,12 +84,21 @@ class Janrain extends REST_Controller
 			var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromTwitterId($identifier, $client_id, $site_id);
 		}
-		if($pb_player_id == 0)
+		else
+		{
+			$identifier = $profile['identifier'];
+			echo $provider . ' id: ';
+			var_dump($identifier);
+			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+				'cl_player_id' => $identifier
+				)));
+		}
+		if($pb_player_id <= 0)
 		{
 			$input['client_id'] = $client_id;
 			$input['site_id'] = $site_id;
 			$input['player_id'] = $identifier;
-			$input['image'] = $profile['photo'];
+			$input['image'] = (isset($profile['photo'])) ? $profile['photo'] : 'https://www.pbapp.net/images/default_profile.jpg';
 			$input['username'] = $profile['preferredUsername'];
 			$input['email'] = (isset($profile['email']) && $profile['email']) ? $profile['email'] : 'no_email@playbasis.com';
 			$input['first_name'] = (isset($profile['name']['givenName']) && $profile['name']['givenName']) ? $profile['name']['givenName'] : $profile['displayName'];
