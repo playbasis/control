@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.JsonReader;
-import android.util.JsonToken;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -112,59 +111,48 @@ class AsyncWebRequestTask extends AsyncTask<String, Void, String>
 		{
 			while(true)
 			{
-				JsonToken nextToken = reader.peek();
-				if(nextToken == JsonToken.BEGIN_OBJECT)
+				switch(reader.peek())
 				{
+				case BEGIN_OBJECT:
 					reader.beginObject();
 					str.append("{\n");
-				}
-				else if(nextToken == JsonToken.END_OBJECT)
-				{
+					break;
+				case END_OBJECT:
 					reader.endObject();
 					str.append("}\n");
-				}
-				else if(nextToken == JsonToken.BEGIN_ARRAY)
-				{
+					break;
+				case BEGIN_ARRAY:
 					reader.beginArray();
 					str.append("[\n");
-				}
-				else if(nextToken == JsonToken.END_ARRAY)
-				{
+					break;
+				case END_ARRAY:
 					reader.endArray();
 					str.append("]\n");
-				}
-				else if(nextToken == JsonToken.NAME)
-				{
-					str.append(reader.nextName());
-					str.append("=");
-				}
-				else if(nextToken == JsonToken.STRING)
-				{
-					str.append(reader.nextString());
+					break;
+				case NAME:
+					str.append("\""+reader.nextName()+"\"");
+					str.append(" : ");
+					break;
+				case STRING:
+					str.append("\""+reader.nextString()+"\"");
 					str.append("\n");
-				}
-				else if(nextToken == JsonToken.BOOLEAN)
-				{
+					break;
+				case BOOLEAN:
 					str.append(reader.nextBoolean());
 					str.append("\n");
-				}
-				else if(nextToken == JsonToken.NULL)
-				{
+					break;
+				case NULL:
 					reader.nextNull();
 					str.append("null\n");
-				}
-				else if(nextToken == JsonToken.NUMBER)
-				{
+					break;
+				case NUMBER:
 					str.append(reader.nextLong());
 					str.append("\n");
-				}
-				else if(nextToken == JsonToken.END_DOCUMENT)
-				{
+					break;
+				case END_DOCUMENT:
 					reader.close();
 					return str.toString();
-				}
-				else
-				{
+				default:
 					reader.close();
 					return "invalid json";
 				}
@@ -186,9 +174,39 @@ class AsyncWebRequestTask extends AsyncTask<String, Void, String>
 		if(input[0].equals("auth"))
 			return (Playbasis.instance.auth(input[1], input[2])) ? "success" : "failed";
 		else if(input[0].equals("player"))
-			return printJsonReader( Playbasis.instance.player(input[1]));
+			return printJsonReader(Playbasis.instance.player(input[1]));
 		else if(input[0].equals("register"))
-			return printJsonReader( Playbasis.instance.register(input[1], input[2], input[3], input[4], input[5], input[6]));
+			return printJsonReader(Playbasis.instance.register(input[1], input[2], input[3], input[4]));
+		else if(input[0].equals("login"))
+			return printJsonReader(Playbasis.instance.login(input[1]));
+		else if(input[0].equals("logout"))
+			return printJsonReader(Playbasis.instance.logout(input[1]));
+		else if(input[0].equals("points"))
+			return printJsonReader(Playbasis.instance.points(input[1]));
+		else if(input[0].equals("point"))
+			return printJsonReader(Playbasis.instance.point(input[1], input[2]));
+		else if(input[0].equals("actionLastPerformed"))
+			return printJsonReader(Playbasis.instance.actionLastPerformed(input[1]));
+		else if(input[0].equals("actionLastPerformedTime"))
+			return printJsonReader(Playbasis.instance.actionLastPerformedTime(input[1], input[2]));
+		else if(input[0].equals("actionPerformedCount"))
+			return printJsonReader(Playbasis.instance.actionLastPerformedTime(input[1], input[2]));
+		else if(input[0].equals("badgeOwned"))
+			return printJsonReader(Playbasis.instance.badgeOwned(input[1]));
+		else if(input[0].equals("rank"))
+			return printJsonReader(Playbasis.instance.rank(input[1], Integer.getInteger(input[2])));
+		else if(input[0].equals("badges"))
+			return printJsonReader(Playbasis.instance.badges());
+		else if(input[0].equals("badge"))
+			return printJsonReader(Playbasis.instance.badge(input[1]));
+		else if(input[0].equals("badgeCollections"))
+			return printJsonReader(Playbasis.instance.badgeCollections());
+		else if(input[0].equals("badgeCollection"))
+			return printJsonReader(Playbasis.instance.badgeCollection(input[1]));
+		else if(input[0].equals("actionConfig"))
+			return printJsonReader(Playbasis.instance.actionConfig());
+		else if(input[0].equals("rule"))
+			return printJsonReader(Playbasis.instance.rule(input[1], input[2]));
 		return null;
 	}
 
