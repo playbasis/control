@@ -72,7 +72,7 @@ $res = $pb->badgeCollections();
 echo 'badgeCollections:';
 var_dump($res);
 
-$res = $pb->badgeColelction(1);
+$res = $pb->badgeCollection(1);
 echo 'badgeCollection:';
 var_dump($res);
 

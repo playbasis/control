@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.JsonReader;
-import android.util.JsonToken;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -112,59 +111,48 @@ class AsyncWebRequestTask extends AsyncTask<String, Void, String>
 		{
 			while(true)
 			{
-				JsonToken nextToken = reader.peek();
-				if(nextToken == JsonToken.BEGIN_OBJECT)
+				switch(reader.peek())
 				{
+				case BEGIN_OBJECT:
 					reader.beginObject();
 					str.append("{\n");
-				}
-				else if(nextToken == JsonToken.END_OBJECT)
-				{
+					break;
+				case END_OBJECT:
 					reader.endObject();
 					str.append("}\n");
-				}
-				else if(nextToken == JsonToken.BEGIN_ARRAY)
-				{
+					break;
+				case BEGIN_ARRAY:
 					reader.beginArray();
 					str.append("[\n");
-				}
-				else if(nextToken == JsonToken.END_ARRAY)
-				{
+					break;
+				case END_ARRAY:
 					reader.endArray();
 					str.append("]\n");
-				}
-				else if(nextToken == JsonToken.NAME)
-				{
+					break;
+				case NAME:
 					str.append("\""+reader.nextName()+"\"");
 					str.append(" : ");
-				}
-				else if(nextToken == JsonToken.STRING)
-				{
+					break;
+				case STRING:
 					str.append("\""+reader.nextString()+"\"");
 					str.append("\n");
-				}
-				else if(nextToken == JsonToken.BOOLEAN)
-				{
+					break;
+				case BOOLEAN:
 					str.append(reader.nextBoolean());
 					str.append("\n");
-				}
-				else if(nextToken == JsonToken.NULL)
-				{
+					break;
+				case NULL:
 					reader.nextNull();
 					str.append("null\n");
-				}
-				else if(nextToken == JsonToken.NUMBER)
-				{
+					break;
+				case NUMBER:
 					str.append(reader.nextLong());
 					str.append("\n");
-				}
-				else if(nextToken == JsonToken.END_DOCUMENT)
-				{
+					break;
+				case END_DOCUMENT:
 					reader.close();
 					return str.toString();
-				}
-				else
-				{
+				default:
 					reader.close();
 					return "invalid json";
 				}

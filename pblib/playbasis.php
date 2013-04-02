@@ -100,7 +100,7 @@ class Playbasis
 		return $this->call("Badge/collection", array('token' => $this->token));
 	}
 	
-	public function badgeColelction($collectionId)
+	public function badgeCollection($collectionId)
 	{
 		return $this->call("Badge/collection/$collectionId", array('token' => $this->token));
 	}

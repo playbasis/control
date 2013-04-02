@@ -23,7 +23,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import android.util.JsonReader;
-import android.util.JsonToken;
 
 /**
  * The Playbasis Object
@@ -62,18 +61,24 @@ public class Playbasis
 			JsonReader reader = callJSON("Auth", param);
 			while(true)
 			{
-				JsonToken nextToken = reader.peek();
-				if(nextToken == JsonToken.BEGIN_OBJECT)
-					reader.beginObject();
-				else if(nextToken == JsonToken.BEGIN_ARRAY)
-					reader.beginArray();
-				else if(nextToken == JsonToken.END_DOCUMENT)
+				switch(reader.peek())
 				{
+				case BEGIN_OBJECT:
+					reader.beginObject();
+					break;
+				case END_OBJECT:
+					reader.endObject();
+					break;
+				case BEGIN_ARRAY:
+					reader.beginArray();
+					break;
+				case END_ARRAY:
+					reader.endArray();
+					break;
+				case END_DOCUMENT:
 					reader.close();
 					return false;
-				}
-				else if(nextToken == JsonToken.NAME)
-				{
+				case NAME:
 					String name = reader.nextName();
 					if(name.equals("token"))
 					{
@@ -81,9 +86,12 @@ public class Playbasis
 						reader.close();
 						return true;
 					}
-				}
-				else
+					break;
+				default:
 					reader.skipValue();
+					break;
+				}
+				
 			}
 		}
 		catch (IOException e)
