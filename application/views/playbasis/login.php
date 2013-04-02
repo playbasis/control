@@ -68,11 +68,23 @@
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(e, s);
 })();
+
+function janrainShareOnload(){
+	janrain.events.onShareSendComplete.addHandler(function(response) {
+		console.log("onShareSendComplete");
+		console.log(response);
+	});
+	janrain.events.onShareLoginComplete.addHandler(function(response) {
+		console.log("onShareLoginComplete");
+		console.log(response);
+	});
+	console.log("events attached");
+}
 </script>
 </head>
 <body>
+	<div id="janrainEngageEmbed"></div>
 	<a class="janrainEngage" href="#">Sign-In</a>
-	<!--div id="janrainEngageEmbed"></div-->
 	<div id="janrainEngageShare">[Share]</div>
 </body>
 </html>
