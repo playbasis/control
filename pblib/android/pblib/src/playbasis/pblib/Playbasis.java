@@ -99,7 +99,16 @@ public class Playbasis
 	
 	/*
 	 * @param	optionalData	Varargs of String for additional parameters to be sent to the register method.
-	 * 							Each element is a string in the format of key=value, for example: first_name=john  
+	 * 							Each element is a string in the format of key=value, for example: first_name=john
+	 * 							The following keys are supported:
+	 * 								- facebook_id
+	 * 								- twitter_id
+	 * 								- password		assumed hashed
+	 * 								- first_name
+	 * 								- last_name
+	 * 								- nickname
+	 * 								- gender		1=Male, 2=Female
+	 * 								- birth_date	format YYYY-MM-DD
 	 */
 	public JsonReader register(String playerId, String username, String email, String imageUrl, String... optionalData)
 	{
@@ -123,6 +132,106 @@ public class Playbasis
 			return null;
 		}
 		return callJSON("Player/"+playerId+"/register", param.toString());
+	}
+	
+	public JsonReader login(String playerId)
+	{
+		return callJSON("Player/"+playerId+"/login", "token="+token);
+	}
+	
+	public JsonReader logout(String playerId)
+	{
+		return callJSON("Player/"+playerId+"/logout", "token="+token);
+	}
+	
+	public JsonReader points(String playerId)
+	{
+		return callJSON("Player/"+playerId+"/points", "token="+token);
+	}
+	
+	public JsonReader point(String playerId, String pointName)
+	{
+		return callJSON("Player/"+playerId+"/point/"+pointName, "token="+token);
+	}
+	
+	public JsonReader actionLastPerformed(String playerId)
+	{
+		return callJSON("Player/"+playerId+"/action/time", "token="+token);
+	}
+	
+	public JsonReader actionLastPerformedTime(String playerId, String actionName)
+	{
+		return callJSON("Player/"+playerId+"/action/"+actionName+"/time", "token="+token);
+	}
+	
+	public JsonReader actionPerformedCount(String playerId, String actionName)
+	{
+		return callJSON("Player/"+playerId+"/action/"+actionName+"/count", "token="+token);
+	}
+	
+	public JsonReader badgeOwned(String playerId)
+	{
+		return callJSON("Player/"+playerId+"/badge", "token="+token);
+	}
+	
+	public JsonReader rank(String rankedBy, int limit)
+	{
+		return callJSON("Player/rank/"+rankedBy+"/"+String.valueOf(limit), "token="+token);
+	}
+	
+	public JsonReader badges()
+	{
+		return callJSON("Badge", "token="+token);
+	}
+	
+	public JsonReader badge(String badgeId)
+	{
+		return callJSON("Badge/"+badgeId, "token="+token);
+	}
+	
+	public JsonReader badgeCollections()
+	{
+		return callJSON("Badge/collection", "token="+token);
+	}
+	
+	public JsonReader badgeCollection(String collectionId)
+	{
+		return callJSON("Badge/collection/"+collectionId, "token="+token);
+	}
+	
+	public JsonReader actionConfig()
+	{
+		return callJSON("Engine/actionConfig", "token="+token);
+	}
+	
+	/*
+	 * @param	optionalData	Varargs of String for additional parameters to be sent to the rule method.
+	 * 							Each element is a string in the format of key=value, for example: url=playbasis.com
+	 * 							The following keys are supported:
+	 * 								- url		url of the page that trigger the action (for triggering non-global actions)
+	 * 								- reward	name of the custom-point reward to give (for triggering rules with custom-point reward)
+	 * 								- quantity	amount of points to give (for triggering rules with custom-point reward)
+	 */
+	public JsonReader rule(String playerId, String action, String... optionalData)
+	{
+		StringBuilder param = new StringBuilder();
+		try
+		{
+			param.append("token=");
+			param.append(token);
+			param.append("&player_id=");
+			param.append(URLEncoder.encode(playerId, "UTF-8"));
+			param.append("&action=");
+			param.append(URLEncoder.encode(action, "UTF-8"));
+			
+			for(int i=0; i<optionalData.length; ++i)
+				param.append("&"+optionalData[i]);
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			return null;
+		}
+		return callJSON("Engine/rule", param.toString());	
 	}
 	
 	public static String call(String method, String data)
