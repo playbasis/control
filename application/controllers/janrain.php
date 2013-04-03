@@ -15,11 +15,12 @@ class Janrain extends REST_Controller
 		$this->load->model('tool/node_stream', 'node');
 		$this->load->model('tool/error', 'error');
 	}
-	public function token_post()
+	public function token_post($option = "")
 	{
-		var_dump($this->input->post());
+		//var_dump($this->input->post());
+		//var_dump($this->input->get());
 		$host = $this->input->server('HTTP_HOST');
-		var_dump($host);
+		//var_dump($host);
 		$client = $this->social_model->getClientFromHost($host);
 		if(!$client)
 			$this->response($this->error->setError('ACCESS_DENIED', $required), 200);
@@ -60,7 +61,7 @@ class Janrain extends REST_Controller
 		}
 		curl_close($curl);
 		$auth_info = json_decode($result, true);
-		var_dump($auth_info);
+		//var_dump($auth_info);
 		if($auth_info['stat'] != 'ok')
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$profile = $auth_info['profile'];
@@ -71,8 +72,8 @@ class Janrain extends REST_Controller
 			$identifier = explode('=', $profile['identifier']);
 			$identifier = $identifier[1];
 			$input['facebook_id'] = $identifier;
-			echo 'facebook id: ';
-			var_dump($identifier);
+			//echo 'facebook id: ';
+			//var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromFacebookId($identifier, $client_id, $site_id);
 		}
 		else if($provider == 'Twitter')
@@ -80,15 +81,15 @@ class Janrain extends REST_Controller
 			$identifier = explode('=', $profile['identifier']);
 			$identifier = $identifier[1];
 			$input['twitter_id'] = $identifier;
-			echo 'twitter id: ';
-			var_dump($identifier);
+			//echo 'twitter id: ';
+			//var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromTwitterId($identifier, $client_id, $site_id);
 		}
 		else
 		{
 			$identifier = $profile['identifier'];
-			echo $provider . ' id: ';
-			var_dump($identifier);
+			//echo $provider . ' id: ';
+			//var_dump($identifier);
 			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 				'cl_player_id' => $identifier
 				)));
@@ -114,8 +115,8 @@ class Janrain extends REST_Controller
 			}
 			$pb_player_id = $this->player_model->createPlayer($input);
 		}
-		echo 'pb_player_id';
-		var_dump($pb_player_id);
+		//echo 'pb_player_id';
+		//var_dump($pb_player_id);
 		//login
 		$eventMessage = $this->utility->getEventMessage('login');
 		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
@@ -129,6 +130,28 @@ class Janrain extends REST_Controller
 			'action_name' => 'login',
 			'message' => $eventMessage
 			), $validToken);
-		var_dump($eventMessage);
+		//var_dump($eventMessage);
+		if($option == "ajax")
+		{
+			$cl_player_id = $this->player_model->getClientPlayerId($pb_player_id);
+			$this->response(array('user' => $cl_player_id, 'provider' => $provider), 200);
+		}
+		//Redirect browser
+		$required = $this->input->checkParam(array(
+			'redir',
+			'protocal',
+			));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$protocal = $this->input->post('protocal');
+		$redir = $this->input->post('redir');
+		$user = urlencode($identifier);
+		$provider = urlencode($provider);
+		header("Location: $protocal://$host/$redir?user=$user&provider=$provider");
+		exit;
+	}
+	public function welcome_get()
+	{
+		$this->load->view('playbasis/login', $this->input->get());
 	}
 }

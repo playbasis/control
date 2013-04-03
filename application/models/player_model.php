@@ -88,6 +88,18 @@ class Player_model extends CI_Model
 		$id = $result->row_array();
 		return $id['pb_player_id'];
 	}
+	public function getClientPlayerId($pb_player_id)
+	{
+		if(!$pb_player_id)
+			return -1;
+		$this->db->select('cl_player_id');
+		$this->db->where('pb_player_id', $pb_player_id);
+		$result = $this->db->get('playbasis_player');
+		if(!$result->row_array())
+			return -1;
+		$id = $result->row_array();
+		return $id['cl_player_id'];
+	}
 	public function getPlayerPoints($data)
 	{
 		$this->db->select('reward_id,value');
