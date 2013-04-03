@@ -1,14 +1,18 @@
 <!doctype html>
 <html>
 <head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
 (function() {
     if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
     
-    //janrain.settings.tokenUrl = 'https://api.pbapp.net/janrain/token';
-	janrain.settings.tokenUrl = 'https://dev.pbapp.net/api/janrain/token';
-	//janrain.settings.tokenUrl = 'http://localhost/api/janrain/token';
+	var redir = encodeURIComponent("api/janrain/welcome");
+	var protocal = "http";
+	var param = '?redir=' + redir + '&protocal=' + protocal
+    //janrain.settings.tokenUrl = 'https://api.pbapp.net/janrain/token' + param;
+	janrain.settings.tokenUrl = 'https://dev.pbapp.net/api/janrain/token' + param;
+	//janrain.settings.tokenUrl = 'http://localhost/api/janrain/token' + param;
 
     function isReady() { janrain.ready = true; };
     if (document.addEventListener) {
@@ -30,8 +34,7 @@
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(e, s);
 })();
-</script>
-<script type="text/javascript">
+
 (function() {
     if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
@@ -43,7 +46,7 @@
 
     janrain.settings.share.message = "Playbasis <3 Janrain\n";
     janrain.settings.share.title = "Playbasis";
-    janrain.settings.share.url = "www.playbasis.com";
+    janrain.settings.share.url = "http://www.playbasis.com";
     janrain.settings.share.description = "gamifying asia";
 
     /* _______________ can edit above this line _______________ */
@@ -69,6 +72,25 @@
     s.parentNode.insertBefore(e, s);
 })();
 
+function janrainWidgetOnload(){
+    janrain.events.onProviderLoginToken.addHandler(function(response) {
+		console.log("onProviderLoginToken");
+		console.log(response);
+		$.ajax({
+			type: "POST",
+			//url: "https://api.pbapp.net/janrain/token/ajax",
+			url: "https://dev.pbapp.net/api/janrain/token/ajax",
+			//url: "http://localhost/api/janrain/token/ajax",
+			data: "token=" + response.token,
+			success: function(res) {
+				console.log("ajax complete");
+				console.log(res);
+			}
+        });
+    });
+	console.log("janrainWidgetOnload - events attached");
+}
+
 function janrainShareOnload(){
 	janrain.events.onShareSendComplete.addHandler(function(response) {
 		console.log("onShareSendComplete");
@@ -78,12 +100,18 @@ function janrainShareOnload(){
 		console.log("onShareLoginComplete");
 		console.log(response);
 	});
-	console.log("events attached");
+	console.log("janrainShareOnload - events attached");
 }
 </script>
 </head>
 <body>
-	<div id="janrainEngageEmbed"></div>
+	<?php
+	if(isset($user))
+		var_dump($user);
+	if(isset($provider))
+		var_dump($provider);
+	?>
+	<!--div id="janrainEngageEmbed"></div-->
 	<a class="janrainEngage" href="#">Sign-In</a>
 	<div id="janrainEngageShare">[Share]</div>
 </body>
