@@ -67,7 +67,7 @@ $db['default']['stricton'] = FALSE;
 
 $db['developer']['hostname'] = 'dev.pbapp.net';
 $db['developer']['username'] = 'playbasis_admin';
-$db['developer']['password'] = 'pl@yb@sis';
+$db['developer']['password'] = 'pl@yb@sispl@yb@sispl@yb@sis';
 $db['developer']['database'] = 'core';
 $db['developer']['dbdriver'] = 'mysql';
 $db['developer']['dbprefix'] = '';
@@ -84,7 +84,7 @@ $db['developer']['stricton'] = FALSE;
 
 $db['production']['hostname'] = 'www.pbapp.net';
 $db['production']['username'] = 'playbasis_admin';
-$db['production']['password'] = 'pl@yb@sis';
+$db['production']['password'] = 'pl@yb@sis@dminpl@yb@sis@dmin';
 $db['production']['database'] = 'core';
 $db['production']['dbdriver'] = 'mysql';
 $db['production']['dbprefix'] = '';
