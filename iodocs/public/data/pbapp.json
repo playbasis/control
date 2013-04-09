@@ -1,0 +1,547 @@
+{
+	"endpoints": [
+		{
+			"name": "Auth API",
+			"methods": [
+				{
+					"MethodName": "Auth",
+					"Synopsis": "Request access token from playbasis server.",
+					"HTTPMethod": "POST",
+					"URI": "/Auth",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "api_key",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "api key issued by Playbasis"
+						},
+						{
+							"Name": "api_secret",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "api secret issued by Playbasis"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Player API",
+			"methods": [
+				{
+					"MethodName": "Player Info",
+					"Synopsis": "Get information about a player.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Register",
+					"Synopsis": "Register a user from client's website as a Playbasis player.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/register",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "username",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "username of the player"
+						},
+						{
+							"Name": "email",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "email address of the player"
+						},
+						{
+							"Name": "image",
+							"Required": "Y",
+							"Default": "https://www.pbapp.net/images/default_profile.jpg",
+							"Type": "string",
+							"Description": "url to the player profile image"
+						},
+						{
+							"Name": "facebook_id",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "facebook id of the player"
+						},
+						{
+							"Name": "twitter_id",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "twitter id of the player"
+						},
+						{
+							"Name": "password",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "hashed password"
+						},
+						{
+							"Name": "first_name",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "first name of the player"
+						},
+						{
+							"Name": "last_name",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "last name of the player"
+						},
+						{
+							"Name": "gender",
+							"Required": "N",
+							"Default": "",
+							"Type": "enumerated",
+							"Description": "1=Male, 2=Female",
+							"EnumeratedList": [
+								"1",
+								"2"
+							]
+						},
+						{
+							"Name": "birth_date",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+						}
+					]
+				},
+				{
+					"MethodName": "Login",
+					"Synopsis": "Tell Playbasis system that a player has logged in.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/login",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Logout",
+					"Synopsis": "Tell Playbasis system that a player has logged out.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/logout",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Points",
+					"Synopsis": "Returns information about all point-based rewards that a player currently have.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/points",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Point",
+					"Synopsis": "Returns how much of specified the point-based reward a player currently have.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/point/:point_name",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "point_name",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of the point-based reward to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Action Time",
+					"Synopsis": "Returns the last time that player performed the specified action.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/action/:action_name/time",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "action_name",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of the action to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Last Action",
+					"Synopsis": "Returns the time and action that a player last performed.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/action/time",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Action Count",
+					"Synopsis": "Returns the number of times that a player has performed the specified action.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/action/:action_name/count",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "action_name",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of the action to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Badge",
+					"Synopsis": "Returns information about all the badges that a player has earned.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/badge",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Rank",
+					"Synopsis": "Returns list of players sorted by the specified point type.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/rank/:rank_by/:limit",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "rank_by",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of point-based reward to rank players by"
+						},
+						{
+							"Name": "limit",
+							"Required": "N",
+							"Default": "20",
+							"Type": "integer",
+							"Description": "number of results to return"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Badge API",
+			"methods": [
+				{
+					"MethodName": "Badges Info",
+					"Synopsis": "Returns information about all available badges for the current site.",
+					"HTTPMethod": "POST",
+					"URI": "/Badge",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						}
+					]
+				},
+				{
+					"MethodName": "Badge Info",
+					"Synopsis": "Returns information about the badge with the specified id.",
+					"HTTPMethod": "POST",
+					"URI": "/Badge/:id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "integer",
+							"Description": "badge id to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Badge Collections Info",
+					"Synopsis": "Returns information about all available badge collections for the current site.",
+					"HTTPMethod": "POST",
+					"URI": "/Badge/collection",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						}
+					]
+				},
+				{
+					"MethodName": "Badge Collection Info",
+					"Synopsis": "Returns information about the badge collection with the specified id.",
+					"HTTPMethod": "POST",
+					"URI": "/Badge/collection/:id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "integer",
+							"Description": "badge collection id to query"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Engine API",
+			"methods": [
+				{
+					"MethodName": "Action Config",
+					"Synopsis": "Returns names of actions that can trigger game rules within a client’s website.",
+					"HTTPMethod": "POST",
+					"URI": "/Engine/actionConfig",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						}
+					]
+				},
+				{
+					"MethodName": "Rule",
+					"Synopsis": "Process an action through all the game rules defined for a client’s website.",
+					"HTTPMethod": "POST",
+					"URI": "/Engine/rule",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "action",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of action performed"
+						},
+						{
+							"Name": "player_id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "url",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "URL of the page that trigger the action or any identifier string - Used for logging, URL specific rules, and rules that trigger only when a specific identifier string is supplied"
+						},
+						{
+							"Name": "reward",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward name"
+						},
+						{
+							"Name": "quantity",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "amount of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward quantity"
+						}
+					]
+				}
+			]
+		}
+	]
+}
