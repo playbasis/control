@@ -14,7 +14,7 @@ var_dump($res);
 
 $user = ''.time();
 $playerId = 'id'.$user;
-$res = $pb->register($playerId, 'usr'.$user, 'usr'.$user.'@pbapp.net', 'http://farm9.staticflickr.com/8175/7931499456_c169c5d7aa_q.jpg');
+$res = $pb->register($playerId, 'usr'.$user, 'usr'.$user.'@pbapp.net', 'https://www.pbapp.net/images/default_profile.jpg');
 echo'register:';
 var_dump($res);
 
