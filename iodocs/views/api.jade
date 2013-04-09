@@ -1,4 +1,50 @@
 h1=apiInfo.name 
+
+h2 Overview
+p
+  | The following is the API reference for interacting with our web service that is the heart of our gamification engine. The web service is responsible for processing users’ actions (comment, like, share, etc.) which can be triggered from websites, mobile applications and internet enabled devices. Once actions are fed into the system, game rules associated with the actions will execute and respond with game events (badge unlocked, level up, exp gained, etc.) to be displayed to end users. Game rules are defined through the game editor inside the 
+  a(href='https://www.pbapp.net/admin') admin panel
+  | .
+br
+h2 Basic Usages
+h3 Authentication
+p
+  | The first thing you need to do is to acquire an access token by calling the /Auth function with a valid api-key and api-secret. The access token is required to call every function in our API (except /Auth). You can view/manage your api-key and api-secret via the 
+  a(href='https://www.pbapp.net/admin') admin panel
+  | . An access token will be valid for 3 days once  it is generated. After it is expired, you’ll have to call the /Auth function again to generate a new token.
+br
+p
+  | For security reasons, please make sure that your access token is kept secured, and not easily exposed to your users. If a cheater or hacker got a hold of your access token, he or she will be able to manually call our api and perform fake actions to receives rewards, until the token is expired.
+br
+h3 Registering Users
+p
+  | Once you’ve acquired the access token, you’ll be able to register your users into our system with a call to the /Player/:id/register function in the Player API. The user id that you provide in the register function is the link from users in your database to the same users in our system; so, it is best that it is the same id that you use to identify your own users. You only need to register each of your users once. If you have a large number of existing users, you can contact us to help you import them.
+br
+h3 Doing Actions
+p
+  | Actions are basically things that your users do on your website or service. An action can trigger a number of game rules that starts with the same action. Users will be rewarded according to the logic defined in the game rules. Assuming you’ve already setup your game rules via the 
+  a(href='https://www.pbapp.net/admin') admin panel
+  | , you can now start letting your users perform actions to triggers game rules and receive rewards. If you have not already setup your game rules or have questions about how to configure the game rules, please contact us or refer to the user manual of the admin panel.
+br
+p
+  | For our system to know that your user has just performed an action, so that we can process the related game rules, you need to call the /Engine/rule function in the Engine API. You’ll need to pass the id of the user that trigger the action and the name of the action as arguments. Make sure that the name of the action passed in as argument matched with the action names that you setup in the game rules. For examples, if a game rule starts with an action called “like”, but you passed in an action call “love” or “pic_like” or “likes”, the game rule will not trigger.
+br
+p
+  | Another possible gotcha that one should be aware of is the user id that you passed in as argument to the /Engine/rule function should be the user that actually receives the reward. For example, if you want to give points when a user acquire a new follower. You have a user who click the follow button and a user that gained a new follower, make sure you passed in the id of the user that will receive the point, which is the user that gained a new follower, not the user that clicked the follow button.
+br
+h3 Receiving Rewards
+p
+  | When calling the /Engine/rule function, rewards may be awarded to the player related to the action as a result of the processed game rules. If any rewards are given, all information about the rewards will be included in the response of the /Engine/rule function.
+br
+h3 Login and Logout
+p
+  | When a user login or logout, you should also tell our system by calling the /Player/:id/login or /Player/:id/logout function in the Player API. This step is not strictly required, but highly recommended as we have some features that rely on knowing when users are logging in or out, for example real-time notifications, logging, and tracking last login time.
+br
+h3 Querying Information
+p
+  | Playbasis API has several ways for retrieving information about your users. The most common functions are in the Player API and Badge API. Please refer to the API documentation for more information.
+br
+
 - if (session.authed && apiInfo.oauth && apiInfo.oauth.type =='three-legged')
     - var authed ='authed'
 - else
