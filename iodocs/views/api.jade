@@ -1,10 +1,12 @@
 h1=apiInfo.name 
 
+br
 h2 Overview
 p
   | The following is the API reference for interacting with our web service that is the heart of our gamification engine. The web service is responsible for processing users’ actions (comment, like, share, etc.) which can be triggered from websites, mobile applications and internet enabled devices. Once actions are fed into the system, game rules associated with the actions will execute and respond with game events (badge unlocked, level up, exp gained, etc.) to be displayed to end users. Game rules are defined through the game editor inside the 
   a(href='https://www.pbapp.net/admin') admin panel
   | .
+br
 br
 h2 Basic Usages
 h3 Authentication
@@ -43,6 +45,43 @@ br
 h3 Querying Information
 p
   | Playbasis API has several ways for retrieving information about your users. The most common functions are in the Player API and Badge API. Please refer to the API documentation for more information.
+br
+br
+h2 Receiving Real-Time Notification
+p
+  | Whenever some notable event happens within your site, Playbasis server will broadcast the event to all connected clients in real-time. Clients can use 
+  a(href='http://socket.io') socket.io
+  |  to subscribe to the activity-feed that belongs to a specific site, and receive data for each event emitted after the time of subscription. The following snippet (in jade/javascript) shows how to subscribe and start receiving activity-feed for your domain:
+  pre
+    code 
+      script(src='/socket.io/socket.io.js')
+        script
+          var socket = io.connect('https://pbapp.net:3000');
+          socket.on('connect', function(data){
+          console.log('client connected');
+            socket.emit('subscribe', {channel:'yourdomain.com'});
+          });
+          socket.on('message', function(data){
+            console.log('msg:' + data);
+          });
+h2 Social Integration
+h3 Facebook
+p
+  | Playbasis API is integrated with Facebook’s Realtime Update API which allows our server to receive events when changes are made to a Facebook Page. This gives you the ability to trigger game rules when users perform actions on your Facebook Page. If you are interested in gamifying your Facebook Page, please contact our technical staff for additional information.
+br
+h3 Twitter
+p
+  | Playbasis API has the ability to trigger game rules when user tweet a specific word, such as a hashtag or @reply. If you are interested in leveraging the power of twitter, please contact our technical staff for additional information.
+br
+h3 Janrain (Social Sign-in and Social Sharing widget)
+p
+  | Playbasis API is integrated with Janrain to give you a simple way to add Social Sign-in and Social Sharing to your website through attractive widgets; but that’s not all. We also provide a way to gamify the widgets by allowing game rules to be triggered when users interact with them. Please contact our technical staff for additional information.
+br
+br
+h2 SDKs
+p
+  | We provide SDKs for faster and easier integrations with your framework. If you need an SDK, please contact our technical staff to request an SDK for your platform.
+br
 br
 
 - if (session.authed && apiInfo.oauth && apiInfo.oauth.type =='three-legged')
