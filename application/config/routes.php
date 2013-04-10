@@ -94,9 +94,9 @@ $route['fb'] = 'playbasis/fb';
 $route['login'] = 'playbasis/login';
 
 //dummy 
-$route['dummy/dummyPlayer/([0-9]+)/([0-9]+)']	= 'dummy/dummyPlayer/$1/$2/$3';
-$route['dummy/([0-9]+)/([0-9]+)/([0-9]+)']	= 'dummy/index/$1/$2/$3';
-$route['dummy/:any']	= 'dummy/error';
+//$route['dummy/dummyPlayer/([0-9]+)/([0-9]+)']	= 'dummy/dummyPlayer/$1/$2/$3';
+//$route['dummy/([0-9]+)/([0-9]+)/([0-9]+)']	= 'dummy/index/$1/$2/$3';
+//$route['dummy/:any']	= 'dummy/error';
 
 $route['404_override'] = '';
 /* End of file routes.php */
