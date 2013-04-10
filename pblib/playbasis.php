@@ -10,7 +10,6 @@ if (!function_exists('json_decode')) {
 class Playbasis
 {
 	const BASE_URL = 'https://api.pbapp.net/';
-	//const BASE_URL = 'https://localhost/api/';
 	private $token = null;
 	
 	public function auth($apiKey, $apiSecret)
@@ -30,6 +29,18 @@ class Playbasis
 		));
 	}
 	
+	/*
+	 * @param	$optionalData	Key-value for additional parameters to be sent to the register method.
+	 * 							The following keys are supported:
+	 * 							- facebook_id
+	 * 							- twitter_id
+	 * 							- password		assumed hashed
+	 * 							- first_name
+	 * 							- last_name
+	 * 							- nickname
+	 * 							- gender		1=Male, 2=Female
+	 * 							- birth_date	format YYYY-MM-DD
+	 */
 	public function register($playerId, $username, $email, $imageUrl, $optionalData=array())
 	{
 		return $this->call("Player/$playerId/register", array_merge(array(
@@ -110,6 +121,13 @@ class Playbasis
 		return $this->call("Engine/actionConfig", array('token' => $this->token));
 	}
 	
+	/*
+	 * @param	$optionalData	Key-value for additional parameters to be sent to the rule method.
+	 * 							The following keys are supported:
+	 * 							- url		url of the page that trigger the action (for triggering non-global actions)
+	 * 							- reward	name of the custom-point reward to give (for triggering rules with custom-point reward)
+	 * 							- quantity	amount of points to give (for triggering rules with custom-point reward)
+	 */
 	public function rule($playerId, $action, $optionalData=array())
 	{
 		return $this->call("Engine/rule", array_merge(array(
