@@ -96,15 +96,18 @@ class Janrain extends REST_Controller
 		}
 		if($pb_player_id <= 0)
 		{
+			$name = (!isset($profile['displayName'])) ? $profile['displayName'] : 'johndoe';
 			$input['client_id'] = $client_id;
 			$input['site_id'] = $site_id;
 			$input['player_id'] = $identifier;
 			$input['image'] = (isset($profile['photo'])) ? $profile['photo'] : 'https://www.pbapp.net/images/default_profile.jpg';
-			$input['username'] = $profile['preferredUsername'];
+			$input['username'] = (isset($profile['preferredUsername'])) ? $profile['preferredUsername'] : $name;
 			$input['email'] = (isset($profile['email']) && $profile['email']) ? $profile['email'] : 'no_email@playbasis.com';
-			$input['first_name'] = (isset($profile['name']['givenName']) && $profile['name']['givenName']) ? $profile['name']['givenName'] : $profile['displayName'];
-			$input['last_name'] = (isset($profile['name']['familyName']) && $profile['name']['familyName']) ? $profile['name']['familyName'] : "";
-			$input['gender'] = 0;
+			if(isset($profile['name']))
+			{
+				$input['first_name'] = (isset($profile['name']['givenName']) && $profile['name']['givenName']) ? $profile['name']['givenName'] : $name;
+				$input['last_name'] = (isset($profile['name']['familyName']) && $profile['name']['familyName']) ? $profile['name']['familyName'] : "";
+			}
 			if(isset($profile['gender']))
 			{
 				$input['gender'] = ($profile['gender'] == 'male') ? 1 : 2;
