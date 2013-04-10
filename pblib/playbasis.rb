@@ -6,7 +6,6 @@ require 'pp'
 class Playbasis
 
 	BASE_URL = 'https://api.pbapp.net/'
-	#BASE_URL = 'https://dev.pbapp.net/api/'
 
 	def initialize()
 		@token = ''
@@ -23,6 +22,16 @@ class Playbasis
 		return call("Player/#{playerId}", { :token => @token })
 	end
 
+	# @param	optionalData	Key-value for additional parameters to be sent to the register method.
+	# 							The following keys are supported:
+	# 							- facebook_id
+	# 							- twitter_id
+	# 							- password		assumed hashed
+	# 							- first_name
+	# 							- last_name
+	# 							- nickname
+	# 							- gender		1=Male, 2=Female
+	# 							- birth_date	format YYYY-MM-DD
 	def register(playerId, username, email, imageUrl, optionalData={})
 		return call("Player/#{playerId}/register", {
 			:token => @token,
@@ -88,6 +97,11 @@ class Playbasis
 		return call("Engine/actionConfig", { :token => @token });
 	end
 
+	# @param	optionalData	Key-value for additional parameters to be sent to the rule method.
+	# 							The following keys are supported:
+	# 							- url		url of the page that trigger the action (for triggering non-global actions)
+	# 							- reward	name of the custom-point reward to give (for triggering rules with custom-point reward)
+	# 							- quantity	amount of points to give (for triggering rules with custom-point reward)
 	def rule(playerId, action, optionalData={})
 		return call("Engine/rule", {
 			:token => @token,

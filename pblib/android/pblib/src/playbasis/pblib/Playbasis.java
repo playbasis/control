@@ -109,14 +109,14 @@ public class Playbasis
 	 * @param	optionalData	Varargs of String for additional parameters to be sent to the register method.
 	 * 							Each element is a string in the format of key=value, for example: first_name=john
 	 * 							The following keys are supported:
-	 * 								- facebook_id
-	 * 								- twitter_id
-	 * 								- password		assumed hashed
-	 * 								- first_name
-	 * 								- last_name
-	 * 								- nickname
-	 * 								- gender		1=Male, 2=Female
-	 * 								- birth_date	format YYYY-MM-DD
+	 * 							- facebook_id
+	 * 							- twitter_id
+	 * 							- password		assumed hashed
+	 * 							- first_name
+	 * 							- last_name
+	 * 							- nickname
+	 * 							- gender		1=Male, 2=Female
+	 * 							- birth_date	format YYYY-MM-DD
 	 */
 	public JsonReader register(String playerId, String username, String email, String imageUrl, String... optionalData)
 	{
@@ -216,9 +216,9 @@ public class Playbasis
 	 * @param	optionalData	Varargs of String for additional parameters to be sent to the rule method.
 	 * 							Each element is a string in the format of key=value, for example: url=playbasis.com
 	 * 							The following keys are supported:
-	 * 								- url		url of the page that trigger the action (for triggering non-global actions)
-	 * 								- reward	name of the custom-point reward to give (for triggering rules with custom-point reward)
-	 * 								- quantity	amount of points to give (for triggering rules with custom-point reward)
+	 * 							- url		url of the page that trigger the action (for triggering non-global actions)
+	 * 							- reward	name of the custom-point reward to give (for triggering rules with custom-point reward)
+	 * 							- quantity	amount of points to give (for triggering rules with custom-point reward)
 	 */
 	public JsonReader rule(String playerId, String action, String... optionalData)
 	{
