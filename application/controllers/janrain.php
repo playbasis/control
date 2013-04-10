@@ -96,7 +96,7 @@ class Janrain extends REST_Controller
 		}
 		if($pb_player_id <= 0)
 		{
-			$name = (!isset($profile['displayName'])) ? $profile['displayName'] : 'johndoe';
+			$name = (isset($profile['displayName'])) ? $profile['displayName'] : 'johndoe';
 			$input['client_id'] = $client_id;
 			$input['site_id'] = $site_id;
 			$input['player_id'] = $identifier;
