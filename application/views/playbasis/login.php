@@ -63,9 +63,9 @@
     e.id = 'janrainWidgets';
 
     if (document.location.protocol === 'https:') {
-      e.src = 'https://rpxnow.com/js/lib/pbapp/widget.js';
+      e.src = 'https://rpxnow.com/js/lib/playbasis/widget.js';
     } else {
-      e.src = 'http://widget-cdn.rpxnow.com/js/lib/pbapp/widget.js';
+      e.src = 'http://widget-cdn.rpxnow.com/js/lib/playbasis/widget.js';
     }
 
     var s = document.getElementsByTagName('script')[0];
