@@ -4,10 +4,10 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
 (function() {
-    if (typeof window.janrain !== 'object') window.janrain = {};
+	if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
     
-	var redir = encodeURIComponent("api/janrain/welcome");
+    var redir = encodeURIComponent("api/janrain/welcome");
 	var protocal = "http";
 	var param = '?redir=' + redir + '&protocal=' + protocal
     //janrain.settings.tokenUrl = 'https://api.pbapp.net/janrain/token' + param;
@@ -26,9 +26,9 @@
     e.id = 'janrainAuthWidget';
 
     if (document.location.protocol === 'https:') {
-      e.src = 'https://rpxnow.com/js/lib/pbapp/engage.js';
+      e.src = 'https://rpxnow.com/js/lib/playbasis/engage.js';
     } else {
-      e.src = 'http://widget-cdn.rpxnow.com/js/lib/pbapp/engage.js';
+      e.src = 'http://widget-cdn.rpxnow.com/js/lib/playbasis/engage.js';
     }
 
     var s = document.getElementsByTagName('script')[0];

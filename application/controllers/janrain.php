@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/REST_Controller.php';
-define('API_KEY', 'ddfa2aaffe9cd021f2b42d7a3c5f5712abca5d43');
+define('API_KEY', 'f6c1a3300b67b87fe4405473c1f73c34412f10a9');
 class Janrain extends REST_Controller
 {
 	public function __construct()
