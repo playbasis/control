@@ -9,6 +9,14 @@ p
 br
 br
 h2 Basic Usages
+h3 Calling the API
+p
+  | The URL for all endpoints starts with:
+  code
+    https://api.pbapp.net
+  br
+  | You can see all avilable methods and try calling them directly on this page.
+br
 h3 Authentication
 p
   | The first thing you need to do is to acquire an access token by calling the /Auth function with a valid api-key and api-secret. The access token is required to call every function in our API (except /Auth). You can view/manage your api-key and api-secret via the 
@@ -16,7 +24,7 @@ p
   | . An access token will be valid for 3 days once  it is generated. After it is expired, you’ll have to call the /Auth function again to generate a new token.
 br
 p
-  | For security reasons, please make sure that your access token is kept secured, and not easily exposed to your users. If a cheater or hacker got a hold of your access token, he or she will be able to manually call our api and perform fake actions to receives rewards, until the token is expired.
+  | For security reasons, please make sure that your access token is kept secured on your server and not easily exposed to clients. If a hacker got a hold of your access token, he or she will be able to manually call our api and perform fake actions to receives rewards until the token expire.
 br
 h3 Registering Users
 p
