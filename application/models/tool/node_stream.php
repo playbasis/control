@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 //define('STREAM_URL', 'https://dev.pbapp.net/activitystream/');
-define('STREAM_URL', 'https://pbapp.net/activitystream/');
+define('STREAM_URL', 'https://node.pbapp.net/activitystream/');
 // define('STREAM_URL', 'http://localhost/activitystream/');
-define('STREAM_PORT', 3000);
+define('STREAM_PORT', 80);
 define('USERPASS', 'planes:capetorment852456');
 class Node_stream extends CI_Model
 {
