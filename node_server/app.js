@@ -76,7 +76,7 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 
 var server = https.createServer(options, app);
-io = io.listen(server);
+io = io.listen(server, {origins: '*'});
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
 });
