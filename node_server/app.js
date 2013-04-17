@@ -124,6 +124,11 @@ var auth = express.basicAuth(function(user, pass){
 	return user === 'planes' && pass === 'capetorment852456';
 });
 
+app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
 //publish event through post request
 app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 	if(req.body)
