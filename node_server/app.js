@@ -55,7 +55,7 @@ function allowCrossDomain(req, res, next) {
 var app = express();
 
 app.configure(function(){
-	app.set('port', process.env.PORT || 3000);
+	app.set('port', process.env.PORT || 80);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.favicon());
@@ -124,11 +124,6 @@ var auth = express.basicAuth(function(user, pass){
 	return user === 'planes' && pass === 'capetorment852456';
 });
 
-app.all('/', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
-});
 //publish event through post request
 app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 	if(req.body)
