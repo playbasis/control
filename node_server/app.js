@@ -38,18 +38,6 @@ function feedParser(req, res, next){
 	})
 }
 
-function allowCrossDomain(req, res, next) {
-//    res.header('Access-Control-Allow-Origin', '*');
-//    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader("Access-Control-Allow-Origin", "*");       // Need to add the correct domain in here!!
-    res.setHeader("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
-//    res.setHeader("Access-Control-Max-Age", "300");          // Cache response for 5 minutes
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");         // Ensure this header is also allowed!
-
-    next();
-}
-
 var app = express();
 
 app.configure(function(){
@@ -60,7 +48,6 @@ app.configure(function(){
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
-    app.use(allowCrossDomain);
 	app.use(feedParser);
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -74,7 +61,7 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 
 var server = https.createServer(options, app);
-io = io.listen(server, {origins: '*:*'});
+io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
 });
