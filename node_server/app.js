@@ -47,7 +47,7 @@ function allowCrossDomain(req, res, next) {
 //    res.setHeader("Access-Control-Max-Age", "300");          // Cache response for 5 minutes
     res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");         // Ensure this header is also allowed!
 
-    console.log("Now use aloow");
+    console.log("Now use allow");
 
     next();
 }
