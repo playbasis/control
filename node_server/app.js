@@ -40,9 +40,14 @@ function feedParser(req, res, next){
 
 function allowCrossDomain(req, res, next) {
 //    res.header('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Origin',  '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+//    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader("Access-Control-Allow-Origin", "*");       // Need to add the correct domain in here!!
+    res.setHeader("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
+//    res.setHeader("Access-Control-Max-Age", "300");          // Cache response for 5 minutes
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");         // Ensure this header is also allowed!
+
+    console.log("Now use aloow");
 
     next();
 }
