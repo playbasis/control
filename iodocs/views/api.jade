@@ -85,7 +85,19 @@ div.readable_area
       h2.topic_header Social Integration
       h3.sub_header Facebook
       p.p_wrap
-        | Playbasis API is integrated with Facebook’s Realtime Update API which allows our server to receive events when changes are made to a Facebook Page. This gives you the ability to trigger game rules when users perform actions on your Facebook Page. If you are interested in gamifying your Facebook Page, please contact our technical staff for additional information.
+        | Playbasis API is integrated with Facebook’s Realtime Update API which allows our server to receive events when changes are made to a Facebook Page. This gives you the ability to trigger game rules when users perform actions on your Facebook Page. Setting up your Facebook Page with Playbasis is simple; you only need a Facebook App that has Realtime Update setup to our API endpoint, then add the app to your Facebook Page. That's all.
+        br
+        | For more detailed instructions, follow Facebook documentation on
+        a(href='https://developers.facebook.com/docs/reference/api/realtime/') how to enable realtime update for your app
+        |  and use the following API endpoint in the callback field:
+        pre
+          code
+            https://api.pbapp.net/Engine/rule/facebook
+      p.p_wrap
+        | Then follow instructions on how to 
+        a(href='https://developers.facebook.com/docs/reference/api/page/#realtime') setup your app to receive realtime update on a Facebook Page.
+        br
+        | If you are interested in gamifying your Facebook Page, please contact our technical staff for additional information.
       br
       h3.sub_header Twitter
       p.p_wrap
