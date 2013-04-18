@@ -75,7 +75,7 @@ class Engine extends REST_Controller
 		{
 			$this->response($this->error->setError('ACCESS_DENIED'), 200);
 		}
-		$challenge = $this->input->get('hub_challenge');
+		$challenge = $this->input->get('hub.challenge');
 		echo $challenge;
 	}
 	public function rule_post($option = 0)
