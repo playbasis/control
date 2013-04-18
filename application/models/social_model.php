@@ -1,24 +1,33 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/facebook-php-sdk/facebook.php';
-define('APP_ID', '421530621269210');
-define('APP_SECRET', '6544951f29daa3afe9c7ad4da7b3d88b');
-define('APP_NAMESPACE', 'api_pbapp');
-define('APP_PERMISSION', 'publish_actions,manage_notifications');
 class Social_model extends CI_Model
 {
-	private $facebook = null;
 	public function __construct()
 	{
 		parent::__construct();
 		$this->load->model('player_model');
 		$this->load->model('client_model');
-		$config = array();
-		$config['appId'] = APP_ID;
-		$config['secret'] = APP_SECRET;
-		$config['fileUpload'] = false; // optional
-		$this->facebook = new Facebook($config);
 		$this->load->library('mongo_db');
+	}
+	private function getFacebookCredentials($client_id, $site_id)
+	{
+		$this->db->select('app_id,app_secret');
+		$this->db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id
+			));
+		$result = $this->db->get('playbasis_facebook_page_to_client');
+		return $result->row_array();
+	}
+	private function getFacebookObject($client_id, $site_id)
+	{
+		$credentials = $this->getFacebookCredentials($client_id, $site_id);
+		$config = array();
+		$config['appId'] = $credentials['app_id'];
+		$config['secret'] = $credentials['app_secret'];
+		$config['fileUpload'] = false; // optional
+		return new Facebook($config);
 	}
 	public function processTwitterData($tweetData)
 	{
@@ -93,7 +102,7 @@ class Social_model extends CI_Model
 					if($item == 'status' && $verb == 'add')
 					{
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
-						$data = $this->getFacebookPostData($postId);
+						$data = $this->getFacebookPostData($client_id, $site_id, $postId);
 						if($data)
 						{
 							$facebook_id = $data['from_id'];
@@ -105,7 +114,7 @@ class Social_model extends CI_Model
 					else if($item == 'post' && $verb == 'add')
 					{
 						$postId = $this->formatFacebookPostId($value['post_id'], $id);
-						$data = $this->getFacebookPostData($postId);
+						$data = $this->getFacebookPostData($client_id, $site_id, $postId);
 						if($data)
 						{
 							$facebook_id = $data['from_id'];
@@ -118,7 +127,7 @@ class Social_model extends CI_Model
 					{
 						$facebook_id = $value['sender_id'];
 						$commentId = $this->formatFacebookCommentId($value['comment_id'], $value['parent_id'], $id);
-						$data = $this->getFacebookCommentData($commentId);
+						$data = $this->getFacebookCommentData($client_id, $site_id, $commentId);
 						if($data)
 						{
 							$message = $data['message'];
@@ -145,22 +154,24 @@ class Social_model extends CI_Model
 			'message' => $message
 			);
 	}
-	public function getAppAccessToken()
+	private function getFacebookAppAccessToken($client_id, $site_id)
 	{
-		$app_token_url = "https://graph.facebook.com/oauth/access_token?" . "client_id=" . APP_ID . "&client_secret=" . APP_SECRET . "&grant_type=client_credentials";
+		$credentials = $this->getFacebookCredentials($client_id, $site_id);
+		$app_token_url = "https://graph.facebook.com/oauth/access_token?" . "client_id=" . $credentials['app_id'] . "&client_secret=" . $credentials['app_secret'] . "&grant_type=client_credentials";
 		$response = file_get_contents($app_token_url);
 		$params = null;
 		parse_str($response, $params);
 		return $params['access_token'];
 	}
-	public function sendFacebookNotification($facebook_id, $message, $href)
+	public function sendFacebookNotification($client_id, $site_id, $facebook_id, $message, $href)
 	{
 		$result = null;
 		try
 		{
-			$appAccessToken = $this->getAppAccessToken();
-			$this->facebook->setAccessToken($appAccessToken);
-			$result = $this->facebook->api('/' . $facebook_id . '/notifications', 'POST', array(
+			$facebook = $this->getFacebookObject($client_id, $site_id);
+			$appAccessToken = $this->getFacebookAppAccessToken($client_id, $site_id);
+			$facebook->setAccessToken($appAccessToken);
+			$result = $facebook->api('/' . $facebook_id . '/notifications', 'POST', array(
 				'href' => $href,
 				'template' => '@[' . $facebook_id . '] ' . $message
 				));
@@ -253,13 +264,14 @@ class Social_model extends CI_Model
 		}
 		return $commentId;
 	}
-	private function getFacebookPostData($postId)
+	private function getFacebookPostData($client_id, $site_id, $postId)
 	{
 		assert(is_string($postId));
 		$result = array();
 		try
 		{
-			$postData = $this->facebook->api('/' . $postId);
+			$facebook = $this->getFacebookObject($client_id, $site_id);
+			$postData = $facebook->api('/' . $postId);
 		}
 		catch(FacebookApiException $e)
 		{
@@ -270,48 +282,14 @@ class Social_model extends CI_Model
 		$result['message'] = $postData['message'];
 		return $result;
 	}
-	private function getFacebookCommentData($commentId)
+	private function getFacebookCommentData($client_id, $site_id, $commentId)
 	{
-		return $this->getFacebookPostData($commentId);
+		return $this->getFacebookPostData($client_id, $site_id, $commentId);
 	}
 	private function bigIntToString($number)
 	{
 		$numStr = serialize($number);
 		return substr($numStr, 2, -1);
-	}
-	// code from facebook doc below
-	public function parse_signed_request($signed_request)
-	{
-		list($encoded_sig, $payload) = explode('.', $signed_request, 2);
-		// decode the data
-		$sig = $this->base64_url_decode($encoded_sig);
-		$data = json_decode($this->base64_url_decode($payload), true);
-		if(strtoupper($data['algorithm']) !== 'HMAC-SHA256')
-		{
-			error_log('Unknown algorithm. Expected HMAC-SHA256');
-			return null;
-		}
-		// Adding the verification of the signed_request below
-		$expected_sig = hash_hmac('sha256', $payload, APP_SECRET, $raw = true);
-		if($sig !== $expected_sig)
-		{
-			error_log('Bad Signed JSON signature!');
-			return null;
-		}
-		return $data;
-	}
-	private function base64_url_decode($input)
-	{
-		return base64_decode(strtr($input, '-_', '+/'));
-	}
-	public function get_oauth_url()
-	{
-		$base_url = 'https://www.facebook.com/dialog/oauth/';
-		$client_id = '?client_id=' . APP_ID;
-		$redirect_uri = '&redirect_uri=' . rawurlencode('https://apps.facebook.com/' . APP_NAMESPACE . '/');
-		$scope = '&scope=' . APP_PERMISSION;
-		$oauth_url = $base_url . $client_id . $redirect_uri . $scope;
-		return $oauth_url;
 	}
 }
 
