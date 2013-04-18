@@ -194,9 +194,11 @@ class Engine extends REST_Controller
 	private function processRule($input, $validToken, $fbData, $twData)
 	{
 		$input['action_log_id'] = $this->tracker_model->trackAction($input); //track action
+		$client_id = $validToken['client_id'];
+		$site_id = $validToken['site_id'];
 		$ruleSet = $this->client_model->getRuleSetByActionId(array(
-			'client_id' => $validToken['client_id'],
-			'site_id' => $validToken['site_id'],
+			'client_id' => $client_id,
+			'site_id' => $site_id,
 			'action_id' => $input['action_id']
 		));
 		$apiResult = array(
@@ -253,7 +255,7 @@ class Engine extends REST_Controller
 							)), $input);
 							//publish to facebook notification
 							if($fbData)
-								$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+								$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
 						}
 						else if(is_null($jigsawConfig['item_id']))
 						{
@@ -284,7 +286,7 @@ class Engine extends REST_Controller
 									)), $input);
 									//publish to facebook notification
 									if($fbData)
-										$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+										$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
 								}
 							}
 							else
@@ -313,7 +315,7 @@ class Engine extends REST_Controller
 							)), $input);
 							//publish to facebook notification
 							if($fbData)
-								$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+								$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
 						}
 						else
 						{
@@ -342,8 +344,8 @@ class Engine extends REST_Controller
 									'badge' => $event['reward_data']
 								)), $input);
 								//publish to facebook notification
-								if($fbData)
-									$this->social_model->sendFacebookNotification($fbData['facebook_id'], $eventMessage, '');
+									if($fbData)
+										$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
 								break;
 							default:
 								break;
