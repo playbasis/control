@@ -1,0 +1,783 @@
+info: socket.io started
+Express server listening on port 3000
+debug: client authorized
+info: handshake authorized ViVGvztSfImHYyZBBNhP
+debug: setting request GET /socket.io/1/websocket/ViVGvztSfImHYyZBBNhP
+debug: set heartbeat interval for client ViVGvztSfImHYyZBBNhP
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client ViVGvztSfImHYyZBBNhP
+debug: cleared close timeout for client ViVGvztSfImHYyZBBNhP
+debug: cleared heartbeat interval for client ViVGvztSfImHYyZBBNhP
+debug: discarding transport
+debug: client authorized
+info: handshake authorized UrWFAz4VtNLsMHhcBNhQ
+debug: client authorized
+info: handshake authorized Kc1Zp58a1rDBURsIBNhR
+debug: setting request GET /socket.io/1/websocket/UrWFAz4VtNLsMHhcBNhQ
+debug: set heartbeat interval for client UrWFAz4VtNLsMHhcBNhQ
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/Kc1Zp58a1rDBURsIBNhR
+debug: set heartbeat interval for client Kc1Zp58a1rDBURsIBNhR
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client Kc1Zp58a1rDBURsIBNhR
+debug: cleared close timeout for client Kc1Zp58a1rDBURsIBNhR
+debug: cleared heartbeat interval for client Kc1Zp58a1rDBURsIBNhR
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client UrWFAz4VtNLsMHhcBNhQ
+debug: cleared close timeout for client UrWFAz4VtNLsMHhcBNhQ
+debug: cleared heartbeat interval for client UrWFAz4VtNLsMHhcBNhQ
+debug: discarding transport
+debug: client authorized
+info: handshake authorized 7ExRAkgYpMd_H_vKBNhS
+debug: client authorized
+info: handshake authorized wfq2ldxIihmFuuVnBNhT
+debug: setting request GET /socket.io/1/websocket/7ExRAkgYpMd_H_vKBNhS
+debug: set heartbeat interval for client 7ExRAkgYpMd_H_vKBNhS
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/wfq2ldxIihmFuuVnBNhT
+debug: set heartbeat interval for client wfq2ldxIihmFuuVnBNhT
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client 7ExRAkgYpMd_H_vKBNhS
+debug: cleared close timeout for client 7ExRAkgYpMd_H_vKBNhS
+debug: cleared heartbeat interval for client 7ExRAkgYpMd_H_vKBNhS
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client wfq2ldxIihmFuuVnBNhT
+debug: cleared close timeout for client wfq2ldxIihmFuuVnBNhT
+debug: cleared heartbeat interval for client wfq2ldxIihmFuuVnBNhT
+debug: discarding transport
+debug: client authorized
+info: handshake authorized 7fJWmtoB_WHB6Gx3BNhU
+debug: setting request GET /socket.io/1/websocket/7fJWmtoB_WHB6Gx3BNhU
+debug: set heartbeat interval for client 7fJWmtoB_WHB6Gx3BNhU
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client 7fJWmtoB_WHB6Gx3BNhU
+debug: cleared close timeout for client 7fJWmtoB_WHB6Gx3BNhU
+debug: cleared heartbeat interval for client 7fJWmtoB_WHB6Gx3BNhU
+debug: discarding transport
+debug: client authorized
+info: handshake authorized F1-Mb5Y_2LRoCNn4BNhV
+debug: client authorized
+info: handshake authorized 7g7TNbbXV3SpxGvQBNhW
+debug: setting request GET /socket.io/1/websocket/F1-Mb5Y_2LRoCNn4BNhV
+debug: set heartbeat interval for client F1-Mb5Y_2LRoCNn4BNhV
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/7g7TNbbXV3SpxGvQBNhW
+debug: set heartbeat interval for client 7g7TNbbXV3SpxGvQBNhW
+debug: client authorized for 
+debug: websocket writing 1::
+debug: emitting heartbeat for client F1-Mb5Y_2LRoCNn4BNhV
+debug: websocket writing 2::
+debug: set heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: set heartbeat interval for client F1-Mb5Y_2LRoCNn4BNhV
+debug: emitting heartbeat for client 7g7TNbbXV3SpxGvQBNhW
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: set heartbeat interval for client 7g7TNbbXV3SpxGvQBNhW
+debug: emitting heartbeat for client F1-Mb5Y_2LRoCNn4BNhV
+debug: websocket writing 2::
+debug: set heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: emitting heartbeat for client 7g7TNbbXV3SpxGvQBNhW
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: set heartbeat interval for client F1-Mb5Y_2LRoCNn4BNhV
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: set heartbeat interval for client 7g7TNbbXV3SpxGvQBNhW
+debug: emitting heartbeat for client F1-Mb5Y_2LRoCNn4BNhV
+debug: websocket writing 2::
+debug: set heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: set heartbeat interval for client F1-Mb5Y_2LRoCNn4BNhV
+debug: emitting heartbeat for client 7g7TNbbXV3SpxGvQBNhW
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: set heartbeat interval for client 7g7TNbbXV3SpxGvQBNhW
+debug: emitting heartbeat for client F1-Mb5Y_2LRoCNn4BNhV
+debug: websocket writing 2::
+debug: set heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: set heartbeat interval for client F1-Mb5Y_2LRoCNn4BNhV
+debug: emitting heartbeat for client 7g7TNbbXV3SpxGvQBNhW
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: set heartbeat interval for client 7g7TNbbXV3SpxGvQBNhW
+info: transport end (socket end)
+debug: set close timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: cleared close timeout for client F1-Mb5Y_2LRoCNn4BNhV
+debug: cleared heartbeat interval for client F1-Mb5Y_2LRoCNn4BNhV
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: cleared close timeout for client 7g7TNbbXV3SpxGvQBNhW
+debug: cleared heartbeat interval for client 7g7TNbbXV3SpxGvQBNhW
+debug: discarding transport
+debug: client authorized
+info: handshake authorized __DhGTLaE1baorM7BNhX
+debug: setting request GET /socket.io/1/websocket/__DhGTLaE1baorM7BNhX
+debug: set heartbeat interval for client __DhGTLaE1baorM7BNhX
+debug: client authorized for 
+debug: websocket writing 1::
+debug: emitting heartbeat for client __DhGTLaE1baorM7BNhX
+debug: websocket writing 2::
+debug: set heartbeat timeout for client __DhGTLaE1baorM7BNhX
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client __DhGTLaE1baorM7BNhX
+debug: set heartbeat interval for client __DhGTLaE1baorM7BNhX
+debug: emitting heartbeat for client __DhGTLaE1baorM7BNhX
+debug: websocket writing 2::
+debug: set heartbeat timeout for client __DhGTLaE1baorM7BNhX
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client __DhGTLaE1baorM7BNhX
+debug: set heartbeat interval for client __DhGTLaE1baorM7BNhX
+debug: emitting heartbeat for client __DhGTLaE1baorM7BNhX
+debug: websocket writing 2::
+debug: set heartbeat timeout for client __DhGTLaE1baorM7BNhX
+debug: fired heartbeat timeout for client __DhGTLaE1baorM7BNhX
+info: transport end (heartbeat timeout)
+debug: set close timeout for client __DhGTLaE1baorM7BNhX
+debug: cleared close timeout for client __DhGTLaE1baorM7BNhX
+debug: discarding transport
+debug: client authorized
+info: handshake authorized 1jNWQLTNeec7d9SABNhY
+debug: setting request GET /socket.io/1/websocket/1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: client authorized for 
+debug: websocket writing 1::
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: emitting heartbeat for client 1jNWQLTNeec7d9SABNhY
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 1jNWQLTNeec7d9SABNhY
+debug: set heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+info: transport end (socket end)
+debug: set close timeout for client 1jNWQLTNeec7d9SABNhY
+debug: cleared close timeout for client 1jNWQLTNeec7d9SABNhY
+debug: cleared heartbeat interval for client 1jNWQLTNeec7d9SABNhY
+debug: discarding transport
+debug: client authorized
+info: handshake authorized sAUYq5gmx_DqEyVYBNhZ
+debug: client authorized
+info: handshake authorized 3aMjdhWU0N6JyxdiBNha
+debug: setting request GET /socket.io/1/websocket/sAUYq5gmx_DqEyVYBNhZ
+debug: set heartbeat interval for client sAUYq5gmx_DqEyVYBNhZ
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/3aMjdhWU0N6JyxdiBNha
+debug: set heartbeat interval for client 3aMjdhWU0N6JyxdiBNha
+debug: client authorized for 
+debug: websocket writing 1::
+debug: emitting heartbeat for client sAUYq5gmx_DqEyVYBNhZ
+debug: websocket writing 2::
+debug: set heartbeat timeout for client sAUYq5gmx_DqEyVYBNhZ
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client sAUYq5gmx_DqEyVYBNhZ
+debug: set heartbeat interval for client sAUYq5gmx_DqEyVYBNhZ
+debug: emitting heartbeat for client 3aMjdhWU0N6JyxdiBNha
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 3aMjdhWU0N6JyxdiBNha
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 3aMjdhWU0N6JyxdiBNha
+debug: set heartbeat interval for client 3aMjdhWU0N6JyxdiBNha
+info: transport end (socket end)
+debug: set close timeout for client sAUYq5gmx_DqEyVYBNhZ
+debug: cleared close timeout for client sAUYq5gmx_DqEyVYBNhZ
+debug: cleared heartbeat interval for client sAUYq5gmx_DqEyVYBNhZ
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client 3aMjdhWU0N6JyxdiBNha
+debug: cleared close timeout for client 3aMjdhWU0N6JyxdiBNha
+debug: cleared heartbeat interval for client 3aMjdhWU0N6JyxdiBNha
+debug: discarding transport
+debug: client authorized
+info: handshake authorized Fe8kcBAuxuuaCKlABNhb
+debug: client authorized
+info: handshake authorized TpWnU8_NIpAHOLqCBNhc
+debug: setting request GET /socket.io/1/websocket/Fe8kcBAuxuuaCKlABNhb
+debug: set heartbeat interval for client Fe8kcBAuxuuaCKlABNhb
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/TpWnU8_NIpAHOLqCBNhc
+debug: set heartbeat interval for client TpWnU8_NIpAHOLqCBNhc
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client Fe8kcBAuxuuaCKlABNhb
+debug: cleared close timeout for client Fe8kcBAuxuuaCKlABNhb
+debug: cleared heartbeat interval for client Fe8kcBAuxuuaCKlABNhb
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client TpWnU8_NIpAHOLqCBNhc
+debug: cleared close timeout for client TpWnU8_NIpAHOLqCBNhc
+debug: cleared heartbeat interval for client TpWnU8_NIpAHOLqCBNhc
+debug: discarding transport
+debug: client authorized
+info: handshake authorized Up9N7rB-0lOtRT6cBNhd
+debug: client authorized
+info: handshake authorized Rk9eBWiclfZNN0oHBNhe
+debug: setting request GET /socket.io/1/websocket/Up9N7rB-0lOtRT6cBNhd
+debug: set heartbeat interval for client Up9N7rB-0lOtRT6cBNhd
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/Rk9eBWiclfZNN0oHBNhe
+debug: set heartbeat interval for client Rk9eBWiclfZNN0oHBNhe
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client Up9N7rB-0lOtRT6cBNhd
+debug: cleared close timeout for client Up9N7rB-0lOtRT6cBNhd
+debug: cleared heartbeat interval for client Up9N7rB-0lOtRT6cBNhd
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client Rk9eBWiclfZNN0oHBNhe
+debug: cleared close timeout for client Rk9eBWiclfZNN0oHBNhe
+debug: cleared heartbeat interval for client Rk9eBWiclfZNN0oHBNhe
+debug: discarding transport
+debug: client authorized
+info: handshake authorized mSFsBiL4USq2JqEFBNhf
+debug: client authorized
+info: handshake authorized H-DFnNI0MqW3JXUMBNhg
+debug: setting request GET /socket.io/1/websocket/mSFsBiL4USq2JqEFBNhf
+debug: set heartbeat interval for client mSFsBiL4USq2JqEFBNhf
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/H-DFnNI0MqW3JXUMBNhg
+debug: set heartbeat interval for client H-DFnNI0MqW3JXUMBNhg
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client H-DFnNI0MqW3JXUMBNhg
+debug: cleared close timeout for client H-DFnNI0MqW3JXUMBNhg
+debug: cleared heartbeat interval for client H-DFnNI0MqW3JXUMBNhg
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client mSFsBiL4USq2JqEFBNhf
+debug: cleared close timeout for client mSFsBiL4USq2JqEFBNhf
+debug: cleared heartbeat interval for client mSFsBiL4USq2JqEFBNhf
+debug: discarding transport
+debug: client authorized
+info: handshake authorized G9MIcaA4JT3cznf3BNhh
+debug: client authorized
+info: handshake authorized IzKJk-ZHNuNhtePIBNhi
+debug: setting request GET /socket.io/1/websocket/G9MIcaA4JT3cznf3BNhh
+debug: set heartbeat interval for client G9MIcaA4JT3cznf3BNhh
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/IzKJk-ZHNuNhtePIBNhi
+debug: set heartbeat interval for client IzKJk-ZHNuNhtePIBNhi
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client IzKJk-ZHNuNhtePIBNhi
+debug: cleared close timeout for client IzKJk-ZHNuNhtePIBNhi
+debug: cleared heartbeat interval for client IzKJk-ZHNuNhtePIBNhi
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client G9MIcaA4JT3cznf3BNhh
+debug: cleared close timeout for client G9MIcaA4JT3cznf3BNhh
+debug: cleared heartbeat interval for client G9MIcaA4JT3cznf3BNhh
+debug: discarding transport
+debug: client authorized
+info: handshake authorized WbYXlIhgXC4S3JhfBNhj
+debug: setting request GET /socket.io/1/websocket/WbYXlIhgXC4S3JhfBNhj
+debug: set heartbeat interval for client WbYXlIhgXC4S3JhfBNhj
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client WbYXlIhgXC4S3JhfBNhj
+debug: cleared close timeout for client WbYXlIhgXC4S3JhfBNhj
+debug: cleared heartbeat interval for client WbYXlIhgXC4S3JhfBNhj
+debug: discarding transport
+debug: client authorized
+info: handshake authorized ul2qPxaHuIS00B3gBNhk
+debug: client authorized
+info: handshake authorized l39xq3kpceLNfnC2BNhl
+debug: setting request GET /socket.io/1/websocket/ul2qPxaHuIS00B3gBNhk
+debug: set heartbeat interval for client ul2qPxaHuIS00B3gBNhk
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/l39xq3kpceLNfnC2BNhl
+debug: set heartbeat interval for client l39xq3kpceLNfnC2BNhl
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client l39xq3kpceLNfnC2BNhl
+debug: cleared close timeout for client l39xq3kpceLNfnC2BNhl
+debug: cleared heartbeat interval for client l39xq3kpceLNfnC2BNhl
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client ul2qPxaHuIS00B3gBNhk
+debug: cleared close timeout for client ul2qPxaHuIS00B3gBNhk
+debug: cleared heartbeat interval for client ul2qPxaHuIS00B3gBNhk
+debug: discarding transport
+debug: client authorized
+info: handshake authorized OZKpll67KdGnfJ23BNhm
+debug: setting request GET /socket.io/1/websocket/OZKpll67KdGnfJ23BNhm
+debug: set heartbeat interval for client OZKpll67KdGnfJ23BNhm
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client OZKpll67KdGnfJ23BNhm
+debug: cleared close timeout for client OZKpll67KdGnfJ23BNhm
+debug: cleared heartbeat interval for client OZKpll67KdGnfJ23BNhm
+debug: discarding transport
+debug: client authorized
+info: handshake authorized yTjNJTSAubDhbz50BNhn
+debug: client authorized
+info: handshake authorized 5eXWIRIv5jPLMnKPBNho
+debug: setting request GET /socket.io/1/websocket/yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: client authorized for 
+debug: websocket writing 1::
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: emitting heartbeat for client yTjNJTSAubDhbz50BNhn
+debug: websocket writing 2::
+debug: set heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client yTjNJTSAubDhbz50BNhn
+debug: set heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: emitting heartbeat for client 5eXWIRIv5jPLMnKPBNho
+debug: websocket writing 2::
+debug: set heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: set heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+info: transport end (socket end)
+debug: set close timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: cleared close timeout for client 5eXWIRIv5jPLMnKPBNho
+debug: cleared heartbeat interval for client 5eXWIRIv5jPLMnKPBNho
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client yTjNJTSAubDhbz50BNhn
+debug: cleared close timeout for client yTjNJTSAubDhbz50BNhn
+debug: cleared heartbeat interval for client yTjNJTSAubDhbz50BNhn
+debug: discarding transport
+debug: client authorized
+info: handshake authorized JvwfrOwz9o3bVx2LBNhp
+debug: setting request GET /socket.io/1/websocket/JvwfrOwz9o3bVx2LBNhp
+debug: set heartbeat interval for client JvwfrOwz9o3bVx2LBNhp
+debug: client authorized for 
+debug: websocket writing 1::
+info: transport end (socket end)
+debug: set close timeout for client JvwfrOwz9o3bVx2LBNhp
+debug: cleared close timeout for client JvwfrOwz9o3bVx2LBNhp
+debug: cleared heartbeat interval for client JvwfrOwz9o3bVx2LBNhp
+debug: discarding transport
+debug: client authorized
+info: handshake authorized 1-x0Kpw-c2mLzVmWBNhq
+debug: client authorized
+info: handshake authorized Ca_qPANzhSuLo8dEBNhr
+debug: setting request GET /socket.io/1/websocket/1-x0Kpw-c2mLzVmWBNhq
+debug: set heartbeat interval for client 1-x0Kpw-c2mLzVmWBNhq
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/Ca_qPANzhSuLo8dEBNhr
+debug: set heartbeat interval for client Ca_qPANzhSuLo8dEBNhr
+debug: client authorized for 
+debug: websocket writing 1::
+debug: client authorized
+info: handshake authorized FMdyFkyBcIqBQ2zEBNhs
+info: transport end (socket end)
+debug: set close timeout for client Ca_qPANzhSuLo8dEBNhr
+debug: cleared close timeout for client Ca_qPANzhSuLo8dEBNhr
+debug: cleared heartbeat interval for client Ca_qPANzhSuLo8dEBNhr
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client 1-x0Kpw-c2mLzVmWBNhq
+debug: cleared close timeout for client 1-x0Kpw-c2mLzVmWBNhq
+debug: cleared heartbeat interval for client 1-x0Kpw-c2mLzVmWBNhq
+debug: discarding transport
+debug: setting request GET /socket.io/1/websocket/FMdyFkyBcIqBQ2zEBNhs
+debug: set heartbeat interval for client FMdyFkyBcIqBQ2zEBNhs
+debug: client authorized for 
+debug: websocket writing 1::
+debug: client authorized
+info: handshake authorized pTVkBG2s-dK1qL6oBNht
+debug: client authorized
+info: handshake authorized jrEZy9_ZGckY3QVwBNhu
+info: transport end (socket end)
+debug: set close timeout for client FMdyFkyBcIqBQ2zEBNhs
+debug: cleared close timeout for client FMdyFkyBcIqBQ2zEBNhs
+debug: cleared heartbeat interval for client FMdyFkyBcIqBQ2zEBNhs
+debug: discarding transport
+debug: setting request GET /socket.io/1/websocket/pTVkBG2s-dK1qL6oBNht
+debug: set heartbeat interval for client pTVkBG2s-dK1qL6oBNht
+debug: client authorized for 
+debug: websocket writing 1::
+debug: setting request GET /socket.io/1/websocket/jrEZy9_ZGckY3QVwBNhu
+debug: set heartbeat interval for client jrEZy9_ZGckY3QVwBNhu
+debug: client authorized for 
+debug: websocket writing 1::
+debug: emitting heartbeat for client pTVkBG2s-dK1qL6oBNht
+debug: websocket writing 2::
+debug: set heartbeat timeout for client pTVkBG2s-dK1qL6oBNht
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client pTVkBG2s-dK1qL6oBNht
+debug: set heartbeat interval for client pTVkBG2s-dK1qL6oBNht
+debug: emitting heartbeat for client jrEZy9_ZGckY3QVwBNhu
+debug: websocket writing 2::
+debug: set heartbeat timeout for client jrEZy9_ZGckY3QVwBNhu
+debug: got heartbeat packet
+debug: cleared heartbeat timeout for client jrEZy9_ZGckY3QVwBNhu
+debug: set heartbeat interval for client jrEZy9_ZGckY3QVwBNhu
+info: transport end (socket end)
+debug: set close timeout for client pTVkBG2s-dK1qL6oBNht
+debug: cleared close timeout for client pTVkBG2s-dK1qL6oBNht
+debug: cleared heartbeat interval for client pTVkBG2s-dK1qL6oBNht
+debug: discarding transport
+info: transport end (socket end)
+debug: set close timeout for client jrEZy9_ZGckY3QVwBNhu
+debug: cleared close timeout for client jrEZy9_ZGckY3QVwBNhu
+debug: cleared heartbeat interval for client jrEZy9_ZGckY3QVwBNhu
+debug: discarding transport
