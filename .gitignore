@@ -10,3 +10,5 @@
 application/config/database.php
 application/config/config.php
 .idea/*
+node_server/*.log
+node_twitter/*.log
