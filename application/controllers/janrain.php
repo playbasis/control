@@ -148,7 +148,7 @@ class Janrain extends REST_Controller
 		$redir = $this->input->post('redir');
 		$user = urlencode($identifier);
 		$provider = urlencode($provider);
-        if (preg_match('?', $redir)) {
+        if (preg_match('/\?/', $redir)) {
             header("Location: $redir&user=$user&provider=$provider");
         }else{
             header("Location: $redir?user=$user&provider=$provider");
