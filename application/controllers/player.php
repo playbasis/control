@@ -43,6 +43,7 @@ class Player extends REST_Controller
 			'last_name',
 			'gender',
 			'image',
+            'email',
 			'exp',
 			'level',
 			'date_added AS registered',
