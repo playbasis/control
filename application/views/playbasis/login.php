@@ -7,9 +7,8 @@
 	if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
     
-    var redir = encodeURIComponent("api/janrain/welcome");
-	var protocal = "http";
-	var param = '?redir=' + redir + '&protocal=' + protocal
+    var redir = "https://dev.pbapp.net/api/janrain/welcome";
+	var param = '?redir=' + redir;
     //janrain.settings.tokenUrl = 'https://api.pbapp.net/janrain/token' + param;
 	janrain.settings.tokenUrl = 'https://dev.pbapp.net/api/janrain/token' + param;
 	//janrain.settings.tokenUrl = 'http://localhost/api/janrain/token' + param;

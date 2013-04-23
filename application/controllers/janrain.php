@@ -142,15 +142,13 @@ class Janrain extends REST_Controller
 		//Redirect browser
 		$required = $this->input->checkParam(array(
 			'redir',
-			'protocal',
 			));
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$protocal = $this->input->post('protocal');
 		$redir = $this->input->post('redir');
 		$user = urlencode($identifier);
 		$provider = urlencode($provider);
-		header("Location: $protocal://$host/$redir?user=$user&provider=$provider");
+		header("Location: $redir?user=$user&provider=$provider");
 		exit;
 	}
 	public function welcome_get()
