@@ -402,7 +402,6 @@ class jigsaw extends CI_Model
 		if(isset($urlFragment['fragment']) && $urlFragment['fragment'])
 			$inputUrl .= '#' . $urlFragment['fragment'];
 		//compare url
-		$match;
 		if($isRegEx)
 			$match = preg_match($compareUrl, $inputUrl);
 		else
