@@ -88,6 +88,7 @@ class Janrain extends REST_Controller
 		else
 		{
 			$identifier = $profile['identifier'];
+            $identifier = preg_replace("/", "_", $identifier);
 			//echo $provider . ' id: ';
 			//var_dump($identifier);
 			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
