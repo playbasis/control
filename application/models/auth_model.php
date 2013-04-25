@@ -82,5 +82,14 @@ class Auth_model extends CI_model
 		}
 		return null;
 	}
+	public function createTokenFromAPIKey($apiKey)
+	{
+		$this->db->select('client_id,site_id,domain_name,site_name');
+		$this->db->where(array(
+			'api_key' => $apiKey,
+			));
+		$result = $this->db->get('playbasis_client_site');
+		return $result->row_array();
+	}
 }
 ?>
