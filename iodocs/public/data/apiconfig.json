@@ -2,9 +2,10 @@
 	"pbapp": {
 		"name": "Playbasis API",
 		"protocol": "https",
-		"baseURL": "api.pbapp.net",
-		"publicPath": "",
+		"baseURL": "dev.pbapp.net",
+		"publicPath": "/api",
 		"headers" : {},
-		"auth": ""
+		"auth": "key",
+		"keyParam": "api_key"
 	}
 }

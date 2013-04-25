@@ -394,6 +394,54 @@
 				{
 					"MethodName": "Badges Info",
 					"Synopsis": "Returns information about all available badges for the current site.",
+					"HTTPMethod": "GET",
+					"URI": "/Badge",
+					"RequiresOAuth": "N",
+					"parameters": []
+				},
+				{
+					"MethodName": "Badge Info",
+					"Synopsis": "Returns information about the badge with the specified id.",
+					"HTTPMethod": "GET",
+					"URI": "/Badge/:id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "integer",
+							"Description": "badge id to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Badge Collections Info",
+					"Synopsis": "Returns information about all available badge collections for the current site.",
+					"HTTPMethod": "GET",
+					"URI": "/Badge/collection",
+					"RequiresOAuth": "N",
+					"parameters": []
+				},
+				{
+					"MethodName": "Badge Collection Info",
+					"Synopsis": "Returns information about the badge collection with the specified id.",
+					"HTTPMethod": "GET",
+					"URI": "/Badge/collection/:id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "integer",
+							"Description": "badge collection id to query"
+						}
+					]
+				},
+				{
+					"MethodName": "DEPRECATED - Badges Info",
+					"Synopsis": "Returns information about all available badges for the current site.",
 					"HTTPMethod": "POST",
 					"URI": "/Badge",
 					"RequiresOAuth": "N",
@@ -408,7 +456,7 @@
 					]
 				},
 				{
-					"MethodName": "Badge Info",
+					"MethodName": "DEPRECATED - Badge Info",
 					"Synopsis": "Returns information about the badge with the specified id.",
 					"HTTPMethod": "POST",
 					"URI": "/Badge/:id",
@@ -431,7 +479,7 @@
 					]
 				},
 				{
-					"MethodName": "Badge Collections Info",
+					"MethodName": "DEPRECATED - Badge Collections Info",
 					"Synopsis": "Returns information about all available badge collections for the current site.",
 					"HTTPMethod": "POST",
 					"URI": "/Badge/collection",
@@ -447,7 +495,7 @@
 					]
 				},
 				{
-					"MethodName": "Badge Collection Info",
+					"MethodName": "DEPRECATED - Badge Collection Info",
 					"Synopsis": "Returns information about the badge collection with the specified id.",
 					"HTTPMethod": "POST",
 					"URI": "/Badge/collection/:id",
