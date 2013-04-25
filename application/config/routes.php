@@ -38,8 +38,8 @@
 |
 */
 
-//define('ANY_STRING','([a-zA-Z0-9-_]+)');
-//define('ANY_NUMBER','([0-9]+)');
+define('ANY_STRING','([a-zA-Z0-9-_:\/\.]+)');
+define('ANY_NUMBER','([0-9]+)');
 
 $route['default_controller'] = "welcome/playbasis";
 
@@ -47,45 +47,45 @@ $route['default_controller'] = "welcome/playbasis";
 $route['Auth'] = 'auth';
 
 //player API
-$route['Player/([a-zA-Z0-9-_]+)'] = 'player/index/$1';
+$route['Player/'.ANY_STRING] = 'player/index/$1';
 $route['Player'] = 'player/index/';
 
-$route['Player/([a-zA-Z0-9-_]+)/register'] = 'player/register/$1';
+$route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';
 
-$route['Player/([a-zA-Z0-9-_]+)/login'] = 'player/login/$1';
+$route['Player/'.ANY_STRING.'/login'] = 'player/login/$1';
 $route['Player/login'] = 'player/login';
-$route['Player/([a-zA-Z0-9-_]+)/logout'] = 'player/logout/$1';
+$route['Player/'.ANY_STRING.'/logout'] = 'player/logout/$1';
 $route['Player/logout'] = 'player/logout';
 
-$route['Player/rank/([a-zA-Z0-9-_]+)/([0-9]+)'] = 'player/rank/$1/$2';
-$route['Player/rank/([a-zA-Z0-9-_]+)'] = 'player/rank/$1/20';
+$route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER.''] = 'player/rank/$1/$2';
+$route['Player/rank/'.ANY_STRING.''] = 'player/rank/$1/20';
 $route['Player/rank'] = 'player/rank/0/0';
 
-$route['Player/([a-zA-Z0-9-_]+)/points'] = 'player/points/$1';
+$route['Player/'.ANY_STRING.'/points'] = 'player/points/$1';
 $route['Player/points'] = 'player/points';
-$route['Player/([a-zA-Z0-9-_]+)/point/([a-zA-Z0-9-_]+)'] = 'player/point/$1/$2';
-$route['Player/point/([a-zA-Z0-9-_]+)'] = 'player/point/0/$1';
-$route['Player/([a-zA-Z0-9-_]+)/point'] = 'player/point/$1/0';
+$route['Player/'.ANY_STRING.'/point/'.ANY_STRING.''] = 'player/point/$1/$2';
+$route['Player/point/'.ANY_STRING.''] = 'player/point/0/$1';
+$route['Player/'.ANY_STRING.'/point'] = 'player/point/$1/0';
 $route['Player/point'] = 'player/point/';
 
-$route['Player/([a-zA-Z0-9-_]+)/action/([a-zA-Z0-9-_]+)/(time|count)'] = 'player/action/$1/$2/$3';
-$route['Player/action/([a-zA-Z0-9-_]+)/(time|count)'] = 'player/action/0/$1/$2';
-$route['Player/([a-zA-Z0-9-_]+)/action/(time|count)'] = 'player/action/$1/0/$2';
+$route['Player/'.ANY_STRING.'/action/'.ANY_STRING.'/(time|count)'] = 'player/action/$1/$2/$3';
+$route['Player/action/'.ANY_STRING.'/(time|count)'] = 'player/action/0/$1/$2';
+$route['Player/'.ANY_STRING.'/action/(time|count)'] = 'player/action/$1/0/$2';
 $route['Player/action'] = 'player/action/';
 
-$route['Player/([a-zA-Z0-9-_]+)/badge'] = 'player/badge/$1';
+$route['Player/'.ANY_STRING.'/badge'] = 'player/badge/$1';
 $route['Player/badge'] = 'player/badge/0';
 
 //badge API
-$route['Badge/collection/([0-9]+)'] = 'badge/getcollection/$1';
+$route['Badge/collection/'.ANY_NUMBER.''] = 'badge/getcollection/$1';
 $route['Badge/collection'] = 'badge/getcollection';
-$route['Badge/([0-9]+)'] = 'badge/index/$1';
+$route['Badge/'.ANY_NUMBER.''] = 'badge/index/$1';
 $route['Badge'] = 'badge/index';
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
-$route['Engine/rule/([a-zA-Z0-9-_]+)'] = 'engine/rule/$1';
+$route['Engine/rule/'.ANY_STRING.''] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
 
 //misc
@@ -94,8 +94,8 @@ $route['fb'] = 'playbasis/fb';
 $route['login'] = 'playbasis/login';
 
 //dummy 
-//$route['dummy/dummyPlayer/([0-9]+)/([0-9]+)']	= 'dummy/dummyPlayer/$1/$2/$3';
-//$route['dummy/([0-9]+)/([0-9]+)/([0-9]+)']	= 'dummy/index/$1/$2/$3';
+//$route['dummy/dummyPlayer/'.ANY_NUMBER.'/'.ANY_NUMBER.'']	= 'dummy/dummyPlayer/$1/$2/$3';
+//$route['dummy/'.ANY_NUMBER.'/'.ANY_NUMBER.'/'.ANY_NUMBER.'']	= 'dummy/index/$1/$2/$3';
 //$route['dummy/:any']	= 'dummy/error';
 
 $route['404_override'] = '';
