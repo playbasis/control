@@ -525,18 +525,10 @@
 				{
 					"MethodName": "Action Config",
 					"Synopsis": "Returns names of actions that can trigger game rules within a client’s website.",
-					"HTTPMethod": "POST",
+					"HTTPMethod": "GET",
 					"URI": "/Engine/actionConfig",
 					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						}
-					]
+					"parameters": []
 				},
 				{
 					"MethodName": "Rule",
@@ -586,6 +578,22 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "amount of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward quantity"
+						}
+					]
+				},
+				{
+					"MethodName": "DEPRECATED - Action Config",
+					"Synopsis": "Returns names of actions that can trigger game rules within a client’s website.",
+					"HTTPMethod": "POST",
+					"URI": "/Engine/actionConfig",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
 						}
 					]
 				}

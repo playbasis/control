@@ -17,6 +17,58 @@ class Engine extends REST_Controller
 		$this->load->model('tool/node_stream', 'node');
 		$this->load->model('social_model');
 	}
+	public function getActionConfig_get()
+	{
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$ruleSet = $this->client_model->getRuleSet(array(
+			'client_id' => $validToken['client_id'],
+			'site_id' => $validToken['site_id']
+		));
+		$actionConfig = array();
+		foreach($ruleSet as $rule)
+		{
+			$jigsawSet = unserialize($rule['jigsaw_set']);
+			$actionId = $jigsawSet[0]['config']['action_id'];
+			$actionInput = $jigsawSet[0]['config'];
+			if(isset($actionConfig[$actionId]))
+			{
+				$config = array(
+					'action_target' => $actionInput['action_target'],
+					'object_target' => $actionInput['object_target']
+				);
+				$found = false;
+				foreach($actionConfig[$actionId]['config'] as $configElement)
+				{
+					if($config['action_target'] != $configElement['action_target'] || $config['object_target'] != $configElement['object_target'])
+						continue;
+					$found = true;
+					break;
+				}
+				if(!$found)
+					array_push($actionConfig[$actionId]['config'], $config);
+			}
+			else
+			{
+				$actionConfig[$actionId] = array(
+					'name' => $jigsawSet[0]['config']['action_name'],
+					'config' => array(
+						array(
+							'action_target' => $actionInput['action_target'],
+							'object_target' => $actionInput['object_target']
+						)
+					)
+				);
+			}
+		}
+		$this->response($this->resp->setRespond($actionConfig), 200);
+	}
 	public function getActionConfig_post()
 	{
 		$required = $this->input->checkParam(array(
