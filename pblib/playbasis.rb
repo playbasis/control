@@ -9,13 +9,15 @@ class Playbasis
 
 	def initialize()
 		@token = ''
+		@apiKeyParam = ''
 	end
 
 	def auth(apiKey, apiSecret)
+		@apiKeyParam = "?api_key=#{apiKey}"
 		result = call('Auth', {	:api_key => apiKey,
 								:api_secret => apiSecret })
 		@token = result['response']['token']
-		return @token.is_a? String;
+		return @token.is_a? String
 	end
 
 	def player(playerId)
@@ -38,63 +40,63 @@ class Playbasis
 			:username => username,
 			:email => email,
 			:image => imageUrl
-			}.merge(optionalData));
+			}.merge(optionalData))
 	end
 
 	def login(playerId)
-		return call("Player/#{playerId}/login", { :token => @token });
+		return call("Player/#{playerId}/login", { :token => @token })
 	end
 		
 	def logout(playerId)
-		return call("Player/#{playerId}/logout", { :token => @token });
+		return call("Player/#{playerId}/logout", { :token => @token })
 	end
 
 	def points(playerId)
-		return call("Player/#{playerId}/points", { :token => @token });
+		return call("Player/#{playerId}/points" + @apiKeyParam)
 	end
 
 	def point(playerId, pointName)
-		return call("Player/#{playerId}/point/#{pointName}", { :token => @token });
+		return call("Player/#{playerId}/point/#{pointName}" + @apiKeyParam)
 	end
 
 	def actionLastPerformed(playerId)
-		return call("Player/#{playerId}/action/time", { :token => @token });
+		return call("Player/#{playerId}/action/time" + @apiKeyParam)
 	end
 	
 	def actionLastPerformedTime(playerId, actionName)
-		return call("Player/#{playerId}/action/#{actionName}/time", { :token => @token });
+		return call("Player/#{playerId}/action/#{actionName}/time" + @apiKeyParam)
 	end
 	
 	def actionPerformedCount(playerId, actionName)
-		return call("Player/#{playerId}/action/#{actionName}/count", { :token => @token });
+		return call("Player/#{playerId}/action/#{actionName}/count" + @apiKeyParam)
 	end
 	
 	def badgeOwned(playerId)
-		return call("Player/#{playerId}/badge", { :token => @token });
+		return call("Player/#{playerId}/badge" + @apiKeyParam)
 	end
 	
 	def rank(rankedBy, limit)
-		return call("Player/rank/#{rankedBy}/#{limit}", { :token => @token });
+		return call("Player/rank/#{rankedBy}/#{limit}" + @apiKeyParam)
 	end
 	
 	def badges()
-		return call("Badge", { :token => @token });
+		return call("Badge" + @apiKeyParam)
 	end
 	
 	def badge(badgeId)
-		return call("Badge/#{badgeId}", { :token => @token });
+		return call("Badge/#{badgeId}" + @apiKeyParam)
 	end
 	
 	def badgeCollections()
-		return call("Badge/collection", { :token => @token });
+		return call("Badge/collection" + @apiKeyParam)
 	end
 	
 	def badgeCollection(collectionId)
-		return call("Badge/collection/#{collectionId}", { :token => @token });
+		return call("Badge/collection/#{collectionId}" + @apiKeyParam)
 	end
 	
 	def actionConfig()
-		return call("Engine/actionConfig", { :token => @token });
+		return call("Engine/actionConfig" + @apiKeyParam)
 	end
 
 	# @param	optionalData	Key-value for additional parameters to be sent to the rule method.
@@ -110,14 +112,18 @@ class Playbasis
 			}.merge(optionalData));
 	end
 
-	def call(method, data)
+	def call(method, data=nil)
 		
 		uri = URI.parse(BASE_URL + method)
 		http = Net::HTTP.new(uri.host, uri.port)
 		http.use_ssl = true
 		http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-		request = Net::HTTP::Post.new(uri.request_uri)
-		request.set_form_data(data)
+		if data
+			request = Net::HTTP::Post.new(uri.request_uri)
+			request.set_form_data(data)
+		else
+			request = Net::HTTP::Get.new(uri.request_uri)
+		end
 		result = http.request(request)
 		return JSON.parse(result.body)
 	end
