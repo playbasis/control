@@ -194,7 +194,7 @@ class AsyncWebRequestTask extends AsyncTask<String, Void, String>
 		else if(input[0].equals("badgeOwned"))
 			return printJsonReader(Playbasis.instance.badgeOwned(input[1]));
 		else if(input[0].equals("rank"))
-			return printJsonReader(Playbasis.instance.rank(input[1], Integer.getInteger(input[2])));
+			return printJsonReader(Playbasis.instance.rank(input[1], 10));
 		else if(input[0].equals("badges"))
 			return printJsonReader(Playbasis.instance.badges());
 		else if(input[0].equals("badge"))

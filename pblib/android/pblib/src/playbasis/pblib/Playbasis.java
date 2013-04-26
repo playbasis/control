@@ -37,6 +37,7 @@ public class Playbasis
 	private static final String CHARSET = "UTF-8";
 	
 	private String token;
+	private String apiKeyParam;
 	
 	public Playbasis()
 	{
@@ -46,6 +47,7 @@ public class Playbasis
 	
 	public boolean auth(String apiKey, String apiSecret)
 	{
+		apiKeyParam = "?api_key=" + apiKey;
 		String param = "";
 		try
 		{
@@ -154,62 +156,62 @@ public class Playbasis
 	
 	public JsonReader points(String playerId)
 	{
-		return callJSON("Player/"+playerId+"/points", "token="+token);
+		return callJSON("Player/"+playerId+"/points"+apiKeyParam, null);
 	}
 	
 	public JsonReader point(String playerId, String pointName)
 	{
-		return callJSON("Player/"+playerId+"/point/"+pointName, "token="+token);
+		return callJSON("Player/"+playerId+"/point/"+pointName+apiKeyParam, null);
 	}
 	
 	public JsonReader actionLastPerformed(String playerId)
 	{
-		return callJSON("Player/"+playerId+"/action/time", "token="+token);
+		return callJSON("Player/"+playerId+"/action/time"+apiKeyParam, null);
 	}
 	
 	public JsonReader actionLastPerformedTime(String playerId, String actionName)
 	{
-		return callJSON("Player/"+playerId+"/action/"+actionName+"/time", "token="+token);
+		return callJSON("Player/"+playerId+"/action/"+actionName+"/time"+apiKeyParam, null);
 	}
 	
 	public JsonReader actionPerformedCount(String playerId, String actionName)
 	{
-		return callJSON("Player/"+playerId+"/action/"+actionName+"/count", "token="+token);
+		return callJSON("Player/"+playerId+"/action/"+actionName+"/count"+apiKeyParam, null);
 	}
 	
 	public JsonReader badgeOwned(String playerId)
 	{
-		return callJSON("Player/"+playerId+"/badge", "token="+token);
+		return callJSON("Player/"+playerId+"/badge"+apiKeyParam, null);
 	}
 	
 	public JsonReader rank(String rankedBy, int limit)
 	{
-		return callJSON("Player/rank/"+rankedBy+"/"+String.valueOf(limit), "token="+token);
+		return callJSON("Player/rank/"+rankedBy+"/"+String.valueOf(limit)+apiKeyParam, null);
 	}
 	
 	public JsonReader badges()
 	{
-		return callJSON("Badge", "token="+token);
+		return callJSON("Badge"+apiKeyParam, null);
 	}
 	
 	public JsonReader badge(String badgeId)
 	{
-		return callJSON("Badge/"+badgeId, "token="+token);
+		return callJSON("Badge/"+badgeId+apiKeyParam, null);
 	}
 	
 	public JsonReader badgeCollections()
 	{
-		return callJSON("Badge/collection", "token="+token);
+		return callJSON("Badge/collection"+apiKeyParam, null);
 	}
 	
 	public JsonReader badgeCollection(String collectionId)
 	{
-		return callJSON("Badge/collection/"+collectionId, "token="+token);
+		return callJSON("Badge/collection/"+collectionId+apiKeyParam, null);
 	}
 	
 	public JsonReader actionConfig()
 	{
-		return callJSON("Engine/actionConfig", "token="+token);
+		return callJSON("Engine/actionConfig"+apiKeyParam, null);
 	}
 	
 	/*
@@ -277,11 +279,10 @@ public class Playbasis
 				http = (HttpURLConnection) url.openConnection();
 			}
 
-			http.setRequestMethod("POST");
-			
 			//set method to post if we have data to send
 			if (data != null)
 			{
+				http.setRequestMethod("POST");
 				http.setDoOutput(true);
 				http.setUseCaches(false);
 				http.setRequestProperty("Content-Type", CONTENT_TYPE);
@@ -292,6 +293,10 @@ public class Playbasis
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(http.getOutputStream()));
 				out.write(data);
 				out.flush();
+			}
+			else
+			{
+				http.setRequestMethod("GET");
 			}
 			
 			//get the response string
