@@ -88,6 +88,9 @@ class Badge extends REST_Controller
 			$this->response($this->resp->setRespond($badgesList), 200);
 		}
 	}
+	////////////////
+	// DEPRECATED //
+	////////////////
 	public function getCollection_post($collectionId = 0)
 	{
 		$required = $this->input->checkParam(array(

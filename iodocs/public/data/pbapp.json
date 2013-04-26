@@ -32,8 +32,24 @@
 			"name": "Player API",
 			"methods": [
 				{
-					"MethodName": "Player Info",
-					"Synopsis": "Get information about a player.",
+					"MethodName": "Player Info (Public)",
+					"Synopsis": "Get public information about a player.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Player Info (Full)",
+					"Synopsis": "Get all information about a player.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id",
 					"RequiresOAuth": "N",
@@ -200,6 +216,146 @@
 				{
 					"MethodName": "Points",
 					"Synopsis": "Returns information about all point-based rewards that a player currently have.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/points",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Point",
+					"Synopsis": "Returns how much of specified the point-based reward a player currently have.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/point/:point_name",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "point_name",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of the point-based reward to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Action Time",
+					"Synopsis": "Returns the last time that player performed the specified action.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/action/:action_name/time",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "action_name",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of the action to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Last Action",
+					"Synopsis": "Returns the time and action that a player last performed.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/action/time",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Action Count",
+					"Synopsis": "Returns the number of times that a player has performed the specified action.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/action/:action_name/count",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "action_name",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of the action to query"
+						}
+					]
+				},
+				{
+					"MethodName": "Badge",
+					"Synopsis": "Returns information about all the badges that a player has earned.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/badge",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Rank",
+					"Synopsis": "Returns list of players sorted by the specified point type.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/rank/:rank_by/:limit",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "rank_by",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "name of point-based reward to rank players by"
+						},
+						{
+							"Name": "limit",
+							"Required": "N",
+							"Default": "20",
+							"Type": "integer",
+							"Description": "number of results to return"
+						}
+					]
+				},
+				{
+					"MethodName": "DEPRECATED - Points",
+					"Synopsis": "Returns information about all point-based rewards that a player currently have.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id/points",
 					"RequiresOAuth": "N",
@@ -221,7 +377,7 @@
 					]
 				},
 				{
-					"MethodName": "Point",
+					"MethodName": "DEPRECATED - Point",
 					"Synopsis": "Returns how much of specified the point-based reward a player currently have.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id/point/:point_name",
@@ -251,7 +407,7 @@
 					]
 				},
 				{
-					"MethodName": "Action Time",
+					"MethodName": "DEPRECATED - Action Time",
 					"Synopsis": "Returns the last time that player performed the specified action.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id/action/:action_name/time",
@@ -281,7 +437,7 @@
 					]
 				},
 				{
-					"MethodName": "Last Action",
+					"MethodName": "DEPRECATED - Last Action",
 					"Synopsis": "Returns the time and action that a player last performed.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id/action/time",
@@ -304,7 +460,7 @@
 					]
 				},
 				{
-					"MethodName": "Action Count",
+					"MethodName": "DEPRECATED - Action Count",
 					"Synopsis": "Returns the number of times that a player has performed the specified action.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id/action/:action_name/count",
@@ -334,7 +490,7 @@
 					]
 				},
 				{
-					"MethodName": "Badge",
+					"MethodName": "DEPRECATED - Badge",
 					"Synopsis": "Returns information about all the badges that a player has earned.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id/badge",
@@ -357,7 +513,7 @@
 					]
 				},
 				{
-					"MethodName": "Rank",
+					"MethodName": "DEPRECATED - Rank",
 					"Synopsis": "Returns list of players sorted by the specified point type.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/rank/:rank_by/:limit",
