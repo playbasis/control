@@ -11,9 +11,11 @@ class Playbasis
 {
 	const BASE_URL = 'https://api.pbapp.net/';
 	private $token = null;
+	private $apiKeyParam = null;
 	
 	public function auth($apiKey, $apiSecret)
 	{
+		$this->apiKeyParam = "?api_key=$apiKey";
 		$result = $this->call('Auth', array(
 			'api_key' => $apiKey,
 			'api_secret' => $apiSecret
@@ -24,9 +26,7 @@ class Playbasis
 	
 	public function player($playerId)
 	{
-		return $this->call("Player/$playerId", array(
-			'token' => $this->token
-		));
+		return $this->call("Player/$playerId", array('token' => $this->token));
 	}
 	
 	/*
@@ -63,62 +63,62 @@ class Playbasis
 	
 	public function points($playerId)
 	{
-		return $this->call("Player/$playerId/points", array('token' => $this->token));
+		return $this->call("Player/$playerId/points" . $this->apiKeyParam);
 	}
 	
 	public function point($playerId, $pointName)
 	{
-		return $this->call("Player/$playerId/point/$pointName", array('token' => $this->token));
+		return $this->call("Player/$playerId/point/$pointName" . $this->apiKeyParam);
 	}
 	
 	public function actionLastPerformed($playerId)
 	{
-		return $this->call("Player/$playerId/action/time", array('token' => $this->token));
+		return $this->call("Player/$playerId/action/time" . $this->apiKeyParam);
 	}
 	
 	public function actionLastPerformedTime($playerId, $actionName)
 	{
-		return $this->call("Player/$playerId/action/$actionName/time", array('token' => $this->token));
+		return $this->call("Player/$playerId/action/$actionName/time" . $this->apiKeyParam);
 	}
 	
 	public function actionPerformedCount($playerId, $actionName)
 	{
-		return $this->call("Player/$playerId/action/$actionName/count", array('token' => $this->token));
+		return $this->call("Player/$playerId/action/$actionName/count" . $this->apiKeyParam);
 	}
 	
 	public function badgeOwned($playerId)
 	{
-		return $this->call("Player/$playerId/badge", array('token' => $this->token));
+		return $this->call("Player/$playerId/badge" . $this->apiKeyParam);
 	}
 	
 	public function rank($rankedBy, $limit)
 	{
-		return $this->call("Player/rank/$rankedBy/$limit", array('token' => $this->token));
+		return $this->call("Player/rank/$rankedBy/$limit" . $this->apiKeyParam);
 	}
 	
 	public function badges()
 	{
-		return $this->call("Badge", array('token' => $this->token));
+		return $this->call("Badge" . $this->apiKeyParam);
 	}
 	
 	public function badge($badgeId)
 	{
-		return $this->call("Badge/$badgeId", array('token' => $this->token));
+		return $this->call("Badge/$badgeId" . $this->apiKeyParam);
 	}
 	
 	public function badgeCollections()
 	{
-		return $this->call("Badge/collection", array('token' => $this->token));
+		return $this->call("Badge/collection" . $this->apiKeyParam);
 	}
 	
 	public function badgeCollection($collectionId)
 	{
-		return $this->call("Badge/collection/$collectionId", array('token' => $this->token));
+		return $this->call("Badge/collection/$collectionId" . $this->apiKeyParam);
 	}
 	
 	public function actionConfig()
 	{
-		return $this->call("Engine/actionConfig", array('token' => $this->token));
+		return $this->call("Engine/actionConfig" . $this->apiKeyParam);
 	}
 	
 	/*
@@ -137,7 +137,7 @@ class Playbasis
 			), $optionalData));
 	}
 	
-	public function call($method, $data)
+	public function call($method, $data = null)
 	{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $method);	// set url
@@ -145,9 +145,12 @@ class Playbasis
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);				// refuse response from called server
 		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');			// set agent
 		curl_setopt($ch, CURLOPT_TIMEOUT, 10);						// times for execute
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);				// times for try to connect 
-		curl_setopt($ch, CURLOPT_POST, TRUE);						// use POST 
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);				// data
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);				// times for try to connect
+		if($data)
+		{
+			curl_setopt($ch, CURLOPT_POST, TRUE);					// use POST 
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);			// data
+		}
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		$result = curl_exec($ch);
 		$result = json_decode($result, true);
