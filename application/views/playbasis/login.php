@@ -7,7 +7,7 @@
 	if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
     
-//    var redir = "https://dev.pbapp.net/api/janrain/welcome";
+	//var redir = "https://dev.pbapp.net/api/janrain/welcome";
     var redir = "https://api.pbapp.net/janrain/welcome";
 
 	var param = '?redir=' + redir;
