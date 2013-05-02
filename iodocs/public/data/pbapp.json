@@ -551,7 +551,7 @@
 					"MethodName": "Badges Info",
 					"Synopsis": "Returns information about all available badges for the current site.",
 					"HTTPMethod": "GET",
-					"URI": "/Badge",
+					"URI": "/Badges",
 					"RequiresOAuth": "N",
 					"parameters": []
 				},
@@ -575,7 +575,7 @@
 					"MethodName": "Badge Collections Info",
 					"Synopsis": "Returns information about all available badge collections for the current site.",
 					"HTTPMethod": "GET",
-					"URI": "/Badge/collection",
+					"URI": "/Badge/collections",
 					"RequiresOAuth": "N",
 					"parameters": []
 				},
@@ -599,7 +599,7 @@
 					"MethodName": "DEPRECATED - Badges Info",
 					"Synopsis": "Returns information about all available badges for the current site.",
 					"HTTPMethod": "POST",
-					"URI": "/Badge",
+					"URI": "/Badges",
 					"RequiresOAuth": "N",
 					"parameters": [
 						{
@@ -638,7 +638,7 @@
 					"MethodName": "DEPRECATED - Badge Collections Info",
 					"Synopsis": "Returns information about all available badge collections for the current site.",
 					"HTTPMethod": "POST",
-					"URI": "/Badge/collection",
+					"URI": "/Badge/collections",
 					"RequiresOAuth": "N",
 					"parameters": [
 						{

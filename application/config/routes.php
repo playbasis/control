@@ -66,7 +66,7 @@ $route['Player/'.ANY_STRING.'/points'] = 'player/points/$1';
 $route['Player/points'] = 'player/points';
 $route['Player/'.ANY_STRING.'/point/'.ANY_STRING.''] = 'player/point/$1/$2';
 $route['Player/point/'.ANY_STRING.''] = 'player/point/0/$1';
-$route['Player/'.ANY_STRING.'/point'] = 'player/point/$1/0';
+$route['Player/'.ANY_STRING.'/point'] = 'player/points/$1';
 $route['Player/point'] = 'player/point/';
 
 $route['Player/'.ANY_STRING.'/action/'.ANY_STRING.'/(time|count)'] = 'player/action/$1/$2/$3';
@@ -79,9 +79,11 @@ $route['Player/badge'] = 'player/badge/0';
 
 //badge API
 $route['Badge/collection/'.ANY_NUMBER.''] = 'badge/getcollection/$1';
-$route['Badge/collection'] = 'badge/getcollection';
+$route['Badge/collection']  = 'badge/getcollection';
+$route['Badge/collections'] = 'badge/getcollection';
 $route['Badge/'.ANY_NUMBER.''] = 'badge/index/$1';
-$route['Badge'] = 'badge/index';
+$route['Badge']  = 'badge/index';
+$route['Badges'] = 'badge/index';
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
