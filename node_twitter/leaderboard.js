@@ -67,31 +67,33 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 		//console.log(data.user.profile_image_url);
 		//console.log(data.text);
 
-		if (userIndex[data.user.id_str] === undefined) {
-			userIndex[data.user.id_str] = rank.length;
-			rank.push({'user': data.user.screen_name, 'name': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0, 'tweet':data.text});
-			io.sockets.emit('totalplayers', {'count':rank.length});
-		}
-		rank[userIndex[data.user.id_str]].score += 1;
-		rank[userIndex[data.user.id_str]].tweet = data.text;
-		rank.sort(rankSort);
-		for(var i=0; i<rank.length; ++i){
-			userIndex[rank[i].id] = i;
-		}
-		tweetCount++;
+        if(data.user.id_str){
+            if (userIndex[data.user.id_str] === undefined) {
+                userIndex[data.user.id_str] = rank.length;
+                rank.push({'user': data.user.screen_name, 'name': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0, 'tweet':data.text});
+                io.sockets.emit('totalplayers', {'count':rank.length});
+            }
+            rank[userIndex[data.user.id_str]].score += 1;
+            rank[userIndex[data.user.id_str]].tweet = data.text;
+            rank.sort(rankSort);
+            for(var i=0; i<rank.length; ++i){
+                userIndex[rank[i].id] = i;
+            }
+            tweetCount++;
 
-		topPlayers = (rank.length > LEADERBOARD_SIZE) ? rank.slice(0, LEADERBOARD_SIZE) : rank;
+            topPlayers = (rank.length > LEADERBOARD_SIZE) ? rank.slice(0, LEADERBOARD_SIZE) : rank;
 
-		console.log('total tweets: ' + tweetCount + " total players: " + rank.length);
-		io.sockets.emit('rank', topPlayers);
-		io.sockets.emit('totaltweets', {'count':tweetCount});
+            console.log('total tweets: ' + tweetCount + " total players: " + rank.length);
+            io.sockets.emit('rank', topPlayers);
+            io.sockets.emit('totaltweets', {'count':tweetCount});
 
-		if(tweetCount >= RESET_EVERY_N_TWEET)
-		{
-			tweetCount = 0;
-			userIndex = [];
-			rank = [];
-		}
+            if(tweetCount >= RESET_EVERY_N_TWEET)
+            {
+                tweetCount = 0;
+                userIndex = [];
+                rank = [];
+            }
+        }
 	});
 });
 
