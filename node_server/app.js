@@ -41,7 +41,7 @@ function feedParser(req, res, next){
 var app = express();
 
 app.configure(function(){
-	app.set('port', process.env.PORT || 443);
+	app.set('port', process.env.PORT || 3000);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.favicon());
