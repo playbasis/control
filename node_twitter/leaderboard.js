@@ -2,8 +2,29 @@
 
 var fs = require('fs');
 
+//connect to mongodb
+var dbReady = false;
+var mongoose = require('mongoose');
+var schema;
+var TweetEntry;
+db = mongoose.createConnection('db.pbapp.net', 'pbapp', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback(){
+	schema = mongoose.Schema({
+		user: 'string', 
+		name: 'string', 
+		id: 'string', 
+		image: 'string', 
+		tweet: 'string' 
+	});
+	TweetEntry = db.model('TweetEntry', schema);
+	dbReady = true;
+	console.log('db connected!');
+});
+console.log('connecting to db...');
+
 var options = {
-    key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
 	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
@@ -22,11 +43,11 @@ function handler(req, res) {
 			res.writeHead(500);
 			return res.end('Error loading index.html');
 		}
-        var headers = {};
-        headers["Access-Control-Allow-Credentials"] = true;
-        headers["Access-Control-Allow-Origin"] = req.headers.origin;
-        res.writeHead(200, headers);
-//		res.writeHead(200);
+		var headers = {};
+		headers["Access-Control-Allow-Credentials"] = true;
+		headers["Access-Control-Allow-Origin"] = req.headers.origin;
+		res.writeHead(200, headers);
+		//res.writeHead(200);
 		res.end(data);
 	});
 }
@@ -34,65 +55,49 @@ function handler(req, res) {
 var twit = new twitter({
 	consumer_key: 'TtqjsKAIuGTs2fqDCTv3rA',
 	consumer_secret: '72pEMZYZQIJ0RKlPql9ENWr9emjeBopfkb6nMfwN0',
-	access_token_key: '19943348-205222126-Fa7P5OFT2k4WJndxfuWq9D1ie3lMXEnugTDphc97',
+	access_token_key: '205222126-Fa7P5OFT2k4WJndxfuWq9D1ie3lMXEnugTDphc97',
 	access_token_secret: 'yBiEFLNcVXmOEj320lrE92SppPwY4ejA2cQSRv5FLM'
 });
 
-var userIndex = [];
-var rank = [];
-var topPlayers = [];
-var tweetCount = 0;
-
-// var TRACKING = '#facebook,#webwedth,#wwth12,#wwth';
-var TRACKING = '#webwedth,#wwth12,#wwth';
-
-var LEADERBOARD_SIZE = 10;
-var RESET_EVERY_N_TWEET = 10000;
-
-function rankSort(a, b){
-	return b.score - a.score;
-}
+var dateObj = new Date();
+var TRACKING = '#facebook';
+//var TRACKING = '#webwedth,#wwth12,#wwth';
 
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 	stream.on('data', function(data){
 
 		console.log('---------- tweet tweet ----------');
-		console.log(data.user.name);
-		console.log(data.user.screen_name);
+		//console.log(data);
+		//console.log(data.user.name);
+		//console.log(data.user.screen_name);
 		//console.log(data.user.id_str);
 		//console.log(data.user.profile_image_url);
-		console.log(data.text);
+		//console.log(data.text);
 
-		if (userIndex[data.user.id_str] === undefined) {
-			userIndex[data.user.id_str] = rank.length;
-			rank.push({'user': data.user.screen_name, 'name': data.user.name, 'id':data.user.id_str, 'image':data.user.profile_image_url, 'score':0, 'tweet':data.text});
-			io.sockets.emit('totalplayers', {'count':rank.length});
-		}
-		rank[userIndex[data.user.id_str]].score += 1;
-		rank[userIndex[data.user.id_str]].tweet = data.text;
-		rank.sort(rankSort);
-		for(var i=0; i<rank.length; ++i){
-			userIndex[rank[i].id] = i;
-		}
-		tweetCount++;
+		//push to mongodb to store
+		if(!dbReady)
+			return;
+		var entry = new TweetEntry({
+			'user': data.user.screen_name, 
+			'name': data.user.name, 
+			'id':data.user.id_str, 
+			'image':data.user.profile_image_url, 
+			'tweet':data.text
+		});
+		console.log('saving entry...');
+		entry.save(function(err){
+			if(err){
+				console.log(err);
+				return;
+			}
+			console.log('tweet saved!');
+		});
 
-		topPlayers = (rank.length > LEADERBOARD_SIZE) ? rank.slice(0, LEADERBOARD_SIZE) : rank;
-
-		console.log('total tweets: ' + tweetCount + " total players: " + rank.length);
-		io.sockets.emit('rank', topPlayers);
-		io.sockets.emit('totaltweets', {'count':tweetCount});
-
-		if(tweetCount >= RESET_EVERY_N_TWEET)
-		{
-			tweetCount = 0;
-			userIndex = [];
-			rank = [];
-		}
+		//tell clients to update data
+		io.sockets.emit('newtweet', {'time': dateObj.getTime()});
 	});
 });
 
 io.sockets.on('connection', function(socket){
-	socket.emit('totaltweets', {'count':tweetCount});
-	socket.emit('totalplayers', {'count':rank.length});
-	socket.emit('rank', topPlayers);
+	socket.emit('newtweet', {'time': dateObj.getTime()});
 });
