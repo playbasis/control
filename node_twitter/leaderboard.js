@@ -34,7 +34,7 @@ function handler(req, res) {
 var twit = new twitter({
 	consumer_key: 'TtqjsKAIuGTs2fqDCTv3rA',
 	consumer_secret: '72pEMZYZQIJ0RKlPql9ENWr9emjeBopfkb6nMfwN0',
-	access_token_key: '19943348-205222126-Fa7P5OFT2k4WJndxfuWq9D1ie3lMXEnugTDphc97',
+	access_token_key: '205222126-Fa7P5OFT2k4WJndxfuWq9D1ie3lMXEnugTDphc97',
 	access_token_secret: 'yBiEFLNcVXmOEj320lrE92SppPwY4ejA2cQSRv5FLM'
 });
 
