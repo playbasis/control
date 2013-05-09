@@ -54,14 +54,18 @@ function rankSort(a, b){
 }
 
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
+    stream.on('error', function(error, code) {
+        console.log("My error: " + error + ": " + code);
+    });
+
 	stream.on('data', function(data){
 
 		console.log('---------- tweet tweet ----------');
-		console.log(data.user.name);
-		console.log(data.user.screen_name);
+		//console.log(data.user.name);
+		//console.log(data.user.screen_name);
 		//console.log(data.user.id_str);
 		//console.log(data.user.profile_image_url);
-		console.log(data.text);
+		//console.log(data.text);
 
 		if (userIndex[data.user.id_str] === undefined) {
 			userIndex[data.user.id_str] = rank.length;
