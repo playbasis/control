@@ -22,16 +22,20 @@ function handler(req, res) {
 			res.writeHead(500);
 			return res.end('Error loading index.html');
 		}
-		res.writeHead(200);
+        var headers = {};
+        headers["Access-Control-Allow-Credentials"] = true;
+        headers["Access-Control-Allow-Origin"] = "*";
+        res.writeHead(200, headers);
+//		res.writeHead(200);
 		res.end(data);
 	});
 }
 
 var twit = new twitter({
-	consumer_key: 'zPUFYp3SERsStcB6lsLjg',
-	consumer_secret: 'QUtQz6ID4BMj5tQZwXHueDOqhByngSQ16Jmm4BprRs',
-	access_token_key: '19943348-YSYM1cQI8EzUvf6Oepx78LBInnrhENpsQYSTrQCNu',
-	access_token_secret: '66Tmt1uAObidzLUS86rwjnCrkT4n0l9w5XcklizOQ'
+	consumer_key: 'TtqjsKAIuGTs2fqDCTv3rA',
+	consumer_secret: '72pEMZYZQIJ0RKlPql9ENWr9emjeBopfkb6nMfwN0',
+	access_token_key: '19943348-205222126-Fa7P5OFT2k4WJndxfuWq9D1ie3lMXEnugTDphc97',
+	access_token_secret: 'yBiEFLNcVXmOEj320lrE92SppPwY4ejA2cQSRv5FLM'
 });
 
 var userIndex = [];

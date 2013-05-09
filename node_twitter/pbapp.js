@@ -12,7 +12,7 @@ var options = {
 
 var twitter = require('ntwitter')
 ,	request = require('request')
-,	app = require('https').createServer(options, handler)
+,	app = require('https').createServer(options, handler);
 //,	app = require('http').createServer(handler);
 
 app.listen(8080);
