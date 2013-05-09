@@ -74,7 +74,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 		//console.log(data.user.profile_image_url);
 		//console.log(data.text);
 
-		//push to mongodb to store
+		//save data to mongodb
 		if(!dbReady)
 			return;
 		var entry = new TweetEntry({
