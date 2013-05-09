@@ -14,7 +14,7 @@ var twitter = require('ntwitter')
 	, app = require('https').createServer(options, handler)
 	, io = require('socket.io').listen(app);
 
-app.listen(8080);
+app.listen(8081);
 
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function (err, data) {
@@ -24,7 +24,7 @@ function handler(req, res) {
 		}
         var headers = {};
         headers["Access-Control-Allow-Credentials"] = true;
-        headers["Access-Control-Allow-Origin"] = "*";
+        headers["Access-Control-Allow-Origin"] = req.headers.origin;
         res.writeHead(200, headers);
 //		res.writeHead(200);
 		res.end(data);
