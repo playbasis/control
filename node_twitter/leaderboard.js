@@ -7,7 +7,7 @@ var dbReady = false;
 var mongoose = require('mongoose');
 var schema;
 var TweetEntry;
-db = mongoose.createConnection('db.pbapp.net', 'pbapp', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
+db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 	schema = mongoose.Schema({
