@@ -15,7 +15,8 @@ db.once('open', function callback(){
 		name: 'string',
 		id: 'string',
 		image: 'string',
-		tweet: 'string'
+		tweet: 'string',
+        tag: 'tag'
 	});
 	TweetEntry = db.model('TweetEntry', schema);
 	dbReady = true;
@@ -82,7 +83,8 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 			'name': data.user.name,
 			'id':data.user.id_str,
 			'image':data.user.profile_image_url,
-			'tweet':data.text
+			'tweet':data.text,
+            'tag': TRACKING
 		});
 		console.log('saving entry...');
 		entry.save(function(err){
