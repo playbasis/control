@@ -11,11 +11,11 @@ db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 	schema = mongoose.Schema({
-		user: 'string', 
-		name: 'string', 
-		id: 'string', 
-		image: 'string', 
-		tweet: 'string' 
+		user: 'string',
+		name: 'string',
+		id: 'string',
+		image: 'string',
+		tweet: 'string'
 	});
 	TweetEntry = db.model('TweetEntry', schema);
 	dbReady = true;
@@ -78,10 +78,10 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 		if(!dbReady)
 			return;
 		var entry = new TweetEntry({
-			'user': data.user.screen_name, 
-			'name': data.user.name, 
-			'id':data.user.id_str, 
-			'image':data.user.profile_image_url, 
+			'user': data.user.screen_name,
+			'name': data.user.name,
+			'id':data.user.id_str,
+			'image':data.user.profile_image_url,
 			'tweet':data.text
 		});
 		console.log('saving entry...');
@@ -91,13 +91,13 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 				return;
 			}
 			console.log('tweet saved!');
+            dateObj = new Date();
+            //tell clients to update data
+            io.sockets.emit('newtweet', {'time': dateObj.getTime()});
 		});
-
-		//tell clients to update data
-		io.sockets.emit('newtweet', {'time': dateObj.getTime()});
 	});
 });
 
 io.sockets.on('connection', function(socket){
-	socket.emit('newtweet', {'time': dateObj.getTime()});
+	socket.emit('newtweet', {'time': dateObj.getTime()}k);
 });
