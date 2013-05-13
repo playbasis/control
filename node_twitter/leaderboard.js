@@ -16,7 +16,7 @@ db.once('open', function callback(){
 		id: 'string',
 		image: 'string',
 		tweet: 'string',
-        tag: 'tag'
+        tag: 'string'
 	});
 	TweetEntry = db.model('TweetEntry', schema);
 	dbReady = true;
