@@ -13,3 +13,5 @@ application/config/config.php
 node_server/*.log
 node_twitter/*.log
 .DS_Store
+
+*.xcuserstate
