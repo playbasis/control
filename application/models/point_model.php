@@ -16,10 +16,10 @@ class Point_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT name FROM playbasis_reward_to_client WHERE reward_id = ".$data['reward_id']." AND client_id = ".$data['client_id']." AND site_id = ".$data['site_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_reward_to_client";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -35,7 +35,7 @@ class Point_model extends CI_Model
         $result = $this->db->get('playbasis_reward_to_client');
         $result = $result->row_array();
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result['name']);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result['name']);
 
         return $result['name'];
 	}
@@ -55,10 +55,10 @@ class Point_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT reward_id FROM playbasis_reward_to_client WHERE name = ".strtolower($data['reward_name'])." AND client_id = ".$data['client_id']." AND site_id = ".$data['site_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_reward_to_client";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -74,11 +74,11 @@ class Point_model extends CI_Model
         $result = $this->db->get('playbasis_reward_to_client');
         $result = $result->row_array();
         if($result){
-            $this->memcached_library->add('sql_' . $md5query.".".$table, $result['reward_id']);
+            $this->memcached_library->add('sql_' . $md5name.".".$table, $result['reward_id']);
             return $result['reward_id'];
         }
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, array());
+        $this->memcached_library->add('sql_' . $md5name.".".$table, array());
 
         return array();
 	}

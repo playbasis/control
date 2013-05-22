@@ -62,10 +62,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT ".$fields." FROM playbasis_player WHERE pb_player_id = ".$id;
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -75,7 +75,7 @@ class Player_model extends CI_Model
 		$this->db->where('pb_player_id', $id);
 		$result = $this->db->get('playbasis_player');
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result->row_array());
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->row_array());
 
 		return $result->row_array();
 	}
@@ -93,10 +93,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT ".$fields." FROM playbasis_player LIMIT ".$limit." OFFSET ".$offset;
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -105,7 +105,7 @@ class Player_model extends CI_Model
         // so if cannot get any result
         $result = $this->db->get('playbasis_player', $offset, $limit);
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result->result_array());
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
 
         return $result->result_array();
 	}
@@ -166,10 +166,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT pb_player_id FROM playbasis_player WHERE client_id = ".$clientData['client_id']." AND site_id = ".$clientData['site_id']." AND cl_player_id = ".$clientData['cl_player_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -185,13 +185,13 @@ class Player_model extends CI_Model
         $result = $this->db->get('playbasis_player');
 
         if(!$result->row_array()){
-            $this->memcached_library->add('sql_' . $md5query.".".$table, -1);
+            $this->memcached_library->add('sql_' . $md5name.".".$table, -1);
             return -1;
         }
 
         $id = $result->row_array();
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $id['pb_player_id']);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $id['pb_player_id']);
 
         return $id['pb_player_id'];
 	}
@@ -212,10 +212,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT cl_player_id FROM playbasis_player WHERE pb_player_id = ".$pb_player_id;
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -227,13 +227,13 @@ class Player_model extends CI_Model
         $result = $this->db->get('playbasis_player');
 
         if(!$result->row_array()){
-            $this->memcached_library->add('sql_' . $md5query.".".$table, -1);
+            $this->memcached_library->add('sql_' . $md5name.".".$table, -1);
             return -1;
         }
 
         $id = $result->row_array();
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $id['cl_player_id']);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $id['cl_player_id']);
 
         return $id['cl_player_id'];
 	}
@@ -246,10 +246,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT reward_id, value FROM playbasis_reward_to_player WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_reward_to_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -260,7 +260,7 @@ class Player_model extends CI_Model
         $this->db->where('pb_player_id', $data['pb_player_id']);
         $result = $this->db->get('playbasis_reward_to_player');
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result->result_array());
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
 
         return $result->result_array();
 	}
@@ -276,10 +276,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT reward_id, value FROM playbasis_reward_to_player WHERE pb_player_id = ".$data['pb_player_id']." AND reward_id = ".$data['reward_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_reward_to_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -293,7 +293,7 @@ class Player_model extends CI_Model
         ));
         $result = $this->db->get('playbasis_reward_to_player');
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result->result_array());
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
 
         return $result->result_array();
 	}
@@ -309,10 +309,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT action_id, action_name, date_added AS time FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_action_log";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -326,7 +326,7 @@ class Player_model extends CI_Model
         $this->db->order_by('date_added', 'DESC');
         $result = $this->db->get('playbasis_action_log');
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result->row_array());
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->row_array());
 
         return $result->row_array();
 	}
@@ -343,10 +343,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT action_id, action_name, date_added AS time FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_action_log";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -361,7 +361,7 @@ class Player_model extends CI_Model
         $this->db->order_by('date_added', 'DESC');
         $result = $this->db->get('playbasis_action_log');
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result->row_array());
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->row_array());
 
         return $result->row_array();
 	}
@@ -384,10 +384,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT action_id, action_name FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id']." AND action_id = ".$data['action_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_action_log";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -408,7 +408,7 @@ class Player_model extends CI_Model
         $result = $result->row_array();
         $result['count'] = $count;
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result);
 
         return $result;
 	}
@@ -440,10 +440,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT badge_id, amount FROM playbasis_badge_to_player WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_badge_to_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -455,7 +455,7 @@ class Player_model extends CI_Model
 		$result = $this->db->get('playbasis_badge_to_player');
 		$badges = $result->result_array();
 		if(!$badges){
-            $this->memcached_library->add('sql_' . $md5query.".".$table, array());
+            $this->memcached_library->add('sql_' . $md5name.".".$table, array());
             return array();
         }
 
@@ -474,7 +474,7 @@ class Player_model extends CI_Model
 			$badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
 		}
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $badges);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $badges);
 
 		return $badges;
 	}
@@ -494,10 +494,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT date_added FROM playbasis_event_log WHERE pb_player_id = ".$pb_player_id." AND event_type = ".$eventType." ORDER BY date_added DESC";
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_event_log";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -513,11 +513,11 @@ class Player_model extends CI_Model
         $result = $this->db->get('playbasis_event_log');
         $result = $result->row_array();
         if($result){
-            $this->memcached_library->add('sql_' . $md5query.".".$table, $result['date_added']);
+            $this->memcached_library->add('sql_' . $md5name.".".$table, $result['date_added']);
             return $result['date_added'];
         }
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, '0000-00-00 00:00:00');
+        $this->memcached_library->add('sql_' . $md5name.".".$table, '0000-00-00 00:00:00');
         return '0000-00-00 00:00:00';
 	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
@@ -554,10 +554,10 @@ class Player_model extends CI_Model
 
         // name for memcached
         $sql = "SELECT cl_player_id AS player_id,value AS ".$ranked_by." FROM playbasis_reward_to_player WHERE reward_id = ".$result['reward_id']." AND playbasis_reward_to_player.client_id = ".$client_id." AND playbasis_reward_to_player.site_id = ".$site_id." ORDER BY value DESC LIMIT ".$limit;
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_reward_to_player";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -578,7 +578,7 @@ class Player_model extends CI_Model
         $result = $this->db->get();
         $result = $result->result_array();
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result);
 
         return $result;
 	}

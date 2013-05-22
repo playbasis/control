@@ -23,10 +23,10 @@ class Auth_model extends CI_model
 
         // name for memcached
         $sql = "SELECT site_id, client_id, domain_name, site_name FROM playbasis_client_site WHERE api_key = ".$data['key']." AND api_secret = ".$data['secret']." AND date_expire = ".date('Y-m-d H:i:s')." AND status = 1";
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_client_site";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -43,7 +43,7 @@ class Auth_model extends CI_model
 		$result = $this->db->get('playbasis_client_site');
         $result = $result->row_array();
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $result);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $result);
 
 		return $result;
 	}
@@ -78,10 +78,10 @@ class Auth_model extends CI_model
 
         // name for memcached
         $sql = "SELECT token FROM playbasis_token WHERE api_key = ".$data['key']." AND api_secret = ".$data['secret']." AND date_expire = ".date('Y-m-d H:i:s');
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_token";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -116,7 +116,7 @@ class Auth_model extends CI_model
             $this->memcached_library->update_delete($table);
         }
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, $token);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $token);
 
         return $token;
 	}
@@ -140,10 +140,10 @@ class Auth_model extends CI_model
 
         // name for memcached
         $sql = "SELECT client_id, site_id FROM playbasis_token WHERE token = ".$token." AND date_expire = ".date('Y-m-d H:i:s');
-        $md5query = md5($sql);
+        $md5name = md5($sql);
         $table = "playbasis_token";
 
-        $results = $this->memcached_library->get('sql_' . $md5query.".".$table);
+        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
 
         // gotcha i got result
         if ($results)
@@ -163,12 +163,12 @@ class Auth_model extends CI_model
 			$this->db->where($info);
 			$result = $this->db->get('playbasis_client_site');
 
-            $this->memcached_library->add('sql_' . $md5query.".".$table, array_merge($info, $result->row_array()));
+            $this->memcached_library->add('sql_' . $md5name.".".$table, array_merge($info, $result->row_array()));
 
 			return array_merge($info, $result->row_array());
 		}
 
-        $this->memcached_library->add('sql_' . $md5query.".".$table, null);
+        $this->memcached_library->add('sql_' . $md5name.".".$table, null);
 
 		return null;
 
