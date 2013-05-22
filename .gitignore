@@ -12,3 +12,6 @@ application/config/config.php
 .idea/*
 node_server/*.log
 node_twitter/*.log
+.DS_Store
+
+*.xcuserstate
