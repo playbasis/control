@@ -566,7 +566,7 @@ class Player_model extends CI_Model
 
         // so if cannot get any result
         //get points for the reward id
-        $this->db->select("playbasis_reward_to_player.cl_player_id AS player_id,value AS $ranked_by");
+        $this->db->select("cl_player_id AS player_id,value AS $ranked_by");
         $this->db->from('playbasis_reward_to_player,playbasis_player');
         $this->db->where(array(
             'reward_id' => $result['reward_id'],
