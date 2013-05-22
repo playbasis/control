@@ -94,6 +94,7 @@ $route['Engine/rule']	= 'engine/rule/0';
 $route['test']	= 'playbasis/test';
 $route['fb'] = 'playbasis/fb';
 $route['login'] = 'playbasis/login';
+$route['memtest'] = 'playbasis/memtest';
 
 //dummy 
 //$route['dummy/dummyPlayer/'.ANY_NUMBER.'/'.ANY_NUMBER.'']	= 'dummy/dummyPlayer/$1/$2/$3';
