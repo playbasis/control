@@ -10,6 +10,7 @@ if (!function_exists('json_decode')) {
 class Playbasis
 {
 	const BASE_URL = 'https://api.pbapp.net/';
+//  const BASE_URL = 'https://dev.pbapp.net/api/';
 	private $token = null;
 	private $apiKeyParam = null;
 	

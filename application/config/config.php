@@ -31,6 +31,7 @@ $config['base_url']	= 'https://dev.pbapp.net/api/';
 |
 */
 $config['index_page'] = '';
+//$config['index_page'] = 'index.php';
 
 /*
 |--------------------------------------------------------------------------
