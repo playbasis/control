@@ -14,6 +14,8 @@ class Point_model extends CI_Model
 //		$result = $result->row_array();
 //		return $result['name'];
 
+        $this->load->library('memcached_library');
+
         // name for memcached
         $sql = "SELECT name FROM playbasis_reward_to_client WHERE reward_id = ".$data['reward_id']." AND client_id = ".$data['client_id']." AND site_id = ".$data['site_id'];
         $md5name = md5($sql);
@@ -52,6 +54,8 @@ class Point_model extends CI_Model
 //		if($result)
 //			return $result['reward_id'];
 //		return array();
+
+        $this->load->library('memcached_library');
 
         // name for memcached
         $sql = "SELECT reward_id FROM playbasis_reward_to_client WHERE name = ".strtolower($data['reward_name'])." AND client_id = ".$data['client_id']." AND site_id = ".$data['site_id'];

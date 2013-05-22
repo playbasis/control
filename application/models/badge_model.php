@@ -6,6 +6,7 @@ class Badge_model extends CI_Model
 	{
 		parent::__construct();
 		$this->config->load('playbasis');
+        $this->load->library('memcached_library');
 	}
 	public function getAllBadges($data)
 	{

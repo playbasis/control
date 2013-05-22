@@ -252,10 +252,10 @@
 
 	(function(){
         console.log('test git update');
-//		var baseURL = 'https://api.pbapp.net/',
-//		var baseURL = '//localhost/api/',
-        var baseURL = '//localhost/api/index.php/',
-//		var baseURL = 'https://dev.pbapp.net/api/index.php/',
+//		  var baseURL = 'https://api.pbapp.net/',
+//		  var baseURL = '//localhost/api/',
+//        var baseURL = '//localhost/api/index.php/',
+		var baseURL = 'https://dev.pbapp.net/api/index.php/',
 
 			methodArray = {
 				'Player' : [
