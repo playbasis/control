@@ -124,8 +124,6 @@ JIGSAW :: {ACTION}
 			"action_name"	: "{string} :: action name",
             "url"			: "{string}	:: specify url for any action {blank = global match},{ / = only index page match},{ :: any url path :: = match specific url path}",
             "regex"			: "{boolean}:: use for match url by regex",
-            "action_target"	: "{string}	:: use for indicate trigger element ",
-            "object_target" : "{string} :: use for indicate object element"
 		} 
 
 JIGSAW :: {REWARD}
