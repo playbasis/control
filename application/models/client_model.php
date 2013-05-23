@@ -90,9 +90,11 @@ class Client_model extends CI_Model
         $result = $this->db->get('playbasis_action_to_client');
         $id = $result->row_array();
 
-        $this->memcached_library->add('sql_' . $md5name.".".$table, ($id) ? $id['action_id'] : 0);
+        $res = ($id) ? $id['action_id'] : 0;
 
-        return ($id) ? $id['action_id'] : 0;
+        $this->memcached_library->add('sql_' . $md5name.".".$table, $res);
+
+        return $res;
 	}
 	public function getRuleSetByActionId($clientData)
 	{
