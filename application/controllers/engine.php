@@ -40,13 +40,13 @@ class Engine extends REST_Controller
 			if(isset($actionConfig[$actionId]))
 			{
 				$config = array(
-					'action_target' => $actionInput['action_target'],
-					'object_target' => $actionInput['object_target']
+					'url' => $actionInput['url'],
+					'regex' => $actionInput['regex']
 				);
 				$found = false;
 				foreach($actionConfig[$actionId]['config'] as $configElement)
 				{
-					if($config['action_target'] != $configElement['action_target'] || $config['object_target'] != $configElement['object_target'])
+					if($config['url'] != $configElement['url'] || $config['regex'] != $configElement['regex'])
 						continue;
 					$found = true;
 					break;
@@ -60,8 +60,8 @@ class Engine extends REST_Controller
 					'name' => $jigsawSet[0]['config']['action_name'],
 					'config' => array(
 						array(
-							'action_target' => $actionInput['action_target'],
-							'object_target' => $actionInput['object_target']
+							'url' => $actionInput['url'],
+							'regex' => $actionInput['regex']
 						)
 					)
 				);
@@ -92,13 +92,13 @@ class Engine extends REST_Controller
 			if(isset($actionConfig[$actionId]))
 			{
 				$config = array(
-					'action_target' => $actionInput['action_target'],
-					'object_target' => $actionInput['object_target']
+					'url' => $actionInput['url'],
+					'regex' => $actionInput['regex']
 				);
 				$found = false;
 				foreach($actionConfig[$actionId]['config'] as $configElement)
 				{
-					if($config['action_target'] != $configElement['action_target'] || $config['object_target'] != $configElement['object_target'])
+					if($config['url'] != $configElement['url'] || $config['regex'] != $configElement['regex'])
 						continue;
 					$found = true;
 					break;
@@ -112,8 +112,8 @@ class Engine extends REST_Controller
 					'name' => $jigsawSet[0]['config']['action_name'],
 					'config' => array(
 						array(
-							'action_target' => $actionInput['action_target'],
-							'object_target' => $actionInput['object_target']
+							'url' => $actionInput['url'],
+							'regex' => $actionInput['regex']
 						)
 					)
 				);
