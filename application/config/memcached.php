@@ -12,7 +12,8 @@ $memcached['servers'] = array(
         'host'			=> 'mem.pbapp.net',
         'port'			=> '11211',
         'weight'		=> '1',
-        'persistent'	=> FALSE
+        'persistent'	=> FALSE,
+        'timeout'       => '3'
 
     )
 );

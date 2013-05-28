@@ -81,7 +81,7 @@ class Memcached_library
 	public function add_server($server)
 	{
 		extract($server);
-        return $this->m->addServer($host, $port, $weight);
+        return $this->m->addServer($host, $port, $weight, $timeout);
 	}
 	
 	/*
@@ -260,17 +260,19 @@ class Memcached_library
             case 'Memcache':
                 $allSlabs = $this->m->getExtendedStats('slabs');
                 foreach($allSlabs as $server => $slabs) {
-                    foreach($slabs AS $slabId => $slabMeta) {
-                        $cdump = $this->m->getExtendedStats('cachedump',(int)$slabId);
-                        foreach($cdump AS $keys => $arrVal) {
-                            if (!is_array($arrVal)) continue;
-                            foreach($arrVal AS $k => $v) {
-                                if(preg_match('/'.$name.'/', $k)){
-                                    $this->m->delete($k);
+                    if($slabs)
+                        foreach($slabs as $slabId => $slabMeta) {
+                            $cdump = $this->m->getExtendedStats('cachedump',(int)$slabId);
+                            if($cdump)
+                                foreach($cdump as $keys => $arrVal) {
+                                    if (!is_array($arrVal)) continue;
+                                    foreach($arrVal as $k => $v) {
+                                        if(preg_match('/'.$name.'/', $k)){
+                                            $this->m->delete($k);
+                                        }
+                                    }
                                 }
-                            }
                         }
-                    }
                 }
                 return true;
                 break;
@@ -278,7 +280,7 @@ class Memcached_library
             default:
             case 'Memcached':
                 $all_keys = $this->m->getAllKeys();
-                foreach($all_keys AS $k => $v) {
+                foreach($all_keys as $k => $v) {
                     if(preg_match('/'.$name.'/', $v)){
                         $this->memcache->delete($v);
                     }
