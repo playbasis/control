@@ -343,7 +343,7 @@ class Player_model extends CI_Model
 //		return $result->row_array();
 
         // name for memcached
-        $sql = "SELECT action_id, action_name, date_added AS time FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id'];
+        $sql = "SELECT action_id, action_name, date_added AS time FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id']." AND action_id = ".$data['action_id'];
         $md5name = md5($sql);
         $table = "playbasis_action_log";
 
