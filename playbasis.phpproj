@@ -94,6 +94,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\config\\memcached.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\config\\migration.php"
     {
     "ProjRelPath" = "T"
@@ -242,6 +246,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\helpers\\memcache_helper.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\hooks"
     {
     "ProjRelPath" = "T"
@@ -291,6 +299,10 @@
     "ProjRelPath" = "T"
     }
     "application\\libraries\\index.html"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\libraries\\memcached_library.php"
     {
     "ProjRelPath" = "T"
     }

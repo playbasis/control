@@ -9,7 +9,7 @@ if(!function_exists('db_get_row_array'))
 		$result = $mdl->memcached_library->get($memId);
 		if(!$result)
 		{
-			$result = $mdl->db->get($table);
+			$result = $mdl->db->run_compiled_sql($sql);
 			$result = $result->row_array();
 			$mdl->memcached_library->add($memId, $result);
 		}

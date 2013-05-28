@@ -7,6 +7,7 @@ class Player_model extends CI_Model
 		parent::__construct();
 		$this->config->load('playbasis');
         $this->load->library('memcached_library');
+		$this->load->helper('memcache');
 	}
 	public function createPlayer($data)
 	{
@@ -333,38 +334,13 @@ class Player_model extends CI_Model
 	}
 	public function getActionPerform($data)
 	{
-//		$this->db->select('action_id,action_name,date_added AS time');
-//		$this->db->where(array(
-//			'pb_player_id' => $data['pb_player_id'],
-//			'action_id' => $data['action_id']
-//		));
-//		$this->db->order_by('date_added', 'DESC');
-//		$result = $this->db->get('playbasis_action_log');
-//		return $result->row_array();
-
-        // name for memcached
-        $sql = "SELECT action_id, action_name, date_added AS time FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_action_log";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->select('action_id,action_name,date_added AS time');
-        $this->db->where(array(
-            'pb_player_id' => $data['pb_player_id'],
-            'action_id' => $data['action_id']
-        ));
-        $this->db->order_by('date_added', 'DESC');
-        $result = $this->db->get('playbasis_action_log');
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->row_array());
-
-        return $result->row_array();
+		$this->db->select('action_id,action_name,date_added AS time');
+		$this->db->where(array(
+			'pb_player_id' => $data['pb_player_id'],
+			'action_id' => $data['action_id']
+		));
+		$this->db->order_by('date_added', 'DESC');
+		return db_get_row_array($this, 'playbasis_action_log');
 	}
 	public function getActionCount($data)
 	{
