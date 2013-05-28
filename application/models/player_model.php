@@ -334,12 +334,12 @@ class Player_model extends CI_Model
 	}
 	public function getActionPerform($data)
 	{
-		$this->db->select('action_id,action_name,date_added AS time');
-		$this->db->where(array(
-			'pb_player_id' => $data['pb_player_id'],
-			'action_id' => $data['action_id']
-		));
-		$this->db->order_by('date_added', 'DESC');
+        $this->db->select('action_id,action_name,date_added AS time');
+        $this->db->where(array(
+            'pb_player_id' => $data['pb_player_id'],
+            'action_id' => $data['action_id']
+        ));
+        $this->db->order_by('date_added', 'DESC');
 		return db_get_row_array($this, 'playbasis_action_log');
 	}
 	public function getActionCount($data)
