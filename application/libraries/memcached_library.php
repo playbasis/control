@@ -81,7 +81,16 @@ class Memcached_library
 	public function add_server($server)
 	{
 		extract($server);
-        return $this->m->addServer($host, $port, $weight, $timeout);
+//        return $this->m->addServer($host, $port, $weight, $timeout);
+        switch($this->client_type)
+        {
+            case 'Memcached':
+                return $this->m->addServer($host, $port, $weight, $timeout);
+                break;
+            case 'Memcache':
+                return $this->m->addServer($host, $port, $persistent , $weight, $timeout);
+                break;
+        }
 	}
 	
 	/*
