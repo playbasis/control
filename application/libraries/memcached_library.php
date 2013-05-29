@@ -445,22 +445,55 @@ class Memcached_library
 
     private function keep_table($key)
     {
+        if($this->m->get($this->key_name("table")))
+            $this->keep = $this->m->get($this->key_name("table"));
+
         $data = explode(".", $key);
         if(isset($data[1]))
             $this->keep[$data[1]][$data[0]] = true;
+
+        switch($this->client_type)
+        {
+            case 'Memcache':
+                $this->m->set($this->key_name("table"), $this->keep, $this->config['config']['compression'], $this->config['config']['expiration']);
+                break;
+
+            default:
+            case 'Memcached':
+                $this->m->set($this->key_name("table"), $this->keep, $this->config['config']['expiration']);
+                break;
+        }
 
         return true;
     }
 
     private function check_table($key)
     {
+        if($this->m->get($this->key_name("table")))
+            $this->keep = $this->m->get($this->key_name("table"));
+
         $data = explode(".", $key);
         return (isset($data[1]) && isset($this->keep[$data[1]]) && isset($this->keep[$data[1]][$data[0]]) && $this->keep[$data[1]][$data[0]]);
     }
 
     private function delete_table($table)
     {
+        if($this->m->get($this->key_name("table")))
+            $this->keep = $this->m->get($this->key_name("table"));
+
         $this->keep[$table] = null;
+
+        switch($this->client_type)
+        {
+            case 'Memcache':
+                $this->m->set($this->key_name("table"), $this->keep, $this->config['config']['compression'], $this->config['config']['expiration']);
+                break;
+
+            default:
+            case 'Memcached':
+                $this->m->set($this->key_name("table"), $this->keep, $this->config['config']['expiration']);
+                break;
+        }
 
         return null;
     }
