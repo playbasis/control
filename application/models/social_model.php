@@ -17,8 +17,7 @@ class Social_model extends CI_Model
 			'client_id' => $client_id,
 			'site_id' => $site_id
 			));
-		$result = $this->db->get('playbasis_facebook_page_to_client');
-		return $result->row_array();
+		return db_get_row_array($this, 'playbasis_facebook_page_to_client');
 	}
 	private function getFacebookObject($client_id, $site_id)
 	{
@@ -189,24 +188,21 @@ class Social_model extends CI_Model
 			$facebook_page_id = $this->bigIntToString($facebook_page_id);
 		$this->db->select('client_id,site_id');
 		$this->db->where('facebook_page_id', $facebook_page_id);
-		$result = $this->db->get('playbasis_facebook_page_to_client');
-		return $result->row_array();
+		return db_get_row_array($this, 'playbasis_facebook_page_to_client');
 	}
 	public function getClientFromHashTag($hashtag)
 	{
 		assert(is_string($hashtag));
 		$this->db->select('client_id,site_id');
 		$this->db->where('hashtag', $hashtag);
-		$result = $this->db->get('playbasis_hashtag_to_client');
-		return $result->row_array();
+		return db_get_row_array($this, 'playbasis_hashtag_to_client');
 	}
 	public function getClientFromHost($host)
 	{
 		assert(is_string($host));
 		$this->db->select('client_id,site_id');
 		$this->db->where('host', $host);
-		$result = $this->db->get('playbasis_hosts_to_client');
-		return $result->row_array();
+		return db_get_row_array($this, 'playbasis_hosts_to_client');
 	}
 	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id)
 	{
@@ -218,8 +214,7 @@ class Social_model extends CI_Model
 			'client_id' => $client_id,
 			'site_id' => $site_id
 			));
-		$result = $this->db->get('playbasis_player');
-		$result = $result->row_array();
+		$result = db_get_row_array($this, 'playbasis_player');
 		return ($result) ? $result['pb_player_id'] : 0;
 	}
 	public function getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id)
@@ -231,8 +226,7 @@ class Social_model extends CI_Model
 			'client_id' => $client_id,
 			'site_id' => $site_id
 			));
-		$result = $this->db->get('playbasis_player');
-		$result = $result->row_array();
+		$result = db_get_row_array($this, 'playbasis_player');
 		return ($result) ? $result['pb_player_id'] : 0;
 	}
 	private function formatFacebookPostId($postId, $pageId)
