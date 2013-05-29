@@ -154,173 +154,58 @@ class Player_model extends CI_Model
 	}
 	public function getBadge($data)
 	{
-//        $this->db->select('badge_id,amount');
-//        $this->db->where('pb_player_id', $data['pb_player_id']);
-//        $result = $this->db->get('playbasis_badge_to_player');
-//        $badges = $result->result_array();
-//        if(!$badges)
-//            return array();
-//
-//        foreach($badges as &$badge)
-//        {
-//            //badge data
-//            $this->db->select('name,description');
-//            $this->db->where('badge_id', $badge['badge_id']);
-//            $result = $this->db->get('playbasis_badge_description');
-//            $badge = array_merge($badge, $result->row_array());
-//            //badge image
-//            $this->db->select('image');
-//            $this->db->where('badge_id', $badge['badge_id']);
-//            $result = $this->db->get('playbasis_badge');
-//            $result = $result->row_array();
-//            $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
-//        }
-//
-//        return $badges;
-
-        // name for memcached
-        $sql = "SELECT badge_id, amount FROM playbasis_badge_to_player WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_badge_to_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-		$this->db->select('badge_id,amount');
-		$this->db->where('pb_player_id', $data['pb_player_id']);
-		$result = $this->db->get('playbasis_badge_to_player');
-		$badges = $result->result_array();
-		if(!$badges){
-            $this->memcached_library->add('sql_' . $md5name.".".$table, array());
+        $this->db->select('badge_id,amount');
+        $this->db->where('pb_player_id', $data['pb_player_id']);
+		$badges = db_get_result_array($this, 'playbasis_badge_to_player');
+        if(!$badges)
             return array();
+        foreach($badges as &$badge)
+        {
+            //badge data
+            $this->db->select('name,description');
+            $this->db->where('badge_id', $badge['badge_id']);
+			$result = db_get_row_array($this, 'playbasis_badge_description');
+            $badge = array_merge($badge, $result);
+            //badge image
+            $this->db->select('image');
+            $this->db->where('badge_id', $badge['badge_id']);
+			$result = db_get_row_array($this, 'playbasis_badge');
+            $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
         }
-
-		foreach($badges as &$badge)
-		{
-			//badge data
-			$this->db->select('name,description');
-			$this->db->where('badge_id', $badge['badge_id']);
-			$result = $this->db->get('playbasis_badge_description');
-			$badge = array_merge($badge, $result->row_array());
-			//badge image
-			$this->db->select('image');
-			$this->db->where('badge_id', $badge['badge_id']);
-			$result = $this->db->get('playbasis_badge');
-			$result = $result->row_array();
-			$badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
-		}
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $badges);
-
-		return $badges;
+        return $badges;
 	}
 	public function getLastEventTime($pb_player_id, $eventType)
 	{
-//		$this->db->select('date_added');
-//		$this->db->where(array(
-//			'pb_player_id' => $pb_player_id,
-//			'event_type' => $eventType
-//		));
-//		$this->db->order_by('date_added', 'DESC');
-//		$result = $this->db->get('playbasis_event_log');
-//		$result = $result->row_array();
-//		if($result)
-//			return $result['date_added'];
-//		return '0000-00-00 00:00:00';
-
-        // name for memcached
-        $sql = "SELECT date_added FROM playbasis_event_log WHERE pb_player_id = ".$pb_player_id." AND event_type = ".$eventType." ORDER BY date_added DESC";
-        $md5name = md5($sql);
-        $table = "playbasis_event_log";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->select('date_added');
-        $this->db->where(array(
-            'pb_player_id' => $pb_player_id,
-            'event_type' => $eventType
-        ));
-        $this->db->order_by('date_added', 'DESC');
-        $result = $this->db->get('playbasis_event_log');
-        $result = $result->row_array();
-        if($result){
-            $this->memcached_library->add('sql_' . $md5name.".".$table, $result['date_added']);
-            return $result['date_added'];
-        }
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, '0000-00-00 00:00:00');
-        return '0000-00-00 00:00:00';
+		$this->db->select('date_added');
+		$this->db->where(array(
+			'pb_player_id' => $pb_player_id,
+			'event_type' => $eventType
+		));
+		$this->db->order_by('date_added', 'DESC');
+		$result = db_get_row_array($this, 'playbasis_event_log');
+		if($result)
+			return $result['date_added'];
+		return '0000-00-00 00:00:00';
 	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
 	{
-//		//get reward id
-//		$this->db->select('reward_id');
-//		$this->db->where('name', $ranked_by);
-//		$result = $this->db->get('playbasis_reward');
-//		$result = $result->row_array();
-//		if(!$result)
-//			return array();
-//		//get points for the reward id
-//		$this->db->select("cl_player_id AS player_id,value AS $ranked_by");
-//		$this->db->from('playbasis_reward_to_player,playbasis_player');
-//		$this->db->where(array(
-//			'reward_id' => $result['reward_id'],
-//			'playbasis_reward_to_player.client_id' => $client_id,
-//			'playbasis_reward_to_player.site_id' => $site_id
-//		));
-//		$this->db->where('playbasis_reward_to_player.pb_player_id = playbasis_player.pb_player_id');
-//		$this->db->order_by('value', 'DESC');
-//		$this->db->limit($limit);
-//		$result = $this->db->get();
-//		$result = $result->result_array();
-//		return $result;
-
-        //get reward id
-        $this->db->select('reward_id');
-        $this->db->where('name', $ranked_by);
-        $result = $this->db->get('playbasis_reward');
-        $result = $result->row_array();
-        if(!$result)
-            return array();
-
-        // name for memcached
-        $sql = "SELECT cl_player_id AS player_id,value AS ".$ranked_by." FROM playbasis_reward_to_player WHERE reward_id = ".$result['reward_id']." AND playbasis_reward_to_player.client_id = ".$client_id." AND playbasis_reward_to_player.site_id = ".$site_id." ORDER BY value DESC LIMIT ".$limit;
-        $md5name = md5($sql);
-        $table = "playbasis_reward_to_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        //get points for the reward id
-        $this->db->select("cl_player_id AS player_id,value AS $ranked_by");
-        $this->db->from('playbasis_reward_to_player,playbasis_player');
-        $this->db->where(array(
-            'reward_id' => $result['reward_id'],
-            'playbasis_reward_to_player.client_id' => $client_id,
-            'playbasis_reward_to_player.site_id' => $site_id
-        ));
-        $this->db->where('playbasis_reward_to_player.pb_player_id = playbasis_player.pb_player_id');
-        $this->db->order_by('value', 'DESC');
-        $this->db->limit($limit);
-        $result = $this->db->get();
-        $result = $result->result_array();
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result);
-
-        return $result;
+		//get reward id
+		$this->db->select('reward_id');
+		$this->db->where('name', $ranked_by);
+		$result = db_get_row_array($this, 'playbasis_reward');
+		if(!$result)
+			return array();
+		//get points for the reward id
+		$this->db->select("cl_player_id AS player_id,value AS $ranked_by");
+		$this->db->where(array(
+			'reward_id' => $result['reward_id'],
+			'client_id' => $client_id,
+			'site_id' => $site_id
+		));
+		$this->db->order_by('value', 'DESC');
+		$this->db->limit($limit);
+		$result = db_get_result_array($this, 'playbasis_reward_to_player');
+		return $result;
 	}
 }
 ?>

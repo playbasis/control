@@ -8,169 +8,55 @@ class Client_model extends CI_Model
 		parent::__construct();
 		$this->config->load('playbasis');
         $this->load->library('memcached_library');
+		$this->load->helper('memcache');
 	}
 	public function getRuleSet($clientData)
 	{
-//		assert($clientData);
-//		assert(is_array($clientData));
-//		assert(isset($clientData['client_id']));
-//		assert(isset($clientData['site_id']));
-//		$this->db->select('jigsaw_set');
-//		$this->db->where($clientData);
-//		$result = $this->db->get('playbasis_rule');
-//		return $result->result_array();
-
-        // name for memcached
-        $sql = "SELECT jigsaw_set FROM playbasis_rule WHERE client_id = ".$clientData['client_id']." AND site_id = ".$clientData['site_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_rule";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-
-        // so if cannot get any result
-        assert($clientData);
-        assert(is_array($clientData));
-        assert(isset($clientData['client_id']));
-        assert(isset($clientData['site_id']));
-        $this->db->select('jigsaw_set');
-        $this->db->where($clientData);
-        $result = $this->db->get('playbasis_rule');
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
-
-        return $result->result_array();
-
+		assert($clientData);
+		assert(is_array($clientData));
+		assert(isset($clientData['client_id']));
+		assert(isset($clientData['site_id']));
+		$this->db->select('jigsaw_set');
+		$this->db->where($clientData);
+		return db_get_result_array($this, 'playbasis_rule');
 	}
 	public function getActionId($clientData)
 	{
-//		assert($clientData);
-//		assert(is_array($clientData));
-//		assert(isset($clientData['client_id']));
-//		assert(isset($clientData['site_id']));
-//		assert(isset($clientData['action_name']));
-//		$this->db->select('action_id');
-//		$this->db->where(array(
-//			'client_id' => $clientData['client_id'],
-//			'site_id' => $clientData['site_id'],
-//			'name' => $clientData['action_name']
-//		));
-//		$result = $this->db->get('playbasis_action_to_client');
-//		$id = $result->row_array();
-//		return ($id) ? $id['action_id'] : 0;
-
-        // name for memcached
-        $sql = "SELECT action_id FROM playbasis_action_to_client WHERE client_id = ".$clientData['client_id']." AND site_id = ".$clientData['site_id']." AND name = ".$clientData['action_name'];
-        $md5name = md5($sql);
-        $table = "playbasis_action_to_client";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-
-        // so if cannot get any result
-        assert($clientData);
-        assert(is_array($clientData));
-        assert(isset($clientData['client_id']));
-        assert(isset($clientData['site_id']));
-        assert(isset($clientData['action_name']));
-        $this->db->select('action_id');
-        $this->db->where(array(
-            'client_id' => $clientData['client_id'],
-            'site_id' => $clientData['site_id'],
-            'name' => $clientData['action_name']
-        ));
-        $result = $this->db->get('playbasis_action_to_client');
-        $id = $result->row_array();
-
-        $res = ($id) ? $id['action_id'] : 0;
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $res);
-
-        return $res;
+		assert($clientData);
+		assert(is_array($clientData));
+		assert(isset($clientData['client_id']));
+		assert(isset($clientData['site_id']));
+		assert(isset($clientData['action_name']));
+		$this->db->select('action_id');
+		$this->db->where(array(
+			'client_id' => $clientData['client_id'],
+			'site_id' => $clientData['site_id'],
+			'name' => $clientData['action_name']
+		));
+		$id = db_get_row_array($this, 'playbasis_action_to_client');
+		return ($id) ? $id['action_id'] : 0;
 	}
 	public function getRuleSetByActionId($clientData)
 	{
-//		assert($clientData);
-//		assert(is_array($clientData));
-//		assert(isset($clientData['client_id']));
-//		assert(isset($clientData['site_id']));
-//		assert(isset($clientData['action_id']));
-//		$clientData['active_status'] = '1';
-//		$this->db->select('rule_id,name,jigsaw_set');
-//		$this->db->where($clientData);
-//		$result = $this->db->get('playbasis_rule');
-//		return $result->result_array();
-
-        // name for memcached
-        $sql = "SELECT rule_id,name, jigsaw_set FROM playbasis_rule WHERE client_id = ".$clientData['client_id']." AND site_id = ".$clientData['site_id']." AND action_id = ".$clientData['action_id']." AND active_status = 1";
-        $md5name = md5($sql);
-        $table = "playbasis_action_to_client";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-
-        // so if cannot get any result
-        assert($clientData);
-        assert(is_array($clientData));
-        assert(isset($clientData['client_id']));
-        assert(isset($clientData['site_id']));
-        assert(isset($clientData['action_id']));
-        $clientData['active_status'] = '1';
-        $this->db->select('rule_id,name,jigsaw_set');
-        $this->db->where($clientData);
-        $result = $this->db->get('playbasis_rule');
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
-
-        return $result->result_array();
+		assert($clientData);
+		assert(is_array($clientData));
+		assert(isset($clientData['client_id']));
+		assert(isset($clientData['site_id']));
+		assert(isset($clientData['action_id']));
+		$clientData['active_status'] = '1';
+		$this->db->select('rule_id,name,jigsaw_set');
+		$this->db->where($clientData);
+		return db_get_result_array($this, 'playbasis_rule');
 	}
 	public function getJigsawProcessor($jigsawId)
 	{
-//		assert($jigsawId);
-//		$this->db->where(array(
-//			'jigsaw_id' => $jigsawId
-//		));
-//		$this->db->select('class_path');
-//		$result = $this->db->get('playbasis_game_jigsaw_to_client');
-//		$jigsawProcessor = $result->row_array();
-//		return $jigsawProcessor['class_path'];
-
-        // name for memcached
-        $sql = "SELECT class_path FROM playbasis_game_jigsaw_to_client WHERE jigsaw_id = ".$jigsawId;
-        $md5name = md5($sql);
-        $table = "playbasis_game_jigsaw_to_client";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results['class_path'];
-
-
-        // so if cannot get any result
-        assert($jigsawId);
-        $this->db->where(array(
-            'jigsaw_id' => $jigsawId
-        ));
-        $this->db->select('class_path');
-        $result = $this->db->get('playbasis_game_jigsaw_to_client');
-        $jigsawProcessor = $result->row_array();
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $jigsawProcessor);
-
-        return $jigsawProcessor['class_path'];
+		assert($jigsawId);
+		$this->db->where(array(
+			'jigsaw_id' => $jigsawId
+		));
+		$this->db->select('class_path');
+		$jigsawProcessor = db_get_row_array($this, 'playbasis_game_jigsaw_to_client');
+		return $jigsawProcessor['class_path'];
 	}
 	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clientId, $siteId, $overrideOldValue = FALSE)
 	{
@@ -209,7 +95,6 @@ class Client_model extends CI_Model
 				'date_modified' => date('Y-m-d H:i:s')
 			));
 		}
-
 		//upadte client reward limit
 		$this->db->select('limit');
 		$this->db->where(array(
@@ -227,15 +112,9 @@ class Client_model extends CI_Model
 			));
 			$this->db->set('limit', "`limit`-$quantity", FALSE);
 			$this->db->update('playbasis_reward_to_client');
-
-            // clear memcached on this table
-            $table = "playbasis_reward_to_client";
-            $this->memcached_library->update_delete($table);
+			$this->memcached_library->update_delete('playbasis_reward_to_client');
 		}
-
-        // clear memcached on this table
-        $table = "playbasis_reward_to_player";
-        $this->memcached_library->update_delete($table);
+		$this->memcached_library->update_delete('playbasis_reward_to_player');
 	}
 	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig)
 	{
@@ -272,9 +151,7 @@ class Client_model extends CI_Model
 				'date_added' => date('Y-m-d H:i:s'),
 				'date_modified' => date('Y-m-d H:i:s')
 			));
-            // clear memcached on this table
-            $table = "playbasis_reward_to_client";
-            $this->memcached_library->update_delete($table);
+			$this->memcached_library->update_delete('playbasis_reward_to_client');
 		}
 		//update player reward
 		$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['client_id'], $input['site_id']);
@@ -306,10 +183,7 @@ class Client_model extends CI_Model
 			$this->db->set('date_modified', date('Y-m-d H:i:s'));
 			$this->db->where('badge_id', $badgeId);
 			$this->db->update('playbasis_badge');
-
-            // clear memcached on this table
-            $table = "playbasis_badge";
-            $this->memcached_library->update_delete($table);
+			$this->memcached_library->update_delete('playbasis_badge');
 		}
 		//update player badge table
 		$this->db->where(array(
@@ -338,10 +212,7 @@ class Client_model extends CI_Model
 				'date_modified' => date('Y-m-d H:i:s')
 			));
 		}
-
-        // clear memcached on this table
-        $table = "playbasis_badge_to_player";
-        $this->memcached_library->update_delete($table);
+		$this->memcached_library->update_delete('playbasis_badge_to_player');
 	}
 	public function updateExpAndLevel($exp, $pb_player_id, $clientData)
 	{
@@ -354,8 +225,7 @@ class Client_model extends CI_Model
 		//get player exp
 		$this->db->select('exp,level');
 		$this->db->where('pb_player_id', $pb_player_id);
-		$result = $this->db->get('playbasis_player');
-		$result = $result->row_array();
+		$result = db_get_row_array($this, 'playbasis_player');
 		$playerExp = $result['exp'];
 		$playerLevel = $result['level'];
 		$newExp = $exp + $playerExp;
@@ -363,15 +233,13 @@ class Client_model extends CI_Model
 		$this->db->select_max('level');
 		$this->db->where($clientData);
 		$this->db->where("exp <=", $newExp);
-		$result = $this->db->get('playbasis_client_exp_table');
-		$level = $result->row_array();
+		$level = db_get_row_array($this, 'playbasis_client_exp_table');
 		if(!$level['level'])
 		{
 			//get level from default exp table instead
 			$this->db->select_max('level');
 			$this->db->where("exp <=", $newExp);
-			$result = $this->db->get('playbasis_exp_table');
-			$level = $result->row_array();
+			$level = db_get_row_array($this, 'playbasis_exp_table');
 		}
 		if($level['level'] && $level['level'] > $playerLevel)
 			$level = $level['level'];
@@ -383,18 +251,11 @@ class Client_model extends CI_Model
 		if($level > 0)
 			$this->db->set('level', $level);
 		$this->db->update('playbasis_player');
-
-        // clear memcached on this table
-        // this not good because player can be update everytime so this will made memcached don't have any performance
-        // than we will think about this later
-        $table = "playbasis_player";
-        $this->memcached_library->update_delete($table);
-
+		$this->memcached_library->update_delete('playbasis_player');
 		//get reward id to update the reward to player table
 		$this->db->select('reward_id');
 		$this->db->where('name', 'exp');
-		$result = $this->db->get('playbasis_reward');
-		$result = $result->row_array();
+		$result = db_get_row_array($this, 'playbasis_reward');
 		$this->updatePlayerPointReward($result['reward_id'], $newExp, $pb_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
 		return $level;
 	}
@@ -464,44 +325,15 @@ class Client_model extends CI_Model
 	}
 	public function getBadgeById($badgeId)
 	{
-//        $this->db->select('badge_id,image');
-//        $this->db->where('badge_id', $badgeId);
-//        $result = $this->db->get('playbasis_badge');
-//        $badgeImage = $result->row_array();
-//        $badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
-//        $this->db->select('name,description');
-//        $this->db->where('badge_id', $badgeId);
-//        $result = $this->db->get('playbasis_badge_description');
-//        $badgeDesc = $result->row_array();
-//        $badge = array_merge($badgeImage, $badgeDesc);
-//        return $badge;
-
-        // name for memcached
-        $sql = "SELECT badge_id,image FROM playbasis_badge WHERE badge_id = ".$badgeId;
-        $md5name = md5($sql);
-        $table = "playbasis_badge";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
 		$this->db->select('badge_id,image');
 		$this->db->where('badge_id', $badgeId);
-		$result = $this->db->get('playbasis_badge');
-		$badgeImage = $result->row_array();
+		$badgeImage = db_get_row_array($this, 'playbasis_badge');
 		$badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
 		$this->db->select('name,description');
 		$this->db->where('badge_id', $badgeId);
-		$result = $this->db->get('playbasis_badge_description');
-		$badgeDesc = $result->row_array();
-        $badge = array_merge($badgeImage, $badgeDesc);
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $badge);
-
-        return $badge;
+		$badgeDesc = db_get_row_array($this, 'playbasis_badge_description');
+		$badge = array_merge($badgeImage, $badgeDesc);
+		return $badge;
 	}
 }
 ?>
