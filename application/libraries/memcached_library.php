@@ -8,6 +8,8 @@ class Memcached_library
 	private $client_type;
 	private $ci;
 	protected $errors = array();
+    private $keep = array();
+    private $table_array = true;
 	
 	
 	public function __construct()
@@ -102,6 +104,9 @@ class Memcached_library
 	*/
 	public function add($key = NULL, $value = NULL, $expiration = NULL)
 	{
+        if($this->table_array)
+            $this->keep_table($key);
+
 		if(is_null($expiration))
 		{
 			$expiration = $this->config['config']['expiration'];
@@ -145,6 +150,9 @@ class Memcached_library
 	*/
 	public function set($key = NULL, $value = NULL, $expiration = NULL)
 	{
+        if($this->table_array)
+            $this->keep_table($key);
+
 		if(is_null($expiration))
 		{
 			$expiration = $this->config['config']['expiration'];
@@ -188,6 +196,10 @@ class Memcached_library
 	*/
 	public function get($key = NULL)
 	{
+        if($this->table_array)
+            if(!$this->check_table($key))
+                return FALSE;
+
 		if($this->m)
 		{
 			if(isset($this->local_cache[$this->key_name($key)]))
@@ -253,50 +265,54 @@ class Memcached_library
 
     public function update_delete($name, $expiration=NULL)
     {
-        if(is_null($name))
-        {
-            $this->errors[] = 'The name value cannot be NULL';
-            return FALSE;
-        }
+        if($this->table_array)
+            $this->delete_table($name);
 
-        if(is_null($expiration))
-        {
-            $expiration = $this->config['config']['delete_expiration'];
-        }
-
-        switch($this->client_type)
-        {
-            case 'Memcache':
-                $allSlabs = $this->m->getExtendedStats('slabs');
-                foreach($allSlabs as $server => $slabs) {
-                    if($slabs)
-                        foreach($slabs as $slabId => $slabMeta) {
-                            $cdump = $this->m->getExtendedStats('cachedump',(int)$slabId);
-                            if($cdump)
-                                foreach($cdump as $keys => $arrVal) {
-                                    if (!is_array($arrVal)) continue;
-                                    foreach($arrVal as $k => $v) {
-                                        if(preg_match('/'.$name.'/', $k)){
-                                            $this->m->delete($k);
-                                        }
-                                    }
-                                }
-                        }
-                }
-                return true;
-                break;
-
-            default:
-            case 'Memcached':
-                $all_keys = $this->m->getAllKeys();
-                foreach($all_keys as $k => $v) {
-                    if(preg_match('/'.$name.'/', $v)){
-                        $this->memcache->delete($v);
-                    }
-                }
-                return true;
-                break;
-        }
+        return true;
+//        if(is_null($name))
+//        {
+//            $this->errors[] = 'The name value cannot be NULL';
+//            return FALSE;
+//        }
+//
+//        if(is_null($expiration))
+//        {
+//            $expiration = $this->config['config']['delete_expiration'];
+//        }
+//
+//        switch($this->client_type)
+//        {
+//            case 'Memcache':
+//                $allSlabs = $this->m->getExtendedStats('slabs');
+//                foreach($allSlabs as $server => $slabs) {
+//                    if($slabs)
+//                        foreach($slabs as $slabId => $slabMeta) {
+//                            $cdump = $this->m->getExtendedStats('cachedump',(int)$slabId);
+//                            if($cdump)
+//                                foreach($cdump as $keys => $arrVal) {
+//                                    if (!is_array($arrVal)) continue;
+//                                    foreach($arrVal as $k => $v) {
+//                                        if(preg_match('/'.$name.'/', $k)){
+//                                            $this->m->delete($k);
+//                                        }
+//                                    }
+//                                }
+//                        }
+//                }
+//                return true;
+//                break;
+//
+//            default:
+//            case 'Memcached':
+//                $all_keys = $this->m->getAllKeys();
+//                foreach($all_keys as $k => $v) {
+//                    if(preg_match('/'.$name.'/', $v)){
+//                        $this->memcache->delete($v);
+//                    }
+//                }
+//                return true;
+//                break;
+//        }
 
     }
 	
@@ -425,8 +441,32 @@ class Memcached_library
 	{
 		return md5(strtolower($this->config['config']['prefix'].$key));
 	}
-	
-	
+
+
+    private function keep_table($key)
+    {
+        $data = explode(".", $key);
+        if(isset($data[1]))
+            $this->keep[$data[1]][$data[0]] = true;
+
+        return true;
+    }
+
+    private function check_table($key)
+    {
+        $data = explode(".", $key);
+        if(isset($data[1]) && isset($this->keep[$data[1]]) && isset($this->keep[$data[1]][$data[0]]) && $this->keep[$data[1]][$data[0]])
+            return true;
+
+        return false;
+    }
+
+    private function delete_table($table)
+    {
+        $this->keep[$table] = null;
+
+        return null;
+    }
 	
 }	
 /* End of file memcached_library.php */
