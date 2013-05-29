@@ -5,6 +5,7 @@ class Tracker_model extends CI_Model
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->library('memcached_library');
 	}
 	public function trackAction($input)
 	{
@@ -29,6 +30,7 @@ class Tracker_model extends CI_Model
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
 		));
+		$this->memcached_library->update_delete('playbasis_action_log');
 		return $this->db->insert_id();
 	}
 	public function trackEvent($type, $message, $input)
@@ -50,6 +52,7 @@ class Tracker_model extends CI_Model
 		$this->db->set('date_added', date('Y-m-d H:i:s'));
 		$this->db->set('date_modified', date('Y-m-d H:i:s'));
 		$this->db->insert('playbasis_event_log');
+		$this->memcached_library->update_delete('playbasis_event_log');
 	}
 }
 ?>
