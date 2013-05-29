@@ -455,10 +455,7 @@ class Memcached_library
     private function check_table($key)
     {
         $data = explode(".", $key);
-        if(isset($data[1]) && isset($this->keep[$data[1]]) && isset($this->keep[$data[1]][$data[0]]) && $this->keep[$data[1]][$data[0]])
-            return true;
-
-        return false;
+        return (isset($data[1]) && isset($this->keep[$data[1]]) && isset($this->keep[$data[1]][$data[0]]) && $this->keep[$data[1]][$data[0]]);
     }
 
     private function delete_table($table)
