@@ -38,101 +38,34 @@ class Player_model extends CI_Model
 		if(isset($data['birth_date']))
 			$inputData['birth_date'] = $data['birth_date'];
 		$this->db->insert('playbasis_player', $inputData);
-
-        // clear memcached on this table
-        $table = "playbasis_player";
-        $this->memcached_library->update_delete($table);
-
+		$this->memcached_library->update_delete('playbasis_player');
 		return $this->db->insert_id();
 	}
 	public function readPlayer($id, $fields)
 	{
-//        if(!$id)
-//            return array();
-//        if($fields)
-//            $this->db->select($fields);
-//        $this->db->where('pb_player_id', $id);
-//        $result = $this->db->get('playbasis_player');
-//        return $result->row_array();
-
-		if(!$id)
-			return array();
-		if($fields)
-			$this->db->select($fields);
-        else
-            $fields = "*";
-
-        // name for memcached
-        $sql = "SELECT ".$fields." FROM playbasis_player WHERE pb_player_id = ".$id;
-        $md5name = md5($sql);
-        $table = "playbasis_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-		$this->db->where('pb_player_id', $id);
-		$result = $this->db->get('playbasis_player');
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->row_array());
-
-		return $result->row_array();
+        if(!$id)
+            return array();
+        if($fields)
+            $this->db->select($fields);
+        $this->db->where('pb_player_id', $id);
+		return db_get_row_array($this, 'playbasis_player');
 	}
 	public function readPlayers($fields, $offset = 0, $limit = 10)
 	{
-//		if($fields)
-//			$this->db->select($fields);
-//		$result = $this->db->get('playbasis_player', $offset, $limit);
-//		return $result->result_array();
-
-        if($fields)
-            $this->db->select($fields);
-        else
-            $fields = "*";
-
-        // name for memcached
-        $sql = "SELECT ".$fields." FROM playbasis_player LIMIT ".$limit." OFFSET ".$offset;
-        $md5name = md5($sql);
-        $table = "playbasis_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $result = $this->db->get('playbasis_player', $offset, $limit);
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
-
-        return $result->result_array();
+		if($fields)
+			$this->db->select($fields);
+		$this->db->limit($limit, $offset);
+		return db_get_result_array($this, 'playbasis_player');
 	}
 	public function updatePlayer($id, $fieldData)
 	{
-//		if(!$id)
-//			return false;
-//		$fieldData['date_modified'] = date('Y-m-d H:i:s');
-//		$this->db->where('pb_player_id', $id);
-//		$this->db->update('playbasis_player', $fieldData);
-//		return true;
-
-        if(!$id)
-            return false;
-        $fieldData['date_modified'] = date('Y-m-d H:i:s');
-        $this->db->where('pb_player_id', $id);
-        $this->db->update('playbasis_player', $fieldData);
-
-        // clear memcached on this table
-        // this not good because player can be update everytime so this will made memcached don't have any performance
-        // than we will think about this later
-        $table = "playbasis_player";
-        $this->memcached_library->update_delete($table);
-
-        return true;
+		if(!$id)
+			return false;
+		$fieldData['date_modified'] = date('Y-m-d H:i:s');
+		$this->db->where('pb_player_id', $id);
+		$this->db->update('playbasis_player', $fieldData);
+		$this->memcached_library->update_delete('playbasis_player');
+		return true;
 	}
 	public function deletePlayer($id)
 	{
@@ -140,197 +73,58 @@ class Player_model extends CI_Model
 			return false;
 		$this->db->where('pb_player_id', $id);
 		$this->db->delete('playbasis_player');
-
-        // clear memcached on this table
-        $table = "playbasis_player";
-        $this->memcached_library->update_delete($table);
-
+		$this->memcached_library->update_delete('playbasis_player');
 		return true;
 	}
 	public function getPlaybasisId($clientData)
 	{
-//		if(!$clientData)
-//			return -1;
-//		$this->db->where(array(
-//			'client_id' => $clientData['client_id'],
-//			'site_id' => $clientData['site_id'],
-//			'cl_player_id' => $clientData['cl_player_id']
-//		));
-//		$this->db->select('pb_player_id');
-//		$result = $this->db->get('playbasis_player');
-//		if(!$result->row_array())
-//			return -1;
-//		$id = $result->row_array();
-//		return $id['pb_player_id'];
-
-        if(!$clientData)
-            return -1;
-
-        // name for memcached
-        $sql = "SELECT pb_player_id FROM playbasis_player WHERE client_id = ".$clientData['client_id']." AND site_id = ".$clientData['site_id']." AND cl_player_id = ".$clientData['cl_player_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->where(array(
-            'client_id' => $clientData['client_id'],
-            'site_id' => $clientData['site_id'],
-            'cl_player_id' => $clientData['cl_player_id']
-        ));
-        $this->db->select('pb_player_id');
-        $result = $this->db->get('playbasis_player');
-
-        if(!$result->row_array()){
-            $this->memcached_library->add('sql_' . $md5name.".".$table, -1);
-            return -1;
-        }
-
-        $id = $result->row_array();
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $id['pb_player_id']);
-
-        return $id['pb_player_id'];
+		if(!$clientData)
+			return -1;
+		$this->db->where(array(
+			'client_id' => $clientData['client_id'],
+			'site_id' => $clientData['site_id'],
+			'cl_player_id' => $clientData['cl_player_id']
+		));
+		$this->db->select('pb_player_id');
+		$id = db_get_row_array($this, 'playbasis_player');
+		if(!$id)
+			return -1;
+		return $id['pb_player_id'];
 	}
 	public function getClientPlayerId($pb_player_id)
 	{
-//		if(!$pb_player_id)
-//			return -1;
-//		$this->db->select('cl_player_id');
-//		$this->db->where('pb_player_id', $pb_player_id);
-//		$result = $this->db->get('playbasis_player');
-//		if(!$result->row_array())
-//			return -1;
-//		$id = $result->row_array();
-//		return $id['cl_player_id'];
-
-        if(!$pb_player_id)
-            return -1;
-
-        // name for memcached
-        $sql = "SELECT cl_player_id FROM playbasis_player WHERE pb_player_id = ".$pb_player_id;
-        $md5name = md5($sql);
-        $table = "playbasis_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->select('cl_player_id');
-        $this->db->where('pb_player_id', $pb_player_id);
-        $result = $this->db->get('playbasis_player');
-
-        if(!$result->row_array()){
-            $this->memcached_library->add('sql_' . $md5name.".".$table, -1);
-            return -1;
-        }
-
-        $id = $result->row_array();
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $id['cl_player_id']);
-
-        return $id['cl_player_id'];
+		if(!$pb_player_id)
+			return -1;
+		$this->db->select('cl_player_id');
+		$this->db->where('pb_player_id', $pb_player_id);
+		$id = db_get_row_array($this, 'playbasis_player');
+		if(!$id)
+			return -1;
+		return $id['cl_player_id'];
 	}
 	public function getPlayerPoints($data)
 	{
-//		$this->db->select('reward_id,value');
-//		$this->db->where('pb_player_id', $data['pb_player_id']);
-//		$result = $this->db->get('playbasis_reward_to_player');
-//		return $result->result_array();
-
-        // name for memcached
-        $sql = "SELECT reward_id, value FROM playbasis_reward_to_player WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_reward_to_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->select('reward_id,value');
-        $this->db->where('pb_player_id', $data['pb_player_id']);
-        $result = $this->db->get('playbasis_reward_to_player');
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
-
-        return $result->result_array();
+		$this->db->select('reward_id,value');
+		$this->db->where('pb_player_id', $data['pb_player_id']);
+		return db_get_result_array($this, 'playbasis_reward_to_player');
 	}
 	public function getPlayerPoint($data)
 	{
-//		$this->db->select('reward_id,value');
-//		$this->db->where(array(
-//			'pb_player_id' => $data['pb_player_id'],
-//			'reward_id' => $data['reward_id']
-//		));
-//		$result = $this->db->get('playbasis_reward_to_player');
-//		return $result->result_array();
-
-        // name for memcached
-        $sql = "SELECT reward_id, value FROM playbasis_reward_to_player WHERE pb_player_id = ".$data['pb_player_id']." AND reward_id = ".$data['reward_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_reward_to_player";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->select('reward_id,value');
-        $this->db->where(array(
-            'pb_player_id' => $data['pb_player_id'],
-            'reward_id' => $data['reward_id']
-        ));
-        $result = $this->db->get('playbasis_reward_to_player');
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->result_array());
-
-        return $result->result_array();
+		$this->db->select('reward_id,value');
+		$this->db->where(array(
+			'pb_player_id' => $data['pb_player_id'],
+			'reward_id' => $data['reward_id']
+		));
+		return db_get_result_array($this, 'playbasis_reward_to_player');
 	}
 	public function getLastActionPerform($data)
 	{
-//		$this->db->select('action_id,action_name,date_added AS time');
-//		$this->db->where(array(
-//			'pb_player_id' => $data['pb_player_id']
-//		));
-//		$this->db->order_by('date_added', 'DESC');
-//		$result = $this->db->get('playbasis_action_log');
-//		return $result->row_array();
-
-        // name for memcached
-        $sql = "SELECT action_id, action_name, date_added AS time FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_action_log";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->select('action_id,action_name,date_added AS time');
-        $this->db->where(array(
-            'pb_player_id' => $data['pb_player_id']
-        ));
-        $this->db->order_by('date_added', 'DESC');
-        $result = $this->db->get('playbasis_action_log');
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result->row_array());
-
-        return $result->row_array();
+		$this->db->select('action_id,action_name,date_added AS time');
+		$this->db->where(array(
+			'pb_player_id' => $data['pb_player_id']
+		));
+		$this->db->order_by('date_added', 'DESC');
+		return db_get_row_array($this, 'playbasis_action_log');
 	}
 	public function getActionPerform($data)
 	{
@@ -344,50 +138,19 @@ class Player_model extends CI_Model
 	}
 	public function getActionCount($data)
 	{
-//		$this->db->where(array(
-//			'pb_player_id' => $data['pb_player_id'],
-//			'action_id' => $data['action_id']
-//		));
-//		$count = $this->db->count_all_results('playbasis_action_log');
-//		$this->db->select('action_id,action_name');
-//		$this->db->where(array(
-//			'pb_player_id' => $data['pb_player_id'],
-//			'action_id' => $data['action_id']
-//		));
-//		$result = $this->db->get('playbasis_action_log');
-//		$result = $result->row_array();
-//		$result['count'] = $count;
-//		return $result;
-
-        // name for memcached
-        $sql = "SELECT action_id, action_name FROM playbasis_action_log WHERE pb_player_id = ".$data['pb_player_id']." AND action_id = ".$data['action_id'];
-        $md5name = md5($sql);
-        $table = "playbasis_action_log";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-        // so if cannot get any result
-        $this->db->where(array(
-            'pb_player_id' => $data['pb_player_id'],
-            'action_id' => $data['action_id']
-        ));
-        $count = $this->db->count_all_results('playbasis_action_log');
-        $this->db->select('action_id,action_name');
-        $this->db->where(array(
-            'pb_player_id' => $data['pb_player_id'],
-            'action_id' => $data['action_id']
-        ));
-        $result = $this->db->get('playbasis_action_log');
-        $result = $result->row_array();
-        $result['count'] = $count;
-
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $result);
-
-        return $result;
+		$this->db->where(array(
+			'pb_player_id' => $data['pb_player_id'],
+			'action_id' => $data['action_id']
+		));
+		$count = db_count_all_results($this, 'playbasis_action_log');
+		$this->db->select('action_id,action_name');
+		$this->db->where(array(
+			'pb_player_id' => $data['pb_player_id'],
+			'action_id' => $data['action_id']
+		));
+		$result = db_get_row_array($this, 'playbasis_action_log');
+		$result['count'] = $count;
+		return $result;
 	}
 	public function getBadge($data)
 	{

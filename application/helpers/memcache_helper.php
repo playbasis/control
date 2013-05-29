@@ -1,19 +1,52 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-if(!function_exists('db_get_row_array'))
+
+function _get_memcached_result($mdl, $table, &$sql, &$memId)
 {
-	function db_get_row_array($mdl, $table)
+	$sql = $mdl->db->get_compiled_select($table);
+	$memId = 'sql_' . md5($sql) . ".$table";
+	return $mdl->memcached_library->get($memId);
+}
+
+function _count_all_results_memcached_result($mdl, $table, &$sql, &$memId)
+{
+	$sql = $mdl->db->get_compiled_count_all_results($table);
+	$memId = 'sql_' . md5($sql) . ".$table";
+	return $mdl->memcached_library->get($memId);
+}
+
+function db_get_row_array($mdl, $table)
+{
+	$result = _get_memcached_result($mdl, $table, $sql, $memId);
+	if(!$result)
 	{
-		$sql = $mdl->db->get_compiled_select($table);
-		$memId = 'sql_' . md5($sql) . ".$table";
-		$result = $mdl->memcached_library->get($memId);
-		if(!$result)
-		{
-			$result = $mdl->db->run_compiled_sql($sql);
-			$result = $result->row_array();
-			$mdl->memcached_library->add($memId, $result);
-		}
-		return $result;
+		$result = $mdl->db->run_compiled_sql($sql);
+		$result = $result->row_array();
+		$mdl->memcached_library->add($memId, $result);
 	}
+	return $result;
+}
+
+function db_get_result_array($mdl, $table)
+{
+	$result = _get_memcached_result($mdl, $table, $sql, $memId);
+	if(!$result)
+	{
+		$result = $mdl->db->run_compiled_sql($sql);
+		$result = $result->result_array();
+		$mdl->memcached_library->add($memId, $result);
+	}
+	return $result;
+}
+
+function db_count_all_results($mdl, $table)
+{
+	$result = _count_all_results_memcached_result($mdl, $table, $sql, $memId);
+	if(!$result)
+	{
+		$result = $mdl->db->run_compiled_sql_count_all_results($sql);
+		$mdl->memcached_library->add($memId, $result);
+	}
+	return $result;
 }
 ?>

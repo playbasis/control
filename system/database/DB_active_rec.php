@@ -1009,6 +1009,59 @@ class CI_DB_active_record extends CI_DB_driver {
 		return $result;
 	}
 
+	// --------------------------------------------------------------------
+
+	/**
+	 * Get SELECT and "Count All Result" query string
+	 *
+	 * Compiles a SELECT query string and returns the sql.
+	 *
+	 * @param	string	the table name to select from (optional)
+	 * @param	bool	TRUE: resets QB values; FALSE: leave QB vaules alone
+	 * @return	string
+	 */
+	public function get_compiled_count_all_results($table = '', $reset = TRUE)
+	{
+		if ($table != '')
+		{
+			$this->_track_aliases($table);
+			$this->from($table);
+		}
+
+		$sql = $this->_compile_select($this->_count_string . $this->_protect_identifiers('numrows'));
+
+		if ($reset === TRUE)
+		{
+			$this->_reset_select();
+		}
+
+		return $sql;
+	}
+	
+	// --------------------------------------------------------------------
+
+	/**
+	 * Run query string generate from get_compiled_count_all_results and count result
+	 *
+	 * @param	string	the query string returned from get_compiled_count_all_results
+	 * @return	int
+	 */
+	public function run_compiled_sql_count_all_results($sql)
+	{
+		$query = $this->query($sql);
+		$this->_reset_select();
+
+		if ($query->num_rows() == 0)
+		{
+			return 0;
+		}
+
+		$row = $query->row();
+		return (int) $row->numrows;
+	}
+
+	// --------------------------------------------------------------------
+
 	/**
 	 * "Count All Results" query
 	 *
