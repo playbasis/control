@@ -108,7 +108,7 @@ class Playbasis extends CI_Controller
 
         echo "updateplayerBadge model return : ".$badgePlayer."<br><br>";
 
-        $lv = $this->client_model->updateExpAndLevel(1, 1, array(
+        $lv = $this->client_model->updateExpAndLevel(1, 1, 1, array(
             'client_id' => $validToken['client_id'],
             'site_id' => $validToken['site_id']
         ));

@@ -58,7 +58,7 @@ class Client_model extends CI_Model
 		$jigsawProcessor = db_get_row_array($this, 'playbasis_game_jigsaw_to_client');
 		return $jigsawProcessor['class_path'];
 	}
-	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clientId, $siteId, $overrideOldValue = FALSE)
+	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clPlayerId, $clientId, $siteId, $overrideOldValue = FALSE)
 	{
 		assert(isset($rewardId));
 		assert(isset($siteId));
@@ -87,6 +87,7 @@ class Client_model extends CI_Model
 		{
 			$this->db->insert('playbasis_reward_to_player', array(
 				'pb_player_id' => $pbPlayerId,
+				'cl_player_id' => $clPlayerId,
 				'client_id' => $clientId,
 				'site_id' => $siteId,
 				'reward_id' => $rewardId,
@@ -154,7 +155,7 @@ class Client_model extends CI_Model
 			$this->memcached_library->update_delete('playbasis_reward_to_client');
 		}
 		//update player reward
-		$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['client_id'], $input['site_id']);
+		$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id']);
 		$jigsawConfig['reward_id'] = $customRewardId;
 		$jigsawConfig['reward_name'] = $rewardName;
 		$jigsawConfig['quantity'] = $quantity;
@@ -214,7 +215,7 @@ class Client_model extends CI_Model
 		}
 		$this->memcached_library->update_delete('playbasis_badge_to_player');
 	}
-	public function updateExpAndLevel($exp, $pb_player_id, $clientData)
+	public function updateExpAndLevel($exp, $pb_player_id, $cl_player_id, $clientData)
 	{
 		assert($exp);
 		assert($pb_player_id);
@@ -256,7 +257,7 @@ class Client_model extends CI_Model
 		$this->db->select('reward_id');
 		$this->db->where('name', 'exp');
 		$result = db_get_row_array($this, 'playbasis_reward');
-		$this->updatePlayerPointReward($result['reward_id'], $newExp, $pb_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
+		$this->updatePlayerPointReward($result['reward_id'], $newExp, $pb_player_id, $cl_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
 		return $level;
 	}
 	public function log($logData, $jigsawOptionData = array())

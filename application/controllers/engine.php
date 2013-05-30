@@ -245,6 +245,8 @@ class Engine extends REST_Controller
 	}
 	private function processRule($input, $validToken, $fbData, $twData)
 	{
+		if(!isset($input['player_id']) || !$input['player_id'])
+			$input['player_id'] = $this->player_model->getClientPlayerId($input['pb_player_id']);
 		$input['action_log_id'] = $this->tracker_model->trackAction($input); //track action
 		$client_id = $validToken['client_id'];
 		$site_id = $validToken['site_id'];
@@ -315,7 +317,7 @@ class Engine extends REST_Controller
 							if($jigsawConfig['reward_name'] == 'exp')
 							{
 								//check if player level up
-								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'], $input['pb_player_id'], array(
+								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], array(
 									'client_id' => $validToken['client_id'],
 									'site_id' => $validToken['site_id']
 								));
@@ -344,7 +346,7 @@ class Engine extends REST_Controller
 							else
 							{
 								//update point-based reward
-								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $input['client_id'], $input['site_id']);
+								$this->client_model->updatePlayerPointReward($jigsawConfig['reward_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id']);
 							}
 							$event = array(
 								'event_type' => 'REWARD_RECEIVED',
