@@ -250,6 +250,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\helpers\\multi_db_helper.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\hooks"
     {
     "ProjRelPath" = "T"
