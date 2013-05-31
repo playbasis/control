@@ -6,6 +6,7 @@ class jigsaw extends CI_Model
 	{
 		parent::__construct();
 		$this->config->load('playbasis');
+		$this->load->library('memcached_library');
 	}
 	public function action($config, $input, &$exInfo = array())
 	{
@@ -20,10 +21,7 @@ class jigsaw extends CI_Model
 			$exInfo['input_url'] = $input['url'];
 			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
 		}
-		else
-		{
-			return true;
-		}
+		return true;
 	}
 	public function reward($config, $input, &$exInfo = array())
 	{
@@ -66,8 +64,6 @@ class jigsaw extends CI_Model
 		$exInfo['dynamic']['quantity'] = $quan;
 		return $name && $quan;
 	}
-	//condition jigsaw : counter
-	//if return true 
 	public function counter($config, $input, &$exInfo = array())
 	{
 		assert($config != false);
@@ -325,12 +321,6 @@ class jigsaw extends CI_Model
 	}
 	private function getMostRecentJigsaw($input, $fields, $fields_str)
 	{
-		//$this->db->select($fields_str);
-		//$this->db->where(array('pb_player_id'=>$input['pb_player_id'],'rule_id'=>$input['rule_id'],'jigsaw_id'=>$input['jigsaw_id']));
-		//$this->db->order_by('date_added','desc');
-		//$result = $this->db->get('playbasis_jigsaw_log');
-		//$result = $result->row_array();
-		//if($this->config->item('TEST_MONGO')){
 		$this->mongo_db->select($fields);
 		$this->mongo_db->where(array(
 			'pb_player_id' => $input['pb_player_id'],
@@ -342,134 +332,40 @@ class jigsaw extends CI_Model
 			));
 		$result = $this->mongo_db->get('jigsaw_log');
 		return ($result) ? $result[0] : $result;
-		//}
-		//return $result;
 	}
 	public function checkbadge($badgeId, $pb_player_id)
 	{
-//		//get badge properties
-//		$this->db->select('stackable,substract,quantity');
-//		$this->db->where(array(
-//			'badge_id' => $badgeId
-//			));
-//		$result = $this->db->get('playbasis_badge');
-//		$badgeInfo = $result->row_array();
-//		//search badge owned by player
-//		$this->db->where(array(
-//			'badge_id' => $badgeId,
-//			'pb_player_id' => $pb_player_id
-//			));
-//		$this->db->from('playbasis_badge_to_player');
-//		$haveBadge = $this->db->count_all_results();
-//		if(!$badgeInfo['quantity'])
-//			return false;
-//		if($badgeInfo['stackable'])
-//			return true;
-//		if($haveBadge)
-//			return false;
-//		return true;
-
-        $this->load->library('memcached_library');
-
-        // name for memcached
-        $sql = "SELECT stackable, substract, quantity FROM playbasis_badge WHERE badge_id = ".$badgeId;
-        $md5name = md5($sql);
-        $table = "playbasis_badge";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results){
-            $badgeInfo = $results;
-        }else{
-            //get badge properties
-            $this->db->select('stackable,substract,quantity');
-            $this->db->where(array(
-                'badge_id' => $badgeId
-            ));
-            $result = $this->db->get('playbasis_badge');
-            $badgeInfo = $result->row_array();
-
-            $this->memcached_library->add('sql_' . $md5name.".".$table, $badgeInfo);
-        }
-
-        // name for memcached
-        $sql = "SELECT COUNT(*) FROM playbasis_badge_to_player WHERE badge_id = ".$badgeId." AND pb_player_id = ".$pb_player_id;
-        $md5name = md5($sql);
-        $table = "playbasis_badge";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results){
-            $haveBadge = $results;
-        }else{
-            //search badge owned by player
-            $this->db->where(array(
-                'badge_id' => $badgeId,
-                'pb_player_id' => $pb_player_id
-            ));
-            $this->db->from('playbasis_badge_to_player');
-            $haveBadge = $this->db->count_all_results();
-
-            $this->memcached_library->add('sql_' . $md5name.".".$table, $haveBadge);
-        }
-
-
-        if(!$badgeInfo['quantity'])
-            return false;
-        if($badgeInfo['stackable'])
-            return true;
-        if($haveBadge)
-            return false;
-        return true;
+		//get badge properties
+		$this->db->select('stackable,substract,quantity');
+		$this->db->where(array(
+			'badge_id' => $badgeId
+			));
+		$badgeInfo = db_get_row_array($this, 'playbasis_badge');
+		//search badge owned by player
+		$this->db->where(array(
+			'badge_id' => $badgeId,
+			'pb_player_id' => $pb_player_id
+			));
+		$haveBadge = db_count_all_results($this, 'playbasis_badge_to_player');
+		if(!$badgeInfo['quantity'])
+			return false;
+		if($badgeInfo['stackable'])
+			return true;
+		if($haveBadge)
+			return false;
+		return true;
 	}
 	public function checkReward($rewardId, $siteId)
 	{
-//		$this->db->select('limit');
-//		$this->db->where(array(
-//			'reward_id' => $rewardId,
-//			'site_id' => $siteId
-//			));
-//		$result = $this->db->get('playbasis_reward_to_client');
-//		assert($result->row_array());
-//		$result = $result->row_array();
-//		if(is_null($result['limit']))
-//			return true;
-//		return $result['limit'] > 0;
-
-        $this->load->library('memcached_library');
-
-        // name for memcached
-        $sql = "SELECT limit FROM playbasis_reward_to_client WHERE reward_id = ".$rewardId." AND site_id = ".$siteId;
-        $md5name = md5($sql);
-        $table = "playbasis_reward_to_client";
-
-        $results = $this->memcached_library->get('sql_' . $md5name.".".$table);
-
-        // gotcha i got result
-        if ($results)
-            return $results;
-
-
-        // so if cannot get any result
-        $this->db->select('limit');
-        $this->db->where(array(
-            'reward_id' => $rewardId,
-            'site_id' => $siteId
-        ));
-        $result = $this->db->get('playbasis_reward_to_client');
-        assert($result->row_array());
-        $result = $result->row_array();
-        if(is_null($result['limit'])){
-            $this->memcached_library->add('sql_' . $md5name.".".$table, true);
-            return true;
-        }
-
-
-        $res = $result['limit'] > 0;
-        $this->memcached_library->add('sql_' . $md5name.".".$table, $res);
-        return $res;
+		$this->db->select('limit');
+		$this->db->where(array(
+			'reward_id' => $rewardId,
+			'site_id' => $siteId
+			));
+		$result = db_get_row_array($this, 'playbasis_reward_to_client');
+		if(is_null($result['limit']))
+			return true;
+		return $result['limit'] > 0;
 	}
 	public function matchUrl($inputUrl, $compareUrl, $isRegEx)
 	{
