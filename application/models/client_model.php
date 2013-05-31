@@ -274,39 +274,6 @@ class Client_model extends CI_Model
 			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
 		else
 			$logData['input'] = 'NO-INPUT';
-/*
-		$this->db->set('pb_player_id', $logData['pb_player_id']);
-		//$this->db->set('first_name',$result['first_name']);
-		//$this->db->set('last_name',$result['last_name']);
-		if(isset($logData['action_id']))
-			$this->db->set('action_id', $logData['action_id']);
-		if(isset($logData['action_name']))
-			$this->db->set('action_name', $logData['action_name']);
-		if(isset($logData['rule_id']))
-			$this->db->set('rule_id', $logData['rule_id']);
-		if(isset($logData['rule_name']))
-			$this->db->set('rule_name', $logData['rule_name']);
-		if(isset($logData['jigsaw_id']))
-			$this->db->set('jigsaw_id', $logData['jigsaw_id']);
-		if(isset($logData['jigsaw_name']))
-			$this->db->set('jigsaw_name', $logData['jigsaw_name']);
-		if(isset($logData['jigsaw_category']))
-			$this->db->set('jigsaw_category', $logData['jigsaw_category']);
-		$this->db->set('input', $logData['input']);
-		$this->db->set('client_id', $logData['client_id']);
-		$this->db->set('site_id', $logData['site_id']);
-		$this->db->set('domain_name', $logData['domain_name']);
-		if(isset($logData['site_name']))
-			$this->db->set('site_name', $logData['site_name']);
-		if(isset($logData['ip_address']))
-			$this->db->set('ip_address', $logData['ip_address']);
-		if(isset($logData['user_agent']))
-			$this->db->set('user_agent', $logData['user_agent']);
-		$this->db->set('date_added', date('Y-m-d H:i:s'));
-		$this->db->set('date_modified', date('Y-m-d H:i:s'));
-		$this->db->insert('playbasis_jigsaw_log');
-*/		
-		//if($this->config->item('TEST_MONGO')){
 		$data = array();
 		static $required = array('pb_player_id', 'input', 'client_id', 'site_id', 'domain_name');
 		static $optional = array('action_id', 'action_name', 'rule_id', 'rule_name', 'jigsaw_id', 'jigsaw_name', 'jigsaw_category', 'site_name', 'ip_address', 'user_agent');
@@ -322,7 +289,6 @@ class Client_model extends CI_Model
 		$data['date_added'] = date('Y-m-d H:i:s');
 		$data['date_modified'] = date('Y-m-d H:i:s');
 		$this->mongo_db->insert('jigsaw_log', $data);
-		//}
 	}
 	public function getBadgeById($badgeId)
 	{
