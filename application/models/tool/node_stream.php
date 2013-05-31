@@ -7,6 +7,12 @@ define('STREAM_PORT', 443);
 define('USERPASS', 'planes:capetorment852456');
 class Node_stream extends CI_Model
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->library('memcached_library');
+		$this->load->helper('memcache');
+	}
 	public function publish($data, $info)
 	{
 		//get chanel name
@@ -79,8 +85,7 @@ class Node_stream extends CI_Model
 	{
 		$this->db->select('cl_player_id,first_name,last_name,image');
 		$this->db->where('pb_player_id', $pb_player_id);
-		$result = $this->db->get('playbasis_player');
-		return $result->row_array();
+		return db_get_row_array($this, 'playbasis_player');
 	}
 }
 ?>

@@ -7,6 +7,7 @@ class jigsaw extends CI_Model
 		parent::__construct();
 		$this->config->load('playbasis');
 		$this->load->library('memcached_library');
+		$this->load->helper('memcache');
 	}
 	public function action($config, $input, &$exInfo = array())
 	{
