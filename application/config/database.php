@@ -115,5 +115,21 @@ $db['production']['swap_pre'] = '';
 $db['production']['autoinit'] = TRUE;
 $db['production']['stricton'] = FALSE;
 
+$db['demo']['hostname'] = 'db.pbapp.net';
+$db['demo']['username'] = 'playbasis_admin';
+$db['demo']['password'] = 'databaseplaybasisproduction';
+$db['demo']['database'] = 'core_demo';
+$db['demo']['dbdriver'] = 'mysql';
+$db['demo']['dbprefix'] = '';
+$db['demo']['pconnect'] = TRUE;
+$db['demo']['db_debug'] = TRUE;
+$db['demo']['cache_on'] = FALSE;
+$db['demo']['cachedir'] = '';
+$db['demo']['char_set'] = 'utf8';
+$db['demo']['dbcollat'] = 'utf8_general_ci';
+$db['demo']['swap_pre'] = '';
+$db['demo']['autoinit'] = TRUE;
+$db['demo']['stricton'] = FALSE;
+
 /* End of file database.php */
 /* Location: ./application/config/database.php */

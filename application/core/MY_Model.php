@@ -24,7 +24,7 @@ class MY_Model extends CI_Model
 		//array of database groups to load for each site_id
 		$dblist = array(
 			0 => 'developer',
-			1 => 'developer'
+			1 => 'demo'
 		);
 		$multiDBs = array();
 		foreach($dblist as $key => $value)
