@@ -197,8 +197,12 @@ class Player_model extends CI_Model
 	{
 		//get reward id
 		$this->db->select('reward_id');
-		$this->db->where('name', $ranked_by);
-		$result = $this->db->get('playbasis_reward');
+		$this->db->where(array(
+            'name' => $ranked_by,
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+		$result = $this->db->get('playbasis_reward_to_client');
 		$result = $result->row_array();
 		if(!$result)
 			return array();
