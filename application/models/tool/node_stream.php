@@ -5,7 +5,7 @@ define('STREAM_URL', 'https://node.pbapp.net/activitystream/');
 // define('STREAM_URL', 'http://localhost/activitystream/');
 define('STREAM_PORT', 443);
 define('USERPASS', 'planes:capetorment852456');
-class Node_stream extends CI_Model
+class Node_stream extends MY_Model
 {
 	public function __construct()
 	{
@@ -13,11 +13,11 @@ class Node_stream extends CI_Model
 		$this->load->library('memcached_library');
 		$this->load->helper('memcache');
 	}
-	public function publish($data, $info)
+	public function publish($data, $domain_name, $site_id)
 	{
 		//get chanel name
-		$chanelName = preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', $info['domain_name']);
-		$message = json_encode($this->activityFeedFormatter($data));
+		$chanelName = preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', $domain_name);
+		$message = json_encode($this->activityFeedFormatter($data, $site_id));
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, STREAM_URL . $chanelName);	// set url
 		curl_setopt($ch, CURLOPT_PORT, STREAM_PORT);				// set port
@@ -39,9 +39,9 @@ class Node_stream extends CI_Model
 		//var_dump($cinfo);
 		curl_close($ch);
 	}
-	private function activityFeedFormatter($data)
+	private function activityFeedFormatter($data, $site_id)
 	{
-		$playerData = $this->getPlayerInfo($data['pb_player_id']);
+		$playerData = $this->getPlayerInfo($data['pb_player_id'], $site_id);
 		$activityFormat = array(
 			'published' => date('c'), //rfc3339, atom, ISO 8601
 			'actor' => array(
@@ -81,10 +81,11 @@ class Node_stream extends CI_Model
 		$activityFormat['object']['amount'] = isset($data['amount']) ? $data['amount'] : NULL;
 		return $activityFormat;
 	}
-	private function getPlayerInfo($pb_player_id)
+	private function getPlayerInfo($pb_player_id, $site_id)
 	{
-		$this->db->select('cl_player_id,first_name,last_name,image');
-		$this->db->where('pb_player_id', $pb_player_id);
+		$this->set_site($site_id);
+		$this->site_db()->select('cl_player_id,first_name,last_name,image');
+		$this->site_db()->where('pb_player_id', $pb_player_id);
 		return db_get_row_array($this, 'playbasis_player');
 	}
 }

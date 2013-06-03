@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 define("CUSTOM_POINT_START_ID", 10000);
-class Client_model extends CI_Model
+class Client_model extends MY_Model
 {
 	public function __construct()
 	{
@@ -16,8 +16,9 @@ class Client_model extends CI_Model
 		assert(is_array($clientData));
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
-		$this->db->select('jigsaw_set');
-		$this->db->where($clientData);
+		$this->set_site($clientData['site_id']);
+		$this->site_db()->select('jigsaw_set');
+		$this->site_db()->where($clientData);
 		return db_get_result_array($this, 'playbasis_rule');
 	}
 	public function getActionId($clientData)
@@ -27,8 +28,9 @@ class Client_model extends CI_Model
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
 		assert(isset($clientData['action_name']));
-		$this->db->select('action_id');
-		$this->db->where(array(
+		$this->set_site($clientData['site_id']);
+		$this->site_db()->select('action_id');
+		$this->site_db()->where(array(
 			'client_id' => $clientData['client_id'],
 			'site_id' => $clientData['site_id'],
 			'name' => $clientData['action_name']
@@ -44,17 +46,19 @@ class Client_model extends CI_Model
 		assert(isset($clientData['site_id']));
 		assert(isset($clientData['action_id']));
 		$clientData['active_status'] = '1';
-		$this->db->select('rule_id,name,jigsaw_set');
-		$this->db->where($clientData);
+		$this->set_site($clientData['site_id']);
+		$this->site_db()->select('rule_id,name,jigsaw_set');
+		$this->site_db()->where($clientData);
 		return db_get_result_array($this, 'playbasis_rule');
 	}
-	public function getJigsawProcessor($jigsawId)
+	public function getJigsawProcessor($jigsawId, $site_id)
 	{
 		assert($jigsawId);
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->where(array(
 			'jigsaw_id' => $jigsawId
 		));
-		$this->db->select('class_path');
+		$this->site_db()->select('class_path');
 		$jigsawProcessor = db_get_row_array($this, 'playbasis_game_jigsaw_to_client');
 		return $jigsawProcessor['class_path'];
 	}
@@ -64,28 +68,29 @@ class Client_model extends CI_Model
 		assert(isset($siteId));
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
-		$this->db->where(array(
+		$this->set_site($siteId);
+		$this->site_db()->where(array(
 			'pb_player_id' => $pbPlayerId,
 			'reward_id' => $rewardId
 		));
-		$this->db->from('playbasis_reward_to_player');
-		$hasReward = $this->db->count_all_results();
+		$this->site_db()->from('playbasis_reward_to_player');
+		$hasReward = $this->site_db()->count_all_results();
 		if($hasReward)
 		{
-			$this->db->where(array(
+			$this->site_db()->where(array(
 				'pb_player_id' => $pbPlayerId,
 				'reward_id' => $rewardId
 			));
-			$this->db->set('date_modified', date('Y-m-d H:i:s'));
+			$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
 			if($overrideOldValue)
-				$this->db->set('value', $quantity);
+				$this->site_db()->set('value', $quantity);
 			else
-				$this->db->set('value', "`value`+$quantity", FALSE);
-			$this->db->update('playbasis_reward_to_player');
+				$this->site_db()->set('value', "`value`+$quantity", FALSE);
+			$this->site_db()->update('playbasis_reward_to_player');
 		}
 		else
 		{
-			$this->db->insert('playbasis_reward_to_player', array(
+			$this->site_db()->insert('playbasis_reward_to_player', array(
 				'pb_player_id' => $pbPlayerId,
 				'cl_player_id' => $clPlayerId,
 				'client_id' => $clientId,
@@ -97,22 +102,22 @@ class Client_model extends CI_Model
 			));
 		}
 		//upadte client reward limit
-		$this->db->select('limit');
-		$this->db->where(array(
+		$this->site_db()->select('limit');
+		$this->site_db()->where(array(
 			'reward_id' => $rewardId,
 			'site_id' => $siteId
 		));
-		$result = $this->db->get('playbasis_reward_to_client');
+		$result = $this->site_db()->get('playbasis_reward_to_client');
 		assert($result->row_array());
 		$result = $result->row_array();
 		if(!is_null($result['limit']))
 		{
-			$this->db->where(array(
+			$this->site_db()->where(array(
 				'reward_id' => $rewardId,
 				'site_id' => $siteId
 			));
-			$this->db->set('limit', "`limit`-$quantity", FALSE);
-			$this->db->update('playbasis_reward_to_client');
+			$this->site_db()->set('limit', "`limit`-$quantity", FALSE);
+			$this->site_db()->update('playbasis_reward_to_client');
 			$this->memcached_library->update_delete('playbasis_reward_to_client');
 		}
 		$this->memcached_library->update_delete('playbasis_reward_to_player');
@@ -120,30 +125,31 @@ class Client_model extends CI_Model
 	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig)
 	{
 		//get reward id
-		$this->db->select('reward_id');
-		$this->db->where(array(
+		$this->set_site($input['site_id']);
+		$this->site_db()->select('reward_id');
+		$this->site_db()->where(array(
 			'client_id' => $input['client_id'],
 			'site_id' => $input['site_id'],
 			'name' => strtolower($rewardName)
 		));
-		$this->db->from('playbasis_reward_to_client');
-		$result = $this->db->get();
+		$this->site_db()->from('playbasis_reward_to_client');
+		$result = $this->site_db()->get();
 		$result = $result->row_array();
 		$customRewardId = isset($result['reward_id']) ? $result['reward_id'] : false;
 		if(!$customRewardId)
 		{
 			//reward does not exist, add new custom point where id is max(reward_id)+1
-			$this->db->select_max('reward_id');
-			$this->db->where(array(
+			$this->site_db()->select_max('reward_id');
+			$this->site_db()->where(array(
 				'client_id' => $input['client_id'],
 				'site_id' => $input['site_id']
 			));
-			$result = $this->db->get('playbasis_reward_to_client');
+			$result = $this->site_db()->get('playbasis_reward_to_client');
 			$result = $result->row_array();
 			$customRewardId = $result['reward_id'] + 1;
 			if($customRewardId < CUSTOM_POINT_START_ID)
 				$customRewardId = CUSTOM_POINT_START_ID;
-			$this->db->insert('playbasis_reward_to_client', array(
+			$this->site_db()->insert('playbasis_reward_to_client', array(
 				'reward_id' => $customRewardId,
 				'client_id' => $input['client_id'],
 				'site_id' => $input['site_id'],
@@ -160,17 +166,18 @@ class Client_model extends CI_Model
 		$jigsawConfig['reward_name'] = $rewardName;
 		$jigsawConfig['quantity'] = $quantity;
 	}
-	public function updateplayerBadge($badgeId, $quantity, $pbPlayerId)
+	public function updateplayerBadge($badgeId, $quantity, $pbPlayerId, $site_id)
 	{
 		assert(isset($badgeId));
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
 		//update badge master table
-		$this->db->select('substract,quantity');
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->select('substract,quantity');
+		$this->site_db()->where(array(
 			'badge_id' => $badgeId
 		));
-		$result = $this->db->get('playbasis_badge');
+		$result = $this->site_db()->get('playbasis_badge');
 		$badgeInfo = $result->row_array();
 		if($badgeInfo['substract'])
 		{
@@ -180,32 +187,32 @@ class Client_model extends CI_Model
 				$remainingQuantity = 0;
 				$quantity = $badgeInfo['quantity'];
 			}
-			$this->db->set('quantity', $remainingQuantity);
-			$this->db->set('date_modified', date('Y-m-d H:i:s'));
-			$this->db->where('badge_id', $badgeId);
-			$this->db->update('playbasis_badge');
+			$this->site_db()->set('quantity', $remainingQuantity);
+			$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
+			$this->site_db()->where('badge_id', $badgeId);
+			$this->site_db()->update('playbasis_badge');
 			$this->memcached_library->update_delete('playbasis_badge');
 		}
 		//update player badge table
-		$this->db->where(array(
+		$this->site_db()->where(array(
 			'pb_player_id' => $pbPlayerId,
 			'badge_id' => $badgeId
 		));
-		$this->db->from('playbasis_badge_to_player');
-		$hasBadge = $this->db->count_all_results();
+		$this->site_db()->from('playbasis_badge_to_player');
+		$hasBadge = $this->site_db()->count_all_results();
 		if($hasBadge)
 		{
-			$this->db->where(array(
+			$this->site_db()->where(array(
 				'pb_player_id' => $pbPlayerId,
 				'badge_id' => $badgeId
 			));
-			$this->db->set('date_modified', date('Y-m-d H:i:s'));
-			$this->db->set('amount', "`amount`+$quantity", FALSE);
-			$this->db->update('playbasis_badge_to_player');
+			$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
+			$this->site_db()->set('amount', "`amount`+$quantity", FALSE);
+			$this->site_db()->update('playbasis_badge_to_player');
 		}
 		else
 		{
-			$this->db->insert('playbasis_badge_to_player', array(
+			$this->site_db()->insert('playbasis_badge_to_player', array(
 				'pb_player_id' => $pbPlayerId,
 				'badge_id' => $badgeId,
 				'amount' => $quantity,
@@ -224,38 +231,39 @@ class Client_model extends CI_Model
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
 		//get player exp
-		$this->db->select('exp,level');
-		$this->db->where('pb_player_id', $pb_player_id);
+		$this->set_site($clientData['site_id']);
+		$this->site_db()->select('exp,level');
+		$this->site_db()->where('pb_player_id', $pb_player_id);
 		$result = db_get_row_array($this, 'playbasis_player');
 		$playerExp = $result['exp'];
 		$playerLevel = $result['level'];
 		$newExp = $exp + $playerExp;
 		//check if client have their own exp table setup
-		$this->db->select_max('level');
-		$this->db->where($clientData);
-		$this->db->where("exp <=", $newExp);
+		$this->site_db()->select_max('level');
+		$this->site_db()->where($clientData);
+		$this->site_db()->where("exp <=", $newExp);
 		$level = db_get_row_array($this, 'playbasis_client_exp_table');
 		if(!$level['level'])
 		{
 			//get level from default exp table instead
-			$this->db->select_max('level');
-			$this->db->where("exp <=", $newExp);
+			$this->site_db()->select_max('level');
+			$this->site_db()->where("exp <=", $newExp);
 			$level = db_get_row_array($this, 'playbasis_exp_table');
 		}
 		if($level['level'] && $level['level'] > $playerLevel)
 			$level = $level['level'];
 		else
 			$level = -1;
-		$this->db->where('pb_player_id', $pb_player_id);
-		$this->db->set('date_modified', date('Y-m-d H:i:s'));
-		$this->db->set('exp', "`exp`+$exp", FALSE);
+		$this->site_db()->where('pb_player_id', $pb_player_id);
+		$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
+		$this->site_db()->set('exp', "`exp`+$exp", FALSE);
 		if($level > 0)
-			$this->db->set('level', $level);
-		$this->db->update('playbasis_player');
+			$this->site_db()->set('level', $level);
+		$this->site_db()->update('playbasis_player');
 		$this->memcached_library->update_delete('playbasis_player');
 		//get reward id to update the reward to player table
-		$this->db->select('reward_id');
-		$this->db->where('name', 'exp');
+		$this->site_db()->select('reward_id');
+		$this->site_db()->where('name', 'exp');
 		$result = db_get_row_array($this, 'playbasis_reward');
 		$this->updatePlayerPointReward($result['reward_id'], $newExp, $pb_player_id, $cl_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
 		return $level;
@@ -290,14 +298,15 @@ class Client_model extends CI_Model
 		$data['date_modified'] = date('Y-m-d H:i:s');
 		$this->mongo_db->insert('jigsaw_log', $data);
 	}
-	public function getBadgeById($badgeId)
+	public function getBadgeById($badgeId, $site_id)
 	{
-		$this->db->select('badge_id,image');
-		$this->db->where('badge_id', $badgeId);
+		$this->set_site($site_id);
+		$this->site_db()->select('badge_id,image');
+		$this->site_db()->where('badge_id', $badgeId);
 		$badgeImage = db_get_row_array($this, 'playbasis_badge');
 		$badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
-		$this->db->select('name,description');
-		$this->db->where('badge_id', $badgeId);
+		$this->site_db()->select('name,description');
+		$this->site_db()->where('badge_id', $badgeId);
 		$badgeDesc = db_get_row_array($this, 'playbasis_badge_description');
 		$badge = array_merge($badgeImage, $badgeDesc);
 		return $badge;

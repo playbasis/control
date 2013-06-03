@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Player_model extends CI_Model
+class Player_model extends MY_Model
 {
 	public function __construct()
 	{
@@ -37,42 +37,47 @@ class Player_model extends CI_Model
 			$inputData['gender'] = $data['gender'];
 		if(isset($data['birth_date']))
 			$inputData['birth_date'] = $data['birth_date'];
-		$this->db->insert('playbasis_player', $inputData);
+		$this->set_site($data['site_id']);
+		$this->site_db()->insert('playbasis_player', $inputData);
 		$this->memcached_library->update_delete('playbasis_player');
-		return $this->db->insert_id();
+		return $this->site_db()->insert_id();
 	}
-	public function readPlayer($id, $fields)
+	public function readPlayer($id, $site_id, $fields)
 	{
         if(!$id)
             return array();
+		$this->set_site($site_id);
         if($fields)
-            $this->db->select($fields);
-        $this->db->where('pb_player_id', $id);
+            $this->site_db()->select($fields);
+        $this->site_db()->where('pb_player_id', $id);
 		return db_get_row_array($this, 'playbasis_player');
 	}
-	public function readPlayers($fields, $offset = 0, $limit = 10)
+	public function readPlayers($site_id, $fields, $offset = 0, $limit = 10)
 	{
+		$this->set_site($site_id);
 		if($fields)
-			$this->db->select($fields);
-		$this->db->limit($limit, $offset);
+			$this->site_db()->select($fields);
+		$this->site_db()->limit($limit, $offset);
 		return db_get_result_array($this, 'playbasis_player');
 	}
-	public function updatePlayer($id, $fieldData)
+	public function updatePlayer($id, $site_id, $fieldData)
 	{
 		if(!$id)
 			return false;
 		$fieldData['date_modified'] = date('Y-m-d H:i:s');
-		$this->db->where('pb_player_id', $id);
-		$this->db->update('playbasis_player', $fieldData);
+		$this->set_site($site_id);
+		$this->site_db()->where('pb_player_id', $id);
+		$this->site_db()->update('playbasis_player', $fieldData);
 		$this->memcached_library->update_delete('playbasis_player');
 		return true;
 	}
-	public function deletePlayer($id)
+	public function deletePlayer($id, $site_id)
 	{
 		if(!$id)
 			return false;
-		$this->db->where('pb_player_id', $id);
-		$this->db->delete('playbasis_player');
+		$this->set_site($site_id);
+		$this->site_db()->where('pb_player_id', $id);
+		$this->site_db()->delete('playbasis_player');
 		$this->memcached_library->update_delete('playbasis_player');
 		return true;
 	}
@@ -80,108 +85,113 @@ class Player_model extends CI_Model
 	{
 		if(!$clientData)
 			return -1;
-		$this->db->where(array(
+		$this->set_site($clientData['site_id']);
+		$this->site_db()->where(array(
 			'client_id' => $clientData['client_id'],
 			'site_id' => $clientData['site_id'],
 			'cl_player_id' => $clientData['cl_player_id']
 		));
-		$this->db->select('pb_player_id');
+		$this->site_db()->select('pb_player_id');
 		$id = db_get_row_array($this, 'playbasis_player');
 		if(!$id)
 			return -1;
 		return $id['pb_player_id'];
 	}
-	public function getClientPlayerId($pb_player_id)
+	public function getClientPlayerId($pb_player_id, $site_id)
 	{
 		if(!$pb_player_id)
 			return -1;
-		$this->db->select('cl_player_id');
-		$this->db->where('pb_player_id', $pb_player_id);
+		$this->set_site($site_id);
+		$this->site_db()->select('cl_player_id');
+		$this->site_db()->where('pb_player_id', $pb_player_id);
 		$id = db_get_row_array($this, 'playbasis_player');
 		if(!$id)
 			return -1;
 		return $id['cl_player_id'];
 	}
-	public function getPlayerPoints($data)
+	public function getPlayerPoints($pb_player_id, $site_id)
 	{
-		$this->db->select('reward_id,value');
-		$this->db->where('pb_player_id', $data['pb_player_id']);
+		$this->set_site($site_id);
+		$this->site_db()->select('reward_id,value');
+		$this->site_db()->where('pb_player_id', $pb_player_id);
 		return db_get_result_array($this, 'playbasis_reward_to_player');
 	}
-	public function getPlayerPoint($data)
+	public function getPlayerPoint($pb_player_id, $reward_id, $site_id)
 	{
-		$this->db->select('reward_id,value');
-		$this->db->where(array(
-			'pb_player_id' => $data['pb_player_id'],
-			'reward_id' => $data['reward_id']
+		$this->set_site($site_id);
+		$this->site_db()->select('reward_id,value');
+		$this->site_db()->where(array(
+			'pb_player_id' => $pb_player_id,
+			'reward_id' => $reward_id
 		));
 		return db_get_result_array($this, 'playbasis_reward_to_player');
 	}
-	public function getLastActionPerform($data)
+	public function getLastActionPerform($pb_player_id, $site_id)
 	{
-		$this->db->select('action_id,action_name,date_added AS time');
-		$this->db->where(array(
-			'pb_player_id' => $data['pb_player_id']
-		));
-		$this->db->order_by('date_added', 'DESC');
+		$this->set_site($site_id);
+		$this->site_db()->select('action_id,action_name,date_added AS time');
+		$this->site_db()->where('pb_player_id', $pb_player_id);
+		$this->site_db()->order_by('date_added', 'DESC');
 		return db_get_row_array($this, 'playbasis_action_log');
 	}
-	public function getActionPerform($data)
+	public function getActionPerform($pb_player_id, $action_id, $site_id)
 	{
-        $this->db->select('action_id,action_name,date_added AS time');
-        $this->db->where(array(
-            'pb_player_id' => $data['pb_player_id'],
-            'action_id' => $data['action_id']
+		$this->set_site($site_id);
+        $this->site_db()->select('action_id,action_name,date_added AS time');
+        $this->site_db()->where(array(
+            'pb_player_id' => $pb_player_id,
+            'action_id' => $action_id
         ));
-        $this->db->order_by('date_added', 'DESC');
+        $this->site_db()->order_by('date_added', 'DESC');
 		return db_get_row_array($this, 'playbasis_action_log');
 	}
-	public function getActionCount($data)
+	public function getActionCount($pb_player_id, $action_id, $site_id)
 	{
-		$this->db->where(array(
-			'pb_player_id' => $data['pb_player_id'],
-			'action_id' => $data['action_id']
-		));
+		$fields = array(
+			'pb_player_id' => $pb_player_id,
+			'action_id' => $action_id
+		);
+		$this->set_site($site_id);
+		$this->site_db()->where($fields);
 		$count = db_count_all_results($this, 'playbasis_action_log');
-		$this->db->select('action_id,action_name');
-		$this->db->where(array(
-			'pb_player_id' => $data['pb_player_id'],
-			'action_id' => $data['action_id']
-		));
+		$this->site_db()->select('action_id,action_name');
+		$this->site_db()->where($fields);
 		$result = db_get_row_array($this, 'playbasis_action_log');
 		$result['count'] = $count;
 		return $result;
 	}
-	public function getBadge($data)
+	public function getBadge($pb_player_id, $site_id)
 	{
-        $this->db->select('badge_id,amount');
-        $this->db->where('pb_player_id', $data['pb_player_id']);
+		$this->set_site($site_id);
+        $this->site_db()->select('badge_id,amount');
+        $this->site_db()->where('pb_player_id', $pb_player_id);
 		$badges = db_get_result_array($this, 'playbasis_badge_to_player');
         if(!$badges)
             return array();
         foreach($badges as &$badge)
         {
             //badge data
-            $this->db->select('name,description');
-            $this->db->where('badge_id', $badge['badge_id']);
+            $this->site_db()->select('name,description');
+            $this->site_db()->where('badge_id', $badge['badge_id']);
 			$result = db_get_row_array($this, 'playbasis_badge_description');
             $badge = array_merge($badge, $result);
             //badge image
-            $this->db->select('image');
-            $this->db->where('badge_id', $badge['badge_id']);
+            $this->site_db()->select('image');
+            $this->site_db()->where('badge_id', $badge['badge_id']);
 			$result = db_get_row_array($this, 'playbasis_badge');
             $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
         }
         return $badges;
 	}
-	public function getLastEventTime($pb_player_id, $eventType)
+	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{
-		$this->db->select('date_added');
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->select('date_added');
+		$this->site_db()->where(array(
 			'pb_player_id' => $pb_player_id,
 			'event_type' => $eventType
 		));
-		$this->db->order_by('date_added', 'DESC');
+		$this->site_db()->order_by('date_added', 'DESC');
 		$result = db_get_row_array($this, 'playbasis_event_log');
 		if($result)
 			return $result['date_added'];
@@ -190,20 +200,25 @@ class Player_model extends CI_Model
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
 	{
 		//get reward id
-		$this->db->select('reward_id');
-		$this->db->where('name', $ranked_by);
-		$result = db_get_row_array($this, 'playbasis_reward');
+		$this->set_site($site_id);
+		$this->site_db()->select('reward_id');
+		$this->site_db()->where(array(
+			'name' => $ranked_by,
+			'site_id' => $site_id,
+			'client_id' => $client_id
+		));
+		$result = db_get_row_array($this, 'playbasis_reward_to_client');
 		if(!$result)
 			return array();
 		//get points for the reward id
-		$this->db->select("cl_player_id AS player_id,value AS $ranked_by");
-		$this->db->where(array(
+		$this->site_db()->select("cl_player_id AS player_id,value AS $ranked_by");
+		$this->site_db()->where(array(
 			'reward_id' => $result['reward_id'],
 			'client_id' => $client_id,
 			'site_id' => $site_id
 		));
-		$this->db->order_by('value', 'DESC');
-		$this->db->limit($limit);
+		$this->site_db()->order_by('value', 'DESC');
+		$this->site_db()->limit($limit);
 		$result = db_get_result_array($this, 'playbasis_reward_to_player');
 		return $result;
 	}

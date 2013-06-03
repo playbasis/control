@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/facebook-php-sdk/facebook.php';
-class Social_model extends CI_Model
+class Social_model extends MY_Model
 {
 	public function __construct()
 	{
@@ -12,8 +12,9 @@ class Social_model extends CI_Model
 	}
 	private function getFacebookCredentials($client_id, $site_id)
 	{
-		$this->db->select('app_id,app_secret');
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->select('app_id,app_secret');
+		$this->site_db()->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id
 			));
@@ -186,30 +187,34 @@ class Social_model extends CI_Model
 	{
 		if(!is_string($facebook_page_id))
 			$facebook_page_id = $this->bigIntToString($facebook_page_id);
-		$this->db->select('client_id,site_id');
-		$this->db->where('facebook_page_id', $facebook_page_id);
+		$this->set_site(0);
+		$this->site_db()->select('client_id,site_id');
+		$this->site_db()->where('facebook_page_id', $facebook_page_id);
 		return db_get_row_array($this, 'playbasis_facebook_page_to_client');
 	}
 	public function getClientFromHashTag($hashtag)
 	{
 		assert(is_string($hashtag));
-		$this->db->select('client_id,site_id');
-		$this->db->where('hashtag', $hashtag);
+		$this->set_site(0);
+		$this->site_db()->select('client_id,site_id');
+		$this->site_db()->where('hashtag', $hashtag);
 		return db_get_row_array($this, 'playbasis_hashtag_to_client');
 	}
 	public function getClientFromHost($host)
 	{
 		assert(is_string($host));
-		$this->db->select('client_id,site_id');
-		$this->db->where('host', $host);
+		$this->set_site(0);
+		$this->site_db()->select('client_id,site_id');
+		$this->site_db()->where('host', $host);
 		return db_get_row_array($this, 'playbasis_hosts_to_client');
 	}
 	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id)
 	{
 		if(!is_string($facebook_id))
 			$facebook_id = $this->bigIntToString($facebook_id);
-		$this->db->select('pb_player_id');
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->select('pb_player_id');
+		$this->site_db()->where(array(
 			'facebook_id' => $facebook_id,
 			'client_id' => $client_id,
 			'site_id' => $site_id
@@ -220,8 +225,9 @@ class Social_model extends CI_Model
 	public function getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id)
 	{
 		assert(is_string($twitter_id));
-		$this->db->select('pb_player_id');
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->select('pb_player_id');
+		$this->site_db()->where(array(
 			'twitter_id' => $twitter_id,
 			'client_id' => $client_id,
 			'site_id' => $site_id

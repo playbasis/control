@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Point_model extends CI_Model
+class Point_model extends MY_Model
 {
 	public function __construct()
 	{
@@ -10,8 +10,9 @@ class Point_model extends CI_Model
 	}
 	public function getRewardNameById($data)
 	{
-		$this->db->select('name');
-		$this->db->where(array(
+		$this->set_site($data['site_id']);
+		$this->site_db()->select('name');
+		$this->site_db()->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 			'reward_id' => $data['reward_id']
@@ -21,8 +22,9 @@ class Point_model extends CI_Model
 	}
 	public function findPoint($data)
 	{
-		$this->db->select('reward_id');
-		$this->db->where(array(
+		$this->set_site($data['site_id']);
+		$this->site_db()->select('reward_id');
+		$this->site_db()->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 			'name' => strtolower($data['reward_name'])

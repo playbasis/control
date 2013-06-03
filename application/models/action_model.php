@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Action_model extends CI_Model
+class Action_model extends MY_Model
 {
 	public function __construct()
 	{
@@ -10,8 +10,9 @@ class Action_model extends CI_Model
 	}
 	public function findAction($data)
 	{
-		$this->db->select('action_id');
-		$this->db->where(array(
+		$this->set_site($data['site_id']);
+		$this->site_db()->select('action_id');
+		$this->site_db()->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 			'name' => strtolower($data['action_name'])

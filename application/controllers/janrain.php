@@ -133,11 +133,11 @@ class Janrain extends REST_Controller
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'login',
 			'message' => $eventMessage
-			), $validToken);
+		), $validToken['domain_name'], $site_id);
 		//var_dump($eventMessage);
 		if($option == "ajax")
 		{
-			$cl_player_id = $this->player_model->getClientPlayerId($pb_player_id);
+			$cl_player_id = $this->player_model->getClientPlayerId($pb_player_id, $site_id);
 			$this->response(array('user' => $cl_player_id, 'provider' => $provider), 200);
 		}
 		//Redirect browser

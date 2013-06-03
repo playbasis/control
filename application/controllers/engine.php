@@ -246,10 +246,11 @@ class Engine extends REST_Controller
 	private function processRule($input, $validToken, $fbData, $twData)
 	{
 		if(!isset($input['player_id']) || !$input['player_id'])
-			$input['player_id'] = $this->player_model->getClientPlayerId($input['pb_player_id']);
+			$input['player_id'] = $this->player_model->getClientPlayerId($input['pb_player_id'], $site_id);
 		$input['action_log_id'] = $this->tracker_model->trackAction($input); //track action
 		$client_id = $validToken['client_id'];
 		$site_id = $validToken['site_id'];
+		$domain_name = $validToken['domain_name'];
 		$ruleSet = $this->client_model->getRuleSetByActionId(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id,
@@ -277,7 +278,7 @@ class Engine extends REST_Controller
 				$exInfo = array();
 				$jigsawConfig = $jigsaw['config'];
 				//get class path to precess jigsaw
-				$processor = $this->client_model->getJigsawProcessor($jigsaw['id']);
+				$processor = $this->client_model->getJigsawProcessor($jigsaw['id'], $site_id);
 				if($this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo))
 				{
 					if($jigsaw['category'] == 'REWARD')
@@ -306,7 +307,7 @@ class Engine extends REST_Controller
 								'message' => $eventMessage,
 								'amount' => $jigsawConfig['quantity'],
 								'point' => $jigsawConfig['reward_name']
-							)), $input);
+							)), $domain_name, $site_id);
 							//publish to facebook notification
 							if($fbData)
 								$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
@@ -337,7 +338,7 @@ class Engine extends REST_Controller
 									$this->node->publish(array_merge($input, array(
 										'message' => $eventMessage,
 										'level' => $lv
-									)), $input);
+									)), $domain_name, $site_id);
 									//publish to facebook notification
 									if($fbData)
 										$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
@@ -366,7 +367,7 @@ class Engine extends REST_Controller
 								'message' => $eventMessage,
 								'amount' => $jigsawConfig['quantity'],
 								'point' => $jigsawConfig['reward_name']
-							)), $input);
+							)), $domain_name, $site_id);
 							//publish to facebook notification
 							if($fbData)
 								$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
@@ -376,11 +377,11 @@ class Engine extends REST_Controller
 							switch($jigsawConfig['reward_name'])
 							{
 							case 'badge':
-								$this->client_model->updateplayerBadge($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id']);
+									$this->client_model->updateplayerBadge($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $site_id);
 								$event = array(
 									'event_type' => 'REWARD_RECEIVED',
 									'reward_type' => $jigsawConfig['reward_name'],
-									'reward_data' => $this->client_model->getBadgeById($jigsawConfig['item_id']),
+									'reward_data' => $this->client_model->getBadgeById($jigsawConfig['item_id'], $site_id),
 									'value' => $jigsawConfig['quantity']
 								);
 								array_push($apiResult['events'], $event);
@@ -396,7 +397,7 @@ class Engine extends REST_Controller
 								$this->node->publish(array_merge($input, array(
 									'message' => $eventMessage,
 									'badge' => $event['reward_data']
-								)), $input);
+								)), $domain_name, $site_id);
 								//publish to facebook notification
 									if($fbData)
 										$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');

@@ -210,6 +210,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\core\\MY_Model.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\dummy_player_data.php"
     {
     "ProjRelPath" = "T"
@@ -247,10 +251,6 @@
     "ProjRelPath" = "T"
     }
     "application\\helpers\\memcache_helper.php"
-    {
-    "ProjRelPath" = "T"
-    }
-    "application\\helpers\\multi_db_helper.php"
     {
     "ProjRelPath" = "T"
     }

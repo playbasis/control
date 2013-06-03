@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class jigsaw extends CI_Model
+class jigsaw extends MY_Model
 {
 	public function __construct()
 	{
@@ -42,7 +42,7 @@ class jigsaw extends CI_Model
 		switch($config['reward_name'])
 		{
 			case 'badge':
-				return $this->checkBadge($config['item_id'], $input['pb_player_id']);
+				return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id']);
 			default:
 				return false;
 		}
@@ -334,16 +334,17 @@ class jigsaw extends CI_Model
 		$result = $this->mongo_db->get('jigsaw_log');
 		return ($result) ? $result[0] : $result;
 	}
-	public function checkbadge($badgeId, $pb_player_id)
+	public function checkBadge($badgeId, $pb_player_id, $site_id)
 	{
 		//get badge properties
-		$this->db->select('stackable,substract,quantity');
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->select('stackable,substract,quantity');
+		$this->site_db()->where(array(
 			'badge_id' => $badgeId
 			));
 		$badgeInfo = db_get_row_array($this, 'playbasis_badge');
 		//search badge owned by player
-		$this->db->where(array(
+		$this->site_db()->where(array(
 			'badge_id' => $badgeId,
 			'pb_player_id' => $pb_player_id
 			));
@@ -358,8 +359,9 @@ class jigsaw extends CI_Model
 	}
 	public function checkReward($rewardId, $siteId)
 	{
-		$this->db->select('limit');
-		$this->db->where(array(
+		$this->set_site($site_id);
+		$this->site_db()->select('limit');
+		$this->site_db()->where(array(
 			'reward_id' => $rewardId,
 			'site_id' => $siteId
 			));

@@ -100,11 +100,11 @@ class Playbasis extends CI_Controller
 
         echo "getRuleSetByActionId model return : ".var_dump($ruleSet)."<br><br>";
 
-        $processor = $this->client_model->getJigsawProcessor(1);
+		$processor = $this->client_model->getJigsawProcessor(1,1);
 
         echo "getJigsawProcessor model return : ".$processor."<br><br>";
 
-        $badgePlayer = $this->client_model->updateplayerBadge(1, 1, 1);
+		$badgePlayer = $this->client_model->updateplayerBadge(1, 1, 1, 1);
 
         echo "updateplayerBadge model return : ".$badgePlayer."<br><br>";
 
@@ -115,11 +115,11 @@ class Playbasis extends CI_Controller
 
         echo "updateExpAndLevel model return : ".$lv."<br><br>";
 
-        $badge = $this->client_model->getBadgeById(1);
+		$badge = $this->client_model->getBadgeById(1,1);
 
         echo "getBadgeById model return : ".var_dump($badge)."<br><br>";
 
-        $player = $this->player_model->readPlayer(1, array(
+        $player = $this->player_model->readPlayer(1, 1, array(
             'username',
             'first_name',
             'last_name',
@@ -133,7 +133,7 @@ class Playbasis extends CI_Controller
 
         echo "readPlayer model return : ".var_dump($player)."<br><br>";
 
-        $players = $this->player_model->readPlayers(array(
+        $players = $this->player_model->readPlayers(1, array(
             'username',
             'first_name',
             'last_name',
@@ -153,37 +153,27 @@ class Playbasis extends CI_Controller
 
         echo "getPlaybasisId model return : ".$pb_player_id."<br><br>";
 
-        $cl_player_id = $this->player_model->getClientPlayerId(1);
+		$cl_player_id = $this->player_model->getClientPlayerId(1,1);
 
         echo "getClientPlayerId model return : ".$cl_player_id."<br><br>";
 
-        $points = $this->player_model->getPlayerPoints(array('pb_player_id' => 1));
+		$points = $this->player_model->getPlayerPoints(1,1);
 
         echo "getPlayerPoints model return : ".var_dump($points)."<br><br>";
 
-        $points = $this->player_model->getPlayerPoint(array('pb_player_id' => 1, 'reward_id' => 1));
+		$points = $this->player_model->getPlayerPoint(1,1,1);
 
         echo "getPlayerPoint model return : ".var_dump($points)."<br><br>";
 
-        $actions = $this->player_model->getLastActionPerform(array_merge($validToken, array(
-            'pb_player_id' => 1
-        )));
+		$actions = $this->player_model->getLastActionPerform(1,1);
 
         echo "getLastActionPerform model return : ".var_dump($actions)."<br><br>";
 
-        $actions = $this->player_model->getActionPerform(array_merge($validToken, array(
-            'pb_player_id' => 1
-        ), array(
-            'action_id' => 1
-        )));
+		$actions = $this->player_model->getActionPerform(1,1,1);
 
         echo "getActionPerform model return : ".var_dump($actions)."<br><br>";
 
-        $actions = $this->player_model->getActionCount(array_merge($validToken, array(
-            'pb_player_id' => 1
-        ), array(
-            'action_id' => 1
-        )));
+		$actions = $this->player_model->getActionCount(1,1,1);
 
         echo "getActionCount model return : ".var_dump($actions)."<br><br>";
 
@@ -193,7 +183,7 @@ class Playbasis extends CI_Controller
 
         echo "getBadge model return : ".var_dump($badge)."<br><br>";
 
-        $player = $this->player_model->getLastEventTime(1, 'LOGIN');
+		$player = $this->player_model->getLastEventTime(1,1, 'LOGIN');
 
         echo "getLastEventTime model return : ".$player."<br><br>";
 
