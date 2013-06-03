@@ -208,6 +208,7 @@ class Player_model extends MY_Model
 			'client_id' => $client_id
 		));
 		$result = db_get_row_array($this, 'playbasis_reward_to_client');
+
 		if(!$result)
 			return array();
 		//get points for the reward id
