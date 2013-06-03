@@ -359,7 +359,7 @@ class jigsaw extends MY_Model
 	}
 	public function checkReward($rewardId, $siteId)
 	{
-		$this->set_site($site_id);
+		$this->set_site($siteId);
 		$this->site_db()->select('limit');
 		$this->site_db()->where(array(
 			'reward_id' => $rewardId,
