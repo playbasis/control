@@ -251,6 +251,8 @@ class Engine extends REST_Controller
 		$client_id = $validToken['client_id'];
 		$site_id = $validToken['site_id'];
 		$domain_name = $validToken['domain_name'];
+		if(!isset($input['site_id']) || !$input['site_id'])
+			$input['site_id'] = $site_id;
 		$ruleSet = $this->client_model->getRuleSetByActionId(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id,

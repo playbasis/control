@@ -296,6 +296,7 @@ class Client_model extends MY_Model
 		}
 		$data['date_added'] = date('Y-m-d H:i:s');
 		$data['date_modified'] = date('Y-m-d H:i:s');
+		$this->set_site_mongodb($logData['site_id']);
 		$this->mongo_db->insert('jigsaw_log', $data);
 	}
 	public function getBadgeById($badgeId, $site_id)

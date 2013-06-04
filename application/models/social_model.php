@@ -31,6 +31,7 @@ class Social_model extends MY_Model
 	}
 	public function processTwitterData($tweetData)
 	{
+		$this->set_site_mongodb(0);
 		$this->mongo_db->insert('twitter_log', array_merge($tweetData, array(
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
@@ -70,6 +71,7 @@ class Social_model extends MY_Model
 	}
 	public function processFacebookData($changedData)
 	{
+		$this->set_site_mongodb(0);
 		$this->mongo_db->insert('facebook_log', array_merge($changedData, array(
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')

@@ -80,7 +80,7 @@ class jigsaw extends MY_Model
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input',
 			'date_added'
-			), 'input,date_added');
+			));
 		if(!$result)
 		{
 			$exInfo['remaining_counter'] = (int) $config['counter_value'] - 1;
@@ -149,7 +149,7 @@ class jigsaw extends MY_Model
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input',
 			'date_added'
-			), 'input,date_added');
+			));
 		if(!$result)
 		{
 			$exInfo['remaining_cooldown'] = (int) $config['cooldown'];
@@ -215,7 +215,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['time_of_day']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'date_added'
-			), 'date_added');
+			));
 		if(!$result)
 			return true;
 		$lastTime = $result['date_added'];
@@ -242,7 +242,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['day_of_week']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
-			), 'input');
+			));
 		if(!$result)
 		{
 			$exInfo['next_trigger'] = strtotime("next " . $config['day_of_week'] . " " . $config['time_of_day']);
@@ -267,7 +267,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['date_of_month']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
-			), 'input');
+			));
 		if(!$result)
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
@@ -294,7 +294,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['num_of_days']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
-			), 'input');
+			));
 		if(!$result)
 		{
 			$currentDate = new DateTime();
@@ -320,8 +320,10 @@ class jigsaw extends MY_Model
 		$exInfo['next_trigger'] = $logInput['next_trigger'];
 		return false;
 	}
-	private function getMostRecentJigsaw($input, $fields, $fields_str)
+	private function getMostRecentJigsaw($input, $fields)
 	{
+		assert(isset($input['site_id']));
+		$this->set_site_mongodb($input['site_id']);
 		$this->mongo_db->select($fields);
 		$this->mongo_db->where(array(
 			'pb_player_id' => $input['pb_player_id'],
