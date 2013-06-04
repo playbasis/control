@@ -3,12 +3,13 @@
 class MY_Model extends CI_Model
 {
 	protected $dbs = null;
+	protected $dbGroups = null;
 	protected $site = 0;
 	
 	public function __construct()
 	{
 		parent::__construct();
-		$this->dbs = $this->multi_db_load($this);
+		$this->multi_db_load($this);
 	}
 	public function set_site($site_id)
 	{
@@ -26,12 +27,13 @@ class MY_Model extends CI_Model
 			0 => 'developer',
 			1 => 'developer'
 		);
-		$multiDBs = array();
+		$this->dbs = array();
+		$this->dbGroups = array();
 		foreach($dblist as $key => $value)
 		{
-			$multiDBs[$key] = $mdl->load->database($value, TRUE);
+			$this->dbs[$key] = $mdl->load->database($value, TRUE);
+			$this->dbGroups[$key] = $value;
 		}
-		return $multiDBs;
 	}
 }
 
