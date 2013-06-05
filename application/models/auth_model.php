@@ -36,21 +36,21 @@ class Auth_model extends MY_Model
 			$token['token'] = hash('sha1', $data['key'] . time() . $data['secret']);
 			$expire = date('Y-m-d H:i:s', time() + TOKEN_EXPIRE);
 			$updated = array();
-			foreach($this->dbs as $key => $value)
+			foreach(self::$dblist as $key => $value)
 			{
 				//keep track of which db is already updated
-				$group = $this->dbGroups[$key];
-				if(isset($updated[$group]))
+				if(isset($updated[$value]))
 					continue;
-				$updated[$group] = true;
+				$updated[$value] = true;
 				//delete old token
-				$value->where(array(
+				$this->set_site($key);
+				$this->site_db()->where(array(
 					'site_id' => $data['site_id'],
 					'client_id' => $data['client_id']
 				));
-				$value->delete('playbasis_token');
+				$this->site_db()->delete('playbasis_token');
 				//insert new token
-				$value->insert('playbasis_token', array(
+				$this->site_db()->insert('playbasis_token', array(
 					'client_id' => $data['client_id'],
 					'site_id' => $data['site_id'],
 					'token' => $token['token'],
