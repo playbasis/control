@@ -8,8 +8,8 @@ class MY_Model extends CI_Model
 	
 	//array of database groups to load for each site_id
 	protected static $dblist = array(
-		0 => 'core', //'developer',
-		1 => 'core'  //'developer'
+		0 => 'core',
+		1 => 'core_demo'
 	);
 	
 	//mongodb setup
