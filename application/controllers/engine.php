@@ -409,7 +409,7 @@ class Engine extends REST_Controller
 							}
 						}
 						//log jigsaw - reward 
-						$this->client_model->log($input);
+						$this->client_model->log($input, $exInfo);
 					}
 					else
 					{
