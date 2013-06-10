@@ -55,13 +55,13 @@ class Playbasis_Gamify_Model_Observer
 	{
 		$customer = $observer->getEvent()->getData('customer');
 		$id = $this->getPlaybasisUserId($customer->getId());
-		$this->pb->logout($id);
+		$result = $this->pb->logout($id);
 		return $this;
 	}
 	public function addToCart(Varien_Event_Observer $observer)
 	{
 		//$product = $observer->getEvent()->getData('product');
-		$this->triggerActionOnLoggedInCustomer(self::addToCartAction);
+		$result = $this->triggerActionOnLoggedInCustomer(self::addToCartAction);
 		return $this;
 	}
 	public function addToWishlist(Varien_Event_Observer $observer)
@@ -70,7 +70,7 @@ class Playbasis_Gamify_Model_Observer
 		//$product = $observer->getEvent()->getData('product');
 		//$item = $observer->getEvent()->getData('item');
 		$id = $this->getPlaybasisUserId($wishlist->getCustomerId());
-		$this->pb->rule($id, self::addToWishlistAction);
+		$result = $this->pb->rule($id, self::addToWishlistAction);
 		return $this;
 	}
 
@@ -98,8 +98,9 @@ class Playbasis_Gamify_Model_Observer
 		{
 			$customer = $session->getCustomer();
 			$id = $this->getPlaybasisUserId($customer->getId());
-			$this->pb->rule($id, $action);
+			return $this->pb->rule($id, $action);
 		}
+		return null;
 	}
 	private function getPlaybasisUserId($userId)
 	{
