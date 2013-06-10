@@ -16,6 +16,7 @@ class Playbasis_Gamify_Model_Observer
 	const api_key = 'abc';
 	const api_secret = 'abcde';
 	const addToCartAction = 'like';
+	const addToWishlistAction = 'want';
 	const userIdPrefix = 'mgusr_';
 	const userNamePrefix = 'mgusr_';
 	const defaultProfileImage = 'https://www.pbapp.net/images/default_profile.jpg';
@@ -60,13 +61,16 @@ class Playbasis_Gamify_Model_Observer
 	public function addToCart(Varien_Event_Observer $observer)
 	{
 		//$product = $observer->getEvent()->getData('product');
-		$session = $this->getCustomerSession();
-		if($session->isLoggedIn())
-		{
-			$customer = $session->getCustomer();
-			$id = $this->getPlaybasisUserId($customer->getId());
-			$this->pb->rule($id, self::addToCartAction);
-		}
+		$this->triggerActionOnLoggedInCustomer(self::addToCartAction);
+		return $this;
+	}
+	public function addToWishlist(Varien_Event_Observer $observer)
+	{
+		$wishlist = $observer->getEvent()->getData('wishlist');
+		//$product = $observer->getEvent()->getData('product');
+		//$item = $observer->getEvent()->getData('item');
+		$id = $this->getPlaybasisUserId($wishlist->getCustomerId());
+		$this->pb->rule($id, self::addToWishlistAction);
 		return $this;
 	}
 
@@ -86,6 +90,16 @@ class Playbasis_Gamify_Model_Observer
 				'last_name' => $lastname
 			)
 		);
+	}
+	private function triggerActionOnLoggedInCustomer($action)
+	{
+		$session = $this->getCustomerSession();
+		if($session->isLoggedIn())
+		{
+			$customer = $session->getCustomer();
+			$id = $this->getPlaybasisUserId($customer->getId());
+			$this->pb->rule($id, $action);
+		}
 	}
 	private function getPlaybasisUserId($userId)
 	{

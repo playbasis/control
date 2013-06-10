@@ -140,6 +140,15 @@
                     </Playbasis_gamify_model_observer>
                 </observers>
             </checkout_cart_add_product_complete>
+            <wishlist_add_product>
+                <observers>
+                    <Playbasis_gamify_model_observer>
+                        <type>singleton</type>
+                        <class>Playbasis_Gamify_Model_Observer</class>
+                        <method>addToWishlist</method>
+                    </Playbasis_gamify_model_observer>
+                </observers>
+            </wishlist_add_product>
         </events>
         <resources>
             <gamify_setup>
