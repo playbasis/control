@@ -223,5 +223,36 @@ class Player_model extends MY_Model
 		$result = db_get_result_array($this, 'playbasis_reward_to_player');
 		return $result;
 	}
+	public function getLeaderboards($limit, $client_id, $site_id)
+	{
+		//get all rewards
+		$this->set_site($site_id);
+		$this->site_db()->select('reward_id,name');
+		$this->site_db()->where(array(
+			'site_id' => $site_id,
+			'client_id' => $client_id,
+			'group' => 'POINT'
+		));
+		$rewards = db_get_result_array($this, 'playbasis_reward_to_client');
+		if(!$rewards)
+			return array();
+		$result = array();
+		foreach($rewards as $reward)
+		{
+			//get points for the reward id
+			$reward_id = $reward['reward_id'];
+			$name = $reward['name'];
+			$this->site_db()->select("cl_player_id AS player_id,value AS '$name'");
+			$this->site_db()->where(array(
+				'reward_id' => $reward_id,
+				'client_id' => $client_id,
+				'site_id' => $site_id
+			));
+			$this->site_db()->order_by('value', 'DESC');
+			$this->site_db()->limit($limit);
+			$result[$name] = db_get_result_array($this, 'playbasis_reward_to_player');
+		}
+		return $result;
+	}
 }
 ?>

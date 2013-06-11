@@ -58,14 +58,17 @@ $route['Player/login'] = 'player/login';
 $route['Player/'.ANY_STRING.'/logout'] = 'player/logout/$1';
 $route['Player/logout'] = 'player/logout';
 
-$route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER.''] = 'player/rank/$1/$2';
-$route['Player/rank/'.ANY_STRING.''] = 'player/rank/$1/20';
+$route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER] = 'player/rank/$1/$2';
+$route['Player/rank/'.ANY_STRING] = 'player/rank/$1/20';
 $route['Player/rank'] = 'player/rank/0/0';
+
+$route['Player/ranks/'.ANY_NUMBER] = 'player/ranks/$1';
+$route['Player/ranks'] = 'player/ranks/20';
 
 $route['Player/'.ANY_STRING.'/points'] = 'player/points/$1';
 $route['Player/points'] = 'player/points';
-$route['Player/'.ANY_STRING.'/point/'.ANY_STRING.''] = 'player/point/$1/$2';
-$route['Player/point/'.ANY_STRING.''] = 'player/point/0/$1';
+$route['Player/'.ANY_STRING.'/point/'.ANY_STRING] = 'player/point/$1/$2';
+$route['Player/point/'.ANY_STRING] = 'player/point/0/$1';
 $route['Player/'.ANY_STRING.'/point'] = 'player/points/$1';
 $route['Player/point'] = 'player/point/';
 
@@ -78,16 +81,16 @@ $route['Player/'.ANY_STRING.'/badge'] = 'player/badge/$1';
 $route['Player/badge'] = 'player/badge/0';
 
 //badge API
-$route['Badge/collection/'.ANY_NUMBER.''] = 'badge/getcollection/$1';
+$route['Badge/collection/'.ANY_NUMBER] = 'badge/getcollection/$1';
 $route['Badge/collection']  = 'badge/getcollection';
 $route['Badge/collections'] = 'badge/getcollection';
-$route['Badge/'.ANY_NUMBER.''] = 'badge/index/$1';
+$route['Badge/'.ANY_NUMBER] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
 $route['Badges'] = 'badge/index';
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
-$route['Engine/rule/'.ANY_STRING.''] = 'engine/rule/$1';
+$route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
 
 //misc
@@ -97,8 +100,8 @@ $route['login'] = 'playbasis/login';
 $route['memtest'] = 'playbasis/memtest';
 
 //dummy 
-//$route['dummy/dummyPlayer/'.ANY_NUMBER.'/'.ANY_NUMBER.'']	= 'dummy/dummyPlayer/$1/$2/$3';
-//$route['dummy/'.ANY_NUMBER.'/'.ANY_NUMBER.'/'.ANY_NUMBER.'']	= 'dummy/index/$1/$2/$3';
+//$route['dummy/dummyPlayer/'.ANY_NUMBER.'/'.ANY_NUMBER]	= 'dummy/dummyPlayer/$1/$2/$3';
+//$route['dummy/'.ANY_NUMBER.'/'.ANY_NUMBER.'/'.ANY_NUMBER]	= 'dummy/index/$1/$2/$3';
 //$route['dummy/:any']	= 'dummy/error';
 
 $route['404_override'] = '';

@@ -378,6 +378,19 @@ class Player extends REST_Controller
 		$leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $validToken['client_id'], $validToken['site_id']);
 		$this->response($this->resp->setRespond($leaderboard), 200);
 	}
+	public function ranks_get($limit = 20)
+	{
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$leaderboards = $this->player_model->getLeaderboards($limit, $validToken['client_id'], $validToken['site_id']);
+		$this->response($this->resp->setRespond($leaderboards), 200);
+	}
 	////////////////
 	// DEPRECATED //
 	////////////////
