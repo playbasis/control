@@ -17,6 +17,7 @@ class Playbasis_Gamify_Model_Observer
 	const api_secret = 'abcde';
 	const addToCartAction = 'like';
 	const addToWishlistAction = 'want';
+	const placeOrderAction = 'order';
 	const userIdPrefix = 'mgusr_';
 	const userNamePrefix = 'mgusr_';
 	const defaultProfileImage = 'https://www.pbapp.net/images/default_profile.jpg';
@@ -71,6 +72,12 @@ class Playbasis_Gamify_Model_Observer
 		//$item = $observer->getEvent()->getData('item');
 		$id = $this->getPlaybasisUserId($wishlist->getCustomerId());
 		$result = $this->pb->rule($id, self::addToWishlistAction);
+		return $this;
+	}
+	public function placeOrder(Varien_Event_Observer $observer)
+	{
+		//$payment = $observer->getEvent()->getData('payment');
+		$result = $this->triggerActionOnLoggedInCustomer(self::placeOrderAction);
 		return $this;
 	}
 

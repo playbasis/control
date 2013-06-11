@@ -149,6 +149,15 @@
                     </Playbasis_gamify_model_observer>
                 </observers>
             </wishlist_add_product>
+            <sales_order_payment_place_end>
+                <observers>
+                    <Playbasis_gamify_model_observer>
+                        <type>singleton</type>
+                        <class>Playbasis_Gamify_Model_Observer</class>
+                        <method>placeOrder</method>
+                    </Playbasis_gamify_model_observer>
+                </observers>
+            </sales_order_payment_place_end>
         </events>
         <resources>
             <gamify_setup>
