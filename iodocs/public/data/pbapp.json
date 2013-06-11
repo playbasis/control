@@ -354,6 +354,22 @@
 					]
 				},
 				{
+					"MethodName": "Ranks",
+					"Synopsis": "Returns list of players sorted by each point type.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/ranks/:limit",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "limit",
+							"Required": "N",
+							"Default": "20",
+							"Type": "integer",
+							"Description": "number of results to return for each point type"
+						}
+					]
+				},
+				{
 					"MethodName": "DEPRECATED - Points",
 					"Synopsis": "Returns information about all point-based rewards that a player currently have.",
 					"HTTPMethod": "POST",
