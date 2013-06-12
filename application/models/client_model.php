@@ -68,35 +68,34 @@ class Client_model extends MY_Model
 		assert(isset($siteId));
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
-		$this->set_site($siteId);
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($siteId);
+		$this->mongo_db->where(array(
 			'pb_player_id' => $pbPlayerId,
 			'reward_id' => $rewardId
 		));
-		$this->site_db()->from('playbasis_reward_to_player');
-		$hasReward = $this->site_db()->count_all_results();
+		$hasReward = $this->mongo_db->count('reward_to_player');
 		if($hasReward)
 		{
-			$this->site_db()->where(array(
+			$this->mongo_db->where(array(
 				'pb_player_id' => $pbPlayerId,
 				'reward_id' => $rewardId
 			));
-			$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
+			$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
 			if($overrideOldValue)
-				$this->site_db()->set('value', $quantity);
+				$this->mongo_db->set('value', $quantity);
 			else
-				$this->site_db()->set('value', "`value`+$quantity", FALSE);
-			$this->site_db()->update('playbasis_reward_to_player');
+				$this->mongo_db->inc('value', intval($quantity));
+			$this->mongo_db->update('reward_to_player');
 		}
 		else
 		{
-			$this->site_db()->insert('playbasis_reward_to_player', array(
+			$this->mongo_db->insert('reward_to_player', array(
 				'pb_player_id' => $pbPlayerId,
 				'cl_player_id' => $clPlayerId,
 				'client_id' => $clientId,
 				'site_id' => $siteId,
 				'reward_id' => $rewardId,
-				'value' => $quantity,
+				'value' => intval($quantity),
 				'date_added' => date('Y-m-d H:i:s'),
 				'date_modified' => date('Y-m-d H:i:s')
 			));
@@ -120,7 +119,6 @@ class Client_model extends MY_Model
 			$this->site_db()->update('playbasis_reward_to_client');
 			$this->memcached_library->update_delete('playbasis_reward_to_client');
 		}
-		$this->memcached_library->update_delete('playbasis_reward_to_player');
 	}
 	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig)
 	{

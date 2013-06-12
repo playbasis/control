@@ -51,7 +51,7 @@ class MY_Model extends CI_Model
 	public function generate_id_mongodb($table)
 	{
 		$this->mongo_db->select($table);
-		$this->mongo_db->inc(array($table => 1));
+		$this->mongo_db->inc($table, 1);
 		$this->mongo_db->update('id_vault');
 		$this->mongo_db->select($table);
 		$result = $this->mongo_db->get('id_vault');
