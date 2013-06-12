@@ -273,7 +273,7 @@ class Engine extends REST_Controller
 			$jigsawSet = unserialize($rule['jigsaw_set']);
 			foreach($jigsawSet as $jigsaw)
 			{
-				$input['jigsaw_id'] = $jigsaw['id'];
+				$input['jigsaw_id'] = (string)$jigsaw['id'];
 				$input['jigsaw_name'] = $jigsaw['name'];
 				$input['jigsaw_category'] = $jigsaw['category'];
 				$input['input'] = $jigsaw['config'];

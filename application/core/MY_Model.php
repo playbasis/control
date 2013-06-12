@@ -9,13 +9,13 @@ class MY_Model extends CI_Model
 	//array of database groups to load for each site_id
 	protected static $dblist = array(
 		0 => 'core',
-		1 => 'core_demo'
+		1 => 'core'
 	);
 	
 	//mongodb setup
 	private static $mongoBDsNames = array(
 		0 => 'pbapp',
-		1 => 'demo'
+		1 => 'pbapp'
 	);
 	private static $mongoDBs = array(
 		0 => 0,
@@ -47,6 +47,15 @@ class MY_Model extends CI_Model
 	public function site_db()
 	{
 		return $this->db; //$this->dbs[$this->site];
+	}
+	public function generate_id_mongodb($table)
+	{
+		$this->mongo_db->select($table);
+		$this->mongo_db->inc(array($table => 1));
+		$this->mongo_db->update('id_vault');
+		$this->mongo_db->select($table);
+		$result = $this->mongo_db->get('id_vault');
+		return ($result) ? $result[0][$table] : 0;
 	}
 	//load all databases
 	//private function multi_db_load($mdl)
