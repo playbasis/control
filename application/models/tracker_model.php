@@ -6,13 +6,16 @@ class Tracker_model extends MY_Model
 	{
 		parent::__construct();
 		$this->load->library('memcached_library');
+		$this->load->library('mongo_db');
 	}
 	public function trackAction($input)
 	{
-		$this->set_site($input['site_id']);
+		$this->set_site_mongodb($input['site_id']);
+		$action_log_id = $this->generate_id_mongodb('action_log');
 		if(isset($input['url']))
 			$this->site_db()->set('url', $input['url']);
-		$this->site_db()->insert('playbasis_action_log', array(
+		$this->mongo_db->insert('action_log', array(
+			'action_log_id' => $action_log_id,
 			'pb_player_id' => $input['pb_player_id'],
 			'client_id' => $input['client_id'],
 			'site_id' => $input['site_id'],
@@ -21,30 +24,32 @@ class Tracker_model extends MY_Model
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
 		));
-		$this->memcached_library->update_delete('playbasis_action_log');
-		return $this->site_db()->insert_id();
+		return $action_log_id;
 	}
 	public function trackEvent($type, $message, $input)
 	{
-		$this->set_site($input['site_id']);
-		$this->site_db()->set('pb_player_id', $input['pb_player_id']);
-		$this->site_db()->set('client_id', $input['client_id']);
-		$this->site_db()->set('site_id', $input['site_id']);
-		$this->site_db()->set('event_type', $type);
+		$this->set_site_mongodb($input['site_id']);
+		$event_log_id = $this->generate_id_mongodb('event_log');
+		$data = array(
+			'event_log_id' => $event_log_id,
+			'pb_player_id' => $input['pb_player_id'],
+			'client_id' => $input['client_id'],
+			'site_id' => $input['site_id'],
+			'event_type' => $type,
+			'action_log_id' => $input['action_log_id'],
+			'message' => $message,
+			'date_added' => date('Y-m-d H:i:s'),
+			'date_modified' => date('Y-m-d H:i:s')
+		);
 		if(isset($input['reward_id']))
-			$this->site_db()->set('reward_id', $input['reward_id']);
+			$data['reward_id'] = $input['reward_id'];
 		if(isset($input['reward_name']))
-			$this->site_db()->set('reward_name', $input['reward_name']);
+			$data['reward_name'] = $input['reward_name'];
 		if(isset($input['item_id']))
-			$this->site_db()->set('item_id', $input['item_id']);
+			$data['item_id'] = $input['item_id'];
 		if(isset($input['amount']))
-			$this->site_db()->set('value', $input['amount']);
-		$this->site_db()->set('action_log_id', $input['action_log_id']);
-		$this->site_db()->set('message', $message);
-		$this->site_db()->set('date_added', date('Y-m-d H:i:s'));
-		$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
-		$this->site_db()->insert('playbasis_event_log');
-		$this->memcached_library->update_delete('playbasis_event_log');
+			$data['value'] = $input['amount'];		
+		$this->mongo_db->insert('event_log', $data);
 	}
 }
 ?>

@@ -8,6 +8,7 @@ class Player_model extends MY_Model
 		$this->config->load('playbasis');
         $this->load->library('memcached_library');
 		$this->load->helper('memcache');
+		$this->load->library('mongo_db');
 	}
 	public function createPlayer($data)
 	{
@@ -128,22 +129,44 @@ class Player_model extends MY_Model
 	}
 	public function getLastActionPerform($pb_player_id, $site_id)
 	{
-		$this->set_site($site_id);
-		$this->site_db()->select('action_id,action_name,date_added AS time');
-		$this->site_db()->where('pb_player_id', $pb_player_id);
-		$this->site_db()->order_by('date_added', 'DESC');
-		return db_get_row_array($this, 'playbasis_action_log');
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'action_id',
+			'action_name',
+			'date_added'
+		));
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$result = $this->mongo_db->get('action_log');
+		if(!$result)
+			return $result;
+		$result = $result[0];
+		$result['time'] = $result['date_added'];
+		unset($result['date_added']);
+		unset($result['_id']);
+		return $result;
 	}
 	public function getActionPerform($pb_player_id, $action_id, $site_id)
 	{
-		$this->set_site($site_id);
-        $this->site_db()->select('action_id,action_name,date_added AS time');
-        $this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'action_id',
+			'action_name',
+			'date_added'
+		));
+		$this->mongo_db->where(array(
             'pb_player_id' => $pb_player_id,
             'action_id' => $action_id
         ));
-        $this->site_db()->order_by('date_added', 'DESC');
-		return db_get_row_array($this, 'playbasis_action_log');
+		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$result = $this->mongo_db->get('action_log');
+		if(!$result)
+			return $result;
+		$result = $result[0];
+		$result['time'] = $result['date_added'];
+		unset($result['date_added']);
+		unset($result['_id']);
+		return $result;
 	}
 	public function getActionCount($pb_player_id, $action_id, $site_id)
 	{
@@ -151,13 +174,18 @@ class Player_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'action_id' => $action_id
 		);
-		$this->set_site($site_id);
-		$this->site_db()->where($fields);
-		$count = db_count_all_results($this, 'playbasis_action_log');
-		$this->site_db()->select('action_id,action_name');
-		$this->site_db()->where($fields);
-		$result = db_get_row_array($this, 'playbasis_action_log');
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where($fields);
+		$count = $this->mongo_db->count('action_log');
+		$this->mongo_db->select(array(
+			'action_id',
+			'action_name'
+		));
+		$this->mongo_db->where($fields);
+		$result = $this->mongo_db->get('action_log');
+		$result = ($result) ? $result[0] : array();
 		$result['count'] = $count;
+		unset($result['_id']);
 		return $result;
 	}
 	public function getBadge($pb_player_id, $site_id)
@@ -185,16 +213,16 @@ class Player_model extends MY_Model
 	}
 	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{
-		$this->set_site($site_id);
-		$this->site_db()->select('date_added');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select('date_added');
+		$this->mongo_db->where(array(
 			'pb_player_id' => $pb_player_id,
 			'event_type' => $eventType
 		));
-		$this->site_db()->order_by('date_added', 'DESC');
-		$result = db_get_row_array($this, 'playbasis_event_log');
+		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$result = $this->mongo_db->get('event_log');
 		if($result)
-			return $result['date_added'];
+			return $result[0]['date_added'];
 		return '0000-00-00 00:00:00';
 	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
