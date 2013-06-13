@@ -101,6 +101,7 @@ class Client_model extends MY_Model
 			));
 		}
 		//upadte client reward limit
+		$this->set_site($siteId);
 		$this->site_db()->select('limit');
 		$this->site_db()->where(array(
 			'reward_id' => $rewardId,
@@ -229,14 +230,18 @@ class Client_model extends MY_Model
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
 		//get player exp
-		$this->set_site($clientData['site_id']);
-		$this->site_db()->select('exp,level');
-		$this->site_db()->where('pb_player_id', $pb_player_id);
-		$result = db_get_row_array($this, 'playbasis_player');
-		$playerExp = $result['exp'];
-		$playerLevel = $result['level'];
+		$this->set_site_mongodb($clientData['site_id']);
+		$this->mongo_db->select(array(
+			'exp',
+			'level'
+		));
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$result = $this->mongo_db->get('player');
+		$playerExp = $result[0]['exp'];
+		$playerLevel = $result[0]['level'];
 		$newExp = $exp + $playerExp;
 		//check if client have their own exp table setup
+		$this->set_site($clientData['site_id']);
 		$this->site_db()->select_max('level');
 		$this->site_db()->where($clientData);
 		$this->site_db()->where("exp <=", $newExp);
@@ -252,13 +257,12 @@ class Client_model extends MY_Model
 			$level = $level['level'];
 		else
 			$level = -1;
-		$this->site_db()->where('pb_player_id', $pb_player_id);
-		$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
-		$this->site_db()->set('exp', "`exp`+$exp", FALSE);
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
+		$this->mongo_db->inc('exp', $exp);
 		if($level > 0)
-			$this->site_db()->set('level', $level);
-		$this->site_db()->update('playbasis_player');
-		$this->memcached_library->update_delete('playbasis_player');
+			$this->mongo_db->set('level', $level);
+		$this->mongo_db->update('player');
 		//get reward id to update the reward to player table
 		$this->site_db()->select('reward_id');
 		$this->site_db()->where('name', 'exp');

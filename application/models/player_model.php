@@ -38,77 +38,75 @@ class Player_model extends MY_Model
 			$inputData['gender'] = $data['gender'];
 		if(isset($data['birth_date']))
 			$inputData['birth_date'] = $data['birth_date'];
-		$this->set_site($data['site_id']);
-		$this->site_db()->insert('playbasis_player', $inputData);
-		$this->memcached_library->update_delete('playbasis_player');
-		return $this->site_db()->insert_id();
+		$pb_player_id = $this->generate_id_mongodb('player');
+		$inputData['pb_player_id'] = $pb_player_id;
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->insert('player', $inputData);
+		return $pb_player_id;
 	}
 	public function readPlayer($id, $site_id, $fields)
 	{
         if(!$id)
             return array();
-		$this->set_site($site_id);
-        if($fields)
-            $this->site_db()->select($fields);
-        $this->site_db()->where('pb_player_id', $id);
-		return db_get_row_array($this, 'playbasis_player');
+		$this->set_site_mongodb($site_id);
+		if($fields)
+			$this->mongo_db->select($fields);
+		$this->mongo_db->where('pb_player_id', $id);
+		$result = $this->mongo_db->get('player');
+		return ($result) ? $result[0] : $result;
 	}
 	public function readPlayers($site_id, $fields, $offset = 0, $limit = 10)
 	{
-		$this->set_site($site_id);
+		$this->set_site_mongodb($site_id);
 		if($fields)
-			$this->site_db()->select($fields);
-		$this->site_db()->limit($limit, $offset);
-		return db_get_result_array($this, 'playbasis_player');
+			$this->mongo_db->select($fields);
+		$this->mongo_db->limit($limit);
+		$this->mongo_db->offset($offset);
+		return $this->mongo_db->get('player');
 	}
 	public function updatePlayer($id, $site_id, $fieldData)
 	{
 		if(!$id)
 			return false;
 		$fieldData['date_modified'] = date('Y-m-d H:i:s');
-		$this->set_site($site_id);
-		$this->site_db()->where('pb_player_id', $id);
-		$this->site_db()->update('playbasis_player', $fieldData);
-		$this->memcached_library->update_delete('playbasis_player');
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where('pb_player_id', $id);
+		$this->mongo_db->set($fieldData);
+		$this->mongo_db()->update('player');
 		return true;
 	}
 	public function deletePlayer($id, $site_id)
 	{
 		if(!$id)
 			return false;
-		$this->set_site($site_id);
-		$this->site_db()->where('pb_player_id', $id);
-		$this->site_db()->delete('playbasis_player');
-		$this->memcached_library->update_delete('playbasis_player');
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where('pb_player_id', $id);
+		$this->mongo_db->delete('player');
 		return true;
 	}
 	public function getPlaybasisId($clientData)
 	{
 		if(!$clientData)
 			return -1;
-		$this->set_site($clientData['site_id']);
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($clientData['site_id']);
+		$this->mongo_db->select('pb_player_id');
+		$this->mongo_db->where(array(
 			'client_id' => $clientData['client_id'],
 			'site_id' => $clientData['site_id'],
 			'cl_player_id' => $clientData['cl_player_id']
 		));
-		$this->site_db()->select('pb_player_id');
-		$id = db_get_row_array($this, 'playbasis_player');
-		if(!$id)
-			return -1;
-		return $id['pb_player_id'];
+		$id = $this->mongo_db->get('player');
+		return ($id) ? $id[0]['pb_player_id'] : -1;
 	}
 	public function getClientPlayerId($pb_player_id, $site_id)
 	{
 		if(!$pb_player_id)
 			return -1;
-		$this->set_site($site_id);
-		$this->site_db()->select('cl_player_id');
-		$this->site_db()->where('pb_player_id', $pb_player_id);
-		$id = db_get_row_array($this, 'playbasis_player');
-		if(!$id)
-			return -1;
-		return $id['cl_player_id'];
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select('cl_player_id');
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$id = $this->mongo_db->get('player');
+		return ($id) ? $id[0]['cl_player_id'] : -1;
 	}
 	public function getPlayerPoints($pb_player_id, $site_id)
 	{

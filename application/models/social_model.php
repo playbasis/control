@@ -214,28 +214,28 @@ class Social_model extends MY_Model
 	{
 		if(!is_string($facebook_id))
 			$facebook_id = $this->bigIntToString($facebook_id);
-		$this->set_site($site_id);
-		$this->site_db()->select('pb_player_id');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select('pb_player_id');
+		$this->mongo_db->where(array(
 			'facebook_id' => $facebook_id,
 			'client_id' => $client_id,
 			'site_id' => $site_id
-			));
-		$result = db_get_row_array($this, 'playbasis_player');
-		return ($result) ? $result['pb_player_id'] : 0;
+		));
+		$result = $this->mongo_db->get('player');
+		return ($result) ? $result[0]['pb_player_id'] : 0;
 	}
 	public function getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id)
 	{
 		assert(is_string($twitter_id));
-		$this->set_site($site_id);
-		$this->site_db()->select('pb_player_id');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select('pb_player_id');
+		$this->mongo_db->where(array(
 			'twitter_id' => $twitter_id,
 			'client_id' => $client_id,
 			'site_id' => $site_id
-			));
-		$result = db_get_row_array($this, 'playbasis_player');
-		return ($result) ? $result['pb_player_id'] : 0;
+		));
+		$result = $this->mongo_db->get('player');
+		return ($result) ? $result[0]['pb_player_id'] : 0;
 	}
 	private function formatFacebookPostId($postId, $pageId)
 	{

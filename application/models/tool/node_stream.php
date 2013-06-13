@@ -83,10 +83,15 @@ class Node_stream extends MY_Model
 	}
 	private function getPlayerInfo($pb_player_id, $site_id)
 	{
-		$this->set_site($site_id);
-		$this->site_db()->select('cl_player_id,first_name,last_name,image');
-		$this->site_db()->where('pb_player_id', $pb_player_id);
-		return db_get_row_array($this, 'playbasis_player');
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'cl_player_id',
+			'first_name',
+			'last_name,image'
+		));
+		$this->mongo_db()->where('pb_player_id', $pb_player_id);
+		$result = $this->mongo_db->get('player');
+		return ($result) ? $result[0] : $result;
 	}
 }
 ?>
