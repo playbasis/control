@@ -65,6 +65,9 @@ class Playbasis:
     
     def rank(self, rankedBy, limit=20):
         return self.call('Player/rank/%s/%s%s' % (rankedBy, limit, self.apiKeyParam))
+
+    def ranks(self, limit=20):
+        return self.call('Player/ranks/%s%s' % (limit, self.apiKeyParam))
     
     def badges(self):
         return self.call('Badge' + self.apiKeyParam)
