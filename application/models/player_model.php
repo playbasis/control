@@ -201,12 +201,13 @@ class Player_model extends MY_Model
 	}
 	public function getBadge($pb_player_id, $site_id)
 	{
-		$this->set_site($site_id);
-        $this->site_db()->select('badge_id,amount');
-        $this->site_db()->where('pb_player_id', $pb_player_id);
-		$badges = db_get_result_array($this, 'playbasis_badge_to_player');
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select('badge_id,amount');
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$badges = $this->mongo_db->get('badge_to_player');
         if(!$badges)
             return array();
+		$this->set_site($site_id);
         foreach($badges as &$badge)
         {
             //badge data

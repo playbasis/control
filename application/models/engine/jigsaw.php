@@ -344,14 +344,15 @@ class jigsaw extends MY_Model
 		$this->site_db()->select('stackable,substract,quantity');
 		$this->site_db()->where(array(
 			'badge_id' => $badgeId
-			));
+		));
 		$badgeInfo = db_get_row_array($this, 'playbasis_badge');
 		//search badge owned by player
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
 			'badge_id' => $badgeId,
 			'pb_player_id' => $pb_player_id
-			));
-		$haveBadge = db_count_all_results($this, 'playbasis_badge_to_player');
+		));
+		$haveBadge = $this->mongo_db->count('badge_to_player');
 		if(!$badgeInfo['quantity'])
 			return false;
 		if($badgeInfo['stackable'])

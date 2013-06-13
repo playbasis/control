@@ -193,33 +193,32 @@ class Client_model extends MY_Model
 			$this->memcached_library->update_delete('playbasis_badge');
 		}
 		//update player badge table
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
 			'pb_player_id' => $pbPlayerId,
 			'badge_id' => $badgeId
 		));
-		$this->site_db()->from('playbasis_badge_to_player');
-		$hasBadge = $this->site_db()->count_all_results();
+		$hasBadge = $this->mongo_db->count('badge_to_player');
 		if($hasBadge)
 		{
-			$this->site_db()->where(array(
+			$this->mongo_db->where(array(
 				'pb_player_id' => $pbPlayerId,
 				'badge_id' => $badgeId
 			));
-			$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
-			$this->site_db()->set('amount', "`amount`+$quantity", FALSE);
-			$this->site_db()->update('playbasis_badge_to_player');
+			$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
+			$this->mongo_db->inc('amount', intval($quantity));
+			$this->mongo_db->update('badge_to_player');
 		}
 		else
 		{
-			$this->site_db()->insert('playbasis_badge_to_player', array(
+			$this->mongo_db->insert('badge_to_player', array(
 				'pb_player_id' => $pbPlayerId,
 				'badge_id' => $badgeId,
-				'amount' => $quantity,
+				'amount' => intval($quantity),
 				'date_added' => date('Y-m-d H:i:s'),
 				'date_modified' => date('Y-m-d H:i:s')
 			));
 		}
-		$this->memcached_library->update_delete('playbasis_badge_to_player');
 	}
 	public function updateExpAndLevel($exp, $pb_player_id, $cl_player_id, $clientData)
 	{
