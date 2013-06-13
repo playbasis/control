@@ -19,25 +19,20 @@ class Player_model extends MY_Model
 			'image' => $data['image'],
 			'email' => $data['email'],
 			'username' => $data['username'],
+			'exp' => 0,
+			'level' => 0,
+			'status' => 1,
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
 		);
-		if(isset($data['first_name']))
-			$inputData['first_name'] = $data['first_name'];
-		if(isset($data['last_name']))
-			$inputData['last_name'] = $data['last_name'];
-		if(isset($data['nickname']))
-			$inputData['nickname'] = $data['nickname'];
-		if(isset($data['facebook_id']))
-			$inputData['facebook_id'] = $data['facebook_id'];
-		if(isset($data['twitter_id']))
-			$inputData['twitter_id'] = $data['twitter_id'];
-		if(isset($data['password']))
-			$inputData['password'] = $data['password'];
-		if(isset($data['gender']))
-			$inputData['gender'] = $data['gender'];
-		if(isset($data['birth_date']))
-			$inputData['birth_date'] = $data['birth_date'];
+		$inputData['first_name'] = (isset($data['first_name'])) ? $data['first_name'] : $data['username'];
+		$inputData['last_name'] = (isset($data['last_name'])) ? $data['last_name'] : '';
+		$inputData['nickname'] = (isset($data['nickname'])) ? $data['nickname'] : '';
+		$inputData['facebook_id'] = (isset($data['facebook_id'])) ? $data['facebook_id'] : '';
+		$inputData['twitter_id'] = (isset($data['twitter_id'])) ? $data['twitter_id'] : '';
+		$inputData['password'] = (isset($data['password'])) ? $data['password'] : '';
+		$inputData['gender'] = (isset($data['gender'])) ? $data['gender'] : 0;
+		$inputData['birth_date'] = (isset($data['birth_date'])) ? $data['birth_date'] : '';
 		$pb_player_id = $this->generate_id_mongodb('player');
 		$inputData['pb_player_id'] = $pb_player_id;
 		$this->set_site_mongodb($data['site_id']);
@@ -53,7 +48,11 @@ class Player_model extends MY_Model
 			$this->mongo_db->select($fields);
 		$this->mongo_db->where('pb_player_id', $id);
 		$result = $this->mongo_db->get('player');
-		return ($result) ? $result[0] : $result;
+		if(!$result)
+			return $result;
+		$result = $result[0];
+		unset($result['_id']);
+		return $result;
 	}
 	public function readPlayers($site_id, $fields, $offset = 0, $limit = 10)
 	{
@@ -72,7 +71,7 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('pb_player_id', $id);
 		$this->mongo_db->set($fieldData);
-		$this->mongo_db()->update('player');
+		$this->mongo_db->update('player');
 		return true;
 	}
 	public function deletePlayer($id, $site_id)

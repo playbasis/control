@@ -259,7 +259,7 @@ class Client_model extends MY_Model
 			$level = -1;
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
 		$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
-		$this->mongo_db->inc('exp', $exp);
+		$this->mongo_db->inc('exp', intval($exp));
 		if($level > 0)
 			$this->mongo_db->set('level', $level);
 		$this->mongo_db->update('player');
@@ -286,15 +286,14 @@ class Client_model extends MY_Model
 			$logData['input'] = 'NO-INPUT';
 		$data = array();
 		static $required = array('pb_player_id', 'input', 'client_id', 'site_id', 'domain_name');
-		static $optional = array('action_id', 'action_name', 'rule_id', 'rule_name', 'jigsaw_id', 'jigsaw_name', 'jigsaw_category', 'site_name', 'ip_address', 'user_agent');
+		static $optional = array('action_id', 'action_name', 'rule_id', 'rule_name', 'jigsaw_id', 'jigsaw_name', 'jigsaw_category', 'site_name');
 		foreach($required as $field)
 		{
 			$data[$field] = $logData[$field];
 		}
 		foreach($optional as $field)
 		{
-			if(isset($logData[$field]))
-				$data[$field] = $logData[$field];
+			$data[$field] = (isset($logData[$field])) ? $logData[$field] : '';
 		}
 		$data['date_added'] = date('Y-m-d H:i:s');
 		$data['date_modified'] = date('Y-m-d H:i:s');

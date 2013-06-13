@@ -12,8 +12,6 @@ class Tracker_model extends MY_Model
 	{
 		$this->set_site_mongodb($input['site_id']);
 		$action_log_id = $this->generate_id_mongodb('action_log');
-		if(isset($input['url']))
-			$this->site_db()->set('url', $input['url']);
 		$this->mongo_db->insert('action_log', array(
 			'action_log_id' => $action_log_id,
 			'pb_player_id' => $input['pb_player_id'],
@@ -21,6 +19,7 @@ class Tracker_model extends MY_Model
 			'site_id' => $input['site_id'],
 			'action_id' => $input['action_id'],
 			'action_name' => $input['action_name'],
+			'url' => (isset($input['url'])) ? $input['url'] : '',
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
 		));
@@ -41,14 +40,10 @@ class Tracker_model extends MY_Model
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
 		);
-		if(isset($input['reward_id']))
-			$data['reward_id'] = $input['reward_id'];
-		if(isset($input['reward_name']))
-			$data['reward_name'] = $input['reward_name'];
-		if(isset($input['item_id']))
-			$data['item_id'] = $input['item_id'];
-		if(isset($input['amount']))
-			$data['value'] = $input['amount'];		
+		$data['reward_id'] = (isset($input['reward_id'])) ? $input['reward_id'] : '';
+		$data['reward_name'] = (isset($input['reward_name'])) ? $input['reward_name'] : '';
+		$data['item_id'] = (isset($input['item_id'])) ? $input['item_id'] : '';
+		$data['value'] = (isset($input['amount'])) ? $input['amount'] : '';
 		$this->mongo_db->insert('event_log', $data);
 	}
 }

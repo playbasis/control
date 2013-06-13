@@ -12,6 +12,7 @@ class Node_stream extends MY_Model
 		parent::__construct();
 		$this->load->library('memcached_library');
 		$this->load->helper('memcache');
+		$this->load->library('mongo_db');
 	}
 	public function publish($data, $domain_name, $site_id)
 	{
@@ -87,9 +88,10 @@ class Node_stream extends MY_Model
 		$this->mongo_db->select(array(
 			'cl_player_id',
 			'first_name',
-			'last_name,image'
+			'last_name',
+			'image'
 		));
-		$this->mongo_db()->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
 		$result = $this->mongo_db->get('player');
 		return ($result) ? $result[0] : $result;
 	}
