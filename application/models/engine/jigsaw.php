@@ -81,7 +81,7 @@ class jigsaw extends MY_Model
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input',
 			'date_added'
-			));
+		));
 		if(!$result)
 		{
 			$exInfo['remaining_counter'] = (int) $config['counter_value'] - 1;
@@ -327,13 +327,13 @@ class jigsaw extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$this->mongo_db->select($fields);
 		$this->mongo_db->where(array(
-			'pb_player_id' => $input['pb_player_id'],
-			'rule_id' => $input['rule_id'],
-			'jigsaw_id' => $input['jigsaw_id']
-			));
+			'pb_player_id' => intval($input['pb_player_id']),
+			'rule_id' => intval($input['rule_id']),
+			'jigsaw_id' => intval($input['jigsaw_id'])
+		));
 		$this->mongo_db->order_by(array(
 			'date_added' => 'desc'
-			));
+		));
 		$result = $this->mongo_db->get('jigsaw_log');
 		return ($result) ? $result[0] : $result;
 	}
@@ -349,8 +349,8 @@ class jigsaw extends MY_Model
 		//search badge owned by player
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where(array(
-			'badge_id' => $badgeId,
-			'pb_player_id' => $pb_player_id
+			'badge_id' => intval($badgeId),
+			'pb_player_id' => intval($pb_player_id)
 		));
 		$haveBadge = $this->mongo_db->count('badge_to_player');
 		if(!$badgeInfo['quantity'])
