@@ -13,8 +13,8 @@ class Tracker_model extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$action_log_id = $this->generate_id_mongodb('action_log');
 		$this->mongo_db->insert('action_log', array(
-			'action_log_id' => intval($action_log_id),
-			'pb_player_id'	=> intval($input['pb_player_id']),
+			'action_log_id' => new MongoInt64("$action_log_id"),
+			'pb_player_id'	=> new MongoInt64("$input['pb_player_id']"),
 			'client_id'		=> intval($input['client_id']),
 			'site_id'		=> intval($input['site_id']),
 			'action_id'		=> intval($input['action_id']),
@@ -29,13 +29,13 @@ class Tracker_model extends MY_Model
 	{
 		$this->set_site_mongodb($input['site_id']);
 		$event_log_id = $this->generate_id_mongodb('event_log');
-		$data = array(
-			'event_log_id'	=> intval($event_log_id),
-			'pb_player_id'	=> intval($input['pb_player_id']),
+		$this->mongo_db->insert('event_log', array(
+			'event_log_id'	=> new MongoInt64("$event_log_id"),
+			'pb_player_id'	=> new MongoInt64("$input['pb_player_id']"),
 			'client_id'		=> intval($input['client_id']),
 			'site_id'		=> intval($input['site_id']),
 			'event_type'	=> $type,
-			'action_log_id' => intval($input['action_log_id']),
+			'action_log_id' => new MongoInt64("$input['action_log_id']"),
 			'message'		=> $message,
 			'reward_id'		=> (isset($input['reward_id']))	  ? intval($input['reward_id']) : 0,
 			'reward_name'	=> (isset($input['reward_name'])) ? $input['reward_name']		: '',
@@ -43,8 +43,7 @@ class Tracker_model extends MY_Model
 			'value'			=> (isset($input['amount']))	  ? intval($input['amount'])	: 0,
 			'date_added'	=> date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
-		);
-		$this->mongo_db->insert('event_log', $data);
+		));
 	}
 }
 ?>

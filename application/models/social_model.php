@@ -35,7 +35,7 @@ class Social_model extends MY_Model
 		$this->mongo_db->insert('twitter_log', array_merge($tweetData, array(
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
-			)));
+		)));
 		$twitter_id = $tweetData['user']['id_str'];
 		$action = 'tweet';
 		$message = $tweetData['text'];
@@ -75,7 +75,7 @@ class Social_model extends MY_Model
 		$this->mongo_db->insert('facebook_log', array_merge($changedData, array(
 			'date_added' => date('Y-m-d H:i:s'),
 			'date_modified' => date('Y-m-d H:i:s')
-			)));
+		)));
 		$pb_player_id = 0;
 		$facebook_id = 0;
 		$client_id = 0;

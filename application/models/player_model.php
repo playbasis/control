@@ -15,7 +15,7 @@ class Player_model extends MY_Model
 		$pb_player_id = $this->generate_id_mongodb('player');
 		$this->set_site_mongodb($data['site_id']);
 		$this->mongo_db->insert('player', array(
-			'pb_player_id'  => intval($pb_player_id),
+			'pb_player_id'  => new MongoInt64("$pb_player_id"),
 			'client_id'		=> intval($data['client_id']),
 			'site_id'		=> intval($data['site_id']),
 			'cl_player_id'	=> $data['player_id'],

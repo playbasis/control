@@ -90,7 +90,7 @@ class Client_model extends MY_Model
 		else
 		{
 			$this->mongo_db->insert('reward_to_player', array(
-				'pb_player_id' => intval($pbPlayerId),
+				'pb_player_id' => new MongoInt64("$pbPlayerId"),
 				'cl_player_id' => $clPlayerId,
 				'client_id' => intval($clientId),
 				'site_id' => intval($siteId),
@@ -208,7 +208,7 @@ class Client_model extends MY_Model
 		else
 		{
 			$this->mongo_db->insert('badge_to_player', array(
-				'pb_player_id' => intval($pbPlayerId),
+				'pb_player_id' => new MongoInt64("$pbPlayerId"),
 				'badge_id' => intval($badgeId),
 				'amount' => intval($quantity),
 				'date_added' => date('Y-m-d H:i:s'),
@@ -281,7 +281,7 @@ class Client_model extends MY_Model
 			$logData['input'] = 'NO-INPUT';
 		$this->set_site_mongodb($logData['site_id']);
 		$this->mongo_db->insert('jigsaw_log', array(
-			'pb_player_id'	  => intval($logData['pb_player_id']),
+			'pb_player_id'	  => new MongoInt64("$logData['pb_player_id']"),
 			'input'			  =>		$logData['input'],
 			'client_id'		  => intval($logData['client_id']),
 			'site_id'		  => intval($logData['site_id']),
