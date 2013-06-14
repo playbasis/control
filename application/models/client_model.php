@@ -281,7 +281,7 @@ class Client_model extends MY_Model
 			$logData['input'] = 'NO-INPUT';
 		$this->set_site_mongodb($logData['site_id']);
 		$this->mongo_db->insert('jigsaw_log', array(
-			'pb_player_id'	  => new MongoInt64("$logData['pb_player_id']"),
+			'pb_player_id'	  => new MongoInt64((string)$logData['pb_player_id']),
 			'input'			  =>		$logData['input'],
 			'client_id'		  => intval($logData['client_id']),
 			'site_id'		  => intval($logData['site_id']),
