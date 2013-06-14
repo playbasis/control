@@ -240,19 +240,18 @@ class Player_model extends MY_Model
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
 	{
 		//get reward id
-		$this->set_site($site_id);
-		$this->site_db()->select('reward_id');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select('reward_id');
+		$this->mongo_db->where(array(
 			'name' => $ranked_by,
 			'site_id' => $site_id,
 			'client_id' => $client_id
 		));
-		$result = db_get_row_array($this, 'playbasis_reward_to_client');
-
+		$result = $this->mongo_db->get('reward_to_client');
 		if(!$result)
 			return array();
+		$result = $result[0];
 		//get points for the reward id
-		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
 			'cl_player_id',
 			'value'
@@ -279,18 +278,20 @@ class Player_model extends MY_Model
 	public function getLeaderboards($limit, $client_id, $site_id)
 	{
 		//get all rewards
-		$this->set_site($site_id);
-		$this->site_db()->select('reward_id,name');
-		$this->site_db()->where(array(
+		$this->set_site_mongo($site_id);
+		$this->mongo_db->select(array(
+			'reward_id',
+			'name'
+		));
+		$this->mongo_db->where(array(
 			'site_id' => $site_id,
 			'client_id' => $client_id,
 			'group' => 'POINT'
 		));
-		$rewards = db_get_result_array($this, 'playbasis_reward_to_client');
+		$rewards = $this->mongo_db->get('reward_to_client');
 		if(!$rewards)
 			return array();
 		$result = array();
-		$this->set_site_mongodb($site_id);
 		foreach($rewards as $reward)
 		{
 			//get points for the reward id

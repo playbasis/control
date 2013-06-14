@@ -101,54 +101,51 @@ class Client_model extends MY_Model
 			));
 		}
 		//upadte client reward limit
-		$this->set_site($siteId);
-		$this->site_db()->select('limit');
-		$this->site_db()->where(array(
+		$this->mongo_db->select('limit');
+		$this->mongo_db->where(array(
 			'reward_id' => $rewardId,
 			'site_id' => $siteId
 		));
-		$result = $this->site_db()->get('playbasis_reward_to_client');
-		assert($result->row_array());
-		$result = $result->row_array();
-		if(!is_null($result['limit']))
-		{
-			$this->site_db()->where(array(
-				'reward_id' => $rewardId,
-				'site_id' => $siteId
-			));
-			$this->site_db()->set('limit', "`limit`-$quantity", FALSE);
-			$this->site_db()->update('playbasis_reward_to_client');
-			$this->memcached_library->update_delete('playbasis_reward_to_client');
-		}
+		$result = $this->mongo_db->get('reward_to_client');
+		assert($result);
+		$result = $result[0];
+		if(is_null($result['limit']))
+			return;
+		$this->mongo_db->where(array(
+			'reward_id' => $rewardId,
+			'site_id' => $siteId
+		));
+		$this->mongo_db->dec('limit', intval($quantity));
+		$this->mongo_db->update('reward_to_client');
 	}
 	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig)
 	{
 		//get reward id
-		$this->set_site($input['site_id']);
-		$this->site_db()->select('reward_id');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($input['site_id']);
+		$this->mongo_db->select('reward_id');
+		$this->mongo_db->where(array(
 			'client_id' => $input['client_id'],
 			'site_id' => $input['site_id'],
 			'name' => strtolower($rewardName)
 		));
-		$this->site_db()->from('playbasis_reward_to_client');
-		$result = $this->site_db()->get();
-		$result = $result->row_array();
+		$result = $this->site_db()->get('reward_to_client');
+		$result = $result[0];
 		$customRewardId = isset($result['reward_id']) ? $result['reward_id'] : false;
 		if(!$customRewardId)
 		{
 			//reward does not exist, add new custom point where id is max(reward_id)+1
-			$this->site_db()->select_max('reward_id');
-			$this->site_db()->where(array(
+			$this->mongo_db->select('reward_id');
+			$this->mongo_db->where(array(
 				'client_id' => $input['client_id'],
 				'site_id' => $input['site_id']
 			));
-			$result = $this->site_db()->get('playbasis_reward_to_client');
-			$result = $result->row_array();
+			$this->mongo_db->order_by(array('reward_id' => 'desc'));
+			$result = $this->mongo_db->get('reward_to_client');
+			$result = $result[0];
 			$customRewardId = $result['reward_id'] + 1;
 			if($customRewardId < CUSTOM_POINT_START_ID)
 				$customRewardId = CUSTOM_POINT_START_ID;
-			$this->site_db()->insert('playbasis_reward_to_client', array(
+			$this->mongo_db->insert('reward_to_client', array(
 				'reward_id' => $customRewardId,
 				'client_id' => $input['client_id'],
 				'site_id' => $input['site_id'],
@@ -157,7 +154,6 @@ class Client_model extends MY_Model
 				'date_added' => date('Y-m-d H:i:s'),
 				'date_modified' => date('Y-m-d H:i:s')
 			));
-			$this->memcached_library->update_delete('playbasis_reward_to_client');
 		}
 		//update player reward
 		$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id']);

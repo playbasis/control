@@ -363,13 +363,14 @@ class jigsaw extends MY_Model
 	}
 	public function checkReward($rewardId, $siteId)
 	{
-		$this->set_site($siteId);
-		$this->site_db()->select('limit');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($siteId);
+		$this->mongo_db->select('limit');
+		$this->mongo_db->where(array(
 			'reward_id' => $rewardId,
 			'site_id' => $siteId
-			));
-		$result = db_get_row_array($this, 'playbasis_reward_to_client');
+		));
+		$result = $this->mongo_db->get('reward_to_client');
+		$result = $result[0];
 		if(is_null($result['limit']))
 			return true;
 		return $result['limit'] > 0;

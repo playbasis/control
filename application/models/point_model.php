@@ -10,28 +10,28 @@ class Point_model extends MY_Model
 	}
 	public function getRewardNameById($data)
 	{
-		$this->set_site($data['site_id']);
-		$this->site_db()->select('name');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->select('name');
+		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 			'reward_id' => $data['reward_id']
 		));
-		$result = db_get_row_array($this, 'playbasis_reward_to_client');
-		return $result['name'];
+		$result = $this->mongo_db->get('reward_to_client');
+		return $result[0]['name'];
 	}
 	public function findPoint($data)
 	{
-		$this->set_site($data['site_id']);
-		$this->site_db()->select('reward_id');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->select('reward_id');
+		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 			'name' => strtolower($data['reward_name'])
 		));
-		$result = db_get_row_array($this, 'playbasis_reward_to_client');
+		$result = $this->mongo_db->get('reward_to_client');
 		if($result)
-			return $result['reward_id'];
+			return $result[0]['reward_id'];
 		return array();
 	}
 }
