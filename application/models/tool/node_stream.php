@@ -91,7 +91,7 @@ class Node_stream extends MY_Model
 			'last_name',
 			'image'
 		));
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$result = $this->mongo_db->get('player');
 		return ($result) ? $result[0] : $result;
 	}

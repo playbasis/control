@@ -366,8 +366,8 @@ class jigsaw extends MY_Model
 		$this->set_site_mongodb($siteId);
 		$this->mongo_db->select('limit');
 		$this->mongo_db->where(array(
-			'reward_id' => $rewardId,
-			'site_id' => $siteId
+			'reward_id' => intval($rewardId),
+			'site_id' => intval($siteId)
 		));
 		$result = $this->mongo_db->get('reward_to_client');
 		$result = $result[0];

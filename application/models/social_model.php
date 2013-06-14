@@ -218,8 +218,8 @@ class Social_model extends MY_Model
 		$this->mongo_db->select('pb_player_id');
 		$this->mongo_db->where(array(
 			'facebook_id' => $facebook_id,
-			'client_id' => $client_id,
-			'site_id' => $site_id
+			'client_id' => intval($client_id),
+			'site_id' => intval($site_id)
 		));
 		$result = $this->mongo_db->get('player');
 		return ($result) ? $result[0]['pb_player_id'] : 0;
@@ -231,8 +231,8 @@ class Social_model extends MY_Model
 		$this->mongo_db->select('pb_player_id');
 		$this->mongo_db->where(array(
 			'twitter_id' => $twitter_id,
-			'client_id' => $client_id,
-			'site_id' => $site_id
+			'client_id' => intval($client_id),
+			'site_id' => intval($site_id)
 		));
 		$result = $this->mongo_db->get('player');
 		return ($result) ? $result[0]['pb_player_id'] : 0;

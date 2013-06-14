@@ -70,19 +70,19 @@ class Client_model extends MY_Model
 		assert(isset($pbPlayerId));
 		$this->set_site_mongodb($siteId);
 		$this->mongo_db->where(array(
-			'pb_player_id' => $pbPlayerId,
-			'reward_id' => $rewardId
+			'pb_player_id' => intval($pbPlayerId),
+			'reward_id' => intval($rewardId)
 		));
 		$hasReward = $this->mongo_db->count('reward_to_player');
 		if($hasReward)
 		{
 			$this->mongo_db->where(array(
-				'pb_player_id' => $pbPlayerId,
-				'reward_id' => $rewardId
+				'pb_player_id' => intval($pbPlayerId),
+				'reward_id' => intval($rewardId)
 			));
 			$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
 			if($overrideOldValue)
-				$this->mongo_db->set('value', $quantity);
+				$this->mongo_db->set('value', intval($quantity));
 			else
 				$this->mongo_db->inc('value', intval($quantity));
 			$this->mongo_db->update('reward_to_player');
@@ -90,11 +90,11 @@ class Client_model extends MY_Model
 		else
 		{
 			$this->mongo_db->insert('reward_to_player', array(
-				'pb_player_id' => $pbPlayerId,
+				'pb_player_id' => intval($pbPlayerId),
 				'cl_player_id' => $clPlayerId,
-				'client_id' => $clientId,
-				'site_id' => $siteId,
-				'reward_id' => $rewardId,
+				'client_id' => intval($clientId),
+				'site_id' => intval($siteId),
+				'reward_id' => intval($rewardId),
 				'value' => intval($quantity),
 				'date_added' => date('Y-m-d H:i:s'),
 				'date_modified' => date('Y-m-d H:i:s')
@@ -103,8 +103,8 @@ class Client_model extends MY_Model
 		//upadte client reward limit
 		$this->mongo_db->select('limit');
 		$this->mongo_db->where(array(
-			'reward_id' => $rewardId,
-			'site_id' => $siteId
+			'reward_id' => intval($rewardId),
+			'site_id' => intval($siteId)
 		));
 		$result = $this->mongo_db->get('reward_to_client');
 		assert($result);
@@ -112,8 +112,8 @@ class Client_model extends MY_Model
 		if(is_null($result['limit']))
 			return;
 		$this->mongo_db->where(array(
-			'reward_id' => $rewardId,
-			'site_id' => $siteId
+			'reward_id' => intval($rewardId),
+			'site_id' => intval($siteId)
 		));
 		$this->mongo_db->dec('limit', intval($quantity));
 		$this->mongo_db->update('reward_to_client');
@@ -124,8 +124,8 @@ class Client_model extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$this->mongo_db->select('reward_id');
 		$this->mongo_db->where(array(
-			'client_id' => $input['client_id'],
-			'site_id' => $input['site_id'],
+			'client_id' => intval($input['client_id']),
+			'site_id' => intval($input['site_id']),
 			'name' => strtolower($rewardName)
 		));
 		$result = $this->site_db()->get('reward_to_client');
@@ -136,8 +136,8 @@ class Client_model extends MY_Model
 			//reward does not exist, add new custom point where id is max(reward_id)+1
 			$this->mongo_db->select('reward_id');
 			$this->mongo_db->where(array(
-				'client_id' => $input['client_id'],
-				'site_id' => $input['site_id']
+				'client_id' => intval($input['client_id']),
+				'site_id' => intval($input['site_id'])
 			));
 			$this->mongo_db->order_by(array('reward_id' => 'desc'));
 			$result = $this->mongo_db->get('reward_to_client');
@@ -146,9 +146,9 @@ class Client_model extends MY_Model
 			if($customRewardId < CUSTOM_POINT_START_ID)
 				$customRewardId = CUSTOM_POINT_START_ID;
 			$this->mongo_db->insert('reward_to_client', array(
-				'reward_id' => $customRewardId,
-				'client_id' => $input['client_id'],
-				'site_id' => $input['site_id'],
+				'reward_id' => intval($customRewardId),
+				'client_id' => intval($input['client_id']),
+				'site_id' => intval($input['site_id']),
 				'group' => 'POINT',
 				'name' => strtolower($rewardName),
 				'date_added' => date('Y-m-d H:i:s'),
@@ -191,15 +191,15 @@ class Client_model extends MY_Model
 		//update player badge table
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where(array(
-			'pb_player_id' => $pbPlayerId,
-			'badge_id' => $badgeId
+			'pb_player_id' => intval($pbPlayerId),
+			'badge_id' => intval($badgeId)
 		));
 		$hasBadge = $this->mongo_db->count('badge_to_player');
 		if($hasBadge)
 		{
 			$this->mongo_db->where(array(
-				'pb_player_id' => $pbPlayerId,
-				'badge_id' => $badgeId
+				'pb_player_id' => intval($pbPlayerId),
+				'badge_id' => intval($badgeId)
 			));
 			$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
 			$this->mongo_db->inc('amount', intval($quantity));
@@ -208,8 +208,8 @@ class Client_model extends MY_Model
 		else
 		{
 			$this->mongo_db->insert('badge_to_player', array(
-				'pb_player_id' => $pbPlayerId,
-				'badge_id' => $badgeId,
+				'pb_player_id' => intval($pbPlayerId),
+				'badge_id' => intval($badgeId),
 				'amount' => intval($quantity),
 				'date_added' => date('Y-m-d H:i:s'),
 				'date_modified' => date('Y-m-d H:i:s')
@@ -230,7 +230,7 @@ class Client_model extends MY_Model
 			'exp',
 			'level'
 		));
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$result = $this->mongo_db->get('player');
 		$playerExp = $result[0]['exp'];
 		$playerLevel = $result[0]['level'];
@@ -252,7 +252,7 @@ class Client_model extends MY_Model
 			$level = $level['level'];
 		else
 			$level = -1;
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
 		$this->mongo_db->inc('exp', intval($exp));
 		if($level > 0)
@@ -279,21 +279,24 @@ class Client_model extends MY_Model
 			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
 		else
 			$logData['input'] = 'NO-INPUT';
-		$data = array();
-		static $required = array('pb_player_id', 'input', 'client_id', 'site_id', 'domain_name');
-		static $optional = array('action_id', 'action_name', 'rule_id', 'rule_name', 'jigsaw_id', 'jigsaw_name', 'jigsaw_category', 'site_name');
-		foreach($required as $field)
-		{
-			$data[$field] = $logData[$field];
-		}
-		foreach($optional as $field)
-		{
-			$data[$field] = (isset($logData[$field])) ? $logData[$field] : '';
-		}
-		$data['date_added'] = date('Y-m-d H:i:s');
-		$data['date_modified'] = date('Y-m-d H:i:s');
 		$this->set_site_mongodb($logData['site_id']);
-		$this->mongo_db->insert('jigsaw_log', $data);
+		$this->mongo_db->insert('jigsaw_log', array(
+			'pb_player_id'	  => intval($logData['pb_player_id']),
+			'input'			  =>		$logData['input'],
+			'client_id'		  => intval($logData['client_id']),
+			'site_id'		  => intval($logData['site_id']),
+			'domain_name'	  =>		$logData['domain_name'],
+			'action_id'		  => (isset($logData['action_id']))		? intval($logData['action_id'])		 : 0,
+			'action_name'	  => (isset($logData['action_name']))	?		 $logData['action_name']	 : '',
+			'rule_id'		  => (isset($logData['rule_id']))		? intval($logData['rule_id'])		 : 0,
+			'rule_name'		  => (isset($logData['rule_name']))		?		 $logData['rule_name']		 : '',
+			'jigsaw_id'		  => (isset($logData['jigsaw_id']))		? intval($logData['jigsaw_id'])		 : 0,
+			'jigsaw_name'	  => (isset($logData['jigsaw_name']))	?		 $logData['jigsaw_name']	 : '',
+			'jigsaw_category' => (isset($logData['jigsaw_category'])) ?		 $logData['jigsaw_category'] : '',
+			'site_name'		  => (isset($logData['site_name']))		?		 $logData['site_name']		 : '',
+			'date_added'	  => date('Y-m-d H:i:s'),
+			'date_modified'	  => date('Y-m-d H:i:s')
+		));
 	}
 	public function getBadgeById($badgeId, $site_id)
 	{

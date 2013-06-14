@@ -12,31 +12,30 @@ class Player_model extends MY_Model
 	}
 	public function createPlayer($data)
 	{
-		$inputData = array(
-			'client_id' => $data['client_id'],
-			'site_id' => $data['site_id'],
-			'cl_player_id' => $data['player_id'],
-			'image' => $data['image'],
-			'email' => $data['email'],
-			'username' => $data['username'],
-			'exp' => 0,
-			'level' => 0,
-			'status' => 1,
-			'date_added' => date('Y-m-d H:i:s'),
-			'date_modified' => date('Y-m-d H:i:s')
-		);
-		$inputData['first_name'] = (isset($data['first_name'])) ? $data['first_name'] : $data['username'];
-		$inputData['last_name'] = (isset($data['last_name'])) ? $data['last_name'] : '';
-		$inputData['nickname'] = (isset($data['nickname'])) ? $data['nickname'] : '';
-		$inputData['facebook_id'] = (isset($data['facebook_id'])) ? $data['facebook_id'] : '';
-		$inputData['twitter_id'] = (isset($data['twitter_id'])) ? $data['twitter_id'] : '';
-		$inputData['password'] = (isset($data['password'])) ? $data['password'] : '';
-		$inputData['gender'] = (isset($data['gender'])) ? $data['gender'] : 0;
-		$inputData['birth_date'] = (isset($data['birth_date'])) ? $data['birth_date'] : '';
 		$pb_player_id = $this->generate_id_mongodb('player');
-		$inputData['pb_player_id'] = $pb_player_id;
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->insert('player', $inputData);
+		$this->mongo_db->insert('player', array(
+			'pb_player_id'  => intval($pb_player_id),
+			'client_id'		=> intval($data['client_id']),
+			'site_id'		=> intval($data['site_id']),
+			'cl_player_id'	=> $data['player_id'],
+			'image'			=> $data['image'],
+			'email'			=> $data['email'],
+			'username'		=> $data['username'],
+			'exp'			=> 0,
+			'level'			=> 0,
+			'status'		=> 1,			
+			'first_name'	=> (isset($data['first_name']))	 ? $data['first_name']	: $data['username'],
+			'last_name'		=> (isset($data['last_name']))	 ? $data['last_name']	: '',
+			'nickname'		=> (isset($data['nickname']))	 ? $data['nickname']	: '',
+			'facebook_id'	=> (isset($data['facebook_id'])) ? $data['facebook_id'] : '',
+			'twitter_id'	=> (isset($data['twitter_id']))	 ? $data['twitter_id']	: '',
+			'password'		=> (isset($data['password']))	 ? $data['password']	: '',
+			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
+			'birth_date'	=> (isset($data['birth_date']))	 ? $data['birth_date']	: '',
+			'date_added'	=> date('Y-m-d H:i:s'),
+			'date_modified' => date('Y-m-d H:i:s')
+		));
 		return $pb_player_id;
 	}
 	public function readPlayer($id, $site_id, $fields)
@@ -46,7 +45,7 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		if($fields)
 			$this->mongo_db->select($fields);
-		$this->mongo_db->where('pb_player_id', $id);
+		$this->mongo_db->where('pb_player_id', intval($id));
 		$result = $this->mongo_db->get('player');
 		if(!$result)
 			return $result;
@@ -69,7 +68,7 @@ class Player_model extends MY_Model
 			return false;
 		$fieldData['date_modified'] = date('Y-m-d H:i:s');
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->where('pb_player_id', $id);
+		$this->mongo_db->where('pb_player_id', intval($id));
 		$this->mongo_db->set($fieldData);
 		$this->mongo_db->update('player');
 		return true;
@@ -79,7 +78,7 @@ class Player_model extends MY_Model
 		if(!$id)
 			return false;
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->where('pb_player_id', $id);
+		$this->mongo_db->where('pb_player_id', intval($id));
 		$this->mongo_db->delete('player');
 		return true;
 	}
@@ -90,8 +89,8 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($clientData['site_id']);
 		$this->mongo_db->select('pb_player_id');
 		$this->mongo_db->where(array(
-			'client_id' => $clientData['client_id'],
-			'site_id' => $clientData['site_id'],
+			'client_id' => intval($clientData['client_id']),
+			'site_id' => intval($clientData['site_id']),
 			'cl_player_id' => $clientData['cl_player_id']
 		));
 		$id = $this->mongo_db->get('player');
@@ -103,7 +102,7 @@ class Player_model extends MY_Model
 			return -1;
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select('cl_player_id');
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$id = $this->mongo_db->get('player');
 		return ($id) ? $id[0]['cl_player_id'] : -1;
 	}
@@ -114,7 +113,7 @@ class Player_model extends MY_Model
 			'reward_id',
 			'value'
 		));
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$result = $this->mongo_db->get('reward_to_player');
 		$count = count($result);
 		for($i=0; $i < $count; ++$i)
@@ -129,8 +128,8 @@ class Player_model extends MY_Model
 			'value'
 		));
 		$this->mongo_db->where(array(
-			'pb_player_id' => $pb_player_id,
-			'reward_id' => $reward_id
+			'pb_player_id' => intval($pb_player_id),
+			'reward_id' => intval($reward_id)
 		));
 		$result = $this->mongo_db->get('reward_to_player');
 		$count = count($result);
@@ -146,7 +145,7 @@ class Player_model extends MY_Model
 			'action_name',
 			'date_added'
 		));
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
 		$result = $this->mongo_db->get('action_log');
 		if(!$result)
@@ -166,8 +165,8 @@ class Player_model extends MY_Model
 			'date_added'
 		));
 		$this->mongo_db->where(array(
-            'pb_player_id' => $pb_player_id,
-            'action_id' => $action_id
+			'pb_player_id' => intval($pb_player_id),
+            'action_id' => intval($action_id)
         ));
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
 		$result = $this->mongo_db->get('action_log');
@@ -182,8 +181,8 @@ class Player_model extends MY_Model
 	public function getActionCount($pb_player_id, $action_id, $site_id)
 	{
 		$fields = array(
-			'pb_player_id' => $pb_player_id,
-			'action_id' => $action_id
+			'pb_player_id' => intval($pb_player_id),
+			'action_id' => intval($action_id)
 		);
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where($fields);
@@ -202,8 +201,11 @@ class Player_model extends MY_Model
 	public function getBadge($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select('badge_id,amount');
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->select(array(
+			'badge_id',
+			'amount'
+		));
+		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$badges = $this->mongo_db->get('badge_to_player');
         if(!$badges)
             return array();
@@ -228,7 +230,7 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select('date_added');
 		$this->mongo_db->where(array(
-			'pb_player_id' => $pb_player_id,
+			'pb_player_id' => intval($pb_player_id),
 			'event_type' => $eventType
 		));
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
@@ -244,8 +246,8 @@ class Player_model extends MY_Model
 		$this->mongo_db->select('reward_id');
 		$this->mongo_db->where(array(
 			'name' => $ranked_by,
-			'site_id' => $site_id,
-			'client_id' => $client_id
+			'site_id' => intval($site_id),
+			'client_id' => intval($client_id)
 		));
 		$result = $this->mongo_db->get('reward_to_client');
 		if(!$result)
@@ -257,9 +259,9 @@ class Player_model extends MY_Model
 			'value'
 		));
 		$this->mongo_db->where(array(
-			'reward_id' => $result['reward_id'],
-			'client_id' => $client_id,
-			'site_id' => $site_id
+			'reward_id' => intval($result['reward_id']),
+			'client_id' => intval($client_id),
+			'site_id' => intval($site_id)
 		));
 		$this->mongo_db->order_by(array('value' => 'desc'));
 		$this->mongo_db->limit($limit);
@@ -284,8 +286,8 @@ class Player_model extends MY_Model
 			'name'
 		));
 		$this->mongo_db->where(array(
-			'site_id' => $site_id,
-			'client_id' => $client_id,
+			'site_id' => intval($site_id),
+			'client_id' => intval($client_id),
 			'group' => 'POINT'
 		));
 		$rewards = $this->mongo_db->get('reward_to_client');
@@ -302,9 +304,9 @@ class Player_model extends MY_Model
 				'value'
 			));
 			$this->mongo_db->where(array(
-				'reward_id' => $reward_id,
-				'client_id' => $client_id,
-				'site_id' => $site_id
+				'reward_id' => intval($reward_id),
+				'client_id' => intval($client_id),
+				'site_id' => intval($site_id)
 			));
 			$this->mongo_db->order_by(array('value' => 'desc'));
 			$this->mongo_db->limit($limit);
