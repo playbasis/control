@@ -18,7 +18,7 @@ class Point_model extends MY_Model
 			'reward_id' => intval($data['reward_id'])
 		));
 		$result = $this->mongo_db->get('reward_to_client');
-		return $result[0]['name'];
+		return ($result) ? $result[0]['name'] : $result;
 	}
 	public function findPoint($data)
 	{
