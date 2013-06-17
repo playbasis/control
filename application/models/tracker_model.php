@@ -20,8 +20,8 @@ class Tracker_model extends MY_Model
 			'action_id'		=> intval($input['action_id']),
 			'action_name'	=> $input['action_name'],
 			'url'			=> (isset($input['url'])) ? $input['url'] : '',
-			'date_added'	=> date('Y-m-d H:i:s'),
-			'date_modified' => date('Y-m-d H:i:s')
+			'date_added'	=> new MongoDate(time()),
+			'date_modified' => new MongoDate(time())
 		));
 		return $action_log_id;
 	}
@@ -41,8 +41,8 @@ class Tracker_model extends MY_Model
 			'reward_name'	=> (isset($input['reward_name'])) ? $input['reward_name']		: '',
 			'item_id'		=> (isset($input['item_id']))	  ? intval($input['item_id'])	: 0,
 			'value'			=> (isset($input['amount']))	  ? intval($input['amount'])	: 0,
-			'date_added'	=> date('Y-m-d H:i:s'),
-			'date_modified' => date('Y-m-d H:i:s')
+			'date_added'	=> new MongoDate(time()),
+			'date_modified' => new MongoDate(time())
 		));
 	}
 }

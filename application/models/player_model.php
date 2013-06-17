@@ -33,8 +33,8 @@ class Player_model extends MY_Model
 			'password'		=> (isset($data['password']))	 ? $data['password']	: '',
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))	 ? $data['birth_date']	: '',
-			'date_added'	=> date('Y-m-d H:i:s'),
-			'date_modified' => date('Y-m-d H:i:s')
+			'date_added'	=> new MongoDate(time()),
+			'date_modified' => new MongoDate(time())
 		));
 		return $pb_player_id;
 	}
@@ -51,22 +51,15 @@ class Player_model extends MY_Model
 			return $result;
 		$result = $result[0];
 		unset($result['_id']);
+		$result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
+		unset($result['date_added']);
 		return $result;
-	}
-	public function readPlayers($site_id, $fields, $offset = 0, $limit = 10)
-	{
-		$this->set_site_mongodb($site_id);
-		if($fields)
-			$this->mongo_db->select($fields);
-		$this->mongo_db->limit($limit);
-		$this->mongo_db->offset($offset);
-		return $this->mongo_db->get('player');
 	}
 	public function updatePlayer($id, $site_id, $fieldData)
 	{
 		if(!$id)
 			return false;
-		$fieldData['date_modified'] = date('Y-m-d H:i:s');
+		$fieldData['date_modified'] = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('pb_player_id', intval($id));
 		$this->mongo_db->set($fieldData);
@@ -151,7 +144,7 @@ class Player_model extends MY_Model
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		$result['time'] = $result['date_added'];
+		$result['time'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 		unset($result['date_added']);
 		unset($result['_id']);
 		return $result;
@@ -173,7 +166,7 @@ class Player_model extends MY_Model
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		$result['time'] = $result['date_added'];
+		$result['time'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 		unset($result['date_added']);
 		unset($result['_id']);
 		return $result;
@@ -236,7 +229,7 @@ class Player_model extends MY_Model
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
 		$result = $this->mongo_db->get('event_log');
 		if($result)
-			return $result[0]['date_added'];
+			return date('Y-m-d H:i:s', $result[0]['date_added']->sec);
 		return '0000-00-00 00:00:00';
 	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)

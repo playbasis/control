@@ -33,8 +33,8 @@ class Social_model extends MY_Model
 	{
 		$this->set_site_mongodb(0);
 		$this->mongo_db->insert('twitter_log', array_merge($tweetData, array(
-			'date_added' => date('Y-m-d H:i:s'),
-			'date_modified' => date('Y-m-d H:i:s')
+			'date_added' => new MongoDate(time()),
+			'date_modified' => new MongoDate(time())
 		)));
 		$twitter_id = $tweetData['user']['id_str'];
 		$action = 'tweet';
@@ -73,8 +73,8 @@ class Social_model extends MY_Model
 	{
 		$this->set_site_mongodb(0);
 		$this->mongo_db->insert('facebook_log', array_merge($changedData, array(
-			'date_added' => date('Y-m-d H:i:s'),
-			'date_modified' => date('Y-m-d H:i:s')
+			'date_added' => new MongoDate(time()),
+			'date_modified' => new MongoDate(time())
 		)));
 		$pb_player_id = 0;
 		$facebook_id = 0;

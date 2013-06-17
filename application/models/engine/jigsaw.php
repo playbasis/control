@@ -88,7 +88,7 @@ class jigsaw extends MY_Model
 			$exInfo['remaining_time'] = (int) $config['interval'];
 			return false;
 		}
-		$timeNow = date('Y-m-d H:i:s');
+		$timeNow = time();
 		$log = unserialize($result['input']);
 		if($config['interval'] == 0) //if config time = 0 reduce counter and return false
 		{
@@ -109,8 +109,8 @@ class jigsaw extends MY_Model
 			$exInfo['remaining_time'] = (int) $config['interval'];
 			return false;
 		}
-		$lastTime = $result['date_added'];
-		$timeDiff = ($log['interval_unit']) == 'second' ? (int) (strtotime($timeNow) - strtotime($lastTime)) : (int) (date_diff(new DateTime(), new DateTime($lastTime))->d);
+		$lastTime = $result['date_added']->sec;
+		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime) : (int) (date_diff(new DateTime(), new DateTime(date('Y-m-d H:i:s', $lastTime)))->d);
 		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
 		$remainingTime = $log['remaining_time'];
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
@@ -150,16 +150,16 @@ class jigsaw extends MY_Model
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input',
 			'date_added'
-			));
+		));
 		if(!$result)
 		{
 			$exInfo['remaining_cooldown'] = (int) $config['cooldown'];
 			return true;
 		}
-		$timeNow = date('Y-m-d H:i:s');
+		$timeNow = time();
 		$log = unserialize($result['input']);
-		$lastTime = $result['date_added'];
-		$timeDiff = (int) (strtotime($timeNow) - strtotime($lastTime));
+		$lastTime = $result['date_added']->sec;
+		$timeDiff = (int) ($timeNow - $lastTime);
 		if($timeDiff > $log['remaining_cooldown'])
 		{
 			$exInfo['remaining_cooldown'] = (int) $config['cooldown'];
@@ -216,11 +216,11 @@ class jigsaw extends MY_Model
 		assert(isset($config['time_of_day']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'date_added'
-			));
+		));
 		if(!$result)
 			return true;
-		$lastTime = $result['date_added'];
-		$datediff = date_diff(new DateTime(), new DateTime($lastTime));
+		$lastTime = $result['date_added']->sec;
+		$datediff = date_diff(new DateTime(), new DateTime(date('Y-m-d H:i:s', $lastTime)));
 		//if more than 2 day
 		if($datediff->d > 1)
 			return true;
@@ -243,7 +243,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['day_of_week']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
-			));
+		));
 		if(!$result)
 		{
 			$exInfo['next_trigger'] = strtotime("next " . $config['day_of_week'] . " " . $config['time_of_day']);
@@ -268,7 +268,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['date_of_month']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
-			));
+		));
 		if(!$result)
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
@@ -295,7 +295,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['num_of_days']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
-			));
+		));
 		if(!$result)
 		{
 			$currentDate = new DateTime();

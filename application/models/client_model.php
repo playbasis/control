@@ -96,8 +96,8 @@ class Client_model extends MY_Model
 				'site_id' => intval($siteId),
 				'reward_id' => intval($rewardId),
 				'value' => intval($quantity),
-				'date_added' => date('Y-m-d H:i:s'),
-				'date_modified' => date('Y-m-d H:i:s')
+				'date_added' => new MongoDate(time()),
+				'date_modified' => new MongoDate(time())
 			));
 		}
 		//upadte client reward limit
@@ -151,8 +151,8 @@ class Client_model extends MY_Model
 				'site_id' => intval($input['site_id']),
 				'group' => 'POINT',
 				'name' => strtolower($rewardName),
-				'date_added' => date('Y-m-d H:i:s'),
-				'date_modified' => date('Y-m-d H:i:s')
+				'date_added' => new MongoDate(time()),
+				'date_modified' => new MongoDate(time())
 			));
 		}
 		//update player reward
@@ -211,8 +211,8 @@ class Client_model extends MY_Model
 				'pb_player_id' => new MongoInt64("$pbPlayerId"),
 				'badge_id' => intval($badgeId),
 				'amount' => intval($quantity),
-				'date_added' => date('Y-m-d H:i:s'),
-				'date_modified' => date('Y-m-d H:i:s')
+				'date_added' => new MongoDate(time()),
+				'date_modified' => new MongoDate(time())
 			));
 		}
 	}
@@ -294,8 +294,8 @@ class Client_model extends MY_Model
 			'jigsaw_name'	  => (isset($logData['jigsaw_name']))	?		 $logData['jigsaw_name']	 : '',
 			'jigsaw_category' => (isset($logData['jigsaw_category'])) ?		 $logData['jigsaw_category'] : '',
 			'site_name'		  => (isset($logData['site_name']))		?		 $logData['site_name']		 : '',
-			'date_added'	  => date('Y-m-d H:i:s'),
-			'date_modified'	  => date('Y-m-d H:i:s')
+			'date_added'	  => new MongoDate(time()),
+			'date_modified'	  => new MongoDate(time())
 		));
 	}
 	public function getBadgeById($badgeId, $site_id)
