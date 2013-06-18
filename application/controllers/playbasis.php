@@ -127,25 +127,25 @@ class Playbasis extends CI_Controller
             'image',
             'exp',
             'level',
-            'date_added AS registered',
+            'date_added',
             'birth_date'
         ));
 
         echo "readPlayer model return : ".var_dump($player)."<br><br>";
 
-        $players = $this->player_model->readPlayers(1, array(
-            'username',
-            'first_name',
-            'last_name',
-            'gender',
-            'image',
-            'exp',
-            'level',
-            'date_added AS registered',
-            'birth_date'
-        ), 0, 10);
+        //$players = $this->player_model->readPlayers(1, array(
+        //    'username',
+        //    'first_name',
+        //    'last_name',
+        //    'gender',
+        //    'image',
+        //    'exp',
+        //    'level',
+        //    'date_added',
+        //    'birth_date'
+        //), 0, 10);
 
-        echo "readPlayers model return : ".var_dump($players)."<br><br>";
+        //echo "readPlayers model return : ".var_dump($players)."<br><br>";
 
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
             'cl_player_id' => 1

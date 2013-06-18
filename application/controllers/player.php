@@ -46,7 +46,7 @@ class Player extends REST_Controller
 			'image',
 			'exp',
 			'level',
-			'date_added AS registered',
+			'date_added',
 			'birth_date'
 		));
 		//get last login/logout
@@ -85,7 +85,7 @@ class Player extends REST_Controller
             'email',
 			'exp',
 			'level',
-			'date_added AS registered',
+			'date_added',
 			'birth_date'
 		));
 		//get last login/logout

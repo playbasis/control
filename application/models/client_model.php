@@ -28,15 +28,15 @@ class Client_model extends MY_Model
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
 		assert(isset($clientData['action_name']));
-		$this->set_site($clientData['site_id']);
-		$this->site_db()->select('action_id');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($clientData['site_id']);
+		$this->mongo_db->select(array('action_id'));
+		$this->mongo_db->where(array(
 			'client_id' => $clientData['client_id'],
 			'site_id' => $clientData['site_id'],
 			'name' => $clientData['action_name']
 		));
-		$id = db_get_row_array($this, 'playbasis_action_to_client');
-		return ($id) ? $id['action_id'] : 0;
+		$id = $this->mongo_db->get('action_to_client');
+		return ($id && $id[0]) ? $id[0]['action_id'] : 0;
 	}
 	public function getRuleSetByActionId($clientData)
 	{
@@ -315,6 +315,7 @@ class Client_model extends MY_Model
 		$badgeImage = $this->mongo_db->get('badge');
 		assert($badgeImage);
 		$badgeImage = $badgeImage[0];
+		unset($badgeImage['_id']);
 		$badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
 		$this->site_db()->select('name,description');
 		$this->site_db()->where('badge_id', $badgeId);
