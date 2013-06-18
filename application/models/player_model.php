@@ -218,6 +218,7 @@ class Player_model extends MY_Model
             $this->site_db()->where('badge_id', $badge['badge_id']);
 			$result = db_get_row_array($this, 'playbasis_badge');
             $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
+			unset($badge['_id']);
         }
         return $badges;
 	}
@@ -276,7 +277,7 @@ class Player_model extends MY_Model
 	public function getLeaderboards($limit, $client_id, $site_id)
 	{
 		//get all rewards
-		$this->set_site_mongo($site_id);
+		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
 			'reward_id',
 			'name'
