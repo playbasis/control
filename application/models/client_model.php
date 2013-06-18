@@ -89,6 +89,7 @@ class Client_model extends MY_Model
 		}
 		else
 		{
+			$mongoDate = new MongoDate(time());
 			$this->mongo_db->insert('reward_to_player', array(
 				'pb_player_id' => new MongoInt64("$pbPlayerId"),
 				'cl_player_id' => $clPlayerId,
@@ -96,8 +97,8 @@ class Client_model extends MY_Model
 				'site_id' => intval($siteId),
 				'reward_id' => intval($rewardId),
 				'value' => intval($quantity),
-				'date_added' => new MongoDate(time()),
-				'date_modified' => new MongoDate(time())
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate
 			));
 		}
 		//upadte client reward limit
@@ -145,14 +146,15 @@ class Client_model extends MY_Model
 			$customRewardId = $result['reward_id'] + 1;
 			if($customRewardId < CUSTOM_POINT_START_ID)
 				$customRewardId = CUSTOM_POINT_START_ID;
+			$mongoDate = new MongoDate(time());
 			$this->mongo_db->insert('reward_to_client', array(
 				'reward_id' => intval($customRewardId),
 				'client_id' => intval($input['client_id']),
 				'site_id' => intval($input['site_id']),
 				'group' => 'POINT',
 				'name' => strtolower($rewardName),
-				'date_added' => new MongoDate(time()),
-				'date_modified' => new MongoDate(time())
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate
 			));
 		}
 		//update player reward
@@ -207,12 +209,13 @@ class Client_model extends MY_Model
 		}
 		else
 		{
+			$mongoDate = new MongoDate(time());
 			$this->mongo_db->insert('badge_to_player', array(
 				'pb_player_id' => new MongoInt64("$pbPlayerId"),
 				'badge_id' => intval($badgeId),
 				'amount' => intval($quantity),
-				'date_added' => new MongoDate(time()),
-				'date_modified' => new MongoDate(time())
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate
 			));
 		}
 	}
@@ -280,6 +283,7 @@ class Client_model extends MY_Model
 		else
 			$logData['input'] = 'NO-INPUT';
 		$this->set_site_mongodb($logData['site_id']);
+		$mongoDate = new MongoDate(time());
 		$this->mongo_db->insert('jigsaw_log', array(
 			'pb_player_id'	  => new MongoInt64((string)$logData['pb_player_id']),
 			'input'			  =>		$logData['input'],
@@ -294,8 +298,8 @@ class Client_model extends MY_Model
 			'jigsaw_name'	  => (isset($logData['jigsaw_name']))	?		 $logData['jigsaw_name']	 : '',
 			'jigsaw_category' => (isset($logData['jigsaw_category'])) ?		 $logData['jigsaw_category'] : '',
 			'site_name'		  => (isset($logData['site_name']))		?		 $logData['site_name']		 : '',
-			'date_added'	  => new MongoDate(time()),
-			'date_modified'	  => new MongoDate(time())
+			'date_added'	  => $mongoDate,
+			'date_modified'	  => $mongoDate
 		));
 	}
 	public function getBadgeById($badgeId, $site_id)

@@ -14,6 +14,7 @@ class Player_model extends MY_Model
 	{
 		$pb_player_id = $this->generate_id_mongodb('player');
 		$this->set_site_mongodb($data['site_id']);
+		$mongoDate = new MongoDate(time());
 		$this->mongo_db->insert('player', array(
 			'pb_player_id'  => new MongoInt64("$pb_player_id"),
 			'client_id'		=> intval($data['client_id']),
@@ -33,8 +34,8 @@ class Player_model extends MY_Model
 			'password'		=> (isset($data['password']))	 ? $data['password']	: '',
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))	 ? $data['birth_date']	: '',
-			'date_added'	=> new MongoDate(time()),
-			'date_modified' => new MongoDate(time())
+			'date_added'	=> $mongoDate,
+			'date_modified' => $mongoDate
 		));
 		return $pb_player_id;
 	}

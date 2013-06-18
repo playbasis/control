@@ -32,9 +32,10 @@ class Social_model extends MY_Model
 	public function processTwitterData($tweetData)
 	{
 		$this->set_site_mongodb(0);
+		$mongoDate = new MongoDate(time());
 		$this->mongo_db->insert('twitter_log', array_merge($tweetData, array(
-			'date_added' => new MongoDate(time()),
-			'date_modified' => new MongoDate(time())
+			'date_added' => $mongoDate,
+			'date_modified' => $mongoDate
 		)));
 		$twitter_id = $tweetData['user']['id_str'];
 		$action = 'tweet';
@@ -72,9 +73,10 @@ class Social_model extends MY_Model
 	public function processFacebookData($changedData)
 	{
 		$this->set_site_mongodb(0);
+		$mongoDate = new MongoDate(time());
 		$this->mongo_db->insert('facebook_log', array_merge($changedData, array(
-			'date_added' => new MongoDate(time()),
-			'date_modified' => new MongoDate(time())
+			'date_added' => $mongoDate,
+			'date_modified' => $mongoDate
 		)));
 		$pb_player_id = 0;
 		$facebook_id = 0;
