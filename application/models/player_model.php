@@ -33,7 +33,7 @@ class Player_model extends MY_Model
 			'twitter_id'	=> (isset($data['twitter_id']))	 ? $data['twitter_id']	: '',
 			'password'		=> (isset($data['password']))	 ? $data['password']	: '',
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
-			'birth_date'	=> (isset($data['birth_date']))	 ? $data['birth_date']	: '',
+			'birth_date'	=> (isset($data['birth_date']))	 ? new MongoDate(strtotime($data['birth_date'])) : '',
 			'date_added'	=> $mongoDate,
 			'date_modified' => $mongoDate
 		));
