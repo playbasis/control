@@ -317,9 +317,15 @@ class Client_model extends MY_Model
 		$badgeImage = $badgeImage[0];
 		unset($badgeImage['_id']);
 		$badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
-		$this->site_db()->select('name,description');
-		$this->site_db()->where('badge_id', $badgeId);
-		$badgeDesc = db_get_row_array($this, 'playbasis_badge_description');
+		$this->mongo_db->select(array(
+			'name',
+			'description'
+		));
+		$this->mongo_db->where('badge_id', intval($badgeId));
+		$badgeDesc = $this->mongo_db->get('badge_description');
+		assert($badgeDesc);
+		$badgeDesc = $badgeDesc[0];
+		unset($badgeDesc['_id']);
 		$badge = array_merge($badgeImage, $badgeDesc);
 		return $badge;
 	}

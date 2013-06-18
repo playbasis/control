@@ -205,14 +205,17 @@ class Player_model extends MY_Model
 		$badges = $this->mongo_db->get('badge_to_player');
         if(!$badges)
             return array();
-		$this->set_site($site_id);
         foreach($badges as &$badge)
         {
             //badge data
-            $this->site_db()->select('name,description');
-            $this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge_description');
-            $badge = array_merge($badge, $result);
+			$this->mongo_db->select(array(
+				'name',
+				'description'
+			));
+			$this->mongo_db->where('badge_id', intval($badge['badge_id']));
+			$result = $this->mongo_db->get('badge_description');
+			assert($result);
+			$badge = array_merge($badge, $result[0]);
             //badge image
 			$this->mongo_db->select(array('image'));
 			$this->mongo_db->where('badge_id', intval($badge['badge_id']));

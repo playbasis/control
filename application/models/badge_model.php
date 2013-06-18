@@ -22,13 +22,19 @@ class Badge_model extends MY_Model
 		if(!$badgeSet)
 			return array();
 		//get data on badges
-		$this->set_site($data['site_id']);
 		foreach($badgeSet as &$badge)
 		{
 			//get badge data
-			$this->site_db()->select('name,description,hint');
-			$this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge_description');
+			$this->mongo_db->select(array(
+				'name',
+				'description',
+				'hint'
+			));
+			$this->mongo_db->where('badge_id', intval($badge['badge_id']));
+			$result = $this->mongo_db->get('badge_description');
+			assert($result);
+			$result = $result[0];
+			unset($result['_id']);
 			$badge = array_merge($badge, $result);
 			//get badge image
 			$this->mongo_db->select(array('image'));
@@ -62,10 +68,16 @@ class Badge_model extends MY_Model
 			'badge_id' => $data['badge_id']
 		);
 		//get badge data
-		$this->set_site($data['site_id']);
-		$this->site_db()->select('name,description,hint');
-		$this->site_db()->where('badge_id', $badge['badge_id']);
-		$result = db_get_row_array($this, 'playbasis_badge_description');
+		$this->mongo_db->select(array(
+			'name',
+			'description',
+			'hint'
+		));
+		$this->mongo_db->where('badge_id', intval($badge['badge_id']));
+		$result = $this->mongo_db->get('badge_description');
+		assert($result);
+		$result = $result[0];
+		unset($result['_id']);
 		$badge = array_merge($badge, $result);
 		//get badge image
 		$this->mongo_db->select(array('image'));
