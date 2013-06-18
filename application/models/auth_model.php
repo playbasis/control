@@ -85,6 +85,7 @@ class Auth_model extends MY_Model
 		if($result && $result[0])
 		{
 			$info = $result[0];
+			unset($info['_id']);
 			$this->set_site_mongodb($info['site_id']);
 			$this->mongo_db->select(array(
 				'domain_name',
@@ -92,7 +93,9 @@ class Auth_model extends MY_Model
 			));
 			$this->mongo_db->where($info);
 			$result = $this->mongo_db->get('client_site');
-			return array_merge($info, ($result) ? $result[0] : array());
+			$result = array_merge($info, ($result) ? $result[0] : array());
+			unset($result['_id']);
+			return $result;
 		}
 		return null;
 	}

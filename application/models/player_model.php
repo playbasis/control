@@ -33,7 +33,7 @@ class Player_model extends MY_Model
 			'twitter_id'	=> (isset($data['twitter_id']))	 ? $data['twitter_id']	: '',
 			'password'		=> (isset($data['password']))	 ? $data['password']	: '',
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
-			'birth_date'	=> (isset($data['birth_date']))	 ? new MongoDate(strtotime($data['birth_date'])) : '',
+			'birth_date'	=> new MongoDate(strtotime(isset($data['birth_date']) ? $data['birth_date'] : '1901-12-31')),
 			'date_added'	=> $mongoDate,
 			'date_modified' => $mongoDate
 		));
@@ -54,6 +54,8 @@ class Player_model extends MY_Model
 		unset($result['_id']);
 		$result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 		unset($result['date_added']);
+		if(isset($result['birth_date']) && $result['birth_date'])
+			$result['birth_date'] = date('Y-m-d', $result['birth_date']->sec);
 		return $result;
 	}
 	public function updatePlayer($id, $site_id, $fieldData)
