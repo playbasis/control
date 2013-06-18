@@ -80,7 +80,7 @@ class Client_model extends MY_Model
 				'pb_player_id' => intval($pbPlayerId),
 				'reward_id' => intval($rewardId)
 			));
-			$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
+			$this->mongo_db->set('date_modified', new MongoDate(time()));
 			if($overrideOldValue)
 				$this->mongo_db->set('value', intval($quantity));
 			else
@@ -183,7 +183,7 @@ class Client_model extends MY_Model
 				$quantity = $badgeInfo['quantity'];
 			}
 			$this->site_db()->set('quantity', $remainingQuantity);
-			$this->site_db()->set('date_modified', date('Y-m-d H:i:s'));
+			$this->site_db()->set('date_modified', new MongoDate(time()));
 			$this->site_db()->where('badge_id', $badgeId);
 			$this->site_db()->update('playbasis_badge');
 			$this->memcached_library->update_delete('playbasis_badge');
@@ -201,7 +201,7 @@ class Client_model extends MY_Model
 				'pb_player_id' => intval($pbPlayerId),
 				'badge_id' => intval($badgeId)
 			));
-			$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
+			$this->mongo_db->set('date_modified', new MongoDate(time()));
 			$this->mongo_db->inc('amount', intval($quantity));
 			$this->mongo_db->update('badge_to_player');
 		}
@@ -253,7 +253,7 @@ class Client_model extends MY_Model
 		else
 			$level = -1;
 		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
-		$this->mongo_db->set('date_modified', date('Y-m-d H:i:s'));
+		$this->mongo_db->set('date_modified', new MongoDate(time()));
 		$this->mongo_db->inc('exp', intval($exp));
 		if($level > 0)
 			$this->mongo_db->set('level', $level);
