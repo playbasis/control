@@ -340,14 +340,19 @@ class jigsaw extends MY_Model
 	public function checkBadge($badgeId, $pb_player_id, $site_id)
 	{
 		//get badge properties
-		$this->set_site($site_id);
-		$this->site_db()->select('stackable,substract,quantity');
-		$this->site_db()->where(array(
-			'badge_id' => $badgeId
-		));
-		$badgeInfo = db_get_row_array($this, 'playbasis_badge');
-		//search badge owned by player
 		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'stackable',
+			'substract',
+			'quantity'));
+		$this->mongo_db->where(array(
+			'badge_id' => intval($badgeId)
+		));
+		$badgeInfo = $this->mongo_db->get('badge');
+		if(!$badgeInfo || !$badgeInfo[0])
+			return false;
+		$badgeInfo = $badgeInfo[0];
+		//search badge owned by player
 		$this->mongo_db->where(array(
 			'badge_id' => intval($badgeId),
 			'pb_player_id' => intval($pb_player_id)
@@ -364,7 +369,7 @@ class jigsaw extends MY_Model
 	public function checkReward($rewardId, $siteId)
 	{
 		$this->set_site_mongodb($siteId);
-		$this->mongo_db->select('limit');
+		$this->mongo_db->select(array('limit'));
 		$this->mongo_db->where(array(
 			'reward_id' => intval($rewardId),
 			'site_id' => intval($siteId)

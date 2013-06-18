@@ -83,7 +83,7 @@ class Player_model extends MY_Model
 		if(!$clientData)
 			return -1;
 		$this->set_site_mongodb($clientData['site_id']);
-		$this->mongo_db->select('pb_player_id');
+		$this->mongo_db->select(array('pb_player_id'));
 		$this->mongo_db->where(array(
 			'client_id' => intval($clientData['client_id']),
 			'site_id' => intval($clientData['site_id']),
@@ -97,7 +97,7 @@ class Player_model extends MY_Model
 		if(!$pb_player_id)
 			return -1;
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select('cl_player_id');
+		$this->mongo_db->select(array('cl_player_id'));
 		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
 		$id = $this->mongo_db->get('player');
 		return ($id) ? $id[0]['cl_player_id'] : -1;
@@ -214,9 +214,12 @@ class Player_model extends MY_Model
 			$result = db_get_row_array($this, 'playbasis_badge_description');
             $badge = array_merge($badge, $result);
             //badge image
-            $this->site_db()->select('image');
-            $this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge');
+			$this->mongo_db->select(array('image'));
+			$this->mongo_db->where('badge_id', intval($badge['badge_id']));
+			$result = $this->mongo_db->get('badge');
+			assert($result);
+			$result = $result[0];
+			unset($result['_id']);
             $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
 			unset($badge['_id']);
         }
@@ -225,7 +228,7 @@ class Player_model extends MY_Model
 	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select('date_added');
+		$this->mongo_db->select(array('date_added'));
 		$this->mongo_db->where(array(
 			'pb_player_id' => intval($pb_player_id),
 			'event_type' => $eventType
@@ -240,7 +243,7 @@ class Player_model extends MY_Model
 	{
 		//get reward id
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select('reward_id');
+		$this->mongo_db->select(array('reward_id'));
 		$this->mongo_db->where(array(
 			'name' => $ranked_by,
 			'site_id' => intval($site_id),

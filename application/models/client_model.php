@@ -102,7 +102,7 @@ class Client_model extends MY_Model
 			));
 		}
 		//upadte client reward limit
-		$this->mongo_db->select('limit');
+		$this->mongo_db->select(array('limit'));
 		$this->mongo_db->where(array(
 			'reward_id' => intval($rewardId),
 			'site_id' => intval($siteId)
@@ -123,7 +123,7 @@ class Client_model extends MY_Model
 	{
 		//get reward id
 		$this->set_site_mongodb($input['site_id']);
-		$this->mongo_db->select('reward_id');
+		$this->mongo_db->select(array('reward_id'));
 		$this->mongo_db->where(array(
 			'client_id' => intval($input['client_id']),
 			'site_id' => intval($input['site_id']),
@@ -135,7 +135,7 @@ class Client_model extends MY_Model
 		if(!$customRewardId)
 		{
 			//reward does not exist, add new custom point where id is max(reward_id)+1
-			$this->mongo_db->select('reward_id');
+			$this->mongo_db->select(array('reward_id'));
 			$this->mongo_db->where(array(
 				'client_id' => intval($input['client_id']),
 				'site_id' => intval($input['site_id'])
@@ -169,13 +169,17 @@ class Client_model extends MY_Model
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
 		//update badge master table
-		$this->set_site($site_id);
-		$this->site_db()->select('substract,quantity');
-		$this->site_db()->where(array(
-			'badge_id' => $badgeId
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'substract',
+			'quantity'
 		));
-		$result = $this->site_db()->get('playbasis_badge');
-		$badgeInfo = $result->row_array();
+		$this->mongo_db->where(array(
+			'badge_id' => intval($badgeId)
+		));
+		$result = $this->mongo_db->get('badge');
+		assert($result);
+		$badgeInfo = $result[0];
 		if($badgeInfo['substract'])
 		{
 			$remainingQuantity = $badgeInfo['quantity'] - $quantity;
@@ -184,14 +188,12 @@ class Client_model extends MY_Model
 				$remainingQuantity = 0;
 				$quantity = $badgeInfo['quantity'];
 			}
-			$this->site_db()->set('quantity', $remainingQuantity);
-			$this->site_db()->set('date_modified', new MongoDate(time()));
-			$this->site_db()->where('badge_id', $badgeId);
-			$this->site_db()->update('playbasis_badge');
-			$this->memcached_library->update_delete('playbasis_badge');
+			$this->mongo_db->set('quantity', $remainingQuantity);
+			$this->mongo_db->set('date_modified', new MongoDate(time()));
+			$this->mongo_db->where('badge_id', $badgeId);
+			$this->mongo_db->update('badge');
 		}
 		//update player badge table
-		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where(array(
 			'pb_player_id' => intval($pbPlayerId),
 			'badge_id' => intval($badgeId)
@@ -259,7 +261,7 @@ class Client_model extends MY_Model
 		$this->mongo_db->set('date_modified', new MongoDate(time()));
 		$this->mongo_db->inc('exp', intval($exp));
 		if($level > 0)
-			$this->mongo_db->set('level', $level);
+			$this->mongo_db->set('level', intval($level));
 		$this->mongo_db->update('player');
 		//get reward id to update the reward to player table
 		$this->site_db()->select('reward_id');
@@ -304,10 +306,15 @@ class Client_model extends MY_Model
 	}
 	public function getBadgeById($badgeId, $site_id)
 	{
-		$this->set_site($site_id);
-		$this->site_db()->select('badge_id,image');
-		$this->site_db()->where('badge_id', $badgeId);
-		$badgeImage = db_get_row_array($this, 'playbasis_badge');
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'badge_id',
+			'image'
+		));
+		$this->mongo_db->where('badge_id', intval($badgeId));
+		$badgeImage = $this->mongo_db->get('badge');
+		assert($badgeImage);
+		$badgeImage = $badgeImage[0];
 		$badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
 		$this->site_db()->select('name,description');
 		$this->site_db()->where('badge_id', $badgeId);

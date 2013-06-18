@@ -217,7 +217,7 @@ class Social_model extends MY_Model
 		if(!is_string($facebook_id))
 			$facebook_id = $this->bigIntToString($facebook_id);
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select('pb_player_id');
+		$this->mongo_db->select(array('pb_player_id'));
 		$this->mongo_db->where(array(
 			'facebook_id' => $facebook_id,
 			'client_id' => intval($client_id),
@@ -230,7 +230,7 @@ class Social_model extends MY_Model
 	{
 		assert(is_string($twitter_id));
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select('pb_player_id');
+		$this->mongo_db->select(array('pb_player_id'));
 		$this->mongo_db->where(array(
 			'twitter_id' => $twitter_id,
 			'client_id' => intval($client_id),

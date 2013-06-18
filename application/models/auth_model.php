@@ -31,7 +31,7 @@ class Auth_model extends MY_Model
 	public function generateToken($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select('token');
+		$this->mongo_db->select(array('token'));
 		$this->mongo_db->where(array(
 			'site_id' => $data['site_id'],
 			'client_id' => $data['client_id'],

@@ -12,7 +12,7 @@ class Point_model extends MY_Model
 	public function getRewardNameById($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select('name');
+		$this->mongo_db->select(array('name'));
 		$this->mongo_db->where(array(
 			'client_id' => intval($data['client_id']),
 			'site_id' => intval($data['site_id']),
@@ -24,7 +24,7 @@ class Point_model extends MY_Model
 	public function findPoint($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select('reward_id');
+		$this->mongo_db->select(array('reward_id'));
 		$this->mongo_db->where(array(
 			'client_id' => intval($data['client_id']),
 			'site_id' => intval($data['site_id']),

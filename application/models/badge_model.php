@@ -12,6 +12,7 @@ class Badge_model extends MY_Model
 	public function getAllBadges($data)
 	{
 		//get badge ids
+		$this->set_site_mongodb($data['site_id']);
 		$this->set_site($data['site_id']);
 		$this->site_db()->select('badge_id');
 		$this->site_db()->where(array(
@@ -30,9 +31,12 @@ class Badge_model extends MY_Model
 			$result = db_get_row_array($this, 'playbasis_badge_description');
 			$badge = array_merge($badge, $result);
 			//get badge image
-			$this->site_db()->select('image');
-			$this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge');
+			$this->mongo_db->select(array('image'));
+			$this->mongo_db->where('badge_id', intval($badge['badge_id']));
+			$result = $this->mongo_db->get('badge');
+			assert($result);
+			$result = $result[0];
+			unset($result['_id']);
 			$result['image'] = $this->config->item('IMG_PATH') . $result['image'];
 			$badge = array_merge($badge, $result);
 		}
@@ -41,6 +45,7 @@ class Badge_model extends MY_Model
 	public function getBadge($data)
 	{
 		//get badge id
+		$this->set_site_mongodb($data['site_id']);
 		$this->set_site($data['site_id']);
 		$this->site_db()->select('badge_id');
 		$this->site_db()->where(array(
@@ -60,9 +65,12 @@ class Badge_model extends MY_Model
 		$result = db_get_row_array($this, 'playbasis_badge_description');
 		$badge = array_merge($badge, $result);
 		//get badge image
-		$this->site_db()->select('image');
-		$this->site_db()->where('badge_id', $badge['badge_id']);
-		$result = db_get_row_array($this, 'playbasis_badge');
+		$this->mongo_db->select(array('image'));
+		$this->mongo_db->where('badge_id', intval($badge['badge_id']));
+		$result = $this->mongo_db->get('badge');
+		assert($result);
+		$result = $result[0];
+		unset($result['_id']);
 		$result['image'] = $this->config->item('IMG_PATH') . $result['image'];
 		$badge = array_merge($badge, $result);
 		return $badge;
