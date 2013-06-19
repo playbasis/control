@@ -59,7 +59,7 @@ class Client_model extends MY_Model
 	{
 		assert($jigsawId);
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select('class_path');
+		$this->mongo_db->select(array('class_path'));
 		$this->mongo_db->where(array(
 			'jigsaw_id' => intval($jigsawId)
 		));
@@ -269,9 +269,11 @@ class Client_model extends MY_Model
 			$this->mongo_db->set('level', intval($level));
 		$this->mongo_db->update('player');
 		//get reward id to update the reward to player table
-		$this->site_db()->select('reward_id');
-		$this->site_db()->where('name', 'exp');
-		$result = db_get_row_array($this, 'playbasis_reward');
+		$this->mongo_db->select(array('reward_id'));
+		$this->mongo_db->where('name', 'exp');
+		$result = $this->mongo_db->get('reward');
+		assert($result);
+		$result = $result[0];
 		$this->updatePlayerPointReward($result['reward_id'], $newExp, $pb_player_id, $cl_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
 		return $level;
 	}
