@@ -16,10 +16,10 @@ class Client_model extends MY_Model
 		assert(is_array($clientData));
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
-		$this->set_site($clientData['site_id']);
-		$this->site_db()->select('jigsaw_set');
-		$this->site_db()->where($clientData);
-		return db_get_result_array($this, 'playbasis_rule');
+		$this->set_site_mongodb($clientData['site_id']);
+		$this->mongo_db->select(array('jigsaw_set'));
+		$this->mongo_db->where($clientData);
+		return $this->mongo_db->get('rule');
 	}
 	public function getActionId($clientData)
 	{
@@ -45,11 +45,15 @@ class Client_model extends MY_Model
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
 		assert(isset($clientData['action_id']));
-		$clientData['active_status'] = '1';
-		$this->set_site($clientData['site_id']);
-		$this->site_db()->select('rule_id,name,jigsaw_set');
-		$this->site_db()->where($clientData);
-		return db_get_result_array($this, 'playbasis_rule');
+		$clientData['active_status'] = true;
+		$this->set_site_mongodb($clientData['site_id']);
+		$this->mongo_db->select(array(
+			'rule_id',
+			'name',
+			'jigsaw_set'
+		));
+		$this->mongo_db->where($clientData);
+		return $this->mongo_db->get('rule');
 	}
 	public function getJigsawProcessor($jigsawId, $site_id)
 	{
