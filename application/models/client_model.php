@@ -58,13 +58,14 @@ class Client_model extends MY_Model
 	public function getJigsawProcessor($jigsawId, $site_id)
 	{
 		assert($jigsawId);
-		$this->set_site($site_id);
-		$this->site_db()->where(array(
-			'jigsaw_id' => $jigsawId
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select('class_path');
+		$this->mongo_db->where(array(
+			'jigsaw_id' => intval($jigsawId)
 		));
-		$this->site_db()->select('class_path');
-		$jigsawProcessor = db_get_row_array($this, 'playbasis_game_jigsaw_to_client');
-		return $jigsawProcessor['class_path'];
+		$jigsawProcessor = $this->mongo_db->get('game_jigsaw_to_client');
+		assert($jigsawProcessor);
+		return $jigsawProcessor[0]['class_path'];
 	}
 	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clPlayerId, $clientId, $siteId, $overrideOldValue = FALSE)
 	{

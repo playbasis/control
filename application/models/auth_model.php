@@ -102,8 +102,8 @@ class Auth_model extends MY_Model
 	public function createToken($client_id, $site_id)
 	{
 		$info = array(
-			'client_id' => $client_id,
-			'site_id' => $site_id
+			'client_id' => intval($client_id),
+			'site_id' => intval($site_id)
 		);
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
