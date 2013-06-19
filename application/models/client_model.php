@@ -246,18 +246,21 @@ class Client_model extends MY_Model
 		$playerLevel = $result[0]['level'];
 		$newExp = $exp + $playerExp;
 		//check if client have their own exp table setup
-		$this->set_site($clientData['site_id']);
-		$this->site_db()->select_max('level');
-		$this->site_db()->where($clientData);
-		$this->site_db()->where("exp <=", $newExp);
-		$level = db_get_row_array($this, 'playbasis_client_exp_table');
-		if(!$level['level'])
+		$this->mongo_db->select(array('level'));
+		$this->mongo_db->where($clientData);
+		$this->mongo_db->where_lte('exp', intval($newExp));
+		$this->mongo_db->order_by(array('level' => 'desc'));
+		$level = $this->mongo_db->get('client_exp_table');
+		if(!$level || !$level[0] || !$level[0]['level'])
 		{
 			//get level from default exp table instead
-			$this->site_db()->select_max('level');
-			$this->site_db()->where("exp <=", $newExp);
-			$level = db_get_row_array($this, 'playbasis_exp_table');
+			$this->mongo_db->select(array('level'));
+			$this->mongo_db->where_lte('exp', intval($newExp));
+			$this->mongo_db->order_by(array('level' => 'desc'));
+			$level = $this->mongo_db->get('exp_table');
+			assert($level);
 		}
+		$level = $level[0];
 		if($level['level'] && $level['level'] > $playerLevel)
 			$level = $level['level'];
 		else

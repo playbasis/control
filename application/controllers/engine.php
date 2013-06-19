@@ -321,8 +321,8 @@ class Engine extends REST_Controller
 							{
 								//check if player level up
 								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], array(
-									'client_id' => $validToken['client_id'],
-									'site_id' => $validToken['site_id']
+									'client_id' => intval($validToken['client_id']),
+									'site_id' => intval($validToken['site_id'])
 								));
 								if($lv > 0)
 								{
