@@ -202,7 +202,11 @@ class Social_model extends MY_Model
 		));
 		$this->mongo_db->where('facebook_page_id', $facebook_page_id);
 		$result = $this->mongo_db->get('facebook_page_to_client');
-		return ($result) ? $result[0] : $result;
+		if(!$result)
+			return $result;
+		$result = $result[0];
+		unset($result['_id']);
+		return $result;
 	}
 	public function getClientFromHashTag($hashtag)
 	{
@@ -214,7 +218,11 @@ class Social_model extends MY_Model
 		));
 		$this->mongo_db->where('hashtag', $hashtag);
 		$result = $this->mongo_db->get('hashtag_to_client');
-		return ($result) ? $result[0] : $result;
+		if(!$result)
+			return $result;
+		$result = $result[0];
+		unset($result['_id']);
+		return $result;
 	}
 	public function getClientFromHost($host)
 	{
@@ -226,7 +234,11 @@ class Social_model extends MY_Model
 		));
 		$this->mongo_db->where('host', $host);
 		$result = $this->mongo_db->get('hosts_to_client');
-		return ($result) ? $result[0] : $result;
+		if(!$result)
+			return $result;
+		$result = $result[0];
+		unset($result['_id']);
+		return $result;
 	}
 	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id)
 	{
