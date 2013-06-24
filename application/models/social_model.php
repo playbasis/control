@@ -12,13 +12,17 @@ class Social_model extends MY_Model
 	}
 	private function getFacebookCredentials($client_id, $site_id)
 	{
-		$this->set_site($site_id);
-		$this->site_db()->select('app_id,app_secret');
-		$this->site_db()->where(array(
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'app_id',
+			'app_secret'
+		));
+		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id
-			));
-		return db_get_row_array($this, 'playbasis_facebook_page_to_client');
+		));
+		$result = $this->mongo_db->get('facebook_page_to_client');
+		return ($result) ? $result[0] : $result;
 	}
 	private function getFacebookObject($client_id, $site_id)
 	{
@@ -68,7 +72,7 @@ class Social_model extends MY_Model
 			'action' => $action,
 			'message' => $message,
 			'sites' => $sites
-			);
+		);
 	}
 	public function processFacebookData($changedData)
 	{
@@ -191,26 +195,38 @@ class Social_model extends MY_Model
 	{
 		if(!is_string($facebook_page_id))
 			$facebook_page_id = $this->bigIntToString($facebook_page_id);
-		$this->set_site(0);
-		$this->site_db()->select('client_id,site_id');
-		$this->site_db()->where('facebook_page_id', $facebook_page_id);
-		return db_get_row_array($this, 'playbasis_facebook_page_to_client');
+		$this->set_site_mongodb(0);
+		$this->mongo_db->select(array(
+			'client_id',
+			'site_id'
+		));
+		$this->mongo_db->where('facebook_page_id', $facebook_page_id);
+		$result = $this->mongo_db->get('facebook_page_to_client');
+		return ($result) ? $result[0] : $result;
 	}
 	public function getClientFromHashTag($hashtag)
 	{
 		assert(is_string($hashtag));
-		$this->set_site(0);
-		$this->site_db()->select('client_id,site_id');
-		$this->site_db()->where('hashtag', $hashtag);
-		return db_get_row_array($this, 'playbasis_hashtag_to_client');
+		$this->set_site_mongodb(0);
+		$this->mongo_db->select(array(
+			'client_id',
+			'site_id'
+		));
+		$this->mongo_db->where('hashtag', $hashtag);
+		$result = $this->mongo_db->get('hashtag_to_client');
+		return ($result) ? $result[0] : $result;
 	}
 	public function getClientFromHost($host)
 	{
 		assert(is_string($host));
-		$this->set_site(0);
-		$this->site_db()->select('client_id,site_id');
-		$this->site_db()->where('host', $host);
-		return db_get_row_array($this, 'playbasis_hosts_to_client');
+		$this->set_site_mongodb(0);
+		$this->mongo_db->select(array(
+			'client_id',
+			'site_id'
+		));
+		$this->mongo_db->where('host', $host);
+		$result = $this->mongo_db->get('hosts_to_client');
+		return ($result) ? $result[0] : $result;
 	}
 	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id)
 	{
