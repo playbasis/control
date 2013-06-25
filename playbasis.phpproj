@@ -158,10 +158,6 @@
     {
     "ProjRelPath" = "T"
     }
-    "application\\controllers\\dummy.php"
-    {
-    "ProjRelPath" = "T"
-    }
     "application\\controllers\\engine.php"
     {
     "ProjRelPath" = "T"
@@ -351,10 +347,6 @@
     "ProjRelPath" = "T"
     }
     "application\\models\\client_model.php"
-    {
-    "ProjRelPath" = "T"
-    }
-    "application\\models\\dummy_model.php"
     {
     "ProjRelPath" = "T"
     }
