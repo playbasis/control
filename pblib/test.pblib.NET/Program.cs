@@ -14,16 +14,16 @@ namespace test.pblib.NET
 			dynamic obj = Playbasis.JsonToDynamic(str);
 			Console.WriteLine(obj);
 		}
+
 		static void Main(string[] args)
 		{
 			var pb = new Playbasis();
-			if(!pb.auth("abc", "abcde"))
-				Debug.Assert(false);
-			string id = "1";
+			if(!pb.auth("API_KEY", "API_SECRET"))
+				Debug.Assert(false); //authentication failed
 
-			/*
+			string id = "1";
 			print(pb.player(id));
-			//print(pb.register("usr1", "test1", "test@email.com", "http://imageurl.jpg", "facebook_id=123456", "first_name=testuser"));
+			print(pb.register("usr1", "test1", "test@email.com", "http://imageurl.jpg", "facebook_id=123456", "first_name=testuser"));
 			print(pb.login(id));
 			print(pb.logout(id));
 			print(pb.points(id));
@@ -39,13 +39,9 @@ namespace test.pblib.NET
 			print(pb.badgeCollections());
 			print(pb.badgeCollection("1"));
 			print(pb.actionConfig());
-			*/
+			print(pb.rule(id, "like"));
+			Console.ReadKey();
 
-			for (int i = 0; i < 20; ++i)
-			{
-				print(pb.rule(id, "like"));
-				Console.ReadKey();
-			}
 			return;
 		}
 	}
