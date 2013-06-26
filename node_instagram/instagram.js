@@ -98,11 +98,6 @@ app.get('/unsubscribe/:subid', auth, function(req, res){
 	res.send(200);
 });
 
-app.get('/unsubscribe', auth, function(req, res){
-	instagram.subscriptions.unsubscribe_all();
-	res.send(200);
-});
-
 app.get('/subscription', function(req, res){
 	instagram.subscriptions.list();
 	res.send(200);
