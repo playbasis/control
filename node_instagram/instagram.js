@@ -110,9 +110,9 @@ app.get('/subscription', function(req, res){
 });
 
 app.get('/feed/process', function(req, res){
-	console.log(req.params);
-	if(req.params['hub.mode'] == 'subscribe'){
-		res.send(req.params['hub.challenge']);
+	console.log(req.query);
+	if(req.query['hub.mode'] == 'subscribe'){
+		res.send(req.query['hub.challenge']);
 	}
 	res.send(200);
 });
