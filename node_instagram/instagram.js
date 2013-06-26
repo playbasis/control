@@ -92,21 +92,21 @@ app.get('/subscribe/tag/:tag', auth, function(req, res){
 	var result = instagram.subscriptions.subscribe({ object : 'tag', object_id : req.params.tag });
 	console.log('subscribe to:');
 	console.log(result);
-	res.send(result);
+	res.send(JSON.stringify(result));
 });
 
 app.get('/unsubscribe/:subid', auth, function(req, res){
 	var result = instagram.subscriptions.unsubscribe({ id: req.params.subid });
 	console.log('unsubscribe from:');
 	console.log(result);
-	res.send(result);
+	res.send(JSON.stringify(result));
 });
 
 app.get('/subscription', function(req, res){
 	var result = instagram.subscriptions.list();
 	console.log('current subscriptions:');
 	console.log(result);
-	res.send(result);
+	res.send(JSON.stringify(result));
 });
 
 app.get('/feed/process', function(req, res){
@@ -122,7 +122,10 @@ app.post('/feed/process', function(req, res){
 	console.log(req.body);
 	//save data to mongodb
 	if(!dbReady)
+	{
+		res.send(200);
 		return;
+	}
 	var entry = new IGFeed({
 		'user': 'test_user',
 		'name': 'test_name',
@@ -136,6 +139,7 @@ app.post('/feed/process', function(req, res){
 	entry.save(function(err){
 		if(err){
 			console.log(err);
+			res.send(200);
 			return;
 		}
 		console.log('post saved!');
@@ -143,4 +147,5 @@ app.post('/feed/process', function(req, res){
 		//tell clients to update data
 		io.sockets.emit('newigpost', {'time': dateObj.getTime()});
 	});
+	res.send(200);
 });
