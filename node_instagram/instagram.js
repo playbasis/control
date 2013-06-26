@@ -90,19 +90,29 @@ var auth = express.basicAuth(function(user, pass){
 });
 
 app.get('/subscribe/tag/:tag', auth, function(req, res){
-	res.send(instagram.subscriptions.subscribe({ object : 'tag', object_id : req.params.tag }));
+	var result = instagram.subscriptions.subscribe({ object : 'tag', object_id : req.params.tag });
+	console.log('subscribe to:');
+	console.log(result);
+	res.send(result);
 });
 
 app.get('/unsubscribe/:subid', auth, function(req, res){
-	res.send(instagram.subscriptions.unsubscribe({ id: req.params.subid }));
+	var result = instagram.subscriptions.unsubscribe({ id: req.params.subid });
+	console.log('unsubscribe from:');
+	console.log(result);
+	res.send(result);
 });
 
 app.get('/subscription', function(req, res){
-	res.send(instagram.subscriptions.list());
+	var result = instagram.subscriptions.list();
+	console.log('current subscriptions:');
+	console.log(result);
+	res.send(result);
 });
 
 app.post('/feed/process', function(reg, res){
 	console.log('---------- ig post ----------');
+	console.log(res.body);
 	//save data to mongodb
 	if(!dbReady)
 		return;
