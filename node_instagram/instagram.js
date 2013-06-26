@@ -89,30 +89,25 @@ var auth = express.basicAuth(function(user, pass){
 });
 
 app.get('/subscribe/tag/:tag', auth, function(req, res){
-	var result = instagram.subscriptions.subscribe({ object : 'tag', object_id : req.params.tag });
-	console.log('subscribe to:');
-	console.log(result);
-	res.send(JSON.stringify(result));
+	instagram.subscriptions.subscribe({ object : 'tag', object_id : req.params.tag });
+	res.send(200);
 });
 
 app.get('/unsubscribe/:subid', auth, function(req, res){
-	var result = instagram.subscriptions.unsubscribe({ id: req.params.subid });
-	console.log('unsubscribe from:');
-	console.log(result);
-	res.send(JSON.stringify(result));
+	instagram.subscriptions.unsubscribe({ id: req.params.subid });
+	res.send(200);
 });
 
 app.get('/subscription', function(req, res){
-	var result = instagram.subscriptions.list();
-	console.log('current subscriptions:');
-	console.log(result);
-	res.send(JSON.stringify(result));
+	instagram.subscriptions.list();
+	res.send(200);
 });
 
 app.get('/feed/process', function(req, res){
 	console.log(req.query);
 	if(req.query['hub.mode'] == 'subscribe'){
 		res.send(req.query['hub.challenge']);
+		return;
 	}
 	res.send(200);
 });
