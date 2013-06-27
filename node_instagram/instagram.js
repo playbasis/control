@@ -73,7 +73,7 @@ server.listen(app.get('port'), function(){
 
 instagram.set('client_id', '0aa6b0bcdff544e0b8f202797b0c117e');
 instagram.set('client_secret', 'a610840147e54cb981f53da99a78d975');
-instagram.set('callback_url', 'https://dev.pbapp.net/api/instagram/feed');
+instagram.set('callback_url', 'http://instagram.pbapp.net/feed');
 
 io.sockets.on('connection', function(socket){
 	var dateObj = new Date();
@@ -103,7 +103,7 @@ app.get('/subscription', function(req, res){
 	res.send(200);
 });
 
-app.get('/feed/process', function(req, res){
+app.get('/feed', function(req, res){
 	console.log(req.query);
 	if(req.query['hub.mode'] == 'subscribe'){
 		res.send(req.query['hub.challenge']);
@@ -112,7 +112,7 @@ app.get('/feed/process', function(req, res){
 	res.send(200);
 });
 
-app.post('/feed/process', function(req, res){
+app.post('/feed', function(req, res){
 	console.log('---------- ig post ----------');
 	console.log(req.body);
 	//save data to mongodb
