@@ -237,6 +237,14 @@ class Social_model extends MY_Model
 		$result = db_get_row_array($this, 'playbasis_player');
 		return ($result) ? $result['pb_player_id'] : 0;
 	}
+	public function saveInstagramFeedData($data)
+	{
+		$this->set_site_mongodb(0);
+		$this->mongo_db->insert('instagram_log', array_merge($data, array(
+			'date_added' => new MongoDate(time()),
+			'date_modified' => new MongoDate(time())
+		)));
+	}
 	private function formatFacebookPostId($postId, $pageId)
 	{
 		if(!is_string($postId))

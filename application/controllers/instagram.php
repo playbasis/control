@@ -7,24 +7,24 @@ class Instagram extends REST_Controller
 	{
 		parent::__construct();
 		$this->load->model('auth_model');
+		$this->load->model('social_model');
+		$this->load->model('tool/respond', 'resp');
 	}
-	public function index_get()
+	public function feed_get()
 	{
-		$hub_mode = $this->input->get('hub.mode');
+		$hub_mode = $this->input->get('hub_mode');
 		if($hub_mode == 'subscribe')
 		{
-			$verify_token = $this->input->get('hub.verify_token');
-			if($verify_token == 'pbapp')
-				echo $this->input->get('hub.challenge');
+			echo $this->input->get('hub_challenge');
 		}
 		else
 		{
 			echo 'playbasis <3 instagram';
 		}
 	}
-	
-	public function index_post()
+	public function feed_post()
 	{
-		echo 'instagram <3 playbasis';
+		$this->social_model->saveInstagramFeedData(array('test' => 'data'));
+		$this->response($this->resp->setRespond(''), 200);
 	}
 }

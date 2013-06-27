@@ -166,6 +166,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\instagram.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\janrain.php"
     {
     "ProjRelPath" = "T"
