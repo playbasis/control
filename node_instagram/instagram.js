@@ -121,26 +121,35 @@ app.post('/feed', function(req, res){
 		res.send(200);
 		return;
 	}
-	var entry = new IGFeed({
-		'user': 'test_user',
-		'name': 'test_name',
-		'id': 'test_id',
-		'profile_image': 'test_profile_image',
-		'photo': 'test_photo',
-		'caption': 'test_caption',
-		'tag': 'test_tag'
-	});
-	console.log('saving entry...');
-	entry.save(function(err){
-		if(err){
-			console.log(err);
-			res.send(200);
-			return;
-		}
-		console.log('post saved!');
-		var dateObj = new Date();
-		//tell clients to update data
-		io.sockets.emit('newigpost', {'time': dateObj.getTime()});
-	});
+	var body = req.body;
+	var length = body.length;
+	for(var i=0; i<length; ++i)
+	{
+		instagram.tags.recent({ name: body[i].object_id, complete: function(data, pagination){
+			console.log('recents: ');
+			console.log(data);
+			var entry = new IGFeed({
+				'user': 'test_user',
+				'name': 'test_name',
+				'id': 'test_id',
+				'profile_image': 'test_profile_image',
+				'photo': 'test_photo',
+				'caption': 'test_caption',
+				'tag': 'test_tag'
+			});
+			console.log('saving entry...');
+			entry.save(function(err){
+				if(err){
+					console.log(err);
+					res.send(200);
+					return;
+				}
+				console.log('post saved!');
+				var dateObj = new Date();
+				//tell clients to update data
+				io.sockets.emit('newigpost', {'time': dateObj.getTime()});
+			});
+		}});
+	}
 	res.send(200);
 });
