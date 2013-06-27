@@ -181,7 +181,7 @@ app.post('/feed', function(req, res){
 						'profile_image': feed.user.profile_picture,
 						'photo': feed.images.standard_resolution.url,
 						'thumbnail' : feed.images.thumbnail.url,
-						'caption': feed.caption.text,
+						'caption': (feed.caption.text) ? feed.caption.text : '',
 						'tag': tag,
 					});
 					console.log('saving entry...');
