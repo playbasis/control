@@ -100,7 +100,7 @@ var auth = express.basicAuth(function(user, pass){
 app.get('/subscribe/tag/:tag', auth, function(req, res)
 {
 	var tag = req.params.tag;
-	IGMeta.where({tag_name: tag}).count(function(err, count){
+	IGMeta.where('tag_name').equals(tag).count(function(err, count){
 	 	if (err){
 	 		console.log(err);
 	 		return;
@@ -204,6 +204,5 @@ app.post('/feed', function(req, res)
 			}});
 		});
 	}
-	
 	res.send(200);
 });
