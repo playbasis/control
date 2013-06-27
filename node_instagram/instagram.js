@@ -196,7 +196,7 @@ app.post('/feed', function(req, res){
 						io.sockets.emit('newigpost', {'time': dateObj.getTime()});
 					});
 				}
-				meta.last_feed_time = new Date().getTime();
+				meta.last_feed_time = maxFeedTime;
 				meta.save(function(err){
 					if(err){
 						console.log(err);
