@@ -51,7 +51,8 @@ db.once('open', function callback(){
 		photo: 'string',
 		thumbnail: 'string',
 		caption: 'string',
-		tag: 'string'
+		tag: 'string',
+		time: 'number'
 	});
 	IGFeed = db.model('IGFeed', feedSchema);
 
@@ -165,7 +166,7 @@ app.post('/feed', function(req, res)
 					var feed = data[j];
 					//ignore old feeds
 					var feedTime = feed.created_time;
-					if(feedTime < meta.last_feed_time)
+					if(feedTime <= meta.last_feed_time)
 						continue;
 					if(feedTime > maxFeedTime)
 						maxFeedTime = feedTime;
@@ -183,6 +184,7 @@ app.post('/feed', function(req, res)
 						'thumbnail' : feed.images.thumbnail.url,
 						'caption': (feed.caption.text) ? feed.caption.text : '',
 						'tag': tag,
+						'time': feed.created_time
 					});
 					console.log('saving entry...');
 					entry.save(function(err){
