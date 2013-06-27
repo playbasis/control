@@ -182,7 +182,7 @@ app.post('/feed', function(req, res)
 						'profile_image': feed.user.profile_picture,
 						'photo': feed.images.standard_resolution.url,
 						'thumbnail' : feed.images.thumbnail.url,
-						'caption': (feed.caption.text) ? feed.caption.text : '',
+						'caption': (feed.caption) ? feed.caption.text : '',
 						'tag': tag,
 						'time': feed.created_time
 					});
