@@ -122,12 +122,22 @@ app.post('/feed', function(req, res){
 		return;
 	}
 	var body = req.body;
-	var length = body.length;
-	for(var i=0; i<length; ++i)
+	var bodylen = body.length;
+	for(var i=0; i<bodylen; ++i)
 	{
 		instagram.tags.recent({ name: body[i].object_id, complete: function(data, pagination){
 			console.log('recents: ');
-			console.log(data);
+			var datalen = data.length;
+			for(int i=0; i<datalen; ++i)
+			{
+				console.log(data[i].user.username);
+				//console.log(data[i].user.full_name);
+				//console.log(data[i].user.id);
+				//console.log(data[i].user.created_time);
+				//console.log(data[i].images.low_resolution.url);
+				//console.log(data[i].images.thumbnail.url);
+				console.log(data[i].images.standard_resolution.url);
+			}
 			var entry = new IGFeed({
 				'user': 'test_user',
 				'name': 'test_name',
