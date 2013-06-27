@@ -138,34 +138,34 @@ app.get('/feed', function(req, res){
 
 app.post('/feed', function(req, res){
 	console.log('---------- ig post ----------');
-	console.log(req.body);
+	//console.log(req.body);
+
 	//save data to mongodb
-	if(!dbReady)
-	{
+	if(!dbReady){
 		res.send(200);
 		return;
 	}
 	IGMeta.find(function(err, meta){
 		var body = req.body;
 		var bodylen = body.length;
-		for(var i=0; i<bodylen; ++i)
-		{
+		for(var i=0; i<bodylen; ++i){
 			var tag = body[i].object_id;
 			instagram.tags.recent({ name: tag, complete: function(data, pagination){
-				console.log('recents: ');
+				console.log('recents:');
 				var datalen = data.length;
 				var maxFeedTime = meta.last_feed_time;
-				for(var j=0; j<datalen; ++j)
-				{
+				console.log('last feed time:');
+				console.log(maxFeedTime);
+				for(var j=0; j<datalen; ++j){
+					var feed = data[j];
 					//ignore old feeds
-					var feedTime = +data[j].created_time;
+					var feedTime = feed.created_time;
 					if(feedTime < meta.last_feed_time)
 						continue;
 					if(feedTime > maxFeedTime)
 						maxFeedTime = feedTime;
 
 					//save new feed
-					var feed = data[j];
 					console.log(feed.created_time);
 					console.log(feed.user.username);
 					//console.log(data[i].user.full_name);
