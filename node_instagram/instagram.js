@@ -128,7 +128,7 @@ app.post('/feed', function(req, res){
 		instagram.tags.recent({ name: body[i].object_id, complete: function(data, pagination){
 			console.log('recents: ');
 			var datalen = data.length;
-			for(int i=0; i<datalen; ++i)
+			for(var i=0; i<datalen; ++i)
 			{
 				console.log(data[i].user.username);
 				//console.log(data[i].user.full_name);
