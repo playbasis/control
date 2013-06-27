@@ -133,7 +133,7 @@ app.post('/feed', function(req, res){
 				console.log(data[i].user.username);
 				//console.log(data[i].user.full_name);
 				//console.log(data[i].user.id);
-				console.log(data[i].user.created_time);
+				console.log(data[i].created_time);
 				//console.log(data[i].images.low_resolution.url);
 				//console.log(data[i].images.thumbnail.url);
 				//console.log(data[i].images.standard_resolution.url);
