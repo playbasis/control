@@ -196,7 +196,7 @@ app.post('/feed', function(req, res)
 						io.sockets.emit('newigpost', {'time': dateObj.getTime()});
 					});
 				}
-				IGMeta.findOneAndUpdate({tag_name: tag}, {last_feed_time: maxFeedTime}, function(err, m){
+				IGMeta.findOneAndUpdate({'tag_name': tag}, {last_feed_time: maxFeedTime}, function(err, m){
 					if(err){
 						console.log(err);
 					}
