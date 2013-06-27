@@ -37,21 +37,45 @@ app.get('/users', user.list);
 //connect to mongodb
 var dbReady = false;
 var mongoose = require('mongoose');
-var schema;
 var IGFeed;
+var IGMeta;
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
-	schema = mongoose.Schema({
+	
+	var feedSchema = mongoose.Schema({
 		user: 'string',
 		name: 'string',
 		id: 'string',
 		profile_image: 'string',
 		photo: 'string',
+		thumbnail: 'string',
 		caption: 'string',
 		tag: 'string'
 	});
-	IGFeed = db.model('IGFeed', schema);
+	IGFeed = db.model('IGFeed', feedSchema);
+
+	var metaSchema = mongoose.Schema({
+		last_feed_time: 'number'
+	});
+	IGMeta = db.model('IGMeta', metaSchema);
+
+	IGMeta.find().count(function(err, count){
+	 	if (err){
+	 		console.log(err);
+	 		return;
+	 	}
+	 	if(count > 0)
+	 		return;
+		var meta = new IGMeta({
+			'last_feed_time': 0
+		});
+		meta.save(function(err){
+			if(err){
+				console.log(err);
+			}
+		});
+	});
 	dbReady = true;
 	console.log('db connected!');
 });
@@ -121,45 +145,66 @@ app.post('/feed', function(req, res){
 		res.send(200);
 		return;
 	}
-	var body = req.body;
-	var bodylen = body.length;
-	for(var i=0; i<bodylen; ++i)
-	{
-		instagram.tags.recent({ name: body[i].object_id, complete: function(data, pagination){
-			console.log('recents: ');
-			var datalen = data.length;
-			for(var i=0; i<datalen; ++i)
-			{
-				console.log(data[i].user.username);
-				//console.log(data[i].user.full_name);
-				//console.log(data[i].user.id);
-				console.log(data[i].created_time);
-				//console.log(data[i].images.low_resolution.url);
-				//console.log(data[i].images.thumbnail.url);
-				//console.log(data[i].images.standard_resolution.url);
-			}
-			var entry = new IGFeed({
-				'user': 'test_user',
-				'name': 'test_name',
-				'id': 'test_id',
-				'profile_image': 'test_profile_image',
-				'photo': 'test_photo',
-				'caption': 'test_caption',
-				'tag': 'test_tag'
-			});
-			console.log('saving entry...');
-			entry.save(function(err){
-				if(err){
-					console.log(err);
-					res.send(200);
-					return;
+	IGMeta.find(function(err, meta){
+		var body = req.body;
+		var bodylen = body.length;
+		for(var i=0; i<bodylen; ++i)
+		{
+			var tag = body[i].object_id;
+			instagram.tags.recent({ name: tag, complete: function(data, pagination){
+				console.log('recents: ');
+				var datalen = data.length;
+				var maxFeedTime = meta.last_feed_time;
+				for(var j=0; j<datalen; ++j)
+				{
+					//ignore old feeds
+					var feedTime = +data[j].created_time;
+					if(feedTime < meta.last_feed_time)
+						continue;
+					if(feedTime > maxFeedTime)
+						maxFeedTime = feedTime;
+
+					//save new feed
+					var feed = data[j];
+					console.log(feed.created_time);
+					console.log(feed.user.username);
+					//console.log(data[i].user.full_name);
+					//console.log(data[i].user.id);
+					//console.log(data[i].images.low_resolution.url);
+					//console.log(data[i].images.thumbnail.url);
+					//console.log(data[i].images.standard_resolution.url);
+					
+					var entry = new IGFeed({
+						'user': feed.user.username,
+						'name': feed.user.full_name,
+						'id': feed.user.id,
+						'profile_image': feed.user.profile_picture,
+						'photo': feed.images.standard_resolution.url,
+						'thumbnail' : feed.images.thumbnail.url,
+						'caption': feed.caption.text,
+						'tag': tag,
+					});
+					console.log('saving entry...');
+					entry.save(function(err){
+						if(err){
+							console.log(err);
+							return;
+						}
+						console.log('post saved!');
+						var dateObj = new Date();
+						//tell clients to update data
+						io.sockets.emit('newigpost', {'time': dateObj.getTime()});
+					});
 				}
-				console.log('post saved!');
-				var dateObj = new Date();
-				//tell clients to update data
-				io.sockets.emit('newigpost', {'time': dateObj.getTime()});
-			});
-		}});
-	}
+				meta.last_feed_time = maxFeedTime;
+				meta.save(function(err){
+					if(err){
+						console.log(err);
+						return;
+					}
+				});
+			}});
+		}
+	});
 	res.send(200);
 });
