@@ -39,6 +39,7 @@ var dbReady = false;
 var mongoose = require('mongoose');
 var IGFeed;
 var IGMeta;
+var metas = {}
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
@@ -108,10 +109,12 @@ app.get('/subscribe/tag/:tag', auth, function(req, res)
 	 	}
 	 	if(count > 0)
 	 		return;
+	 	var dateObj = new Date();
 		var meta = new IGMeta({
 			'tag_name': tag,
-			'last_feed_time': 0
+			'last_feed_time': dateObj.getTime();
 		});
+		metas[tag].last_feed_time = meta.last_feed_time;
 		meta.save(function(err){
 			if(err){
 				console.log(err);
@@ -155,56 +158,57 @@ app.post('/feed', function(req, res)
 	var bodylen = body.length;
 	for(var i=0; i<bodylen; ++i){
 		var tag = body[i].object_id;
-		IGMeta.findOne({tag_name: tag}, function(err, meta){
-			instagram.tags.recent({ name: tag, complete: function(data, pagination){
-				console.log('recents:');
-				var datalen = data.length;
-				var maxFeedTime = meta.last_feed_time;
-				console.log('last feed time:');
-				console.log(maxFeedTime);
-				for(var j=0; j<datalen; ++j){
-					var feed = data[j];
-					//ignore old feeds
-					var feedTime = feed.created_time;
-					if(feedTime <= meta.last_feed_time)
-						continue;
-					if(feedTime > maxFeedTime)
-						maxFeedTime = feedTime;
+		if(!metas.hasOwnProperty(tag))
+		{
+			IGMeta.findOne({ tag_name: tag }, function(err, meta){
+				metas[tag].last_feed_time = meta.last_feed_time;
+			});
+			continue;
+		}
+		instagram.tags.recent({ name: tag, complete: function(data, pagination){
+			console.log('recents:');
+			var datalen = data.length;
+			var maxFeedTime = metas[tag].last_feed_time;
+			console.log('last feed time:');
+			console.log(maxFeedTime);
+			for(var j=0; j<datalen; ++j){
+				var feed = data[j];
+				//ignore old feeds
+				var feedTime = feed.created_time;
+				if(feedTime <= metas[tag].last_feed_time)
+					continue;
+				if(feedTime > maxFeedTime)
+					maxFeedTime = feedTime;
 
-					//save new feed
-					console.log(feed.created_time);
-					console.log(feed.user.username);
-					
-					var entry = new IGFeed({
-						'user': feed.user.username,
-						'name': feed.user.full_name,
-						'id': feed.user.id,
-						'profile_image': feed.user.profile_picture,
-						'photo': feed.images.standard_resolution.url,
-						'thumbnail' : feed.images.thumbnail.url,
-						'caption': (feed.caption) ? feed.caption.text : '',
-						'tag': tag,
-						'time': feed.created_time
-					});
-					console.log('saving entry...');
-					entry.save(function(err){
-						if(err){
-							console.log(err);
-							return;
-						}
-						console.log('post saved!');
-						var dateObj = new Date();
-						//tell clients to update data
-						io.sockets.emit('newigpost', {'time': dateObj.getTime()});
-					});
-				}
-				IGMeta.findOneAndUpdate({'tag_name': tag}, {last_feed_time: maxFeedTime}, function(err, m){
+				//save new feed
+				console.log(feed.created_time);
+				console.log(feed.user.username);
+				
+				var entry = new IGFeed({
+					'user': feed.user.username,
+					'name': feed.user.full_name,
+					'id': feed.user.id,
+					'profile_image': feed.user.profile_picture,
+					'photo': feed.images.standard_resolution.url,
+					'thumbnail' : feed.images.thumbnail.url,
+					'caption': (feed.caption) ? feed.caption.text : '',
+					'tag': tag,
+					'time': feed.created_time
+				});
+				console.log('saving entry...');
+				entry.save(function(err){
 					if(err){
 						console.log(err);
+						return;
 					}
+					console.log('post saved!');
+					var dateObj = new Date();
+					//tell clients to update data
+					io.sockets.emit('newigpost', {'time': dateObj.getTime()});
 				});
-			}});
-		});
+			}
+			metas[tag].last_feed_time = maxFeedTime;
+		}});
 	}
 	res.send(200);
 });
