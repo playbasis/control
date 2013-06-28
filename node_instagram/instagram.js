@@ -6,7 +6,7 @@
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
-  , http = require('http')
+  , http = require('https')
   , path = require('path')
   , fs = require('fs')
   , io = require('socket.io')
@@ -69,14 +69,14 @@ db.once('open', function callback(){
 console.log('connecting to db...');
 
 var options = {
-	//key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	//cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	//ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
 	rejectUnauthorized: false
 };
 
-var server = http.createServer(app);//(options, app);
+var server = http.createServer(options, app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
@@ -121,7 +121,7 @@ app.get('/subscribe/tag/:tag', auth, function(req, res)
 			}
 		});
 	});
-	//instagram.subscriptions.subscribe({ object : 'tag', object_id : tag });
+	instagram.subscriptions.subscribe({ object : 'tag', object_id : tag });
 	res.send(200);
 });
 
@@ -150,17 +150,13 @@ function processRecentFeeds(tag)
 		var datalen = data.length;
 		console.log('recents: ' + datalen);
 		var maxFeedTime = metas[tag].last_feed_time;
-		console.log('last feed time:');
-		console.log(maxFeedTime);
+		console.log('last feed time: ' + maxFeedTime);
 		for(var i=0; i<datalen; ++i){
 			var feed = data[i];
 			//ignore old feeds
 			var feedTime = feed.created_time;
 			if(feedTime <= metas[tag].last_feed_time)
-			{
-				console.log('skipping: ' + feedTime);
 				continue;
-			}
 			if(feedTime > maxFeedTime)
 				maxFeedTime = feedTime;
 
@@ -179,7 +175,7 @@ function processRecentFeeds(tag)
 				'tag': tag,
 				'time': feed.created_time
 			});
-			console.log('saving entry...');
+			console.log('saving entry: ' + feedTime);
 			entry.save(function(err){
 				if(err){
 					console.log(err);
@@ -191,7 +187,15 @@ function processRecentFeeds(tag)
 				io.sockets.emit('newigpost', {'time': dateObj.getTime()});
 			});
 		}
-		metas[tag].last_feed_time = maxFeedTime;
+		if(metas[tag].last_feed_time < maxFeedTime){
+			console.log('update feed time: ' + tag + ' - ' + maxFeedTime);
+			metas[tag].last_feed_time = maxFeedTime;
+			IGMeta.findOneAndUpdate({ tag_name: tag }, { last_feed_time: maxFeedTime }, function(err){
+				if(err){
+					console.log(err);
+				}
+			});
+		}
 	}});
 }
 
