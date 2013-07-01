@@ -125,8 +125,18 @@ app.get('/subscribe/tag/:tag', auth, function(req, res)
 	res.send(200);
 });
 
-app.get('/unsubscribe/:subid', auth, function(req, res){
-	instagram.subscriptions.unsubscribe({ id: req.params.subid });
+app.get('/unsubscribe/tag/:tag', auth, function(req, res){
+	var tag = req.params.tag;
+	instagram.subscriptions.list({ complete: function(data, pagination){
+		console.log('unsubscribe from: ' + tag);
+		var datalen = data.length;
+		for(var i=0; i<datalen; ++i){
+			if(data[i].object_id != tag)
+				continue;
+			instagram.subscriptions.unsubscribe({ id: data[i].id });
+			break;
+		}
+	}});
 	res.send(200);
 });
 
