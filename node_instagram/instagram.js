@@ -130,7 +130,7 @@ app.get('/unsubscribe/:tag', auth, function(req, res){
 	instagram.subscriptions.list({ complete: function(data, pagination){
 		console.log('unsubscribe from: ' + tag);
 		var datalen = data.length;
-		for(int i=0 i<datalen; ++i){
+		for(int i=0; i<datalen; ++i){
 			if(data[i].object_id != tag)
 				continue;
 			instagram.subscriptions.unsubscribe({ id: data[i].id });
