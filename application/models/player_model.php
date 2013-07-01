@@ -11,6 +11,7 @@ class Player_model extends MY_Model
 	}
 	public function createPlayer($data)
 	{
+		$this->checkClientUserLimitWarning($data['client_id'], $data['site_id']);
 		$inputData = array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
@@ -253,6 +254,29 @@ class Player_model extends MY_Model
 			$result[$name] = db_get_result_array($this, 'playbasis_reward_to_player');
 		}
 		return $result;
+	}
+	private function checkClientUserLimitWarning($client_id, $site_id)
+	{
+		$this->set_site($site_id);
+		$this->site_db()->select('limit_users');
+		$this->site_db()->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id
+		));
+		$result = db_get_row_array($this, 'playbasis_client_site');
+		assert($result);
+		$limit = $result['limit_users'];
+		if(!$limit)
+			return;
+		$this->site_db()->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id
+		));
+		$usersCount = db_count_all_results($this, 'playbasis_player');
+		if($usersCount > ($limit * 0.95))
+		{
+			//email client to upgrade account
+		}
 	}
 }
 ?>
