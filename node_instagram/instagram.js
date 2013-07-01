@@ -125,7 +125,7 @@ app.get('/subscribe/tag/:tag', auth, function(req, res)
 	res.send(200);
 });
 
-app.get('/unsubscribe/:tag', auth, function(req, res){
+app.get('/unsubscribe/tag/:tag', auth, function(req, res){
 	var tag = req.params.tag;
 	instagram.subscriptions.list({ complete: function(data, pagination){
 		console.log('unsubscribe from: ' + tag);
