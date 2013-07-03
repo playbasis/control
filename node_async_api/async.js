@@ -144,7 +144,7 @@ function postRequest(reqURL, data, channel)
 	});
 }
 
-app.post('/async', function(req, res)
+app.post('/call', function(req, res)
 {
 	console.log(req.body);
 	if(!req.body.endpoint)
