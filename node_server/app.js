@@ -2,6 +2,8 @@
 var REDIS_SERVER_PORT = 6379;
 var REDIS_SERVER_ADDRESS = '127.0.0.1';//'46.137.248.96';
 var METHOD_PUBLISH_FEED = '/activitystream';
+var CHANNEL_PREFIX = 'as_';
+
 /**
  * Module dependencies.
  */
@@ -13,6 +15,7 @@ var express = require('express')
 	, path = require('path')
 	, io = require('socket.io')
 	, redis = require('redis')
+	, mysql = require('mysql')
 	, fs = require('fs');
 
 var options = {
@@ -66,6 +69,14 @@ server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
 });
 
+var sqlcon = mysql.createConnection({
+  host     : 'db.pbapp.net',
+  user     : 'playbasis_admin',
+  password : 'databaseplaybasisproduction',
+  database : 'core'
+});
+sqlcon.connect();
+
 var redisSubClients = Object(); //an object holding redis clients that subscribed to a channel
 var redisPubClient = redis.createClient(); //redis client for publishing feeds
 
@@ -84,24 +95,61 @@ function createRedisSubClient(channel){
 	});
 }
 
-io.sockets.on('connection', function(socket){
-
-	socket.on('subscribe', function(data){
-
-		if(!data.channel)
+function verifyChannel(channel, callback)
+{
+	if(!channel)
+	{
+		callback('channel is not invalid', channel);
+		return;
+	}
+	if(channel.slice(0, 'http'.length) == 'http')
+	{
+		callback('channel cannot begins with [http]', channel);
+		return;
+	}
+	if(channel.slice(0, 'www'.length) == 'www')
+	{
+		callback('channel cannot begins with [www]', channel);
+		return;
+	}
+	var sql = 'SELECT domain_name FROM playbasis_client_site WHERE domain_name = ' + sqlcon.escape(channel) + ' OR domain_name = ' + sqlcon.escape('www.' + channel);
+	sqlcon.query(sql, function(err, rows){
+		if(err){
+			console.log(err);
+			callback(err);
 			return;
-			
-		if(!redisSubClients[data.channel]){
-			createRedisSubClient(data.channel);
-			//assert(redisSubClients[data.channel]);
-			redisSubClients[data.channel].subscribe(data.channel);
-
-			//set callback to emit message to connected clients
-			redisSubClients[data.channel].on('message', function(channel, message){
-				io.sockets.in(channel).emit('message', message);
-			});
 		}
-		socket.join(data.channel);
+		console.log(rows);
+		if(rows.length < 1)
+		{
+			callback('channel does not exist', channel);
+			return;
+		}
+		console.log('domain valid: ' + rows[0].domain_name);
+		callback(null, channel)
+	});
+}
+
+io.sockets.on('connection', function(socket){
+	socket.on('subscribe', function(data){
+		if(!data || !data.channel)
+			return;
+		verifyChannel(data.channel, function(err, channel){
+			if(err){
+				console.log(err);
+				return;
+			}
+			host = CHANNEL_PREFIX + channel;
+			if(!redisSubClients[host]){
+				createRedisSubClient(host);
+				redisSubClients[host].subscribe(host);
+				redisSubClients[host].on('message', function(channel, message){
+					io.sockets.in(channel).emit('message', message);
+				});
+			}
+			socket.join(host);
+			console.log('new client subscribed at: ' + channel);
+		});
 	});
 });
 
@@ -112,6 +160,6 @@ var auth = express.basicAuth(function(user, pass){
 //publish event through post request
 app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 	if(req.body)
-		redisPubClient.publish(req.params.channel, req.body);
+		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);
 });
