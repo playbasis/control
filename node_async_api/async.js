@@ -11,7 +11,8 @@ var express = require('express')
   , io = require('socket.io')
   ,	request = require('request')
   , redis = require('redis')
-  , mysql = require('mysql');
+  , mysql = require('mysql')
+  , fs = require('fs');
 
 var app = express();
 
