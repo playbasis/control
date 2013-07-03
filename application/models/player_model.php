@@ -264,10 +264,11 @@ class Player_model extends MY_Model
 			'site_id' => $site_id
 		));
 		$result = db_get_row_array($this, 'playbasis_client_site');
-		assert($result);
+        assert($result);
 		$limit = $result['limit_users'];
 		if(!$limit)
 			return;
+
 		$this->site_db()->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id
@@ -275,7 +276,52 @@ class Player_model extends MY_Model
 		$usersCount = db_count_all_results($this, 'playbasis_player');
 		if($usersCount > ($limit * 0.95))
 		{
+            $this->set_site($site_id);
+            $this->site_db()->select('user_id');
+            $this->site_db()->where(array(
+                'client_id' => $client_id
+            ));
+            $result = db_get_result_array($this, 'user_to_client');
+
+            $user_id_list=array();
+            foreach ($result as $r) {
+                array_push($user_id_list,$r['user_id']);
+            }
+
+            $this->set_site($site_id);
+            $this->site_db()->select('email');
+            $this->site_db()->where_in(
+                'user_id', $user_id_list
+            );
+            $result = db_get_result_array($this, 'user');
+
+            $email_list=array();
+            foreach ($result as $r) {
+                array_push($email_list,$r['email']);
+            }
+
+            $email_string = implode(",", $email_list);
+
+            $this->load->library('email');
+
+            $this->load->library('parser');
+            $data = array('user_left' => ($limit-$usersCount));
+
+            $config['mailtype'] = 'html';
+            $config['charset'] = 'utf-8';
+            $email = $email_string;
+            $subject = "Playbasis user limit alert";
+            $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
+
 			//email client to upgrade account
+            $this->email->initialize($config);
+            $this->email->clear();
+            $this->email->from('info@playbasis.com', 'Playbasis');
+            $this->email->to($email);
+            $this->email->bcc('cscteam@playbasis.com');
+            $this->email->subject($subject);
+            $this->email->message($htmlMessage);
+            $this->email->send();
 		}
 	}
 }
