@@ -243,6 +243,20 @@ class Engine extends REST_Controller
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
 		$this->response($this->resp->setRespond($apiResult), 200);
 	}
+	private function levelup($lv, &$apiResult, $input)
+	{
+		$event = array(
+			'event_type' => 'LEVEL_UP',
+			'value' => $lv
+		);
+		array_push($apiResult['events'], $event);
+		$eventMessage = $this->utility->getEventMessage('level', '', '', '', $lv);
+		//log event - level
+		$this->tracker_model->trackEvent('LEVEL', $eventMessage, array_merge($input, array(
+			'amount' => $lv
+		)));
+		return $eventMessage;
+	}
 	private function processRule($input, $validToken, $fbData, $twData)
 	{
 		if(!isset($input['player_id']) || !$input['player_id'])
@@ -290,7 +304,7 @@ class Engine extends REST_Controller
 							//reward is a custom point
 							assert('$exInfo["dynamic"]["reward_name"]');
 							assert('$exInfo["dynamic"]["quantity"]');
-							$this->client_model->updateCustomReward($exInfo['dynamic']['reward_name'], $exInfo['dynamic']['quantity'], $input, $jigsawConfig);
+							$lv = $this->client_model->updateCustomReward($exInfo['dynamic']['reward_name'], $exInfo['dynamic']['quantity'], $input, $jigsawConfig);
 							$event = array(
 								'event_type' => 'REWARD_RECEIVED',
 								'reward_type' => $jigsawConfig['reward_name'],
@@ -313,6 +327,18 @@ class Engine extends REST_Controller
 							//publish to facebook notification
 							if($fbData)
 								$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
+							if($lv > 0)
+							{
+								$eventMessage = $this->levelup($lv, $apiResult, $input);
+								//publish to node stream
+								$this->node->publish(array_merge($input, array(
+									'message' => $eventMessage,
+									'level' => $lv
+								)), $domain_name, $site_id);
+								//publish to facebook notification
+								if($fbData)
+									$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
+							}
 						}
 						else if(is_null($jigsawConfig['item_id']))
 						{
@@ -326,16 +352,7 @@ class Engine extends REST_Controller
 								));
 								if($lv > 0)
 								{
-									$event = array(
-										'event_type' => 'LEVEL_UP',
-										'value' => $lv
-									);
-									array_push($apiResult['events'], $event);
-									$eventMessage = $this->utility->getEventMessage('level', '', '', '', $lv);
-									//log event - level
-									$this->tracker_model->trackEvent('LEVEL', $eventMessage, array_merge($input, array(
-										'amount' => $lv
-									)));
+									$eventMessage = $this->levelup($lv, $apiResult, $input);
 									//publish to node stream
 									$this->node->publish(array_merge($input, array(
 										'message' => $eventMessage,

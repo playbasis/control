@@ -53,6 +53,12 @@ $route['Player'] = 'player/index/';
 $route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';
 
+$route['Player/'.ANY_STRING.'/update'] = 'player/update/$1';
+$route['Player/update'] = 'player/update';
+
+$route['Player/'.ANY_STRING.'/delete'] = 'player/delete/$1';
+$route['Player/delete'] = 'player/delete';
+
 $route['Player/'.ANY_STRING.'/login'] = 'player/login/$1';
 $route['Player/login'] = 'player/login';
 $route['Player/'.ANY_STRING.'/logout'] = 'player/logout/$1';

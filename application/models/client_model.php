@@ -162,11 +162,23 @@ class Client_model extends MY_Model
 				'date_modified' => $mongoDate
 			));
 		}
-		//update player reward
-		$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id']);
+		$level = 0;
+		if($rewardName == 'exp')
+		{
+			$level = $this->updateExpAndLevel($quantity, $input['pb_player_id'], $input['player_id'], array(
+				'client_id' => $input['client_id'],
+				'site_id' => $input['site_id']
+			));
+		}
+		else
+		{
+			//update player reward
+			$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id']);
+		}
 		$jigsawConfig['reward_id'] = $customRewardId;
 		$jigsawConfig['reward_name'] = $rewardName;
 		$jigsawConfig['quantity'] = $quantity;
+		return $level;
 	}
 	public function updateplayerBadge($badgeId, $quantity, $pbPlayerId, $site_id)
 	{
