@@ -258,7 +258,7 @@ class Player_model extends MY_Model
 	private function checkClientUserLimitWarning($client_id, $site_id)
 	{
 		$this->set_site($site_id);
-		$this->site_db()->select('limit_users');
+		$this->site_db()->select('limit_users, last_send_limit_users');
 		$this->site_db()->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id
@@ -266,6 +266,14 @@ class Player_model extends MY_Model
 		$result = db_get_row_array($this, 'playbasis_client_site');
         assert($result);
 		$limit = $result['limit_users'];
+        $last_send = $result['last_send_limit_users'];
+
+        $date1 = new DateTime($last_send);
+        $date1->modify('+1 day');
+        $date2 = new DateTime("now");
+
+        if($date1 > $date2)
+            return;
 		if(!$limit)
 			return;
 
@@ -326,7 +334,20 @@ class Player_model extends MY_Model
             $this->email->subject($subject);
             $this->email->message($htmlMessage);
             $this->email->send();
+
+            $this->updateLastAlertLimitUser($client_id, $site_id);
 		}
 	}
+
+    public function updateLastAlertLimitUser($client_id, $site_id)
+    {
+        $fieldData['last_send_limit_users'] = date('Y-m-d H:i:s');
+        $this->set_site($site_id);
+        $this->site_db()->where('client_id', $client_id);
+        $this->site_db()->where('site_id', $site_id);
+        $this->site_db()->update('playbasis_client_site', $fieldData);
+        $this->memcached_library->update_delete('playbasis_client_site');
+        return true;
+    }
 }
 ?>
