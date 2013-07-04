@@ -12,6 +12,7 @@ class Player_model extends MY_Model
 	}
 	public function createPlayer($data)
 	{
+		$this->checkClientUserLimitWarning($data['client_id'], $data['site_id']);
 		$pb_player_id = $this->generate_id_mongodb('player');
 		$this->set_site_mongodb($data['site_id']);
 		$mongoDate = new MongoDate(time());
@@ -19,10 +20,10 @@ class Player_model extends MY_Model
 			'pb_player_id'  => new MongoInt64("$pb_player_id"),
 			'client_id'		=> intval($data['client_id']),
 			'site_id'		=> intval($data['site_id']),
-			'cl_player_id'	=> $data['player_id'],
-			'image'			=> $data['image'],
-			'email'			=> $data['email'],
-			'username'		=> $data['username'],
+			'cl_player_id' => $data['player_id'],
+			'image' => $data['image'],
+			'email' => $data['email'],
+			'username' => $data['username'],
 			'exp'			=> 0,
 			'level'			=> 0,
 			'status'		=> 1,			
@@ -44,7 +45,7 @@ class Player_model extends MY_Model
         if(!$id)
             return array();
 		$this->set_site_mongodb($site_id);
-		if($fields)
+        if($fields)
 			$this->mongo_db->select($fields);
 		$this->mongo_db->where('pb_player_id', intval($id));
 		$result = $this->mongo_db->get('player');
@@ -159,7 +160,7 @@ class Player_model extends MY_Model
 			'action_id',
 			'action_name',
 			'date_added'
-		));
+        ));
 		$this->mongo_db->where(array(
 			'pb_player_id' => intval($pb_player_id),
             'action_id' => intval($action_id)
@@ -327,5 +328,99 @@ class Player_model extends MY_Model
 		}
 		return $result;
 	}
+	private function checkClientUserLimitWarning($client_id, $site_id)
+	{
+		$this->set_site($site_id);
+		$this->site_db()->select('limit_users, last_send_limit_users');
+		$this->site_db()->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id
+		));
+		$result = db_get_row_array($this, 'playbasis_client_site');
+        assert($result);
+		$limit = $result['limit_users'];
+        $last_send = $result['last_send_limit_users'];
+
+        $date1 = new DateTime($last_send);
+		$date1->modify('+1 week');
+        $date2 = new DateTime("now");
+
+        if($date1 > $date2)
+            return;
+		if(!$limit)
+			return;
+
+		$this->site_db()->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id
+		));
+		$usersCount = db_count_all_results($this, 'playbasis_player');
+		if($usersCount > ($limit * 0.95))
+		{
+            $this->set_site($site_id);
+            $this->site_db()->select('user_id');
+            $this->site_db()->where(array(
+                'client_id' => $client_id
+            ));
+            $result = db_get_result_array($this, 'user_to_client');
+
+            $user_id_list=array();
+            foreach ($result as $r) {
+                array_push($user_id_list,$r['user_id']);
+            }
+
+            $this->set_site($site_id);
+            $this->site_db()->select('email');
+            $this->site_db()->where_in(
+                'user_id', $user_id_list
+            );
+            $result = db_get_result_array($this, 'user');
+
+            $email_list=array();
+            foreach ($result as $r) {
+                array_push($email_list,$r['email']);
+            }
+
+            $email_string = implode(",", $email_list);
+
+            $this->load->library('email');
+
+            $this->load->library('parser');
+			$data = array(
+				'user_left' => ($limit-$usersCount),
+				'user_count' => $usersCount,
+				'user_limit' => $limit
+			);
+
+            $config['mailtype'] = 'html';
+            $config['charset'] = 'utf-8';
+            $email = $email_string;
+            $subject = "Playbasis user limit alert";
+            $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
+
+			//email client to upgrade account
+            $this->email->initialize($config);
+            $this->email->clear();
+            $this->email->from('info@playbasis.com', 'Playbasis');
+            $this->email->to($email);
+            $this->email->bcc('cscteam@playbasis.com');
+            $this->email->subject($subject);
+            $this->email->message($htmlMessage);
+            $this->email->send();
+
+            $this->updateLastAlertLimitUser($client_id, $site_id);
+		}
+	}
+
+    public function updateLastAlertLimitUser($client_id, $site_id)
+    {
+        $fieldData['last_send_limit_users'] = date('Y-m-d H:i:s');
+        $this->set_site($site_id);
+        $this->site_db()->where('client_id', $client_id);
+        $this->site_db()->where('site_id', $site_id);
+        $this->site_db()->update('playbasis_client_site', $fieldData);
+        $this->memcached_library->update_delete('playbasis_client_site');
+        return true;
+    }
 }
 ?>

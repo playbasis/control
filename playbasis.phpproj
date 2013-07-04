@@ -418,6 +418,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\views\\limit_user_alert.html"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\views\\oauth_auth_server"
     {
     "ProjRelPath" = "T"
