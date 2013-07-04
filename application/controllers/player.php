@@ -154,6 +154,95 @@ class Player extends REST_Controller
 		$this->player_model->createPlayer(array_merge($validToken, $playerInfo));
 		$this->response($this->resp->setRespond(), 200);
 	}
+	public function update_post($player_id = '')
+	{
+		$required = $this->input->checkParam(array(
+			'token'
+		));
+		if($required)
+			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'player_id'
+			)), 200);
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_TOKEN'), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+			'cl_player_id' => $player_id
+		)));
+		if($pb_player_id < 0)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);		
+		$playerInfo = array();
+		$email = $this->input->post('email');
+		if($email)
+			$playerInfo['email'] = $email;
+		$image = $this->input->post('image');
+		if($image)
+			$playerInfo['image'] = $image;
+		$username = $this->input->post('username');
+		if($username)
+			$playerInfo['username'] = $username;
+		$exp = $this->input->post('exp');
+		if(is_numeric($exp))
+			$playerInfo['exp'] = $exp;
+		$level = $this->input->post('level');
+		if(is_numeric($level))
+			$playerInfo['level'] = $level;
+		$firstName = $this->input->post('first_name');
+		if($firstName)
+			$playerInfo['first_name'] = $firstName;
+		$lastName = $this->input->post('last_name');
+		if($lastName)
+			$playerInfo['last_name'] = $lastName;
+		$nickName = $this->input->post('nickname');
+		if($nickName)
+			$playerInfo['nickname'] = $nickName;
+		$facebookId = $this->input->post('facebook_id');
+		if($facebookId)
+			$playerInfo['facebook_id'] = $facebookId;
+		$twitterId = $this->input->post('twitter_id');
+		if($twitterId)
+			$playerInfo['twitter_id'] = $twitterId;
+		$password = $this->input->post('password');
+		if($password)
+			$playerInfo['password'] = $password;
+		$gender = $this->input->post('gender');
+		if($gender)
+			$playerInfo['gender'] = $gender;
+		$birthdate = $this->input->post('birth_date');
+		if($birthdate)
+		{
+			$timestamp = strtotime($birthdate);
+			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
+		}
+		$this->player_model->updatePlayer($pb_player_id, $validToken['site_id'], $playerInfo);
+		$this->response($this->resp->setRespond(), 200);
+	}
+	public function delete_post($player_id = '')
+	{
+		$required = $this->input->checkParam(array(
+			'token'
+		));
+		if($required)
+			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'player_id'
+			)), 200);
+		$validToken = $this->auth_model->findToken($this->input->post('token'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_TOKEN'), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+			'cl_player_id' => $player_id
+		)));
+		if($pb_player_id < 0)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		$this->player_model->deletePlayer($pb_player_id, $validToken['site_id']);
+		$this->response($this->resp->setRespond(), 200);
+	}
 	public function login_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
