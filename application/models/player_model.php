@@ -269,7 +269,7 @@ class Player_model extends MY_Model
         $last_send = $result['last_send_limit_users'];
 
         $date1 = new DateTime($last_send);
-        $date1->modify('+1 day');
+		$date1->modify('+1 week');
         $date2 = new DateTime("now");
 
         if($date1 > $date2)
