@@ -305,7 +305,11 @@ class Player_model extends MY_Model
             $this->load->library('email');
 
             $this->load->library('parser');
-            $data = array('user_left' => ($limit-$usersCount));
+			$data = array(
+				'user_left' => ($limit-$usersCount),
+				'user_count' => $usersCount,
+				'user_limit' => $limit
+			);
 
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
