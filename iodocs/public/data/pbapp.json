@@ -168,6 +168,140 @@
 					]
 				},
 				{
+					"MethodName": "Update",
+					"Synopsis": "Update player information.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/update",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "username",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "username of the player"
+						},
+						{
+							"Name": "email",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "email address of the player"
+						},
+						{
+							"Name": "image",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "url to the player profile image"
+						},
+						{
+							"Name": "exp",
+							"Required": "N",
+							"Default": "",
+							"Type": "number",
+							"Description": "player's experience points"
+						},
+						{
+							"Name": "level",
+							"Required": "N",
+							"Default": "",
+							"Type": "number",
+							"Description": "player's level"
+						},
+						{
+							"Name": "facebook_id",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "facebook id of the player"
+						},
+						{
+							"Name": "twitter_id",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "twitter id of the player"
+						},
+						{
+							"Name": "password",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "hashed password"
+						},
+						{
+							"Name": "first_name",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "first name of the player"
+						},
+						{
+							"Name": "last_name",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "last name of the player"
+						},
+						{
+							"Name": "gender",
+							"Required": "N",
+							"Default": "",
+							"Type": "enumerated",
+							"Description": "1=Male, 2=Female",
+							"EnumeratedList": [
+								"1",
+								"2"
+							]
+						},
+						{
+							"Name": "birth_date",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
+						}
+					]
+				},
+				{
+					"MethodName": "Delete",
+					"Synopsis": "Permenently delete a player from Playbasis database.",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/delete",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
 					"MethodName": "Login",
 					"Synopsis": "Tell Playbasis system that a player has logged in.",
 					"HTTPMethod": "POST",
