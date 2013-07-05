@@ -43,6 +43,8 @@ var options = {
 	rejectUnauthorized: false
 };
 
+io.set('resource', '/async/socket.io');
+
 var server = http.createServer(options, app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
@@ -168,10 +170,10 @@ app.get('/channel/verify/:channel', function(req, res){
 	verifyChannel(chan, function(err, channel){
 		if(err){
 			console.log(err);
-			res.send(channel + ' is not valid', 200);
+			res.send(false, 200);
 			return;
 		}
 		console.log('channel is valid: ' + channel);
-		res.send(channel + ' is valid', 200);
+		res.send(true, 200);
 	});
 });
