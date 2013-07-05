@@ -10,9 +10,11 @@ if (!function_exists('json_decode')) {
 class Playbasis
 {
 	const BASE_URL = 'https://api.pbapp.net/';
+	const BASE_ASYNC_URL = 'https://api.pbapp.net/async/';
 
 	private $token = null;
 	private $apiKeyParam = null;
+	private $respChannel = null;
 	
 	public function auth($apiKey, $apiSecret)
 	{
@@ -23,6 +25,31 @@ class Playbasis
 		));
 		$this->token = $result['response']['token'];
 		return $this->token != false && is_string($this->token);
+	}
+	
+	/*
+	 * @param	$channel	Set this value to the domain of your site (ex. yoursite.com) to receive the response of async calls via our response server.
+	 *						Please see our api documentation at doc.pbapp.net for more details.
+	 */
+	public function setAsyncResponseChannel($channel)
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, self::BASE_ASYNC_URL."channel/verify/$channel");
+		curl_setopt($ch, CURLOPT_HEADER, FALSE);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		$result = curl_exec($ch);
+		curl_close($ch);
+
+		if($result === 'true')
+		{
+			$this->respChannel = $channel;
+			return true;
+		}
+		return false;
 	}
 	
 	public function player($playerId)
@@ -52,14 +79,69 @@ class Playbasis
 		), $optionalData));
 	}
 	
+	public function register_async($playerId, $username, $email, $imageUrl, $optionalData=array())
+	{
+		return $this->call_async("Player/$playerId/register", array_merge(array(
+			'token' => $this->token,
+			'username' => $username,
+			'email' => $email,
+			'image' => $imageUrl
+		), $optionalData), $this->respChannel);
+	}
+	
+	/*
+	 * @param	$updateData		Key-value for data to be updated.
+	 * 							The following keys are supported:
+	 *							- username
+	 *							- email
+	 *							- image
+	 *							- exp
+	 *							- level
+	 * 							- facebook_id
+	 * 							- twitter_id
+	 * 							- password		assumed hashed
+	 * 							- first_name
+	 * 							- last_name
+	 * 							- nickname
+	 * 							- gender		1=Male, 2=Female
+	 * 							- birth_date	format YYYY-MM-DD
+	 */
+	public function update($playerId, $updateData)
+	{
+		$updateData['token'] = $this->token;
+		return $this->call("Player/$playerId/update", $updateData);
+	}
+	public function update_async($playerId, $updateData)
+	{
+		$updateData['token'] = $this->token;
+		return $this->call_async("Player/$playerId/update", $updateData, $this->respChannel);
+	}
+	
+	public function delete($playerId)
+	{
+		return $this->call("Player/$playerId/delete", array('token' => $this->token));
+	}
+	public function delete_async($playerId)
+	{
+		return $this->call_async("Player/$playerId/delete", array('token' => $this->token), $this->respChannel);
+	}
+	
 	public function login($playerId)
 	{
 		return $this->call("Player/$playerId/login", array('token' => $this->token));
+	}
+	public function login_async($playerId)
+	{
+		return $this->call_async("Player/$playerId/login", array('token' => $this->token), $this->respChannel);
 	}
 	
 	public function logout($playerId)
 	{
 		return $this->call("Player/$playerId/logout", array('token' => $this->token));
+	}
+	public function logout_async($playerId)
+	{
+		return $this->call_async("Player/$playerId/logout", array('token' => $this->token), $this->respChannel);
 	}
 	
 	public function points($playerId)
@@ -135,13 +217,21 @@ class Playbasis
 			'token' => $this->token,
 			'player_id' => $playerId,
 			'action' => $action
-			), $optionalData));
+		), $optionalData));
+	}
+	public function rule_async($playerId, $action, $optionalData=array())
+	{
+		return $this->call_async("Engine/rule", array_merge(array(
+			'token' => $this->token,
+			'player_id' => $playerId,
+			'action' => $action
+		), $optionalData), $this->respChannel);
 	}
 	
-	public function call($method, $data = null)
+	public function call($method, $data = null) 
 	{
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $method);	// set url
+		curl_setopt($ch, CURLOPT_URL, self::BASE_URL . $method);
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);					// turn off output
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);				// refuse response from called server
 		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');			// set agent
@@ -155,6 +245,38 @@ class Playbasis
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		$result = curl_exec($ch);
 		$result = json_decode($result, true);
+		curl_close($ch);
+		return $result;
+	}
+	
+	/*
+	 * @param	$responseChannel	Set this value to the domain of your site (ex. yoursite.com) to receive the response of async calls via our response server.
+	 *								Please see our api documentation at doc.pbapp.net for more details.
+	 */
+	public function call_async($method, $data, $responseChannel = null)
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, self::BASE_ASYNC_URL.'call');
+		curl_setopt($ch, CURLOPT_HEADER, FALSE);					// turn off output
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);				// refuse response from called server
+		curl_setopt($ch, CURLOPT_USERAGENT, 'CURL AGENT');			// set agent
+		curl_setopt($ch, CURLOPT_TIMEOUT, 1);						// times for execute
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);				// times for try to connect
+		if($data)
+		{
+			$body['endpoint'] = $method;
+			$body['data'] = $data;
+			if($responseChannel)
+				$body['channel'] = $responseChannel;
+			$body = json_encode($body);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Content-Type: application/json; charset=utf-8'		// set Content-Type
+			));
+			curl_setopt($ch, CURLOPT_POST, TRUE);					// use POST
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $body);			// post body
+		}
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		$result = curl_exec($ch);
 		curl_close($ch);
 		return $result;
 	}

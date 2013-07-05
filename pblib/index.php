@@ -15,7 +15,19 @@ var_dump($res);
 $user = ''.time();
 $playerId = 'id'.$user;
 $res = $pb->register($playerId, 'usr'.$user, 'usr'.$user.'@pbapp.net', 'https://www.pbapp.net/images/default_profile.jpg');
-echo'register:';
+echo 'register:';
+var_dump($res);
+
+$res = $pb->update($playerId, array('username'=>'newusername', 'email'=>'email@pbapp.com'));
+echo 'update: ';
+var_dump($res);
+
+$res = $pb->player($playerId);
+echo 'player: ';
+var_dump($res);
+
+$res = $pb->delete($playerId);
+echo 'delete: ';
 var_dump($res);
 
 $playerId = '1';
