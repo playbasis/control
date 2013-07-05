@@ -107,6 +107,49 @@ div.readable_area
         | Playbasis API is integrated with Janrain to give you a simple way to add Social Sign-in and Social Sharing to your website through attractive widgets; but that’s not all. We also provide a way to gamify the widgets by allowing game rules to be triggered when users interact with them. Please contact our technical staff for additional information.
       br
       br
+      h2.topic_header Asynchronous API
+      h3.sub_header Calling POST Methods Asynchronously
+      p.p_wrap
+        | You can call all of our post methods asynchronously via our async method. The end point for the async method is:
+        pre
+          code
+            https://api.pbapp.net/async/call
+      p.p_wrap
+        | When you call this method, set the Content-Type header to "application/json" and provide JSON string in the following format the request body:
+        br
+        br
+        | endpoint - The endpoint that you want to call asynchronously.
+        br
+        | data - Data that you normally goes into the POST body in standard synchronous calls.
+        br
+        | channel - Set this to the domain of your site if you wish to receive response from the asynchronous call. This is optional. We'll get into more details on this in the next section.
+        br
+        br
+        | Here is an example of a the JSON body of an asynchronous call to the Login method
+        pre
+          code
+            {
+              "endpoint" : "Player/1/login",
+              "data" : {
+                "token" : "69b3784233aa83090f8a90c080448072c85e1fcc"
+              },
+              "channel" : "yourdomain.com"
+            }
+      h3.sub_header Receive Response from Asynchronous Calls
+      p.p_wrap
+        | You can receive response from your asynchronus call through socket.io, you can use exactly the same as code as when you receive realtime notifications, except you need to connect to a different server. The value in the "channel" field that you put in the JSON post body when you call the async endpoint is the channel that you subscribe to after you're connected. See the following code for an example:
+        pre
+          code 
+            script(src='/socket.io/socket.io.js')
+              script
+                var socket = io.connect('https://api.pbapp.net', { resource : 'async/socket.io' });
+                socket.on('connect', function(data){
+                console.log('client connected');
+                  socket.emit('subscribe', {channel:'yourdomain.com'});
+                });
+                socket.on('message', function(data){
+                  console.log(data);
+                });
       h2.topic_header SDKs
       p.p_wrap
         | We provide SDKs for faster and easier integrations with your framework. If you need an SDK, please contact our technical staff to request an SDK for your platform.
