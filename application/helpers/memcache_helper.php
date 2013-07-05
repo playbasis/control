@@ -27,7 +27,7 @@ function db_get_row_array($mdl, $table)
 	{
 		$result = $mdl->site_db()->run_compiled_sql($sql);
 		$result = $result->row_array();
-		$mdl->memcached_library->add($memId, $result);
+		$mdl->memcached_library->set($memId, $result);
 	}
 	return $result;
 }
@@ -39,7 +39,7 @@ function db_get_result_array($mdl, $table)
 	{
 		$result = $mdl->site_db()->run_compiled_sql($sql);
 		$result = $result->result_array();
-		$mdl->memcached_library->add($memId, $result);
+		$mdl->memcached_library->set($memId, $result);
 	}
 	return $result;
 }
@@ -50,7 +50,7 @@ function db_count_all_results($mdl, $table)
 	if(!$result)
 	{
 		$result = $mdl->site_db()->run_compiled_sql_count_all_results($sql);
-		$mdl->memcached_library->add($memId, $result);
+		$mdl->memcached_library->set($memId, $result);
 	}
 	return $result;
 }
