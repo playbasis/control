@@ -52,6 +52,34 @@ class Playbasis
 		), $optionalData));
 	}
 	
+	/*
+	 * @param	$updateData		Key-value for data to be updated.
+	 * 							The following keys are supported:
+	 *							- username
+	 *							- email
+	 *							- image
+	 *							- exp
+	 *							- level
+	 * 							- facebook_id
+	 * 							- twitter_id
+	 * 							- password		assumed hashed
+	 * 							- first_name
+	 * 							- last_name
+	 * 							- nickname
+	 * 							- gender		1=Male, 2=Female
+	 * 							- birth_date	format YYYY-MM-DD
+	 */
+	public function update($playerId, $updateData)
+	{
+		$updateData['token'] = $this->token;
+		return $this->call("Player/$playerId/update", $updateData);
+	}
+	
+	public function delete($playerId)
+	{
+		return $this->call("Player/$playerId/delete", array('token' => $this->token));
+	}
+	
 	public function login($playerId)
 	{
 		return $this->call("Player/$playerId/login", array('token' => $this->token));
