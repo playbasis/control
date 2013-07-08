@@ -68,18 +68,69 @@ div.readable_area
       p.p_wrap
         | Whenever some notable event happens within your site, Playbasis server will broadcast the event to all connected clients in real-time. Clients can use 
         a(href='http://socket.io') socket.io
-        |  to subscribe to the activity-feed that belongs to a specific site, and receive data for each event emitted after the time of subscription. The following snippet (in jade/javascript) shows how to subscribe and start receiving activity-feed for your domain:
+        |  to subscribe to the activity-feed channel that belongs to your site and receive data for events emitted after the time of subscription. The name of your activity-feed channel is the same as the domain name that is registered with your Playbasis account, without leading "http://" or "www".
+        br
+        | The following snippet (in jade/javascript) shows how to connect, subscribe and receive real-time activity-feed for your site:
         pre
           code 
             script(src='/socket.io/socket.io.js')
               script
                 var socket = io.connect('https://node.pbapp.net');
                 socket.on('connect', function(data){
-                console.log('client connected');
+                  console.log('client connected');
                   socket.emit('subscribe', {channel:'yourdomain.com'});
                 });
                 socket.on('message', function(data){
                   console.log('msg:' + data);
+                });
+      h2.topic_header Asynchronous Requests
+      h3.sub_header Calling POST Methods Asynchronously
+      p.p_wrap
+        | You can call all of our POST methods asynchronously via our async request endpoint at: 
+        code
+          https://api.pbapp.net/async/call
+        br
+        | When you call this method, set the Content-Type header to "application/json" and provide JSON string with the following data the request body:
+        pre
+          code
+            "endpoint" : The endpoint that you want to call asynchronously.
+            "data"     : Object containing data that you normally goes into the POST body in standard synchronous calls.
+            "channel"  : Optional. If you wish to see the response from this request, set this to the domain name of your site.
+                         See section "Receiving Responses from Asynchronous Calls" for more details.
+      p.p_wrap
+        | Here is an example of a the JSON body of an asynchronous call to the Login method
+        pre
+          code
+            {
+              "endpoint" : "Player/1/login",
+              "data" : {
+                "token" : "69b3784233aa83090f8a90c080448072c85e1fcc"
+              },
+              "channel" : "yourdomain.com"
+            }
+      h3.sub_header Receiving Responses from Asynchronous Calls
+      p.p_wrap
+        | For debugging purposes, it may be useful to see responses from your asynchronous requests. This can be done by connecting to our async response server via 
+        a(href='http://socket.io') socket.io
+        |, similar to how you would receive the activity-feed, the only different is the server you connect to. The value in the "channel" field in the JSON body when you call the async/call endpoint is the channel that you subscribe to once you're connected to the response server. Just as when you receive activity-feed, your channel is the domain name that is registered with your Playbasis account.
+      br
+      p.p_wrap
+        | You can verify that your channel is valid by making a GET request to:
+        code
+          https://api.pbapp.net/async/channel/verify/yourdomain.com
+        br
+        | The following code shows an example of how to connect to the async response server, subscribe to your response channel, and display the response:
+        pre
+          code 
+            script(src='/socket.io/socket.io.js')
+              script
+                var socket = io.connect('https://async.pbapp.net');
+                socket.on('connect', function(data){
+                  console.log('client connected');
+                  socket.emit('subscribe', {channel:'yourdomain.com'});
+                });
+                socket.on('message', function(data){
+                  console.log(data);
                 });
       h2.topic_header Social Integration
       h3.sub_header Facebook
