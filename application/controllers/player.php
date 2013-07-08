@@ -139,6 +139,9 @@ class Player extends REST_Controller
 		$twitterId = $this->input->post('twitter_id');
 		if($twitterId)
 			$playerInfo['twitter_id'] = $twitterId;
+		$instagramId = $this->input->post('instagram_id');
+		if($instagramId)
+			$playerInfo['instagram_id'] = $instagramId;
 		$password = $this->input->post('password');
 		if($password)
 			$playerInfo['password'] = $password;
@@ -205,6 +208,9 @@ class Player extends REST_Controller
 		$twitterId = $this->input->post('twitter_id');
 		if($twitterId)
 			$playerInfo['twitter_id'] = $twitterId;
+		$instagramId = $this->input->post('instagram_id');
+		if($instagramId)
+			$playerInfo['instagram_id'] = $instagramId;
 		$password = $this->input->post('password');
 		if($password)
 			$playerInfo['password'] = $password;
