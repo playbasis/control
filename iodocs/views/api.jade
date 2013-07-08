@@ -124,7 +124,7 @@ div.readable_area
           code 
             script(src='/socket.io/socket.io.js')
               script
-                var socket = io.connect('https://api.pbapp.net', { resource : 'async/socket.io' });
+                var socket = io.connect('https://async.pbapp.net');
                 socket.on('connect', function(data){
                   console.log('client connected');
                   socket.emit('subscribe', {channel:'yourdomain.com'});
