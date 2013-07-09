@@ -49,7 +49,7 @@ server.listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
 });
 
-io.set('resource', '/async/socket.io');
+io.set('resource', '/socket.io');
 
 var REDIS_SERVER_PORT = 6379;
 var REDIS_SERVER_ADDRESS = '127.0.0.1';//'46.137.248.96';
