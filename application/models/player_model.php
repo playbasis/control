@@ -32,6 +32,8 @@ class Player_model extends MY_Model
 			$inputData['facebook_id'] = $data['facebook_id'];
 		if(isset($data['twitter_id']))
 			$inputData['twitter_id'] = $data['twitter_id'];
+		if(isset($data['instagram_id']))
+			$inputData['instagram_id'] = $data['instagram_id'];
 		if(isset($data['password']))
 			$inputData['password'] = $data['password'];
 		if(isset($data['gender']))
