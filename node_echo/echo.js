@@ -8,6 +8,7 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('https')
   , path = require('path')
+  , fs = require('fs')
   , io = require('socket.io');
 
 var app = express();
