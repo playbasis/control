@@ -32,6 +32,7 @@ class Player_model extends MY_Model
 			'nickname'		=> (isset($data['nickname']))	 ? $data['nickname']	: '',
 			'facebook_id'	=> (isset($data['facebook_id'])) ? $data['facebook_id'] : '',
 			'twitter_id'	=> (isset($data['twitter_id']))	 ? $data['twitter_id']	: '',
+			'instagram_id'	=> (isset($data['instagram_id']))? $data['instagram_id']: '',
 			'password'		=> (isset($data['password']))	 ? $data['password']	: '',
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> new MongoDate(strtotime(isset($data['birth_date']) ? $data['birth_date'] : '1901-12-31')),

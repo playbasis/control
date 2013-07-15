@@ -267,6 +267,19 @@ class Social_model extends MY_Model
 		$result = $this->mongo_db->get('player');
 		return ($result) ? $result[0]['pb_player_id'] : 0;
 	}
+	public function getPBPlayerIdFromInstagramId($instagram_id, $client_id, $site_id)
+	{
+		assert(is_string($instagram_id));
+		$this->set_site($site_id);
+		$this->site_db()->select('pb_player_id');
+		$this->site_db()->where(array(
+			'instagram_id' => $instagram_id,
+			'client_id' => $client_id,
+			'site_id' => $site_id
+			));
+		$result = db_get_row_array($this, 'playbasis_player');
+		return ($result) ? $result['pb_player_id'] : 0;
+	}
 	public function saveInstagramFeedData($data)
 	{
 		$this->set_site_mongodb(0);

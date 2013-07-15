@@ -67,6 +67,7 @@ class Janrain extends REST_Controller
 		$profile = $auth_info['profile'];
 		$provider = $profile['providerName'];
 		$input = array();
+		$pb_player_id = 0;
 		if($provider == 'Facebook')
 		{
 			$identifier = explode('=', $profile['identifier']);
@@ -85,7 +86,16 @@ class Janrain extends REST_Controller
 			//var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromTwitterId($identifier, $client_id, $site_id);
 		}
-		else
+		else if($provider == 'Instagram')
+		{
+			$identifier = explode('/', $profile['identifier']);
+			$identifier = $identifier[count($identifier)-1];
+			$input['instagram_id'] = $identifier;
+			//echo 'instagram id: ';
+			//var_dump($identifier);
+			$pb_player_id = $this->social_model->getPBPlayerIdFromInstagramId($identifier, $client_id, $site_id);
+		}
+		if($pb_player_id <= 0)
 		{
 			$identifier = $profile['identifier'];
             $identifier = preg_replace("/\//", "_", $identifier);
@@ -93,7 +103,7 @@ class Janrain extends REST_Controller
 			//var_dump($identifier);
 			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 				'cl_player_id' => $identifier
-				)));
+			)));
 		}
 		if($pb_player_id <= 0)
 		{
