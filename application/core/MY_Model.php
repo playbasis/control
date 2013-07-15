@@ -35,6 +35,10 @@ class MY_Model extends CI_Model
 		$clientdb = self::$dblist[$this->site];
 		$this->db->query("USE $clientdb;");
 	}
+    public function get_site()
+    {
+        return $this->site;
+    }
 	public function set_site_mongodb($site_id)
 	{
 		$currDB = self::$mongoDBs[$this->mongoSite];
