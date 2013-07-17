@@ -69,15 +69,93 @@ namespace pblib.NET
 
 			return call("Player/" + playerId + "/register", param.ToString());
 		}
+		public void register_async(string playerId, string username, string email, string imageUrl, UploadStringCompletedEventHandler onComplete = null, params string[] optionalData)
+		{
+			var param = new StringBuilder();
+			param.Append("token=");
+			param.Append(token);
+			param.Append("&username=");
+			param.Append(username);
+			param.Append("&email=");
+			param.Append(email);
+			param.Append("&image=");
+			param.Append(imageUrl);
+
+			for (int i = 0; i < optionalData.Length; ++i)
+				param.Append("&" + optionalData[i]);
+
+			call_async("Player/" + playerId + "/register", param.ToString(), onComplete);
+		}
+
+		/// <summary>
+		/// Update user data
+		/// </summary>
+		/// <param name="playerId"></param>
+		/// <param name="updateData"> Varargs of String data to be updated.
+		/// Each element is a string in the format of key=value, for example: first_name=john
+		/// The following keys are supported:
+		/// - username
+		/// - email
+		/// - image
+		/// - exp
+		/// - level
+		/// - facebook_id
+		/// - twitter_id
+		/// - password		assumed hashed
+		/// - first_name
+		/// - last_name
+		/// - nickname
+		/// - gender		1=Male, 2=Female
+		/// - birth_date	format YYYY-MM-DD</param>
+		/// <returns></returns>
+		public string update(string playerId, params string[] updateData)
+		{
+			var param = new StringBuilder();
+			param.Append("token=");
+			param.Append(token);
+
+			for (int i = 0; i < updateData.Length; ++i)
+				param.Append("&" + updateData[i]);
+
+			return call("Player/" + playerId + "/update", param.ToString());
+		}
+		public void update_async(string playerId, UploadStringCompletedEventHandler onComplete = null, params string[] updateData)
+		{
+			var param = new StringBuilder();
+			param.Append("token=");
+			param.Append(token);
+
+			for (int i = 0; i < updateData.Length; ++i)
+				param.Append("&" + updateData[i]);
+
+			call_async("Player/" + playerId + "/update", param.ToString(), onComplete);
+		}
+
+		public string delete(string playerId)
+		{
+			return call("Player/" + playerId + "/delete", "token=" + token);
+		}
+		public void delete_async(string playerId, UploadStringCompletedEventHandler onComplete = null)
+		{
+			call_async("Player/" + playerId + "/delete", "token=" + token, onComplete);
+		}
 
 		public string login(string playerId)
 		{
 			return call("Player/" + playerId + "/login", "token=" + token);
 		}
+		public void login_async(string playerId, UploadStringCompletedEventHandler onComplete = null)
+		{
+			call_async("Player/" + playerId + "/login", "token=" + token, onComplete);
+		}
 
 		public string logout(string playerId)
 		{
 			return call("Player/" + playerId + "/logout", "token=" + token);
+		}
+		public void logout_async(string playerId, UploadStringCompletedEventHandler onComplete = null)
+		{
+			call_async("Player/" + playerId + "/logout", "token=" + token, onComplete);
 		}
 
 		public string points(string playerId)
@@ -172,6 +250,21 @@ namespace pblib.NET
 
 			return call("Engine/rule", param.ToString());
 		}
+		public void rule_async(string playerId, string action, UploadStringCompletedEventHandler onComplete, params string[] optionalData)
+		{
+			var param = new StringBuilder();
+			param.Append("token=");
+			param.Append(token);
+			param.Append("&player_id=");
+			param.Append(playerId);
+			param.Append("&action=");
+			param.Append(action);
+
+			for (int i = 0; i < optionalData.Length; ++i)
+				param.Append("&" + optionalData[i]);
+
+			call_async("Engine/rule", param.ToString(), onComplete);
+		}
 
 		public static string call(string address, string data = null)
 		{
@@ -180,11 +273,22 @@ namespace pblib.NET
 			WebClient client = new WebClient();
 			if (!string.IsNullOrEmpty(data))
 			{
-				client = new WebClient();
 				client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
 				return client.UploadString(BASE_URL + address, data);
 			}
 			return client.DownloadString(BASE_URL + address);
+		}
+
+		public static void call_async(string address, string data, UploadStringCompletedEventHandler onComplete)
+		{
+			Console.WriteLine("making async request to: " + address);
+
+			WebClient client = new WebClient();
+			Debug.Assert(!string.IsNullOrEmpty(data));			
+			client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+			if(onComplete != null)
+				client.UploadStringCompleted += onComplete;
+			client.UploadStringAsync(new Uri(BASE_URL + address), data);
 		}
 
 		public static dynamic JsonToDynamic(string json)

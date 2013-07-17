@@ -78,7 +78,6 @@ class Playbasis
 			'image' => $imageUrl
 		), $optionalData));
 	}
-	
 	public function register_async($playerId, $username, $email, $imageUrl, $optionalData=array())
 	{
 		return $this->call_async("Player/$playerId/register", array_merge(array(
