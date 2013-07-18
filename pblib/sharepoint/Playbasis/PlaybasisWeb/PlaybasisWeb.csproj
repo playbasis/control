@@ -52,6 +52,10 @@
     <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0">
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.UserProfiles, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Json.NET45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -111,6 +115,8 @@
     <Compile Include="Pages\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Playbasis.cs" />
+    <Compile Include="PlaybasisHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Announcements_ItemAdded.svc.cs">
       <DependentUpon>Announcements_ItemAdded.svc</DependentUpon>

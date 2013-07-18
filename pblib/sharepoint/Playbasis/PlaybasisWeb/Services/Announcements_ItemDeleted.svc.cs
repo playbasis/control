@@ -27,10 +27,7 @@ namespace PlaybasisWeb.Services
 
 		public void ProcessOneWayEvent(SPRemoteEventProperties properties)
 		{
-			TraceHelper.RemoteLog(properties.EventType.ToString());
-			TraceHelper.RemoteLog("list id: " + properties.ItemEventProperties.ListId.ToString());
-			TraceHelper.RemoteLog("item id: " + properties.ItemEventProperties.ListItemId.ToString());
-			TraceHelper.RemoteLog("user id: " + properties.ItemEventProperties.CurrentUserId.ToString());
+			PlaybasisHelper.Instance.TriggerAction(properties, "like");
 		}
 	}
 }
