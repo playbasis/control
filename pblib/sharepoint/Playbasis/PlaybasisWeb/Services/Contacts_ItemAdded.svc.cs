@@ -27,7 +27,8 @@ namespace PlaybasisWeb.Services
 
 		public void ProcessOneWayEvent(SPRemoteEventProperties properties)
 		{
-			PlaybasisHelper.Instance.TriggerAction(properties, "like");
+			// the line below will trigger action for the current user, 
+			PlaybasisHelper.Instance.TriggerAction(properties.ItemEventProperties.CurrentUserId, properties, "ACTION_NAME");
 		}
 	}
 }

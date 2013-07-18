@@ -13,10 +13,11 @@ namespace PlaybasisWeb
 	public sealed class PlaybasisHelper
 	{
 		public static readonly int AUTH_INTERVAL_HOUR = 24;
-		private static readonly string API_KEY = "abc";
-		private static readonly string API_SECRET = "abcde";
-		private static readonly string PLAYER_ID_PREFIX = "sp";
+		private static readonly string API_KEY = "YOUR_API_KEY";
+		private static readonly string API_SECRET = "YOUR_API_SECRET";
+		private static readonly string PLAYER_ID_PREFIX = "spusr_";
 		private static readonly string DEFAULT_PROFILE_IMAGE = "https://www.pbapp.net/images/default_profile.jpg";
+		private static readonly string DEFAULT_EMAIL_DOMAIN = "@email.com";
 
 		private static PlaybasisHelper instance = new PlaybasisHelper();
 
@@ -45,26 +46,61 @@ namespace PlaybasisWeb
 			}
 		}
 
-		public void Register(int userId)
+		public string Register(int userId, SPRemoteEventProperties properties, bool async)
 		{
-			var id = PLAYER_ID_PREFIX + userId.ToString();
-			var result = pb.register(id, id, id + "@mail.com", DEFAULT_PROFILE_IMAGE);
-			TraceHelper.RemoteLog(result);
+			using (ClientContext clientContext = TokenHelper.CreateRemoteEventReceiverClientContext(properties))
+			{
+				if (clientContext != null)
+				{
+					clientContext.Load(clientContext.Web);
+					clientContext.Load(clientContext.Web.SiteUsers);
+					clientContext.ExecuteQuery();
+
+					var user = clientContext.Web.SiteUsers.GetById(userId);
+					clientContext.Load(user);
+					clientContext.ExecuteQuery();
+
+					return Register(user, async);
+				}
+			}
+			return null;
 		}
 
-		public void TriggerAction(int userId, string action, params string[] optionalData)
+		public string Register(User user, bool async)
+		{
+			var id = PLAYER_ID_PREFIX + user.Id.ToString();
+			var username = user.Title;
+			if (string.IsNullOrWhiteSpace(username))
+				username = id;
+			var email = user.Email;
+			if (string.IsNullOrWhiteSpace(email))
+				email = id + DEFAULT_EMAIL_DOMAIN;
+
+			if (!async)
+			{
+				var result = pb.register(id, username, email, DEFAULT_PROFILE_IMAGE);
+				TraceHelper.RemoteLog(result);
+				return result;
+			}
+			pb.register_async(id, username, email, DEFAULT_PROFILE_IMAGE, printHandler);
+			return null;
+		}
+
+		public void TriggerAction(int userId, string action, bool tryAuth = true, params string[] optionalData)
 		{
 			Debug.Assert(!string.IsNullOrWhiteSpace(action));
+			TraceHelper.RemoteLog("user " + userId.ToString() + " trigger action " + action);
+			if (tryAuth)
+				Auth();
 			pb.rule_async(PLAYER_ID_PREFIX + userId.ToString(), action, printHandler, optionalData);
 		}
 
-		public void TriggerAction(SPRemoteEventProperties properties, string action, params string[] optionalData)
+		public void TriggerAction(int userId, SPRemoteEventProperties properties, string action, bool tryAuth = true, params string[] optionalData)
 		{
-			var userId = properties.ItemEventProperties.CurrentUserId;
-			TraceHelper.RemoteLog("user " + userId.ToString() + " trigger action " + action);
-			PlaybasisHelper.Instance.Auth();
-			PlaybasisHelper.Instance.Register(userId);
-			PlaybasisHelper.Instance.TriggerAction(userId, action, optionalData);
+			if (tryAuth)
+				Auth();
+			Register(userId, properties, false); //make sure the user is registered
+			TriggerAction(userId, action, false, optionalData);
 		}
 
 		public static void printHandler(Object sender, UploadStringCompletedEventArgs e)

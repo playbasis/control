@@ -23,9 +23,18 @@ namespace PlaybasisWeb.Services
 				if (clientContext != null)
 				{
 					clientContext.Load(clientContext.Web);
+					clientContext.Load(clientContext.Web.SiteUsers);
 					clientContext.ExecuteQuery();
 
 					RegisterEventReceivers(clientContext);
+
+					PlaybasisHelper.Instance.Auth();
+					foreach (var user in clientContext.Web.SiteUsers)
+					{
+						if (string.IsNullOrWhiteSpace(user.Email))
+							continue;
+						PlaybasisHelper.Instance.Register(user, true);
+					}
 				}
 			}
 
