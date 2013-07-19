@@ -78,7 +78,6 @@ class Playbasis
 			'image' => $imageUrl
 		), $optionalData));
 	}
-	
 	public function register_async($playerId, $username, $email, $imageUrl, $optionalData=array())
 	{
 		return $this->call_async("Player/$playerId/register", array_merge(array(
@@ -207,7 +206,7 @@ class Playbasis
 	/*
 	 * @param	$optionalData	Key-value for additional parameters to be sent to the rule method.
 	 * 							The following keys are supported:
-	 * 							- url		url of the page that trigger the action (for triggering non-global actions)
+	 * 							- url		url or filter string (for triggering non-global actions)
 	 * 							- reward	name of the custom-point reward to give (for triggering rules with custom-point reward)
 	 * 							- quantity	amount of points to give (for triggering rules with custom-point reward)
 	 */

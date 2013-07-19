@@ -86,7 +86,7 @@ class Playbasis:
 
     # @param    optionalData    Key-value for additional parameters to be sent to the rule method.
     #                           The following keys are supported:
-    #                           - url       url of the page that trigger the action (for triggering non-global actions)
+    #                           - url       url or filter string (for triggering non-global actions)
     #                           - reward    name of the custom-point reward to give (for triggering rules with custom-point reward)
     #                           - quantity  amount of points to give (for triggering rules with custom-point reward)
     def rule(self, playerId, action, optionalData={}):

@@ -218,7 +218,7 @@ public class Playbasis
 	 * @param	optionalData	Varargs of String for additional parameters to be sent to the rule method.
 	 * 							Each element is a string in the format of key=value, for example: url=playbasis.com
 	 * 							The following keys are supported:
-	 * 							- url		url of the page that trigger the action (for triggering non-global actions)
+	 * 							- url		url or filter string (for triggering non-global actions)
 	 * 							- reward	name of the custom-point reward to give (for triggering rules with custom-point reward)
 	 * 							- quantity	amount of points to give (for triggering rules with custom-point reward)
 	 */

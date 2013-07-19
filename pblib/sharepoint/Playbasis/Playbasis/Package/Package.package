@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="7efcf07f-248c-47f4-9f29-baca5772f2cc" solutionId="7efcf07f-248c-47f4-9f29-baca5772f2cc" resetWebServer="false" sharePointProductVersion="15.0" name="Playbasis" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="9035096f-f17b-4263-8349-3a2d26c6b457" />
+  </features>
+</package>
