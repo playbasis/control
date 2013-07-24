@@ -279,7 +279,7 @@ function processRequest(req, res, next) {
     var reqQuery = req.body,
         customHeaders = {},
         params = reqQuery.params || {},
-        locations = reqQuery.locations || {},
+        locations = reqQuery.locations || {},
         methodURL = reqQuery.methodUri,
         httpMethod = reqQuery.httpMethod,
         apiKey = reqQuery.apiKey,
@@ -641,6 +641,7 @@ app.dynamicHelpers({
     session: function(req, res) {
     // If api wasn't passed in as a parameter, check the path to see if it's there
         if (!req.params.api) {
+
             pathName = req.url.replace('/','');
             // Is it a valid API - if there's a config file we can assume so
             fs.stat(__dirname + '/public/data/' + pathName + '.json', function (error, stats) {
@@ -648,9 +649,15 @@ app.dynamicHelpers({
                     req.params.api = pathName;
                 }
             });
-        }       
+        }
+
         // If the cookie says we're authed for this particular API, set the session to authed as well
         if (req.params.api && req.session[req.params.api] && req.session[req.params.api]['authed']) {
+            var pbapp = ["pbapp"];
+
+            if(pbapp.indexOf(req.params.api) < 0){
+                req.params.api = "pbapp"
+            }
             req.session['authed'] = true;
         }
 
@@ -658,6 +665,12 @@ app.dynamicHelpers({
     },
     apiInfo: function(req, res) {
         if (req.params.api) {
+            var pbapp = ["pbapp"];
+
+            if(pbapp.indexOf(req.params.api) < 0){
+                req.params.api = "pbapp"
+            }
+
             return apisConfig[req.params.api];
         } else {
             return apisConfig;
@@ -665,12 +678,26 @@ app.dynamicHelpers({
     },
     apiName: function(req, res) {
         if (req.params.api) {
+            var pbapp = ["pbapp"];
+
+            if(pbapp.indexOf(req.params.api) < 0){
+                req.params.api = "pbapp"
+            }
+
             return req.params.api;
         }
     },
     apiDefinition: function(req, res) {
         if (req.params.api) {
-            return require(__dirname + '/public/data/' + req.params.api + '.json');
+            try
+            {
+                return require(__dirname + '/public/data/' + req.params.api + '.json');
+            }
+            catch(err)
+            {
+                console.log("error require : "+req.params.api);
+                return require(__dirname + '/public/data/pbapp.json');
+            }
         }
     }
 })
