@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="PlaybasisWeb.Services.Issues_ItemDeleted" CodeBehind="Issues_ItemDeleted.svc.cs" %>

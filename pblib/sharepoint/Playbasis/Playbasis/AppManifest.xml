@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created:cb85b80c-f585-40ff-8bfc-12ff4d0e34a9-->
+<App xmlns="http://schemas.microsoft.com/sharepoint/2012/app/manifest"
+     Name="Playbasis"
+     ProductID="{ce7f2d48-98b5-47ea-aa78-1c3c87ffdf1c}"
+     Version="1.0.0.0"
+     SharePointMinVersion="15.0.0.0"
+>
+  <Properties>
+    <Title>Playbasis</Title>
+    <StartPage>~remoteAppUrl/Pages/Default.aspx?{StandardTokens}</StartPage>
+    <InstalledEventEndpoint>~remoteAppUrl/Services/AppEventReceiver.svc</InstalledEventEndpoint>
+  </Properties>
+
+  <AppPrincipal>
+    <AutoDeployedWebApplication/>
+  </AppPrincipal>
+
+  <AppPrerequisites> 
+    <AppPrerequisite Type="AutoProvisioning" ID="RemoteWebHost" /> 
+  </AppPrerequisites>
+  <AppPermissionRequests>
+    <AppPermissionRequest Scope="http://sharepoint/content/sitecollection" Right="FullControl" />
+    <AppPermissionRequest Scope="http://sharepoint/content/sitecollection/web" Right="FullControl" />
+    <AppPermissionRequest Scope="http://sharepoint/content/tenant" Right="FullControl" />
+    <AppPermissionRequest Scope="http://sharepoint/content/sitecollection/web/list" Right="FullControl" />
+    <AppPermissionRequest Scope="http://sharepoint/social/core" Right="FullControl" />
+    <AppPermissionRequest Scope="http://sharepoint/social/microfeed" Right="FullControl" />
+    <AppPermissionRequest Scope="http://sharepoint/social/tenant" Right="FullControl" />
+  </AppPermissionRequests>
+</App>
