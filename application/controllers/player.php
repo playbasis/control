@@ -35,7 +35,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//read player information
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
@@ -73,7 +73,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//read player information
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
@@ -116,7 +116,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id > 0)
+		if($pb_player_id)
 			$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
 		$playerInfo = array(
 			'email' => $this->input->post('email'),
@@ -175,7 +175,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);		
 		$playerInfo = array();
 		$email = $this->input->post('email');
@@ -244,7 +244,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$this->player_model->deletePlayer($pb_player_id, $validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
@@ -267,7 +267,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('login');
@@ -275,7 +275,7 @@ class Player extends REST_Controller
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id'],
 			'pb_player_id' => $pb_player_id,
-			'action_log_id' => 0
+			'action_log_id' => null
 		));
 		//publish to node stream
 		$this->node->publish(array(
@@ -303,7 +303,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('logout');
@@ -311,7 +311,7 @@ class Player extends REST_Controller
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id'],
 			'pb_player_id' => $pb_player_id,
-			'action_log_id' => 0
+			'action_log_id' => null
 		));
 		//publish to node stream
 		$this->node->publish(array(
@@ -340,7 +340,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$input = array_merge($validToken, array(
 			'pb_player_id' => $pb_player_id
@@ -378,7 +378,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$input = array_merge($validToken, array(
 			'reward_name' => $reward
@@ -411,7 +411,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$actions = array();
 		if($action)
@@ -450,7 +450,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//get player badge
 		$badgeList = $this->player_model->getBadge($pb_player_id, $site_id);
@@ -508,7 +508,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$input = array_merge($validToken, array(
 			'pb_player_id' => $pb_player_id
@@ -549,7 +549,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$input = array_merge($validToken, array(
 			'reward_name' => $reward
@@ -585,7 +585,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		$actions = array();
 		if($action)
@@ -627,7 +627,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//get player badge
 		$badgeList = $this->player_model->getBadge($pb_player_id, $site_id);

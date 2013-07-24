@@ -220,7 +220,7 @@ class Engine extends REST_Controller
 			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 				'cl_player_id' => $this->input->post('player_id')
 			)));
-			if($pb_player_id < 0)
+			if(!$pb_player_id)
 				$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 			//get action id by action name
 			$actionName = $this->input->post('action');

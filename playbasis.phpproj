@@ -202,6 +202,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\tracker.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\welcome.php"
     {
     "ProjRelPath" = "T"

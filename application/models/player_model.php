@@ -48,11 +48,12 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($site_id);
         if($fields)
 			$this->mongo_db->select($fields);
-		$this->mongo_db->where('pb_player_id', intval($id));
-		$result = $this->mongo_db->get('player');
+		$this->mongo_db->where('_id', $id);
+		$result = $this->mongo_db->get('playbasis_player');
 		if(!$result)
 			return $result;
 		$result = $result[0];
+		$result['pb_player_id'] = $result['_id'];
 		unset($result['_id']);
 		$result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 		unset($result['date_added']);
@@ -83,26 +84,26 @@ class Player_model extends MY_Model
 	public function getPlaybasisId($clientData)
 	{
 		if(!$clientData)
-			return -1;
+			return null;
 		$this->set_site_mongodb($clientData['site_id']);
-		$this->mongo_db->select(array('pb_player_id'));
+		$this->mongo_db->select(array('_id'));
 		$this->mongo_db->where(array(
-			'client_id' => intval($clientData['client_id']),
-			'site_id' => intval($clientData['site_id']),
+			'client_id' => $clientData['client_id'],
+			'site_id' => $clientData['site_id'],
 			'cl_player_id' => $clientData['cl_player_id']
 		));
-		$id = $this->mongo_db->get('player');
-		return ($id) ? $id[0]['pb_player_id'] : -1;
+		$id = $this->mongo_db->get('playbasis_player');
+		return ($id) ? $id[0]['_id'] : null;
 	}
 	public function getClientPlayerId($pb_player_id, $site_id)
 	{
 		if(!$pb_player_id)
-			return -1;
+			return null;
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('cl_player_id'));
-		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
-		$id = $this->mongo_db->get('player');
-		return ($id) ? $id[0]['cl_player_id'] : -1;
+		$this->mongo_db->where('_id', $pb_player_id);
+		$id = $this->mongo_db->get('playbasis_player');
+		return ($id) ? $id[0]['cl_player_id'] : null;
 	}
 	public function getPlayerPoints($pb_player_id, $site_id)
 	{

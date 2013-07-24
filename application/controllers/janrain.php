@@ -95,7 +95,7 @@ class Janrain extends REST_Controller
 			//var_dump($identifier);
 			$pb_player_id = $this->social_model->getPBPlayerIdFromInstagramId($identifier, $client_id, $site_id);
 		}
-		if($pb_player_id <= 0)
+		if(!$pb_player_id)
 		{
 			$identifier = $profile['identifier'];
             $identifier = preg_replace("/\//", "_", $identifier);
@@ -105,7 +105,7 @@ class Janrain extends REST_Controller
 				'cl_player_id' => $identifier
 			)));
 		}
-		if($pb_player_id <= 0)
+		if(!$pb_player_id)
 		{
 			$name = (isset($profile['displayName'])) ? $profile['displayName'] : 'johndoe';
 			$input['client_id'] = $client_id;
@@ -137,7 +137,7 @@ class Janrain extends REST_Controller
 			'client_id' => $client_id,
 			'site_id' => $site_id,
 			'pb_player_id' => $pb_player_id,
-			'action_log_id' => 0
+			'action_log_id' => null
 		));
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
