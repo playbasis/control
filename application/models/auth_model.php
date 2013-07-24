@@ -12,7 +12,7 @@ class Auth_model extends MY_Model
 	{
 		$this->set_site_mongodb(0);
 		$this->mongo_db->select(array(
-			'site_id',
+			'_id',
 			'client_id',
 			'domain_name',
 			'site_name'
@@ -20,12 +20,17 @@ class Auth_model extends MY_Model
 		$this->mongo_db->where(array(
 			'api_key' => $data['key'],
 			'api_secret' => $data['secret'],
-			'status' => true
+			'status' => 1
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
-		$result = $this->mongo_db->get('client_site');
+		$result = $this->mongo_db->get('playbasis_client_site');
 		if($result)
-			return $result[0];
+		{
+			$result = $result[0];
+			$result['site_id'] = $result['_id'];
+			unset($result['_id']);
+			return $result;
+		}
 		return array();
 	}
 	public function generateToken($data)
@@ -37,7 +42,7 @@ class Auth_model extends MY_Model
 			'client_id' => $data['client_id'],
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
-		$token = $this->mongo_db->get('token');
+		$token = $this->mongo_db->get('playbasis_token');
 		if($token && $token[0])
 		{
 			$result['token'] = $token[0]['token'];
@@ -59,9 +64,9 @@ class Auth_model extends MY_Model
 				'site_id' => $data['site_id'],
 				'client_id' => $data['client_id']
 			));
-			$this->mongo_db->delete('token');
+			$this->mongo_db->delete('playbasis_token');
 			//insert new token
-			$this->mongo_db->insert('token', array(
+			$this->mongo_db->insert('playbasis_token', array(
 				'client_id' => $data['client_id'],
 				'site_id' => $data['site_id'],
 				'token' => $token['token'],
@@ -81,19 +86,21 @@ class Auth_model extends MY_Model
 			'token' => $token,
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
-		$result = $this->mongo_db->get('token');
+		$result = $this->mongo_db->get('playbasis_token');
 		if($result && $result[0])
 		{
 			$info = $result[0];
-			unset($info['_id']);
-			$this->set_site_mongodb($info['site_id']);
+			$info['_id'] = $info['site_id'];
+			unset($info['site_id']);
+			$this->set_site_mongodb($info['_id']);
 			$this->mongo_db->select(array(
 				'domain_name',
 				'site_name'
 			));
 			$this->mongo_db->where($info);
-			$result = $this->mongo_db->get('client_site');
+			$result = $this->mongo_db->get('playbasis_client_site');
 			$result = array_merge($info, ($result) ? $result[0] : array());
+			$result['site_id'] = $result['_id'];
 			unset($result['_id']);
 			return $result;
 		}
@@ -102,8 +109,8 @@ class Auth_model extends MY_Model
 	public function createToken($client_id, $site_id)
 	{
 		$info = array(
-			'client_id' => intval($client_id),
-			'site_id' => intval($site_id)
+			'client_id' => $client_id,
+			'_id' => $site_id
 		);
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
@@ -111,10 +118,14 @@ class Auth_model extends MY_Model
 			'site_name'
 		));
 		$this->mongo_db->where($info);
-		$result = $this->mongo_db->get('client_site');
-		$result = $result->row_array();
+		$result = $this->mongo_db->get('playbasis_client_site');
 		if($result && $result[0])
-			return array_merge($info, $result[0]);
+		{
+			$result = array_merge($info, $result[0]);
+			$result['site_id'] = $result['_id'];
+			unset($result['_id']);
+			return $result;
+		}
 		return null;
 	}
 	public function createTokenFromAPIKey($apiKey)
@@ -122,15 +133,22 @@ class Auth_model extends MY_Model
 		$this->set_site_mongodb(0);
 		$this->mongo_db->select(array(
 			'client_id',
-			'site_id',
+			'_id',
 			'domain_name',
 			'site_name'
 		));
 		$this->mongo_db->where(array(
 			'api_key' => $apiKey,
 		));
-		$result = $this->mongo_db->get('client_site');
-		return ($result) ? $result[0] : array();
+		$result = $this->mongo_db->get('playbasis_client_site');
+		if($result && $result[0])
+		{
+			$result = $result[0];
+			$result['site_id'] = $result['_id'];
+			unset($result['_id']);
+			return $result;
+		}
+		return array();
 	}
 }
 ?>

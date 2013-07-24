@@ -19,6 +19,7 @@ class Playbasis extends CI_Controller
 	{
 		$this->load->view('playbasis/login');
 	}
+	/*
     public function memtest()
     {
         $this->load->model('auth_model');
@@ -208,5 +209,6 @@ class Playbasis extends CI_Controller
         echo "findPoint model return : ".$haspoint."<br><br>";
 
     }
+	*/
 }
 ?>

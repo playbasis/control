@@ -31,5 +31,33 @@ class Auth extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET', $required), 200);
 		}
 	}
+	public function test_get()
+	{
+		echo '<pre>';
+		$credential = array(
+			'key' => 'abc',
+			'secret' => 'abcde'
+		);
+		echo '<br>getApiInfo:<br>';
+		$result = $this->auth_model->getApiInfo($credential);
+		print_r($result);
+		echo 'site id: ' . $result['site_id']->{'$id'};
+		echo '<br>';
+		echo 'client id: ' . $result['client_id']->{'$id'};
+		echo '<br>';
+		echo '<br>generateToken:<br>';
+		$result = $this->auth_model->generateToken(array_merge($result, $credential));
+		print_r($result);
+		echo '<br>findToken:<br>';
+		$result = $this->auth_model->findToken($result['token']);
+		print_r($result);
+		echo '<br>createToken:<br>';
+		$result = $this->auth_model->createToken($result['client_id'], $result['site_id']);
+		print_r($result);
+		echo '<br>createTokenFromAPIKey<br>';
+		$result = $this->auth_model->createTokenFromAPIKey($credential['key']);
+		print_r($result);
+		echo '</pre>';
+	}
 }
 ?>

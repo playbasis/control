@@ -14,13 +14,13 @@ class MY_Model extends CI_Model
 	
 	//mongodb setup
 	private static $mongoBDsNames = array(
-		0 => 'pbapp',
-		1 => 'pbapp'
+		0 => 'core',
+		1 => 'core_true'
 	);
 	private static $mongoDBs = array(
 		0 => 0,
-		1 => 0,
-		2 => 0
+		//'some_site_id' => 0,
+		//'51e7681104b602402a000109' => 0
 	);
 	protected $mongoSite = 0;
 	
@@ -42,7 +42,8 @@ class MY_Model extends CI_Model
 	public function set_site_mongodb($site_id)
 	{
 		$currDB = self::$mongoDBs[$this->mongoSite];
-		$this->mongoSite = isset(self::$mongoDBs[$site_id]) ? $site_id : 0;
+		$id = is_object($site_id) ? $site_id->{'$id'} : $site_id;
+		$this->mongoSite = isset(self::$mongoDBs[$id]) ? $id : 0;
 		$newDB = self::$mongoDBs[$this->mongoSite];
 		if($currDB == $newDB)
 			return; //no need to switch
