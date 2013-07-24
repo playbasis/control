@@ -14,11 +14,11 @@ class Action_model extends MY_Model
 		$this->set_site_mongodb($data['site_id']);
 		$this->mongo_db->select(array('action_id'));
 		$this->mongo_db->where(array(
-			'client_id' => intval($data['client_id']),
-			'site_id' => intval($data['site_id']),
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
 			'name' => strtolower($data['action_name'])
 		));
-		$result = $this->mongo_db->get('action_to_client');
+		$result = $this->mongo_db->get('playbasis_action_to_client');
 		if($result && $result[0])
 		{
 			unset($result[0]['_id']);
