@@ -36,6 +36,9 @@ class Badge extends REST_Controller
 			$this->response($this->resp->setRespond($badgesList), 200);
 		}
 	}
+	////////////////
+	// DEPRECATED //
+	////////////////
 	public function getCollection_get($collectionId = 0)
 	{
 		$required = $this->input->checkParam(array(
@@ -59,24 +62,6 @@ class Badge extends REST_Controller
 			$collectionsList['collections'] = $this->badge_model->getAllCollection($validToken);
 			$this->response($this->resp->setRespond($collectionsList), 200);
 		}
-	}
-	public function test_get()
-	{
-		echo '<pre>';
-		$credential = array(
-			'key' => 'abc',
-			'secret' => 'abcde'
-			);
-		$token = $this->auth_model->getApiInfo($credential);
-		echo '<br>getAllBadges:<br>';
-		$result = $this->badge_model->getAllBadges($token);
-		print_r($result);
-		echo '<br>getBadge:<br>';
-		$result = $this->badge_model->getBadge(array_merge($token, array(
-			'badge_id' => $result[0]['badge_id']
-		)));
-		print_r($result);
-		echo '</pre>';
 	}
 	////////////////
 	// DEPRECATED //
@@ -132,6 +117,24 @@ class Badge extends REST_Controller
 			$collectionsList['collections'] = $this->badge_model->getAllCollection($validToken);
 			$this->response($this->resp->setRespond($collectionsList), 200);
 		}
+	}
+	public function test_get()
+	{
+		echo '<pre>';
+		$credential = array(
+			'key' => 'abc',
+			'secret' => 'abcde'
+			);
+		$token = $this->auth_model->getApiInfo($credential);
+		echo '<br>getAllBadges:<br>';
+		$result = $this->badge_model->getAllBadges($token);
+		print_r($result);
+		echo '<br>getBadge:<br>';
+		$result = $this->badge_model->getBadge(array_merge($token, array(
+			'badge_id' => $result[0]['badge_id']
+			)));
+		print_r($result);
+		echo '</pre>';
 	}
 }
 ?>
