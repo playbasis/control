@@ -134,7 +134,7 @@ class Client_model extends MY_Model
 			'site_id' => intval($input['site_id']),
 			'name' => strtolower($rewardName)
 		));
-		$result = $this->site_db()->get('reward_to_client');
+		$result = $this->mongo_db->get('reward_to_client');
 		$result = $result[0];
 		$customRewardId = isset($result['reward_id']) ? $result['reward_id'] : false;
 		if(!$customRewardId)
