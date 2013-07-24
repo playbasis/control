@@ -138,6 +138,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\action.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\api"
     {
     "ProjRelPath" = "T"
@@ -187,6 +191,10 @@
     "ProjRelPath" = "T"
     }
     "application\\controllers\\player.php"
+    {
+    "ProjRelPath" = "T"
+    }
+    "application\\controllers\\point.php"
     {
     "ProjRelPath" = "T"
     }
