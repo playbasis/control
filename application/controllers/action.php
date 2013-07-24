@@ -19,8 +19,8 @@ class Action extends REST_Controller
 			'secret' => 'abcde'
 			);
 		$token = $this->auth_model->getApiInfo($credential);
-		$result = $this->action_model->findAction(array_merge($token, array('action_name'=>'like')));
 		echo '<br>findAction:<br>';
+		$result = $this->action_model->findAction(array_merge($token, array('action_name'=>'like')));
 		print_r($result);
 		echo '</pre>';
 	}
