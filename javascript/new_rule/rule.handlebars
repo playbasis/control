@@ -1,0 +1,158 @@
+{{#.}}
+
+{{! start rule : container avoids animation conflicts with isotope }}
+{{#unless addRule}}<div class="rule-container">{{/unless}}
+<div{{#if rule_id}} id="rule-{{rule_id}}"{{/if}} class="rule {{actionColor action_id}}">
+
+    <div class="rule-header rule-box-header">
+        <i class="{{actionIcon action_id}}"></i>
+    </div>
+
+    <div class="rule-name">
+        <h4 title="{{name}}">{{name}}</h4>
+    </div>
+
+    <div class="rule-minimize">
+        <span title="Minimize Rule">X</span>
+    </div>
+
+    {{! start rule-content }}
+    <div class="rule-content">
+
+        <div class="rule-title">
+            <input type="text" name="Rule Title" placeholder="Rule Title" value="{{name}}">
+            <i class="icon-pencil"></i>
+        </div>
+
+        <div class="rule-description">
+            <textarea placeholder="Rule Description" rows="4" cols="60">{{description}}</textarea>
+            <i class="icon-pencil"></i>
+        </div>
+
+        {{! start rule-actions }}
+        <div class="rule-actions">
+            <h4>Action</h4>
+
+            {{> rule-box this}}
+
+            <div class="rule-action-conditions">
+
+                <div class="rule-input">
+                    <label{{#if rule_id}} for="action-url-{{rule_id}}"{{/if}}>Target URL</label>
+                    <input type="text" name="Target URL"{{#if rule_id}} id="action-url-{{rule_id}}"{{/if}} class="action-url" placeholder="i.e. http://www.playbasis.com/" value="">
+                    <div class="rule-input-help">
+                        <p>Which page are we checking for this action?</p>
+                    </div>
+                </div>
+
+                <div class="rule-input">
+                    <label{{#if rule_id}} for="action-counter-{{rule_id}}"{{/if}}>Counter</label>
+                    <input type="text" name="Action Counter"{{#if rule_id}} id="action-counter-{{rule_id}}"{{/if}} class="action-counter" placeholder="Number of Actions to Trigger Rule ( i.e. 1, 2, 3 )" value="">
+                    <div class="rule-input-help">
+                        <input type="checkbox"{{#if rule_id}} id="action-in-a-row-{{rule_id}}"{{/if}} name="reset" checked value="Reset">
+                        <label{{#if rule_id}} for="action-in-a-row-{{rule_id}}"{{/if}}>Reset counter if actions are not in a row?</label>
+                    </div>
+                </div>
+
+                <div class="toggle-rule-action-date-restrictions">
+                    <button type="button" class="btn btn-small">Manage Date Restrictions</a>
+                </div>
+
+            </div>
+
+            <div class="rule-action-date-restrictions well rule-input-well">
+                <div class="rule-input-small">
+                    <label{{#if rule_id}} for="start-time-{{rule_id}}"{{/if}}>From:</label>
+                    <input type="text" name="Start Time"{{#if rule_id}} id="start-time-{{rule_id}}"{{/if}} class="datepicker" placeholder="dd/mm/yyyy" value="{{date_added}}">
+                </div>
+                <div class="rule-input-small">
+                    <label{{#if rule_id}} for="end-time-{{rule_id}}"{{/if}}>To:</label>
+                    <input type="text" name="End Time"{{#if rule_id}} id="end-time-{{rule_id}}"{{/if}} class="datepicker" placeholder="dd/mm/yyyy" value="">
+                </div>
+                <div class="btn-group rule-date-toggle" data-toggle="buttons-radio">
+                    <button type="button" class="btn btn-mini active">No Repeat</button>
+                    <button type="button" class="btn btn-mini">Daily</button>
+                    <button type="button" class="btn btn-mini">Weekly</button>
+                    <button type="button" class="btn btn-mini">Monthly</button>
+                </div>
+                <a class="close-rule-input-well" href="#"><i class="icon-ok"></i></a>
+            </div>
+
+        </div>
+        {{! end rule-actions }}
+
+        {{! start rule-rewards }}
+        <div class="rule-rewards">
+
+            <h4>Rewards</h4>
+
+            <div class="add-rule-reward">
+                <i class="icon-plus"></i>
+                <span>Add Reward</span>
+            </div>
+
+            {{#rewards}}
+            {{!  > rule-box this}}
+            <div class="rule-box rule-box-extra">
+                <div class="rule-box-header">
+                    <i class="{{icon}}"></i>
+                </div>
+                <div class="rule-box-footer">
+                    <span class="rule-box-highlight">{{quantity}}</span>
+                    <span>{{title}}</span>
+                </div>
+            </div>
+            {{/rewards}}
+
+            <div class="rule-reward-editor well rule-input-well">
+                <div class="rule-input-small">
+                    <label{{#if rule_id}} for="reward-title-{{rule_id}}"{{/if}}>Reward Title:</label>
+                    <input type="text" name="Reward Title"{{#if rule_id}} id="reward-title-{{rule_id}}"{{/if}} placeholder="" value="">
+                </div>
+                <div class="rule-input-small">
+                    <label{{#if rule_id}} for="reward-quantity-{{rule_id}}"{{/if}}>Quantity:</label>
+                    <input type="text" name="Reward Quantity"{{#if rule_id}} id="reward-quantity-{{rule_id}}"{{/if}} placeholder="" value="">
+                </div>
+                <a class="close-rule-input-well" href="#">
+                    <i class="icon-ok"></i>
+                </a>
+            </div>
+
+        </div>
+        {{! end rule-rewards }}
+
+        <div class="tag-editor">
+
+            <h4>{{tags}}</h4>
+
+        </div>
+
+    </div>
+    {{! end rule-content }}
+
+    {{! start rule-footer }}
+    <div class="rule-footer">
+
+        <div class="rule-controls">
+            <button class="btn btn-primary rule-controls-save" type="submit">Save</button>
+            <button class="btn rule-controls-cancel" type="button">Cancel</button>
+            {{#unless addRule}}
+            <button class="btn rule-controls-duplicate" type="button">Duplicate</button>
+            <button class="btn rule-controls-delete" type="button">Delete</button>
+            {{/unless}}
+        </div>
+
+        <div class="rule-status {{enabled active_status}}">
+            <div class="rule-status-toggle">
+                <span>{{enabled active_status}}</span>
+            </div>
+        </div>
+
+    </div>
+    {{! end rule-footer }}
+
+</div>
+{{#unless addRule}}</div>{{/unless}}
+{{! end rule }}
+
+{{/.}}

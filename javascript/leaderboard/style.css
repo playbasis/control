@@ -1,0 +1,50 @@
+
+/*TAB INDICATOR */
+ul.tab_indicator,ul.tab_indicator_fit {
+list-style-type:none;
+padding:0;
+margin:2px 0 -1px;
+overflow:auto
+}
+
+ul.tab_indicator li,ul.tab_indicator_fit li {
+float:left;
+padding:4px 12px 2px;
+min-width:110px;
+margin:0 0 0 4px;
+cursor:pointer;
+line-height:26px;
+overflow:auto
+}
+
+ul.tab_indicator li span,ul.tab_indicator_fit li span {
+margin-top:-2px;
+position:absolute;
+font-weight:700
+}
+
+ul.tab_indicator li img,ul.tab_indicator_fit li img {
+margin:4px 4px 0 0
+}
+
+/*OVERRIDE */
+/*ul.tab_indicator_fit li{width: 10px; margin-left: 0px }*/
+ul.tab_indicator_fit li {
+	float: left;
+    /*min-width: 92px;*/
+    min-width: 97px;
+    margin: 0 0 2px 2px;
+    cursor: pointer;
+    line-height: 36px;
+    background: #ddd;
+}
+
+ul.tab_indicator_fit li span {
+display:none
+}
+
+ul.tab_indicator_fit li img {
+	margin: -10px 0px 0px 26px;
+}
+
+ul.tab_indicator_fit li.pbd_r_active{ background: #fff;}

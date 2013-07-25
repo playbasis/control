@@ -1,0 +1,73 @@
+db.playbasis_player.aggregate([
+	{ $match: { 
+		client_id: ObjectId("51e7681104b602402a0000fd"), 
+		site_id: ObjectId("51e7681104b602402a000109"), 
+		date_added: {$gte: ISODate("2012-01-01T00:00:00.0Z"), $lt: ISODate("2013-07-01T00:00:00.0Z")}
+	}},
+    { $group : {
+        _id: {
+            year : { $year : "$date_added" },        
+            month : { $month : "$date_added" },        
+            day : { $dayOfMonth : "$date_added" },
+        },
+        count: { $sum: 1 },
+		fulldate: "$date_added"
+    }}]
+);
+
+db.playbasis_player.aggregate([
+	{ $match: { 
+		client_id: ObjectId("51e7681104b602402a0000fd"), 
+		site_id: ObjectId("51e7681104b602402a000109"), 
+		date_added: {$gte: ISODate("2012-01-01T00:00:00.0Z"), $lt: ISODate("2013-07-01T00:00:00.0Z")}
+	}},
+    { $group : {
+        _id: {
+            year : { $year : "$date_added" },        
+            month : { $month : "$date_added" },        
+            day : { $dayOfMonth : "$date_added" },
+        },
+        count: { $sum: 1 }
+    }},
+	{$sort:{_id:1}}
+]);
+
+db.playbasis_player.aggregate([
+	{ $match: { 
+		client_id: ObjectId("51e7681104b602402a0000fd"), 
+		site_id: ObjectId("51e7681104b602402a000109"), 
+		date_added: {$gte: ISODate("2012-01-01T00:00:00.0Z"), $lt: ISODate("2013-07-01T00:00:00.0Z")}
+	}}
+]);
+
+db.playbasis_player.aggregate([
+	{ $match: { 
+		date_added: {$gte: ISODate("2012-01-01T00:00:00.0Z"), $lt: ISODate("2013-07-01T00:00:00.0Z")}
+	}}
+]);
+
+db.playbasis_player.aggregate([
+    { $group : {
+        _id: {
+            year : { $year : "$date_added" },        
+            month : { $month : "$date_added" },        
+            day : { $dayOfMonth : "$date_added" },
+        },
+        count: { $sum: 1 },
+		fulldate: "$date_added"
+    }}]
+);
+
+db.playbasis_player.aggregate([
+    { 
+		$group : {
+			_id: {
+				year : { $year : "$date_added" },        
+				month : { $month : "$date_added" },        
+				day : { $dayOfMonth : "$date_added" },
+			},
+			count: { $sum: 1 },
+			fulldate: "$date_added"
+		}
+	}
+]);

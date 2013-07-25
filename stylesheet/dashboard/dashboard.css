@@ -1,0 +1,260 @@
+/*dashboard.css*/
+.top_title{margin:0px 0px -4px 0px;font-family:arial;font-weight:lighter;font-size:1.4em;text-decoration:underline}
+
+.insight_time_interval{margin-top:-6px}
+.insight_time_interval .datepicker{width:80px}
+
+
+.box-header{overflow: hidden;}
+.feed_container{ width: 100%;margin-top: -35px !important;}
+.feed_container ul{padding-left: 34px;}
+.summary_li {width: 50%;}
+.tab_feed_label{padding-left: 12px}
+
+.nav-pills > .active > a, .nav-pills > .active > a:hover {color: #ffffff;background-color: rgb(103, 105, 105);}
+a{ color:#999}
+
+/* Custom Isotope styles for dashboard
+=================================================================== */
+
+/** Latest / Leader Masonry **/
+
+/** Containers **/
+#latest-masonry .isot-player-container,
+#leader-masonry .isot-player-container {
+  width: 100%;
+  height: 42px;
+  margin: 0 0 10px;
+}
+#latest-masonry .large,
+#leader-masonry .large {
+  height: 322px;
+}
+
+#latest-masonry .isot-player,
+#leader-masonry .isot-player {
+  width: 99%;
+  height: 40px;
+  border-width: 0 0 1px 0;
+}
+#latest-masonry .large .isot-player,
+#leader-masonry .large .isot-player {
+  height: 320px;
+  border-width: 1px;
+}
+
+/** Portrait **/
+#latest-masonry .isot-player-portrait img,
+#leader-masonry .isot-player-portrait img {
+  width: 30px;
+  height: 30px;
+  top: 0;
+  left: 0;
+}
+#latest-masonry .large .isot-player-portrait img,
+#leader-masonry .large .isot-player-portrait img {
+  width: 100px;
+  height: 100px;
+  top: 10px;
+  left: 10px;
+}
+
+/** Name **/
+#latest-masonry .isot-player-name,
+#leader-masonry .isot-player-name {
+  font-size: 16px;
+  position: absolute;
+  top: 285px;
+  left: 40px;
+  color: #333;
+  text-shadow: none;
+}
+#latest-masonry .large .isot-player-name,
+#leader-masonry .large .isot-player-name {
+  top: 10px;
+  left: 120px;
+  color: #fff;
+  text-shadow: 0 -1px rgb(0,0,0);
+  text-shadow: 0 -1px rgba(0,0,0,0.6);
+}
+
+/** Stats Container **/
+#latest-masonry .large .isot-player-stats,
+#leader-masonry .large .isot-player-stats {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+/** Points **/
+#latest-masonry .isot-player-points,
+#leader-masonry .isot-player-points {
+  float: right;
+  width: auto;
+  height: auto;
+  position: static;
+  background: none;
+  margin-top: 6px;
+  color: #666;
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: normal;
+}
+  #latest-masonry .isot-player-points span,
+  #leader-masonry .isot-player-points span {
+    margin: 0;
+  }
+  #latest-masonry .isot-player-points small,
+  #leader-masonry .isot-player-points small {
+    color: #999;
+    display: inline-block;
+    font-size: 13px;
+    font-variant: normal;
+  }
+
+/** Level **/
+#latest-masonry .isot-player-level,
+#leader-masonry .isot-player-level {
+  float: right;
+  width: auto;
+  height: auto;
+  position: static;
+  background: none;
+  margin: 6px 6px 0;
+  color: #999;
+}
+  #latest-masonry .isot-player-level span,
+  #leader-masonry .isot-player-level span {
+    color: #2b91af;
+    font-size: 16px;
+    position: static;
+    text-shadow: none;
+    padding-right: 6px;
+    border-right: #ccc solid 1px;
+  }
+  #latest-masonry .isot-player-level small,
+  #leader-masonry .isot-player-level small {
+    color: #999;
+    font-size: 13px;
+    font-variant: normal;
+  }
+
+
+/** Latest Masonry Only **/
+
+/** Date joined **/
+#latest-masonry .isot-player-joined {
+  position: absolute;
+  top: 206px;
+  right: 0;
+}
+  #latest-masonry .isot-player-joined h6 {
+    display: inline-block;
+    color: #999;
+    font-weight: normal;
+    font-variant: normal;
+  }
+  #latest-masonry .isot-player-joined span {
+    font-size: 16px;
+    color: #2b91af;
+  }
+#latest-masonry .large .isot-player-joined {
+  top: 1px;
+  left: 120px;
+}
+  #latest-masonry .large .isot-player-joined h6 {
+    display: block;
+    color: #000;
+    font-weight: bold;
+    font-variant: small-caps;
+  }
+  #latest-masonry .large .isot-player-joined span {
+    font-size: 13px;
+    color: #000;
+  }
+
+/** Stats Container **/
+#latest-masonry .isot-player-stats {
+  display: none;
+}
+#latest-masonry .large .isot-player-stats {
+  display: block;
+}
+
+
+
+/** Leader Masonry Only **/
+
+/** Rank **/
+#leader-masonry .isot-player-rank {
+  position: absolute;
+  bottom: 17px;
+  left: 10px;
+  color: #fa603d;
+  font-size: 24px;
+}
+  #leader-masonry .isot-player-rank small {
+    display: none;
+    color: #999;
+    font-size: 13px;
+    font-variant: normal;
+  }
+#leader-masonry .large .isot-player-rank {
+  bottom: 10px;
+}
+  #leader-masonry .large .isot-player-rank small {
+    display: inline-block;
+  }
+
+/** Portrait **/
+#leader-masonry .isot-player-portrait img {
+  left: 40px;
+}
+
+/** Name **/
+#leader-masonry .isot-player-name {
+  left: 80px;
+}
+
+
+/** For small devices **/
+@media (min-width: 768px) and (max-width: 1130px), (max-width: 480px) {
+
+  /** Latest / Leader Masonry **/
+  #latest-masonry .isot-player-name,
+  #leader-masonry .isot-player-name {
+    font-size: 13px;
+  }
+
+	/** Latest Masonry **/
+  #latest-masonry .isot-player-joined h6,
+  #latest-masonry .isot-player-last-active {
+    display: none;
+  }
+  #latest-masonry .isot-player-joined span {
+    font-size: 13px;
+  }
+
+	/** Leader Masonry **/
+  #leader-masonry .isot-player-rank {
+    font-size: 18px;
+  }
+
+  #leader-masonry .isot-player small,
+  #leader-masonry .isot-player-joined {
+    display: none;
+  }
+  #leader-masonry .large .isot-player small {
+    display: inline-block;
+  }
+
+  #leader-masonry .isot-player-points,
+  #leader-masonry .isot-player-level span {
+    font-size: 13px;
+  }
+  #leader-masonry .large .isot-player-points,
+  #leader-masonry .large .isot-player-level span {
+    font-size: 16px;
+  }
+
+}

@@ -1,0 +1,60 @@
+.fixMenu{
+    background: #666666;
+    /*width: 30px;*/
+    /*padding: 5px;*/
+    width: 40px;
+    overflow: hidden;
+}
+
+.fixMenu ul{
+    /*height: 175px;*/
+    padding:4px 0px;
+    list-style:none;
+    /*margin:6px auto 0px auto;*/
+    margin: 5px;
+}
+.fixMenu ul li{
+    display:block;
+    margin:5px 2px;
+}
+
+.fixMenu ul li a{
+    width: 25px;
+    height: 25px;
+    text-indent: -9999em;
+    display: inline-block;
+    border: white 1px solid;
+}
+
+.fixMenu ul li a:hover{
+    opacity: 0.7;
+}
+
+.fixMenu #fixMenugoToTop{
+    background: url('../../image/rule_editor/rule_button.png') -5px -12px no-repeat;
+}
+
+.fixMenu #fixMenuActionRule{
+    background: url('../../image/rule_editor/rule_button.png') -5px -46px no-repeat;
+}
+
+.fixMenu #fixMenuSave{
+    background: url('../../image/rule_editor/rule_button.png') -5px -80px no-repeat;
+}
+
+.fixMenu #fixMenuDelete{
+    background: url('../../image/rule_editor/rule_button.png') -5px -114px no-repeat;
+}
+
+.fixMenu #fixMenugoToDown{
+    background: url('../../image/rule_editor/rule_button.png') -5px -147px no-repeat;
+}
+
+.fixMenuDisable{
+    opacity: 0.5;
+    width: 100%;
+    background: black;
+    position: absolute;
+    top:0;
+    height: 185px;
+}

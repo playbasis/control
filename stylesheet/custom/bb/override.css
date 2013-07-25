@@ -1,0 +1,77 @@
+
+.sidebar-nav > ul {
+	margin: 0 0 0 -20px !important;
+	border-top: none !important;
+	border-bottom: none !important;
+}
+
+.nav-tabs.nav-stacked > li:first-child > a{
+	border-top: none !important;
+}
+
+.nav-tabs.nav-stacked > li:last-child > a{
+	border-bottom: none !important;
+}
+
+.header {
+	/*background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#AAB8C9), to(#6E84A2), color-stop(.5,#6E84A2));*/
+	/*background: -moz-linear-gradient(0% 65% 90deg,#6E84A2, #AAB8C9, #AAB8C9 100%);*/
+	font-size: 18px;
+	color: #fff;
+	height: 30px;
+	padding: 0 10px;
+	text-shadow: 0px 1px 0px #000;
+	text-align: center;
+	position: relative;
+}
+
+.additional-block {
+	float: left;
+	width: 271px;
+	height: 600px;
+	position: absolute;
+}
+
+.binder {
+	/*background: #e8e8e8;*/
+	float: left ;
+	width: 271px ;
+	height: 600px;
+	position: relative;
+	overflow: hidden;
+}
+
+
+.binder a {
+	margin: 0 0 0 -20px !important;
+	
+}
+/*.binder > .slider{
+	background: none;
+	border: none;
+	height: 0;
+}*/
+
+.has-child {
+	background: url('../../image/custom/arrow.png') 90% 50% no-repeat !important;
+}
+
+.has-child:hover {
+	background: url('../../image/custom/arrow-hover.png') 90% 50% no-repeat !important;
+	background-color: #4e525d;
+}
+
+.back {
+	/*margin-top: .5em;*/
+	background: url('../../image/custom/prev.png') center left no-repeat;
+	position: absolute;
+	display: block;
+	height: 20px;
+	width: 10px;
+	cursor: pointer;
+}
+.back:hover{
+	background: url('img/prev-hover.png') center left no-repeat;
+	background-color: #4e525d;
+}
+

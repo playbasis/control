@@ -1,0 +1,1007 @@
+
+#rule-masonry {
+	overflow: hidden;
+}
+
+/* Isotope Styling
+===================================*/
+
+/**** Isotope Filtering ****/
+
+.isotope-item {
+  z-index: 2;
+}
+
+.isotope-hidden.isotope-item {
+  pointer-events: none;
+  z-index: 1;
+}
+
+/**** Isotope CSS3 transitions ****/
+
+.isotope,
+.isotope .isotope-item {
+  -webkit-transition-duration: 0.4s;
+     -moz-transition-duration: 0.4s;
+      -ms-transition-duration: 0.4s;
+       -o-transition-duration: 0.4s;
+          transition-duration: 0.4s;
+}
+
+.isotope {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+      -ms-transition-property: height, width;
+       -o-transition-property: height, width;
+          transition-property: height, width;
+}
+
+.isotope .isotope-item {
+  -webkit-transition-property: -webkit-transform, opacity;
+     -moz-transition-property:    -moz-transform, opacity;
+      -ms-transition-property:     -ms-transform, opacity;
+       -o-transition-property:      -o-transform, opacity;
+          transition-property:         transform, opacity;
+}
+
+/**** disabling Isotope CSS3 transitions ****/
+
+.isotope.no-transition,
+.isotope.no-transition .isotope-item,
+.isotope .isotope-item.no-transition {
+  -webkit-transition-duration: 0s;
+     -moz-transition-duration: 0s;
+      -ms-transition-duration: 0s;
+       -o-transition-duration: 0s;
+          transition-duration: 0s;
+}
+
+/* End: Isotope CSS3 transitions */
+
+
+/* Reusable code for all the colorful boxes
+=============================================*/
+.rule-box {
+	float: left;
+	width: 110px;
+	height: 110px;
+	cursor: pointer;
+	overflow: hidden;
+	margin-right: 20px;
+	text-align: center;
+	border: #ddd solid 1px;
+	background-color: #f2f2f2;
+	-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+	        border-radius: 5px;
+    -webkit-transition: border-color 0.3s ease-in-out;
+	   -moz-transition: border-color 0.3s ease-in-out;
+	    -ms-transition: border-color 0.3s ease-in-out;
+	     -o-transition: border-color 0.3s ease-in-out;
+	        transition: border-color 0.3s ease-in-out;
+}
+.rule-box:hover {
+	background-color: #fff;
+}
+	.rule-box-header {
+		width: 100%;
+		height: 76px;
+		color: #fff;
+		border-bottom: #eee solid 1px;
+		text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+	    -webkit-transition: background-color 0.3s ease-in-out;
+		   -moz-transition: background-color 0.3s ease-in-out;
+		    -ms-transition: background-color 0.3s ease-in-out;
+		     -o-transition: background-color 0.3s ease-in-out;
+		        transition: background-color 0.3s ease-in-out;
+	}
+		.rule-box-header > i {
+			display: block;
+			font-size: 36px;
+			padding-top: 16px;
+			line-height: normal;
+		}
+	.rule-box-footer {
+		color: #666;
+		padding-top: 7px;
+		font-weight: bold;
+		line-height: 16px;
+	}
+		.rule-box-footer > span {
+			display: block;
+			text-transform: capitalize;
+		    -webkit-transition: color 0.3s ease-in-out;
+			   -moz-transition: color 0.3s ease-in-out;
+			    -ms-transition: color 0.3s ease-in-out;
+			     -o-transition: color 0.3s ease-in-out;
+			        transition: color 0.3s ease-in-out;
+		}
+
+
+/* Rule-box - special cases
+=============================================*/
+
+/* text highlight - gets some color down below */
+.rule-box-footer > span.rule-box-highlight {
+	font-size: 1.125em;
+}
+
+/* for boxes with two lines of text */
+.rule-box.rule-box-extra .rule-box-header {
+	height: 69px;
+}
+.rule-box.rule-box-extra .rule-box-footer {
+	padding-top: 4px;
+}
+
+
+/* Rule-box colors
+=============================================*/
+
+/* blue - rule box default ( O: 019CC7 ) */
+.rule-box:hover {
+	border-color: #2fabe9;
+}
+.rule-name > h4,
+.rule-box-header,
+.rule-box:hover .rule-box-header {
+	background-color: #2fabe9;
+}
+.rule-input-well > a,
+span.rule-box-highlight,
+.rule-box:hover span.rule-box-highlight {
+	color: #2fabe9;
+}
+
+/* blue */
+.rule-blue .rule-box:hover {
+	border-color: #2fabe9;
+}
+.rule-blue .rule-name > h4,
+.rule-blue .rule-box-header,
+.rule-blue .rule-box:hover .rule-box-header {
+	background-color: #2fabe9;
+}
+.rule-blue .rule-input-well > a,
+.rule-blue .rule-title > i,
+.rule-blue .rule-description > i,
+.rule-blue span.rule-box-highlight,
+.rule-blue .rule-box:hover span.rule-box-highlight {
+	color: #2fabe9;
+}
+.rule-blue .rule-title > input:hover,
+.rule-blue .rule-description > textarea:hover {
+	border-left: #2fabe9 solid 2px !important;
+}
+
+/* orange */
+.rule-orange .rule-box:hover {
+	border-color: #fa5833;
+}
+.rule-orange .rule-name > h4,
+.rule-orange .rule-box-header,
+.rule-orange .rule-box:hover .rule-box-header {
+	background-color: #fa5833;
+}
+.rule-orange .rule-input-well > a,
+.rule-orange .rule-title > i,
+.rule-orange .rule-description > i,
+.rule-orange span.rule-box-highlight,
+.rule-orange .rule-box:hover span.rule-box-highlight {
+	color: #fa5833;
+}
+.rule-orange .rule-title > input:hover,
+.rule-orange .rule-description > textarea:hover {
+	border-left: #fa5833 solid 2px !important;
+}
+
+/* yellow ( previously lightorange ) */
+.rule-yellow .rule-box:hover {
+	border-color: #f4a70c;
+}
+.rule-yellow .rule-name > h4,
+.rule-yellow .rule-box-header,
+.rule-yellow .rule-box:hover .rule-box-header {
+	background-color: #f4a70c;
+}
+.rule-yellow .rule-input-well > a,
+.rule-yellow .rule-title > i,
+.rule-yellow .rule-description > i,
+.rule-yellow span.rule-box-highlight,
+.rule-yellow .rule-box:hover span.rule-box-highlight {
+	color: #f4a70c;
+}
+.rule-yellow .rule-title > input:hover,
+.rule-yellow .rule-description > textarea:hover {
+	border-left: #f4a70c solid 2px !important;
+}
+
+/* green */
+.rule-green .rule-box:hover {
+	border-color: #109648;
+}
+.rule-green .rule-name > h4,
+.rule-green .rule-box-header,
+.rule-green .rule-box:hover .rule-box-header {
+	background-color: #109648;
+}
+.rule-green .rule-input-well > a,
+.rule-green .rule-title > i,
+.rule-green .rule-description > i,
+.rule-green span.rule-box-highlight,
+.rule-green .rule-box:hover span.rule-box-highlight {
+	color: #109648;
+}
+.rule-green .rule-title > input:hover,
+.rule-green .rule-description > textarea:hover {
+	border-left: #109648 solid 2px !important;
+}
+
+/* purple */
+.rule-purple .rule-box:hover {
+	border-color: #9440ED;
+}
+.rule-purple .rule-name > h4,
+.rule-purple .rule-box-header,
+.rule-purple .rule-box:hover .rule-box-header {
+	background-color: #9440ED;
+}
+.rule-purple .rule-input-well > a,
+.rule-purple .rule-title > i,
+.rule-purple .rule-description > i,
+.rule-purple span.rule-box-highlight,
+.rule-purple .rule-box:hover span.rule-box-highlight {
+	color: #9440ED;
+}
+.rule-purple .rule-title > input:hover,
+.rule-purple .rule-description > textarea:hover {
+	border-left: #9440ED solid 2px !important;
+}
+
+/* pink */
+.rule-pink .rule-box:hover {
+	border-color: #e42b75;
+}
+.rule-pink .rule-name > h4,
+.rule-pink .rule-box-header,
+.rule-pink .rule-box:hover .rule-box-header {
+	background-color: #e42b75;
+}
+.rule-pink .rule-input-well > a,
+.rule-pink .rule-title > i,
+.rule-pink .rule-description > i,
+.rule-pink span.rule-box-highlight,
+.rule-pink .rule-box:hover span.rule-box-highlight {
+	color: #e42b75;
+}
+.rule-pink .rule-title > input:hover,
+.rule-pink .rule-description > textarea:hover {
+	border-left: #e42b75 solid 2px !important;
+}
+
+
+/* Rule Containers
+===================================*/
+.rule-container {
+	float: left;
+	margin: 9px;
+	width: 162px;
+	height: 202px;
+	display: block;
+	cursor: pointer;
+/*    -webkit-transition: all 0.4s ease-in-out;
+       -moz-transition: all 0.4s ease-in-out;
+        -ms-transition: all 0.4s ease-in-out;
+         -o-transition: all 0.4s ease-in-out;
+            transition: all 0.4s ease-in-out;*/
+}
+.rule-container.large {
+	width: 522px;
+	height: 642px;
+	cursor: auto;
+}
+
+.rule {
+	width: 160px;
+	height: 200px;
+	border: #ddd solid 1px;
+	background-color: #fff;
+	position: relative;
+	overflow: hidden;
+	-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+	        border-radius: 5px;
+    -webkit-transition: all 0.4s ease-in-out;
+       -moz-transition: all 0.4s ease-in-out;
+        -ms-transition: all 0.4s ease-in-out;
+         -o-transition: all 0.4s ease-in-out;
+            transition: all 0.4s ease-in-out;
+}
+.large .rule {
+	width: 520px;
+	height: 640px;
+}
+/* TODO: Stop hacking */
+.rule input,
+.rule textarea {
+	outline: none !important;
+    -webkit-box-shadow: none !important;
+       -moz-box-shadow: none !important;
+            box-shadow: none !important;
+}
+
+/* Placeholder for javascript animations */
+/*.rule-tmp {
+	width: 0;
+	height: 202px;
+	margin: 9px 0;
+	border: none;
+	background: none;
+	float: left;
+    -webkit-transition: width 0.4s ease-in-out;
+       -moz-transition: width 0.4s ease-in-out;
+        -ms-transition: width 0.4s ease-in-out;
+         -o-transition: width 0.4s ease-in-out;
+            transition: width 0.4s ease-in-out;
+}*/
+
+
+/* Add Rule
+===================================*/
+.add-rule {
+	position: absolute;
+	top: -1px;
+	left: -1px;
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+	color: #666;
+	cursor: pointer;
+	text-align: center;
+	border: #ddd solid 1px;
+	background-color: #f5f5f5;
+	-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+	        border-radius: 5px;
+    -webkit-transition: all 0.4s ease-in-out;
+       -moz-transition: all 0.4s ease-in-out;
+        -ms-transition: all 0.4s ease-in-out;
+         -o-transition: all 0.4s ease-in-out;
+            transition: all 0.4s ease-in-out;
+}
+.add-rule:hover {
+	color: #eee;
+	background-color: #666;
+}
+.large .add-rule {
+	opacity: 0;
+}
+	.add-rule > i {
+		display: block;
+		font-size: 72px;
+		padding: 36px 0;
+	}
+	.add-rule > span {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+
+/* Rule Header
+===================================*/
+.rule-header {
+	height: 120px;
+	text-align: center;
+	/*border-color: #eee;*/
+	/*border-width: 0;*/
+	/*border-style: solid;*/
+}
+	.rule-header > i {
+		font-size: 48px;
+		padding-top: 26px;
+	}
+
+
+/* Rule Minimize
+===================================*/
+.rule-minimize {
+	display: none;
+	width: 35px;
+	height: 35px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	color: #ccc;
+	opacity: 0.6;
+	background: url(../../image/close.svg) top right no-repeat;
+    -webkit-transition: all 0.3s ease-in-out;
+       -moz-transition: all 0.3s ease-in-out;
+        -ms-transition: all 0.3s ease-in-out;
+         -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+}
+.large .rule-minimize {
+	display: block;
+}
+.large .rule-minimize:hover {
+	color: #fff;
+	opacity: 1;
+}
+	.rule-minimize span {
+		cursor: pointer;
+		font-size: 14px;
+		line-height: 14px;
+		text-shadow: 0 -1px rgb(0,0,0);
+		text-shadow: 0 -1px rgba(0,0,0,0.6);
+		position: absolute;
+		top: 3px;
+		right: 4px;
+	}
+
+/* Rule Name
+===================================*/
+.rule-name {
+	width: 100%;
+	position: absolute;
+	top: 109px;
+	text-align: center;
+	z-index: 1;
+}
+.large .rule-name {
+	display: none;
+}
+	.rule-name > h4 {
+		margin: 0 5px;
+		padding: 0 7px;
+		max-width: 134px;
+		display: inline-block;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-size: 10px;
+		line-height: 20px;
+		text-transform: uppercase;
+		color: #fff;
+		border: #fff solid 1px;
+		-webkit-border-radius: 5px;
+	       -moz-border-radius: 5px;
+		        border-radius: 5px;
+	}
+
+
+/* Rule Content
+===================================*/
+.rule-content {
+	opacity: 0;
+	width: 480px;
+	padding: 20px;
+	margin-left: -10px;
+    -webkit-transition: all 0.1s ease-out;
+       -moz-transition: all 0.1s ease-out;
+        -ms-transition: all 0.1s ease-out;
+         -o-transition: all 0.1s ease-out;
+            transition: all 0.1s ease-out;
+}
+.large .rule-content {
+	opacity: 1;
+	margin-left: 0;
+}
+
+.rule-title,
+.rule-description {
+	font-size: 12px;
+	position: relative;
+}
+
+.rule-title > input,
+.rule-description > textarea {
+	width: 480px;
+	padding: 2px 6px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	height: auto;
+	border: none;
+	color: #333333;
+	line-height: 18px;
+	/*outline: none;*/
+	/*box-shadow: none;*/
+	-webkit-border-radius: 0;
+	   -moz-border-radius: 0;
+	        border-radius: 0;
+}
+.rule-title.error > input {
+	background-color: #f6e6e6;
+}
+.rule-title > input:hover,
+.rule-description > textarea:hover {
+	background-color: #f6f6f6;
+	border-left: #666 solid 2px !important;
+}
+.rule-title.error > input:hover {
+	background-color: #f2e2e2;
+}
+.rule-title > i,
+.rule-description > i {
+	display: none;
+	color: #666;
+	position: absolute;
+	top: 0;
+	left: -18px;
+}
+.rule-title > i {
+	top: -6px;
+}
+.rule-title:hover > i,
+.rule-description:hover > i {
+	display: block;
+}
+
+.rule-title > input::-webkit-input-placeholder {
+	color: #99a;
+	padding: 2px 0;
+}
+.rule-title > input:-moz-placeholder { /* Firefox 18- */
+	color: #99a;
+	padding: 2px 0;
+}
+.rule-title > input::-moz-placeholder {  /* Firefox 19+ */
+	color: #99a;
+	padding: 2px 0;
+}
+.rule-title > input:-ms-input-placeholder {
+	color: #99a;
+	padding: 2px 0;
+}
+
+.rule-title > input:focus,
+.rule-description > textarea:focus {
+	color: #000;
+	background-color: #f6f6f6;
+	/*outline: #ccc dotted 2px;*/
+	border: #ccc dotted 2px;
+}
+.rule-title.error > input:focus {
+	background-color: #f6e6e6;
+	outline: #ebb dotted 2px;
+}
+
+.rule-title > input {
+	font-size: 18px;
+	font-weight: bold;
+	margin: -6px 0 1px -6px;
+}
+
+.rule-description > textarea {
+	height: 56px;
+	color: #666666;
+	font-size: 12px;
+	margin: 0 0 3px -6px;
+	resize: none;
+	-webkit-transition: all 0.3s ease-in-out;
+	   -moz-transition: all 0.3s ease-in-out;
+	    -ms-transition: all 0.3s ease-in-out;
+	     -o-transition: all 0.3s ease-in-out;
+		    transition: all 0.3s ease-in-out;
+}
+
+
+/* Rule Templates
+===================================*/
+.rule-templates {
+	margin: 9px 0 0;
+	color: #666;
+}
+	.rule-templates > h4 {
+		font-size: 14px;
+		margin: 0 0 10px;
+	}
+	.rule-templates > div {
+		float: left;
+	}
+
+.rule-template {
+	float: none;
+	position: relative;
+}
+	.rule-template .rule-template-action {
+		background-color: #999;
+	}
+		.rule-template .rule-template-action > i {
+			font-size: 30px;
+			padding: 12px 0 2px;
+		}
+	.rule-template .rule-template-reward {
+	}
+		.rule-template .rule-template-reward span.rule-template-reward-quantity {
+			color: #999;
+		}
+
+.rule-templates-low .rule-template {
+	width: 118px;
+	margin: 0 10px 10px 0;
+}
+
+.rule-templates-medium .rule-template {
+	width: 148px;
+	height: 171px;
+	font-size: 14px;
+	margin: 0 10px 10px 0;
+}
+	.rule-templates-medium .rule-template-action {
+		height: 99px;
+	}
+		.rule-templates-medium .rule-template-action > i {
+			font-size: 48px;
+			padding: 16px 0 2px;
+		}
+	.rule-templates-medium .rule-template-reward {
+		padding-top: 12px;
+	}
+		.rule-templates-medium .rule-template-reward-quantity {
+			font-size: 18px;
+			line-height: 24px;
+		}
+
+.rule-templates-high .rule-template {
+	width: 188px;
+	height: 354px;
+	font-size: 18px;
+	margin: 0 0 10px;
+}
+	.rule-templates-high .rule-template-action {
+		height: 219px;
+	}
+		.rule-templates-high .rule-template-action > i {
+			font-size: 72px;
+			padding: 54px 0 2px;
+		}
+	.rule-templates-high .rule-template-reward {
+		padding-top: 32px;
+	}
+		.rule-templates-high .rule-template-reward-quantity {
+			font-size: 24px;
+			line-height: 36px;
+		}
+
+
+/* Rule Action
+===================================*/
+.rule-actions {
+	width: 100%;
+	float: left;
+	position: relative;
+	/*margin: 5px 0;*/
+	margin: 0;
+	/*margin: 35px 0 10px;*/
+	/*background: #fcc;*/
+}
+	.rule-actions h4 {
+		margin: 0 0 9px;
+		font-size: 16px;
+		line-height: 18px;
+	}
+
+.rule-action-conditions {
+	height: 152px;
+	overflow: hidden;
+}
+
+
+/* Rule Input Fields
+===================================*/
+.rule-input {
+	margin: 0 0 10px;
+	position: relative;
+}
+	.rule-input > label {
+		position: absolute;
+		top: 7px;
+		left: 10px;
+		color: #333;
+		font-size: 12px;
+		line-height: 18px;
+		font-weight: bold;
+	}
+	.rule-input.active > label {
+		color: #444;
+	}
+	.rule-input > input,
+	.rule-input > textarea {
+		margin: 0;
+		width: 410px;
+		height: 25px;
+		outline: none;
+		font-size: 12px;
+		background: #fff;
+		border: #ccc solid 1px;
+		padding: 2px 10px 2px 58px;
+		-webkit-border-radius: 2px;
+	       -moz-border-radius: 2px;
+		        border-radius: 2px;
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	}
+	.rule-input > input:focus,
+	.rule-input > textarea:focus {
+		color: #333;
+		border: #999 solid 1px !important;
+	}
+	.rule-input > input.action-url {
+		width: 240px;
+		padding-left: 96px;
+	}
+	.rule-input > input.action-counter {
+		width: 260px;
+		padding-left: 76px;
+	}
+	.rule-input > div {
+		display: none;
+		margin-top: -3px;
+		padding: 13px 10px 10px;
+		font-size: 12px;
+		line-height: 18px;
+		height: 18px;
+		color: #333;
+		/*color: #525c66;*/
+		background: #f2f2f2;
+		border: #ccc solid 1px;
+		-webkit-border-radius: 2px;
+	       -moz-border-radius: 2px;
+		        border-radius: 2px;
+	}
+	.rule-input > div.rule-input-error {
+		color: #322;
+		background: #f2d2d2;
+		border: #caa solid 1px;
+	}
+	.rule-input > div > input {
+		margin: 0;
+	}
+	.rule-input > div > label {
+		display: inline-block;
+		font-size: 12px;
+		margin: 0;
+	}
+
+.toggle-rule-action-date-restrictions button {
+	width: 348px;
+	height: 30px;
+}
+
+.rule-input-well {
+	float: left;
+	width: 468px;
+	/*height: 30px;*/
+	margin: 10px 0 0;
+	padding: 3px 5px 1px;
+}
+	.rule-input-small {
+		display: inline-block;
+	}
+		.rule-input-small > label {
+			color: #333;
+			font-size: 12px;
+			display: inline-block;
+		}
+		.rule-input-small > input {
+			width: 66px;
+			height: 12px;
+			padding: 4px;
+			font-size: 11px;
+			line-height: 12px;
+			margin: 0;
+			border: #ccc solid 1px;
+			outline: none;
+			-webkit-border-radius: 2px;
+		       -moz-border-radius: 2px;
+			        border-radius: 2px;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		}
+		.rule-input-small > input:focus {
+			border: #666 solid 1px !important;
+		}
+	.rule-date-toggle {
+		margin: 0 5px;
+		display: inline-block;
+	}
+	.rule-input-well > a {
+		float: right;
+		font-size: 18px;
+		line-height: 25px;
+	}
+	.rule-input-well > a:hover {
+		color: #27ae60;
+		/*color: #bd312c;*/
+		text-decoration: none;
+	}
+
+.rule-action-date-restrictions.rule-input-well {
+	display: none;
+	position: absolute;
+	top: 139px;
+}
+.rule-reward-editor.rule-input-well {
+	display: none;
+}
+.rule-reward-editor.rule-input-well .rule-input-small > input {
+	width: 134px;
+}
+
+
+/* Rule Reward
+===================================*/
+.rule-rewards {
+	width: 100%;
+	float: left;
+	/*margin: 10px 0 5px;*/
+	margin: 10px 0 0;
+}
+	.rule-rewards h4 {
+		margin: 0 0 9px;
+		font-size: 16px;
+	}
+
+.add-rule-reward {
+	float: left;
+	width: 110px;
+	height: 110px;
+	color: #666;
+	cursor: pointer;
+	text-align: center;
+	margin-right: 20px;
+	border: #ddd solid 1px;
+	background-color: #eee;
+	-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+	        border-radius: 5px;
+}
+.add-rule-reward:hover {
+	color: #eee;
+	background-color: #666;
+}
+	.add-rule-reward > i {
+		display: block;
+		font-size: 48px;
+		padding: 16px 0;
+	}
+	.add-rule-reward > span {
+		font-weight: bold;
+	}
+
+
+/* Rule Tag Editor
+===================================*/
+.tag-editor {
+	float: left;
+	margin: 5px 0 0;
+}
+
+
+/* Rule Footer
+===================================*/
+.rule-footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 80px;
+	text-align: center;
+	border-width: 0;
+	border-style: solid;
+	border-color: #bbbbc3;
+	background-color: #f5f5f5;
+    -webkit-transition: height 0.4s ease-in-out;
+       -moz-transition: height 0.4s ease-in-out;
+        -ms-transition: height 0.4s ease-in-out;
+         -o-transition: height 0.4s ease-in-out;
+            transition: height 0.4s ease-in-out;
+}
+.large .rule-footer {
+	height: 40px;
+	border-width: 1px 0 0;
+}
+	.rule-controls {
+		float: left;
+		display: none;
+		margin: 0 10px;
+		line-height: 39px;
+	}
+	.large .rule-controls {
+		display: block;
+	}
+		.rule-controls > button {
+			font-size: 12px;
+		}
+
+
+/* Rule Status Toggle
+===================================*/
+
+/* Toggle Background */
+.rule-status {
+	display: block;
+	width: 90px;
+	height: 30px;
+	position: absolute;
+	right: 35px;
+	bottom: 18px;
+	cursor: pointer;
+	background-color: #27ae60;
+	-webkit-border-radius: 15px;
+       -moz-border-radius: 15px;
+	        border-radius: 15px;
+}
+.large .rule-status {
+	right: 5px;
+	bottom: 5px;
+}
+	.rule-status.enabled {
+		background-color: #27ae60;
+	}
+	.rule-status.disabled {
+		background-color: #d1d2d4;
+	}
+
+/* Toggle Button */
+.rule-status-toggle {
+	display: block;
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	right: 3px;
+	margin: 3px 0;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 24px;
+	background: #d1d2d4;
+	-webkit-border-radius: 12px;
+       -moz-border-radius: 12px;
+	        border-radius: 12px;
+    -webkit-transition: all 0.3s ease-in-out;
+       -moz-transition: all 0.3s ease-in-out;
+        -ms-transition: all 0.3s ease-in-out;
+         -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+}
+	.enabled .rule-status-toggle {
+		right: 3px;
+		color: #fff;
+		background: #d1d2d4;
+	}
+	.disabled .rule-status-toggle {
+		right: 62px;
+		color: #7f8c8d;
+		background: #7f8c8d;
+	}
+
+/* Toggle Text */
+.rule-status-toggle span {
+	margin: 0 0 0 -82px;
+	text-transform: capitalize;
+    -webkit-transition: all 0.3s ease-in-out;
+       -moz-transition: all 0.3s ease-in-out;
+        -ms-transition: all 0.3s ease-in-out;
+         -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+}
+	.enabled .rule-status-toggle span {
+		margin: 0 0 0 -82px;
+	}
+	.disabled .rule-status-toggle span {
+		margin: 0 -82px 0 0;
+	}
+
+
+/* Custom styles for new rule
+===================================*/
+#add-rule .rule-header {
+	color: #999;
+	background: #f2f2f2;
+}
+#add-rule .rule-description,
+#add-rule .rule-templates {
+	opacity: 0;
+	display: none;
+}
+#add-rule .rule-content {
+	opacity: 0;
+	margin-left: -10px;
+}

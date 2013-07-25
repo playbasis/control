@@ -1,0 +1,204 @@
+/*player.css*/
+ /*common*/
+.line { border:1px solid #ccc;}
+.round{ -webkit-border-radius: 8px; -moz-border-radius: 8px; border-radius: 8px; }
+.less_round{ -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; }
+.more-round{ -webkit-border-radius: 12px; -moz-border-radius: 12px; border-radius: 12px; }
+
+
+/*specific*/
+    .filter-collection{ overflow: auto; position: relative; min-height: 44px;}
+    .filter-collection ul{ margin:0px; padding:2px; overflow: auto}
+    .filter-collection ul li{ list-style-type: none; float: left; margin: 0px 4px 4px 2px;background: #666;}
+
+    .filter-pill{ padding: 2px 4px 2px 8px;color: #ccc;font-size: 1.0em;line-height: 18px;}
+    .filter-pill i{color: #ccc; zoom:1.02; cursor: pointer;margin:0px 1px 1px 2px; border-left: 1px solid #ccc;}
+  
+    .start_over_btn{ cursor: pointer;}
+
+.filter-collection_btn{
+  height: 34px; color:#999;   
+}
+.top_icontx{
+  margin-top:6px;margin-right:8px
+}
+
+
+
+
+/*New Context menu*/
+.context-menu{ width: 200px; margin-right: 0px;margin-top:-12px;height: auto;overflow: auto;}
+.context-menu .box-content{padding:4px 0px;}
+.context-menu{ padding:1px;}
+      
+      
+.context-menu ul{ list-style-type: none;text-align: left;font-size: 0.99em; background: #fff; font-weight: normal; color: #646464; margin:0px 1px;} 
+
+.context-menu ul li{ line-height: 28px;padding: 2px 4px;font-weight: normal; /*text-transform: uppercase;*/ cursor: pointer; background: #fff}
+
+.context-menu ul li:hover {background: #ccc;}
+
+.parent {background: #eee !important; cursor: default;}
+
+.context-menu ul li ul {margin: 0px;width: 104%;margin-left: -4px;}
+
+.context-menu ul li ul li {padding-left: 16px;border-bottom: 1px solid #ddd; background: #fff}
+
+.context-menu-close { font-size: 1.4em; cursor: pointer;}
+
+
+
+
+.resetFilter{ cursor: pointer; }
+
+#summary{ margin-top: -20px;}
+
+.filter-collection-ul-container{ overflow: auto; padding: 4px !important; padding-bottom: 0px !important; }
+
+
+
+
+
+
+
+/*Dinamic with js */
+a.show_popover{text-decoration: none; color: #fff; }
+
+/* CRM sorting styles
+=================================================================== */
+.player-data {
+  min-height: 808px;
+  margin-bottom: 100px;
+}
+
+.close_popover:hover{cursor: pointer; background: #ccc;}
+
+.custom_blackdrop{
+  position:fixed;
+  z-index: 999999 !important;
+  top:0; left:0;
+  width: 100%;
+  height: 100%;
+  background: url(../../image/transparent.png);
+  text-align: center;
+  font-size: 1.2em;
+  color: white;
+  font-weight: bold;
+  padding-left: 6%;
+  padding-top: 4%
+}
+
+.custom_blackdrop img{margin-top:20%; width: 84px; height: 84px}
+
+/* Hack input fields to be fullsize */
+.input-set {
+  padding: 10px 12px 4px 0;
+}
+.input-set .input-prepend {
+  display: block;
+  position: relative;
+}
+  .input-set .input-prepend .dropdown-title {
+    width: 120px;
+  }
+  .input-set .input-prepend .dropdown-toggle {
+    width: 26px;
+  }
+  .input-set .input-prepend .no-dropdown {
+    width: 144px;
+  }
+  .input-set .input-prepend .input-wrapper {
+    position: absolute;
+    display: block;
+    left: 144px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+  .input-set .input-prepend .input-wrapper input {
+    width: 100%;
+  /*  height: 100%;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;*/
+  }
+.input-set .sliderRange {
+  margin-top: 14px;
+}
+
+/* Prettier button active states */
+.input-set .input-append .btn-primary.active,
+.input-set .input-prepend .btn-primary.active {
+  border-color: #0044cc #0044cc #002a80;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+.input-set .input-append .btn-danger.active,
+.input-set .input-prepend .btn-danger.active {
+  border-color: #bd362f #bd362f #802420;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+.input-set .input-append .btn-success.active,
+.input-set .input-prepend .btn-success.active {
+  border-color: #51a351 #51a351 #387038;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+/* Input field active styles */
+.input-set .input-prepend .input-wrapper input {
+  -webkit-transition: background-color 0.3s ease-in-out;
+     -moz-transition: background-color 0.3s ease-in-out;
+      -ms-transition: background-color 0.3s ease-in-out;
+       -o-transition: background-color 0.3s ease-in-out;
+          transition: background-color 0.3s ease-in-out;
+}
+.input-set .input-prepend .input-wrapper input.ipt-primary.active {
+  background-color: #E6F6FF;
+}
+.input-set .input-prepend .input-wrapper input.ipt-danger.active {
+  background-color: #FFEFDC;
+}
+.input-set .input-prepend .input-wrapper input.ipt-success.active {
+  background-color: #E7FFD0;
+}
+
+/* Filter formatting */
+.common-filter {
+  display: inline-block;
+  /*margin: 10px 0;*/
+}
+.common-filter > span {
+  margin-left: 10px;
+}
+.common-filter .btn-group {
+  margin: 5px;
+}
+
+#crm .pagination {
+  margin: 0 0 20px;
+}
+#crm blockquote span {
+  color: #2b91af;
+  cursor: pointer;
+}
+
+/* For small devices */
+@media (min-width: 768px) and (max-width: 1100px) {
+
+  .input-set .input-prepend .dropdown-title {
+    width: 80px;
+  }
+  .input-set .input-prepend .dropdown-toggle {
+    width: 26px;
+  }
+  .input-set .input-prepend .no-dropdown {
+    width: 104px;
+  }
+  .input-set .input-prepend .input-wrapper {
+    position: absolute;
+    display: block;
+    left: 104px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+}

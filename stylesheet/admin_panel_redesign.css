@@ -1,0 +1,22 @@
+#header .div1 {background: #000;}
+
+.overview {width:100%; margin-bottom: 10px;}
+.latest {width:100%; margin-bottom: 10px;}
+.home {width: 100%; overflow: hidden;}
+.leftside {width: 49%; float: left;}
+.rightside {width: 49%; float: right;}
+.homebox {width: 100%; margin-bottom: 10px; background: #fff; overflow: hidden;}
+.header {background: #6c6c6c; color: #FFF; border-bottom: 1px solid #6c6c6c; padding: 5px; font-size: 14px; font-weight: bold;}
+.inside {background: #FCFCFC; border: 1px solid #6c6c6c; padding: 10px; height: 100%;}
+.dashboard-heading {background: #747474; border-bottom: 1px solid #747474;}
+.dashboard-content {border: 1px solid #747474;}
+a.button, .list a.button {background: #747474;}
+.box > .heading {background: #333;}
+.box > .heading h1 {color: #fff;}
+
+#icons {float: left; list-style: none; margin:0; padding:0;}
+#icons a {text-decoration: none;}
+#icons li {float: left; width: 100px; height: 100px; border:1px solid #ccc; margin: 0 7px 7px 0;}
+#icons li:hover {border:1px solid #aaa; background: #ddd;}
+#icons li img {padding: 8px 18px 2px 18px; align: center;}
+#icons li h6 {color: #333; font-size:12px; text-align: center; margin:0; padding:0;}
