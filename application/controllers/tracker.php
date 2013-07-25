@@ -19,7 +19,7 @@ class Tracker extends REST_Controller
 		$credential = array(
 			'key' => 'abc',
 			'secret' => 'abcde'
-			);
+		);
 		$token = $this->auth_model->getApiInfo($credential);
 		$cl_player_id = '1';
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($token, array('cl_player_id'=>$cl_player_id)));

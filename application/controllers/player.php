@@ -653,5 +653,91 @@ class Player extends REST_Controller
 		$leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $validToken['client_id'], $validToken['site_id']);
 		$this->response($this->resp->setRespond($leaderboard), 200);
 	}
+	public function test_get()
+	{
+		echo '<pre>';
+		$credential = array(
+			'key' => 'abc',
+			'secret' => 'abcde'
+		);
+		$cl_player_id = 'test1234';
+		$image = 'profileimage.jpg';
+		$email = 'test123@email.com';
+		$username = 'test-1234';
+		$token = $this->auth_model->getApiInfo($credential);
+		echo '<br>createPlayer:<br>';
+		$pb_player_id = $this->player_model->createPlayer(array_merge($token, array(
+			'player_id' => $cl_player_id,
+			'image' => $image,
+			'email' => $email,
+			'username' => $username,
+			'birth_date' => '1982-09-08',
+			'gender' => 1
+		)));
+		print_r($pb_player_id);
+		echo '<br>readPlayer:<br>';
+		$result = $this->player_model->readPlayer($pb_player_id, $token['site_id'], array(
+			'cl_player_id',
+			'pb_player_id',
+			'username',
+			'email',
+			'image',
+			'date_added',
+			'birth_date'
+		));
+		print_r($result);
+		echo '<br>updatePlayer:<br>';
+		$result = $this->player_model->updatePlayer($pb_player_id, $token['site_id'], array(
+			'username' => 'test-4567',
+			'email' => 'test4567@email.com'
+		));
+		$result = $this->player_model->readPlayer($pb_player_id, $token['site_id'], array(
+			'username',
+			'email'
+		));
+		print_r($result);
+		echo '<br>deletePlayer:<br>';
+		$result = $this->player_model->deletePlayer($pb_player_id, $token['site_id']);
+		print_r($result);
+		$cl_player_id = '1';
+		echo '<br>getPlaybasisId:<br>';
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($token, array(
+			'cl_player_id' => $cl_player_id
+		)));
+		print_r($pb_player_id);
+		echo '<br>getClientPlayerId:<br>';
+		$cl_player_id = $this->player_model->getClientPlayerId($pb_player_id, $token['site_id']);
+		print_r($cl_player_id);
+		echo '<br>getPlayerPoints:<br>';
+		$result = $this->player_model->getPlayerPoints($pb_player_id, $token['site_id']);
+		print_r($result);
+		$reward_id = $this->point_model->findPoint(array_merge($token, array('reward_name'=>'exp')));
+		echo '<br>getPlayerPoint:<br>';
+		$result = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $token['site_id']);
+		print_r($result);
+		echo '<br>getLastActionPerform:<br>';
+		$result = $this->player_model->getLastActionPerform($pb_player_id, $token['site_id']);
+		print_r($result);
+		echo '<br>getActionPerform:<br>';
+		$action_id = $this->action_model->findAction(array_merge($token, array('action_name' => 'like')));
+		$result = $this->player_model->getActionPerform($pb_player_id, $action_id, $token['site_id']);
+		print_r($result);
+		echo '<br>getActionCount:<br>';
+		$result = $this->player_model->getActionCount($pb_player_id, $action_id, $token['site_id']);
+		print_r($result);
+		echo '<br>getBadge:<br>';
+		$result = $this->player_model->getBadge($pb_player_id, $token['site_id']);
+		print_r($result);
+		echo '<br>getLastEventTime<br>';
+		$result = $this->player_model->getLastEventTime($pb_player_id, $token['site_id'], 'LOGIN');
+		print_r($result);
+		echo '<br>getLeaderboard<br>';
+		$result = $this->player_model->getLeaderboard('exp', 20, $token['client_id'], $token['site_id']);
+		print_r($result);
+		echo '<br>getLeaderboards<br>';
+		$result = $this->player_model->getLeaderboards(20, $token['client_id'], $token['site_id']);
+		print_r($result);
+		echo '</pre>';
+	}
 }
 ?>
