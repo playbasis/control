@@ -128,7 +128,7 @@ class Player_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'reward_id' => $reward_id
 		));
-		$result = $this->mongo_db->get('reward_to_player');
+		$result = $this->mongo_db->get('playbasis_reward_to_player');
 		$count = count($result);
 		for($i=0; $i < $count; ++$i)
 			unset($result[$i]['_id']);
@@ -303,9 +303,9 @@ class Player_model extends MY_Model
 				'value'
 			));
 			$this->mongo_db->where(array(
-				'reward_id' => intval($reward_id),
-				'client_id' => intval($client_id),
-				'site_id' => intval($site_id)
+				'reward_id' => $reward_id,
+				'client_id' => $client_id,
+				'site_id' => $site_id
 			));
 			$this->mongo_db->order_by(array('value' => 'desc'));
 			$this->mongo_db->limit($limit);

@@ -699,6 +699,7 @@ class Player extends REST_Controller
 		echo '<br>deletePlayer:<br>';
 		$result = $this->player_model->deletePlayer($pb_player_id, $token['site_id']);
 		print_r($result);
+		echo '<br>';
 		$cl_player_id = '1';
 		echo '<br>getPlaybasisId:<br>';
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($token, array(
@@ -708,13 +709,14 @@ class Player extends REST_Controller
 		echo '<br>getClientPlayerId:<br>';
 		$cl_player_id = $this->player_model->getClientPlayerId($pb_player_id, $token['site_id']);
 		print_r($cl_player_id);
+		echo '<br>';
 		echo '<br>getPlayerPoints:<br>';
 		$result = $this->player_model->getPlayerPoints($pb_player_id, $token['site_id']);
 		print_r($result);
 		$reward_id = $this->point_model->findPoint(array_merge($token, array('reward_name'=>'exp')));
 		echo '<br>getPlayerPoint:<br>';
 		$result = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $token['site_id']);
-		print_r($result);
+		print_r($result);		
 		echo '<br>getLastActionPerform:<br>';
 		$result = $this->player_model->getLastActionPerform($pb_player_id, $token['site_id']);
 		print_r($result);
@@ -731,6 +733,7 @@ class Player extends REST_Controller
 		echo '<br>getLastEventTime<br>';
 		$result = $this->player_model->getLastEventTime($pb_player_id, $token['site_id'], 'LOGIN');
 		print_r($result);
+		echo '<br>';
 		echo '<br>getLeaderboard<br>';
 		$result = $this->player_model->getLeaderboard('exp', 20, $token['client_id'], $token['site_id']);
 		print_r($result);
