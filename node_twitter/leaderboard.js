@@ -84,7 +84,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 			'id':data.user.id_str,
 			'image':data.user.profile_image_url,
 			'tweet':data.text,
-            'tag': TRACKING
+            'tag': data.entities.hashtags
 		});
 		console.log('saving entry...');
 		entry.save(function(err){
