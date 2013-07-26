@@ -16,7 +16,8 @@ db.once('open', function callback(){
 		id: 'string',
 		image: 'string',
 		tweet: 'string',
-        tag: 'string'
+        tag: 'string',
+        retweet: 'boolean',
 	});
 	TweetEntry = db.model('TweetEntry', schema);
 	dbReady = true;
@@ -64,6 +65,14 @@ var dateObj = new Date();
 var TRACKING = '#facebook,#acnwave,#acnwaves,#webwedth,#wwth13,#wwth';
 //var TRACKING = '#webwedth,#wwth12,#wwth';
 
+function stringObj(s){
+    var o = new Array();
+    for (var key in s){
+        o.push(s[key]['text']);
+    }
+    return o;
+}
+
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 	stream.on('data', function(data){
 
@@ -84,7 +93,8 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 			'id':data.user.id_str,
 			'image':data.user.profile_image_url,
 			'tweet':data.text,
-            'tag': data.entities.hashtags
+            'tag': stringObj(data.entities.hashtags).join(),
+            'retweet':data.retweeted,
 		});
 		console.log('saving entry...');
 		entry.save(function(err){
