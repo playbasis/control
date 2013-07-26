@@ -61,7 +61,7 @@ var twit = new twitter({
 });
 
 var dateObj = new Date();
-var TRACKING = '#facebook';
+var TRACKING = '#facebook,#acnwave,#acnwaves,#webwedth,#wwth13,#wwth';
 //var TRACKING = '#webwedth,#wwth12,#wwth';
 
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
