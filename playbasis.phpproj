@@ -162,6 +162,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\client.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\engine.php"
     {
     "ProjRelPath" = "T"

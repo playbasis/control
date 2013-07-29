@@ -19,7 +19,7 @@ class Client_model extends MY_Model
 		$this->set_site_mongodb($clientData['site_id']);
 		$this->mongo_db->select(array('jigsaw_set'));
 		$this->mongo_db->where($clientData);
-		return $this->mongo_db->get('rule');
+		return $this->mongo_db->get('playbasis_rule');
 	}
 	public function getActionId($clientData)
 	{
@@ -35,7 +35,7 @@ class Client_model extends MY_Model
 			'site_id' => $clientData['site_id'],
 			'name' => $clientData['action_name']
 		));
-		$id = $this->mongo_db->get('action_to_client');
+		$id = $this->mongo_db->get('playbasis_action_to_client');
 		return ($id && $id[0]) ? $id[0]['action_id'] : 0;
 	}
 	public function getRuleSetByActionId($clientData)
@@ -45,15 +45,21 @@ class Client_model extends MY_Model
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
 		assert(isset($clientData['action_id']));
-		$clientData['active_status'] = true;
+		$clientData['active_status'] = 1;
 		$this->set_site_mongodb($clientData['site_id']);
 		$this->mongo_db->select(array(
-			'rule_id',
+			'_id',
 			'name',
 			'jigsaw_set'
 		));
 		$this->mongo_db->where($clientData);
-		return $this->mongo_db->get('rule');
+		$rules = $this->mongo_db->get('playbasis_rule');
+		foreach($rules as &$rule)
+		{
+			$rule['rule_id'] = $rule['_id'];
+			unset($rule['_id']);
+		}
+		return $rules;
 	}
 	public function getJigsawProcessor($jigsawId, $site_id)
 	{
@@ -61,9 +67,9 @@ class Client_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('class_path'));
 		$this->mongo_db->where(array(
-			'jigsaw_id' => intval($jigsawId)
+			'jigsaw_id' => $jigsawId
 		));
-		$jigsawProcessor = $this->mongo_db->get('game_jigsaw_to_client');
+		$jigsawProcessor = $this->mongo_db->get('playbasis_game_jigsaw_to_client');
 		assert($jigsawProcessor);
 		return $jigsawProcessor[0]['class_path'];
 	}
@@ -75,32 +81,32 @@ class Client_model extends MY_Model
 		assert(isset($pbPlayerId));
 		$this->set_site_mongodb($siteId);
 		$this->mongo_db->where(array(
-			'pb_player_id' => intval($pbPlayerId),
-			'reward_id' => intval($rewardId)
+			'pb_player_id' => $pbPlayerId,
+			'reward_id' => $rewardId
 		));
-		$hasReward = $this->mongo_db->count('reward_to_player');
+		$hasReward = $this->mongo_db->count('playbasis_reward_to_player');
 		if($hasReward)
 		{
 			$this->mongo_db->where(array(
-				'pb_player_id' => intval($pbPlayerId),
-				'reward_id' => intval($rewardId)
+				'pb_player_id' => $pbPlayerId,
+				'reward_id' => $rewardId
 			));
 			$this->mongo_db->set('date_modified', new MongoDate(time()));
 			if($overrideOldValue)
 				$this->mongo_db->set('value', intval($quantity));
 			else
 				$this->mongo_db->inc('value', intval($quantity));
-			$this->mongo_db->update('reward_to_player');
+			$this->mongo_db->update('playbasis_reward_to_player');
 		}
 		else
 		{
 			$mongoDate = new MongoDate(time());
-			$this->mongo_db->insert('reward_to_player', array(
-				'pb_player_id' => new MongoInt64("$pbPlayerId"),
+			$this->mongo_db->insert('playbasis_reward_to_player', array(
+				'pb_player_id' => $pbPlayerId,
 				'cl_player_id' => $clPlayerId,
-				'client_id' => intval($clientId),
-				'site_id' => intval($siteId),
-				'reward_id' => intval($rewardId),
+				'client_id' => $clientId,
+				'site_id' => $siteId,
+				'reward_id' => $rewardId,
 				'value' => intval($quantity),
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
@@ -109,20 +115,20 @@ class Client_model extends MY_Model
 		//upadte client reward limit
 		$this->mongo_db->select(array('limit'));
 		$this->mongo_db->where(array(
-			'reward_id' => intval($rewardId),
-			'site_id' => intval($siteId)
+			'reward_id' => $rewardId,
+			'site_id' => $siteId
 		));
-		$result = $this->mongo_db->get('reward_to_client');
+		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		assert($result);
 		$result = $result[0];
 		if(is_null($result['limit']))
 			return;
 		$this->mongo_db->where(array(
-			'reward_id' => intval($rewardId),
-			'site_id' => intval($siteId)
+			'reward_id' => $rewardId,
+			'site_id' => $siteId
 		));
 		$this->mongo_db->dec('limit', intval($quantity));
-		$this->mongo_db->update('reward_to_client');
+		$this->mongo_db->update('playbasis_reward_to_client');
 	}
 	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig)
 	{
@@ -130,34 +136,42 @@ class Client_model extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$this->mongo_db->select(array('reward_id'));
 		$this->mongo_db->where(array(
-			'client_id' => intval($input['client_id']),
-			'site_id' => intval($input['site_id']),
+			'client_id' => $input['client_id'],
+			'site_id' => $input['site_id'],
 			'name' => strtolower($rewardName)
 		));
-		$result = $this->mongo_db->get('reward_to_client');
-		$result = $result[0];
-		$customRewardId = isset($result['reward_id']) ? $result['reward_id'] : false;
+		$result = $this->mongo_db->get('playbasis_reward_to_client');
+		$customRewardId = null;
+		if($result && $result[0])
+		{
+			$result = $result[0];
+			$customRewardId = isset($result['reward_id']) ? $result['reward_id'] : null;
+		}
 		if(!$customRewardId)
 		{
 			//reward does not exist, add new custom point where id is max(reward_id)+1
-			$this->mongo_db->select(array('reward_id'));
-			$this->mongo_db->where(array(
-				'client_id' => intval($input['client_id']),
-				'site_id' => intval($input['site_id'])
-			));
-			$this->mongo_db->order_by(array('reward_id' => 'desc'));
-			$result = $this->mongo_db->get('reward_to_client');
-			$result = $result[0];
-			$customRewardId = $result['reward_id'] + 1;
-			if($customRewardId < CUSTOM_POINT_START_ID)
-				$customRewardId = CUSTOM_POINT_START_ID;
+			//$this->mongo_db->select(array('reward_id'));
+			//$this->mongo_db->where(array(
+			//	'client_id' => $input['client_id'],
+			//	'site_id' => $input['site_id']
+			//));
+			//$this->mongo_db->order_by(array('reward_id' => 'desc'));
+			//$result = $this->mongo_db->get('playbasis_reward_to_client');
+			//$result = $result[0];
+			//$customRewardId = $result['reward_id'] + 1;
+			//if($customRewardId < CUSTOM_POINT_START_ID)
+			//	$customRewardId = CUSTOM_POINT_START_ID;
+			$customRewardId = new MongoId();
 			$mongoDate = new MongoDate(time());
-			$this->mongo_db->insert('reward_to_client', array(
-				'reward_id' => intval($customRewardId),
-				'client_id' => intval($input['client_id']),
-				'site_id' => intval($input['site_id']),
+			$this->mongo_db->insert('playbasis_reward_to_client', array(
+				'reward_id' => $customRewardId,
+				'client_id' => $input['client_id'],
+				'site_id' => $input['site_id'],
 				'group' => 'POINT',
 				'name' => strtolower($rewardName),
+				'limit' => null,
+				'sort_order' => 1,
+				'status' => 1,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
 			));

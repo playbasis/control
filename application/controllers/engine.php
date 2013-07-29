@@ -28,8 +28,8 @@ class Engine extends REST_Controller
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		$ruleSet = $this->client_model->getRuleSet(array(
-			'client_id' => intval($validToken['client_id']),
-			'site_id' => intval($validToken['site_id'])
+			'client_id' => $validToken['client_id'],
+			'site_id' => $validToken['site_id']
 		));
 		$actionConfig = array();
 		foreach($ruleSet as $rule)
@@ -80,8 +80,8 @@ class Engine extends REST_Controller
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		$ruleSet = $this->client_model->getRuleSet(array(
-			'client_id' => intval($validToken['client_id']),
-			'site_id' => intval($validToken['site_id'])
+			'client_id' => $validToken['client_id'],
+			'site_id' => $validToken['site_id']
 		));
 		$actionConfig = array();
 		foreach($ruleSet as $rule)
@@ -268,9 +268,9 @@ class Engine extends REST_Controller
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
 		$ruleSet = $this->client_model->getRuleSetByActionId(array(
-			'client_id' => intval($client_id),
-			'site_id' => intval($site_id),
-			'action_id' => intval($input['action_id'])
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'action_id' => $input['action_id']
 		));
 		$apiResult = array(
 			'events' => array()
