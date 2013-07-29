@@ -215,7 +215,7 @@ class Player_model extends MY_Model
 		if(!$result)
 			return array();
 		//get points for the reward id
-		$this->site_db()->select("cl_player_id AS player_id,value AS $ranked_by");
+		$this->site_db()->select("cl_player_id AS player_id,value AS '$ranked_by'");
 		$this->site_db()->where(array(
 			'reward_id' => $result['reward_id'],
 			'client_id' => $client_id,
