@@ -170,8 +170,11 @@ class Client_model extends MY_Model
 				'group' => 'POINT',
 				'name' => strtolower($rewardName),
 				'limit' => null,
+				'badge_id' => null,
+				'description' => null,
 				'sort_order' => 1,
 				'status' => 1,
+				'is_custom' => 1,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
 			));
