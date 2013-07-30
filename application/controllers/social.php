@@ -17,8 +17,11 @@ class Social extends REST_Controller
 		$credential = array(
 			'key' => 'abc',
 			'secret' => 'abcde'
-			);
+		);
 		$token = $this->auth_model->getApiInfo($credential);
+		//echo '<br>getFacebookCredentials<br>';
+		//$result = $this->social_model->getFacebookCredentials($token['client_id'], $token['site_id']);
+		//print_r($result);
 		echo '<br>getClientFromFacebookPageId<br>';
 		$facebook_page_id = '145245468987996';
 		$result = $this->social_model->getClientFromFacebookPageId($facebook_page_id);

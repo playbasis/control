@@ -21,7 +21,7 @@ class Social_model extends MY_Model
 			'client_id' => $client_id,
 			'site_id' => $site_id
 		));
-		$result = $this->mongo_db->get('facebook_page_to_client');
+		$result = $this->mongo_db->get('playbasis_facebook_page_to_client');
 		return ($result) ? $result[0] : $result;
 	}
 	private function getFacebookObject($client_id, $site_id)
