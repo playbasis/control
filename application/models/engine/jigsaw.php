@@ -327,9 +327,9 @@ class jigsaw extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$this->mongo_db->select($fields);
 		$this->mongo_db->where(array(
-			'pb_player_id' => intval($input['pb_player_id']),
-			'rule_id' => intval($input['rule_id']),
-			'jigsaw_id' => intval($input['jigsaw_id'])
+			'pb_player_id' => $input['pb_player_id'],
+			'rule_id' => $input['rule_id'],
+			'jigsaw_id' => $input['jigsaw_id']
 		));
 		$this->mongo_db->order_by(array(
 			'date_added' => 'desc'
@@ -337,7 +337,7 @@ class jigsaw extends MY_Model
 		$result = $this->mongo_db->get('jigsaw_log');
 		return ($result) ? $result[0] : $result;
 	}
-	public function checkBadge($badgeId, $pb_player_id, $site_id)
+	private function checkBadge($badgeId, $pb_player_id, $site_id)
 	{
 		//get badge properties
 		$this->set_site_mongodb($site_id);
@@ -346,18 +346,18 @@ class jigsaw extends MY_Model
 			'substract',
 			'quantity'));
 		$this->mongo_db->where(array(
-			'badge_id' => intval($badgeId)
+			'_id' => $badgeId
 		));
-		$badgeInfo = $this->mongo_db->get('badge');
+		$badgeInfo = $this->mongo_db->get('playbasis_badge');
 		if(!$badgeInfo || !$badgeInfo[0])
 			return false;
 		$badgeInfo = $badgeInfo[0];
 		//search badge owned by player
 		$this->mongo_db->where(array(
-			'badge_id' => intval($badgeId),
-			'pb_player_id' => intval($pb_player_id)
+			'badge_id' => $badgeId,
+			'pb_player_id' => $pb_player_id
 		));
-		$haveBadge = $this->mongo_db->count('badge_to_player');
+		$haveBadge = $this->mongo_db->count('playbasis_badge_to_player');
 		if(!$badgeInfo['quantity'])
 			return false;
 		if($badgeInfo['stackable'])
@@ -366,21 +366,21 @@ class jigsaw extends MY_Model
 			return false;
 		return true;
 	}
-	public function checkReward($rewardId, $siteId)
+	private function checkReward($rewardId, $siteId)
 	{
 		$this->set_site_mongodb($siteId);
 		$this->mongo_db->select(array('limit'));
 		$this->mongo_db->where(array(
-			'reward_id' => intval($rewardId),
-			'site_id' => intval($siteId)
+			'reward_id' => $rewardId,
+			'site_id' => $siteId
 		));
-		$result = $this->mongo_db->get('reward_to_client');
+		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		$result = $result[0];
 		if(is_null($result['limit']))
 			return true;
 		return $result['limit'] > 0;
 	}
-	public function matchUrl($inputUrl, $compareUrl, $isRegEx)
+	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
 	{
 		$urlFragment = parse_url($inputUrl);
 		//check posible index page
