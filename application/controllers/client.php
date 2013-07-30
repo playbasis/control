@@ -66,6 +66,22 @@ class Client extends REST_Controller
 		print_r($result);
 		echo '<br>';
 		print_r($jigsawConfig);
+		$badge_id = new MongoId('51f120906d6cfb641700001f');
+		echo '<br>current badges<br>';
+		$result = $this->player_model->getBadge($pb_player_id, $token['site_id']);
+		print_r($result);
+		echo '<br>updatePlayerBadge<br>';
+		$result = $this->client_model->updateplayerBadge($badge_id, 1, $pb_player_id, $token['site_id']);
+		print_r($result);
+		echo '<br>';
+		echo '<br>udpated badges<br>';
+		$result = $this->player_model->getBadge($pb_player_id, $token['site_id']);
+		print_r($result);
+		echo '<br>updateExpAndLevel<br>';
+		$result = $this->client_model->updateExpAndLevel(10, $pb_player_id, $cl_player_id, array(
+			'site_id' => $token['site_id'],
+			'client_id' => $token['client_id']));
+		print_r($result);
 		echo '</pre>';
 	}
 }

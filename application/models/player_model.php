@@ -217,9 +217,10 @@ class Player_model extends MY_Model
 			$this->mongo_db->where('_id', $badge['badge_id']);
 			$result = $this->mongo_db->get('playbasis_badge');
 			assert($result);
-			$badge = $result[0];
-			$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
-			$badge['badge_id'] = $badge['_id'];
+			$result = $result[0];
+			$badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
+			$badge['name'] = $result['name'];
+			$badge['description'] = $result['description'];
 			unset($badge['_id']);
         }
         return $badges;

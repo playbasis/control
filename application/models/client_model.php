@@ -170,7 +170,6 @@ class Client_model extends MY_Model
 				'group' => 'POINT',
 				'name' => strtolower($rewardName),
 				'limit' => null,
-				'badge_id' => null,
 				'description' => null,
 				'sort_order' => 1,
 				'status' => 1,
@@ -209,11 +208,12 @@ class Client_model extends MY_Model
 			'quantity'
 		));
 		$this->mongo_db->where(array(
-			'badge_id' => intval($badgeId)
+			'_id' => $badgeId
 		));
-		$result = $this->mongo_db->get('badge');
+		$result = $this->mongo_db->get('playbasis_badge');
 		assert($result);
 		$badgeInfo = $result[0];
+		$mongoDate = new MongoDate(time());
 		if($badgeInfo['substract'])
 		{
 			$remainingQuantity = $badgeInfo['quantity'] - $quantity;
@@ -223,32 +223,31 @@ class Client_model extends MY_Model
 				$quantity = $badgeInfo['quantity'];
 			}
 			$this->mongo_db->set('quantity', $remainingQuantity);
-			$this->mongo_db->set('date_modified', new MongoDate(time()));
-			$this->mongo_db->where('badge_id', $badgeId);
-			$this->mongo_db->update('badge');
+			$this->mongo_db->set('date_modified', $mongoDate);
+			$this->mongo_db->where('_id', $badgeId);
+			$this->mongo_db->update('playbasis_badge');
 		}
 		//update player badge table
 		$this->mongo_db->where(array(
-			'pb_player_id' => intval($pbPlayerId),
-			'badge_id' => intval($badgeId)
+			'pb_player_id' => $pbPlayerId,
+			'badge_id' => $badgeId
 		));
-		$hasBadge = $this->mongo_db->count('badge_to_player');
+		$hasBadge = $this->mongo_db->count('playbasis_badge_to_player');
 		if($hasBadge)
 		{
 			$this->mongo_db->where(array(
-				'pb_player_id' => intval($pbPlayerId),
-				'badge_id' => intval($badgeId)
+				'pb_player_id' => $pbPlayerId,
+				'badge_id' => $badgeId
 			));
-			$this->mongo_db->set('date_modified', new MongoDate(time()));
+			$this->mongo_db->set('date_modified', $mongoDate);
 			$this->mongo_db->inc('amount', intval($quantity));
-			$this->mongo_db->update('badge_to_player');
+			$this->mongo_db->update('playbasis_badge_to_player');
 		}
 		else
 		{
-			$mongoDate = new MongoDate(time());
-			$this->mongo_db->insert('badge_to_player', array(
-				'pb_player_id' => new MongoInt64("$pbPlayerId"),
-				'badge_id' => intval($badgeId),
+			$this->mongo_db->insert('playbasis_badge_to_player', array(
+				'pb_player_id' => $pbPlayerId,
+				'badge_id' => $badgeId,
 				'amount' => intval($quantity),
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
@@ -269,8 +268,8 @@ class Client_model extends MY_Model
 			'exp',
 			'level'
 		));
-		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
-		$result = $this->mongo_db->get('player');
+		$this->mongo_db->where('_id', $pb_player_id);
+		$result = $this->mongo_db->get('playbasis_player');
 		$playerExp = $result[0]['exp'];
 		$playerLevel = $result[0]['level'];
 		$newExp = $exp + $playerExp;
@@ -279,14 +278,14 @@ class Client_model extends MY_Model
 		$this->mongo_db->where($clientData);
 		$this->mongo_db->where_lte('exp', intval($newExp));
 		$this->mongo_db->order_by(array('level' => 'desc'));
-		$level = $this->mongo_db->get('client_exp_table');
+		$level = $this->mongo_db->get('playbasis_client_exp_table');
 		if(!$level || !$level[0] || !$level[0]['level'])
 		{
 			//get level from default exp table instead
 			$this->mongo_db->select(array('level'));
 			$this->mongo_db->where_lte('exp', intval($newExp));
 			$this->mongo_db->order_by(array('level' => 'desc'));
-			$level = $this->mongo_db->get('exp_table');
+			$level = $this->mongo_db->get('playbasis_exp_table');
 			assert($level);
 		}
 		$level = $level[0];
@@ -294,19 +293,19 @@ class Client_model extends MY_Model
 			$level = $level['level'];
 		else
 			$level = -1;
-		$this->mongo_db->where('pb_player_id', intval($pb_player_id));
+		$this->mongo_db->where('_id', $pb_player_id);
 		$this->mongo_db->set('date_modified', new MongoDate(time()));
 		$this->mongo_db->inc('exp', intval($exp));
 		if($level > 0)
 			$this->mongo_db->set('level', intval($level));
-		$this->mongo_db->update('player');
+		$this->mongo_db->update('playbasis_player');
 		//get reward id to update the reward to player table
-		$this->mongo_db->select(array('reward_id'));
+		$this->mongo_db->select(array('_id'));
 		$this->mongo_db->where('name', 'exp');
-		$result = $this->mongo_db->get('reward');
+		$result = $this->mongo_db->get('playbasis_reward');
 		assert($result);
 		$result = $result[0];
-		$this->updatePlayerPointReward($result['reward_id'], $newExp, $pb_player_id, $cl_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
+		$this->updatePlayerPointReward($result['_id'], $newExp, $pb_player_id, $cl_player_id, $clientData['client_id'], $clientData['site_id'], TRUE);
 		return $level;
 	}
 	public function log($logData, $jigsawOptionData = array())
