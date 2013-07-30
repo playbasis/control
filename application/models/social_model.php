@@ -201,7 +201,7 @@ class Social_model extends MY_Model
 			'site_id'
 		));
 		$this->mongo_db->where('facebook_page_id', $facebook_page_id);
-		$result = $this->mongo_db->get('facebook_page_to_client');
+		$result = $this->mongo_db->get('playbasis_facebook_page_to_client');
 		if(!$result)
 			return $result;
 		$result = $result[0];
@@ -217,7 +217,7 @@ class Social_model extends MY_Model
 			'site_id'
 		));
 		$this->mongo_db->where('hashtag', $hashtag);
-		$result = $this->mongo_db->get('hashtag_to_client');
+		$result = $this->mongo_db->get('playbasis_hashtag_to_client');
 		if(!$result)
 			return $result;
 		$result = $result[0];
@@ -233,7 +233,7 @@ class Social_model extends MY_Model
 			'site_id'
 		));
 		$this->mongo_db->where('host', $host);
-		$result = $this->mongo_db->get('hosts_to_client');
+		$result = $this->mongo_db->get('playbasis_hosts_to_client');
 		if(!$result)
 			return $result;
 		$result = $result[0];
@@ -248,10 +248,10 @@ class Social_model extends MY_Model
 		$this->mongo_db->select(array('pb_player_id'));
 		$this->mongo_db->where(array(
 			'facebook_id' => $facebook_id,
-			'client_id' => intval($client_id),
-			'site_id' => intval($site_id)
+			'client_id' => $client_id,
+			'site_id' => $site_id
 		));
-		$result = $this->mongo_db->get('player');
+		$result = $this->mongo_db->get('playbasis_player');
 		return ($result) ? $result[0]['pb_player_id'] : 0;
 	}
 	public function getPBPlayerIdFromTwitterId($twitter_id, $client_id, $site_id)
@@ -261,10 +261,10 @@ class Social_model extends MY_Model
 		$this->mongo_db->select(array('pb_player_id'));
 		$this->mongo_db->where(array(
 			'twitter_id' => $twitter_id,
-			'client_id' => intval($client_id),
-			'site_id' => intval($site_id)
+			'client_id' => $client_id,
+			'site_id' => $site_id
 		));
-		$result = $this->mongo_db->get('player');
+		$result = $this->mongo_db->get('playbasis_player');
 		return ($result) ? $result[0]['pb_player_id'] : 0;
 	}
 	public function getPBPlayerIdFromInstagramId($instagram_id, $client_id, $site_id)
@@ -277,7 +277,7 @@ class Social_model extends MY_Model
 			'client_id' => $client_id,
 			'site_id' => $site_id
 			));
-		$result = $this->mongo_db->get('player');
+		$result = $this->mongo_db->get('playbasis_player');
 		return ($result) ? $result[0]['pb_player_id'] : 0;
 	}
 	public function saveInstagramFeedData($data)

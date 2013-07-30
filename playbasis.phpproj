@@ -206,6 +206,10 @@
     {
     "ProjRelPath" = "T"
     }
+    "application\\controllers\\social.php"
+    {
+    "ProjRelPath" = "T"
+    }
     "application\\controllers\\tracker.php"
     {
     "ProjRelPath" = "T"
