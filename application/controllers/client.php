@@ -10,6 +10,7 @@ class Client extends REST_Controller
 		$this->load->model('client_model');
 		$this->load->model('player_model');
 		$this->load->model('point_model');
+		$this->load->model('badge_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/respond', 'resp');
 	}
@@ -81,6 +82,26 @@ class Client extends REST_Controller
 		$result = $this->client_model->updateExpAndLevel(10, $pb_player_id, $cl_player_id, array(
 			'site_id' => $token['site_id'],
 			'client_id' => $token['client_id']));
+		print_r($result);
+		echo '<br>log<br>';
+		$result = $this->client_model->log(array(
+			'pb_player_id' => $pb_player_id,
+			'action_id' => $action_id,
+			'action_name' => 'like',
+			'client_id' => $token['client_id'],
+			'site_id' => $token['site_id'],
+			'domain_name' => $token['domain_name']
+		));
+		print_r($result);
+		echo '<br>getBadgeById<br>';
+		$result = $this->client_model->getBadgeById($badge_id, $token['site_id']);
+		print_r($result);
+		echo '<br>getBadge (from badge_model)<br>';
+		$result = $this->badge_model->getBadge(array(
+			'badge_id' => $badge_id,
+			'site_id' => $token['site_id'],
+			'client_id' => $token['client_id']
+		));
 		print_r($result);
 		echo '</pre>';
 	}

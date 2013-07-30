@@ -314,10 +314,10 @@ class Client_model extends MY_Model
 		assert(is_array($logData));
 		assert($logData['pb_player_id']);
 		assert($logData['action_id']);
-		assert('$logData["action_name"]');
+		assert(is_string($logData['action_name']));
 		assert($logData['client_id']);
 		assert($logData['site_id']);
-		assert('$logData["domain_name"]');
+		assert(is_string($logData['domain_name']));
 		if(isset($logData['input']))
 			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
 		else
@@ -325,19 +325,19 @@ class Client_model extends MY_Model
 		$this->set_site_mongodb($logData['site_id']);
 		$mongoDate = new MongoDate(time());
 		$this->mongo_db->insert('jigsaw_log', array(
-			'pb_player_id'	  => new MongoInt64((string)$logData['pb_player_id']),
+			'pb_player_id'	  =>		$logData['pb_player_id'],
 			'input'			  =>		$logData['input'],
-			'client_id'		  => intval($logData['client_id']),
-			'site_id'		  => intval($logData['site_id']),
+			'client_id'		  =>		$logData['client_id'],
+			'site_id'		  =>		$logData['site_id'],
 			'domain_name'	  =>		$logData['domain_name'],
-			'action_id'		  => (isset($logData['action_id']))		? intval($logData['action_id'])		 : 0,
-			'action_name'	  => (isset($logData['action_name']))	?		 $logData['action_name']	 : '',
-			'rule_id'		  => (isset($logData['rule_id']))		? intval($logData['rule_id'])		 : 0,
-			'rule_name'		  => (isset($logData['rule_name']))		?		 $logData['rule_name']		 : '',
-			'jigsaw_id'		  => (isset($logData['jigsaw_id']))		? intval($logData['jigsaw_id'])		 : 0,
-			'jigsaw_name'	  => (isset($logData['jigsaw_name']))	?		 $logData['jigsaw_name']	 : '',
-			'jigsaw_category' => (isset($logData['jigsaw_category'])) ?		 $logData['jigsaw_category'] : '',
-			'site_name'		  => (isset($logData['site_name']))		?		 $logData['site_name']		 : '',
+			'action_id'		  => (isset($logData['action_id']))		  ? $logData['action_id']		: 0,
+			'action_name'	  => (isset($logData['action_name']))	  ? $logData['action_name']		: '',
+			'rule_id'		  => (isset($logData['rule_id']))		  ? $logData['rule_id']			: 0,
+			'rule_name'		  => (isset($logData['rule_name']))		  ? $logData['rule_name']		: '',
+			'jigsaw_id'		  => (isset($logData['jigsaw_id']))		  ? $logData['jigsaw_id']		: 0,
+			'jigsaw_name'	  => (isset($logData['jigsaw_name']))	  ? $logData['jigsaw_name']	    : '',
+			'jigsaw_category' => (isset($logData['jigsaw_category'])) ? $logData['jigsaw_category'] : '',
+			'site_name'		  => (isset($logData['site_name']))		  ? $logData['site_name']		: '',
 			'date_added'	  => $mongoDate,
 			'date_modified'	  => $mongoDate
 		));
@@ -346,25 +346,18 @@ class Client_model extends MY_Model
 	{
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
-			'badge_id',
-			'image'
-		));
-		$this->mongo_db->where('badge_id', intval($badgeId));
-		$badgeImage = $this->mongo_db->get('badge');
-		assert($badgeImage);
-		$badgeImage = $badgeImage[0];
-		unset($badgeImage['_id']);
-		$badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
-		$this->mongo_db->select(array(
 			'name',
-			'description'
+			'description',
+			'image',
+			'hint'
 		));
-		$this->mongo_db->where('badge_id', intval($badgeId));
-		$badgeDesc = $this->mongo_db->get('badge_description');
-		assert($badgeDesc);
-		$badgeDesc = $badgeDesc[0];
-		unset($badgeDesc['_id']);
-		$badge = array_merge($badgeImage, $badgeDesc);
+		$this->mongo_db->where('_id', $badgeId);
+		$badge = $this->mongo_db->get('playbasis_badge');
+		assert($badge);
+		$badge = $badge[0];
+		$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
+		$badge['badge_id'] = $badge['_id'];
+		unset($badge['_id']);
 		return $badge;
 	}
 }
