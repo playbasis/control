@@ -352,16 +352,16 @@ class jigsaw extends MY_Model
 		if(!$badgeInfo || !$badgeInfo[0])
 			return false;
 		$badgeInfo = $badgeInfo[0];
-		//search badge owned by player
+		if(!$badgeInfo['quantity'])
+			return false;
+		if($badgeInfo['stackable'])
+			return true;
+		//badge not stackable, check if player already have the badge
 		$this->mongo_db->where(array(
 			'badge_id' => $badgeId,
 			'pb_player_id' => $pb_player_id
 		));
 		$haveBadge = $this->mongo_db->count('playbasis_badge_to_player');
-		if(!$badgeInfo['quantity'])
-			return false;
-		if($badgeInfo['stackable'])
-			return true;
 		if($haveBadge)
 			return false;
 		return true;

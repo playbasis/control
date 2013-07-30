@@ -84,13 +84,17 @@ class Client extends REST_Controller
 			'client_id' => $token['client_id']));
 		print_r($result);
 		echo '<br>log<br>';
+		$rule_id = new MongoId('51f1b3506d6cfb64170e81cd');
+		$jigsaw_id = new MongoId('51f120906d6cfb64170000b4');
 		$result = $this->client_model->log(array(
 			'pb_player_id' => $pb_player_id,
 			'action_id' => $action_id,
 			'action_name' => 'like',
 			'client_id' => $token['client_id'],
 			'site_id' => $token['site_id'],
-			'domain_name' => $token['domain_name']
+			'domain_name' => $token['domain_name'],
+			'jigsaw_id' => $jigsaw_id,
+			'rule_id' => $rule_id
 		));
 		print_r($result);
 		echo '<br>getBadgeById<br>';

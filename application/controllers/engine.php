@@ -11,6 +11,7 @@ class Engine extends REST_Controller
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
+		$this->load->model('point_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -396,7 +397,7 @@ class Engine extends REST_Controller
 							switch($jigsawConfig['reward_name'])
 							{
 							case 'badge':
-									$this->client_model->updateplayerBadge($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $site_id);
+								$this->client_model->updateplayerBadge($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $site_id);
 								$event = array(
 									'event_type' => 'REWARD_RECEIVED',
 									'reward_type' => $jigsawConfig['reward_name'],
@@ -418,8 +419,8 @@ class Engine extends REST_Controller
 									'badge' => $event['reward_data']
 								)), $domain_name, $site_id);
 								//publish to facebook notification
-									if($fbData)
-										$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
+								if($fbData)
+									$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
 								break;
 							default:
 								break;
@@ -451,6 +452,45 @@ class Engine extends REST_Controller
 			}
 		}
 		return $apiResult;
+	}
+	public function test_get()
+	{
+		echo '<pre>';
+		$credential = array(
+			'key' => 'abc',
+			'secret' => 'abcde'
+		);
+		$token = $this->auth_model->getApiInfo($credential);
+		echo '<br>getPlaybasisId (node_stream)<br>';
+		$pb_player_id = $this->player_model->getPlaybasisId(array(
+			'site_id' => $token['site_id'],
+			'client_id' => $token['client_id'],
+			'cl_player_id' => '1'
+		));
+		$result = $this->node->getPlayerInfo($pb_player_id, $token['site_id']);
+		print_r($result);
+		echo '<br>getMostRecentJigsaw (jigsaw)<br>';
+		$rule_id = new MongoId('51f1b3506d6cfb64170e81cd');
+		$jigsaw_id = new MongoId('51f120906d6cfb64170000b4');
+		$result = $this->jigsaw_model->getMostRecentJigsaw(array(
+			'site_id' => $token['site_id'],
+			'pb_player_id' => $pb_player_id,
+			'rule_id' => $rule_id,
+			'jigsaw_id' => $jigsaw_id
+		), array(
+			'input',
+			'date_added'
+		));
+		print_r($result);
+		echo '<br>checkBadge (jigsaw)<br>';
+		$badge_id = new MongoId('51f120906d6cfb641700001f');
+		$result = $this->jigsaw_model->checkBadge($badge_id, $pb_player_id, $token['site_id']);
+		var_dump($result);
+		echo '<br>checkReward (jigsaw)<br>';
+		$reward_id = $this->point_model->findPoint(array_merge($token, array('reward_name'=>'point')));
+		$result = $this->jigsaw_model->checkReward($reward_id, $token['site_id']);
+		var_dump($result);
+		echo '</pre>';
 	}
 }
 ?>

@@ -95,22 +95,5 @@ class Node_stream extends MY_Model
 		$result = $this->mongo_db->get('playbasis_player');
 		return ($result) ? $result[0] : $result;
 	}
-	//public function test()
-	//{
-	//	echo '<pre>';
-	//	$credential = array(
-	//		'key' => 'abc',
-	//		'secret' => 'abcde'
-	//		);
-	//	$token = $this->auth_model->getApiInfo($credential);
-	//	$pb_player_id = $this->player_model->getPlaybasisId(array(
-	//		'site_id' => $token['site_id'],
-	//		'client_id' => $token['client_id'],
-	//		'cl_player_id' => '1'
-	//		));
-	//	$result = $this->node->getPlayerInfo($pb_player_id, $token['site_id']);
-	//	print_r($result);
-	//	echo '</pre>';
-	//}
 }
 ?>
