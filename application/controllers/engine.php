@@ -70,58 +70,6 @@ class Engine extends REST_Controller
 		}
 		$this->response($this->resp->setRespond($actionConfig), 200);
 	}
-	public function getActionConfig_post()
-	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		$ruleSet = $this->client_model->getRuleSet(array(
-			'client_id' => $validToken['client_id'],
-			'site_id' => $validToken['site_id']
-		));
-		$actionConfig = array();
-		foreach($ruleSet as $rule)
-		{
-			$jigsawSet = unserialize($rule['jigsaw_set']);
-			$actionId = $jigsawSet[0]['config']['action_id'];
-			$actionInput = $jigsawSet[0]['config'];
-			if(isset($actionConfig[$actionId]))
-			{
-				$config = array(
-					'url' => $actionInput['url'],
-					'regex' => $actionInput['regex']
-				);
-				$found = false;
-				foreach($actionConfig[$actionId]['config'] as $configElement)
-				{
-					if($config['url'] != $configElement['url'] || $config['regex'] != $configElement['regex'])
-						continue;
-					$found = true;
-					break;
-				}
-				if(!$found)
-					array_push($actionConfig[$actionId]['config'], $config);
-			}
-			else
-			{
-				$actionConfig[$actionId] = array(
-					'name' => $jigsawSet[0]['config']['action_name'],
-					'config' => array(
-						array(
-							'url' => $actionInput['url'],
-							'regex' => $actionInput['regex']
-						)
-					)
-				);
-			}
-		}
-		$this->response($this->resp->setRespond($actionConfig), 200);
-	}
 	public function rule_get($option = 0)
 	{
 		if($option != 'facebook')

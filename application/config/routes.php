@@ -87,10 +87,7 @@ $route['Player/'.ANY_STRING.'/badge'] = 'player/badge/$1';
 $route['Player/badge'] = 'player/badge/0';
 
 //badge API
-$route['Badge/collection/'.ANY_NUMBER] = 'badge/getcollection/$1';
-$route['Badge/collection']  = 'badge/getcollection';
-$route['Badge/collections'] = 'badge/getcollection';
-$route['Badge/'.ANY_NUMBER] = 'badge/index/$1';
+$route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
 $route['Badges'] = 'badge/index';
 
