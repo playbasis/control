@@ -231,19 +231,26 @@ class Engine extends REST_Controller
 		}
 		foreach($ruleSet as $rule)
 		{
-			$input['rule_id'] = $rule['rule_id'];
+			$input['rule_id'] = new MongoId($rule['rule_id']);
 			$input['rule_name'] = $rule['name'];
 			$jigsawSet = unserialize($rule['jigsaw_set']);
 			foreach($jigsawSet as $jigsaw)
 			{
-				$input['jigsaw_id'] = (string)$jigsaw['id'];
+				$jigsaw_id = new MongoId($jigsaw['id']);
+				$input['jigsaw_id'] = $jigsaw_id;
 				$input['jigsaw_name'] = $jigsaw['name'];
 				$input['jigsaw_category'] = $jigsaw['category'];
+				if(isset($jigsaw['config']['action_id']))
+					$jigsaw['config']['action_id'] = new MongoId($jigsaw['config']['action_id']);
+				if(isset($jigsaw['config']['reward_id']))
+					$jigsaw['config']['reward_id'] = new MongoId($jigsaw['config']['reward_id']);
+				if(isset($jigsaw['config']['item_id']))
+					$jigsaw['config']['item_id'] = new MongoId($jigsaw['config']['item_id']);
 				$input['input'] = $jigsaw['config'];
 				$exInfo = array();
 				$jigsawConfig = $jigsaw['config'];
 				//get class path to precess jigsaw
-				$processor = $this->client_model->getJigsawProcessor($jigsaw['id'], $site_id);
+				$processor = $this->client_model->getJigsawProcessor($jigsaw_id, $site_id);
 				if($this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo))
 				{
 					if($jigsaw['category'] == 'REWARD')
@@ -296,8 +303,8 @@ class Engine extends REST_Controller
 							{
 								//check if player level up
 								$lv = $this->client_model->updateExpAndLevel($jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], array(
-									'client_id' => intval($validToken['client_id']),
-									'site_id' => intval($validToken['site_id'])
+									'client_id' => $validToken['client_id'],
+									'site_id' => $validToken['site_id']
 								));
 								if($lv > 0)
 								{
