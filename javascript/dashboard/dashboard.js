@@ -114,7 +114,7 @@ $(function(){
   var token = getUrlVars()["token"];
 
   $.ajax({
-      url: 'index.php?route=common/home/liveFeed',
+      url: baseUrlPath+'dashboard/liveFeed',
       data: {
           token: token
       },

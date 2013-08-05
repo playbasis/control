@@ -115,7 +115,10 @@
             });
         });
 
-        var imageUrlPath = "<?php echo IMG_PATH ?>";
+        var imageUrlPath = "<?php echo S3_IMAGE ?>";
+        var baseUrlPath = "<?php echo base_url();?>index.php/";
+        var SiteId = "<?php echo $site_id;?>";
+        var ClientId = "<?php echo $client_id;?>";
     </script>
 
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/strip_tags.js"></script>
@@ -123,6 +126,15 @@
     <script type="text/javascript" src="<?php echo base_url();?>javascript/html5.js"></script>
 </head>
 <body>
+
+<?php
+if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit['total'] > ((int)$check_limit['limit_user'] * 0.95)){
+    ?>
+<div class="message-error">You currently have <?php echo $check_limit['total']; ?> users registered out of your plan's limit of <?php echo $check_limit['limit_user']; ?> users.
+    To avoid losing new users, please contact us to upgrade your plan.</div>
+    <?php
+};
+?>
 
 <!-- start: Header -->
 <div class="navbar">
@@ -137,7 +149,7 @@
 
             <!-- start: Header Menu -->
             <div class="nav-no-collapse header-nav">
-                <?php if (isset($username)) { ?>
+        <?php if (isset($username)) { ?>
           <ul class="nav pull-right">
             <li class="dropdown">
               <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -166,7 +178,7 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?php echo $logout; ?>"><i class="icon-off"></i> Logout</a></li>
+                        <li><a href="<?php echo base_url(); ?>logout"><i class="icon-off"></i> Logout</a></li>
                     </ul>
                 </li>
                 </ul>

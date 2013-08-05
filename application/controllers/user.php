@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class User extends CI_Controller
+require APPPATH . '/libraries/MY_Controller.php';
+class User extends MY_Controller
 {
     public function __construct()
     {
@@ -49,14 +50,13 @@ class User extends CI_Controller
             }
         }
 
-        $this->data['lang'] = $lang['folder'];
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'login';
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
         $this->load->vars($this->data);
-        $this->load->view('template');
+        $this->render_page('template');
     }
 
     public function logout(){

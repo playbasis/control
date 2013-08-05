@@ -3,12 +3,12 @@
 
   var s = document.createElement('script');
       s.setAttribute('type','text/javascript');
-      s.setAttribute('src', 'view/javascript/player/jquery.nivo.slider.pack.js');
+      s.setAttribute('src', 'javascript/player/jquery.nivo.slider.pack.js');
       body.appendChild(s);
 
   var cs = document.createElement('script');
       cs.setAttribute('type','text/javascript');
-      cs.setAttribute('src', 'view/javascript/player/jquery.cookies.2.2.0.js');
+      cs.setAttribute('src', 'javascript/player/jquery.cookies.2.2.0.js');
       body.appendChild(cs);
 
   // $(document).ready(function() {

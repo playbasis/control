@@ -425,20 +425,20 @@ var notificationManagerJS = (function($){
 
 		if(title=='loadtable'){
 			title = "Table updated";
-			img = 'view/image/notification_icon/load_table.png';
+			img = 'image/notification_icon/load_table.png';
 
 		}else if(title=='loadrule'){
 			title = "Editor updated";
-			img = 'view/image/notification_icon/load_editor.png';
+			img = 'image/notification_icon/load_editor.png';
 
 		}else if(title=='save'){
 			title = "Saved";
-			img = 'view/image/notification_icon/save.png';
+			img = 'image/notification_icon/save.png';
 			title = "Message"
 
 		}else if(title=='delete'){
 			title = "Deleted";
-			img = 'view/image/notification_icon/delete.png';
+			img = 'image/notification_icon/delete.png';
 			title = "Message"
 
 		}else{//inform
@@ -485,7 +485,7 @@ var progressDialog = (function($){
 		//If dialog appear hide all notification
 		// $.gritter.removeAll();// $('.gritter-close').trigger('click');
 		
-		$('body').prepend('<div class="custom_blackdrop"><img src="./view/image/white_loading.gif" /><br><span>'+text+'</span></div>');
+		$('body').prepend('<div class="custom_blackdrop"><img src="./image/white_loading.gif" /><br><span>'+text+'</span></div>');
 	}
 
 	obj.hide = function(){

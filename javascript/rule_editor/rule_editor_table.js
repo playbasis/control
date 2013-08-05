@@ -15,6 +15,7 @@ var ruleTableMan = {
   },
 
   reRenderTable:function(json){
+
   // Parse json input string to jsonObject and generate HTML element 
   // then setup parameter and append to Rule Tables
     if(typeof json === 'string') {

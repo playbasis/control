@@ -9,7 +9,7 @@
             main_panel: "#reward_collection",
             panel_badge: "#rule-reward-modal",
             output_data: ".reward_type",
-            html_load: '<center><img src="./view/image/white_loading.gif" height="100" width="100" /></center>'
+            html_load: '<center><img src="./image/white_loading.gif" height="100" width="100" /></center>'
         };
 
         var opts = $.extend(defaults, options);

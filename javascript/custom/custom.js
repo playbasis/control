@@ -3,15 +3,103 @@ $(function() {
 	// sparkline_charts();
 	charts();
 	widthFunctions();
-	circle_progress();
+    circle_progress();
 
 	//pervent all #click
 	$('a[href="#"]').live('click', function(event){
 		event.preventDefault();
 	});
 
+    $("#submitdate_filter").live('click' ,function(){
+
+        var startDate = new Date( $('#start_date').val() ).getTime();
+        var endDate = new Date($('#end_date').val()).getTime();
+
+
+
+        if( startDate > endDate ){
+
+            $('.message-dialog .modal-body p').html('Invalid parameter! ,Start-date range shouldn\'t less than End-date')
+            $('.message-dialog').modal('show');
+            return ;
+        }
+
+
+        var data_filter = "";
+
+        var startStamp = $("#start_date").val().split("/");
+        var yearStart = '';
+        if(startStamp[2].length = 2){
+            yearStart = '20'+startStamp[2];
+        }
+        var startDate = new Date(yearStart,parseInt(startStamp[0])-1,startStamp[1]);
+        var start_date = startDate.toString("dd-MM-yyyy");
+
+        var endStamp = $("#end_date").val().split("/");
+        var yearEnd = '';
+        if(endStamp[2].length = 2){
+            yearEnd = '20'+endStamp[2];
+        }
+        var endDate = new Date(yearEnd,parseInt(endStamp[0])-1,endStamp[1]);
+        var end_date = endDate.toString("dd-MM-yyyy");
+        $.ajax({
+            url: baseUrlPath+'statistic/getStatisticData?date_start='+start_date+'&date_expire='+end_date,
+            dataType: 'json',
+            success: function(json) {
+                data_filter = [
+                    { data: json.points, label: "Points"},
+                    { data: json.levelup, label: "Level Up"},
+                    { data: json.register, label: "Register"},
+                    { data: json.badges, label: "Badges" }
+                ];
+//                console.log(data_filter);
+                plot.setData(data_filter);
+                plot.setupGrid();
+                plot.draw();
+            }
+        });
+    });
+
 });
 
+function circleDay(){
+    $.ajax({
+        url: baseUrlPath+'statistic/getDailyActionmeaturement',
+        dataType: 'html',
+        beforeSend: function (  ) {
+            $("#stats-carousel-day").html('/image/white_loading.gif');
+        }
+    }).done(function ( d ) {
+        $("#stats-carousel-day").html(d);
+        circle_progress();
+    });
+}
+
+function circleWeek(){
+    $.ajax({
+        url: baseUrlPath+'statistic/getWeeklyActionmeaturement',
+        dataType: 'html',
+        beforeSend: function (  ) {
+            $("#stats-carousel-weekly").html('/image/white_loading.gif');
+        }
+    }).done(function ( d ) {
+        $("#stats-carousel-weekly").html(d);
+        circle_progress();
+    });
+}
+
+function circleMonth(){
+    $.ajax({
+        url: baseUrlPath+'statistic/getMonthlyActionmeaturement',
+        dataType: 'html',
+        beforeSend: function (  ) {
+            $("#stats-carousel-month").html('/image/white_loading.gif');
+        }
+    }).done(function ( d ) {
+        $("#stats-carousel-month").html(d);
+        circle_progress();
+    });
+}
 
 /* ---------- Datable ---------- */
 function template_functions() {
@@ -46,7 +134,7 @@ function template_functions() {
 
 /* ---------- Sparkline Charts ---------- */
 
-function sparkline_charts() {
+/***function sparkline_charts() {
 
 	//generate random number for charts
 	randNum = function(){
@@ -74,7 +162,7 @@ function sparkline_charts() {
 		});
 	}
 
-}
+}***/
 
 /* ---------- Charts ---------- */
 
@@ -121,89 +209,32 @@ function timeTickFormatter(val,axis) {
 
 function charts() {
 
+
     var plot = "";
 
-    $("#submitdate_filter").live('click' ,function(){
-      var startDate = new Date( $('#start_date').val() ).getTime();
-      var endDate = new Date($('#end_date').val()).getTime();
-
-      
-        
-        if( startDate > endDate ){
-          
-          $('.message-dialog .modal-body p').html('Invalid parameter! ,Start-date range shouldn\'t less than End-date')
-          $('.message-dialog').modal('show');
-          return ;
-        }
-
-
-        var data_filter = "";
-
-        var startStamp = $("#start_date").val().split("/");
-        var yearStart = '';
-        if(startStamp[2].length = 2){
-            yearStart = '20'+startStamp[2];
-        }
-        var startDate = new Date(yearStart,parseInt(startStamp[0])-1,startStamp[1]);
-        var start_date = startDate.toString("dd-MM-yyyy");
-
-        var endStamp = $("#end_date").val().split("/");
-        var yearEnd = '';
-        if(endStamp[2].length = 2){
-            yearEnd = '20'+endStamp[2];
-        }
-        var endDate = new Date(yearEnd,parseInt(endStamp[0])-1,endStamp[1]);
-        var end_date = endDate.toString("dd-MM-yyyy");
-        $.ajax({
-            url: 'index.php?route=admin/dashboard/getStatisticData&date_start='+start_date+'&date_expire='+end_date,
-            data: {
-                token: token
-            },
-            dataType: 'json',
-            success: function(json) {
-                data_filter = [ { data: json.points, label: "Points"},
-                    { data: json.levelup, label: "Level Up"},
-                    { data: json.register, label: "Register"},
-                    { data: json.badges, label: "Badges" }
-                ];
-                //console.log(data_filter);
-                plot.setData(data_filter);
-                plot.setupGrid();
-                plot.draw();
-            }
-        });
-    });
   /* ---------- Chart with points ---------- */
   if($("#stats-chart").length) {
-    token = getUrlVars()["token"];
 
-    var site_id = getUrlVars()["site_id"];
     var url = '';
-    if(site_id){
-        url = 'index.php?route=admin/dashboard/getStatisticData&site_id='+site_id;
-    }else{
-        url = 'index.php?route=admin/dashboard/getStatisticData';
-    }
 
+    url = baseUrlPath+'statistic/getStatisticData';
 
-    if (token) {
       $.ajax({
-//        url: 'index.php?route=common/home/loadSite',
         url: url,
-        data: {
-          token: token
-        },
         dataType: 'json',
         success: function(json) {
           //console.log(json);
           window.json = json;
 
-          window.plot = plot = $.plot($("#stats-chart"),
-            [ { data: json.points, label: "Points"},
+          data_filter = [
+              { data: json.points, label: "Points"},
               { data: json.levelup, label: "Level Up"},
               { data: json.register, label: "Register"},
               { data: json.badges, label: "Badges" }
-            ],
+          ];
+
+          window.plot = plot = $.plot($("#stats-chart"),
+            data_filter,
             {
              series: {
                lines: { show: true,
@@ -250,9 +281,9 @@ function charts() {
                 previousPoint = null;
               }
             });
+
         }
       });
-    }
 
     $("#sincos").bind("plotclick", function (event, pos, item) {
       if (item) {
@@ -552,7 +583,7 @@ function charts() {
   }
 }
 
-function growlLikeNotifications() {
+/**function growlLikeNotifications() {
 
   $('#add-sticky').click(function(){
 
@@ -572,16 +603,7 @@ function growlLikeNotifications() {
     });
 
     // You can have it return a unique id, this can be used to manually remove it later using
-    /* ----------
-    setTimeout(function(){
 
-      $.gritter.remove(unique_id, {
-        fade: true,
-        speed: 'slow'
-      });
-
-    }, 6000)
-    */
 
     return false;
 
@@ -739,7 +761,7 @@ function growlLikeNotifications() {
   });
 
 
-}
+}**/
 
 
 /* ---------- Page width functions ---------- */
@@ -791,33 +813,33 @@ function widthFunctions( e ) {
 
     });
 
-    $(".circleStatsItem").each(function() {
+      $(".circleStatsItem").each(function() {
 
-      var getOnTablet = $(this).parent().attr('onTablet');
-      var getOnDesktop = $(this).parent().attr('onDesktop');
+          var getOnTablet = $(this).parent().attr('onTablet');
+          var getOnDesktop = $(this).parent().attr('onDesktop');
 
-      if (getOnTablet) {
+          if (getOnTablet) {
 
-        $(this).parent().removeClass(getOnDesktop);
-        $(this).parent().addClass(getOnTablet);
+              $(this).parent().removeClass(getOnDesktop);
+              $(this).parent().addClass(getOnTablet);
 
-      }
+          }
 
-    });
+      });
 
-    $(".box").each(function(){
+      $(".box").each(function(){
 
-      var getOnTablet = $(this).attr('onTablet');
-      var getOnDesktop = $(this).attr('onDesktop');
+          var getOnTablet = $(this).attr('onTablet');
+          var getOnDesktop = $(this).attr('onDesktop');
 
-      if (getOnTablet) {
+          if (getOnTablet) {
 
-        $(this).removeClass(getOnDesktop);
-        $(this).addClass(getOnTablet);
+              $(this).removeClass(getOnDesktop);
+              $(this).addClass(getOnTablet);
 
-      }
+          }
 
-    });
+      });
 
   } else {
 
@@ -839,43 +861,42 @@ function widthFunctions( e ) {
 
       if($(this).hasClass("quick-button span2 changed")) {
 
-        $(this).removeClass("quick-button span2 changed");
-        $(this).addClass("quick-button-small span1");
+          $(this).removeClass("quick-button span2 changed");
+          $(this).addClass("quick-button-small span1");
 
       }
 
     });
 
-    $(".circleStatsItem").each(function() {
+      $(".circleStatsItem").each(function() {
 
-      var getOnTablet = $(this).parent().attr('onTablet');
-      var getOnDesktop = $(this).parent().attr('onDesktop');
+          var getOnTablet = $(this).parent().attr('onTablet');
+          var getOnDesktop = $(this).parent().attr('onDesktop');
 
-      if (getOnTablet) {
+          if (getOnTablet) {
 
-        $(this).parent().removeClass(getOnTablet);
-        $(this).parent().addClass(getOnDesktop);
+              $(this).parent().removeClass(getOnTablet);
+              $(this).parent().addClass(getOnDesktop);
 
-      }
+          }
 
-    });
+      });
 
-    $(".box").each(function(){
+      $(".box").each(function(){
 
-      var getOnTablet = $(this).attr('onTablet');
-      var getOnDesktop = $(this).attr('onDesktop');
+          var getOnTablet = $(this).attr('onTablet');
+          var getOnDesktop = $(this).attr('onDesktop');
 
-      if (getOnTablet) {
+          if (getOnTablet) {
 
-        $(this).removeClass(getOnTablet);
-        $(this).addClass(getOnDesktop);
+              $(this).removeClass(getOnTablet);
+              $(this).addClass(getOnDesktop);
 
-      }
+          }
 
-    });
+      });
 
   }
-
 }
 
 

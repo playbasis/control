@@ -185,26 +185,6 @@ oneRuleMan = {
 
 			}
 
-
-			// if(kind =='action')
-			// 	// var iconClass = ["fa-icon-map-marker","fa-icon-thumbs-up","fa-icon-share","fa-icon-flag","fa-icon-globe","fa-icon-comment","fa-icon-plus-sign","fa-icon-group","fa-icon-cogs","fa-icon-cogs"];
-			// 	// For demo
-			// 	var iconClass = ["fa-icon-map-marker","fa-icon-bookmark-empty","fa-icon-thumbs-up","fa-icon-share","fa-icon-thumbs-up","fa-icon-comment","fa-icon-facebook-sign","fa-icon-reorder","fa-icon-cogs","fa-icon-cogs"];
-			// else if(kind =='condition')
-			// 	var iconClass = ["fa-icon-time","fa-icon-sort-down","fa-icon-chevron-left","fa-icon-chevron-right","fa-icon-resize-small","fa-icon-globe","fa-icon-globe","fa-icon-globe","fa-icon-globe"];
-			// else if(kind =='reward')
-			// 	var iconClass = ["fa-icon-heart-empty","fa-icon-tasks","fa-icon-certificate","fa-icon-cogs"];
-
-			// var cnt = 0;
-			// var len = iconClass.length;
-
-			// for(var index in list){
-			// 	var listItem = list[index];
-			// 	detail.append('<li id="'+listItem.specific_id+'" title="'+listItem.description+'" class="mini-round jigsaw_select_btn line" > <div class="text">'+listItem.name+'</div> <i class="'+iconClass[cnt++%len]+'"/></li>');
-			// }
-
-
-			// targetDiv.append(detail);
 	},
 
 
@@ -345,25 +325,6 @@ oneRuleMan = {
 	
 
 },//->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //Mod : node chaining manager
@@ -733,22 +694,6 @@ $('.one_rule_save_btn').live('click',function(){
 	}
 return true;
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //Event : Click on [+New Rule] button

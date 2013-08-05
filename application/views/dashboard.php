@@ -58,12 +58,9 @@
                         <i class="<?php echo $event['class']; ?>"></i>
                         <span class="plus"><?php echo $event['advancement_direction']; ?></span>
                         <span class="percent">%</span>
-                        <?php $rand_num = rand(1, 100); ?>
                         <input type="text" value="<?php echo $event['advancement_rate']; ?>" class="<?php echo $event['circle']; ?>" />
                     </div>
                     <div class="box-small-title">
-                        <?php //$rand_num = rand(100, 10000); ?>
-                        <?php //echo number_format($rand_num);?>
                         <?php echo $event['value']; ?>
                         <?php echo $event['name']; ?>
                     </div>
@@ -89,12 +86,9 @@
                         <i class="<?php echo $event['class']; ?>"></i>
                         <span class="plus"><?php echo $event['advancement_direction']; ?></span>
                         <span class="percent">%</span>
-                        <?php $rand_num = rand(1, 100); ?>
                         <input type="text" value="<?php echo $event['advancement_rate']; ?>" class="<?php echo $event['circle']; ?>" />
                     </div>
                     <div class="box-small-title">
-                        <?php $rand_num = rand(100, 10000); ?>
-                        <?php //echo number_format($rand_num);?>
                         <?php echo $event['value']; ?>
                         <?php echo $event['name']; ?>
                     </div>
@@ -120,12 +114,9 @@
                         <i class="<?php echo $event['class']; ?>"></i>
                         <span class="plus"><?php echo $event['advancement_direction']; ?></span>
                         <span class="percent">%</span>
-                        <?php $rand_num = rand(1, 100); ?>
                         <input type="text" value="<?php echo $event['advancement_rate']; ?>" class="<?php echo $event['circle']; ?>" />
                     </div>
                     <div class="box-small-title">
-                        <?php $rand_num = rand(100, 10000); ?>
-                        <?php //echo number_format($rand_num); ?>
                         <?php echo $event['value']; ?>
                         <?php echo $event['name']; ?>
                     </div>
@@ -242,9 +233,7 @@
                         <ul>
                             <?php //if(!empty($player['badges'])) { foreach($player['badges'] as $badge) { ?>
                             <li class="isot-player-recent-badge">
-                                <?php //if(!empty($action['icon'])) { ?>
-                                <img width='40' src='../image/data/default/acorn.png'>
-                                <?php //} ?>
+
                             </li>
                             <?php //} } ?>
                         </ul>
@@ -349,9 +338,7 @@
                         <ul>
                             <?php //if(!empty($player['badges'])) { foreach($player['badges'] as $badge) { ?>
                             <li class="isot-player-recent-badge">
-                                <?php //if(!empty($action['icon'])) { ?>
-                                <img width='40' src='../image/data/default/acorn.png'>
-                                <?php //} ?>
+
                             </li>
                             <?php //} } ?>
                         </ul>
@@ -389,12 +376,11 @@
 <hr>
 
 </div>
-<?php echo $footer; ?>
 
-<script type="text/javascript" src="<?php echo base_url();?>view/javascript/dashboard/jquery.mousewheel.min.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>view/javascript/dashboard/jquery.touchSwipe.min.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>view/javascript/dashboard/jquery.carouFredSel-6.2.0-packed.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>view/javascript/dashboard/jquery.flot.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/dashboard/jquery.mousewheel.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/dashboard/jquery.touchSwipe.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/dashboard/jquery.carouFredSel-6.2.0-packed.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/dashboard/jquery.flot.js"></script>
 <script type="text/javascript">
 
     $(function(){
@@ -416,8 +402,8 @@
     })
 
 </script>
-<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>view/stylesheet/dashboard/dashboard.css" />
-<script type="text/javascript" src="<?php echo base_url();?>view/javascript/dashboard/dashboard.js"></script>
+<link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/dashboard/dashboard.css" />
+<script type="text/javascript" src="<?php echo base_url();?>javascript/dashboard/dashboard.js"></script>
 
 <div class="message-dialog modal hide fade">
     <div class="modal-header">

@@ -1,6 +1,6 @@
 
 // rule_editor.js
-var DEBUG = false;
+var DEBUG = true;
 
 
 //########################################
@@ -11,13 +11,18 @@ urlConfig = {
       var protocal = window.location.protocol+'//';
       var root = window.location.host+window.location.pathname;
       var paramset = (window.location.search).split('&');
-      for(var index in paramset){
-        if(paramset[index].indexOf('route')>-1){
-          paramset[index] = '?route=admin/rules/'+customAction
-        }
-      }
+//      for(var index in paramset){
+//        if(paramset[index].indexOf('route')>-1){
+//          paramset[index] = '?route=admin/rules/'+customAction
+//        }
+//      }
       paramset = paramset.join('&');
-      var url = protocal+root+paramset;
+      var url = '';
+      if(customAction){
+          url = protocal+root+'/'+customAction+paramset;
+      }else{
+          url = protocal+root+paramset;
+      }
       return url;
   },
 
@@ -45,9 +50,10 @@ dataMan = {
   loadPrerender_jigsawConfig: function(){},
   loadPrerender_jigsawBadges: function(){},
   loadRulesTable:function() {
+      console.log(urlConfig.URL_getRules());
     $.ajax({
       url: urlConfig.URL_getRules(),
-      data: '&siteId='+jsonConfig_siteId+'&clientId='+jsonConfig_clientId+'&ts='+(new Date()).getMilliseconds(),
+      data: 'ts='+(new Date()).getMilliseconds(),
       type:'GET',
       dataType:'json',
       beforeSend:function(){
@@ -94,6 +100,7 @@ dataMan = {
             progressDialog.show('Fetching rule ...');
           },
           success:function(data){
+              alert(data);
             // if(($.parseJSON(data)).success==true){
               if(DEBUG)console.log('Current Rule : ')
               if(DEBUG)console.log(data)

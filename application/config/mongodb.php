@@ -27,5 +27,5 @@ $config['default']['mongo_query_safety'] = 'safe';
 $config['default']['mongo_suppress_connect_error'] = TRUE;
 $config['default']['mongo_host_db_flag']   = FALSE;
 
-$config[1] = $config['default'];
-$config[1]['mongo_database'] = 'core_demo';
+$config['demo'] = $config['default'];
+$config['demo']['mongo_database'] = 'core_demo';

@@ -17,7 +17,7 @@ globalVar = {
 
 progressDialog = {
   show: function (text) {
-    $('body').prepend('<div class="custom_blackdrop"><img src="./view/image/white_loading.gif" /><br><span>' + text + '</span></div>');
+    $('body').prepend('<div class="custom_blackdrop"><img src="./image/white_loading.gif" /><br><span>' + text + '</span></div>');
   },
   hide: function () {
     setTimeout(function () {

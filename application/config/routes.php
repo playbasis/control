@@ -38,7 +38,7 @@
 |
 */
 
-$route['default_controller'] = "user/login";
+$route['default_controller'] = "dashboard";
 $route['404_override'] = '';
 
 $route['login'] = 'user/login';

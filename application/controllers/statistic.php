@@ -6,6 +6,11 @@ class Statistic extends CI_Controller
     {
         parent::__construct();
 
+        $this->load->model('User_model');
+        if(!$this->User_model->isLogged()){
+            redirect('/login', 'refresh');
+        }
+
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
@@ -15,14 +20,14 @@ class Statistic extends CI_Controller
         $this->load->model('User_model');
         $this->load->model('Statistic_model');
 
-        if (isset($this->request->get['date_start'])) {
-            $date_start = strtotime($this->request->get['date_start']);
+        if ($this->input->get('date_start')) {
+            $date_start = strtotime($this->input->get('date_start'));
         } else {
             $date_start = strtotime(' -30 day');
         }
 
-        if (isset($this->request->get['date_expire'])) {
-            $date_expire = strtotime($this->request->get['date_expire']);
+        if ($this->input->get('date_expire')) {
+            $date_expire = strtotime($this->input->get('date_expire'));
         } else {
             $date_expire = strtotime('today');
         }
@@ -78,5 +83,68 @@ class Statistic extends CI_Controller
         }
 
         $this->output->set_output(json_encode($json));
+    }
+
+    public function getDailyActionmeaturement(){
+        $this->load->model('User_model');
+        $this->load->model('Statistic_model');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $data = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date' => date('Y-m-d'),
+            'start' => 0,
+            'limit' => 5
+        );
+
+        $this->data['events'] = $this->Statistic_model->getDailyActionmeaturement($data);
+
+        $this->load->vars($this->data);
+        $this->load->view('carousel');
+    }
+
+    public function getWeeklyActionmeaturement(){
+        $this->load->model('User_model');
+        $this->load->model('Statistic_model');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $data = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date' => date('Y-m-d'),
+            'start' => 0,
+            'limit' => 5
+        );
+
+        $this->data['events'] = $this->Statistic_model->getWeeklyActionmeaturement($data);
+
+        $this->load->vars($this->data);
+        $this->load->view('carousel');
+    }
+
+    public function getMonthlyActionmeaturement(){
+        $this->load->model('User_model');
+        $this->load->model('Statistic_model');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $data = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'date' => date('Y-m-d'),
+            'start' => 0,
+            'limit' => 5
+        );
+
+        $this->data['events'] = $this->Statistic_model->getMonthlyActionmeaturement($data);
+
+        $this->load->vars($this->data);
+        $this->load->view('carousel');
     }
 }
