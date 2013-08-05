@@ -1,6 +1,6 @@
 
 // rule_editor.js
-var DEBUG = true;
+var DEBUG = false;
 
 
 //########################################
@@ -100,7 +100,6 @@ dataMan = {
             progressDialog.show('Fetching rule ...');
           },
           success:function(data){
-              alert(data);
             // if(($.parseJSON(data)).success==true){
               if(DEBUG)console.log('Current Rule : ')
               if(DEBUG)console.log(data)

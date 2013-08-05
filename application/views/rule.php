@@ -15,9 +15,9 @@
 <div id="content" class="span10">
 
 <div style='float:right; margin-top:-10px;margin-right:-30px'>
-<span class="x-slider-frame value_current" style="margin: 0px; margin-bottom: -20px;">
+<!--span class="x-slider-frame value_current" style="margin: 0px; margin-bottom: -20px;">
   <span class="x-slider-button">Current</span>
-</span>
+</span-->
 
     <script type="text/javascript">
         $(document).ready(function(){
