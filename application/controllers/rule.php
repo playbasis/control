@@ -8,6 +8,10 @@ class Rule extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_Model');
+        if(!$this->User_Model->isLogged()){
+            redirect('/login', 'refresh');
+        }
+
         $this->load->model('Rule_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -25,6 +29,8 @@ class Rule extends MY_Controller
     }
 
     private function getList() {
+        include('action_data_log.php');
+
         $this->load->model('Badge_model');
 
         $s_siteId = $this->User_Model->getSiteId();
@@ -38,6 +44,7 @@ class Rule extends MY_Controller
         $this->data['jsonConfig_siteId'] = $this->User_Model->getSiteId();
         $this->data['jsonConfig_clientId'] = $this->User_Model->getClientId();
 
+        $this->data['jsonIcons'] = json_encode($icons);
 
         $this->data['ruleList'] = json_encode($this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId));
 
@@ -59,24 +66,17 @@ class Rule extends MY_Controller
     }
 
 
-    /*public function jsonSaveRule(){
+    public function jsonSaveRule(){
 
-        $params = $_POST;
-        $this->load->model('admin/rules');
-
-        if(!$this->paramsCleaned($params,array('json'))){
+        if(!$this->input->post('json')){
             $this->jsonErrorResponse();
             return ;
         }
 
+        $input = json_decode(html_entity_decode($this->input->post('json')),true);
 
-        $input = json_decode(html_entity_decode($params['json']),true);
-        // // $input = $this->stdObjToArray($input);
-        $this->jsonResponse( $this->model_admin_rules->saveRule($input) );
-
-        // $this->jsonResponse(  );
-        // echo "JSON : ".$params['json'];
-    }*/
+        $this->output->set_output(json_encode($this->Rule_model->saveRule($input)));
+    }
 
 
     /*public function deleteRule(){

@@ -178,7 +178,9 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?php echo base_url(); ?>logout"><i class="icon-off"></i> Logout</a></li>
+                        <li>
+                        <?php echo anchor('logout', "Logout"); ?>
+                        </li>
                     </ul>
                 </li>
                 </ul>

@@ -5,6 +5,7 @@ class Rule_model extends MY_Model
     public function getActionGigsawList($siteId,$clientId){
         $this->set_site_mongodb(0);
 
+        $this->mongo_db->select(array('action_id','name','description','sort_order','icon','status','init_dataset'));
         $this->mongo_db->where('site_id',  new MongoID($siteId));
         $this->mongo_db->where('client_id',  new MongoID($clientId));
         $results = $this->mongo_db->get("playbasis_action_to_client");
@@ -14,9 +15,12 @@ class Rule_model extends MY_Model
         try{
             if(count($results)>0){
                 foreach ($results as &$rowx) {
+                    $rowx['specific_id'] = $rowx['action_id']."";
                     $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['id']=1;#hard code set id to be '1'
                     $rowx['category']='ACTION';
+                    unset($rowx['action_id']);
+                    unset($rowx['init_dataset']);
                 }
                 $output = $results;
             }
@@ -33,6 +37,7 @@ class Rule_model extends MY_Model
     public function getConditionGigsawList($siteId,$clientId){
         $this->set_site_mongodb(0);
 
+        $this->mongo_db->select(array('jigsaw_id','name','description','sort_order','icon','status','init_dataset'));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
         $this->mongo_db->where('category', 'CONDITION');
@@ -43,10 +48,12 @@ class Rule_model extends MY_Model
         try{
             if(count($results)>0){
                 foreach ($results as &$rowx) {
-
+                    $rowx['id']=$rowx['jigsaw_id']."";
                     $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
-                    $rowx['specific_id']= $rowx['_id'];
+                    $rowx['specific_id']= $rowx['id']."";//'';//no specific id for contion so using the same id with jigsaw id.
                     $rowx['category']='CONDITION';
+                    unset($rowx['jigsaw_id']);
+                    unset($rowx['init_dataset']);
                 }
                 $output = $results;
             }
@@ -63,24 +70,37 @@ class Rule_model extends MY_Model
     public function getRewardGigsawList($siteId,$clientId){
         $this->set_site_mongodb(0);
 
+        $this->mongo_db->select(array('_id'));
+        $reward_res= $this->mongo_db->get("playbasis_reward");
+
+        $reward_id = array();
+        foreach($reward_res as $r){
+            $reward_id[] = $r['_id'];
+        }
+
+        $this->mongo_db->select(array('reward_id','name','description','sort_order','icon','status','init_dataset'));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
-        $this->mongo_db->where('reward_id', array('$lt'=>10000));
-        $results = $this->mongo_db->get("playbasis_reward_to_client");
+        $this->mongo_db->where('reward_id', array('$in'=>$reward_id));
+        $ds = $this->mongo_db->get("playbasis_reward_to_client");
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
 
         try{
-            if(count($results)>0){
-                foreach ($results as &$rowx) {
-                    $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
+            if(count($ds)>0){
+                foreach ($ds as &$rowx) {
+                    $rowx['specific_id'] = $rowx['reward_id']."";
+                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['id']=2;#hard code set id to be '2'
                     $rowx['category']='REWARD';
+                    unset($rowx['reward_id']);
+                    unset($rowx['init_dataset']);
                 }
 
                 // append custom reward
                 $this->set_site_mongodb(0);
 
+                $this->mongo_db->select(array('jigsaw_id','name','description','sort_order','icon','status','category','init_dataset'));
                 $this->mongo_db->where('site_id', new MongoID($siteId));
                 $this->mongo_db->where('client_id', new MongoID($clientId));
                 $this->mongo_db->where('category', 'REWARD');
@@ -88,15 +108,16 @@ class Rule_model extends MY_Model
                 $ds2 = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
 
                 if(count($ds2)>0){
-                    $ds2->row['specific_id'] = $ds2->row['id'];//'';
-                    $ds2->row['jigsaw_category'] = 'REWARD';
+                    $ds2[0]['specific_id'] = $ds2[0]['jigsaw_id']."";//'';
+                    $ds2[0]['jigsaw_category'] = 'REWARD';
 
-                    $ds2->row['dataSet'] = unserialize(trim($ds2->row['dataSet']));
-
-                    array_push($results, $ds2->row);
+                    $ds2[0]['dataSet'] = unserialize(trim($ds2[0]['init_dataset']));
+                    unset($ds2[0]['jigsaw_id']);
+                    unset($ds2[0]['init_dataset']);
+                    array_push($ds, $ds2[0]);
                 }
 
-                $output = $results;
+                $output = $ds;
 
 
             }
@@ -110,9 +131,57 @@ class Rule_model extends MY_Model
 
     }
 
+    function saveRule($input){
+        $this->set_site_mongodb(0);
+
+        if($input['rule_id']=='undefined'){
+            //set time
+            $input['date_added'] = $input['date_modify'] = date('Y-m-d H:i:s');
+
+            $res = $this->mongo_db->insert('playbasis_rule', array(
+                'client_id' =>  new MongoID($input['client_id']),
+                'site_id' =>  new MongoID($input['site_id']),
+                'action_id' => new MongoID($input['action_id']),
+                'name' => $input['name'],
+                'description' => $input['description'],
+                'tags' => $input['tags'],
+                'jigsaw_set' => serialize($input['jigsaw_set']),
+                'active_status' => (bool)$input['active_status'],
+                'date_added' => $input['date_added'],
+                'date_modified' => $input['date_modified']
+            ));
+
+            if($res){
+                return array('success'=>true);
+            }else{
+                return array('success'=>false);
+            }
+
+        }else{
+
+            $this->mongo_db->where('_id', new MongoID($input['rule_id']));
+            $this->mongo_db->set('client_id', new MongoID($input['client_id']));
+            $this->mongo_db->set('site_id', new MongoID($input['site_id']));
+            $this->mongo_db->set('action_id', new MongoID($input['action_id']));
+            $this->mongo_db->set('name', $input['name']);
+            $this->mongo_db->set('description', $input['description']);
+            $this->mongo_db->set('tags', $input['tags']);
+            $this->mongo_db->set('jigsaw_set',serialize($input['jigsaw_set']));
+            $this->mongo_db->set('active_status', (bool)$input['active_status']);
+            $this->mongo_db->set('date_modified', $input['date_modified']);
+            $res = $this->mongo_db->update('playbasis_rule');
+
+            if($res){
+                return array('success'=>true);
+            }else{
+                return array('success'=>false);
+            }
+
+        }
+
+    }
+
     public function getRuleById($siteId,$clientId,$ruleId){
-
-
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
 
@@ -125,8 +194,10 @@ class Rule_model extends MY_Model
             $results = $this->mongo_db->get("playbasis_rule");
             $ds = $this->unserializeRuleSet($results);
 
-            if(count($ds)>0)
+            if(count($ds)>0){
+                $ds[0]['rule_id'] = $ds[0]['_id']."";
                 $output = $ds;
+            }
 
         }catch(Exception $e){
             //Exception stuff

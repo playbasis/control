@@ -6,6 +6,7 @@
 <link id="base-style" rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/player/nivo-slider.css" />
 <link rel="stylesheet" href="<?php echo base_url();?>stylesheet/player/nivo/themes/default/default.css" type="text/css" media="screen" />
 
+<script type="text/javascript" src="<?php echo base_url();?>javascript/md5.js"></script>
 
 <!-- ############################################# -->
 <!-- CONTENT -->
@@ -28,8 +29,8 @@
 
                 if( (frame.attr('class')).indexOf('current')>-1 ){
                     var obj = frame.find('.x-slider-button');
-                    frame.removeClass('value_current');
-                    frame.addClass('value_next');
+                    frame.removeClass('value_current')
+                    frame.addClass('value_next')
 
                     obj.removeClass('on').html('Next');
                     frame.css('background','#BF0016');
@@ -40,8 +41,8 @@
 
                 }else{
                     var obj = frame.find('.x-slider-button');
-                    frame.removeClass('value_next');
-                    frame.addClass('value_current');
+                    frame.removeClass('value_next')
+                    frame.addClass('value_current')
 
                     obj.addClass('on').html('Current');
                     frame.css('background','#3B9900');
@@ -90,6 +91,9 @@
             margin: 0 auto;
         }
     </style>
+
+
+
 
 </div>
 
@@ -282,6 +286,7 @@
 </div>
 <!-- end ob -->
 <div class ="od hide">
+
     <?php #include 'new_rule_prototype.php';?>
 </div>
 
@@ -339,8 +344,8 @@
 
     <div class="modal-body pbd_newrule_body ">
         <ul class='newrule_item_holder' style='margin-left:12px'>
-            <li class='newrule_mode_item' id='mode_import'><img src='<?php echo base_url();?>image/import_template.png' width='128' height='128'><br/><span>New Rule From Template</span></li>
-            <li class='newrule_mode_item' id='mode_new'><img src='<?php echo base_url();?>image/add_newrule.png' width='128' height='128'><br/><span>New Rule From Scrath</span></li>
+            <li class='newrule_mode_item' id='mode_import'><img src='./image/import_template.png' width='128' height='128'><br/><span>New Rule From Template</span></li>
+            <li class='newrule_mode_item' id='mode_new'><img src='./image/add_newrule.png' width='128' height='128'><br/><span>New Rule From Scrath</span></li>
         </ul>
     </div>
     <div class="modal-footer">
@@ -415,9 +420,11 @@
     var jsonString_Action   = '<?php print_r($actionList);?>';
     var jsonString_Condition= '<?php print_r($conditionList);?>';
     var jsonString_Reward   = '<?php print_r($rewardList);?>';
+    // var jsonString_commonBadge = '<?php echo $badgesList?>';
 
     var jsonString_RulesList= '<?php print_r($ruleList);?>';
     var requestedSet        = '<?php echo $requestParams; ?>';
+    var jsonConfig_icons   = '<?php echo $jsonIcons; ?>';
     //########### End : Global variable for rule_e.js ##################/
 </script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/msgpack.js"></script>
@@ -457,11 +464,6 @@
 <!-- /tabPage -->
 
 <!-- End : Rule Editor -->
-
-
-
-
-
 
 <!-- ############################################# -->
 <!-- MODAL -->
