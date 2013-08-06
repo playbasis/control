@@ -146,6 +146,10 @@ DataSet = function(jsonArray, parent_id) {
                 ruleField = $('<span class="pbd_rule_field">').append(inputType);
                 ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+v.value+'</span>');
 
+                if(v.field_type == "collection"){
+                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+BadgeSet.getBadgeImage(v.value)+'</span>');
+                }
+
                 dataColumn.append(ruleText);
                 dataColumn.append(ruleField);
 

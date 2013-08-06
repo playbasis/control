@@ -169,7 +169,7 @@ ul.pbd_rule_unit_wrapper li .box{margin-top:0px;}
 .collection_nav ul li.active div,.collection_nav ul li:hover div{display: block}
 
 
-.collection_basket{margin:0px; width: 78% !important; margin-left: 2% !important;}
+.collection_basket{margin:0px; width: 75% !important; margin-left: 2% !important;}
 .collection_basket ul{overflow: auto;padding-bottom: 12px;height: 300px;}
 .collection_basket ul li{ list-style-type: none; float:left; width: 94%;height: 64px; cursor: pointer; margin:2px 0px 0px 2px;;padding:8px;  padding:4px;border: 1px solid #999;-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; }
 .collection_basket ul li.selected_badge, .collection_basket ul li:hover{ background: #ccc;border: 1px solid #999;}

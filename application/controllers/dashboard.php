@@ -38,11 +38,11 @@ class Dashboard extends MY_Controller
             'limit' => 5
         );
 
-        $this->data['weekly_events'] = $this->Statistic_model->getWeeklyActionmeaturement($data);
+        $this->data['weekly_events'] = null;//$this->Statistic_model->getWeeklyActionmeaturement($data);
 
-        $this->data['monthly_events'] = $this->Statistic_model->getMonthlyActionmeaturement($data);
+        $this->data['monthly_events'] = null;//$this->Statistic_model->getMonthlyActionmeaturement($data);
 
-        $this->data['daily_events'] = $this->Statistic_model->getDailyActionmeaturement($data);
+        $this->data['daily_events'] = null;//$this->Statistic_model->getDailyActionmeaturement($data);
 
         $leaderboards = $this->Statistic_model->LeaderBoard($data);
 

@@ -420,7 +420,6 @@
     var jsonString_Action   = '<?php print_r($actionList);?>';
     var jsonString_Condition= '<?php print_r($conditionList);?>';
     var jsonString_Reward   = '<?php print_r($rewardList);?>';
-    // var jsonString_commonBadge = '<?php echo $badgesList?>';
 
     var jsonString_RulesList= '<?php print_r($ruleList);?>';
     var requestedSet        = '<?php echo $requestParams; ?>';

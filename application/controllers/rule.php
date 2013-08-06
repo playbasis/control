@@ -39,7 +39,6 @@ class Rule extends MY_Controller
         $this->data['actionList'] = json_encode($this->Rule_model->getActionGigsawList($s_siteId,$s_clientId));
         $this->data['conditionList'] = json_encode($this->Rule_model->getConditionGigsawList($s_siteId,$s_clientId));
         $this->data['rewardList'] = json_encode($this->Rule_model->getRewardGigsawList($s_siteId,$s_clientId));
-        $this->data['badgesList'] = json_encode($this->Badge_model->getCommonBadges());
 
         $this->data['jsonConfig_siteId'] = $this->User_Model->getSiteId();
         $this->data['jsonConfig_clientId'] = $this->User_Model->getClientId();
