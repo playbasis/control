@@ -181,6 +181,36 @@ class Rule_model extends MY_Model
 
     }
 
+    public function deleteRule($ruleId,$siteId,$clientId){
+
+        $this->mongo_db->where('_id', new MongoID($ruleId));
+        $this->mongo_db->where('site_id', new MongoID($siteId));
+        $this->mongo_db->where('client_id', new MongoID($clientId));
+        $res = $this->mongo_db->delete('playbasis_rule');
+
+        if($res){
+            return array('success'=>true,'message'=>$res);
+        }else{
+            return array('success'=>false);
+        }
+    }
+
+    function changeRuleState($ruleId,$state,$siteId,$clientId){
+
+        $this->mongo_db->where('_id', new MongoID($ruleId));
+        $this->mongo_db->where('site_id', new MongoID($siteId));
+        $this->mongo_db->where('client_id', new MongoID($clientId));
+        $this->mongo_db->set('active_status', (bool)$state);
+        $res = $this->mongo_db->update('playbasis_rule');
+
+        if($res){
+            return array('success'=>true,'other'=>$res);
+        }else{
+            return array('success'=>false);
+        }
+
+    }
+
     public function getRuleById($siteId,$clientId,$ruleId){
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
@@ -211,6 +241,7 @@ class Rule_model extends MY_Model
 
         $this->set_site_mongodb(0);
 
+        $this->mongo_db->select(array('_id','client_id','site_id','action_id','name','description','tags','active_status','date_added','date_modified'));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
         $results = $this->mongo_db->get("playbasis_rule");
@@ -222,6 +253,7 @@ class Rule_model extends MY_Model
                 $output = $results;
                 /*Cut time string off*/
                 foreach($output as  &$value){
+                    $value['rule_id'] = $value["_id"];
                     foreach ($value as $k2 => &$v2) {
                         if($k2 == "date_added"){
                             $value[$k2] = substr($this->datetimeMongotoReadable($value[$k2]) , 0 ,-8);

@@ -239,7 +239,7 @@ dataMan = {
 
   setRuleStatus:function(toState, targetObj){
      $.ajax({
-      url: urlConfig.URL_changeRuleState()+'&ts='+(new Date()).getMilliseconds(),//Add time stamp to avoid the cash data in any cases
+      url: urlConfig.URL_changeRuleState()+'?ts='+(new Date()).getMilliseconds(),//Add time stamp to avoid the cash data in any cases
       data: {
         ruleId:   dataMan.currentRuleIdToChangeState,
         state:    toState,

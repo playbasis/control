@@ -423,7 +423,7 @@ var notificationManagerJS = (function($){
     var obj = {};
     obj.showAlertDialog = function(title,message){
         // trace('notificationManagerJS.showAlertDialog("'+title+'","'+message+'")');
-        var img = 'view/image/notification_icon/inform.png';
+        var img = 'image/notification_icon/inform.png';
 
         if(title=='loadtable'){
             title = "Table updated";

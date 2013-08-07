@@ -64,6 +64,22 @@ class Rule extends MY_Controller
         $this->output->set_output(json_encode($result));
     }
 
+    public function setRuleState(){
+
+        if(!$this->input->post('ruleId') && !$this->input->post('siteId') && !$this->input->post('clientId') && !$this->input->post('state')){
+            $this->jsonErrorResponse();
+            return ;
+        }
+
+        //after clean channge disable to be 0 because 0-string is lost in network
+        if($this->input->post('state')=='disable')
+            $state='0';
+        else
+            $state='1';
+
+        // $this->jsonResponse($params);
+        $this->output->set_output(json_encode($this->Rule_model->changeRuleState($this->input->post('ruleId'),$state,$this->User_Model->getSiteId(),$this->User_Model->getClientId())));
+    }
 
     public function jsonSaveRule(){
 
@@ -78,19 +94,16 @@ class Rule extends MY_Controller
     }
 
 
-    /*public function deleteRule(){
+    public function deleteRule(){
 
         /*start  : Wrap all of this to be reqireParam('post','rulesID')*/
-        /*$params = $_POST;
-        $this->load->model('admin/rules');
-
-        if(!$this->paramsCleaned($params,array('ruleId','siteId','clientId'))){
+        if(!$this->input->post('ruleId') && !$this->input->post('siteId') && !$this->input->post('clientId')){
             $this->jsonErrorResponse();
             return ;
         }
 
-        $this->jsonResponse( $this->model_admin_rules->deleteRule($params['ruleId'],$this->user->getSiteId(),$this->user->getClientId()));
-    }*/
+        $this->output->set_output(json_encode($this->Rule_model->deleteRule($this->input->post('ruleId'),$this->User_Model->getSiteId(),$this->User_Model->getClientId())));
+    }
 
     public function loadBadges() {
         $this->load->model('Badge_model');
