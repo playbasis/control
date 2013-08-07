@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="<?php echo base_url();?>stylesheet/player/nivo/themes/default/default.css" type="text/css" media="screen" />
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/md5.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/mongoid.js"></script>
 
 <!-- ############################################# -->
 <!-- CONTENT -->

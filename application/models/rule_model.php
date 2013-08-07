@@ -246,7 +246,22 @@ class Rule_model extends MY_Model
             //Exception stuff
         }
 
+        $this->vsort($output, "date_added");
         return $output;
+    }
+
+    private function vsort (&$array, $key) {
+        $res=array();
+        $sort=array();
+        reset($array);
+        foreach ($array as $ii => $va) {
+            $sort[$ii]=$va[$key];
+        }
+        asort($sort);
+        foreach ($sort as $ii => $va) {
+            $res[$ii]=$array[$ii];
+        }
+        $array=$res;
     }
 
     private function datetimeMongotoReadable($dateTimeMongo)

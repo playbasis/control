@@ -1,7 +1,11 @@
 var DEBUG = false;
 
 Node = function(json){
-    this.uid = Math.floor(Math.random()*1000000);
+    if(json.jigsaw_index){
+        this.uid = json.jigsaw_index;
+    }else{
+        this.uid = mongoIDjs();
+    }
     this.jigsawId = json.id;
     this.specificId = json.specific_id;
     this.jigsawName = json.name;
@@ -144,6 +148,7 @@ Node.prototype.getJSON = function() {
     output.specific_id = this.specificId;
     output.category = this.category;
     output.sort_order = this.sortOrder;
+    output.jigsaw_index = this.uid;
 
     //get dataset output from dataset object
     output.dataSet = this.currentDataSet.getJSON();
@@ -219,7 +224,7 @@ Node.prototype.getJSON = function() {
         return output;
     }//End function : extract_configFromJSON
 
-
+    //console.log(output);
     return output;
 };
 
