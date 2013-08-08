@@ -56,3 +56,7 @@ app.get('/echo/:channel/:message', function(req, res){
 	io.sockets.emit(channel, {'msg': message});
 	res.send(200);
 });
+
+app.get('/facebook', function(req, res){
+    res.send('id: ' + req.query.hub.challenge);
+});
