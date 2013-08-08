@@ -16,8 +16,8 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($data['site_id']);
 		$mongoDate = new MongoDate(time());
 		return $this->mongo_db->insert('playbasis_player', array(
-			'client_id'		=> $data['client_id'],
-			'site_id'		=> $data['site_id'],
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
 			'cl_player_id' => $data['player_id'],
 			'image' => $data['image'],
 			'email' => $data['email'],
@@ -56,7 +56,7 @@ class Player_model extends MY_Model
 		{
 			$result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 			unset($result['date_added']);
-		}
+	}
 		if(isset($result['birth_date']) && $result['birth_date'])
 			$result['birth_date'] = date('Y-m-d', $result['birth_date']->sec);
 		return $result;
@@ -162,7 +162,7 @@ class Player_model extends MY_Model
 			'date_added'
         ));
 		$this->mongo_db->where(array(
-			'pb_player_id' => $pb_player_id,
+            'pb_player_id' => $pb_player_id,
             'action_id' => $action_id
         ));
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
@@ -218,7 +218,7 @@ class Player_model extends MY_Model
 			$result = $this->mongo_db->get('playbasis_badge');
 			assert($result);
 			$result = $result[0];
-			$badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
+            $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
 			$badge['name'] = $result['name'];
 			$badge['description'] = $result['description'];
 			unset($badge['_id']);
@@ -336,7 +336,7 @@ class Player_model extends MY_Model
 			'_id' => $site_id
 		));
 		$result = $this->mongo_db->get('playbasis_client_site');
-		assert($result);
+        assert($result);
 		$result = $result[0];
 		$limit = $result['limit_users'];
 		if(!$limit)
@@ -354,49 +354,49 @@ class Player_model extends MY_Model
 		{
 			$this->mongo_db->select(array('user_id'));
 			$this->mongo_db->where(array(
-				'client_id' => $client_id
-			));
+                'client_id' => $client_id
+            ));
 			$result = $this->mongo_db-get('user_to_client');
-			$user_id_list=array();
+            $user_id_list=array();
 			foreach ($result as $r)
-				array_push($user_id_list, $r['user_id']);
+                array_push($user_id_list,$r['user_id']);
 			$this->mongo_db->select(array('email'));
 			$this->mongo_db->where_in(
-				'user_id', $user_id_list
-			);
+                'user_id', $user_id_list
+            );
 			$result = $this->mongo_db->get('user');
-			$email_list=array();
+            $email_list=array();
 			foreach ($result as $r)
-				array_push($email_list,$r['email']);
-			$email_string = implode(",", $email_list);
-			$this->load->library('email');
-			$this->load->library('parser');
+                array_push($email_list,$r['email']);
+            $email_string = implode(",", $email_list);
+            $this->load->library('email');
+            $this->load->library('parser');
 			$data = array(
 				'user_left' => ($limit-$usersCount),
 				'user_count' => $usersCount,
 				'user_limit' => $limit
 			);
-			$config['mailtype'] = 'html';
-			$config['charset'] = 'utf-8';
-			$email = $email_string;
-			$subject = "Playbasis user limit alert";
-			$htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
+            $config['mailtype'] = 'html';
+            $config['charset'] = 'utf-8';
+            $email = $email_string;
+            $subject = "Playbasis user limit alert";
+            $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
 			//email client to upgrade account
-			$this->email->initialize($config);
-			$this->email->clear();
-			$this->email->from('info@playbasis.com', 'Playbasis');
-			$this->email->to($email);
-			$this->email->bcc('cscteam@playbasis.com');
-			$this->email->subject($subject);
-			$this->email->message($htmlMessage);
-			$this->email->send();
+            $this->email->initialize($config);
+            $this->email->clear();
+            $this->email->from('info@playbasis.com', 'Playbasis');
+            $this->email->to($email);
+            $this->email->bcc('cscteam@playbasis.com');
+            $this->email->subject($subject);
+            $this->email->message($htmlMessage);
+            $this->email->send();
 
-			$this->updateLastAlertLimitUser($client_id, $site_id);
+            $this->updateLastAlertLimitUser($client_id, $site_id);
 		}
 	}
 	private function updateLastAlertLimitUser($client_id, $site_id)
-	{
+    {
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where(array(
@@ -406,6 +406,6 @@ class Player_model extends MY_Model
 		$this->mongo_db->update('playbasis_client_site', array(
 			'last_send_limit_users' => $mongoDate
 		));
-	}
+    }
 }
 ?>
