@@ -58,5 +58,10 @@ app.get('/echo/:channel/:message', function(req, res){
 });
 
 app.get('/facebook', function(req, res){
-    res.send('id: ' + req.query.hub.challenge);
+    res.send(req.query['hub.challenge']);
+});
+
+app.post('/facebook', function(req, res){
+    console.log(req);
+    res.send(200);
 });
