@@ -56,7 +56,6 @@ app.get('/facebook', function(req, res){
 
 app.post('/facebook', function(req, res){
     console.log(req.body);
-    var fbdata = req.body;
-    console.log(fbdata.entry.changes);
+    console.log(req.body.entry.changes);
     res.send(200);
 });
