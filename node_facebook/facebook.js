@@ -3,16 +3,6 @@
  * Module dependencies.
  */
 
-var FacebookClient = require("facebook-client").FacebookClient;
-
-var facebook_client = new FacebookClient(
-    "528536277199443", // configure like your fb app page states
-    "9f5f62191b8d592ed322305c9b202837", // configure like your fb app page states
-    {
-        "timeout": 10000 // modify the global timeout for facebook calls (Default: 10000)
-    }
-);
-
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
