@@ -3,6 +3,16 @@
  * Module dependencies.
  */
 
+var FacebookClient = require("facebook-client").FacebookClient;
+
+var facebook_client = new FacebookClient(
+    "528536277199443", // configure like your fb app page states
+    "9f5f62191b8d592ed322305c9b202837", // configure like your fb app page states
+    {
+        "timeout": 10000 // modify the global timeout for facebook calls (Default: 10000)
+    }
+);
+
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
@@ -55,7 +65,26 @@ app.get('/facebook', function(req, res){
 });
 
 app.post('/facebook', function(req, res){
+    facebook_client.getSessionByRequestHeaders(request.headers)(function(facebook_session) {
+        facebook_session.graphCall("/me", {
+        })(function(result) {
+            console.log('Username is:' + result.name);
+        });
+        facebook_session.graphCall("/me/feed", {message:"I love node.js!"}, 'POST')(function(result) {
+            console.log('The new feed post id is: ' + result.id);
+        });
+    });
     console.log(req.body);
-    console.log(req.body.entry.changes);
+    console.log(req.body.entry);
+    for(x in req.body.entry){
+        var entry = req.body.entry[x]
+        console.log(entry);
+        for(y in entry.changes){
+            var change = entry.changes[y]
+            console.log(change);
+        }
+    }
     res.send(200);
 });
+
+
