@@ -50,13 +50,6 @@ io.sockets.on('connection', function(socket){
 	console.log('new connection...');
 });
 
-app.get('/echo/:channel/:message', function(req, res){
-	var channel = req.params.channel;
-	var message = req.params.message;
-	io.sockets.emit(channel, {'msg': message});
-	res.send(200);
-});
-
 app.get('/facebook', function(req, res){
     res.send(req.query['hub.challenge']);
 });
