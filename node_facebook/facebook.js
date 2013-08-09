@@ -55,25 +55,24 @@ app.get('/facebook', function(req, res){
 });
 
 app.post('/facebook', function(req, res){
-//    console.log(req.body);
-//    console.log(req.body.entry);
-//    for(x in req.body.entry){
-//        var entry = req.body.entry[x]
-//        console.log(entry);
-//        for(y in entry.changes){
-//            var change = entry.changes[y]
-//            console.log(change);
-//        }
-//    }
-    var request = require('request');
-    request.post({
-        headers: {'content-type' : 'application/x-www-form-urlencoded'},
-        url:     'https://dev.pbapp.net/api/index.php/Engine/facebook',
-        body:    req.body
-    }, function(error, response, body){
-        console.log(body);
+    var fbsdk = require('facebook-sdk');
+
+    var facebook = new fbsdk.Facebook({
+        appId  : '528536277199443',
+        secret : '9f5f62191b8d592ed322305c9b202837'
     });
-    res.send(200);
+
+    for(x in req.body.entry){
+        var entry = req.body.entry[x]
+        console.log(entry);
+        for(y in entry.changes){
+            var change = entry.changes[y];
+            console.log(change);
+            facebook.api('/1201407222?fields=id,name', function(data) {
+                console.log(data);
+            });
+        }
+    }
 });
 
 
