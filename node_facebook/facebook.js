@@ -65,25 +65,24 @@ app.get('/facebook', function(req, res){
 });
 
 app.post('/facebook', function(req, res){
-    facebook_client.getSessionByRequestHeaders(request.headers)(function(facebook_session) {
-        facebook_session.graphCall("/me", {
-        })(function(result) {
-            console.log('Username is:' + result.name);
-        });
-        facebook_session.graphCall("/me/feed", {message:"I love node.js!"}, 'POST')(function(result) {
-            console.log('The new feed post id is: ' + result.id);
-        });
+//    console.log(req.body);
+//    console.log(req.body.entry);
+//    for(x in req.body.entry){
+//        var entry = req.body.entry[x]
+//        console.log(entry);
+//        for(y in entry.changes){
+//            var change = entry.changes[y]
+//            console.log(change);
+//        }
+//    }
+    var request = require('request');
+    request.post({
+        headers: {'content-type' : 'application/x-www-form-urlencoded'},
+        url:     'https://dev.pbapp.net/api/index.php/Engine/facebook',
+        body:    req.body
+    }, function(error, response, body){
+        console.log(body);
     });
-    console.log(req.body);
-    console.log(req.body.entry);
-    for(x in req.body.entry){
-        var entry = req.body.entry[x]
-        console.log(entry);
-        for(y in entry.changes){
-            var change = entry.changes[y]
-            console.log(change);
-        }
-    }
     res.send(200);
 });
 
