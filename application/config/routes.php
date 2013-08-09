@@ -98,6 +98,7 @@ $route['Badges'] = 'badge/index';
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
 $route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
+$route['Engine/facebook']	= 'Engine/rule/facebook';
 
 //misc
 $route['test']	= 'playbasis/test';
