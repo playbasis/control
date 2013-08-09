@@ -55,6 +55,6 @@ app.get('/facebook', function(req, res){
 });
 
 app.post('/facebook', function(req, res){
-    console.log(req);
+    console.log(req.body);
     res.send(200);
 });
