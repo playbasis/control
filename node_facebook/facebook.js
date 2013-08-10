@@ -69,24 +69,20 @@ app.post('/facebook', function(req, res){
             var value = change.value;
             var item = value.item;
             var verb = value.verb;
-            console.log(change);
             if(item == 'status' && verb == 'add'){
-                facebook._graph('/'+change.sender_id, 'GET', function(data) {
+                facebook._graph('/'+value.post_id, 'POST', function(data) {
                     console.log(data);
                 });
-//                facebook._graph('/'+value.post_id, 'POST', function(data) {
-//                    console.log(data);
-//                });
             }else if(item == 'post' && verb == 'add'){
-                facebook._graph('/'+change.sender_id, 'GET', function(data) {
+                facebook._graph('/'+value.post_id, 'POST', function(data) {
                     console.log(data);
                 });
             }else if(item == 'comment' && verb == 'add'){
-                facebook._graph('/'+change.sender_id, 'GET', function(data) {
+                facebook._graph('/'+value.post_id, 'POST', function(data) {
                     console.log(data);
                 });
             }else if(item == 'like' && verb == 'add'){
-                facebook._graph('/'+change.sender_id, 'GET', function(data) {
+                facebook._graph('/'+value.post_id, 'POST', function(data) {
                     console.log(data);
                 });
             }
