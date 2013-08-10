@@ -69,6 +69,7 @@ app.post('/facebook', function(req, res){
             var value = change.value;
             var item = value.item;
             var verb = value.verb;
+            console.log(value);
             if(item == 'status' && verb == 'add'){
                 facebook._graph('/'+value.sender_id, 'GET', function(data) {
                     console.log(data);
