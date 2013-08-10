@@ -64,13 +64,15 @@ app.post('/facebook', function(req, res){
 
     for(x in req.body.entry){
         var entry = req.body.entry[x]
-        console.log(entry);
         for(y in entry.changes){
             var change = entry.changes[y];
-            console.log(change);
-            facebook.api('/1201407222?fields=id,name', function(data) {
-                console.log(data);
-            });
+            for(z in change.value){
+                var value = change.value[z];
+                console.log(value);
+                facebook._graph('/'+value.post_id, 'POST', function(data) {
+                    console.log(data);
+                });
+            }
         }
     }
 });
