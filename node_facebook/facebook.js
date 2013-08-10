@@ -66,13 +66,29 @@ app.post('/facebook', function(req, res){
         var entry = req.body.entry[x]
         for(y in entry.changes){
             var change = entry.changes[y];
-            console.log(change.item);
-            console.log(change.verb);
-            console.log(change.value);
-            console.log('----------');
-            facebook._graph('/'+change.value.post_id, 'POST', function(data) {
-                console.log(data);
-            });
+            var value = change.value;
+            var item = value.item;
+            var verb = value.verb;
+            if(item == 'status' && verb == 'add'){
+                facebook._graph('/'+value.sender_id, 'GET', function(data) {
+                    console.log(data);
+                });
+//                facebook._graph('/'+value.post_id, 'POST', function(data) {
+//                    console.log(data);
+//                });
+            }else if(item == 'post' && verb == 'add'){
+                facebook._graph('/'+value.sender_id, 'GET', function(data) {
+                    console.log(data);
+                });
+            }else if(item == 'comment' && verb == 'add'){
+                facebook._graph('/'+value.sender_id, 'GET', function(data) {
+                    console.log(data);
+                });
+            }else if(item == 'like' && verb == 'add'){
+                facebook._graph('/'+value.sender_id, 'GET', function(data) {
+                    console.log(data);
+                });
+            }
         }
     }
 });
