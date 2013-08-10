@@ -66,13 +66,12 @@ app.post('/facebook', function(req, res){
         var entry = req.body.entry[x]
         for(y in entry.changes){
             var change = entry.changes[y];
-            for(z in change.value){
-                var value = change.value[z];
-                console.log(value);
-                facebook._graph('/'+value.post_id, 'POST', function(data) {
-                    console.log(data);
-                });
-            }
+            console.log(change.value);
+            console.log('----------');
+            console.log('/'+change.value.post_id);
+            facebook._graph('/'+value.post_id, 'POST', function(data) {
+                console.log(data);
+            });
         }
     }
 });
