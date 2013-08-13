@@ -84,7 +84,11 @@ var facebook = new fbsdk.Facebook({
 });
 
 function checkFacebookPostId(page_id,post_id){
-
+    if(post_id.indexOf("_") >= 0){
+        return post_id;
+    }else{
+        return page_id+"_"+post_id;
+    }
 }
 
 function getFacebookPostData(post_id, type){
@@ -111,8 +115,9 @@ function getFacebookPostData(post_id, type){
     });
 }
 
-function getFacebookCommentData(sender_id, comment_id){
-    getFacebookPostData(sender_id+"_"+comment_id, "comment");
+function getFacebookCommentData(page_id, sender_id, comment_id){
+    var commentId = checkFacebookPostId(page_id, comment_id);
+    getFacebookPostData(sender_id+"_"+commentId, "comment");
 }
 
 function getFacebookLikeData(sender_id, parent_id){
@@ -147,20 +152,14 @@ app.post('/facebook', function(req, res){
             var item = value.item;
             var verb = value.verb;
             if(item == 'status' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
-                getFacebookPostData(value.post_id, item);
+                var postId = checkFacebookPostId(entry.id, value.post_id);
+                getFacebookPostData(postId, item);
             }else if(item == 'post' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
-                getFacebookPostData(value.post_id, item);
+                var postId = checkFacebookPostId(entry.id, value.post_id);
+                getFacebookPostData(postId, item);
             }else if(item == 'comment' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
-                getFacebookCommentData(value.sender_id, value.comment_id)
+                getFacebookCommentData(entry.id, value.sender_id, value.comment_id)
             }else if(item == 'like' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
                 getFacebookLikeData(value.sender_id,value.parent_id)
             }
         }
