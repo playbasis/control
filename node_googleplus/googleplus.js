@@ -7,8 +7,6 @@ var dbReady = false;
 var mongoose = require('mongoose');
 var schema;
 var GPEntry;
-var GPMeta;
-var metas = {};
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
@@ -16,6 +14,7 @@ db.once('open', function callback(){
 		user_id: String,
 		display_name: String,
 		profile_image: String,
+		activity_id: String,
 		verb: String,
 		type: String,
 		title: String,
@@ -26,12 +25,6 @@ db.once('open', function callback(){
 		tag: String
 	});
 	GPEntry = db.model('GPEntry', schema);
-
-	var metaSchema = mongoose.Schema({
-		search_query: String,
-		last_updated: Date
-	});
-	GPMeta = db.model('GPMeta', metaSchema);
 
 	dbReady = true;
 	console.log('db connected!');
@@ -80,7 +73,6 @@ for(var i=0; i<TRACKING.length; ++i) {
 	latestPostId[TRACKING[i]] = null;
 	nextPageFetchCount[TRACKING[i]] = 0;
 }
-
 
 function pollGooglePlusActivities(searchTerm, nextToken)
 {
@@ -137,6 +129,7 @@ function pollGooglePlusActivities(searchTerm, nextToken)
 				user_id: item.actor.id,
 				display_name: item.actor.displayName,
 				profile_image: item.actor.image.url,
+				activity_id: item.id,
 				verb: item.verb,
 				type: item.object.objectType,
 				title: item.title,
@@ -151,6 +144,10 @@ function pollGooglePlusActivities(searchTerm, nextToken)
 			console.log('saving entry...');
 			entry.save(function(err) {
 				if(err) {
+					if(err.code = 11000){
+						console.log('entry duped');
+						return;
+					}
 					console.log(err);
 					return;
 				}
