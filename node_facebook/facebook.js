@@ -92,19 +92,6 @@ app.get('/facebook', function(req, res){
 
 var fbsdk = require('facebook-sdk');
 
-function facebookConnect(page_id){
-    var facebook = null;
-    FbKey.findOne({page_id: page_id}, function (err, data) {
-        if (data) {
-            facebook = new fbsdk.Facebook({
-                appId  : data.app_id,
-                secret : data.secret
-            });
-        }
-    })
-    return facebook;
-}
-
 function checkFacebookPostId(page_id,post_id){
     if(post_id.toString().indexOf("_") >= 0){
         return post_id;
@@ -114,29 +101,36 @@ function checkFacebookPostId(page_id,post_id){
 }
 
 function getFacebookPostData(page_id, post_id, type){
-    var facebook = facebookConnect(page_id);
-    facebook._graph('/'+post_id, 'GET', function(data) {
-        var entry = new FbEntry({
-            page_id: page_id,
-            id: data.from.id,
-            name: data.from.name,
-            object_id: post_id,
-            type: type,
-            message: data.message,
-            created_time: data.created_time,
-        });
-        console.log('saving entry...');
-        entry.save(function(err){
-            if(err){
-                console.log(err);
-                return;
-            }
-            console.log('fb saved!');
-            dateObj = new Date();
-            //tell clients to update data
-            io.sockets.emit('newtweet', {'time': dateObj.getTime()});
-        });
-    });
+    FbKey.findOne({page_id: page_id}, function (err, data) {
+        if (data) {
+            facebook = new fbsdk.Facebook({
+                appId  : data.app_id,
+                secret : data.secret
+            });
+            facebook._graph('/'+post_id, 'GET', function(data) {
+                var entry = new FbEntry({
+                    page_id: page_id,
+                    id: data.from.id,
+                    name: data.from.name,
+                    object_id: post_id,
+                    type: type,
+                    message: data.message,
+                    created_time: data.created_time,
+                });
+                console.log('saving entry...');
+                entry.save(function(err){
+                    if(err){
+                        console.log(err);
+                        return;
+                    }
+                    console.log('fb saved!');
+                    dateObj = new Date();
+                    //tell clients to update data
+                    io.sockets.emit('newtweet', {'time': dateObj.getTime()});
+                });
+            });
+        }
+    })
 }
 
 function getFacebookCommentData(page_id, sender_id, comment_id){
@@ -145,28 +139,35 @@ function getFacebookCommentData(page_id, sender_id, comment_id){
 }
 
 function getFacebookLikeData(page_id, sender_id, parent_id){
-    var facebook = facebookConnect(page_id);
-    facebook._graph('/'+sender_id, 'GET', function(data) {
-        var entry = new FbEntry({
-            page_id: page_id,
-            id: data.id,
-            name: data.name,
-            object_id: parent_id,
-            type: 'like',
-            message: '',
-        });
-        console.log('saving entry...');
-        entry.save(function(err){
-            if(err){
-                console.log(err);
-                return;
-            }
-            console.log('fb saved!');
-            dateObj = new Date();
-            //tell clients to update data
-            io.sockets.emit('newtweet', {'time': dateObj.getTime()});
-        });
-    });
+    FbKey.findOne({page_id: page_id}, function (err, data) {
+        if (data) {
+            facebook = new fbsdk.Facebook({
+                appId  : data.app_id,
+                secret : data.secret
+            });
+            facebook._graph('/'+sender_id, 'GET', function(data) {
+                var entry = new FbEntry({
+                    page_id: page_id,
+                    id: data.id,
+                    name: data.name,
+                    object_id: parent_id,
+                    type: 'like',
+                    message: '',
+                });
+                console.log('saving entry...');
+                entry.save(function(err){
+                    if(err){
+                        console.log(err);
+                        return;
+                    }
+                    console.log('fb saved!');
+                    dateObj = new Date();
+                    //tell clients to update data
+                    io.sockets.emit('newtweet', {'time': dateObj.getTime()});
+                });
+            });
+        }
+    })
 }
 
 app.post('/facebook', function(req, res){
