@@ -67,9 +67,21 @@ var TRACKING = '#acnwave,#acnwaves,#webwedth,#wwth13,#wwth';
 
 function stringObj(s){
     var o = new Array();
-    for (var key in s){
-        o.push(s[key]['text']);
+    if(s.entities){
+        if(s.entities.hashtags){
+            var t = s.entities.hashtags;
+            console.log(t);
+            for (var key in t){
+                if(t[key] && t[key]['text']){
+                    o.push(t[key]['text']);
+                }
+            }
+        }
     }
+    if(o){
+        o.join();
+    }
+    console.log(o);
     return o;
 }
 
@@ -93,7 +105,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 			'id':data.user.id_str,
 			'image':data.user.profile_image_url,
 			'tweet':data.text,
-            'tag': stringObj(data.entities.hashtags).join(),
+            'tag': stringObj(data),
             'retweet':data.retweeted,
 		});
 		console.log('saving entry...');
