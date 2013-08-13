@@ -54,14 +54,29 @@ app.get('/facebook', function(req, res){
     res.send(req.query['hub.challenge']);
 });
 
-app.post('/facebook', function(req, res){
-    var fbsdk = require('facebook-sdk');
+var fbsdk = require('facebook-sdk');
 
-    var facebook = new fbsdk.Facebook({
-        appId  : '528536277199443',
-        secret : '9f5f62191b8d592ed322305c9b202837'
+var facebook = new fbsdk.Facebook({
+    appId  : '528536277199443',
+    secret : '9f5f62191b8d592ed322305c9b202837'
+});
+
+function getFacebookPostData(post_id){
+    var res = new Array();
+
+    facebook._graph('/'+post_id, 'GET', function(data) {
+        res['from_name'] = data.from.name;
+        res['from_id'] = data.from.id;
+        res['message'] = data.message;
     });
+    return res;
+}
 
+function getFacebookLikeData(sender_id){
+
+}
+
+app.post('/facebook', function(req, res){
     for(x in req.body.entry){
         var entry = req.body.entry[x]
         for(y in entry.changes){
@@ -70,21 +85,17 @@ app.post('/facebook', function(req, res){
             var item = value.item;
             var verb = value.verb;
             if(item == 'status' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'GET', function(data) {
-                    console.log(data);
-                });
+                console.log(entry);
+                getFacebookPostData(value.post_id);
             }else if(item == 'post' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'GET', function(data) {
-                    console.log(data);
-                });
+                console.log(entry);
+                getFacebookPostData(value.post_id);
             }else if(item == 'comment' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'GET', function(data) {
-                    console.log(data);
-                });
+                console.log(entry);
+
             }else if(item == 'like' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'GET', function(data) {
-                    console.log(data);
-                });
+                console.log(entry);
+                getFacebookLikeData(value.sender_id)
             }
         }
     }
