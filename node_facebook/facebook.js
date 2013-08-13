@@ -10,6 +10,28 @@ var express = require('express')
   , path = require('path')
   , io = require('socket.io');
 
+//connect to mongodb
+var dbReady = false;
+var mongoose = require('mongoose');
+var schema;
+var FbEntry;
+db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback(){
+    schema = mongoose.Schema({
+        id: 'string',
+        name: 'string',
+        object_id: 'string',
+        type: 'string',
+        message: 'string',
+        created_time: {type: Date, default: Date.now},
+    });
+    FbEntry = db.model('FbEntry', schema);
+    dbReady = true;
+    console.log('db connected!');
+});
+console.log('connecting to db...');
+
 var app = express();
 
 // all environments
@@ -61,19 +83,55 @@ var facebook = new fbsdk.Facebook({
     secret : '9f5f62191b8d592ed322305c9b202837'
 });
 
-function getFacebookPostData(post_id){
-    var res = new Array();
-
+function getFacebookPostData(post_id, type){
     facebook._graph('/'+post_id, 'GET', function(data) {
-        res['from_name'] = data.from.name;
-        res['from_id'] = data.from.id;
-        res['message'] = data.message;
+        var entry = new FbEntry({
+            id: data.from.id,
+            name: data.from.name,
+            object_id: post_id,
+            type: type,
+            message: data.message,
+            created_time: data.created_time,
+        });
+        console.log('saving entry...');
+        entry.save(function(err){
+            if(err){
+                console.log(err);
+                return;
+            }
+            console.log('fb saved!');
+            dateObj = new Date();
+            //tell clients to update data
+            io.sockets.emit('newtweet', {'time': dateObj.getTime()});
+        });
     });
-    return res;
 }
 
-function getFacebookLikeData(sender_id){
+function getFacebookCommentData(sender_id, comment_id){
+    getFacebookPostData(sender_id+"_"+comment_id, "comment");
+}
 
+function getFacebookLikeData(sender_id, parent_id){
+    facebook._graph('/'+sender_id, 'GET', function(data) {
+        var entry = new FbEntry({
+            id: data.id,
+            name: data.name,
+            object_id: parent_id,
+            type: 'like',
+            message: '',
+        });
+        console.log('saving entry...');
+        entry.save(function(err){
+            if(err){
+                console.log(err);
+                return;
+            }
+            console.log('fb saved!');
+            dateObj = new Date();
+            //tell clients to update data
+            io.sockets.emit('newtweet', {'time': dateObj.getTime()});
+        });
+    });
 }
 
 app.post('/facebook', function(req, res){
@@ -85,23 +143,18 @@ app.post('/facebook', function(req, res){
             var item = value.item;
             var verb = value.verb;
             if(item == 'status' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
-                getFacebookPostData(value.post_id);
+                getFacebookPostData(value.post_id, item);
             }else if(item == 'post' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
-                getFacebookPostData(value.post_id);
+                getFacebookPostData(value.post_id, item);
             }else if(item == 'comment' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
+                getFacebookCommentData(value.sender_id, value.comment_id)
             }else if(item == 'like' && verb == 'add'){
-                console.log(entry);
-                console.log(value);
-                getFacebookLikeData(value.sender_id)
+                getFacebookLikeData(value.sender_id,value.parent_id)
             }
         }
     }
 });
 
-
+io.sockets.on('connection', function(socket){
+    socket.emit('newtweet', {'time': dateObj.getTime()});
+});
