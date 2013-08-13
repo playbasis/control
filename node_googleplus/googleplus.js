@@ -7,8 +7,6 @@ var dbReady = false;
 var mongoose = require('mongoose');
 var schema;
 var GPEntry;
-var GPMeta;
-var metas = {};
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
@@ -16,6 +14,7 @@ db.once('open', function callback(){
 		user_id: String,
 		display_name: String,
 		profile_image: String,
+		activity_id: String,
 		verb: String,
 		type: String,
 		title: String,
@@ -26,12 +25,6 @@ db.once('open', function callback(){
 		tag: String
 	});
 	GPEntry = db.model('GPEntry', schema);
-
-	var metaSchema = mongoose.Schema({
-		search_query: String,
-		last_updated: Date
-	});
-	GPMeta = db.model('GPMeta', metaSchema);
 
 	dbReady = true;
 	console.log('db connected!');
@@ -71,16 +64,13 @@ var POLL_FREQ = 60000;
 var MAX_NEXT_PAGE_FETCH = 5;
 var REQ_QUERY = 'https://www.googleapis.com/plus/v1/activities?orderBy=recent&key=' + GOOGLE_PLUS_API_KEY
 var latestPostId = {};
-var latestPostTime = {};
 var oldestPostTime = Date.now() - (7*24*60*60*1000);
 var nextPageFetchCount = {};
 
 for(var i=0; i<TRACKING.length; ++i) {
-	latestPostTime[TRACKING[i]] = oldestPostTime;
 	latestPostId[TRACKING[i]] = null;
 	nextPageFetchCount[TRACKING[i]] = 0;
 }
-
 
 function pollGooglePlusActivities(searchTerm, nextToken)
 {
@@ -137,6 +127,7 @@ function pollGooglePlusActivities(searchTerm, nextToken)
 				user_id: item.actor.id,
 				display_name: item.actor.displayName,
 				profile_image: item.actor.image.url,
+				activity_id: item.id,
 				verb: item.verb,
 				type: item.object.objectType,
 				title: item.title,
@@ -151,6 +142,10 @@ function pollGooglePlusActivities(searchTerm, nextToken)
 			console.log('saving entry...');
 			entry.save(function(err) {
 				if(err) {
+					if(err.code = 11000){
+						console.log('entry duped');
+						return;
+					}
 					console.log(err);
 					return;
 				}
@@ -160,10 +155,8 @@ function pollGooglePlusActivities(searchTerm, nextToken)
 	            io.sockets.emit('activity', {'time': dateObj.getTime()});
 			});
 		}
-		var latestTime = Date.parse(items[0].published);
-		if(latestTime > latestPostTime[searchTerm]) {
-			latestPostTime[searchTerm] = latestTime;
-			latestPostId[searchTerm] = items[0].id;	
+		if(nextToken === '') {
+			latestPostId[searchTerm] = items[0].id;
 		}
 		if(stop)
 			return;
