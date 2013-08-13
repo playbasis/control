@@ -85,6 +85,7 @@ var facebook = new fbsdk.Facebook({
 
 function getFacebookPostData(post_id, type){
     facebook._graph('/'+post_id, 'GET', function(data) {
+        console.log(data);
         var entry = new FbEntry({
             id: data.from.id,
             name: data.from.name,
@@ -113,6 +114,7 @@ function getFacebookCommentData(sender_id, comment_id){
 
 function getFacebookLikeData(sender_id, parent_id){
     facebook._graph('/'+sender_id, 'GET', function(data) {
+        console.log(data);
         var entry = new FbEntry({
             id: data.id,
             name: data.name,
