@@ -70,19 +70,19 @@ app.post('/facebook', function(req, res){
             var item = value.item;
             var verb = value.verb;
             if(item == 'status' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'POST', function(data) {
+                facebook._graph('/'+value.post_id, 'GET', function(data) {
                     console.log(data);
                 });
             }else if(item == 'post' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'POST', function(data) {
+                facebook._graph('/'+value.post_id, 'GET', function(data) {
                     console.log(data);
                 });
             }else if(item == 'comment' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'POST', function(data) {
+                facebook._graph('/'+value.post_id, 'GET', function(data) {
                     console.log(data);
                 });
             }else if(item == 'like' && verb == 'add'){
-                facebook._graph('/'+value.post_id, 'POST', function(data) {
+                facebook._graph('/'+value.post_id, 'GET', function(data) {
                     console.log(data);
                 });
             }
