@@ -64,12 +64,10 @@ var POLL_FREQ = 60000;
 var MAX_NEXT_PAGE_FETCH = 5;
 var REQ_QUERY = 'https://www.googleapis.com/plus/v1/activities?orderBy=recent&key=' + GOOGLE_PLUS_API_KEY
 var latestPostId = {};
-var latestPostTime = {};
 var oldestPostTime = Date.now() - (7*24*60*60*1000);
 var nextPageFetchCount = {};
 
 for(var i=0; i<TRACKING.length; ++i) {
-	latestPostTime[TRACKING[i]] = oldestPostTime;
 	latestPostId[TRACKING[i]] = null;
 	nextPageFetchCount[TRACKING[i]] = 0;
 }
@@ -157,10 +155,8 @@ function pollGooglePlusActivities(searchTerm, nextToken)
 	            io.sockets.emit('activity', {'time': dateObj.getTime()});
 			});
 		}
-		var latestTime = Date.parse(items[0].published);
-		if(latestTime > latestPostTime[searchTerm]) {
-			latestPostTime[searchTerm] = latestTime;
-			latestPostId[searchTerm] = items[0].id;	
+		if(nextToken === '') {
+			latestPostId[searchTerm] = items[0].id;
 		}
 		if(stop)
 			return;
