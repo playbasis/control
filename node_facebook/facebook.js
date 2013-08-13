@@ -83,10 +83,12 @@ var facebook = new fbsdk.Facebook({
     secret : '9f5f62191b8d592ed322305c9b202837'
 });
 
+function checkFacebookPostId(page_id,post_id){
+
+}
+
 function getFacebookPostData(post_id, type){
-    console.log(post_id);
     facebook._graph('/'+post_id, 'GET', function(data) {
-        console.log(data);
         var entry = new FbEntry({
             id: data.from.id,
             name: data.from.name,
@@ -114,10 +116,7 @@ function getFacebookCommentData(sender_id, comment_id){
 }
 
 function getFacebookLikeData(sender_id, parent_id){
-    console.log(sender_id);
-    console.log(parent_id);
     facebook._graph('/'+sender_id, 'GET', function(data) {
-        console.log(data);
         var entry = new FbEntry({
             id: data.id,
             name: data.name,
@@ -148,12 +147,20 @@ app.post('/facebook', function(req, res){
             var item = value.item;
             var verb = value.verb;
             if(item == 'status' && verb == 'add'){
+                console.log(entry);
+                console.log(value);
                 getFacebookPostData(value.post_id, item);
             }else if(item == 'post' && verb == 'add'){
+                console.log(entry);
+                console.log(value);
                 getFacebookPostData(value.post_id, item);
             }else if(item == 'comment' && verb == 'add'){
+                console.log(entry);
+                console.log(value);
                 getFacebookCommentData(value.sender_id, value.comment_id)
             }else if(item == 'like' && verb == 'add'){
+                console.log(entry);
+                console.log(value);
                 getFacebookLikeData(value.sender_id,value.parent_id)
             }
         }
