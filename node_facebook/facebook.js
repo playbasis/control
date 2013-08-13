@@ -86,15 +86,18 @@ app.post('/facebook', function(req, res){
             var verb = value.verb;
             if(item == 'status' && verb == 'add'){
                 console.log(entry);
+                console.log(value);
                 getFacebookPostData(value.post_id);
             }else if(item == 'post' && verb == 'add'){
                 console.log(entry);
+                console.log(value);
                 getFacebookPostData(value.post_id);
             }else if(item == 'comment' && verb == 'add'){
                 console.log(entry);
-
+                console.log(value);
             }else if(item == 'like' && verb == 'add'){
                 console.log(entry);
+                console.log(value);
                 getFacebookLikeData(value.sender_id)
             }
         }
