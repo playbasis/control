@@ -13,20 +13,34 @@ var express = require('express')
 //connect to mongodb
 var dbReady = false;
 var mongoose = require('mongoose');
-var schema;
+
 var FbEntry;
+var FbKey;
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
-    schema = mongoose.Schema({
+
+    var schemaEntry = mongoose.Schema({
+        page_id: 'string',
         id: 'string',
         name: 'string',
         object_id: 'string',
         type: 'string',
         message: 'string',
-        created_time: {type: Date, default: Date.now},
+        created_time: {type: Date, default: Date.now}
     });
-    FbEntry = db.model('FbEntry', schema);
+    FbEntry = db.model('FbEntry', schemaEntry);
+
+    var schemaKey = mongoose.Schema({
+        client_id: 'string',
+        site_id: 'string',
+        page_id: 'string',
+        app_id: 'string',
+        secret: 'string',
+        app_name: 'string'
+    });
+    FbKey = db.model('FbAppKey', schemaKey);
+
     dbReady = true;
     console.log('db connected!');
 });
@@ -78,10 +92,18 @@ app.get('/facebook', function(req, res){
 
 var fbsdk = require('facebook-sdk');
 
-var facebook = new fbsdk.Facebook({
-    appId  : '528536277199443',
-    secret : '9f5f62191b8d592ed322305c9b202837'
-});
+function facebookConnect(page_id){
+    var facebook = null;
+    FbKey.findOne({page_id: page_id}, function (err, data) {
+        if (data) {
+            facebook = new fbsdk.Facebook({
+                appId  : data.app_id,
+                secret : data.secret
+            });
+        }
+    })
+    return facebook;
+}
 
 function checkFacebookPostId(page_id,post_id){
     if(post_id.toString().indexOf("_") >= 0){
@@ -91,9 +113,11 @@ function checkFacebookPostId(page_id,post_id){
     }
 }
 
-function getFacebookPostData(post_id, type){
+function getFacebookPostData(page_id, post_id, type){
+    var facebook = facebookConnect(page_id);
     facebook._graph('/'+post_id, 'GET', function(data) {
         var entry = new FbEntry({
+            page_id: page_id,
             id: data.from.id,
             name: data.from.name,
             object_id: post_id,
@@ -117,12 +141,14 @@ function getFacebookPostData(post_id, type){
 
 function getFacebookCommentData(page_id, sender_id, comment_id){
     var commentId = checkFacebookPostId(page_id, comment_id);
-    getFacebookPostData(sender_id+"_"+commentId, "comment");
+    getFacebookPostData(page_id, sender_id+"_"+commentId, "comment");
 }
 
-function getFacebookLikeData(sender_id, parent_id){
+function getFacebookLikeData(page_id, sender_id, parent_id){
+    var facebook = facebookConnect(page_id);
     facebook._graph('/'+sender_id, 'GET', function(data) {
         var entry = new FbEntry({
+            page_id: page_id,
             id: data.id,
             name: data.name,
             object_id: parent_id,
@@ -153,14 +179,14 @@ app.post('/facebook', function(req, res){
             var verb = value.verb;
             if(item == 'status' && verb == 'add'){
                 var postId = checkFacebookPostId(entry.id, value.post_id);
-                getFacebookPostData(postId, item);
+                getFacebookPostData(entry.id, postId, item);
             }else if(item == 'post' && verb == 'add'){
                 var postId = checkFacebookPostId(entry.id, value.post_id);
-                getFacebookPostData(postId, item);
+                getFacebookPostData(entry.id, postId, item);
             }else if(item == 'comment' && verb == 'add'){
                 getFacebookCommentData(entry.id, value.sender_id, value.comment_id)
             }else if(item == 'like' && verb == 'add'){
-                getFacebookLikeData(value.sender_id,value.parent_id)
+                getFacebookLikeData(entry.id, value.sender_id,value.parent_id)
             }
         }
     }
