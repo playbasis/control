@@ -6,8 +6,9 @@
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
-  , http = require('http')
+  , http = require('https')
   , path = require('path')
+  , fs = require('fs')
   , io = require('socket.io');
 
 //connect to mongodb
@@ -68,15 +69,14 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 
 var options = {
-//	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-//	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-//	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
 	rejectUnauthorized: false
 };
 
-//var server = http.createServer(options, app);
-var server = http.createServer(app);
+var server = http.createServer(options, app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
