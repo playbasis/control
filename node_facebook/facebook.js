@@ -84,7 +84,7 @@ var facebook = new fbsdk.Facebook({
 });
 
 function checkFacebookPostId(page_id,post_id){
-    if(post_id.indexOf("_") >= 0){
+    if(post_id.toString().indexOf("_") >= 0){
         return post_id;
     }else{
         return page_id+"_"+post_id;
