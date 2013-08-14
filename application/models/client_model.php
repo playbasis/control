@@ -249,6 +249,8 @@ class Client_model extends MY_Model
 				'pb_player_id' => $pbPlayerId,
 				'badge_id' => $badgeId,
 				'amount' => intval($quantity),
+				'cliamed' => 0,
+				'redeemed' => 0,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
 			));
