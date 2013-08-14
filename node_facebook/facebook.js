@@ -20,14 +20,15 @@ db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 
-    //made unqiue id,objectid,type and message
+    //made unqiue index with this command
+    //db.fbentries.ensureIndex({page_id:1,id:1,object_id:1,type:1,message:1}, { unique: true });
     var schemaEntry = mongoose.Schema({
         page_id: { type: 'string', index: true },
-        id: { type: 'string', unique: true },
+        id: 'string',
         name: 'string',
-        object_id: { type: 'string', unique: true },
-        type: { type: 'string', unique: true },
-        message: { type: 'string', unique: true },
+        object_id: 'string',
+        type: 'string',
+        message: 'string',
         created_time: {type: Date, default: Date.now}
     });
     FbEntry = db.model('FbEntry', schemaEntry);
