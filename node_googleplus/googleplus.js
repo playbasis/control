@@ -32,16 +32,16 @@ db.once('open', function callback(){
 console.log('connecting to db...');
 
 var options = {
-	//key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	//cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	//ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
 	rejectUnauthorized: false
 };
 
 var	request = require('request')
-//,	app = require('https').createServer(options, handler);
-,	app = require('http').createServer(handler)
+,	app = require('https').createServer(options, handler);
+//,	app = require('http').createServer(handler)
 ,	io = require('socket.io').listen(app);
 
 app.listen(3005);
