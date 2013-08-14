@@ -6,7 +6,6 @@
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
-  , http = require('https')
   , path = require('path')
   , fs = require('fs')
   , io = require('socket.io');
@@ -21,13 +20,14 @@ db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 
+    //made unqiue id,objectid,type and message
     var schemaEntry = mongoose.Schema({
-        page_id: 'string',
-        id: 'string',
+        page_id: { type: 'string', index: true },
+        id: { type: 'string', unique: true },
         name: 'string',
-        object_id: 'string',
-        type: 'string',
-        message: 'string',
+        object_id: { type: 'string', unique: true },
+        type: { type: 'string', unique: true },
+        message: { type: 'string', unique: true },
         created_time: {type: Date, default: Date.now}
     });
     FbEntry = db.model('FbEntry', schemaEntry);
@@ -76,7 +76,8 @@ var options = {
 	rejectUnauthorized: false
 };
 
-var server = http.createServer(options, app);
+var server = require('https').createServer(options, app);
+//var server = require('http').createServer(app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

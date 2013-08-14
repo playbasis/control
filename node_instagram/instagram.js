@@ -52,7 +52,7 @@ db.once('open', function callback(){
 		photo: 'string',
 		thumbnail: 'string',
 		caption: 'string',
-		tag: 'string',
+		tag: { type: 'string', index: true },
 		time: 'number'
 	});
 	IGFeed = db.model('IGFeed', feedSchema);

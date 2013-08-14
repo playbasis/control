@@ -14,7 +14,7 @@ db.once('open', function callback(){
 		user_id: String,
 		display_name: String,
 		profile_image: String,
-		activity_id: String,
+		activity_id: { type: String, unique: true },
 		verb: String,
 		type: String,
 		title: String,
@@ -40,7 +40,7 @@ var options = {
 };
 
 var	request = require('request')
-,	app = require('https').createServer(options, handler);
+,	app = require('https').createServer(options, handler)
 //,	app = require('http').createServer(handler)
 ,	io = require('socket.io').listen(app);
 

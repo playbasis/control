@@ -16,7 +16,7 @@ db.once('open', function callback(){
 		id: 'string',
 		image: 'string',
 		tweet: 'string',
-        tag: 'string',
+        tag: { type: 'string', index: true },
         retweet: 'boolean',
 	});
 	TweetEntry = db.model('TweetEntry', schema);
