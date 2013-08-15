@@ -134,9 +134,10 @@ class Rule_model extends MY_Model
     function saveRule($input){
         $this->set_site_mongodb(0);
 
+        //set time
+        $input['date_added'] = $input['date_modified'] = date('Y-m-d H:i:s');
+
         if($input['rule_id']=='undefined'){
-            //set time
-            $input['date_added'] = $input['date_modify'] = date('Y-m-d H:i:s');
 
             $res = $this->mongo_db->insert('playbasis_rule', array(
                 'client_id' =>  new MongoID($input['client_id']),
@@ -147,8 +148,8 @@ class Rule_model extends MY_Model
                 'tags' => $input['tags'],
                 'jigsaw_set' => serialize($input['jigsaw_set']),
                 'active_status' => (bool)$input['active_status'],
-                'date_added' => $input['date_added'],
-                'date_modified' => $input['date_modified']
+                'date_added' => new MongoDate(strtotime($input['date_added'])),
+                'date_modified' => new MongoDate(strtotime($input['date_modified']))
             ));
 
             if($res){
@@ -168,7 +169,7 @@ class Rule_model extends MY_Model
             $this->mongo_db->set('tags', $input['tags']);
             $this->mongo_db->set('jigsaw_set',serialize($input['jigsaw_set']));
             $this->mongo_db->set('active_status', (bool)$input['active_status']);
-            $this->mongo_db->set('date_modified', $input['date_modified']);
+            $this->mongo_db->set('date_modified', new MongoDate(strtotime($input['date_modified'])));
             $res = $this->mongo_db->update('playbasis_rule');
 
             if($res){

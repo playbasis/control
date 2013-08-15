@@ -150,9 +150,6 @@
                         <li class='page_index_nav prev'><a href="">Prev</a></li>
 
                         <li class="active page_index_number"><a href="#">1</a></li>
-                        <li class='page_index_number'><a href="#">2</a></li>
-                        <li class='page_index_number'><a href="#">3</a></li>
-                        <li class='page_index_number'><a href="#">4</a></li>
 
                         <li  class='page_index_nav next'><a href="">Next</a></li>
                     </ul>
