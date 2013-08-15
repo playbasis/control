@@ -38,6 +38,8 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
 
 define('S3_IMAGE', 'http://images.pbapp.net/');
+define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');
+//define('DIR_IMAGE', './control/image/');
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

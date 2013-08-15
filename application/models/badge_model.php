@@ -1,5 +1,5 @@
 <?php
-    defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 class Badge_model extends MY_Model
 {
     public function getBadge($badge_id) {
@@ -9,6 +9,81 @@ class Badge_model extends MY_Model
         $results = $this->mongo_db->get("playbasis_badge");
 
         return $results;
+    }
+
+    public function getBadges($data = array()) {
+        $this->set_site_mongodb(0);
+
+        $badges_data = array();
+
+        $this->mongo_db->where('status', true);
+
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (int)$data['filter_status']);
+        }
+
+        $sort_data = array(
+            'badge_id',
+            'name',
+            'status',
+            'sort_order'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = " DESC";
+        } else {
+            $order = " ASC";
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        $results = $this->mongo_db->get("playbasis_badge");
+
+        foreach ($results as $result) {
+
+            $this->mongo_db->where('badge_id', new MongoID($result['badge_id']));
+            if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+                $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+                $this->mongo->where('name', $regex);
+            }
+            $this->mongo_db->select(array('name','description','hint','language_id'));
+            $results2 = $this->mongo_db->get("playbasis_badge_description");
+
+            if($results2){
+                $badges_data[] = array(
+                    'badge_id' => $result['_id'],
+                    'image' => $result['image'],
+                    'quantity' => $result['quantity'],
+                    'name' => $this->getPath($result['badge_id'], $this->config->get('config_language_id')),
+                    'description' => $results2[0]['description'],
+                    'hint' => $results2[0]['hint'],
+                    'status' => $result['status'],
+                    'sort_order'  => $result['sort_order'],
+                    'date_added' => $this->datetimeMongotoReadable($result['date_added']),
+                    'date_modified' => $this->datetimeMongotoReadable($result['date_modified'])
+                );
+            }
+
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $badges_data = array_slice($badges_data, $data['start'], $data['limit']);
+        }
+
+        return $badges_data;
     }
 
     public function getBadgeBySiteId($site_id) {

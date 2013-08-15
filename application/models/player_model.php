@@ -67,8 +67,8 @@ class Player_model extends MY_Model
                 'exp' => $result['exp'],
                 'action' => $this->getPlayerAction($site_id, $client_id, $result['pb_player_id']),
                 'status' => $result['status'],
-                'date_added' => $result['date_added'],
-                'date_modified' => $result['date_modified'],
+                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
+                'date_modified' => $this->datetimeMongotoReadable($result['date_modified']),
                 // 'points' => $this->getUserPoint($result['pb_player_id'] , $sql_reward),
                 'points' => 0,
                 'age' => $this->getAge($result['birth_date'])

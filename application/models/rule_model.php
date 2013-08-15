@@ -17,7 +17,8 @@ class Rule_model extends MY_Model
                 foreach ($results as &$rowx) {
                     $rowx['specific_id'] = $rowx['action_id']."";
                     $rowx['dataSet'] = unserialize($rowx['init_dataset']);
-                    $rowx['id']=1;#hard code set id to be '1'
+//                    $rowx['id']=1;#hard code set id to be '1'
+                    $rowx['id']=$rowx['action_id']."";
                     $rowx['category']='ACTION';
                     unset($rowx['action_id']);
                     unset($rowx['init_dataset']);
@@ -50,7 +51,7 @@ class Rule_model extends MY_Model
                 foreach ($results as &$rowx) {
                     $rowx['id']=$rowx['jigsaw_id']."";
                     $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
-                    $rowx['specific_id']= $rowx['id']."";//'';//no specific id for contion so using the same id with jigsaw id.
+                    $rowx['specific_id']= $rowx['jigsaw_id']."";//'';//no specific id for contion so using the same id with jigsaw id.
                     $rowx['category']='CONDITION';
                     unset($rowx['jigsaw_id']);
                     unset($rowx['init_dataset']);
@@ -91,7 +92,8 @@ class Rule_model extends MY_Model
                 foreach ($ds as &$rowx) {
                     $rowx['specific_id'] = $rowx['reward_id']."";
                     $rowx['dataSet'] = unserialize($rowx['init_dataset']);
-                    $rowx['id']=2;#hard code set id to be '2'
+//                    $rowx['id']=2;#hard code set id to be '2'
+                    $rowx['id']=$rowx['reward_id']."";
                     $rowx['category']='REWARD';
                     unset($rowx['reward_id']);
                     unset($rowx['init_dataset']);

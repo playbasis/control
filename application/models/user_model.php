@@ -9,6 +9,7 @@ class User_model extends MY_Model
     private $user_group_id;
     private $permission = array();
     private $database;
+    private $admin_group_id;
 
     public function __construct()
     {
@@ -190,6 +191,21 @@ class User_model extends MY_Model
 
     public function getClientDatabase() {
         return isset($this->database) ? $this->database : "core";
+    }
+
+    public function getAdminGroupID(){
+        if($this->session->userdata('admin_group_id'))
+            return $this->session->userdata('admin_group_id');
+
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('name', 'Top Administrator');
+        $this->mongo_db->limit(1);
+        $Q = $this->mongo_db->get('user_group');
+
+        $row = $Q[0];
+        $this->admin_group_id = $row['_id'];
+        $this->session->set_userdata('admin_group_id',$this->admin_group_id );
+        return $this->admin_group_id;
     }
 }
 ?>
