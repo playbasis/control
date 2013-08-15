@@ -594,7 +594,7 @@ DataSet = function(jsonArray, parent_id) {
         },
 
         getJSON: function() {
-            //console.log('getJson : ' + this.parent_id);
+//            console.log('getJson : ' + this.parent_id);
             var result = [];
 
             $('#'+this.parent_id+' tbody tr').each(function() {
@@ -664,7 +664,7 @@ DataSet = function(jsonArray, parent_id) {
                 obj.value = value;
                 result.push(obj);
             });
-            //console.log(result);
+//            console.log(result);
             return result;
         }
     }

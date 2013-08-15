@@ -249,6 +249,8 @@ oneRuleMan = {
         //Update jigsaw_set
         output.jigsaw_set = [];//reset Jigsaw set to blank
         for(var index in oneRuleMan.nodeList){
+//            console.log(oneRuleMan.nodeList[index]);
+//            console.log(oneRuleMan.nodeList[index].getJSON());
             output.jigsaw_set.push(oneRuleMan.nodeList[index].getJSON())
         }
 
