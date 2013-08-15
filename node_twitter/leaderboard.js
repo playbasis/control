@@ -114,7 +114,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 	stream.on('data', function(data){
 
 		console.log('---------- tweet tweet ----------');
-		console.log(data);
+		//console.log(data);
 		//console.log(data.user.name);
 		//console.log(data.user.screen_name);
 		//console.log(data.user.id_str);
