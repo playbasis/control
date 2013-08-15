@@ -18,8 +18,7 @@ db.once('open', function callback(){
         tweet_id: 'string',
         tweet: 'string',
         tag: { type: 'string', index: true },
-        retweet: 'boolean',
-        retweet_count: 'string'
+        retweet: 'boolean'
 	});
 	TweetEntry = db.model('TweetEntry', schema);
 	dbReady = true;
@@ -85,7 +84,31 @@ function stringObj(s){
     }
     console.log(o);
     return o;
-}
+};
+
+function saveTweet(data, retweet){
+    var entry = new TweetEntry({
+        'user': data.user.screen_name,
+        'name': data.user.name,
+        'id':data.user.id_str,
+        'image':data.user.profile_image_url,
+        'tweet_id': data.id_str,
+        'tweet':data.text,
+        'tag': stringObj(data),
+        'retweet':retweet
+    });
+    console.log('saving entry...');
+    entry.save(function(err){
+        if(err){
+            console.log(err);
+            return;
+        }
+        console.log('tweet saved!');
+        dateObj = new Date();
+        //tell clients to update data
+        io.sockets.emit('newtweet', {'time': dateObj.getTime()});
+    });
+};
 
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 	stream.on('data', function(data){
@@ -101,28 +124,12 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 		//save data to mongodb
 		if(!dbReady)
 			return;
-		var entry = new TweetEntry({
-			'user': data.user.screen_name,
-			'name': data.user.name,
-			'id':data.user.id_str,
-			'image':data.user.profile_image_url,
-            'tweet_id': data.id,
-			'tweet':data.text,
-            'tag': stringObj(data),
-            'retweet':data.retweeted,
-            'retweet_count': data.retweet_count
-		});
-		console.log('saving entry...');
-		entry.save(function(err){
-			if(err){
-				console.log(err);
-				return;
-			}
-			console.log('tweet saved!');
-            dateObj = new Date();
-            //tell clients to update data
-            io.sockets.emit('newtweet', {'time': dateObj.getTime()});
-		});
+        if(data.retweeted_status){
+            saveTweet(data.retweeted_status, true);
+            saveTweet(data, true);
+        }else{
+            saveTweet(data, data.retweeted);
+        }
 	});
 });
 
