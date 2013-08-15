@@ -15,9 +15,11 @@ db.once('open', function callback(){
 		name: 'string',
 		id: 'string',
 		image: 'string',
-		tweet: 'string',
+        tweet_id: 'string',
+        tweet: 'string',
         tag: { type: 'string', index: true },
         retweet: 'boolean',
+        retweet_count: 'string'
 	});
 	TweetEntry = db.model('TweetEntry', schema);
 	dbReady = true;
@@ -104,9 +106,11 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 			'name': data.user.name,
 			'id':data.user.id_str,
 			'image':data.user.profile_image_url,
+            'tweet_id': data.id,
 			'tweet':data.text,
             'tag': stringObj(data),
             'retweet':data.retweeted,
+            'retweet_count': data.retweet_count
 		});
 		console.log('saving entry...');
 		entry.save(function(err){
