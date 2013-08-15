@@ -1,11 +1,13 @@
 var DEBUG = false;
 
 Node = function(json){
-    if(json.jigsaw_index){
-        this.uid = json.jigsaw_index;
+    var idgen = '';
+    if(json.jigsaw_index !== undefined){
+        idgen = json.jigsaw_index;
     }else{
-        this.uid = mongoIDjs();
+        idgen = mongoIDjs();
     }
+    this.uid = idgen;
     this.jigsawId = json.id;
     this.specificId = json.specific_id;
     this.jigsawName = json.name;
