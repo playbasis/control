@@ -169,4 +169,100 @@ class Badge extends MY_Controller
 
         $this->getList();
     }
+
+    private function validateForm() {
+        if (!$this->user->hasPermission('modify', 'badge')) {
+            $this->error['warning'] = $this->language->get('error_permission');
+        }
+
+        foreach ($this->request->post['badge_description'] as $language_id => $value) {
+            if ((utf8_strlen($value['name']) < 2) || (utf8_strlen($value['name']) > 255)) {
+                $this->error['name'][$language_id] = $this->language->get('error_name');
+            }
+        }
+
+        if ($this->error && !isset($this->error['warning'])) {
+            $this->error['warning'] = $this->language->get('error_warning');
+        }
+
+        if (!$this->error) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validateDelete() {
+        if (!$this->user->hasPermission('modify', 'badge')) {
+            $this->error['warning'] = $this->language->get('error_permission');
+        }
+
+        if (!$this->error) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkLimitBadge(){
+
+        if($this->user->getUserGroupId() != 1){
+
+            $this->load->model('badge/badge');
+
+            $this->load->model('plan/reward');
+
+            $plan_limit = $this->model_plan_reward->getRewardByClientId($this->user->getClientId());
+
+            $badges_count = $this->model_badge_badge->getBadgeBySiteId($this->user->getSiteId());
+
+            foreach ($plan_limit as $plan) {
+                if($plan['site_id'] == $this->request->post['site_id']){
+                    if($plan['name'] == 'badge'){
+                        if($plan['limit']){
+                            $limit_badge =  $plan['limit'];
+                        }
+                    }
+                }
+            }
+
+            if(isset($limit_badge) && $limit_badge <= count($badges_count)){
+                $this->error['warning'] = $this->language->get('error_limit');
+            }
+        }
+
+        if (!$this->error) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkOwnerBadge($badgeId){
+
+        if($this->user->getUserGroupId() != 1){
+
+            $this->load->model('badge/badge');
+
+            $badges = $this->model_badge_badge->getBadgeBySiteId($this->user->getSiteId());
+
+            $has = false;
+
+            foreach ($badges as $badge) {
+                if($badge['badge_id'] == $badgeId){
+                    $has = true;
+                }
+            }
+
+            if(!$has){
+                $this->error['warning'] = $this->language->get('error_permission');
+            }
+        }
+
+        if (!$this->error) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

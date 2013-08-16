@@ -96,7 +96,7 @@ class Badge_model extends MY_Model
             if($badge_info){
                 $badges_client_data[] = array(
                     'client_id' => $result['client_id']."",
-                    'badge_id' => $result['_id']."",
+                    'badge_id' => $result['badge_id']."",
                     'name' => isset($badge_info[0]['name'])?$badge_info[0]['name']:'',
                     'description' => isset($badge_info[0]['description'])?$badge_info[0]['description']:'',
                     'hint' => isset($badge_info[0]['hint'])?$badge_info[0]['hint']:'',
