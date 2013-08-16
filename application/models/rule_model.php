@@ -116,7 +116,7 @@ class Rule_model extends MY_Model
                 $this->mongo_db->where('site_id', new MongoID($siteId));
                 $this->mongo_db->where('client_id', new MongoID($clientId));
                 $this->mongo_db->where('category', 'REWARD');
-                $this->mongo_db->where('jigsaw_id', array('$ne'=>2));
+                $this->mongo_db->where('name', array('$ne'=>'reward'));
                 $ds2 = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
 
                 if(count($ds2)>0){
