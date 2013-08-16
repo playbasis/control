@@ -134,6 +134,5 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 });
 
 io.sockets.on('connection', function(socket){
-    dateObj = new Date();
 	socket.emit('newtweet', {'time': dateObj.getTime()});
 });
