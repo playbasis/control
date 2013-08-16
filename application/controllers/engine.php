@@ -240,6 +240,7 @@ class Engine extends REST_Controller
 				$input['jigsaw_id'] = $jigsaw_id;
 				$input['jigsaw_name'] = $jigsaw['name'];
 				$input['jigsaw_category'] = $jigsaw['category'];
+				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
 				if(isset($jigsaw['config']['action_id']))
 					$jigsaw['config']['action_id'] = new MongoId($jigsaw['config']['action_id']);
 				if(isset($jigsaw['config']['reward_id']))
@@ -386,6 +387,17 @@ class Engine extends REST_Controller
 					}
 					else
 					{
+						//check for completed objective
+						if(isset($exInfo['objective_complete']))
+						{
+							$this->player_model->completeObjective($input['pb_player_id'], new MongoId($exInfo['objective_complete']['id']), $client_id, $site_id);
+							$event = array(
+								'event_type' => 'OBJECTIVE_COMPLETE',
+								'objective_id' => $exInfo['objective_complete']['id'],
+								'objective_name' => $exInfo['objective_complete']['name']
+							);
+							array_push($apiResult['events'], $event);
+						}
 						//log jigsaw - condition or action
 						$this->client_model->log($input, $exInfo);
 						continue;

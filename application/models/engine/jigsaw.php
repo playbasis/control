@@ -321,6 +321,51 @@ class jigsaw extends MY_Model
 		$exInfo['next_trigger'] = $logInput['next_trigger'];
 		return false;
 	}
+	public function objective($config, $input, &$exInfo = array())
+	{
+		assert($config != false);
+		assert(is_array($config));
+		assert($input != false);
+		assert(is_array($input));
+		assert(isset($config['objective_id']));
+		$objective_id = $config['objective_id'];
+		assert(is_string($objective_id));
+		$this->set_site_mongodb($input['site_id']);
+		//check if this objective has been completed
+		$this->mongo_db->where(array(
+			'objective_id'=> new MongoId($objective_id),
+			'pb_player_id'=> $input['pb_player_id'],
+			));
+		$count = $this->mongo_db->count('playbasis_objective_to_player');
+		if($count > 0)
+			return true;
+		//objective not yet completed, check prerequisites
+		$this->mongo_db->select(array(
+			'prerequisites',
+			'name'
+		));
+		$this->mongo_db->where(array('_id'=> new MongoId($objective_id)));
+		$result = $this->mongo_db->get('playbasis_objective');
+		assert($result);
+		$result = $result[0];
+		$prereqs = $result['prerequisites'];
+		$objName = $result['name'];
+		foreach ($prereqs as $value)
+		{
+			$this->mongo_db->where(array(
+				'objective_id'=> $value,
+				'pb_player_id'=> $input['pb_player_id'],
+			));
+			$count = $this->mongo_db->count('playbasis_objective_to_player');
+			if(!$count || ($count <= 0))
+				return false; //prereq objective not complete, can't complete this objective
+		}
+		$exInfo['objective_complete'] = array(
+			'id' => $objective_id,
+			'name' => $objName
+		);
+		return true;
+	}
 	private function getMostRecentJigsaw($input, $fields)
 	{
 		assert(isset($input['site_id']));
@@ -329,7 +374,8 @@ class jigsaw extends MY_Model
 		$this->mongo_db->where(array(
 			'pb_player_id' => $input['pb_player_id'],
 			'rule_id' => $input['rule_id'],
-			'jigsaw_id' => $input['jigsaw_id']
+			'jigsaw_id' => $input['jigsaw_id'],
+			'jigsaw_index' => $input['jigsaw_index']
 		));
 		$this->mongo_db->order_by(array(
 			'date_added' => 'desc'

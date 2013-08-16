@@ -265,6 +265,19 @@ class Player_model extends MY_Model
 			return date('Y-m-d H:i:s', $result[0]['date_added']->sec);
 		return '0000-00-00 00:00:00';
 	}
+	public function completeObjective($pb_player_id, $objective_id, $client_id, $site_id)
+	{
+		$this->set_site_mongodb($site_id);
+		$mongoDate = new MongoDate(time());
+		return $this->mongo_db->insert('playbasis_objective_to_player', array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'pb_player_id' => $pb_player_id,
+			'objective_id' => $objective_id,
+			'date_added' => $mongoDate,
+			'date_modified' => $mongoDate
+		));
+	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
 	{
 		//get reward id

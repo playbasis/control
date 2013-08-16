@@ -45,7 +45,7 @@ class Client_model extends MY_Model
 		assert(isset($clientData['client_id']));
 		assert(isset($clientData['site_id']));
 		assert(isset($clientData['action_id']));
-		$clientData['active_status'] = 1;
+		$clientData['active_status'] = true;
 		$this->set_site_mongodb($clientData['site_id']);
 		$this->mongo_db->select(array(
 			'_id',
@@ -339,6 +339,7 @@ class Client_model extends MY_Model
 			'jigsaw_id'		  => (isset($logData['jigsaw_id']))		  ? $logData['jigsaw_id']		: 0,
 			'jigsaw_name'	  => (isset($logData['jigsaw_name']))	  ? $logData['jigsaw_name']	    : '',
 			'jigsaw_category' => (isset($logData['jigsaw_category'])) ? $logData['jigsaw_category'] : '',
+			'jigsaw_index'	  => (isset($logData['jigsaw_index']))	  ? $logData['jigsaw_index']	: '',
 			'site_name'		  => (isset($logData['site_name']))		  ? $logData['site_name']		: '',
 			'date_added'	  => $mongoDate,
 			'date_modified'	  => $mongoDate
