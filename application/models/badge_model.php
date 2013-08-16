@@ -18,6 +18,10 @@ class Badge_model extends MY_Model
 
         $this->mongo_db->where('status', true);
 
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo->where('name', $regex);
+        }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (int)$data['filter_status']);
@@ -46,28 +50,19 @@ class Badge_model extends MY_Model
 
         foreach ($results as $result) {
 
-            $this->mongo_db->where('badge_id', new MongoID($result['badge_id']));
-            if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-                $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
-                $this->mongo->where('name', $regex);
-            }
-            $this->mongo_db->select(array('name','description','hint','language_id'));
-            $results2 = $this->mongo_db->get("playbasis_badge_description");
+            $badges_data[] = array(
+                'badge_id' => $result['_id'],
+                'image' => $result['image'],
+                'quantity' => $result['quantity'],
+                'name' => $result['name'],
+                'description' => $result['description'],
+                'hint' => $result['hint'],
+                'status' => $result['status'],
+                'sort_order'  => $result['sort_order'],
+                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
+                'date_modified' => $this->datetimeMongotoReadable($result['date_modified'])
+            );
 
-            if($results2){
-                $badges_data[] = array(
-                    'badge_id' => $result['_id'],
-                    'image' => $result['image'],
-                    'quantity' => $result['quantity'],
-                    'name' => $this->getPath($result['badge_id'], $this->config->get('config_language_id')),
-                    'description' => $results2[0]['description'],
-                    'hint' => $results2[0]['hint'],
-                    'status' => $result['status'],
-                    'sort_order'  => $result['sort_order'],
-                    'date_added' => $this->datetimeMongotoReadable($result['date_added']),
-                    'date_modified' => $this->datetimeMongotoReadable($result['date_modified'])
-                );
-            }
 
         }
 
@@ -101,7 +96,7 @@ class Badge_model extends MY_Model
             if($badge_info){
                 $badges_client_data[] = array(
                     'client_id' => $result['client_id']."",
-                    'badge_id' => $result['badge_id']."",
+                    'badge_id' => $result['_id']."",
                     'name' => isset($badge_info[0]['name'])?$badge_info[0]['name']:'',
                     'description' => isset($badge_info[0]['description'])?$badge_info[0]['description']:'',
                     'hint' => isset($badge_info[0]['hint'])?$badge_info[0]['hint']:'',

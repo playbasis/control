@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="content">
-            <?php if ($user_group_id==1) { ?>
+            <?php if ($user_group_id==$setting_group_id) { ?>
             <?php
             $attributes = array('id' => 'form');
             echo form_open('badge/delete',$attributes);
@@ -72,10 +72,10 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="left" style="width:72px;"><?php echo $column_image; ?></td>
-                        <td class="left"><?php echo $column_name; ?></td>
-                        <td class="left" style="width:50px;"><?php echo $column_quantity; ?></td>
-                        <td class="right" style="width:100px;"><?php echo $column_action; ?></td>
+                        <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>

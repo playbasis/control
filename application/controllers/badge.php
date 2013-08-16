@@ -32,6 +32,7 @@ class Badge extends MY_Controller
     private function getList() {
 
         $this->load->model('Badge_model');
+        $this->load->model('Image_model');
 
         $client_id = $this->User_Model->getClientId();
         $site_id = $this->User_Model->getSiteId();
@@ -56,7 +57,7 @@ class Badge extends MY_Controller
                 }
 
                 $this->data['badges'][] = array(
-                    'badge_id' => $result['_id'],
+                    'badge_id' => $result['badge_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
@@ -85,10 +86,9 @@ class Badge extends MY_Controller
                 $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
                 foreach ($badges as $badge) {
+                    $action = array();
 
-                    $action = $this->url->link('badge/badge/update', 'badge_id=' . $badge['_id'] . '&token=' . $this->request->get['token']);
-
-                    if ($badge['image'] && (HTTP_IMAGE . $badge['image'] != 'HTTP/1.1 404 Not Found' && HTTP_IMAGE . $badge['image'] != 'HTTP/1.0 403 Forbidden')) {
+                    if ($badge['image'] && (S3_IMAGE . $badge['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge['image'] != 'HTTP/1.0 403 Forbidden')) {
                         $image = $this->Image_model->resize($badge['image'], 50, 50);
                     }
                     else {
@@ -96,7 +96,7 @@ class Badge extends MY_Controller
                     }
 
                     $this->data['badges'][] = array(
-                        'badge_id' => $badge['_id'],
+                        'badge_id' => $badge['badge_id'],
                         'name' => $badge['name'],
                         'hint' => $badge['hint'],
                         'quantity' => $badge['quantity'],
@@ -124,8 +124,49 @@ class Badge extends MY_Controller
         }
 
         $this->data['main'] = 'badge';
+        $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    public function update() {
+        $this->load->language('badge/badge');
+
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $this->load->model('badge/badge');
+
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm() && $this->checkOwnerBadge($this->request->get['badge_id'])) {
+            $this->model_badge_badge->editBadge($this->request->get['badge_id'], $this->request->post);
+
+            $this->session->data['success'] = $this->language->get('text_success');
+
+            $this->redirect($this->url->link('badge/badge', 'site_id=' . $this->request->post['site_id'] . '&token=' . $this->session->data['token'], 'SSL'));
+        }
+
+        $this->getForm();
+    }
+
+    public function delete() {
+        $this->load->language('badge/badge');
+
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $this->load->model('badge/badge');
+
+        if (isset($this->request->post['selected']) && $this->validateDelete()) {
+            foreach ($this->request->post['selected'] as $badge_id) {
+                if($this->checkOwnerBadge($badge_id)){
+                    $this->model_badge_badge->deleteBadge($badge_id);
+                }
+            }
+
+            $this->session->data['success'] = $this->language->get('text_success');
+
+            $this->redirect($this->url->link('badge/badge', 'token=' . $this->session->data['token'], 'SSL'));
+        }
+
+        $this->getList();
     }
 }

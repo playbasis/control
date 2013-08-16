@@ -38,7 +38,8 @@ class Image_model extends MY_Model
                 }
             }
 
-            $image = new Image(DIR_IMAGE . $old_image);
+            $image = new Image();
+            $image->load(DIR_IMAGE . $old_image);
             $image->resize($width, $height);
             $image->save(DIR_IMAGE . $new_image);
 
@@ -50,11 +51,7 @@ class Image_model extends MY_Model
             $this->s3->putObject($data_image, "elasticbeanstalk-ap-southeast-1-007834438823", $new_image, S3::ACL_PUBLIC_READ);
         }
 
-        if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
-            return S3_IMAGE . $new_image;
-        } else {
-            return S3_IMAGE . $new_image;
-        }
+        return S3_IMAGE . $new_image;
     }
 }
 ?>

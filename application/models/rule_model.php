@@ -12,13 +12,18 @@ class Rule_model extends MY_Model
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
 
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('name',  'action');
+        $this->mongo_db->where('category',  'ACTION');
+        $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
+
         try{
             if(count($results)>0){
                 foreach ($results as &$rowx) {
                     $rowx['specific_id'] = $rowx['action_id']."";
                     $rowx['dataSet'] = unserialize($rowx['init_dataset']);
 //                    $rowx['id']=1;#hard code set id to be '1'
-                    $rowx['id']=$rowx['action_id']."";
+                    $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='ACTION';
                     unset($rowx['action_id']);
                     unset($rowx['init_dataset']);
@@ -87,13 +92,18 @@ class Rule_model extends MY_Model
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
 
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('name',  'reward');
+        $this->mongo_db->where('category',  'REWARD');
+        $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
+
         try{
             if(count($ds)>0){
                 foreach ($ds as &$rowx) {
                     $rowx['specific_id'] = $rowx['reward_id']."";
                     $rowx['dataSet'] = unserialize($rowx['init_dataset']);
 //                    $rowx['id']=2;#hard code set id to be '2'
-                    $rowx['id']=$rowx['reward_id']."";
+                    $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='REWARD';
                     unset($rowx['reward_id']);
                     unset($rowx['init_dataset']);
