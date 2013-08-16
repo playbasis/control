@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Utility extends CI_Model
 {
-	public function getEventMessage($eventType, $amount = 'some', $pointName = 'points', $badgeName = 'a', $newLevel = '')
+	public function getEventMessage($eventType, $amount = 'some', $pointName = 'points', $badgeName = 'a', $newLevel = '', $objectiveName = '')
 	{
 		switch($eventType)
 		{
@@ -12,12 +12,14 @@ class Utility extends CI_Model
 			return "earned $amount $pointName";
 		case 'level':
 			return ($newLevel) ? "is now level $newLevel" : 'gained a level';
-			case 'login':
-				return 'logged in';
-			case 'logout':
-				return 'logged out';
-			default:
-				return 'did a thing';
+		case 'login':
+			return 'logged in';
+		case 'logout':
+			return 'logged out';
+		case 'objective':
+			return 'completed an objective "'.$objectiveName.'"';
+		default:
+			return 'did a thing';
 		}
 	}
 }

@@ -381,6 +381,20 @@ class jigsaw extends MY_Model
 			'date_added' => 'desc'
 		));
 		$result = $this->mongo_db->get('jigsaw_log');
+		//for backward compatibility, check again without jigsaw_index
+		if(!$result)
+		{
+			$this->mongo_db->select($fields);
+			$this->mongo_db->where(array(
+				'pb_player_id' => $input['pb_player_id'],
+				'rule_id' => $input['rule_id'],
+				'jigsaw_id' => $input['jigsaw_id'],
+			));
+			$this->mongo_db->order_by(array(
+				'date_added' => 'desc'
+			));
+			$result = $this->mongo_db->get('jigsaw_log');
+		}
 		return ($result) ? $result[0] : $result;
 	}
 	private function checkBadge($badgeId, $pb_player_id, $site_id)

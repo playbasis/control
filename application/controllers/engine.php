@@ -390,13 +390,32 @@ class Engine extends REST_Controller
 						//check for completed objective
 						if(isset($exInfo['objective_complete']))
 						{
-							$this->player_model->completeObjective($input['pb_player_id'], new MongoId($exInfo['objective_complete']['id']), $client_id, $site_id);
+							$objId = $exInfo['objective_complete']['id'];
+							$objName = $exInfo['objective_complete']['name'];
+							$this->player_model->completeObjective($input['pb_player_id'], new MongoId($objId), $client_id, $site_id);
 							$event = array(
 								'event_type' => 'OBJECTIVE_COMPLETE',
-								'objective_id' => $exInfo['objective_complete']['id'],
-								'objective_name' => $exInfo['objective_complete']['name']
+								'objective_id' => $objId,
+								'objective_name' => $objName
 							);
 							array_push($apiResult['events'], $event);
+							$eventMessage = $this->utility->getEventMessage('objective', '', '', '', '', $objName);
+							//log event - objective complete
+							$this->tracker_model->trackEvent('OBJECTIVE_COMPLETE', $eventMessage, array_merge($input, array(
+								'objective_id' => $objId,
+								'objective_name' => $objName,
+							)));
+							//publish to node stream
+							$this->node->publish(array_merge($input, array(
+								'message' => $eventMessage,
+								'objective' => array(
+									'id' => $objId,
+									'name' => $objName
+								)
+							)), $domain_name, $site_id);
+							//publish to facebook notification
+							if($fbData)
+								$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
 						}
 						//log jigsaw - condition or action
 						$this->client_model->log($input, $exInfo);

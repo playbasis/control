@@ -34,10 +34,12 @@ class Tracker_model extends MY_Model
 			'event_type'	=> $type,
 			'action_log_id' => $input['action_log_id'],
 			'message'		=> $message,
-			'reward_id'		=> (isset($input['reward_id']))	  ? $input['reward_id']		: null,
-			'reward_name'	=> (isset($input['reward_name'])) ? $input['reward_name']	: null,
-			'item_id'		=> (isset($input['item_id']))	  ? $input['item_id']		: null,
-			'value'			=> (isset($input['amount']))	  ? intval($input['amount']): null,
+			'reward_id'		=> (isset($input['reward_id']))		? $input['reward_id']		: null,
+			'reward_name'	=> (isset($input['reward_name']))	? $input['reward_name']		: null,
+			'item_id'		=> (isset($input['item_id']))		? $input['item_id']			: null,
+			'value'			=> (isset($input['amount']))		? intval($input['amount'])	: null,
+			'objective_id'	=> (isset($input['objective_id']))	? $input['objective_id']	: null,
+			'objective_name'=> (isset($input['objective_name']))? $input['objective_name']	: null,
 			'date_added'	=> $mongoDate,
 			'date_modified' => $mongoDate
 		));
