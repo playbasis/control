@@ -27,6 +27,7 @@ class Badge extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getList();
+        
     }
 
     private function getList() {
