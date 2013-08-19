@@ -20,7 +20,7 @@ class Badge_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
-            $this->mongo->where('name', $regex);
+            $this->mongo_db->where('name', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -135,5 +135,63 @@ class Badge_model extends MY_Model
         );
 
         return $output;
+    }
+
+    public function addBadge($data) {
+        $this->set_site_mongodb(0);
+
+        $b = $this->mongo_db->insert('playbasis_badge', array(
+            'stackable' => (int)$data['stackable']|0 ,
+            'substract' => (int)$data['substract']|0,
+            'quantity' => (int)$data['quantity']|0 ,
+            'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => (bool)$data['status'],
+            'sort_order' => (int)$data['sort_order']|1,
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'name' => $data['name']|'' ,
+            'description' => $data['description']|'',
+            'hint' => $data['hint']|'' ,
+            'language_id' => (int)1,
+        ));
+
+        $this->mongo_db->insert('playbasis_badge_to_client', array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id']),
+            'badge_id' => new MongoID($b)
+        ));
+    }
+
+    public function editBadge($badge_id, $data) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id',  new MongoID($badge_id));
+        $this->mongo_db->set('stackable', (int)$data['stackable']);
+        $this->mongo_db->set('substract', (int)$data['substract']);
+        $this->mongo_db->set('quantity', (int)$data['quantity']);
+        $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('hint', $data['hint']);
+        $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->update('playbasis_badge');
+
+        if (isset($data['image'])) {
+            $this->mongo_db->where('_id', new MongoID($badge_id));
+            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->update('playbasis_badge');
+        }
+
+    }
+
+    public function deleteBadge($badge_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id', new MongoID($badge_id));
+        $this->mongo_db->delete('playbasis_badge');
+        $this->mongo_db->where('badge_id',  new MongoID($badge_id));
+        $this->mongo_db->delete('playbasis_badge_to_client');
     }
 }

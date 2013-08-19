@@ -11,7 +11,7 @@
             <div class="buttons">
 
                 <?php //if ($user_group_id == 1) { ?>
-                <button class="btn btn-info" onclick="location = '<?php echo $this->lang->line('insert'); ?>'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'badge/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
                 <?php //if ($user_group_id == 1) { ?>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
                 <?php //} ?>
@@ -89,7 +89,7 @@
                             <td class="left"><?php echo $badge['name']; ?></td>
                             <td class="right"><?php echo $badge['quantity']; ?></td>
                             <td class="right">
-                                [ <a href="<?php echo $badge['href']; ?>">Edit</a> ]
+                                [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
                             </td>
                         </tr>
                             <?php } ?>

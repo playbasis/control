@@ -7,8 +7,8 @@ class Rule extends MY_Controller
     {
         parent::__construct();
 
-        $this->load->model('User_Model');
-        if(!$this->User_Model->isLogged()){
+        $this->load->model('User_model');
+        if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
 
@@ -33,15 +33,15 @@ class Rule extends MY_Controller
 
         $this->load->model('Badge_model');
 
-        $s_siteId = $this->User_Model->getSiteId();
-        $s_clientId = $this->User_Model->getClientId();
+        $s_siteId = $this->User_model->getSiteId();
+        $s_clientId = $this->User_model->getClientId();
 
         $this->data['actionList'] = json_encode($this->Rule_model->getActionGigsawList($s_siteId,$s_clientId));
         $this->data['conditionList'] = json_encode($this->Rule_model->getConditionGigsawList($s_siteId,$s_clientId));
         $this->data['rewardList'] = json_encode($this->Rule_model->getRewardGigsawList($s_siteId,$s_clientId));
 
-        $this->data['jsonConfig_siteId'] = $this->User_Model->getSiteId();
-        $this->data['jsonConfig_clientId'] = $this->User_Model->getClientId();
+        $this->data['jsonConfig_siteId'] = $this->User_model->getSiteId();
+        $this->data['jsonConfig_clientId'] = $this->User_model->getClientId();
 
         $this->data['jsonIcons'] = json_encode($icons);
 
@@ -57,8 +57,8 @@ class Rule extends MY_Controller
 
     public function jsonGetRules(){
 
-        $s_siteId = $this->User_Model->getSiteId();
-        $s_clientId = $this->User_Model->getClientId();
+        $s_siteId = $this->User_model->getSiteId();
+        $s_clientId = $this->User_model->getClientId();
 
         $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId);
         $this->output->set_output(json_encode($result));
@@ -78,7 +78,7 @@ class Rule extends MY_Controller
             $state='1';
 
         // $this->jsonResponse($params);
-        $this->output->set_output(json_encode($this->Rule_model->changeRuleState($this->input->post('ruleId'),$state,$this->User_Model->getSiteId(),$this->User_Model->getClientId())));
+        $this->output->set_output(json_encode($this->Rule_model->changeRuleState($this->input->post('ruleId'),$state,$this->User_model->getSiteId(),$this->User_model->getClientId())));
     }
 
     public function jsonSaveRule(){
@@ -102,13 +102,13 @@ class Rule extends MY_Controller
             return ;
         }
 
-        $this->output->set_output(json_encode($this->Rule_model->deleteRule($this->input->post('ruleId'),$this->User_Model->getSiteId(),$this->User_Model->getClientId())));
+        $this->output->set_output(json_encode($this->Rule_model->deleteRule($this->input->post('ruleId'),$this->User_model->getSiteId(),$this->User_model->getClientId())));
     }
 
     public function loadBadges() {
         $this->load->model('Badge_model');
 
-        $badges = $this->Badge_model->getBadgeBySiteId($this->User_Model->getSiteId());
+        $badges = $this->Badge_model->getBadgeBySiteId($this->User_model->getSiteId());
 
         if ($badges) {
             foreach ($badges as $badge) {
@@ -132,7 +132,7 @@ class Rule extends MY_Controller
             return ;
         }
 
-        $json = $this->Rule_model->getRuleById($this->User_Model->getSiteId(),$this->User_Model->getClientId(),$this->input->get('ruleId'));
+        $json = $this->Rule_model->getRuleById($this->User_model->getSiteId(),$this->User_model->getClientId(),$this->input->get('ruleId'));
 
         if($json){
             $this->output->set_output($this->input->get('callback')."(".json_encode($json[0]).")");

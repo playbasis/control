@@ -99,12 +99,34 @@ class Reward_model extends MY_Model
     public function getRewardLimitByRewardId($plan_id, $reward_id) {
         $reward_data = NULL;
 
-        $results = $this->mongo_db->where('reward_id', (int)$reward_id)
+        $results = $this->mongo_db->where('reward_id', new MongoID($reward_id))
             ->where('plan_id', (int)$plan_id)
-            ->get("playbasis_reward_to_plan");
+            ->get("playbasis_reward_to_client");
 
         if ($results) {
             $reward_data = $results[0]['limit'];
+        }
+
+        return $reward_data;
+    }
+
+    public function getRewardByClientId($client_id) {
+        $reward_data = array();
+
+        $results = $this->mongo_db->where('client_id', new MongoID($client_id))
+            ->get("playbasis_reward_to_client");
+
+        foreach ($results as $result) {
+
+            $reward_data[] = array(
+                'reward_id' => $result['reward_id'],
+                'site_id' => $result['site_id'],
+                'client_id' => $result['client_id'],
+                'limit' => $result['limit'],
+                'group' => $result['group'],
+                'name' => $result['name'],
+                'description' => $result['description']
+            );
         }
 
         return $reward_data;
