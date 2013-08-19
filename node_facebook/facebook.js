@@ -104,7 +104,6 @@ function checkFacebookPostId(page_id,post_id){
 
 function getFacebookPostData(page_id, post_id, type){
     FbKey.findOne({page_id: page_id}, function (err, data) {
-        console.log(data);
         if (data) {
             facebook = new fbsdk.Facebook({
                 appId  : data.app_id,
