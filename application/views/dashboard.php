@@ -52,21 +52,6 @@
             <!-- Start circleStats -->
             <div id="stats-carousel-day" class="circleStats">
 
-                <?php if (isset($daily_events) && $daily_events) { foreach ($daily_events as $event) { ?>
-                <div class="circleStatsItemContainer">
-                    <div class="circleStatsItem <?php echo $event['color']; ?>">
-                        <i class="<?php echo $event['class']; ?>"></i>
-                        <span class="plus"><?php echo $event['advancement_direction']; ?></span>
-                        <span class="percent">%</span>
-                        <input type="text" value="<?php echo $event['advancement_rate']; ?>" class="<?php echo $event['circle']; ?>" />
-                    </div>
-                    <div class="box-small-title">
-                        <?php echo $event['value']; ?>
-                        <?php echo $event['name']; ?>
-                    </div>
-                </div>
-                <?php } } ?>
-
             </div>
             <!-- End circleStats -->
 
@@ -79,22 +64,6 @@
             <!-- Start circleStats -->
             <div id="stats-carousel-weekly" class="circleStats">
 
-                <?php if (isset($weekly_events) && $weekly_events) { foreach ($weekly_events as $event) { ?>
-                <!-- <div class="span2" onTablet="span4" onDesktop="span2"> -->
-                <div class="circleStatsItemContainer">
-                    <div class="circleStatsItem <?php echo $event['color']; ?>">
-                        <i class="<?php echo $event['class']; ?>"></i>
-                        <span class="plus"><?php echo $event['advancement_direction']; ?></span>
-                        <span class="percent">%</span>
-                        <input type="text" value="<?php echo $event['advancement_rate']; ?>" class="<?php echo $event['circle']; ?>" />
-                    </div>
-                    <div class="box-small-title">
-                        <?php echo $event['value']; ?>
-                        <?php echo $event['name']; ?>
-                    </div>
-                </div>
-                <?php } } ?>
-
             </div>
             <!-- End circleStats -->
 
@@ -106,22 +75,6 @@
         <div id="panel-carousel-month" class="panel-carousel">
             <!-- Start circleStats -->
             <div id="stats-carousel-month" class="circleStats">
-
-                <?php if (isset($monthly_events) && $monthly_events) { foreach ($monthly_events as $event) { ?>
-                <!-- <div class="span2" onTablet="span4" onDesktop="span2"> -->
-                <div class="circleStatsItemContainer">
-                    <div class="circleStatsItem <?php echo $event['color']; ?>">
-                        <i class="<?php echo $event['class']; ?>"></i>
-                        <span class="plus"><?php echo $event['advancement_direction']; ?></span>
-                        <span class="percent">%</span>
-                        <input type="text" value="<?php echo $event['advancement_rate']; ?>" class="<?php echo $event['circle']; ?>" />
-                    </div>
-                    <div class="box-small-title">
-                        <?php echo $event['value']; ?>
-                        <?php echo $event['name']; ?>
-                    </div>
-                </div>
-                <?php } } ?>
 
             </div>
             <!-- End circleStats -->
@@ -157,7 +110,7 @@
 
         <!-- Start latest-masonry -->
         <div id="latest-masonry" class="super-list variable-sizes clearfix">
-            <?php if($players) { foreach ($players as $player) { ?>
+            <?php if(isset($players)) { foreach ($players as $player) { ?>
             <!-- Start isot-player-container -->
             <div class="isot-player-container">
                 <div class="isot-player">

@@ -1,47 +1,6 @@
 //Set Date picker for Insight day range
 $(function(){
 
-  // TODO: Combine all these into one
-  $('#stats-carousel-day').carouFredSel({
-      prev: '#carousel-prev-day',
-      next: '#carousel-next-day',
-      width: '100%',
-      auto: false,
-      scroll: 2,
-      // mousewheel: true,
-      swipe: {
-          onMouse: true,
-          onTouch: true
-      }
-  });
-
-  $('#stats-carousel-weekly').carouFredSel({
-      prev: '#carousel-prev-weekly',
-      next: '#carousel-next-weekly',
-      width: '100%',
-      auto: false,
-      scroll: 2,
-      // mousewheel: true,
-      swipe: {
-          onMouse: true,
-          onTouch: true
-      }
-  });
-
-
-  $('#stats-carousel-month').carouFredSel({
-      prev: '#carousel-prev-month',
-      next: '#carousel-next-month',
-      width: '100%',
-      auto: false,
-      scroll: 2,
-      // mousewheel: true,
-      swipe: {
-          onMouse: true,
-          onTouch: true
-      }
-  });
-
   $(".panel-carousel").hide();
   $(".panel-carousel").first().show();
 

@@ -3,7 +3,10 @@ $(function() {
 	// sparkline_charts();
 	charts();
 	widthFunctions();
-    circle_progress();
+    circleDay();
+    circleWeek();
+    circleMonth();
+    //circle_progress();
 
 	//pervent all #click
 	$('a[href="#"]').live('click', function(event){
@@ -67,10 +70,22 @@ function circleDay(){
         url: baseUrlPath+'statistic/getDailyActionmeaturement',
         dataType: 'html',
         beforeSend: function (  ) {
-            $("#stats-carousel-day").html('/image/white_loading.gif');
+            $("#stats-carousel-day").html('<img width="50" height="50" src="image/white_loading.gif">');
         }
     }).done(function ( d ) {
         $("#stats-carousel-day").html(d);
+        $('#stats-carousel-day').carouFredSel({
+            prev: '#carousel-prev-day',
+            next: '#carousel-next-day',
+            width: '100%',
+            auto: false,
+            scroll: 2,
+            // mousewheel: true,
+            swipe: {
+                onMouse: true,
+                onTouch: true
+            }
+        });
         circle_progress();
     });
 }
@@ -80,10 +95,22 @@ function circleWeek(){
         url: baseUrlPath+'statistic/getWeeklyActionmeaturement',
         dataType: 'html',
         beforeSend: function (  ) {
-            $("#stats-carousel-weekly").html('/image/white_loading.gif');
+            $("#stats-carousel-weekly").html('<img width="50" height="50" src="image/white_loading.gif">');
         }
     }).done(function ( d ) {
         $("#stats-carousel-weekly").html(d);
+        $('#stats-carousel-weekly').carouFredSel({
+            prev: '#carousel-prev-weekly',
+            next: '#carousel-next-weekly',
+            width: '100%',
+            auto: false,
+            scroll: 2,
+            // mousewheel: true,
+            swipe: {
+                onMouse: true,
+                onTouch: true
+            }
+        });
         circle_progress();
     });
 }
@@ -93,10 +120,22 @@ function circleMonth(){
         url: baseUrlPath+'statistic/getMonthlyActionmeaturement',
         dataType: 'html',
         beforeSend: function (  ) {
-            $("#stats-carousel-month").html('/image/white_loading.gif');
+            $("#stats-carousel-month").html('<img width="50" height="50" src="image/white_loading.gif">');
         }
     }).done(function ( d ) {
         $("#stats-carousel-month").html(d);
+        $('#stats-carousel-month').carouFredSel({
+            prev: '#carousel-prev-month',
+            next: '#carousel-next-month',
+            width: '100%',
+            auto: false,
+            scroll: 2,
+            // mousewheel: true,
+            swipe: {
+                onMouse: true,
+                onTouch: true
+            }
+        });
         circle_progress();
     });
 }
