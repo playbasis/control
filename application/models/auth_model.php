@@ -20,7 +20,7 @@ class Auth_model extends MY_Model
 		$this->mongo_db->where(array(
 			'api_key' => $data['key'],
 			'api_secret' => $data['secret'],
-			'status' => 1
+			'status' => true
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
 		$result = $this->mongo_db->get('playbasis_client_site');

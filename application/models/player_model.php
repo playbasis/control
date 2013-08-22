@@ -24,7 +24,7 @@ class Player_model extends MY_Model
 			'username' => $data['username'],
 			'exp'			=> 0,
 			'level'			=> 0,
-			'status'		=> 1,			
+			'status'		=> true,			
 			'first_name'	=> (isset($data['first_name']))	 ? $data['first_name']	: $data['username'],
 			'last_name'		=> (isset($data['last_name']))	 ? $data['last_name']	: null,
 			'nickname'		=> (isset($data['nickname']))	 ? $data['nickname']	: null,

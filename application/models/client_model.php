@@ -172,8 +172,8 @@ class Client_model extends MY_Model
 				'limit' => null,
 				'description' => null,
 				'sort_order' => 1,
-				'status' => 1,
-				'is_custom' => 1,
+				'status' => true,
+				'is_custom' => true,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
 			));
