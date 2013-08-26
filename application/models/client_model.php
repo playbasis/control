@@ -196,7 +196,7 @@ class Client_model extends MY_Model
 		$jigsawConfig['quantity'] = $quantity;
 		return $level;
 	}
-	public function updateplayerBadge($badgeId, $quantity, $pbPlayerId, $site_id)
+	public function updateplayerBadge($badgeId, $quantity, $pbPlayerId, $clPlayerId, $client_id, $site_id)
 	{
 		assert(isset($badgeId));
 		assert(isset($quantity));
@@ -232,7 +232,7 @@ class Client_model extends MY_Model
 			'pb_player_id' => $pbPlayerId,
 			'badge_id' => $badgeId
 		));
-		$hasBadge = $this->mongo_db->count('playbasis_badge_to_player');
+		$hasBadge = $this->mongo_db->count('playbasis_reward_to_player');
 		if($hasBadge)
 		{
 			$this->mongo_db->where(array(
@@ -240,15 +240,18 @@ class Client_model extends MY_Model
 				'badge_id' => $badgeId
 			));
 			$this->mongo_db->set('date_modified', $mongoDate);
-			$this->mongo_db->inc('amount', intval($quantity));
-			$this->mongo_db->update('playbasis_badge_to_player');
+			$this->mongo_db->inc('value', intval($quantity));
+			$this->mongo_db->update('playbasis_reward_to_player');
 		}
 		else
 		{
-			$this->mongo_db->insert('playbasis_badge_to_player', array(
+			$this->mongo_db->insert('playbasis_reward_to_player', array(
 				'pb_player_id' => $pbPlayerId,
+				'cl_player_id' => $clPlayerId,
+				'client_id' => $client_id,
+				'site_id' => $site_id,
 				'badge_id' => $badgeId,
-				'amount' => intval($quantity),
+				'value' => intval($quantity),
 				'cliamed' => 0,
 				'redeemed' => 0,
 				'date_added' => $mongoDate,

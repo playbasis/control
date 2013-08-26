@@ -72,7 +72,7 @@ class Client extends REST_Controller
 		$result = $this->player_model->getBadge($pb_player_id, $token['site_id']);
 		print_r($result);
 		echo '<br>updatePlayerBadge<br>';
-		$result = $this->client_model->updateplayerBadge($badge_id, 1, $pb_player_id, $token['site_id']);
+		$result = $this->client_model->updateplayerBadge($badge_id, 1, $pb_player_id, $cl_player_id, $token['client_id'], $token['site_id']);
 		print_r($result);
 		echo '<br>';
 		echo '<br>udpated badges<br>';

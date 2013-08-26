@@ -200,12 +200,12 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
 			'badge_id',
-			'amount',
+			'value',
 			'claimed',
 			'redeemed'
 		));
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
-		$badges = $this->mongo_db->get('playbasis_badge_to_player');
+		$badges = $this->mongo_db->get('playbasis_reward_to_player');
         if(!$badges)
             return array();
         foreach($badges as &$badge)
@@ -223,6 +223,8 @@ class Player_model extends MY_Model
             $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
 			$badge['name'] = $result['name'];
 			$badge['description'] = $result['description'];
+			$badge['amount'] = $badge['value'];
+			unset($badge['value']);
 			unset($badge['_id']);
         }
         return $badges;
@@ -237,7 +239,7 @@ class Player_model extends MY_Model
 		));
 		$this->mongo_db->set('date_modified', $mongoDate);
 		$this->mongo_db->inc('claimed', 1);
-		return $this->mongo_db->update('playbasis_badge_to_player');
+		return $this->mongo_db->update('playbasis_reward_to_player');
 	}
 	public function redeemBadge($pb_player_id, $badge_id, $site_id)
 	{
@@ -249,7 +251,7 @@ class Player_model extends MY_Model
 		));
 		$this->mongo_db->set('date_modified', $mongoDate);
 		$this->mongo_db->inc('redeemed', 1);
-		return $this->mongo_db->update('playbasis_badge_to_player');
+		return $this->mongo_db->update('playbasis_reward_to_player');
 	}
 	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{

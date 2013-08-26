@@ -421,7 +421,7 @@ class jigsaw extends MY_Model
 			'badge_id' => $badgeId,
 			'pb_player_id' => $pb_player_id
 		));
-		$haveBadge = $this->mongo_db->count('playbasis_badge_to_player');
+		$haveBadge = $this->mongo_db->count('playbasis_reward_to_player');
 		if($haveBadge)
 			return false;
 		return true;

@@ -353,7 +353,7 @@ class Engine extends REST_Controller
 							switch($jigsawConfig['reward_name'])
 							{
 							case 'badge':
-								$this->client_model->updateplayerBadge($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $site_id);
+								$this->client_model->updateplayerBadge($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], $client_id, $site_id);
 								$event = array(
 									'event_type' => 'REWARD_RECEIVED',
 									'reward_type' => $jigsawConfig['reward_name'],
