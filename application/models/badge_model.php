@@ -46,6 +46,19 @@ class Badge_model extends MY_Model
             $this->mongo_db->order_by(array('name' => $order));
         }
 
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
         $results = $this->mongo_db->get("playbasis_badge");
 
         foreach ($results as $result) {
@@ -57,25 +70,11 @@ class Badge_model extends MY_Model
                 'name' => $result['name'],
                 'description' => $result['description'],
                 'hint' => $result['hint'],
-                'status' => $result['status'],
+                'status' => (bool)$result['status'],
                 'sort_order'  => $result['sort_order'],
                 'date_added' => $this->datetimeMongotoReadable($result['date_added']),
                 'date_modified' => $this->datetimeMongotoReadable($result['date_modified'])
             );
-
-
-        }
-
-        if (isset($data['start']) || isset($data['limit'])) {
-            if ($data['start'] < 0) {
-                $data['start'] = 0;
-            }
-
-            if ($data['limit'] < 1) {
-                $data['limit'] = 20;
-            }
-
-            $badges_data = array_slice($badges_data, $data['start'], $data['limit']);
         }
 
         return $badges_data;

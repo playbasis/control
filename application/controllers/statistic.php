@@ -11,14 +11,14 @@ class Statistic extends CI_Controller
             redirect('/login', 'refresh');
         }
 
+        $this->load->model('Statistic_model');
+
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
     }
 
     public function getStatisticData(){
-        $this->load->model('User_model');
-        $this->load->model('Statistic_model');
 
         if ($this->input->get('date_start')) {
             $date_start = strtotime($this->input->get('date_start'));
@@ -86,8 +86,6 @@ class Statistic extends CI_Controller
     }
 
     public function getDailyActionmeaturement(){
-        $this->load->model('User_model');
-        $this->load->model('Statistic_model');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -107,8 +105,6 @@ class Statistic extends CI_Controller
     }
 
     public function getWeeklyActionmeaturement(){
-        $this->load->model('User_model');
-        $this->load->model('Statistic_model');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -128,8 +124,6 @@ class Statistic extends CI_Controller
     }
 
     public function getMonthlyActionmeaturement(){
-        $this->load->model('User_model');
-        $this->load->model('Statistic_model');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -146,5 +140,207 @@ class Statistic extends CI_Controller
 
         $this->load->vars($this->data);
         $this->load->view('carousel');
+    }
+
+    public function isotope(){
+//        $this->benchmark->mark('isotope_start');
+
+        include('action_data_log.php');
+
+        $this->load->model('Player_model');
+        $this->load->model('Badge_model');
+        $this->load->model('Image_model');
+
+        if ($this->input->get('filter_page')) {
+            $page = $this->input->get('filter_page');
+        } else {
+            $page = 1;
+        }
+
+        if ($this->input->get('filter_name')) {
+            $filter_name = $this->input->get('filter_name');
+        } else {
+            $filter_name = null;
+        }
+
+        $data = $this->filterData();
+
+        $result = $this->Player_model->getIsotopePlayer($data);
+//        $total_players = $this->Player_model->getIsotopeTotalPlayer($data);
+
+        $total_players = $result['total'];
+        $results = $result['result'];
+
+        if(isset($data['limit'])){
+            $limit = $data['limit'];
+        }else{
+            $limit = 100;
+        }
+
+        $this->current_page = $page;
+        $this->limit = $limit;
+
+        $players = array();
+
+        if ($results) {
+            foreach ($results as $result) {
+                $actions = array();
+                $player_action = $this->Player_model->getActionsByPlayerId($result['pb_player_id']);
+                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
+
+                if ($player_action) {
+                    foreach ($player_action as $action) {
+                        $actions[] = array(
+                            'action_id' => $action['action_id'],
+                            'name' => $action['name'],
+                            'value' => $action['total'],
+                            'icon' => $action['icon']
+                        );
+                    }
+                }
+
+                $data_player = array('pb_player_id' => $result['pb_player_id']);
+                $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
+
+                $badges = array();
+                if ($player_badge) {
+                    foreach ($player_badge as $badge) {
+
+                        $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
+
+                        if ($badge_info && (S3_IMAGE . $badge_info[0]['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info[0]['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $thumb = $this->Image_model->resize($badge_info[0]['image'], 40, 40);
+                        } else {
+                            $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
+                        }
+
+                        $badges[] = array(
+                            'badge_id' => $badge['badge_id'],
+                            'name' => $badge_info[0]['name'],
+                            'image' => $thumb,
+                            'quantity' => $badge['amount'],
+                            'date_added' => $badge['date_added'],
+                            'date_modified' => $badge['date_modified'],
+                        );
+                    }
+                }
+
+                $players[] = array(
+                    'pb_player_id' => $result['pb_player_id'],
+                    'firstname' => $result['first_name'],
+                    'lastname' => $result['last_name'],
+                    'nickname' => $result['nickname'],
+                    'image' => $result['image'],
+                    'points' => $result['value'],
+                    'level' => $result['level'],
+                    'exp' => $result['exp'],
+                    'status' => $result['status'],
+                    'email' => $result['email'],
+                    'gender' => $result['gender'],
+                    'last_active' => (isset($event_log[0]))? $event_log[0]['date_modified'] : '0 / 0 / 0',
+                    'action' => $actions,
+                    'badge' => $badges
+                );
+
+            }
+        }
+
+        $this->data['players'] = $players;
+
+        $total_pages = ceil($total_players / $data['limit']);
+
+        $this->data['total_pages'] = $total_pages;
+        $this->data['current_page'] = $this->current_page;
+        $this->data['limit'] = $this->limit;
+        $this->data['total_players'] = $total_players;
+
+        $this->load->library('parser');
+        $html = $this->parser->parse('player_isotope', $this->data, TRUE);
+
+        $data_html = array('html' => $html , 'current_page' => $this->current_page, 'total_page' => $total_pages, 'limit' => $this->limit, 'total_players' => $total_players);
+
+//        $this->benchmark->mark('isotope_end');
+//
+//        echo "isotope : ".$this->benchmark->elapsed_time('isotope_start', 'isotope_end');
+
+        $this->output->set_output(json_encode($data_html));
+    }
+
+    private function filterData() {
+        include('action_data_log.php');
+
+        if($this->input->get('limit')){
+            $limit = $this->input->get('limit');
+        }else{
+            $limit = 100;
+        }
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        if ($this->input->get('filter_sort')) {
+            $sort = explode('|', $this->input->get('filter_sort'));
+
+            if (is_array($sort)) {
+                foreach ($sort as $value) {
+                    $sort_explode = explode(':', $value);
+
+                    if (is_array($sort_explode)) {
+                        $sort_data[] = array(
+                            'name' => (!empty($sort_explode[0]))? $sort_explode[0] : '',
+                            'value' => (!empty($sort_explode[1]))? $sort_explode[1] : ''
+                        );
+                    }
+                }
+            }
+
+        } else {
+            $sort_data = array();
+        }
+
+        if ($this->input->get('filter_page')) {
+            $page = $this->input->get('filter_page');
+        } else {
+            $page = 1;
+        }
+
+        if ($this->input->get('filter_order')) {
+            $order = $this->input->get('filter_order');
+        } else {
+            $order = 'ASC';
+        }
+
+        if ($this->input->get('sort')) {
+            $sort = $this->input->get('sort');
+        } else {
+            $sort = '';
+        }
+
+        $data = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'filter_sort' => $sort_data,
+            'order' => $order,
+            'start' => ($page - 1) * $limit,
+            'limit' => $limit,
+            'sort' => $sort
+        );
+
+        return $data;
+
+    }
+
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = "0000-00-00 00:00:00";
+        }
+        return $dateTimeMongo;
     }
 }

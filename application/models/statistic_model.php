@@ -36,7 +36,7 @@ class Statistic_model extends MY_Model
 
         $this->mongo_db->select(array('_id','reward_id'));
         $this->mongo_db->where('name', array('$nin' =>  array('exp', 'badge')));
-        $this->mongo_db->where('status', 1);
+        $this->mongo_db->where('status', true);
         $Q =  $this->mongo_db->get('playbasis_reward');
 
         $reward_id = array();
@@ -70,7 +70,7 @@ class Statistic_model extends MY_Model
 
         $this->mongo_db->select(array('_id','reward_id'));
         $this->mongo_db->where('name', 'badge');
-        $this->mongo_db->where('status', 1);
+        $this->mongo_db->where('status', true);
         $Q =  $this->mongo_db->get('playbasis_reward');
 
         $reward_id = array();
@@ -104,7 +104,7 @@ class Statistic_model extends MY_Model
 
         $this->mongo_db->select(array('_id','reward_id'));
         $this->mongo_db->where('name', 'exp');
-        $this->mongo_db->where('status', 1);
+        $this->mongo_db->where('status', true);
         $Q =  $this->mongo_db->get('playbasis_reward');
 
         $reward_id = array();

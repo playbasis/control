@@ -53,7 +53,7 @@ class User_model extends MY_Model
             $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
             $this->mongo_db->where('username', db_clean($u, 20));
             $this->mongo_db->where('password', db_clean(dohash($p, $row['salt']), 40));
-            $this->mongo_db->where('status', 1);
+            $this->mongo_db->where('status', true);
             $this->mongo_db->limit(1);
             $Q = $this->mongo_db->get('user');
 
@@ -80,7 +80,7 @@ class User_model extends MY_Model
 
                 $this->mongo_db->select(array('client_id'));
                 $this->mongo_db->where('user_id', new MongoID($this->user_id));
-                $this->mongo_db->where('status', 1);
+                $this->mongo_db->where('status', true);
                 $this->mongo_db->limit(1);
                 $Q = $this->mongo_db->get('user_to_client');
 
@@ -93,7 +93,7 @@ class User_model extends MY_Model
 
                 $this->mongo_db->select(array('_id'));
                 $this->mongo_db->where('client_id', new MongoID($this->client_id));
-                $this->mongo_db->where('status', 1);
+                $this->mongo_db->where('status', true);
                 $this->mongo_db->limit(1);
                 $Q = $this->mongo_db->get('playbasis_client_site');
 

@@ -322,9 +322,8 @@ isotopeMan = {
     }
 
     $.ajax({
-      url: 'index.php?route=statistic/isotope',
+      url: baseUrlPath+'statistic/isotope',
       data: {
-        token: location.search.split('&token=')[1].split('&')[0],
         filter_page: page,
         filter_sort: filter[0].replace('&filter_sort=', '')
         // filter_selected: filter[1].replace('&filter_selected=', '')

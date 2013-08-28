@@ -86,7 +86,7 @@ class Reward_model extends MY_Model
                 'name' => $result['name'],
                 'description' => $result['description'],
                 'limit' => $limit,
-                'status'  	  => $result['status'],
+                'status'  	  => (bool)$result['status'],
                 'sort_order'  => $result['sort_order'],
                 'date_added' => $result['date_added'],
                 'date_modified' => $result['date_modified']

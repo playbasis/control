@@ -1821,7 +1821,7 @@ class Mongo_db
 		
 		try
 		{
-			$this->_connection = new Mongo($this->_connection_string, $options);
+			$this->_connection = new MongoClient($this->_connection_string, $options);
 			$this->_dbhandle = $this->_connection->{$this->_dbname};
 			return $this;	
 		} 

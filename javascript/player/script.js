@@ -290,7 +290,8 @@
 
     //Circular graph render
     generate: function(data) {
-      // console.log('donut graph generate');
+      //console.log('donut graph generate');
+      //console.log(data);
       window.plot = $.plot($("#player-summary"), data, {
                 series: {
                   pie: {
@@ -381,18 +382,19 @@
   var donutAPI = {
     get: function(criteria) {
       // console.log('donut api get :> '+config_statistic_link+'&filter='+criteria);
-
+      console.log(criteria);
       return  $.ajax({
                 url: config_statistic_link,
-                data: 'filter_sort='+criteria,
+                data: {filter_sort:criteria},
                 type:'GET',
+                dataType: "json",
                 beforeSend: function(){
                   // progressDialog is global object
                   progressDialog.show('Fetching data...');
                 },
                 success:function(data){
-                  // console.log('Request success');
-                  // console.log(data);
+                  //console.log('Request success');
+                  //console.log(data);
                   
                   //hide context menu
                   $('.context-menu').hide();
