@@ -165,11 +165,11 @@ class Statistic extends CI_Controller
 
         $data = $this->filterData();
 
-        $result = $this->Player_model->getIsotopePlayer($data);
+        $iso_data = $this->Player_model->getIsotopePlayer($data);
 //        $total_players = $this->Player_model->getIsotopeTotalPlayer($data);
 
-        $total_players = $result['total'];
-        $results = $result['result'];
+        $total_players = $iso_data['total'];
+        $results = $iso_data['result'];
 
         if(isset($data['limit'])){
             $limit = $data['limit'];
@@ -185,6 +185,7 @@ class Statistic extends CI_Controller
         if ($results) {
             foreach ($results as $result) {
                 $actions = array();
+
                 $player_action = $this->Player_model->getActionsByPlayerId($result['pb_player_id']);
                 $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
 
@@ -225,13 +226,20 @@ class Statistic extends CI_Controller
                     }
                 }
 
+                $point = 0;
+                foreach($result['value'] as $r){
+                    if(is_array($r) && isset($r['value'])){
+                        $point += $r['value'];
+                    }
+                }
+
                 $players[] = array(
                     'pb_player_id' => $result['pb_player_id'],
                     'firstname' => $result['first_name'],
                     'lastname' => $result['last_name'],
                     'nickname' => $result['nickname'],
                     'image' => $result['image'],
-                    'points' => $result['value'],
+                    'points' => $point,
                     'level' => $result['level'],
                     'exp' => $result['exp'],
                     'status' => $result['status'],

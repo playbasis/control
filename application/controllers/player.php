@@ -317,8 +317,6 @@ class Player extends MY_Controller
 
         $data = $this->filterData();
 
-//        $total_players = $this->Player_model->getDonutTotalPlayer($data);
-
         $output = $this->Player_model->getDonutGender($data);
 
         $gender_player = $output['result'];
@@ -354,16 +352,20 @@ class Player extends MY_Controller
             $text_range = $min."-".$max;
         }
 
-        $data['filter_sort'] = array(array('name' => 'action_value', 'value' => $text_range));
+        $data['filter_sort'] = array_merge($data['filter_sort'], array(array('name' => 'action_value', 'value' => $text_range)));
 
-        $player = $this->Player_model->getDonutAction($data);
+        $output = $this->Player_model->getDonutAction($data);
+
+        $player = $output['result'];
 
         $a = end($player);
 
         $json = array(
             'label' => $text.':'.$text_range,
-            'data' => round(($a['value'] * 100) / $total_players),
-            'value' => $a['value'],
+//            'data' => round(($a['value'] * 100) / $total_players),
+            'data' => round(($output['total'] * 100) / $total_players),
+//            'value' => $a['value'],
+            'value' => $output['total'],
         );
 
         return $json;
@@ -395,7 +397,7 @@ class Player extends MY_Controller
                 if($max_data >= $last_player['action_value']){
                     $max_data = $last_player['action_value'];
                 }
-                $json[] = $this->actionRange($data, 'action', $min_data, $max_data, $total_players);
+                $json[] = $this->actionRange($data, 'action_value', $min_data, $max_data, $total_players);
                 if($max_data >= $last_player['action_value']){
                     break;
                 }
@@ -426,18 +428,14 @@ class Player extends MY_Controller
             $text_range = $min."-".$max;
         }
 
-        $data['filter_sort'] = array(array('name' => 'reward_value', 'value' => $text_range));
+        $data['filter_sort'] = array_merge($data['filter_sort'], array(array('name' => 'reward_value', 'value' => $text_range)));
 
         $output = $this->Player_model->getDonutReward($data);
 
-        $player = $output['result'];
-
-        $a = end($player);
-
         $json = array(
             'label' => $text.':'.$text_range,
-            'data' => round(($a['value'] * 100) / $total_players),
-            'value' => $a['value'],
+            'data' => round(($output['total'] * 100) / $total_players),
+            'value' => $output['total'],
         );
 
         return $json;
@@ -469,7 +467,8 @@ class Player extends MY_Controller
                 if($max_data >= $last_player['reward_value']){
                     $max_data = $last_player['reward_value'];
                 }
-                $json[] = $this->rewardRange($data, 'reward', $min_data, $max_data, $total_players);
+
+                $json[] = $this->rewardRange($data, 'reward_value', $min_data, $max_data, $total_players);
                 if($max_data >= $last_player['reward_value']){
                     break;
                 }
@@ -555,8 +554,8 @@ class Player extends MY_Controller
 
                     if (is_array($sort_explode)) {
                         $sort_data[] = array(
-                            'name' => (!empty($sort_explode[0]))? $sort_explode[0] : '',
-                            'value' => (!empty($sort_explode[1]))? $sort_explode[1] : ''
+                            'name' => (isset($sort_explode[0]) && !empty($sort_explode[0]))? $sort_explode[0] : '',
+                            'value' => (isset($sort_explode[1]) && (!empty($sort_explode[1]) || $sort_explode[1]  === "0") )? $sort_explode[1] : ''
                         );
                     }
                 }
