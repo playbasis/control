@@ -63,7 +63,7 @@ var twit = new twitter({
 });
 
 var dateObj = new Date();
-var TRACKING = '#acnwave,#acnwaves';
+var TRACKING = '#acnwave,#acnwaves,#hyatt';
 //var TRACKING = '#webwedth,#wwth12,#wwth';
 
 function stringObj(s){
