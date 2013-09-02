@@ -63,7 +63,7 @@ var twit = new twitter({
 });
 
 var dateObj = new Date();
-var TRACKING = '#acnwave,#acnwaves';
+var TRACKING = '#acnwave,#acnwaves,#hyatt';
 //var TRACKING = '#webwedth,#wwth12,#wwth';
 
 function stringObj(s){
@@ -87,27 +87,30 @@ function stringObj(s){
 };
 
 function saveTweet(data, retweet){
-    var entry = new TweetEntry({
-        'user': data.user.screen_name,
-        'name': data.user.name,
-        'id':data.user.id_str,
-        'image':data.user.profile_image_url,
-        'tweet_id': data.id_str,
-        'tweet':data.text,
-        'tag': stringObj(data),
-        'retweet':retweet
-    });
-    console.log('saving entry...');
-    entry.save(function(err){
-        if(err){
-            console.log(err);
-            return;
-        }
-        console.log('tweet saved!');
-        dateObj = new Date();
-        //tell clients to update data
-        io.sockets.emit('newtweet', {'time': dateObj.getTime()});
-    });
+    if(data.hasOwnProperty('user') && data.user.hasOwnProperty('screen_name') && data.user.hasOwnProperty('name') && data.user.hasOwnProperty('id_str')
+        && data.user.hasOwnProperty('profile_image_url') && data.hasOwnProperty('id_str')){
+        var entry = new TweetEntry({
+            'user': data.user.screen_name,
+            'name': data.user.name,
+            'id':data.user.id_str,
+            'image':data.user.profile_image_url,
+            'tweet_id': data.id_str,
+            'tweet':data.text,
+            'tag': stringObj(data),
+            'retweet':retweet
+        });
+        console.log('saving entry...');
+        entry.save(function(err){
+            if(err){
+                console.log(err);
+                return;
+            }
+            console.log('tweet saved!');
+            dateObj = new Date();
+            //tell clients to update data
+            io.sockets.emit('newtweet', {'time': dateObj.getTime()});
+        });
+    }
 };
 
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
