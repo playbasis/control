@@ -11,11 +11,6 @@ var FbLeader;
 
 var TRACKING = '';
 
-
-
-
-console.log('connecting to db...');
-
 var options = {
 	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
@@ -76,6 +71,7 @@ function stringObj(s){
     return o;
 };
 
+console.log('connecting to db...');
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
@@ -176,8 +172,6 @@ function saveTweet(data, retweet){
         });
     }
 };
-
-
 
 io.sockets.on('connection', function(socket){
 	socket.emit('newtweet', {'time': dateObj.getTime()});
