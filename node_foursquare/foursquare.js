@@ -37,18 +37,16 @@ app.get('/users', user.list);
 //connect to mongodb
 var dbReady = false;
 var mongoose = require('mongoose');
-var FSqFeed;
+var FsqFeed;
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 	
 	var schema = mongoose.Schema({
 		user: 'string',
-		name: 'string',
-		id: 'string',
-		profile_image: 'string',
+		checkin: 'string'
 	});
-	FSqFeed = db.model('FSqFeed', schema);
+	FsqFeed = db.model('FsqFeed', schema);
 
 	dbReady = true;
 	console.log('db connected!');
@@ -72,7 +70,7 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function(socket){
 	var dateObj = new Date();
-	socket.emit('fsqstream', {'time': dateObj.getTime()});
+	socket.emit('fsqcheckin', {'time': dateObj.getTime()});
 });
 
 var BASE_URL = 'https://foursquare.pbapp.net';
@@ -122,5 +120,19 @@ app.post('/feed/callback', function (req, res)
 {
 	console.log('---------- checkin ----------');
 	console.log(req.body);
+	var entry = new FsqFeed({
+		'user' : req.body.user,
+		'checkin' : req.body.checkin
+	});
+	console.log('saving checkin...');
+	entry.save(function(err){
+		if(err){
+			console.log(err);
+			return;
+		}
+		console.log('checkin saved!');
+		var dateObj = new Date();
+		io.sockets.emit('fsqcheckin', {'time': dateObj.getTime()});
+	});
 	res.send(200);
 });
