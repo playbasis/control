@@ -140,6 +140,19 @@ app.get('/unsubscribe/tag/:tag', auth, function(req, res){
 	res.send(200);
 });
 
+app.get('/unsubscribe/all', auth, function(req, res){
+    var tag = req.params.tag;
+    instagram.subscriptions.list({ complete: function(data, pagination){
+        console.log('unsubscribe from: ' + tag);
+        var datalen = data.length;
+        for(var i=0; i<datalen; ++i){
+            instagram.subscriptions.unsubscribe({ id: data[i].id });
+            break;
+        }
+    }});
+    res.send(200);
+});
+
 app.get('/subscription', function(req, res){
 	instagram.subscriptions.list();
 	res.send(200);
