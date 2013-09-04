@@ -141,13 +141,11 @@ app.get('/unsubscribe/tag/:tag', auth, function(req, res){
 });
 
 app.get('/unsubscribe/all', auth, function(req, res){
-    var tag = req.params.tag;
     instagram.subscriptions.list({ complete: function(data, pagination){
-        console.log('unsubscribe from: ' + tag);
+        console.log('unsubscribe all');
         var datalen = data.length;
         for(var i=0; i<datalen; ++i){
             instagram.subscriptions.unsubscribe({ id: data[i].id });
-            break;
         }
     }});
     res.send(200);
