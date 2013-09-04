@@ -5,12 +5,13 @@ var fs = require('fs');
 //connect to mongodb
 var dbReady = false;
 var mongoose = require('mongoose');
-var schema;
+
 var TweetEntry;
+var FbLeader;
 db = mongoose.createConnection('db.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
-	schema = mongoose.Schema({
+    var schema = mongoose.Schema({
 		user: 'string',
 		name: 'string',
 		id: 'string',
@@ -21,9 +22,42 @@ db.once('open', function callback(){
         retweet: 'boolean'
 	});
 	TweetEntry = db.model('TweetEntry', schema);
+
+    var schemaKey = mongoose.Schema({
+        bg: 'string',
+        bg526: 'string',
+        bg980: 'string',
+        date_added: {type: Date, default: Date.now},
+        date_modified: {type: Date, default: Date.now},
+        fb_id: { type: 'string', unique: true },
+        htag: { type: 'string', index: true },
+        r1box: 'string',
+        r1boxs: 'string',
+        r2box: 'string',
+        r2boxs: 'string',
+        r3box: 'string',
+        r3boxs: 'string',
+        sbox: 'string',
+        sboxs: 'string',
+        sfc: 'string'
+    });
+    FbLeader = db.model('FbLeader', schemaKey);
+
 	dbReady = true;
 	console.log('db connected!');
 });
+var TRACKING = '';
+
+FbLeader.find({}, function (err, data) {
+    if (data) {
+        for (data in d) {
+            console.log(d);
+            console.log(d.htag);
+        }
+//        TRACKING =  data
+    }
+});
+
 console.log('connecting to db...');
 
 var options = {
@@ -63,7 +97,7 @@ var twit = new twitter({
 });
 
 var dateObj = new Date();
-var TRACKING = '#acnwave,#acnwaves,#hyatt';
+//var TRACKING = '#acnwave,#acnwaves,#hyatt';
 //var TRACKING = '#webwedth,#wwth12,#wwth';
 
 function stringObj(s){
