@@ -11,19 +11,46 @@ var FbLeader;
 
 var TRACKING = '';
 
-var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-	requestCert: true,
-	rejectUnauthorized: false
-};
+var express = require('express');
 
 var twitter = require('ntwitter')
-	, app = require('https').createServer(options, handler)
-	, io = require('socket.io').listen(app);
+    , routes = require('./routes')
+    , user = require('./routes/user')
+    , path = require('path')
+    , fs = require('fs')
+    , io = require('socket.io');
 
-app.listen(8081);
+var app = express();
+
+// all environments
+app.set('port', process.env.PORT || 8081);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', routes.index);
+app.get('/users', user.list);
+
+var options = {
+    key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+    cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+    ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+    requestCert: true,
+    rejectUnauthorized: false
+};
+
+var server = require('https').createServer(options, app);
+//var server = require('http').createServer(app);
+io = io.listen(server);
+
+server.listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
+});
 
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function (err, data) {
@@ -152,11 +179,10 @@ function getTweetFeed(){
     });
 }
 
-getTweetFeed();
 app.get('/restart', auth, function(req, res)
 {
     twit.stream.destroy;
-    getTweetFeed()
+    getTweetFeed();
     res.send(200);
 });
 
