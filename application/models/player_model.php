@@ -760,7 +760,7 @@ class Player_model extends MY_Model
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('pb_player_id', new MongoID($data['pb_player_id']));
-        $this->mongo_db->where('badge_id', array('$ne', null));
+        $this->mongo_db->where_ne('badge_id', null);
 
         if(isset($data['filter_badges_id'])){
             $this->mongo_db->where('badge_id', new MongoID($data['filter_badges_id']));
@@ -773,14 +773,14 @@ class Player_model extends MY_Model
         }
 
         $sort_data = array(
-            'amount',
+            'value',
             'date_modified',
         );
 
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($data['sort'] => $order));
         } else {
-            $this->mongo_db->order_by(array('amount' => $order));
+            $this->mongo_db->order_by(array('value' => $order));
         }
 
         $badges_data =  $this->mongo_db->get('playbasis_reward_to_player');
@@ -797,12 +797,18 @@ class Player_model extends MY_Model
             $badges_data = array_slice($badges_data, $data['start'], $data['limit']);
         }
 
+
         return $badges_data;
     }
 
     private function filterMongoPlayer($data){
 
         $res = array();
+
+        $this->mongo_db->where('group',  'NONPOINT');
+        $this->mongo_db->where('name',  'badge');
+        $reward = $this->mongo_db->get("playbasis_reward");
+        $reward_badge_id = $reward[0]["_id"];
 
         if (!empty($data['filter_sort'])) {
 
@@ -903,6 +909,15 @@ class Player_model extends MY_Model
                             $res['exp_value'] =  array('value.exp' => array('$gte' => (int)$exp_explode[0], '$lte' => (int)$exp_explode[1]));
                         };
 
+                        break;
+                    case 'gender':
+                        if (isset($filter['value'])) {
+                            if ($filter['value']=='Male') {
+                                $res['gender_value'] = array('value.gender' => 1);
+                            } else if ($filter['value']=='Female') {
+                                $res['gender_value'] = array('value.gender' => 2);
+                            };
+                        }
                         break;
                     case 'gender_id':
                         $action_pos = strrpos($filter['value'], '-');

@@ -44,7 +44,6 @@ class Player extends MY_Controller
         $this->data['site_id'] = $this->User_model->getSiteId();
         $this->data['client_id'] = $this->User_model->getClientId();
 
-        $total = $this->Player_model->getTotalPlayers($this->data['site_id'], $this->data['client_id']);
         $results = $this->Player_model->getPlayers($data);
 
         foreach ($results as $result) {

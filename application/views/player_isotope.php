@@ -101,13 +101,15 @@
                 <h5>Recent Badges</h5>
 
                 <ul>
-                    <?php if(!empty($player['badge'])) { foreach($player['badge'] as $badge) { ?>
-                    <li class="isot-player-recent-badge">
-                        <?php if(!empty($badge['image'])) { ?>
-                        <img width="40" src="<?php echo $badge['image']; ?>" alt="badge">
-                        <?php } ?>
-                    </li>
-                    <?php } } ?>
+                    <?php if(!empty($player['badges'])) {
+                        foreach($player['badges'] as $badge) { ?>
+                        <li class="isot-player-recent-badge">
+                            <?php if(!empty($badge['image'])) { ?>
+                            <img width="40" src="<?php echo $badge['image']; ?>" alt="badge">
+                            <?php } ?>
+                        </li>
+                        <?php }
+                    } ?>
                 </ul>
 
             </div>
@@ -124,7 +126,7 @@
             <!-- Start isot-player-level -->
             <div class="isot-player-level <?php if( $player['level'] >= 100 ) echo "isot-player-level-hundreds"; ?>" title="Level">
 
-                <object data="view/image/level-group-<?php echo floor( $player['level'] / 10 ); ?>.svg" type="image/svg+xml" />
+                <object data="image/level-group-<?php echo floor( $player['level'] / 10 ); ?>.svg" type="image/svg+xml" />
 
                 <span><?php echo $player['level']; ?></span>
 

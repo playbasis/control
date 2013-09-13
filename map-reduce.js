@@ -86,12 +86,13 @@ db.playbasis_reward_to_player.mapReduce(
 	{ out: {reduce:"playbasis_summary_of_player"} }
 )
 var map_badge_value = function() {
+	var badge_in_reward = '5215f8ab6d6cfb001e00008f';
 	if (!this.badge_id || !this.value || !this.pb_player_id) {
         return;
     }
 	 
 	 var output = {};
-	 output["badge_"+this.badge_id+""] = {badge_id: this.badge_id, value: this.value};
+	 output["reward_"+badge_in_reward+""] = {reward_id: ObjectId(badge_in_reward), value: this.value};
 	 var key = {client_id: this.client_id, site_id: this.site_id, pb_player_id: this.pb_player_id};
 	 
 	 emit(key, output);
@@ -113,9 +114,7 @@ var reduce_badge_value = function(key, values){
 	return reduced;
 }
 db.playbasis_reward_to_player.mapReduce(
-	map_reward_value,
-	reduce_reward_value,
+	map_badge_value,
+	reduce_badge_value,
 	{ out: {reduce:"playbasis_summary_of_player"} }
 )
-
-

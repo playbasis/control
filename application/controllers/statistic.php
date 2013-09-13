@@ -143,7 +143,6 @@ class Statistic extends CI_Controller
     }
 
     public function isotope(){
-//        $this->benchmark->mark('isotope_start');
 
         include('action_data_log.php');
 
@@ -166,7 +165,6 @@ class Statistic extends CI_Controller
         $data = $this->filterData();
 
         $iso_data = $this->Player_model->getIsotopePlayer($data);
-//        $total_players = $this->Player_model->getIsotopeTotalPlayer($data);
 
         $total_players = $iso_data['total'];
         $results = $iso_data['result'];
@@ -219,7 +217,7 @@ class Statistic extends CI_Controller
                             'badge_id' => $badge['badge_id'],
                             'name' => $badge_info[0]['name'],
                             'image' => $thumb,
-                            'quantity' => $badge['amount'],
+                            'quantity' => $badge['value'],
                             'date_added' => $badge['date_added'],
                             'date_modified' => $badge['date_modified'],
                         );
@@ -247,7 +245,7 @@ class Statistic extends CI_Controller
                     'gender' => $result['gender'],
                     'last_active' => (isset($event_log[0]))? $event_log[0]['date_modified'] : '0 / 0 / 0',
                     'action' => $actions,
-                    'badge' => $badges
+                    'badges' => $badges
                 );
 
             }
@@ -266,10 +264,6 @@ class Statistic extends CI_Controller
         $html = $this->parser->parse('player_isotope', $this->data, TRUE);
 
         $data_html = array('html' => $html , 'current_page' => $this->current_page, 'total_page' => $total_pages, 'limit' => $this->limit, 'total_players' => $total_players);
-
-//        $this->benchmark->mark('isotope_end');
-//
-//        echo "isotope : ".$this->benchmark->elapsed_time('isotope_start', 'isotope_end');
 
         $this->output->set_output(json_encode($data_html));
     }

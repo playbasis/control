@@ -24,7 +24,7 @@ class Badge_model extends MY_Model
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-            $this->mongo_db->where('status', (int)$data['filter_status']);
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
 
         $sort_data = array(
@@ -80,12 +80,36 @@ class Badge_model extends MY_Model
         return $badges_data;
     }
 
-    public function getBadgeBySiteId($site_id) {
+    public function getTotalBadges(){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('status', true);
+
+        $total = $this->mongo_db->count("playbasis_badge");
+
+        return $total;
+    }
+
+    public function getBadgeBySiteId($site_id, $limit=null, $offset=null) {
         $badges_client_data = array();
 
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('site_id',  new MongoID($site_id));
+
+        if ($limit || $offset) {
+            if ($offset < 0) {
+                $offset = 0;
+            }
+
+            if ($limit < 1) {
+                $limit = 20;
+            }
+
+            $this->mongo_db->limit((int)$limit);
+            $this->mongo_db->offset((int)$offset);
+        }
+
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
         foreach ($results as $result) {
@@ -101,12 +125,23 @@ class Badge_model extends MY_Model
                     'hint' => isset($badge_info[0]['hint'])?$badge_info[0]['hint']:'',
                     'quantity' => isset($badge_info[0]['quantity'])?$badge_info[0]['quantity']:0,
                     'image' => isset($badge_info[0]['image'])?$badge_info[0]['image']:'',
-                    'status' => isset($badge_info[0]['status'])?$badge_info[0]['status']:false
+                    'status' => isset($badge_info[0]['status'])?$badge_info[0]['status']:false,
+                    'sort_order'  =>  isset($badge_info[0]['sort_order'])?$badge_info[0]['sort_order']:0,
                 );
             }
         }
 
         return $badges_client_data;
+    }
+
+    public function getTotalBadgeBySiteId($site_id) {
+
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('site_id',  new MongoID($site_id));
+        $total = $this->mongo_db->count("playbasis_badge_to_client");
+
+        return $total;
     }
 
     public function getCommonBadges(){
@@ -192,5 +227,19 @@ class Badge_model extends MY_Model
         $this->mongo_db->delete('playbasis_badge');
         $this->mongo_db->where('badge_id',  new MongoID($badge_id));
         $this->mongo_db->delete('playbasis_badge_to_client');
+    }
+
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = "0000-00-00 00:00:00";
+        }
+        return $dateTimeMongo;
     }
 }

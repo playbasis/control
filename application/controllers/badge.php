@@ -26,8 +26,19 @@ class Badge extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getList();
+        $this->getList(0);
         
+    }
+
+    public function page($offset=0) {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getList($offset);
+
     }
 
     public function insert() {
@@ -114,10 +125,17 @@ class Badge extends MY_Controller
             redirect('/badge', 'refresh');
         }
 
-        $this->getList();
+        $this->getList(0);
     }
 
-    private function getList() {
+    private function getList($offset) {
+
+        $per_page = 10;
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('badge/page');
+
 
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
@@ -133,10 +151,14 @@ class Badge extends MY_Controller
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
 
-            $results = $this->Badge_model->getBadges();
+            $data['limit'] = $per_page;
+            $data['start'] = $offset;
+
+            $results = $this->Badge_model->getBadges($data);
+
+            $badge_total = $this->Badge_model->getTotalBadges();
 
             foreach ($results as $result) {
-                $action = array();
 
                 if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($result['image'], 50, 50);
@@ -153,7 +175,6 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'action' => $action
                 );
             }
         }
@@ -161,10 +182,11 @@ class Badge extends MY_Controller
 
             $this->load->model('Reward_model');
 
-            $badges = $this->Badge_model->getBadgeBySiteId($site_id);
+            $badges = $this->Badge_model->getBadgeBySiteId($site_id, $per_page, $offset);
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
-            $badge_total = count($badges);
+
+            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($site_id);
 
             if ($reward_limit_data) {
 
@@ -174,7 +196,6 @@ class Badge extends MY_Controller
                 $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
                 foreach ($badges as $badge) {
-                    $action = array();
 
                     if ($badge['image'] && (S3_IMAGE . $badge['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge['image'] != 'HTTP/1.0 403 Forbidden')) {
                         $image = $this->Image_model->resize($badge['image'], 50, 50);
@@ -188,8 +209,10 @@ class Badge extends MY_Controller
                         'name' => $badge['name'],
                         'hint' => $badge['hint'],
                         'quantity' => $badge['quantity'],
+                        'status' => $badge['status'],
                         'image' => $image,
-                        'href' => $action
+                        'sort_order'  => $badge['sort_order'],
+                        'selected' => ($this->input->post('selected') && in_array($badge['_id'], $this->input->post('selected'))),
                     );
                 }
 
@@ -210,6 +233,16 @@ class Badge extends MY_Controller
         } else {
             $this->data['success'] = '';
         }
+
+        $config['total_rows'] = $badge_total;
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
 
         $this->data['main'] = 'badge';
         $this->data['setting_group_id'] = $setting_group_id;

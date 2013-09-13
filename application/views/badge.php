@@ -19,7 +19,6 @@
             </div>
         </div>
         <div class="content">
-            <?php if ($user_group_id==$setting_group_id) { ?>
             <?php
             $attributes = array('id' => 'form');
             echo form_open('badge/delete',$attributes);
@@ -50,44 +49,6 @@
                             <td class="right"><?php echo $badge['quantity']; ?></td>
                             <td class="left"><?php echo $badge['status']; ?></td>
                             <td class="right"><?php echo $badge['sort_order']; ?></td>
-                            <td class="right"><?php foreach ($badge['action'] as $action) { ?>
-                                [ <a href="<?php echo $action['href']; ?>"><?php echo $action['text']; ?></a> ]
-                                <?php } ?></td>
-                        </tr>
-                            <?php } ?>
-                        <?php } else { ?>
-                    <tr>
-                        <td class="center" colspan="8"><?php echo $text_no_results; ?></td>
-                    </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            <?php
-            echo form_close();
-            } else {
-            $attributes = array('id' => 'form');
-            echo form_open('badge/delete',$attributes);
-            ?>
-                <table class="list">
-                    <thead>
-                    <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (isset($badges)) { ?>
-                        <?php foreach ($badges as $badge) { ?>
-                        <tr>
-                            <td style="text-align: center;">
-                                <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" />
-                            </td>
-                            <td class="left"><div class="image"><img src="<?php echo $badge['image']; ?>" alt="" id="thumb" /></div></td>
-                            <td class="left"><?php echo $badge['name']; ?></td>
-                            <td class="right"><?php echo $badge['quantity']; ?></td>
                             <td class="right">
                                 [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
                             </td>
@@ -95,13 +56,16 @@
                             <?php } ?>
                         <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="8"><?php echo $text_no_results; ?></td>
+                        <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
                     </tr>
                         <?php } ?>
                     </tbody>
                 </table>
             <?php
             echo form_close();
+
+            if($pagination_links != ''){
+                echo $pagination_links;
             }
             ?>
         </div>

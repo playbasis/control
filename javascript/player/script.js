@@ -382,7 +382,7 @@
   var donutAPI = {
     get: function(criteria) {
       // console.log('donut api get :> '+config_statistic_link+'&filter='+criteria);
-      console.log(criteria);
+      // console.log(criteria);
       return  $.ajax({
                 url: config_statistic_link,
                 data: {filter_sort:criteria},
