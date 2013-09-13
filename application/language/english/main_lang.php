@@ -87,6 +87,7 @@ $lang['text_voucher_theme']               = 'Voucher Themes';
 $lang['text_weight_class']                = 'Weight Classes';
 $lang['text_length_class']                = 'Length Classes';
 $lang['text_zone']                        = 'Zones';
+$lang['text_no_results']                  = 'No results!';
 
 //Playbasis
 $lang['text_player']									= 'Players';

@@ -95,6 +95,41 @@ class Domain_model extends MY_Model
         return $client_data;
     }
 
+    public function resetToken ($site_id) {
+
+        $secret = $this->genAccessSecret($site_id);
+
+        $token = $this->checkAccessToken("",$secret);
+
+        if ($token == '0' || $token == 0) {
+            $this->set_site_mongodb(0);
+            $this->mongo_db->where('_id', new MongoID($site_id));
+            $this->mongo_db->set('api_secret', $secret);
+            $this->mongo_db->update('playbasis_client_site');
+        }
+    }
+
+    public function checkAccessToken($keys="", $secret) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('api_secret', $secret);
+
+        $total = $this->mongo_db->count("playbasis_client_site");
+
+        return $total;
+    }
+
+    private function genAccessSecret($site_id) {
+        $salt = "R0b3rt pl@yb@s1s";
+
+        $site_info = $this->getDomain($site_id);
+
+        $secret = md5($site_info['site_name'] . (time() . $salt));
+
+        return $secret;
+    }
+
     private function datetimeMongotoReadable($dateTimeMongo)
     {
         if ($dateTimeMongo) {

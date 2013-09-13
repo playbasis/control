@@ -49,8 +49,6 @@ class Domain extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        $data = array();
-
         if (isset($this->request->get['filter_name'])) {
             $filter_name = $this->request->get['filter_name'];
         } else {
@@ -80,15 +78,12 @@ class Domain extends MY_Controller
             'limit' => $limit
         );
 
-        $setting_group_id = $this->User_model->getAdminGroupID();
-
         $total = $this->Domain_model->getTotalDomainsByClientId($client_id);
 
         $results = $this->Domain_model->getDomainsByClientId($data);
 
         if ($results) {
             foreach ($results as $result) {
-                $action = array();
 
                 $plan_id = $this->Permission_model->getPermissionBySiteId($result['site_id']);
 
@@ -140,6 +135,20 @@ class Domain extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    public function reset() {
+        $json = array();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->Domain_model->resetToken($this->input->post('site_id'));
+
+            $json['success'] = $this->lang->line('text_success');
+
+        }
+
+        $this->output->set_output(json_encode($json));
     }
 }
 ?>
