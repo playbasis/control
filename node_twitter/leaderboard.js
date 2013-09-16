@@ -115,7 +115,8 @@ function getTweetFeed(){
             tweet_id: 'string',
             tweet: 'string',
             tag: { type: 'string', index: true },
-            retweet: 'boolean'
+            retweet: 'boolean',
+            created_time: {type: Date, default: Date.now}
         });
         TweetEntry = db.model('TweetEntry', schema);
 
