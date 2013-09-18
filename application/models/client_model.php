@@ -187,10 +187,13 @@ class Client_model extends MY_Model
 		$this->set_site($site_id);
 		$this->site_db()->select('substract,quantity');
 		$this->site_db()->where(array(
-			'badge_id' => $badgeId
+			'badge_id' => $badgeId,
+			'deleted' => 0
 		));
 		$result = $this->site_db()->get('playbasis_badge');
 		$badgeInfo = $result->row_array();
+		if(!$result)
+			return;
 		if($badgeInfo['substract'])
 		{
 			$remainingQuantity = $badgeInfo['quantity'] - $quantity;
@@ -311,18 +314,24 @@ class Client_model extends MY_Model
 		$this->set_site_mongodb($logData['site_id']);
 		$this->mongo_db->insert('jigsaw_log', $data);
 	}
-	public function getBadgeById($badgeId, $site_id)
+	public function getBadgeById($badge_id, $site_id)
 	{
-		$this->set_site($site_id);
-		$this->site_db()->select('badge_id,image');
-		$this->site_db()->where('badge_id', $badgeId);
-		$badgeImage = db_get_row_array($this, 'playbasis_badge');
-		$badgeImage['image'] = $this->config->item('IMG_PATH') . $badgeImage['image'];
-		$this->site_db()->select('name,description');
-		$this->site_db()->where('badge_id', $badgeId);
-		$badgeDesc = db_get_row_array($this, 'playbasis_badge_description');
-		$badge = array_merge($badgeImage, $badgeDesc);
-		return $badge;
+		//get badge image
+		$this->site_db()->select('image');
+		$this->site_db()->where(array(
+			'badge_id' => $badge_id,
+			'deleted' => 0
+		));
+		$result = db_get_row_array($this, 'playbasis_badge');
+		if(!$result)
+			return null;
+		$image = $this->config->item('IMG_PATH') . $result['image'];		
+		//get badge data
+		$this->site_db()->select('badge_id,name,description,hint');
+		$this->site_db()->where('badge_id', $badge_id);
+		$result = db_get_row_array($this, 'playbasis_badge_description');
+		$result['image'] = $image;
+		return $result;
 	}
 }
 ?>

@@ -171,20 +171,37 @@ class Player_model extends MY_Model
 		$badges = db_get_result_array($this, 'playbasis_badge_to_player');
         if(!$badges)
             return array();
-        foreach($badges as &$badge)
+		foreach($badges as $key => &$badge)
         {
-            //badge data
-            $this->site_db()->select('name,description');
-            $this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge_description');
-            $badge = array_merge($badge, $result);
-            //badge image
-            $this->site_db()->select('image');
-            $this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge');
-            $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
+			$badgeDetails = $this->getBadgeDetailsById($badge['badge_id']);
+			if(!$badgeDetails)
+			{
+				unset($badges[$key]);
+				continue;
+			}
+			$badge = $badgeDetails;
         }
+		unset($badge);
         return $badges;
+	}
+	private function getBadgeDetailsById($badge_id)
+	{
+		//get badge image
+		$this->site_db()->select('image');
+		$this->site_db()->where(array(
+			'badge_id' => $badge_id,
+			'deleted' => 0
+		));
+		$result = db_get_row_array($this, 'playbasis_badge');
+		if(!$result)
+			return null;
+		$image = $this->config->item('IMG_PATH') . $result['image'];		
+		//get badge data
+		$this->site_db()->select('badge_id,name,description,hint');
+		$this->site_db()->where('badge_id', $badge_id);
+		$result = db_get_row_array($this, 'playbasis_badge_description');
+		$result['image'] = $image;
+		return $result;
 	}
 	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{

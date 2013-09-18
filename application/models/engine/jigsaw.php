@@ -343,9 +343,12 @@ class jigsaw extends MY_Model
 		$this->set_site($site_id);
 		$this->site_db()->select('stackable,substract,quantity');
 		$this->site_db()->where(array(
-			'badge_id' => $badgeId
+			'badge_id' => $badgeId,
+			'deleted' => 0
 			));
 		$badgeInfo = db_get_row_array($this, 'playbasis_badge');
+		if(!$badgeInfo)
+			return false;
 		//search badge owned by player
 		$this->site_db()->where(array(
 			'badge_id' => $badgeId,

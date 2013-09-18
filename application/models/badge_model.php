@@ -22,20 +22,17 @@ class Badge_model extends MY_Model
 		if(!$badgeSet)
 			return array();
 		//get data on badges
-		foreach($badgeSet as &$badge)
+		foreach($badgeSet as $key => &$badge)
 		{
-			//get badge data
-			$this->site_db()->select('name,description,hint');
-			$this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge_description');
-			$badge = array_merge($badge, $result);
-			//get badge image
-			$this->site_db()->select('image');
-			$this->site_db()->where('badge_id', $badge['badge_id']);
-			$result = db_get_row_array($this, 'playbasis_badge');
-			$result['image'] = $this->config->item('IMG_PATH') . $result['image'];
-			$badge = array_merge($badge, $result);
+			$badgeDetails = $this->getBadgeDetailsById($badge['badge_id']);
+			if(!$badgeDetails)
+			{
+				unset($badgeSet[$key]);
+				continue;
+			}
+			$badge = $badgeDetails;
 		}
+		unset($badge);
 		return $badgeSet;
 	}
 	public function getBadge($data)
@@ -51,21 +48,27 @@ class Badge_model extends MY_Model
 		$result = db_get_row_array($this, 'playbasis_badge_to_client');
 		if(!$result)
 			return array();
-		$badge = array(
-			'badge_id' => $data['badge_id']
-		);
-		//get badge data
-		$this->site_db()->select('name,description,hint');
-		$this->site_db()->where('badge_id', $badge['badge_id']);
-		$result = db_get_row_array($this, 'playbasis_badge_description');
-		$badge = array_merge($badge, $result);
+		$badgeDetails = $this->getBadgeDetailsById($data['badge_id']);
+		return ($badgeDetails) ? $badgeDetails : array();
+	}
+	private function getBadgeDetailsById($badge_id)
+	{
 		//get badge image
 		$this->site_db()->select('image');
-		$this->site_db()->where('badge_id', $badge['badge_id']);
+		$this->site_db()->where(array(
+			'badge_id' => $badge_id,
+			'deleted' => 0
+		));
 		$result = db_get_row_array($this, 'playbasis_badge');
-		$result['image'] = $this->config->item('IMG_PATH') . $result['image'];
-		$badge = array_merge($badge, $result);
-		return $badge;
+		if(!$result)
+			return null;
+		$image = $this->config->item('IMG_PATH') . $result['image'];		
+		//get badge data
+		$this->site_db()->select('badge_id,name,description,hint');
+		$this->site_db()->where('badge_id', $badge_id);
+		$result = db_get_row_array($this, 'playbasis_badge_description');
+		$result['image'] = $image;
+		return $result;
 	}
 	public function getAllCollection($data)
 	{
