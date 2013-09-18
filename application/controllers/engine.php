@@ -354,10 +354,13 @@ class Engine extends REST_Controller
 							{
 							case 'badge':
 								$this->client_model->updateplayerBadge($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], $client_id, $site_id);
+								$badgeData = $this->client_model->getBadgeById($jigsawConfig['item_id'], $site_id);
+								if(!$badgeData)
+									break;
 								$event = array(
 									'event_type' => 'REWARD_RECEIVED',
 									'reward_type' => $jigsawConfig['reward_name'],
-									'reward_data' => $this->client_model->getBadgeById($jigsawConfig['item_id'], $site_id),
+									'reward_data' => $badgeData,
 									'value' => $jigsawConfig['quantity']
 								);
 								array_push($apiResult['events'], $event);

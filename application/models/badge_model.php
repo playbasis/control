@@ -22,7 +22,7 @@ class Badge_model extends MY_Model
 		if(!$badgeSet)
 			return array();
 		//get data on badges
-		foreach($badgeSet as &$badge)
+		foreach($badgeSet as $key => &$badge)
 		{
 			//get badge data
 			$this->mongo_db->select(array(
@@ -31,14 +31,22 @@ class Badge_model extends MY_Model
 				'description',
 				'hint'
 			));
-			$this->mongo_db->where('_id', $badge['badge_id']);
+			$this->mongo_db->where(array(
+				'_id' => $badge['badge_id'],
+				'deleted' => false
+			));
 			$result = $this->mongo_db->get('playbasis_badge');
-			assert($result);
+			if(!$result)
+			{
+				unset($badgeSet[$key]);
+				continue;
+			}
 			$badge = $result[0];
 			$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
 			$badge['badge_id'] = $badge['_id'];
 			unset($badge['_id']);
 		}
+		unset($badge);
 		return $badgeSet;
 	}
 	public function getBadge($data)
@@ -63,9 +71,13 @@ class Badge_model extends MY_Model
 			'description',
 			'hint'
 		));
-		$this->mongo_db->where('_id', $data['badge_id']);
+		$this->mongo_db->where(array(
+			'_id' => $data['badge_id'],
+			'deleted' => false
+		));
 		$result = $this->mongo_db->get('playbasis_badge');
-		assert($result);
+		if(!$result)
+			return array();
 		$result = $result[0];
 		$result['image'] = $this->config->item('IMG_PATH') . $result['image'];
 		$result['badge_id'] = $result['_id'];

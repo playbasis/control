@@ -208,10 +208,12 @@ class Client_model extends MY_Model
 			'quantity'
 		));
 		$this->mongo_db->where(array(
-			'_id' => $badgeId
+			'_id' => $badgeId,
+			'deleted' => false
 		));
 		$result = $this->mongo_db->get('playbasis_badge');
-		assert($result);
+		if(!$result)
+			return;
 		$badgeInfo = $result[0];
 		$mongoDate = new MongoDate(time());
 		if($badgeInfo['substract'])
@@ -357,9 +359,13 @@ class Client_model extends MY_Model
 			'image',
 			'hint'
 		));
-		$this->mongo_db->where('_id', $badgeId);
+		$this->mongo_db->where(array(
+			'_id' => $badgeId,
+			'deleted' => false
+		));
 		$badge = $this->mongo_db->get('playbasis_badge');
-		assert($badge);
+		if(!$badge)
+			return null;
 		$badge = $badge[0];
 		$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
 		$badge['badge_id'] = $badge['_id'];
