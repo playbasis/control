@@ -22,7 +22,8 @@ db.once('open', function callback(){
 		content: String,
 		content_url : String,
 		attachments : String,
-		tag: String
+		tag: String,
+        created_time: {type: Date, default: Date.now}
 	});
 	GPEntry = db.model('GPEntry', schema);
 

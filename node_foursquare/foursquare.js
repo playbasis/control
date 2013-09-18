@@ -44,7 +44,8 @@ db.once('open', function callback(){
 	
 	var schema = mongoose.Schema({
 		user: 'string',
-		checkin: 'string'
+		checkin: 'string',
+        created_time: {type: Date, default: Date.now}
 	});
 	FsqFeed = db.model('FsqFeed', schema);
 

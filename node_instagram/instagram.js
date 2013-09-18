@@ -53,7 +53,8 @@ db.once('open', function callback(){
 		thumbnail: 'string',
 		caption: 'string',
 		tag: { type: 'string', index: true },
-		time: 'number'
+		time: 'number',
+        created_time: {type: Date, default: Date.now}
 	});
 	IGFeed = db.model('IGFeed', feedSchema);
 
