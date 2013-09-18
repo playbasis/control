@@ -22,7 +22,8 @@ class Badge_model extends MY_Model
 		if(!$badgeSet)
 			return array();
 		//get data on badges
-		foreach($badgeSet as $key => &$badge)
+		$badges = array();
+		foreach($badgeSet as $badge)
 		{
 			//get badge data
 			$this->mongo_db->select(array(
@@ -37,17 +38,14 @@ class Badge_model extends MY_Model
 			));
 			$result = $this->mongo_db->get('playbasis_badge');
 			if(!$result)
-			{
-				unset($badgeSet[$key]);
 				continue;
-			}
 			$badge = $result[0];
 			$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
 			$badge['badge_id'] = $badge['_id'];
 			unset($badge['_id']);
+			array_push($badges, $badge);
 		}
-		unset($badge);
-		return $badgeSet;
+		return $badges;
 	}
 	public function getBadge($data)
 	{

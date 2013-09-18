@@ -208,7 +208,8 @@ class Player_model extends MY_Model
 		$badges = $this->mongo_db->get('playbasis_reward_to_player');
         if(!$badges)
             return array();
-		foreach($badges as $key => &$badge)
+		$playerBadges = array();
+		foreach($badges as $badge)
         {
             //get badge data
 			$this->mongo_db->select(array(
@@ -222,11 +223,7 @@ class Player_model extends MY_Model
 			));
 			$result = $this->mongo_db->get('playbasis_badge');
 			if(!$result)
-			{
-				unset($badges[$key]);
 				continue;
-			}
-			assert($result);
 			$result = $result[0];
             $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
 			$badge['name'] = $result['name'];
@@ -234,9 +231,9 @@ class Player_model extends MY_Model
 			$badge['amount'] = $badge['value'];
 			unset($badge['value']);
 			unset($badge['_id']);
+			array_push($playerBadges, $badge);
         }
-		unset($badge);
-        return $badges;
+		return $playerBadges;
 	}
 	public function claimBadge($pb_player_id, $badge_id, $site_id)
 	{
