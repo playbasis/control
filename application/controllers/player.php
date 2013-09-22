@@ -76,6 +76,7 @@ class Player extends REST_Controller
 		if($pb_player_id < 0)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//read player information
+
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
 			'username',
 			'first_name',
@@ -88,6 +89,22 @@ class Player extends REST_Controller
 			'date_added AS registered',
 			'birth_date'
 		));
+        $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $site_id);
+
+        $input = array_merge($validToken, array(
+            'pb_player_id' => $pb_player_id
+        ));
+        $points['points'] = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
+        foreach($points['points'] as &$point)
+        {
+            $point['reward_name'] = $this->point_model->getRewardNameById(array_merge($input, array(
+                'reward_id' => $point['reward_id']
+            )));
+            ksort($point);
+        }
+
+        $player['player']['points'] = $points;
+
 		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
