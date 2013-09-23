@@ -110,7 +110,10 @@ class Player_model extends MY_Model
 			'reward_id',
 			'value'
 		));
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where(array(
+			'pb_player_id' => $pb_player_id,
+			'badge_id' => null,
+		));
 		$result = $this->mongo_db->get('playbasis_reward_to_player');
 		$count = count($result);
 		for($i=0; $i < $count; ++$i)

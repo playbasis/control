@@ -112,10 +112,9 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//read player information
-
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
 			'username',
 			'first_name',
@@ -161,7 +160,7 @@ class Player extends REST_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
-		if($pb_player_id < 0)
+		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//read player information
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
