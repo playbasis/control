@@ -32,7 +32,7 @@
 			"name": "Player API",
 			"methods": [
 				{
-					"MethodName": "Player Info (Public)",
+					"MethodName": "Player Info (public data only)",
 					"Synopsis": "Get public information about a player.",
 					"HTTPMethod": "GET",
 					"URI": "/Player/:id",
@@ -48,10 +48,49 @@
 					]
 				},
 				{
-					"MethodName": "Player Info (Full)",
-					"Synopsis": "Get all information about a player.",
+					"MethodName": "Player Info (include private data)",
+					"Synopsis": "Get public and private information about a player.",
 					"HTTPMethod": "POST",
 					"URI": "/Player/:id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "token",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "access token returned from Auth"
+						},
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Detailed Player Info (public data only)",
+					"Synopsis": "Get detailed public information about a player, including points and badges.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/data/all",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Detailed Player Info (include private data)",
+					"Synopsis": "Get detailed public and private information about a player, including points and badges",
+					"HTTPMethod": "POST",
+					"URI": "/Player/:id/data/all",
 					"RequiresOAuth": "N",
 					"parameters": [
 						{
