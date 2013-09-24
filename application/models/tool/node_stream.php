@@ -60,6 +60,9 @@ class Node_stream extends MY_Model
 			),
 			'target' => array()
 		);
+        if(!$activityFormat['actor']['displayName']){
+            $activityFormat['actor']['displayName'] = $playerData['username'];
+        }
 		if(isset($data['badge']))
 		{
 			$activityFormat['object']['badge'] = array(
@@ -84,7 +87,7 @@ class Node_stream extends MY_Model
 	private function getPlayerInfo($pb_player_id, $site_id)
 	{
 		$this->set_site($site_id);
-		$this->site_db()->select('cl_player_id,first_name,last_name,image');
+		$this->site_db()->select('cl_player_id,first_name,last_name,image,username');
 		$this->site_db()->where('pb_player_id', $pb_player_id);
 		return db_get_row_array($this, 'playbasis_player');
 	}
