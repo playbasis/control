@@ -60,7 +60,7 @@ class Node_stream extends MY_Model
 			),
 			'target' => array()
 		);
-        if(!$activityFormat['actor']['displayName']){
+        if(!$playerData['first_name']){
             $activityFormat['actor']['displayName'] = $playerData['username'];
         }
 		if(isset($data['badge']))
