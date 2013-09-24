@@ -166,11 +166,23 @@ class Engine extends REST_Controller
 			if(!$validToken)
 				$this->response($this->error->setError('INVALID_TOKEN'), 200);
 			//get playbasis player id from client player id
+			$cl_player_id = $this->input->post('player_id');
 			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
-				'cl_player_id' => $this->input->post('player_id')
+				'cl_player_id' => $cl_player_id
 			)));
 			if(!$pb_player_id)
-				$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+			{
+				//$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+				//create user with tmp data for this id
+				$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+					'player_id' => $cl_player_id,
+					'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
+					'email' => 'pbapp_auto_user@playbasis.com',
+					'username' => 'pbapp_auto_user',
+					'first_name' => 'pbapp_auto_user',
+					'nickname' => 'pbapp_auto_user',
+				)));
+			}
 			//get action id by action name
 			$actionName = $this->input->post('action');
 			$actionId = $this->client_model->getActionId(array(

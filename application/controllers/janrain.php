@@ -111,7 +111,7 @@ class Janrain extends REST_Controller
 			$input['client_id'] = $client_id;
 			$input['site_id'] = $site_id;
 			$input['player_id'] = $identifier;
-			$input['image'] = (isset($profile['photo'])) ? $profile['photo'] : 'https://www.pbapp.net/images/default_profile.jpg';
+			$input['image'] = (isset($profile['photo'])) ? $profile['photo'] : $this->config->item('DEFAULT_PROFILE_IMAGE');
 			$input['username'] = (isset($profile['preferredUsername'])) ? $profile['preferredUsername'] : $name;
 			$input['email'] = (isset($profile['email']) && $profile['email']) ? $profile['email'] : 'no_email@playbasis.com';
 			if(isset($profile['name']))
