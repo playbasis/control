@@ -61,6 +61,9 @@ class Node_stream extends MY_Model
 			),
 			'target' => array()
 		);
+        if(!$playerData['first_name']){
+            $activityFormat['actor']['displayName'] = $playerData['username'];
+        }
 		if(isset($data['badge']))
 		{
 			$activityFormat['object']['badge'] = array(
@@ -90,7 +93,8 @@ class Node_stream extends MY_Model
 			'cl_player_id',
 			'first_name',
 			'last_name',
-			'image'
+			'image',
+			'username'
 		));
 		$this->mongo_db->where('_id', $pb_player_id);
 		$result = $this->mongo_db->get('playbasis_player');
