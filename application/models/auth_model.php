@@ -36,7 +36,10 @@ class Auth_model extends MY_Model
 	public function generateToken($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select(array('token'));
+		$this->mongo_db->select(array(
+			'token',
+			'date_expire'
+		));
 		$this->mongo_db->where(array(
 			'site_id' => $data['site_id'],
 			'client_id' => $data['client_id'],
@@ -46,8 +49,13 @@ class Auth_model extends MY_Model
 		if($token && $token[0])
 		{
 			$result['token'] = $token[0]['token'];
+			$result['date_expire'] = date('Y-m-d H:i:s', $token[0]['date_expire']->sec);
 			return $result;
 		}
+		return $this->renewToken($data);
+	}
+	public function renewToken($data)
+	{
 		$token = array();
 		$token['token'] = hash('sha1', $data['key'] . time() . $data['secret']);
 		$expire = new MongoDate(time() + TOKEN_EXPIRE);
@@ -73,6 +81,7 @@ class Auth_model extends MY_Model
 				'date_expire' => $expire
 			));
 		}
+		$token['date_expire'] = date('Y-m-d H:i:s', $expire->sec);
 		return $token;
 	}
 	public function findToken($token)
@@ -139,7 +148,7 @@ class Auth_model extends MY_Model
 		));
 		$this->mongo_db->where(array(
 			'api_key' => $apiKey,
-		));
+			));
 		$result = $this->mongo_db->get('playbasis_client_site');
 		if($result && $result[0])
 		{
