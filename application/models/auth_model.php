@@ -23,7 +23,7 @@ class Auth_model extends MY_Model
 	public function generateToken($data)
 	{
 		$this->set_site($data['site_id']);
-		$this->site_db()->select('token');
+		$this->site_db()->select('token,date_expire');
 		$this->site_db()->where(array(
 			'site_id' => $data['site_id'],
 			'client_id' => $data['client_id'],
@@ -58,6 +58,35 @@ class Auth_model extends MY_Model
 				));
 			}
 		}
+		return $token;
+	}
+	public function renewToken($data)
+	{
+		$token['token'] = hash('sha1', $data['key'] . time() . $data['secret']);
+		$expire = date('Y-m-d H:i:s', time() + TOKEN_EXPIRE);
+		$updated = array();
+		foreach(self::$dblist as $key => $value)
+		{
+			//keep track of which db is already updated
+			if(isset($updated[$value]))
+				continue;
+			$updated[$value] = true;
+			//delete old token
+			$this->set_site($key);
+			$this->site_db()->where(array(
+				'site_id' => $data['site_id'],
+				'client_id' => $data['client_id']
+			));
+			$this->site_db()->delete('playbasis_token');
+			//insert new token
+			$this->site_db()->insert('playbasis_token', array(
+				'client_id' => $data['client_id'],
+				'site_id' => $data['site_id'],
+				'token' => $token['token'],
+				'date_expire' => $expire
+			));
+		}
+		$token['date_expire'] = $expire;
 		return $token;
 	}
 	public function findToken($token)

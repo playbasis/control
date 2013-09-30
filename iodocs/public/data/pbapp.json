@@ -25,6 +25,29 @@
 							"Description": "api secret issued by Playbasis"
 						}
 					]
+				},
+				{
+					"MethodName": "Renew",
+					"Synopsis": "Create a new token and discard the current token",
+					"HTTPMethod": "POST",
+					"URI": "/Auth/renew",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "api_key",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "api key issued by Playbasis"
+						},
+						{
+							"Name": "api_secret",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "api secret issued by Playbasis"
+						}
+					]
 				}
 			]
 		},
