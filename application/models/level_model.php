@@ -70,7 +70,7 @@ class Level_model extends MY_Model
         if(!isset($slevel['level'])){
             $min_level = 1;
         }else{
-            $min_level = $slevel['level'];
+            $min_level = intval($slevel['level']);
         }
 
         $this->site_db()->select_max('level');
@@ -78,7 +78,7 @@ class Level_model extends MY_Model
         if(!isset($slevel['level'])){
             $max_level = 100;
         }else{
-            $max_level = $slevel['level'];
+            $max_level = intval($slevel['level']);
         }
 
         for($i = $min_level; $i <= $max_level; $i++){
