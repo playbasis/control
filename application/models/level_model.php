@@ -82,7 +82,7 @@ class Level_model extends MY_Model
         }
 
         for($i = $min_level; $i <= $max_level; $i++){
-            $level[$i] = $this->getLevelDetail($i, $client_id, $site_id);
+            $level[] = $this->getLevelDetail($i, $client_id, $site_id);
         }
 
         return $level;
