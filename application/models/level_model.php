@@ -24,7 +24,7 @@ class Level_model extends MY_Model
         $level = db_get_row_array($this, 'playbasis_client_exp_table');
         $level['max_exp'] = null;
 
-        $next_level = ($level+1);
+        $next_level = (intval($level)+1);
         $this->site_db()->select("exp AS max_exp");
         $this->site_db()->where('client_id', $client_id);
         $this->site_db()->where('site_id', $site_id);
