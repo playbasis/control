@@ -21,8 +21,8 @@ class Level_model extends MY_Model
         $this->site_db()->where("status", '1');
         $this->site_db()->order_by('exp');
         $this->site_db()->limit(1);
-        $level = db_get_row_array($this, 'playbasis_client_exp_table');
-        $level['max_exp'] = null;
+        $leveldata = db_get_row_array($this, 'playbasis_client_exp_table');
+        $leveldata['max_exp'] = null;
 
         $next_level = (intval($level)+1);
         $this->site_db()->select("exp AS max_exp");
@@ -35,7 +35,7 @@ class Level_model extends MY_Model
         $levelmax = db_get_row_array($this, 'playbasis_client_exp_table');
 
         if(isset($levelmax['max_exp'])){
-            $level['max_exp'] = intval($levelmax['max_exp'])-1;
+            $leveldata['max_exp'] = intval($levelmax['max_exp'])-1;
         }
         if(!isset($level['level']))
         {
@@ -45,8 +45,8 @@ class Level_model extends MY_Model
             $this->site_db()->where("status", '1');
             $this->site_db()->order_by('exp');
             $this->site_db()->limit(1);
-            $level = db_get_row_array($this, 'playbasis_exp_table');
-            $level['max_exp'] = null;
+            $leveldata = db_get_row_array($this, 'playbasis_exp_table');
+            $leveldata['max_exp'] = null;
 
             $this->site_db()->select("exp AS max_exp");
             $this->site_db()->where("level", $next_level);
@@ -56,10 +56,10 @@ class Level_model extends MY_Model
             $levelmax = db_get_row_array($this, 'playbasis_exp_table');
 
             if(isset($levelmax['max_exp'])){
-                $level['max_exp'] = intval($levelmax['max_exp'])-1;
+                $leveldata['max_exp'] = intval($levelmax['max_exp'])-1;
             }
         }
-        return $level;
+        return $leveldata;
     }
 
     public function getLevelsDetail($client_id, $site_id)
