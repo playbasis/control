@@ -584,6 +584,40 @@ class Player extends REST_Controller
 		$leaderboards = $this->player_model->getLeaderboards($limit, $validToken['client_id'], $validToken['site_id']);
 		$this->response($this->resp->setRespond($leaderboards), 200);
 	}
+    public function level_get($level)
+    {
+        $required = $this->input->checkParam(array(
+            'api_key'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        if(!$level)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'level'
+            )), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+
+        $this->load->model('level_model');
+        $level= $this->level_model->getLevelDetail($level, $validToken['client_id'], $validToken['site_id']);
+        $this->response($this->resp->setRespond($level), 200);
+    }
+    public function levels_get()
+    {
+        $required = $this->input->checkParam(array(
+            'api_key'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+
+        $this->load->model('level_model');
+        $level= $this->level_model->getLevelsDetail($validToken['client_id'], $validToken['site_id']);
+        $this->response($this->resp->setRespond($level), 200);
+    }
 	////////////////
 	// DEPRECATED //
 	////////////////
@@ -751,5 +785,61 @@ class Player extends REST_Controller
 		$leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $validToken['client_id'], $validToken['site_id']);
 		$this->response($this->resp->setRespond($leaderboard), 200);
 	}
+    ////////////////
+    // DEPRECATED //
+    ////////////////
+    public function ranks_post($limit = 20)
+    {
+        $required = $this->input->checkParam(array(
+            'token'
+        ));
+        if($required)
+            $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+        $validToken = $this->auth_model->findToken($this->input->post('token'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+        $leaderboards = $this->player_model->getLeaderboards($limit, $validToken['client_id'], $validToken['site_id']);
+        $this->response($this->resp->setRespond($leaderboards), 200);
+    }
+    ////////////////
+    // DEPRECATED //
+    ////////////////
+    public function level_post($level)
+    {
+        $required = $this->input->checkParam(array(
+            'token'
+        ));
+        if($required)
+            $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+        if(!$level)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'level'
+            )), 200);
+        $validToken = $this->auth_model->findToken($this->input->post('token'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_TOKEN'), 200);
+
+        $this->load->model('level_model');
+        $level= $this->level_model->getLevelDetail($level, $validToken['client_id'], $validToken['site_id']);
+        $this->response($this->resp->setRespond($level), 200);
+    }
+    ////////////////
+    // DEPRECATED //
+    ////////////////
+    public function levels_post()
+    {
+        $required = $this->input->checkParam(array(
+            'token'
+        ));
+        if($required)
+            $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+        $validToken = $this->auth_model->findToken($this->input->post('token'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_TOKEN'), 200);
+
+        $this->load->model('level_model');
+        $level= $this->level_model->getLevelsDetail($validToken['client_id'], $validToken['site_id']);
+        $this->response($this->resp->setRespond($level), 200);
+    }
 }
 ?>

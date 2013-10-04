@@ -526,6 +526,32 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "Level",
+                    "Synopsis": "Returns detail of level.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/level/:level",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "level",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "number of  level"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Levels",
+                    "Synopsis": "Returns all detail of level.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/levels",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                            
+                    ]
+                },
 				{
 					"MethodName": "Rank",
 					"Synopsis": "Returns list of players sorted by the specified point type.",
@@ -724,6 +750,45 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "DEPRECATED - Level",
+                    "Synopsis": "Returns detail of level.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/level/:level",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "level",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "number of level"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "DEPRECATED - Levels",
+                    "Synopsis": "Returns all detail of level.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/levels",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        }
+                    ]
+                },
 				{
 					"MethodName": "DEPRECATED - Rank",
 					"Synopsis": "Returns list of players sorted by the specified point type.",
@@ -753,7 +818,30 @@
 							"Description": "number of results to return"
 						}
 					]
-				}
+				},
+                {
+                    "MethodName": "DEPRECATED - Ranks",
+                    "Synopsis": "Returns list of players sorted by each point type.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/ranks/:limit",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return for each point type"
+                        }
+                    ]
+                }
 			]
 		},
 		{
