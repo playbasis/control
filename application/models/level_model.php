@@ -13,52 +13,39 @@ class Level_model extends MY_Model
     public function getLevelDetail($level, $client_id, $site_id)
     {
         $this->set_site($site_id);
+
+        $leveldata = array();
+        $level_range = array($level, intval($level)+1);
+
         //check if client have their own exp table setup
         $this->site_db()->select("level,exp AS min_exp,level_title,image");
         $this->site_db()->where('client_id', $client_id);
         $this->site_db()->where('site_id', $site_id);
-        $this->site_db()->where("level", $level);
+        $this->site_db()->where_in("level", $level_range);
         $this->site_db()->where("status", '1');
         $this->site_db()->order_by('exp');
-        $this->site_db()->limit(1);
-        $leveldata = db_get_row_array($this, 'playbasis_client_exp_table');
-        $leveldata['max_exp'] = null;
+        $this->site_db()->limit(2);
+        $levela = db_get_result_array($this, 'playbasis_client_exp_table');
 
-        $next_level = (intval($level)+1);
-        $this->site_db()->select("exp AS max_exp");
-        $this->site_db()->where('client_id', $client_id);
-        $this->site_db()->where('site_id', $site_id);
-        $this->site_db()->where("level", $next_level);
-        $this->site_db()->where("status", '1');
-        $this->site_db()->order_by('exp');
-        $this->site_db()->limit(1);
-        $levelmax = db_get_row_array($this, 'playbasis_client_exp_table');
-
-        if(isset($levelmax['max_exp'])){
-            $leveldata['max_exp'] = intval($levelmax['max_exp'])-1;
-        }
-        if(!isset($level['level']))
+        if(empty($levela))
         {
             //get level from default exp table instead
             $this->site_db()->select("level,exp AS min_exp,level_title,image");
-            $this->site_db()->where("level", $level);
+            $this->site_db()->where_in("level", $level_range);
             $this->site_db()->where("status", '1');
             $this->site_db()->order_by('exp');
-            $this->site_db()->limit(1);
-            $leveldata = db_get_row_array($this, 'playbasis_exp_table');
-            $leveldata['max_exp'] = null;
+            $this->site_db()->limit(2);
+            $levela = db_get_result_array($this, 'playbasis_exp_table');
 
-            $this->site_db()->select("exp AS max_exp");
-            $this->site_db()->where("level", $next_level);
-            $this->site_db()->where("status", '1');
-            $this->site_db()->order_by('exp');
-            $this->site_db()->limit(1);
-            $levelmax = db_get_row_array($this, 'playbasis_exp_table');
-
-            if(isset($levelmax['max_exp'])){
-                $leveldata['max_exp'] = intval($levelmax['max_exp'])-1;
-            }
         }
+
+        $i = 0;
+        foreach($levela as $l){
+            $l['max_exp'] = (isset($levela[$i+1]))?intval($levela[$i+1]['min_exp'])-1:null;
+            $leveldata = $l;
+            break;
+        }
+
         return $leveldata;
     }
 
@@ -73,7 +60,7 @@ class Level_model extends MY_Model
         $this->site_db()->order_by('exp');
         $leveldata = db_get_result_array($this, 'playbasis_client_exp_table');
 
-        if(!isset($level['level']))
+        if(empty($leveldata))
         {
             //get level from default exp table instead
             $this->site_db()->select("level,exp AS min_exp,level_title,image");

@@ -11,6 +11,7 @@ class Player extends REST_Controller
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
 		$this->load->model('action_model');
+        $this->load->model('level_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -127,6 +128,17 @@ class Player extends REST_Controller
 			'date_added AS registered',
 			'birth_date'
 		));
+        $level = $this->level_model->getLevelDetail($player['player']['level'], $validToken['client_id'], $validToken['site_id']);
+        $base_exp = $level['min_exp'];
+        $max_exp = $level['max_exp'] - $base_exp;
+        $now_exp = $player['player']['exp'] - $base_exp;
+        if(isset($level['max_exp'])){
+            $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
+            $player['player']['percent_of_level'] = round($percent_exp,2);
+        }else{
+            $player['player']['percent_of_level'] = 100;
+        }
+
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
         foreach($points as &$point)
@@ -599,7 +611,6 @@ class Player extends REST_Controller
         if(!$validToken)
             $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 
-        $this->load->model('level_model');
         $level= $this->level_model->getLevelDetail($level, $validToken['client_id'], $validToken['site_id']);
         $this->response($this->resp->setRespond($level), 200);
     }
@@ -614,7 +625,6 @@ class Player extends REST_Controller
         if(!$validToken)
             $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 
-        $this->load->model('level_model');
         $level= $this->level_model->getLevelsDetail($validToken['client_id'], $validToken['site_id']);
         $this->response($this->resp->setRespond($level), 200);
     }
@@ -819,7 +829,6 @@ class Player extends REST_Controller
         if(!$validToken)
             $this->response($this->error->setError('INVALID_TOKEN'), 200);
 
-        $this->load->model('level_model');
         $level = $this->level_model->getLevelDetail($level, $validToken['client_id'], $validToken['site_id']);
         $this->response($this->resp->setRespond($level), 200);
     }
@@ -837,7 +846,6 @@ class Player extends REST_Controller
         if(!$validToken)
             $this->response($this->error->setError('INVALID_TOKEN'), 200);
 
-        $this->load->model('level_model');
         $level['levels'] = $this->level_model->getLevelsDetail($validToken['client_id'], $validToken['site_id']);
         $this->response($this->resp->setRespond($level), 200);
     }
