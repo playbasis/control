@@ -94,7 +94,7 @@
 					]
 				},
                 {
-                    "MethodName": "List Player",
+                    "MethodName": "List Player (Basic information)",
                     "Synopsis": "Get basic information of players.",
                     "HTTPMethod": "POST",
                     "URI": "/Player/list",
