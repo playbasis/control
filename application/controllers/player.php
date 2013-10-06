@@ -137,6 +137,7 @@ class Player extends REST_Controller
         $list_player_id = explode(",", $this->input->post('list_player_id'));
         //read player information
         $player['player'] = $this->player_model->readListPlayer($list_player_id, $site_id, array(
+            'cl_player_id',
             'username',
             'first_name',
             'last_name',
