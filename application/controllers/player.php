@@ -94,6 +94,63 @@ class Player extends REST_Controller
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
 		$this->response($this->resp->setRespond($player), 200);
 	}
+    /*public function list_get()
+    {
+        $required = $this->input->checkParam(array(
+            'api_key',
+            'list_player_id'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+        $site_id = $validToken['site_id'];
+        $list_player_id = explode(",", $this->input->get('list_player_id'));
+        //read player information
+        $player['player'] = $this->player_model->readListPlayer($list_player_id, $site_id, array(
+            'username',
+            'first_name',
+            'last_name',
+            'gender',
+            'image',
+            'exp',
+            'level',
+            'date_added AS registered',
+            'birth_date'
+        ));
+
+        $this->response($this->resp->setRespond($player), 200);
+    }*/
+    public function list_post()
+    {
+        $required = $this->input->checkParam(array(
+            'token',
+            'list_player_id'
+        ));
+        if($required)
+            $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+        $validToken = $this->auth_model->findToken($this->input->post('token'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_TOKEN'), 200);
+        $site_id = $validToken['site_id'];
+        $list_player_id = explode(",", $this->input->post('list_player_id'));
+        //read player information
+        $player['player'] = $this->player_model->readListPlayer($list_player_id, $site_id, array(
+            'username',
+            'first_name',
+            'last_name',
+            'gender',
+            'image',
+            'email',
+            'exp',
+            'level',
+            'date_added AS registered',
+            'birth_date'
+        ));
+
+        $this->response($this->resp->setRespond($player), 200);
+    }
 	public function details_get($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
@@ -612,7 +669,7 @@ class Player extends REST_Controller
 		$leaderboards = $this->player_model->getLeaderboards($limit, $validToken['client_id'], $validToken['site_id']);
 		$this->response($this->resp->setRespond($leaderboards), 200);
 	}
-    public function level_get($level)
+    public function level_get($level='')
     {
         $required = $this->input->checkParam(array(
             'api_key'
@@ -830,7 +887,7 @@ class Player extends REST_Controller
     ////////////////
     // DEPRECATED //
     ////////////////
-    public function level_post($level)
+    public function level_post($level='')
     {
         $required = $this->input->checkParam(array(
             'token'

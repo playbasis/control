@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 function _build_memcache_id($sql, $table, $site_id)
 {
+//    echo $sql;
 	return 'sql_' . md5($sql) . ".$table.$site_id.";
 }
 

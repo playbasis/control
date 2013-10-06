@@ -93,6 +93,29 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "List Player",
+                    "Synopsis": "Get basic information of players.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/list",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "list_player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website separate with ',' example '1,2,3'"
+                        }
+                    ]
+                },
 				{
 					"MethodName": "Detailed Player Info (public data only)",
 					"Synopsis": "Get detailed public information about a player, including points and badges.",
