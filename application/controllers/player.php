@@ -115,8 +115,8 @@ class Player extends REST_Controller
 		)));
 		if($pb_player_id < 0)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		//read player information
 
+		//read player information
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
 			'username',
 			'first_name',
@@ -128,6 +128,8 @@ class Player extends REST_Controller
 			'date_added AS registered',
 			'birth_date'
 		));
+
+        //percent exp of level
         $level = $this->level_model->getLevelDetail($player['player']['level'], $validToken['client_id'], $validToken['site_id']);
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
@@ -175,6 +177,7 @@ class Player extends REST_Controller
 		)));
 		if($pb_player_id < 0)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
 		//read player information
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
 			'username',
@@ -188,6 +191,19 @@ class Player extends REST_Controller
 			'date_added AS registered',
 			'birth_date'
 		));
+
+        //percent exp of level
+        $level = $this->level_model->getLevelDetail($player['player']['level'], $validToken['client_id'], $validToken['site_id']);
+        $base_exp = $level['min_exp'];
+        $max_exp = $level['max_exp'] - $base_exp;
+        $now_exp = $player['player']['exp'] - $base_exp;
+        if(isset($level['max_exp'])){
+            $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
+            $player['player']['percent_of_level'] = round($percent_exp,2);
+        }else{
+            $player['player']['percent_of_level'] = 100;
+        }
+
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
         foreach($points as &$point)
