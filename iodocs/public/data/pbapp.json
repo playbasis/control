@@ -93,6 +93,29 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "List Player (Basic information)",
+                    "Synopsis": "Get basic information of players.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/list",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "list_player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website separate with ',' example '1,2,3'"
+                        }
+                    ]
+                },
 				{
 					"MethodName": "Detailed Player Info (public data only)",
 					"Synopsis": "Get detailed public information about a player, including points and badges.",
@@ -526,6 +549,32 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "Level",
+                    "Synopsis": "Returns detail of level.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/level/:level",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "level",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "number of  level"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Levels",
+                    "Synopsis": "Returns all detail of level.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/levels",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+
+                    ]
+                },
 				{
 					"MethodName": "Claim Badge",
 					"Synopsis": "Claim a badge that a player has earned.",
@@ -609,6 +658,45 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "DEPRECATED - Level",
+                    "Synopsis": "Returns detail of level.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/level/:level",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "level",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "number of level"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "DEPRECATED - Levels",
+                    "Synopsis": "Returns all detail of level.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/levels",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        }
+                    ]
+                },
 				{
 					"MethodName": "Ranks",
 					"Synopsis": "Returns list of players sorted by each point type.",
@@ -624,7 +712,30 @@
 							"Description": "number of results to return for each point type"
 						}
 					]
-				}
+				},
+                {
+                    "MethodName": "DEPRECATED - Ranks",
+                    "Synopsis": "Returns list of players sorted by each point type.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/ranks/:limit",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return for each point type"
+                        }
+                    ]
+                }
 			]
 		},
 		{

@@ -51,6 +51,7 @@ $route['Auth/renew'] = 'auth/renew';
 $route['Player/'.ANY_STRING] = 'player/index/$1';
 $route['Player/'.ANY_STRING.'/data/all'] = 'player/details/$1';
 $route['Player'] = 'player/index/';
+$route['Player/list'] = 'player/list';
 
 $route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';
@@ -72,6 +73,9 @@ $route['Player/rank'] = 'player/rank/0/0';
 
 $route['Player/ranks/'.ANY_NUMBER] = 'player/ranks/$1';
 $route['Player/ranks'] = 'player/ranks/20';
+
+$route['Player/level/'.ANY_NUMBER] = 'player/level/$1';
+$route['Player/levels'] = 'player/levels';
 
 $route['Player/'.ANY_STRING.'/points'] = 'player/points/$1';
 $route['Player/points'] = 'player/points';

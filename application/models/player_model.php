@@ -56,11 +56,32 @@ class Player_model extends MY_Model
 		{
 			$result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 			unset($result['date_added']);
-	}
+	    }
 		if(isset($result['birth_date']) && $result['birth_date'])
 			$result['birth_date'] = date('Y-m-d', $result['birth_date']->sec);
 		return $result;
-	}
+    }
+    public function readListPlayer($list_id, $site_id, $fields)
+    {
+        if(empty($list_id))
+            return array();
+        $this->set_site_mongodb($site_id);
+        if($fields)
+            $this->mongo_db()->select($fields);
+        $this->mongo_db()->where_in('cl_player_id', $list_id);
+        $this->mongo_db()->where('site_id', $site_id);
+        $result = $this->mongo_db->get('playbasis_player');
+        return $result;
+    }
+	public function readPlayers($site_id, $fields, $offset = 0, $limit = 10)
+	{
+		$this->set_site_mongodb($site_id);
+		if($fields)
+			$this->mongo_db()->select($fields);
+		$this->mongo_db()->limit($limit, $offset);
+        $result = $this->mongo_db->get('playbasis_player');
+        return $result;
+    }
 	public function updatePlayer($id, $site_id, $fieldData)
 	{
 		if(!$id)

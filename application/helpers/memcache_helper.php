@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 function _build_memcache_id($sql, $table, $site_id)
 {
+//    echo $sql;
 	return 'sql_' . md5($sql) . ".$table.$site_id.";
 }
 
@@ -11,6 +12,7 @@ function _get_memcached_result($mdl, $table, &$sql, &$memId)
 	$sql = $mdl->site_db()->get_compiled_select($table);
 	$memId = _build_memcache_id($sql, $table, $mdl->get_site());
 	return $mdl->memcached_library->get($memId);
+//    return null;
 }
 
 function _count_all_results_memcached_result($mdl, $table, &$sql, &$memId)
@@ -18,6 +20,7 @@ function _count_all_results_memcached_result($mdl, $table, &$sql, &$memId)
 	$sql = $mdl->site_db()->get_compiled_count_all_results($table);
 	$memId = _build_memcache_id($sql, $table, $mdl->get_site());
 	return $mdl->memcached_library->get($memId);
+//    return null;
 }
 
 function db_get_row_array($mdl, $table)
