@@ -46,9 +46,9 @@ class Reward_model extends MY_Model
         $reward_data = "";
 
         if (isset($data['order']) && ($data['order'] == 'DESC')) {
-            $order = " DESC";
+            $order = -1;
         } else {
-            $order = " ASC";
+            $order = 1;
         }
 
         $sort_data = array(

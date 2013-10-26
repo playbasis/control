@@ -35,9 +35,9 @@ class Badge_model extends MY_Model
         );
 
         if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-            $order = " DESC";
+            $order = -1;
         } else {
-            $order = " ASC";
+            $order = 1;
         }
 
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
