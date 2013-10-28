@@ -116,7 +116,7 @@
         });
 
         var imageUrlPath = "<?php echo S3_IMAGE ?>";
-        var baseUrlPath = "<?php echo base_url();?>index.php/";
+        var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>";
         var SiteId = "<?php echo $site_id;?>";
         var ClientId = "<?php echo $client_id;?>";
     </script>

@@ -26,8 +26,8 @@
                 </div>
                 <?php
             }
-                $attributes = array('id' => 'form');
-                echo form_open($form ,$attributes);
+            $attributes = array('id' => 'form');
+            echo form_open($form ,$attributes);
             ?>
                 <div id="tab-general">
                         <table class="form">
