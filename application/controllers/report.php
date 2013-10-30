@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Report extends CI_Controller
+require APPPATH . '/libraries/MY_Controller.php';
+class Report extends MY_Controller
 {
     public function __construct()
     {
@@ -18,39 +19,85 @@ class Report extends CI_Controller
 
     public function index() {
 
-        $per_page = 100;
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->load->library('pagination');
+        $this->getActionList(0, site_url('report/page'));
+    }
 
-        $this->load->model('Action_model');
+    public function page($offset=0) {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
+        $this->getActionList($offset, site_url('report/page'));
+    }
+
+    public function action() {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getActionList(0, site_url('report/action_page'));
+    }
+
+    public function action_page($offset=0) {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getActionList($offset, site_url('report/action_page'));
+    }
+
+    private function getActionList($offset, $url){
+        $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
+
+        $per_page = 100;
+        $parameter_url = "?t=".rand();
+
+        $this->load->library('pagination');
+
+        $this->load->model('Action_model');
+        $this->load->model('Image_model');
+        $this->load->model('Player_model');
+
+        $lang = get_lang($this->session, $this->config);
+        $this->lang->load("action", $lang['folder']);
+
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
+            $parameter_url .= "&date_start=".$filter_date_start;
         } else {
             $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
+            $parameter_url .= "&date_expire=".$filter_date_end;
         } else {
             $filter_date_end = date("Y-m-d"); ;
         }
 
         if ($this->input->get('username')) {
             $filter_username = $this->input->get('username');
+            $parameter_url .= "&username=".$filter_username;
         } else {
             $filter_username = '';
         }
 
         if ($this->input->get('action_id')) {
             $filter_action_id = $this->input->get('action_id');
+            $parameter_url .= "&action_id=".$filter_action_id;
         } else {
-            $filter_action_id = 0;
+            $filter_action_id = '';
         }
 
         $limit =($this->input->get('limit')) ? $this->input->get('limit') : $per_page ;
@@ -77,32 +124,37 @@ class Report extends CI_Controller
 
         foreach ($results as $result) {
 
-            if (!empty($result['image']) && $result['image'] && ($result['image'] != 'HTTP/1.1 404 Not Found' && $result['image'] != 'HTTP/1.0 403 Forbidden')) {
-                $thumb = $result['image'];
+            $player = $this->Player_model->getPlayerById($result['pb_player_id']);
+
+            if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
+                $thumb = $player['image'];
             } else {
-                $thumb = $this->model_tool_image->resize('no_image.jpg', 40, 40);
+                $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
             }
 
             $this->data['reports'][] = array(
-                'cl_player_id'      => $result['cl_player_id'],
-                'username'          => $result['username'],
+                'cl_player_id'      => $player['cl_player_id'],
+                'username'          => $player['username'],
                 'image'             => $thumb,
-                'email'             => $result['email'],
-                'exp'               => $result['exp'],
-                'level'             => $result['level'],
+                'email'             => $player['email'],
+                'exp'               => $player['exp'],
+                'level'             => $player['level'],
                 'action_name'       => $result['action_name'],
                 'url'               => $result['url'],
-                'date_added'        => $result['date_added']
+                'date_added'        => $this->datetimeMongotoReadable($result['date_added'])
             );
         }
 
-        $config['base_url'] = site_url('report/page');
+        $this->data['actions'] = $this->Action_model->getActionClient($client_id);
+
+        $config['base_url'] = $url.$parameter_url;
 
         $config['total_rows'] = $report_total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
+        $config['page_query_string'] = true;
 
         $this->pagination->initialize($config);
 
@@ -116,10 +168,6 @@ class Report extends CI_Controller
         $this->data['main'] = 'action';
         $this->load->vars($this->data);
         $this->render_page('template');
-    }
-
-    public function page($offset=0) {
-
     }
 
     private function xlsBOF()
@@ -174,8 +222,8 @@ class Report extends CI_Controller
 
     public function actionDownload() {
 
-        $this->load->language('report/action');
-        $this->load->model('report/action');
+        $this->load->model('Action_model');
+        $this->load->model('Player_model');
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
@@ -201,8 +249,8 @@ class Report extends CI_Controller
             $filter_action_id = 0;
         }
 
-        $client_id = $this->user->getClientId();
-        $site_id = $this->user->getSiteId();
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
 
         $data = array(
             'client_id'              => $client_id,
@@ -219,42 +267,48 @@ class Report extends CI_Controller
 
         $this->xlsBOF();
 
-        $this->data['column_avatar'] = $this->language->get('column_avatar');
-        $this->data['column_player_id'] = $this->language->get('column_player_id');
-        $this->data['column_username'] = $this->language->get('column_username');
-        $this->data['column_email'] = $this->language->get('column_email');
-        $this->data['column_level'] = $this->language->get('column_level');
-        $this->data['column_exp'] = $this->language->get('column_exp');
-        $this->data['column_action_name'] = $this->language->get('column_action_name');
-        $this->data['column_url'] = $this->language->get('column_url');
-        $this->data['column_date_added'] = $this->language->get('column_date_added');
-
-        $this->xlsWriteLabel(0,0,$this->language->get('column_player_id'));
-        $this->xlsWriteLabel(0,1,$this->language->get('column_username'));
-        $this->xlsWriteLabel(0,2,$this->language->get('column_email'));
-        $this->xlsWriteLabel(0,3,$this->language->get('column_level'));
-        $this->xlsWriteLabel(0,4,$this->language->get('column_exp'));
-        $this->xlsWriteLabel(0,5,$this->language->get('column_action_name'));
-        $this->xlsWriteLabel(0,6,$this->language->get('column_url'));
-        $this->xlsWriteLabel(0,7,$this->language->get('column_date_added'));
+        $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
+        $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
+        $this->xlsWriteLabel(0,2,$this->lang->line('column_email'));
+        $this->xlsWriteLabel(0,3,$this->lang->line('column_level'));
+        $this->xlsWriteLabel(0,4,$this->lang->line('column_exp'));
+        $this->xlsWriteLabel(0,5,$this->lang->line('column_action_name'));
+        $this->xlsWriteLabel(0,6,$this->lang->line('column_url'));
+        $this->xlsWriteLabel(0,7,$this->lang->line('column_date_added'));
         $xlsRow = 1;
 
-        $results = $this->model_report_action->getActionReport($data, true);
+        $results = $this->Action_model->getActionReport($data, true);
 
         foreach($results as $row)
         {
-            $this->xlsWriteNumber($xlsRow,0,$row['cl_player_id']);
-            $this->xlsWriteLabel($xlsRow,1,$row['username']);
-            $this->xlsWriteLabel($xlsRow,2,$row['email']);
-            $this->xlsWriteLabel($xlsRow,3,$row['level']);
-            $this->xlsWriteLabel($xlsRow,4,$row['exp']);
+            $player = $this->Player_model->getPlayerById($row['pb_player_id']);
+
+            $this->xlsWriteNumber($xlsRow,0,$player['cl_player_id']);
+            $this->xlsWriteLabel($xlsRow,1,$player['username']);
+            $this->xlsWriteLabel($xlsRow,2,$player['email']);
+            $this->xlsWriteLabel($xlsRow,3,$player['level']);
+            $this->xlsWriteLabel($xlsRow,4,$player['exp']);
             $this->xlsWriteLabel($xlsRow,5,$row['action_name']);
             $this->xlsWriteLabel($xlsRow,6,$row['url']);
-            $this->xlsWriteLabel($xlsRow,7,$row['date_added']);
+            $this->xlsWriteLabel($xlsRow,7,$this->datetimeMongotoReadable($row['date_added']));
             $xlsRow++;
         }
         $this->xlsEOF();
 
+    }
+
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = "0000-00-00 00:00:00";
+        }
+        return $dateTimeMongo;
     }
 }
 ?>

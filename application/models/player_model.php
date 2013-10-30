@@ -11,6 +11,7 @@ class Player_model extends MY_Model
 
         foreach ($results as $result) {
             $player_data = array(
+                'cl_player_id' => $result['cl_player_id'],
                 'pb_player_id' => $result['_id'],
                 'username' => $result['username'],
                 'first_name' => $result['first_name'],
