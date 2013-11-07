@@ -43,7 +43,8 @@ class Level extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'level/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('exp', $this->lang->line('exp'), 'trim|required|numeric|xss_clean|check_space');
+        $this->form_validation->set_rules('level', $this->lang->line('level'), 'trim|required|numeric|xss_clean|check_space');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -54,7 +55,14 @@ class Level extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
-                $this->Level_model->addLevel($this->input->post());
+                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                    $data = $this->input->post();
+                    $data['client_id'] = $this->User_model->getClientId();
+                    $data['site_id'] = $this->User_model->getSiteId();
+                    $this->Level_model->addLevelSite($data);
+                }else{
+                    $this->Level_model->addLevel($this->input->post());
+                }
 
                 $this->session->data['success'] = $this->lang->line('text_success');
 
@@ -85,6 +93,11 @@ class Level extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
                 $this->Level_model->editLevel($level_id, $this->input->post());
+                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                    $this->Level_model->editLevelSite($level_id, $this->input->post());
+                }else{
+                    $this->Level_model->editLevel($level_id, $this->input->post());
+                }
 
                 $this->session->data['success'] = $this->lang->line('text_success');
 
@@ -109,14 +122,20 @@ class Level extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $level_id) {
 
-                $this->Level_model->deleteLevel($level_id);
+            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                foreach ($this->input->post('selected') as $level_id) {
+                    $this->Level_model->deleteLevelSite($level_id);
+                }
+            }else{
+                foreach ($this->input->post('selected') as $level_id) {
+                    $this->Level_model->deleteLevel($level_id);
+                }
             }
 
             $this->session->data['success'] = $this->lang->line('text_success');
 
-            redirect('/badge', 'refresh');
+            redirect('/level', 'refresh');
         }
 
         $this->getList(0);
@@ -153,9 +172,18 @@ class Level extends MY_Controller
 
         $this->data['levels'] = array();
 
-        $total = $this->Level_model->getTotalLevels($data);
+        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+            $data['client_id'] = $this->User_model->getClientId();
+            $data['site_id'] = $this->User_model->getSiteId();
 
-        $results = $this->Level_model->getLevels($data);
+            $total = $this->Level_model->getTotalLevelsSite($data);
+
+            $results = $this->Level_model->getLevelsSite($data);
+        }else{
+            $total = $this->Level_model->getTotalLevels($data);
+
+            $results = $this->Level_model->getLevels($data);
+        }
 
         if ($results) {
             foreach ($results as $result) {
