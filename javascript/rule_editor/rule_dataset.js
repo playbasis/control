@@ -219,6 +219,17 @@ DataSet = function(jsonArray, parent_id) {
                 });
             });
 
+            // ******************************//
+            // binding event enter for input //
+            // ******************************//
+
+            $('.pbd_rule_unit_wrapper').on('keypress', 'input', function(event) {
+                var code = event.keyCode || event.which;
+                if(code == 13) {
+                    console.log($(this).parent().parent().find('.pbd_rule_action #pbd_rule_action_save').click());
+                }
+            });
+
             // *****************************//
             // binding edit/save button     //
             // *****************************//
@@ -670,7 +681,16 @@ DataSet = function(jsonArray, parent_id) {
     }
 };
 
+// ******************************//
+// binding event enter for input //
+// ******************************//
 
+$('.pbd_rule_header').on('keypress', 'input', function(event) {
+    var code = event.keyCode || event.which;
+    if(code == 13) {
+        console.log($(this).parent().parent().find('.pbd_rule_action #pbd_rule_action_save').click());
+    }
+});
 
 // // *****************************//
 // // binding event hover table row//
