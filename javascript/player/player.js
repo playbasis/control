@@ -366,7 +366,9 @@ isotopeMan = {
                 isotopeMan.renderGraph(isotopeMan.getFilterString(), num);
             }
             });
-              isFirst=false;
+            isFirst=false;
+            // setup bar, event binding
+            isotopeMan.setUpGraphEvent();
           }else{
               $("#pagination").trigger("reset",{
                   selectedPage:null,
@@ -374,8 +376,6 @@ isotopeMan = {
                   nbVisible: resp.total_page
               });
           }
-            // setup bar, event binding
-            isotopeMan.setUpGraphEvent();
       },
       error: function (err) {
         console.log('Request fail');
