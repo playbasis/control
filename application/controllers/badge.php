@@ -156,7 +156,7 @@ class Badge extends MY_Controller
 
             $results = $this->Badge_model->getBadges($data);
 
-            $badge_total = $this->Badge_model->getTotalBadges();
+            $badge_total = $this->Badge_model->getTotalBadges($data);
 
             foreach ($results as $result) {
 
@@ -167,7 +167,7 @@ class Badge extends MY_Controller
                 }
 
                 $this->data['badges'][] = array(
-                    'badge_id' => $result['badge_id'],
+                    'badge_id' => $result['_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
@@ -197,23 +197,29 @@ class Badge extends MY_Controller
 
                 foreach ($badges as $badge) {
 
-                    if ($badge['image'] && (S3_IMAGE . $badge['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge['image'] != 'HTTP/1.0 403 Forbidden')) {
-                        $image = $this->Image_model->resize($badge['image'], 50, 50);
-                    }
-                    else {
-                        $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                    }
+                    $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
 
-                    $this->data['badges'][] = array(
-                        'badge_id' => $badge['badge_id'],
-                        'name' => $badge['name'],
-                        'hint' => $badge['hint'],
-                        'quantity' => $badge['quantity'],
-                        'status' => $badge['status'],
-                        'image' => $image,
-                        'sort_order'  => $badge['sort_order'],
-                        'selected' => ($this->input->post('selected') && in_array($badge['_id'], $this->input->post('selected'))),
-                    );
+                    if($badge_info){
+
+                        if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $image = $this->Image_model->resize($badge_info['image'], 50, 50);
+                        }
+                        else {
+                            $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                        }
+
+                        $this->data['badges'][] = array(
+                            'badge_id' => $badge_info['_id'],
+                            'name' => $badge_info['name'],
+                            'hint' => $badge_info['hint'],
+                            'quantity' => $badge_info['quantity'],
+                            'status' => $badge_info['status'],
+                            'image' => $image,
+                            'sort_order'  => $badge_info['sort_order'],
+                            'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
+                        );
+
+                    }
                 }
 
             }
@@ -249,6 +255,7 @@ class Badge extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('badge');
     }
 
     private function getForm($badge_id=null) {
@@ -355,6 +362,7 @@ class Badge extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('badge_form');
     }
 
     private function validateModify() {
@@ -376,7 +384,7 @@ class Badge extends MY_Controller
 
             $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
 
-            $badges_count = $this->Badge_model->getBadgeBySiteId($this->User_model->getSiteId());
+            $badges_count = $this->Badge_model->getTotalBadgeBySiteId($this->User_model->getSiteId());
 
             foreach ($plan_limit as $plan) {
                 if($plan['site_id'] == $this->input->post('site_id')){
@@ -388,7 +396,7 @@ class Badge extends MY_Controller
                 }
             }
 
-            if(isset($limit_badge) && $limit_badge <= count($badges_count)){
+            if(isset($limit_badge) && $limit_badge <= $badges_count){
                 $error = $this->lang->line('error_limit');
             }
         }
@@ -411,7 +419,7 @@ class Badge extends MY_Controller
             $has = false;
 
             foreach ($badges as $badge) {
-                if($badge['badge_id'] == $badgeId){
+                if($badge['_id']."" == $badgeId.""){
                     $has = true;
                 }
             }

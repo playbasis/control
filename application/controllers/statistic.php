@@ -185,7 +185,7 @@ class Statistic extends CI_Controller
                 $actions = array();
 
                 $player_action = $this->Player_model->getActionsByPlayerId($result['pb_player_id']);
-                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
+//                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
 
                 if ($player_action) {
                     foreach ($player_action as $action) {
@@ -243,7 +243,8 @@ class Statistic extends CI_Controller
                     'status' => $result['status'],
                     'email' => $result['email'],
                     'gender' => $result['gender'],
-                    'last_active' => (isset($event_log[0]))? $event_log[0]['date_modified'] : '0 / 0 / 0',
+                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_added']))),
+                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_modified']))),
                     'action' => $actions,
                     'badges' => $badges
                 );

@@ -168,6 +168,7 @@ class Report extends MY_Controller
         $this->data['main'] = 'action';
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('action');
     }
 
     private function xlsBOF()

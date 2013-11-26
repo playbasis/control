@@ -125,7 +125,7 @@
                             <span class="isot-player-name"><?php echo $player['username']; ?></span>
                             <?php } ?>
                             <br>
-                            <span class="isot-player-email"><?php echo 'email';//$player['email']; ?></span>
+                            <span class="isot-player-email"><?php echo $player['email']; ?></span>
                         </div>
                     </div>
 
@@ -147,7 +147,7 @@
 
                             <div class="isot-player-last-active">
                                 <h6>last active</h6>
-                                <span><?php echo '0 / 0 / 0';//$player['last_active']; ?></span>
+                                <span><?php echo $player['last_active']; ?></span>
                             </div>
                         </div>
                     </div>
@@ -234,7 +234,7 @@
                         <div class="isot-player-contact">
                             <span class="isot-player-name"><?php echo $leaderboard['name']; ?></span>
                             <br>
-                            <span class="isot-player-email"><?php echo 'email';//$leaderboard['email']; ?></span>
+                            <span class="isot-player-email"><?php echo $leaderboard['email']; ?></span>
                         </div>
                     </div>
 
@@ -256,7 +256,7 @@
 
                             <div class="isot-player-last-active">
                                 <h6>last active</h6>
-                                <span><?php echo '0 / 0 / 0';//$leaderboard['last_active']; ?></span>
+                                <span><?php echo $leaderboard['last_active']; ?></span>
                             </div>
                         </div>
                     </div>

@@ -133,6 +133,48 @@ class Statistic_model extends MY_Model
         return $this->fillGap($reward_badge_player, $data);
     }
 
+    public function getLogClient($data, $action, $start, $end){
+        $this->mongo_db->select(array('_id','action_id','name','color','icon'));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('action_id', new MongoID($action['_id']));
+        if($start){
+            $start = strtotime( $start, strtotime($data['date']) );
+        }else{
+            $start = strtotime( $data['date'] );
+        }
+        if($end){
+            $end = strtotime( $end, strtotime($data['date']) );
+        }else{
+            $end = strtotime( $data['date'] );
+        }
+        $this->mongo_db->where('date_added', array('$gt' => new MongoDate($start), '$lte' => new MongoDate($end)));
+        $r =  $this->mongo_db->get('playbasis_action_log');
+
+        return $r;
+    }
+
+    public function getCountLogClient($data, $action, $start, $end){
+        $this->mongo_db->select(array('_id','action_id','name','color','icon'));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('action_id', new MongoID($action['_id']));
+        if($start){
+            $start = strtotime( $start, strtotime($data['date']) );
+        }else{
+            $start = strtotime( $data['date'] );
+        }
+        if($end){
+            $end = strtotime( $end, strtotime($data['date']) );
+        }else{
+            $end = strtotime( $data['date'] );
+        }
+        $this->mongo_db->where('date_added', array('$gt' => new MongoDate($start), '$lte' => new MongoDate($end)));
+        $r =  $this->mongo_db->count('playbasis_action_log');
+
+        return $r;
+    }
+
     public function getDailyActionmeaturement($data) {
         $this->set_site_mongodb(0);
 
@@ -142,26 +184,17 @@ class Statistic_model extends MY_Model
         $actions =  $this->mongo_db->get('playbasis_action_to_client');
 
         foreach ($actions as &$action) {
-            $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('action_id', new MongoID($action['_id']));
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime ( '-1 day' . $data['date'] )), '$lte' => new MongoDate(strtotime ($data['date']))));
-            $r1 =  $this->mongo_db->get('playbasis_action_log');
 
-            $action['value'] = (int)count($r1);
+            $r1 =  $this->getCountLogClient($data, $action, '-1 day', null);
+
+            $action['value'] = (int)$r1;
 
             $action['circle'] = $action['color']."Circle";
             $action['class'] = $action['icon'];
 
-            $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('action_id', new MongoID($action['_id']));
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime ( '-2 day' . $data['date'] )), '$lte' => new MongoDate(strtotime ( '-1 day' . $data['date'] ))));
-            $r2 =  $this->mongo_db->get('playbasis_action_log');
+            $r2 =  $this->getCountLogClient($data, $action, '-2 day', '-1 day');
 
-            $action['count_of_last_day'] =  (int)count($r2);
+            $action['count_of_last_day'] =  (int)$r2;
 
             //zero check
             $rateFactor = ($action['count_of_last_day'])? $action['count_of_last_day'] : 1;
@@ -184,26 +217,17 @@ class Statistic_model extends MY_Model
         $actions =  $this->mongo_db->get('playbasis_action_to_client');
 
         foreach ($actions as &$action) {
-            $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('action_id', new MongoID($action['_id']));
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime ( '-1 week', strtotime($data['date']) )), '$lte' => new MongoDate(strtotime($data['date']))));
-            $r1 =  $this->mongo_db->get('playbasis_action_log');
 
-            $action['value'] = (int)count($r1);
+            $r1 =  $this->getCountLogClient($data, $action, '-1 week', null);
+
+            $action['value'] = (int)$r1;
 
             $action['circle'] = $action['color']."Circle";
             $action['class'] = $action['icon'];
 
-            $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('action_id', new MongoID($action['_id']));
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime ( '-2 week', strtotime($data['date']) )), '$lte' => new MongoDate(strtotime ( '-1 week', strtotime($data['date']) ))));
-            $r2 =  $this->mongo_db->get('playbasis_action_log');
+            $r2 =  $this->getCountLogClient($data, $action, '-2 week', '-1 week');
 
-            $action['count_of_last_week'] =  (int)count($r2);
+            $action['count_of_last_week'] =  (int)$r2;
 
             //zero check
             $rateFactor = ($action['count_of_last_week'])? $action['count_of_last_week'] : 1;
@@ -226,26 +250,17 @@ class Statistic_model extends MY_Model
         $actions =  $this->mongo_db->get('playbasis_action_to_client');
 
         foreach ($actions as &$action) {
-            $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('action_id', new MongoID($action['_id']));
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime ( '-1 month' . $data['date'] )), '$lte' => new MongoDate(strtotime ($data['date']))));
-            $r1 =  $this->mongo_db->get('playbasis_action_log');
 
-            $action['value'] = (int)count($r1);
+            $r1 =  $this->getCountLogClient($data, $action, '-1 month', null);
+
+            $action['value'] = (int)$r1;
 
             $action['circle'] = $action['color']."Circle";
             $action['class'] = $action['icon'];
 
-            $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->where('action_id', new MongoID($action['_id']));
-            $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime ( '-2 month' . $data['date'] )), '$lte' => new MongoDate(strtotime ( '-1 month' . $data['date'] ))));
-            $r2 =  $this->mongo_db->get('playbasis_action_log');
+            $r2 =  $this->getCountLogClient($data, $action, '-2 month', '-1 month');
 
-            $action['count_of_last_month'] =  (int)count($r2);
+            $action['count_of_last_month'] =  (int)$r2;
 
             //zero check
             $rateFactor = ($action['count_of_last_month'])? $action['count_of_last_month'] : 1;
@@ -284,37 +299,38 @@ class Statistic_model extends MY_Model
             $this->mongo_db->offset(0);
         }
 
-        $result =  $this->mongo_db->get('playbasis_reward_to_player');
+        $LeaderBoardList =  $this->mongo_db->get('playbasis_reward_to_player');
 
-        $LeaderBoardList = array();
-
-        foreach ($result as $player) {
-            $info = $this->getPlayerInfo($player['pb_player_id']);
-
-            array_push($LeaderBoardList, array(
-                    'player_id'   => $info[0]['_id'],
-                    'player_name' => $info[0]['first_name'] .' '. $info[0]['last_name'],
-                    'exp'         => $info[0]['exp'],
-                    'level'       => $info[0]['level'],
-                    'point'       => $player['value'],
-                    'image'       => $info[0]['image'],
-                    'date_added'  => $info[0]['date_added']
-                )
-            );
-        }
+//        $LeaderBoardList = array();
+//
+//        foreach ($result as $player) {
+//            $info = $this->getPlayerInfo($player['pb_player_id']);
+//
+//            $LeaderBoardList[] = array(
+//                    'player_id'   => $info['_id'],
+//                    'player_name' => $info['first_name'] .' '. $info['last_name'],
+//                    'exp'         => $info['exp'],
+//                    'level'       => $info['level'],
+//                    'point'       => $player['value'],
+//                    'image'       => $info['image'],
+//                    'email'       => $info['email'],
+//                    'date_added'  => $info['date_added'],
+//                    'date_modified'  => $info['date_modified']
+//            );
+//        }
 
         return $LeaderBoardList;
     }
 
-    public function getPlayerInfo($pb_player_id){
-        $this->set_site_mongodb(0);
-
-        $this->mongo_db->select(array('_id','pb_player_id','first_name','last_name','exp','level','image','date_added'));
-        $this->mongo_db->where('_id', new MongoID($pb_player_id));
-        $result =  $this->mongo_db->get('playbasis_player');
-
-        return $result;
-    }
+//    public function getPlayerInfo($pb_player_id){
+//        $this->set_site_mongodb(0);
+//
+//        $this->mongo_db->select(array('_id','pb_player_id','first_name','last_name','exp','level','image','email','date_added','date_modified'));
+//        $this->mongo_db->where('_id', new MongoID($pb_player_id));
+//        $result =  $this->mongo_db->get('playbasis_player');
+//
+//        return $result ? $result[0] : null;
+//    }
 
     private function datetimeMongotoReadable($dateTimeMongo)
     {

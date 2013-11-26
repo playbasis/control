@@ -73,24 +73,7 @@ class Domain_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $results = $this->mongo_db->get("playbasis_client_site");
-
-        foreach ($results as $result) {
-            $client_data[] = array(
-                'site_id' => $result['_id'],
-                'client_id' => $result['client_id'],
-                'domain_name' => $result['domain_name'],
-                'site_name' => $result['site_name'],
-                'status'  	  => (bool)$result['status'],
-                'api_key' => $result['api_key'],
-                'api_secret' => $result['api_secret'],
-                'date_start' => $result['date_start'],
-                'date_expire' => $this->datetimeMongotoReadable($result['date_expire']),
-                'limit_users' => $result['limit_users'],
-                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
-                'date_modified' => $this->datetimeMongotoReadable($result['date_modified'])
-            );
-        }
+        $client_data = $this->mongo_db->get("playbasis_client_site");
 
         return $client_data;
     }

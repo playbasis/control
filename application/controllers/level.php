@@ -143,7 +143,7 @@ class Level extends MY_Controller
 
     private function getList($offset) {
 
-        $per_page = 100;
+        $per_page = 50;
 
         $this->load->library('pagination');
 
@@ -189,10 +189,10 @@ class Level extends MY_Controller
             foreach ($results as $result) {
 
                 $this->data['levels'][] = array(
-                    'level_id' => $result['level_id'],
+                    'level_id' => $result['_id'],
                     'level' => $result['level'],
-                    'title' => $result['title'],
-                    'exp' => $result['exp'],
+                    'title' => $result['level_title'],
+                    'exp' => number_format($result['exp'], 0),
                     'status' => ($result['status']==false)? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'),
                     'sort_order' => $result['sort_order'],
                     'selected' => $this->input->post('selected') && in_array($result['level_id'], $this->input->post('selected')),
@@ -229,6 +229,7 @@ class Level extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('level');
     }
 
     private function getForm($level_id=null) {
@@ -335,6 +336,7 @@ class Level extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('level_form');
     }
 
     private function validateModify() {

@@ -8,6 +8,13 @@
                     <?php
                     echo anchor($feature['link'], '<i class="'.$feature["icon"].'"></i><span class="hidden-tablet">'.$feature['name'].'</span>');
                     ?>
+                    <?php
+                    if(false){
+                    ?>
+                    <a href="#<?php echo $feature['link']; ?>" class="left-menu"><i class="<?php echo $feature["icon"]; ?>"></i><span class="hidden-tablet"><?php echo $feature['name']; ?></span></a>
+                    <?php
+                    }
+                    ?>
                 </li>
                 <?php } ?>
             <?php } ?>
@@ -20,3 +27,21 @@
     </div>
 </div>
 <!-- end: Main Menu -->
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.left-menu').click(function(){
+            var url = $(this).attr('href');
+            url = baseUrlPath+url.substring(1);
+            $.ajax({
+                type: "GET",
+                url: url,
+                beforeSend: function( xhr ) {
+                    $("#top-header").prepend('<div class="ajax-loading"><span class="text-ajax-loading">Loading...</span></div>');
+                }
+            }).done(function( res ) {
+                        $("#page-render").html(res);
+                        $(".ajax-loading").remove();
+                    });
+        });
+    });
+</script>

@@ -137,7 +137,7 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
 ?>
 
 <!-- start: Header -->
-<div class="navbar">
+<div id="top-header" class="navbar">
     <div class="navbar-inner">
         <div class="container-fluid">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">

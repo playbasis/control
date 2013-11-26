@@ -134,7 +134,7 @@ class  MY_Controller  extends  CI_Controller  {
         }
 
         $this->load->vars($this->data);
-        $this->load->view('template');
+        $this->load->view($view);
     }
 
 }

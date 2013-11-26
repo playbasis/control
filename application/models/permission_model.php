@@ -11,7 +11,7 @@ class Permission_model extends MY_Model
 
         $result = $this->mongo_db->get("playbasis_permission");
 
-        return $result[0]['plan_id'];
+        return $result ? $result[0]['plan_id'] : null;
     }
 }
 ?>

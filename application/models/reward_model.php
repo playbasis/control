@@ -11,8 +11,10 @@ class Reward_model extends MY_Model
         $this->mongo_db->where('name',  'badge');
         $reward = $this->mongo_db->get("playbasis_reward");
 
+        $reward_id = $reward ? $reward[0]["_id"] : null;
+
         $this->mongo_db->where('site_id',  new MongoID($site_id));
-        $this->mongo_db->where('reward_id',  new MongoID($reward[0]["_id"]));
+        $this->mongo_db->where('reward_id',  new MongoID($reward_id));
         $results = $this->mongo_db->get("playbasis_reward_to_client");
 
         foreach ($results as $result) {
@@ -23,9 +25,9 @@ class Reward_model extends MY_Model
                     'site_id' => $result['site_id'],
                     'client_id' => $result['client_id'],
                     'limit' => $result['limit'],
-                    'group' => $reward_info[0]['group'],
-                    'name' => $reward_info[0]['name'],
-                    'description' => $reward_info[0]['description']
+                    'group' => $reward_info['group'],
+                    'name' => $reward_info['name'],
+                    'description' => $reward_info['description']
                 );
             }
         }
@@ -39,7 +41,7 @@ class Reward_model extends MY_Model
             ->order_by(array('sort_order' => 'asc'))
             ->get("playbasis_reward");
 
-        return $results;
+        return $results ? $results[0] : null;
     }
 
     public function getRewards($data = array()) {
@@ -114,21 +116,8 @@ class Reward_model extends MY_Model
     public function getRewardByClientId($client_id) {
         $reward_data = array();
 
-        $results = $this->mongo_db->where('client_id', new MongoID($client_id))
+        $reward_data = $this->mongo_db->where('client_id', new MongoID($client_id))
             ->get("playbasis_reward_to_client");
-
-        foreach ($results as $result) {
-
-            $reward_data[] = array(
-                'reward_id' => $result['reward_id'],
-                'site_id' => $result['site_id'],
-                'client_id' => $result['client_id'],
-                'limit' => $result['limit'],
-                'group' => $result['group'],
-                'name' => $result['name'],
-                'description' => $result['description']
-            );
-        }
 
         return $reward_data;
     }

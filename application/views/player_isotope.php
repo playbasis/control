@@ -40,7 +40,7 @@
 
                     <div class="isot-player-joined">
                         <h6>joined</h6>
-                        <span><?php echo $player['last_active']; ?></span>
+                        <span><?php echo $player['date_added']; ?></span>
                     </div>
 
                     <div class="isot-player-last-active">

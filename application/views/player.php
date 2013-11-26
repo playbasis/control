@@ -349,65 +349,6 @@
 
 <div class='model-hidden hide' >
     <div class="filter_popover" rel="popover">
-        <style type="text/css">
-            .load_menu {
-                width: 200px;
-                padding:0;
-            }
-            .load_menu li.parent:hover, .load_menu li:hover {
-                background: #eee;
-                color: #333;
-                cursor: pointer;
-            }
-            .popover-title{
-                font-size: 1.4em;
-                font-family: arial;
-                font-weight: bold;
-            }
-
-            .popover-move-max ,.popover-move ,.popover-move_minor{
-                margin-top:-40px !important;
-            }
-            .popover-move-max .arrow{
-                margin-top: -230px !important;
-            }
-            .popover-move .arrow{
-                margin-top: -130px !important;
-            }
-            .popover-move_minor .arrow{
-                margin-top: -55px !important;
-            }
-
-
-
-            .load_menu li {
-                list-style-type: circle;
-                border-bottom: 1px #ccc dotted;
-                line-height: 32px;
-                cursor: pointer;
-                padding-left: 4px;
-            }
-            .population_lable {
-                min-width: 60px;
-                background: #eee;
-                color:#999;
-                font-weight: bold;
-                padding:4px 12px;
-            }
-            .population_value {
-                margin-right: 4px;
-            }
-
-            .popover{
-                max-width: 160px;
-            }
-
-
-
-                /* .popover.right{margin-left:70px; margin-top: -14px }
-         */
-
-        </style>
 
         <ol>
             <li>View ISOTOPE</li>

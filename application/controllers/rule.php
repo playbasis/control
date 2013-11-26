@@ -53,6 +53,7 @@ class Rule extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('rule');
     }
 
     public function jsonGetRules(){
