@@ -2,8 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Level_model extends MY_Model
 {
-    public function getTotalLevels() {
+    public function getTotalLevels($data) {
         $this->set_site_mongodb(0);
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
 
         $results = $this->mongo_db->count("playbasis_exp_table");
 
@@ -83,6 +87,11 @@ class Level_model extends MY_Model
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
         $results = $this->mongo_db->count("playbasis_client_exp_table");
 
         return $results;

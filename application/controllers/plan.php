@@ -136,7 +136,7 @@ class Plan extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('badge/page');
+        $config['base_url'] = site_url('plan/page');
 
         $this->load->model('Domain_model');
 
@@ -178,7 +178,7 @@ class Plan extends MY_Controller
                     'name' => $result['name'],
                     'description' => $result['description'],
                     'status' => $result['status'],
-                    'selected'    => null
+                    'selected'    => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
                 );
             }
         }

@@ -34,10 +34,6 @@ class Player_model extends MY_Model
     }
 
     public function getPlayers($data) {
-        $player_data = array();
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
 
         if (isset($data['client_id']) && isset($data['site_id'])) {
             $this->mongo_db->where('client_id', new MongoID($data['client_id']));

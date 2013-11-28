@@ -12,11 +12,20 @@ class Domain_model extends MY_Model
         return $results ? $results[0] : null  ;
     }
 
-    public function getTotalDomainsByClientId($client_id) {
+    public function getTotalDomainsByClientId($data) {
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('domain_name', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
 
         $total = $this->mongo_db->count("playbasis_client_site");
 
