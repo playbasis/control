@@ -8,7 +8,7 @@ class Action_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($action_id));
         $results = $this->mongo_db->get("playbasis_action");
 
-        return $results;
+        return $results ? $results[0] : null;
     }
 
     public function getTotalActionReport($data) {

@@ -41,7 +41,7 @@ class User extends MY_Controller
                         $redirect = $this->session->userdata('redirect');
                         $this->session->unset_userdata('redirect');
                     } else {
-                        $redirect = '/dashboard';
+                        $redirect = '/';
                     }
                     redirect($redirect, 'refresh');
                 }

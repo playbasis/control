@@ -2,8 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Level_model extends MY_Model
 {
-    public function getTotalLevels() {
+    public function getTotalLevels($data) {
         $this->set_site_mongodb(0);
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
 
         $results = $this->mongo_db->count("playbasis_exp_table");
 
@@ -16,7 +20,7 @@ class Level_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($level_id));
         $results = $this->mongo_db->get("playbasis_exp_table");
 
-        return $results;
+        return $results ? $results[0] : null;
     }
 
     public function getLevels($data) {
@@ -62,18 +66,18 @@ class Level_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $results =  $this->mongo_db->get('playbasis_exp_table');
+        $level_data =  $this->mongo_db->get('playbasis_exp_table');
 
-        foreach ($results as $result) {
-            $level_data[] = array(
-                'level_id' => $result['_id'],
-                'level' => $result['level'],
-                'title' => $result['level_title'],
-                'exp' => number_format($result['exp'], 0),
-                'status' => $result['status'],
-                'sort_order' => $result['sort_order']
-            );
-        }
+//        foreach ($results as $result) {
+//            $level_data[] = array(
+//                'level_id' => $result['_id'],
+//                'level' => $result['level'],
+//                'title' => $result['level_title'],
+//                'exp' => number_format($result['exp'], 0),
+//                'status' => $result['status'],
+//                'sort_order' => $result['sort_order']
+//            );
+//        }
 
         return $level_data;
     }
@@ -83,6 +87,11 @@ class Level_model extends MY_Model
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
         $results = $this->mongo_db->count("playbasis_client_exp_table");
 
         return $results;
@@ -134,18 +143,18 @@ class Level_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $results =  $this->mongo_db->get('playbasis_client_exp_table');
+        $level_data =  $this->mongo_db->get('playbasis_client_exp_table');
 
-        foreach ($results as $result) {
-            $level_data[] = array(
-                'level_id' => $result['_id'],
-                'level' => $result['level'],
-                'title' => $result['level_title'],
-                'exp' => number_format($result['exp'], 0),
-                'status' => $result['status'],
-                'sort_order' => $result['sort_order']
-            );
-        }
+//        foreach ($results as $result) {
+//            $level_data[] = array(
+//                'level_id' => $result['_id'],
+//                'level' => $result['level'],
+//                'title' => $result['level_title'],
+//                'exp' => number_format($result['exp'], 0),
+//                'status' => $result['status'],
+//                'sort_order' => $result['sort_order']
+//            );
+//        }
 
         return $level_data;
     }

@@ -7,37 +7,33 @@ class Player_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($player_id));
 
-        $results =  $this->mongo_db->get('playbasis_player');
+        $result =  $this->mongo_db->get('playbasis_player');
 
-        foreach ($results as $result) {
-            $player_data = array(
-                'cl_player_id' => $result['cl_player_id'],
-                'pb_player_id' => $result['_id'],
-                'username' => $result['username'],
-                'first_name' => $result['first_name'],
-                'last_name' => $result['last_name'],
-                'email' => $result['email'],
-                'nickname' => $result['nickname'],
-                'gender' => $result['gender'] === '1' ? 'male' : 'female',
-                'image' => $result['image'],
-                'level' => $result['level'],
-                'exp' => $result['exp'],
-                'status' => (bool)$result['status'],
-                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
-                'date_modified' => $this->datetimeMongotoReadable($result['date_modified']),
-                'points' => 0,
-                'age' => $this->getAge($result['birth_date'])
-            );
-        }
+//        foreach ($results as $result) {
+//            $player_data = array(
+//                'cl_player_id' => $result['cl_player_id'],
+//                'pb_player_id' => $result['_id'],
+//                'username' => $result['username'],
+//                'first_name' => $result['first_name'],
+//                'last_name' => $result['last_name'],
+//                'email' => $result['email'],
+//                'nickname' => $result['nickname'],
+//                'gender' => $result['gender'] === '1' ? 'male' : 'female',
+//                'image' => $result['image'],
+//                'level' => $result['level'],
+//                'exp' => $result['exp'],
+//                'status' => (bool)$result['status'],
+//                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
+//                'date_modified' => $this->datetimeMongotoReadable($result['date_modified']),
+//                'points' => 0,
+//                'age' => $this->getAge($result['birth_date'])
+//            );
+//        }
 
-        return $player_data;
+        return $result ? $result[0] : null;
     }
 
     public function getPlayers($data) {
-        $player_data = array();
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
 
         if (isset($data['client_id']) && isset($data['site_id'])) {
             $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -82,29 +78,29 @@ class Player_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $results =  $this->mongo_db->get('playbasis_player');
+        $player_data =  $this->mongo_db->get('playbasis_player');
 
-        foreach ($results as $result) {
-            $player_data[] = array(
-                'pb_player_id' => $result['_id'],
-                'username' => $result['username'],
-                'first_name' => $result['first_name'],
-                'last_name' => $result['last_name'],
-                'email' => $result['email'],
-                'nickname' => $result['nickname'],
-                'gender' => $result['gender'] === '1' ? 'male' : 'female',
-                'image' => $result['image'],
-                'level' => $result['level'],
-                'exp' => $result['exp'],
-                'action' => $this->getPlayerAction($site_id, $client_id, $result['_id']),
-                'status' => (bool)$result['status'],
-                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
-                'date_modified' => $this->datetimeMongotoReadable($result['date_modified']),
-                // 'points' => $this->getUserPoint($result['pb_player_id'] , $sql_reward),
-                'points' => 0,
-                'age' => $this->getAge($result['birth_date'])
-            );
-        }
+//        foreach ($results as $result) {
+//            $player_data[] = array(
+//                'pb_player_id' => $result['_id'],
+//                'username' => $result['username'],
+//                'first_name' => $result['first_name'],
+//                'last_name' => $result['last_name'],
+//                'email' => $result['email'],
+//                'nickname' => $result['nickname'],
+//                'gender' => $result['gender'] === '1' ? 'male' : 'female',
+//                'image' => $result['image'],
+//                'level' => $result['level'],
+//                'exp' => $result['exp'],
+//                'action' => $this->getPlayerAction($site_id, $client_id, $result['_id']),
+//                'status' => (bool)$result['status'],
+//                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
+//                'date_modified' => $this->datetimeMongotoReadable($result['date_modified']),
+//                // 'points' => $this->getUserPoint($result['pb_player_id'] , $sql_reward),
+//                'points' => 0,
+//                'age' => $this->getAge($result['birth_date'])
+//            );
+//        }
 
         return $player_data;
     }
@@ -717,7 +713,7 @@ class Player_model extends MY_Model
             $action_data[$a['action_id'].""] = array(
                 'action_id' => $a['action_id'],
                 'name' => $a['action_name'],
-                'icon' => $action_info ? $action_info[0]['icon'] : '',
+                'icon' => $action_info ? $action_info['icon'] : '',
                 'total' => ( isset($action_data[$a['action_id'].""] ) ) ? $action_data[$a['action_id'].""]['total'] + 1 : 1,
             );
         }
@@ -809,7 +805,7 @@ class Player_model extends MY_Model
         $this->mongo_db->where('group',  'NONPOINT');
         $this->mongo_db->where('name',  'badge');
         $reward = $this->mongo_db->get("playbasis_reward");
-        $reward_badge_id = $reward[0]["_id"];
+        $reward_badge_id = $reward ? $reward[0]["_id"] : null;
 
         if (!empty($data['filter_sort'])) {
 

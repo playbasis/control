@@ -81,7 +81,6 @@ function resetSecret(site_id) {
         data: 'site_id=' + site_id,
         dataType: 'json',
         success: function(json) {
-            //console.log(json);
             if(json.success){
                 location.href = baseUrlPath+'domain';
             }

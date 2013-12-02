@@ -8,15 +8,16 @@
     <div class="box">
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
+            <?php
+            if($user_group_id != $setting_group_id){
+            ?>
             <div class="buttons">
-
-                <?php //if ($user_group_id == 1) { ?>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'badge/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
-                <?php //if ($user_group_id == 1) { ?>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
-                <?php //} ?>
-
             </div>
+            <?php
+            }
+            ?>
         </div>
         <div class="content">
             <?php

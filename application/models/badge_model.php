@@ -8,15 +8,13 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $results = $this->mongo_db->get("playbasis_badge");
 
-        return $results;
+        return $results ? $results[0] : null;
     }
 
     public function getBadges($data = array()) {
         $this->set_site_mongodb(0);
 
         $badges_data = array();
-
-        $this->mongo_db->where('status', true);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -28,7 +26,7 @@ class Badge_model extends MY_Model
         }
 
         $sort_data = array(
-            'badge_id',
+            '_id',
             'name',
             'status',
             'sort_order'
@@ -59,31 +57,22 @@ class Badge_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $results = $this->mongo_db->get("playbasis_badge");
-
-        foreach ($results as $result) {
-
-            $badges_data[] = array(
-                'badge_id' => $result['_id'],
-                'image' => $result['image'],
-                'quantity' => $result['quantity'],
-                'name' => $result['name'],
-                'description' => $result['description'],
-                'hint' => $result['hint'],
-                'status' => (bool)$result['status'],
-                'sort_order'  => $result['sort_order'],
-                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
-                'date_modified' => $this->datetimeMongotoReadable($result['date_modified'])
-            );
-        }
+        $badges_data = $this->mongo_db->get("playbasis_badge");
 
         return $badges_data;
     }
 
-    public function getTotalBadges(){
+    public function getTotalBadges($data){
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->where('status', true);
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
 
         $total = $this->mongo_db->count("playbasis_badge");
 
@@ -91,7 +80,6 @@ class Badge_model extends MY_Model
     }
 
     public function getBadgeBySiteId($site_id, $limit=null, $offset=null) {
-        $badges_client_data = array();
 
         $this->set_site_mongodb(0);
 
@@ -112,26 +100,7 @@ class Badge_model extends MY_Model
 
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
-        foreach ($results as $result) {
-
-            $badge_info = $this->getBadge($result['badge_id']);
-
-            if($badge_info){
-                $badges_client_data[] = array(
-                    'client_id' => $result['client_id']."",
-                    'badge_id' => $result['badge_id']."",
-                    'name' => isset($badge_info[0]['name'])?$badge_info[0]['name']:'',
-                    'description' => isset($badge_info[0]['description'])?$badge_info[0]['description']:'',
-                    'hint' => isset($badge_info[0]['hint'])?$badge_info[0]['hint']:'',
-                    'quantity' => isset($badge_info[0]['quantity'])?$badge_info[0]['quantity']:0,
-                    'image' => isset($badge_info[0]['image'])?$badge_info[0]['image']:'',
-                    'status' => isset($badge_info[0]['status'])?$badge_info[0]['status']:false,
-                    'sort_order'  =>  isset($badge_info[0]['sort_order'])?$badge_info[0]['sort_order']:0,
-                );
-            }
-        }
-
-        return $badges_client_data;
+        return $results;
     }
 
     public function getTotalBadgeBySiteId($site_id) {

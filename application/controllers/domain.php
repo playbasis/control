@@ -49,20 +49,20 @@ class Domain extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        if (isset($this->request->get['filter_name'])) {
-            $filter_name = $this->request->get['filter_name'];
+        if ($this->input->get('filter_name')) {
+            $filter_name = $this->input->get('filter_name');
         } else {
             $filter_name = null;
         }
 
-        if (isset($this->request->get['sort'])) {
-            $sort = $this->request->get['sort'];
+        if ($this->input->get('sort')) {
+            $sort = $this->input->get('sort');
         } else {
             $sort = 'domain_name';
         }
 
-        if (isset($this->request->get['order'])) {
-            $order = $this->request->get['order'];
+        if ($this->input->get('order')) {
+            $order = $this->input->get('order');
         } else {
             $order = 'ASC';
         }
@@ -78,18 +78,18 @@ class Domain extends MY_Controller
             'limit' => $limit
         );
 
-        $total = $this->Domain_model->getTotalDomainsByClientId($client_id);
+        $total = $this->Domain_model->getTotalDomainsByClientId($data);
 
-        $results = $this->Domain_model->getDomainsByClientId($data);
+        $results_site = $this->Domain_model->getDomainsByClientId($data);
 
-        if ($results) {
-            foreach ($results as $result) {
+        if ($results_site) {
+            foreach ($results_site as $result) {
 
-                $plan_id = $this->Permission_model->getPermissionBySiteId($result['site_id']);
+                $plan_id = $this->Permission_model->getPermissionBySiteId($result['_id']);
 
                 $this->data['domain_list'][] = array(
                     'selected'    => isset($this->request->post['selected']) && in_array($result['sitel_id'], $this->request->post['selected']),
-                    'site_id' => $result['site_id'],
+                    'site_id' => $result['_id'],
                     'client_id' => $result['client_id'],
                     'plan_id' => $plan_id,
                     'domain_name' => $result['domain_name'],
@@ -135,6 +135,7 @@ class Domain extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('domain');
     }
 
     public function reset() {

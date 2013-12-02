@@ -56,7 +56,7 @@ class Player extends MY_Controller
             }
 
             $this->data['players'][] = array(
-                'pb_player_id' => $result['pb_player_id'],
+                'pb_player_id' => $result['_id'],
                 'firstname' => $result['first_name'],
                 'lastname' => $result['last_name'],
                 'nickname' => $result['nickname'],
@@ -66,6 +66,8 @@ class Player extends MY_Controller
                 'color' => $color,
                 'exp' => $result['exp'],
                 'status' => $result['status'],
+                'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_added']))),
+                'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_modified'])))
             );
         }
 
@@ -112,6 +114,7 @@ class Player extends MY_Controller
         $this->data['main'] = 'player';
         $this->load->vars($this->data);
         $this->render_page('template');
+//        $this->render_page('player');
     }
 
     public function getSummary() {
@@ -640,6 +643,29 @@ class Player extends MY_Controller
                 break;
         };
         return $color;
+    }
+
+    private function getAge($birthdate) {
+        $now = new DateTime();
+        $birthdate = $this->datetimeMongotoReadable($birthdate);
+        $oDateBirth = new DateTime($birthdate);
+        $oDateInterval = $now->diff($oDateBirth);
+
+        return $oDateInterval->y;
+    }
+
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = "0000-00-00 00:00:00";
+        }
+        return $dateTimeMongo;
     }
 }
 ?>
