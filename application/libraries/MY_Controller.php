@@ -112,15 +112,15 @@ class  MY_Controller  extends  CI_Controller  {
 
         if($this->session->userdata('user_id')){
             $this->data['username'] = $this->User_model->getUserName();
-            $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
             $this->data['domain_name'] = $this->data['domain'];
+            $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
+        }
 
-            if($this->User_model->getClientId()) {
-                $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
-            }else {
-                // super admin
-                $features = $this->Feature_model->getFeatures();
-            }
+        if($this->User_model->getClientId()) {
+            $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
+        }else {
+            // super admin
+            $features = $this->Feature_model->getFeatures();
         }
 
         foreach ($features as $value) {
