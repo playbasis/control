@@ -109,19 +109,18 @@ class  MY_Controller  extends  CI_Controller  {
         $this->data['lang'] = $lang['folder'];
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
-        $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
 
         if($this->session->userdata('user_id')){
             $this->data['username'] = $this->User_model->getUserName();
+            $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
             $this->data['domain_name'] = $this->data['domain'];
-        }
 
-        if($this->User_model->getClientId() === 0) {
-            // super admin
-            $features = $this->Feature_model->getFeatures();
-        }
-        else {
-            $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
+            if($this->User_model->getClientId()) {
+                $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
+            }else {
+                // super admin
+                $features = $this->Feature_model->getFeatures();
+            }
         }
 
         foreach ($features as $value) {
