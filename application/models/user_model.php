@@ -11,8 +11,7 @@ class User_model extends MY_Model
     private $database;
     private $admin_group_id;
 
-    public function __construct()
-    {
+    public function __construct(){
         parent::__construct();
         $this->load->library('mongo_db');
 
@@ -38,8 +37,80 @@ class User_model extends MY_Model
         }
 
     }
-    public function login($u, $p)
-    {
+
+    public function getAllUsers($data = array()){
+
+        $users_data = array();
+
+        if(isset($data['start']) || isset($data['limit'])){
+            if($data['start'] < 0 ){
+                $data['start'] = 0;
+            }
+            if($data['limit'] < 1){
+                $data['limit'] = 20;
+            }
+        }
+
+        $users_data = $this->mongo_db->get("user");
+
+        return $users_data;
+
+    }
+
+    public function getTotalNumUsers(){
+        return $this->mongo_db->count('user');
+    }
+
+    public function getUserInfo($user_id){
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $results =  $this->mongo_db->get('user');  
+
+        return $results ? $results[0] : null;
+    }
+
+    public function editUser($user_id, $data){
+        $this->set_site_mongodb(0);
+
+        $find_salt = $this->getUserInfo($user_id);
+        $salt = $find_salt['salt'];
+
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('username', $data['username']);
+        $this->mongo_db->set('firstname', $data['firstname']);
+        $this->mongo_db->set('lastname', $data['lastname']);
+        $this->mongo_db->set('email', $data['email']);
+        $this->mongo_db->set('status', (bool)$data['status']);
+
+        if($data['password'] == $data['confirm_password']){
+            
+            if(trim($data['password']) =="" || trim($data['confirm_password']=="")){
+                $this->mongo_db->update('user');
+                $this->session->data['success'] = $this->lang->line('text_success');
+                redirect('/user', 'refresh');
+            }else{
+                $this->mongo_db->set('password', dohash($data['password'],$salt));    
+                $this->mongo_db->update('user');
+                $this->session->data['success'] = $this->lang->line('text_success');
+                redirect('/user', 'refresh');
+            }
+        }else{
+            echo "Password not matched";
+        }
+
+        
+    }
+
+
+    public function fetchAllUsers($limit, $offset){
+        
+        $this->mongo_db->limit($limit);
+        $this->mongo_db->offset($offset);
+        $results = $this->mongo_db->get("user");
+
+        return $results;
+    }
+
+    public function login($u, $p){
 
         $this->set_site_mongodb(0);
         $Q = $this->mongo_db->select(array('salt'))

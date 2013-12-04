@@ -264,7 +264,6 @@ class Badge extends MY_Controller
 
         if (isset($badge_id) && ($badge_id != 0)) {
             $badge_info = $this->Badge_model->getBadge($badge_id);
-            $badge_info = $badge_info[0];
         }
 
         if ($this->input->post('name')) {
