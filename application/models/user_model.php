@@ -110,6 +110,11 @@ class User_model extends MY_Model
         return $results;
     }
 
+    public function deleteUser($user_id){
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->delete("user");
+    }
+
     public function login($u, $p){
 
         $this->set_site_mongodb(0);
