@@ -204,8 +204,8 @@ class Client extends MY_Controller
                     'image' => $image,
                     'quantity' => $domain_total,
                     'status' => $result['status'],
-                    'selected'    => isset($this->request->post['selected']) && in_array($result['client_id'], $this->request->post['selected']),
-                );
+                    'selected'    => in_array($result['client_id'], $this->input->post('selected')
+                )
             }
         }
 
