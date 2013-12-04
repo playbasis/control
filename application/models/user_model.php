@@ -113,10 +113,10 @@ class User_model extends MY_Model
     public function login($u, $p){
 
         $this->set_site_mongodb(0);
-        $Q = $this->mongo_db->select(array('salt'))
-            ->where('username', db_clean($u, 40))
-            ->limit(1)
-            ->get('user');
+        $this->mongo_db->select(array('salt'));
+        $this->mongo_db->where('username', db_clean($u, 40));
+        $this->mongo_db->limit(1);
+        $Q = $this->mongo_db->get('user');
 
         if (count($Q) > 0) {
             $row = $Q[0];
@@ -153,35 +153,35 @@ class User_model extends MY_Model
                 $this->mongo_db->where('user_id', new MongoID($this->user_id));
                 $this->mongo_db->where('status', true);
                 $this->mongo_db->limit(1);
-                $Q = $this->mongo_db->get('user_to_client');
+                $Q1 = $this->mongo_db->get('user_to_client');
 
-                if(count($Q)>0){
-                    $row1 = $Q[0];
+                if(count($Q1)>0){
+                    $row1 = $Q1[0];
                     $this->client_id = $row1['client_id'];
                 }else{
-                    $this->client_id = 0;
+                    $this->client_id = null;
                 }
 
                 $this->mongo_db->select(array('_id'));
                 $this->mongo_db->where('client_id', new MongoID($this->client_id));
                 $this->mongo_db->where('status', true);
                 $this->mongo_db->limit(1);
-                $Q = $this->mongo_db->get('playbasis_client_site');
+                $Q2 = $this->mongo_db->get('playbasis_client_site');
 
-                if(count($Q)>0){
-                    $row2 = $Q[0];
+                if(count($Q2)>0){
+                    $row2 = $Q2[0];
                     $this->site_id = $row2['_id'];
                 }else{
-                    $this->site_id = 0;
+                    $this->site_id = null;
                 }
 
                 $this->mongo_db->select(array('permission'));
                 $this->mongo_db->where('_id', $this->user_group_id);
                 $this->mongo_db->limit(1);
-                $Q = $this->mongo_db->get('user_group');
+                $Q3 = $this->mongo_db->get('user_group');
 
-                if(count($Q)>0){
-                    $row3 = $Q[0];
+                if(count($Q3)>0){
+                    $row3 = $Q3[0];
                     $permissions = unserialize($row3['permission']);
                 }else{
                     $this->session->unset_userdata('user_id');

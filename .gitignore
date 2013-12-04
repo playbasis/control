@@ -11,3 +11,7 @@ application/logs/*
 .idea/*
 
 image/cache/*
+
+application/config/config.php
+application/config/constants.php
+application/config/mongodb.php

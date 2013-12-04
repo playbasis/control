@@ -295,7 +295,7 @@ class Badge extends MY_Controller
         } elseif (!empty($badge_info)) {
             $this->data['image'] = $badge_info['image'];
         } else {
-            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);;
+            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }
 
         if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {

@@ -195,11 +195,11 @@
                     <div class="isot-player-stats">
 
                         <div class="isot-player-points">
-                            <span><?php echo 0;//$player['points']; ?> <small>points</small></span>
+                            <span><?php echo $player['points']; ?> <small>points</small></span>
                         </div>
 
                         <div class="isot-player-level" title="Level">
-                            <span><small>lvl</small> <?php echo 0;//$player['level']; ?></span>
+                            <span><small>lvl</small> <?php echo $player['level']; ?></span>
                         </div>
 
                     </div>

@@ -262,7 +262,6 @@ class Level extends MY_Controller
 
         if (isset($level_id) && ($level_id != 0)) {
             $level_info = $this->Level_model->getLevel($level_id);
-            $level_info = $level_info[0];
         }
 
         if(isset($level_id)){
@@ -276,7 +275,7 @@ class Level extends MY_Controller
         } elseif (!empty($level_info)) {
             $this->data['image'] = $level_info['image'];
         } else {
-            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);;
+            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }
 
         if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {

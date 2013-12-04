@@ -13,8 +13,8 @@
                 <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
                 <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>
                 <!-- <a href="#tab-address"><?php echo $this->lang->line('tab_address'); ?></a> -->
-                <?php if ($client_id!=0) { ?><a href="#tab-user"><?php echo $this->lang->line('tab_user'); ?></a><?php } ?>
-                <?php if ($client_id!=0) { ?><a href="#tab-domain"><?php echo $this->lang->line('tab_domain'); ?></a><?php } ?>
+                <?php if ($list_client_id.""!=0) { ?><a href="#tab-user"><?php echo $this->lang->line('tab_user'); ?></a><?php } ?>
+                <?php if ($list_client_id.""!=0) { ?><a href="#tab-domain"><?php echo $this->lang->line('tab_domain'); ?></a><?php } ?>
             </div>
             <?php
             if(validation_errors() || isset($message)) {
@@ -38,19 +38,19 @@
                 <div id="tab-general">
                     <table class="form">
                         <tr>
-                            <td><?php echo $entry_firstname; ?></td>
+                            <td><?php echo $this->lang->line('entry_firstname'); ?></td>
                             <td><input type="text" name="first_name" value="<?php echo $first_name; ?>" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_lastname; ?></td>
+                            <td><?php echo $this->lang->line('entry_lastname'); ?></td>
                             <td><input type="text" name="last_name" value="<?php echo $last_name; ?>" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_email; ?></td>
+                            <td><?php echo $this->lang->line('entry_email'); ?></td>
                             <td><input type="text" name="email" value="<?php echo $email; ?>"size="50"  /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_mobile; ?></td>
+                            <td><?php echo $this->lang->line('entry_mobile'); ?></td>
                             <td><input type="text" name="mobile" value="<?php echo $mobile; ?>" size="50" /></td>
                         </tr>
                     </table>
@@ -58,54 +58,54 @@
                 <div id="tab-data">
                     <table class="form">
                         <tr>
-                            <td><?php echo $entry_image; ?></td>
+                            <td><?php echo $this->lang->line('entry_image'); ?></td>
                             <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" />
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
-                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $no_image; ?>'); $('#image').attr('value', '');"><?php echo $text_clear; ?></a></div></td>
+                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $no_image; ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_status; ?></td>
+                            <td><?php echo $this->lang->line('entry_status'); ?></td>
                             <td><select name="status">
                                 <?php if ($status) { ?>
-                                <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-                                <option value="0"><?php echo $text_disabled; ?></option>
+                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
                                 <?php } else { ?>
-                                <option value="1"><?php echo $text_enabled; ?></option>
-                                <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
                                 <?php } ?>
                             </select></td>
                         </tr>
                     </table>
                 </div>
                 <div id="tab-address"></div>
-                <?php if ($client_id!=0) { ?>
+                <?php if ($list_client_id.""!=0) { ?>
                 <div id="tab-user">
                     <table class="form">
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_firstname; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_firstname'); ?></td>
                             <td><input type="text" name="user_firstname" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_lastname; ?></td>
+                            <td><?php echo $this->lang->line('entry_lastname'); ?></td>
                             <td><input type="text" name="user_lastname" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_email; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_email'); ?></td>
                             <td><input type="text" name="user_email" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_username; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_username'); ?></td>
                             <td><input type="text" name="user_username" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_password; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_password'); ?></td>
                             <td><input type="password" name="user_password" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_group; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_group'); ?></td>
                             <td>
                                 <select name="user_group">
-                                    <option value="0" selected="selected"><?php echo $text_select; ?></option>
+                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($groups) { ?>
                                     <?php foreach ($groups as $group) { ?>
                                         <option value="<?php echo $group['user_group_id']; ?>"><?php echo $group['name']; ?></option>
@@ -115,51 +115,51 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_status; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_status'); ?></td>
                             <td>
                                 <select name="user_status">
-                                    <option value="1"><?php echo $text_enabled; ?></option>
-                                    <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                                    <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td></td>
-                            <td><a onclick="addNewUser();" class="button"><span><?php echo $button_add_user; ?></span></a></td>
+                            <td><a onclick="addNewUser();" class="button"><span><?php echo $this->lang->line('button_add_user'); ?></span></a></td>
                         </tr>
                     </table>
 
                     <div id="users"></div>
                 </div>
                 <?php } ?>
-                <?php if ($client_id!=0) { ?>
+                <?php if ($list_client_id.""!=0) { ?>
                 <div id="tab-domain">
                     <table class="form">
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_domain_name; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_domain_name'); ?></td>
                             <td><input type="text" name="domain_name" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_site_name; ?></td>
+                            <td><?php echo $this->lang->line('entry_site_name'); ?></td>
                             <td><input type="text" name="domain_site_name" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_start_date; ?></td>
+                            <td><?php echo $this->lang->line('entry_start_date'); ?></td>
                             <td><input type="text" class="date" name="domain_start_date" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $entry_expire_date; ?></td>
+                            <td><?php echo $this->lang->line('entry_expire_date'); ?></td>
                             <td><input type="text" class="date" name="domain_expire_date" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $limit_users; ?></td>
+                            <td><?php echo $this->lang->line('limit_users'); ?></td>
                             <td><input type="text" name="limit_users" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_plan; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_plan'); ?></td>
                             <td>
                                 <select name="domain_plan_id">
-                                    <option value="0" selected="selected"><?php echo $text_select; ?></option>
+                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($plan_data) { ?>
                                     <?php foreach ($plan_data as $plan) { ?>
                                         <option value="<?php echo $plan['plan_id']; ?>"><?php echo $plan['name']; ?></option>
@@ -169,17 +169,17 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $entry_status; ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_status'); ?></td>
                             <td>
                                 <select name="domain_status">
-                                    <option value="1"><?php echo $text_enabled; ?></option>
-                                    <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                                    <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <td></td>
-                            <td><a onclick="addNewDomain();" class="button"><span><?php echo $button_add_domain; ?></span></a></td>
+                            <td><a onclick="addNewDomain();" class="button"><span><?php echo $this->lang->line('button_add_domain'); ?></span></a></td>
                         </tr>
                     </table>
 
@@ -205,7 +205,7 @@ function addNewDomain() {
     var plan_id = $('select[name=domain_plan_id]').val();
 
     $.ajax({
-        url: 'index.php?route=client/client/adddomain&token=<?php echo $token; ?>',
+        url: 'index.php?route=client/client/adddomain',
         type: 'POST',
         dataType: 'json',
         data: ({'domain_name' : domain_name, 'site_name' : site_name, 'date_start' : date_start, 'date_expire' : date_expire, 'limit_users' : limit_users, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $client_id; ?>'}),
@@ -242,7 +242,7 @@ function addNewUser() {
     var status = $('select[name=user_status]').val();
 
     $.ajax({
-        url: 'index.php?route=client/client/adduser&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>',
+        url: 'index.php?route=client/client/adduser&client_id=<?php echo $client_id; ?>',
         type: 'POST',
         dataType: 'json',
         data: ({'first_name' : first_name, 'last_name' : last_name, 'email' : email, 'username' : username, 'password' : password, 'user_group_id' : user_group_id, 'status' : status}),
@@ -278,7 +278,7 @@ $('#users .pagination a').live('click', function() {
     return false;
 });
 
-$('#users').load('index.php?route=client/client/users&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
+$('#users').load('index.php?route=client/client/users&client_id=<?php echo $client_id; ?>');
 
 //--></script>
 
@@ -293,7 +293,7 @@ $('#domains .pagination a').live('click', function() {
     return false;
 });
 
-$('#domains').load('index.php?route=client/client/domain&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
+$('#domains').load('index.php?route=client/client/domain&client_id=<?php echo $client_id; ?>');
 
 //--></script>
 
@@ -302,12 +302,12 @@ $('#domains').load('index.php?route=client/client/domain&token=<?php echo $token
 function resetToken(site_id) {
 
     $.ajax({
-        url: 'index.php?route=client/client/reset&token=<?php echo $token; ?>',
+        url: 'index.php?route=client/client/reset',
         type: 'post',
         data: 'site_id=' + site_id,
         dataType: 'json',
         success: function(json) {
-            $('#domains').load('index.php?route=client/client/domain&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
+            $('#domains').load('index.php?route=client/client/domain&client_id=<?php echo $client_id; ?>');
         }
     });
 
@@ -321,14 +321,14 @@ function resetToken(site_id) {
 function image_upload(field, thumb) {
     $('#dialog').remove();
 
-    $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="index.php?route=common/filemanager&token=<?php echo $token; ?>&field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
+    $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
 
     $('#dialog').dialog({
-        title: '<?php echo $text_image_manager; ?>',
+        title: '<?php echo $this->lang->line('text_image_manager'); ?>',
         close: function (event, ui) {
             if ($('#' + field).attr('value')) {
                 $.ajax({
-                    url: 'index.php?route=common/filemanager/image&token=<?php echo $token; ?>&image=' + encodeURIComponent($('#' + field).val()),
+                    url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
                     dataType: 'text',
                     success: function(data) {
                         $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" />');

@@ -49,7 +49,8 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('first_name', $this->lang->line('first_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -78,7 +79,8 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/update/'.$client_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('first_name', $this->lang->line('first_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerClient($client_id)) {
 
@@ -204,8 +206,13 @@ class Client extends MY_Controller
                     'image' => $image,
                     'quantity' => $domain_total,
                     'status' => $result['status'],
+<<<<<<< HEAD
                     'selected'    => in_array($result['client_id'], $this->input->post('selected')
                 )
+=======
+                    'selected'    => is_array($this->input->post('selected')) && in_array($result['client_id'], $this->input->post('selected')),
+                );
+>>>>>>> 7eab98bcddeee01b94014570e97d9720b9f57747
             }
         }
 
@@ -247,97 +254,77 @@ class Client extends MY_Controller
 
         $this->load->model('Image_model');
 
-        if (isset($badge_id) && ($badge_id != 0)) {
-            $badge_info = $this->Badge_model->getBadge($badge_id);
-            $badge_info = $badge_info[0];
+        if (isset($client_id) && ($client_id != 0)) {
+            $client_info = $this->Client_model->getClient($client_id);
+            $this->data['list_client_id'] = $client_id;
+        }else {
+            $this->data['list_client_id'] = null;
         }
 
-        if ($this->input->post('name')) {
-            $this->data['name'] = $this->input->post('name');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['name'] = $badge_info['name'];
+        if ($this->input->post('first_name')) {
+            $this->data['first_name'] = $this->input->post('first_name');
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['first_name'] = $client_info['first_name'];
         } else {
-            $this->data['name'] = '';
+            $this->data['first_name'] = '';
         }
 
-        if ($this->input->post('description')) {
-            $this->data['description'] = $this->input->post('description');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['description'] = $badge_info['description'];
+        if ($this->input->post('last_name')) {
+            $this->data['last_name'] = $this->input->post('last_name');
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['last_name'] = $client_info['last_name'];
         } else {
-            $this->data['description'] = '';
+            $this->data['last_name'] = '';
         }
 
-        if ($this->input->post('hint')) {
-            $this->data['hint'] = $this->input->post('hint');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['hint'] = $badge_info['hint'];
+        if ($this->input->post('mobile')) {
+            $this->data['mobile'] = $this->input->post('mobile');
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['mobile'] = $client_info['mobile'];
         } else {
-            $this->data['hint'] = '';
+            $this->data['mobile'] = '';
+        }
+
+        if ($this->input->post('email')) {
+            $this->data['email'] = $this->input->post('email');
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['email'] = $client_info['email'];
+        } else {
+            $this->data['email'] = '';
+        }
+
+        if ($this->input->post('company')) {
+            $this->data['company'] = $this->input->post('company');
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['company'] = $client_info['company'];
+        } else {
+            $this->data['company'] = '';
         }
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($badge_info)) {
-            $this->data['image'] = $badge_info['image'];
+        } elseif (!empty($client_info)) {
+            $this->data['image'] = $client_info['image'];
         } else {
-            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);;
+            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }
 
         if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($badge_info) && $badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($badge_info['image'], 100, 100);
+        } elseif (!empty($client_info) && $client_info['image'] && (S3_IMAGE . $client_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $client_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+            $this->data['thumb'] = $this->Image_model->resize($client_info['image'], 100, 100);
         } else {
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }
 
         $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
 
-        if ($this->input->post('sort_order')) {
-            $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($badge_info)) {
-            $this->data['sort_order'] = $badge_info['sort_order'];
-        } else {
-            $this->data['sort_order'] = 0;
-        }
-
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
-        } elseif (!empty($badge_info)) {
-            $this->data['status'] = $badge_info['status'];
+        } elseif (!empty($client_info)) {
+            $this->data['status'] = $client_info['status'];
         } else {
             $this->data['status'] = 1;
-        }
-
-        if ($this->input->post('stackable')) {
-            $this->data['stackable'] = $this->input->post('stackable');
-        } elseif (!empty($badge_info)) {
-            $this->data['stackable'] = $badge_info['stackable'];
-        } else {
-            $this->data['stackable'] = 1;
-        }
-
-        if ($this->input->post('substract')) {
-            $this->data['substract'] = $this->input->post('substract');
-        } elseif (!empty($badge_info)) {
-            $this->data['substract'] = $badge_info['substract'];
-        } else {
-            $this->data['substract'] = 1;
-        }
-
-        if ($this->input->post('quantity')) {
-            $this->data['quantity'] = $this->input->post('quantity');
-        } elseif (!empty($badge_info)) {
-            $this->data['quantity'] = $badge_info['quantity'];
-        } else {
-            $this->data['quantity'] = 1;
-        }
-
-        if (isset($badge_id)) {
-            $this->data['badge_id'] = $badge_id;
-        } else {
-            $this->data['badge_id'] = null;
         }
 
         $this->data['client_id'] = $this->User_model->getClientId();
@@ -347,6 +334,15 @@ class Client extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function validateModify() {
+
+        if ($this->User_model->hasPermission('modify', 'client')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function checkOwnerClient($clientId){

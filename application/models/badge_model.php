@@ -14,8 +14,6 @@ class Badge_model extends MY_Model
     public function getBadges($data = array()) {
         $this->set_site_mongodb(0);
 
-        $badges_data = array();
-
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
             $this->mongo_db->where('name', $regex);
