@@ -108,8 +108,14 @@ class Player extends MY_Controller
         $this->data['order'] = $params['order'];
 
         // get Action list and reward list
-        $this->data['rewardList'] = $this->Player_model->getRewardListAPI($this->data['client_id'], $this->data['site_id']);
-        $this->data['actionList'] = $this->Player_model->getActionListAPI($this->data['client_id'], $this->data['site_id']);
+        if($this->data['client_id']){
+            $this->data['rewardList'] = $this->Player_model->getRewardListAPI($this->data['client_id'], $this->data['site_id']);
+            $this->data['actionList'] = $this->Player_model->getActionListAPI($this->data['client_id'], $this->data['site_id']);
+        }else{
+            $this->data['rewardList'] = array();
+            $this->data['actionList'] = array();
+        }
+
 
         $this->data['main'] = 'player';
         $this->load->vars($this->data);

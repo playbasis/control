@@ -118,9 +118,15 @@ class Report extends MY_Controller
             'limit'                  => $limit
         );
 
-        $report_total = $this->Action_model->getTotalActionReport($data);
+        $report_total = 0;
 
-        $results = $this->Action_model->getActionReport($data);
+        $results = array();
+
+        if($client_id){
+            $report_total = $this->Action_model->getTotalActionReport($data);
+
+            $results = $this->Action_model->getActionReport($data);
+        }
 
         foreach ($results as $result) {
 
@@ -145,7 +151,11 @@ class Report extends MY_Controller
             );
         }
 
-        $this->data['actions'] = $this->Action_model->getActionClient($client_id);
+        $this->data['actions'] = array();
+
+        if($client_id){
+            $this->data['actions'] = $this->Action_model->getActionClient($client_id);
+        }
 
         $config['base_url'] = $url.$parameter_url;
 

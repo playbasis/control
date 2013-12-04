@@ -36,16 +36,23 @@ class Rule extends MY_Controller
         $s_siteId = $this->User_model->getSiteId();
         $s_clientId = $this->User_model->getClientId();
 
-        $this->data['actionList'] = json_encode($this->Rule_model->getActionGigsawList($s_siteId,$s_clientId));
-        $this->data['conditionList'] = json_encode($this->Rule_model->getConditionGigsawList($s_siteId,$s_clientId));
-        $this->data['rewardList'] = json_encode($this->Rule_model->getRewardGigsawList($s_siteId,$s_clientId));
+        $this->data['jsonConfig_siteId'] = $s_siteId;
+        $this->data['jsonConfig_clientId'] = $s_clientId;
 
-        $this->data['jsonConfig_siteId'] = $this->User_model->getSiteId();
-        $this->data['jsonConfig_clientId'] = $this->User_model->getClientId();
+        $this->data['actionList'] = json_encode(array());
+        $this->data['conditionList'] = json_encode(array());
+        $this->data['rewardList'] = json_encode(array());
+        $this->data['ruleList'] = json_encode(array());
+
+        if($s_clientId){
+            $this->data['actionList'] = json_encode($this->Rule_model->getActionGigsawList($s_siteId,$s_clientId));
+            $this->data['conditionList'] = json_encode($this->Rule_model->getConditionGigsawList($s_siteId,$s_clientId));
+            $this->data['rewardList'] = json_encode($this->Rule_model->getRewardGigsawList($s_siteId,$s_clientId));
+            $this->data['ruleList'] = json_encode($this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId));
+        }
 
         $this->data['jsonIcons'] = json_encode($icons);
 
-        $this->data['ruleList'] = json_encode($this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId));
 
         $this->data['requestParams'] = '&siteId='.$s_siteId.'&clientId='.$s_clientId;
 

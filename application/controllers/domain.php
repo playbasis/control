@@ -78,9 +78,15 @@ class Domain extends MY_Controller
             'limit' => $limit
         );
 
-        $total = $this->Domain_model->getTotalDomainsByClientId($data);
+        if($client_id){
+            $total = $this->Domain_model->getTotalDomainsByClientId($data);
 
-        $results_site = $this->Domain_model->getDomainsByClientId($data);
+            $results_site = $this->Domain_model->getDomainsByClientId($data);
+        }else{
+            $total = $this->Domain_model->getTotalDomains($data);
+
+            $results_site = $this->Domain_model->getDomains($data);
+        }
 
         if ($results_site) {
             foreach ($results_site as $result) {
@@ -88,7 +94,7 @@ class Domain extends MY_Controller
                 $plan_id = $this->Permission_model->getPermissionBySiteId($result['_id']);
 
                 $this->data['domain_list'][] = array(
-                    'selected'    => isset($this->request->post['selected']) && in_array($result['sitel_id'], $this->request->post['selected']),
+                    'selected'    => is_array($this->input->post('selected')) && in_array($result['_id'], $this->input->post('selected')),
                     'site_id' => $result['_id'],
                     'client_id' => $result['client_id'],
                     'plan_id' => $plan_id,

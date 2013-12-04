@@ -44,51 +44,55 @@ class Dashboard extends MY_Controller
 //
 //        $this->data['daily_events'] = $this->Statistic_model->getDailyActionmeaturement($data);
 
-        $leaderboards = $this->Statistic_model->LeaderBoard($data);
-
         $this->data['leaderboards'] = array();
 
-        if ($leaderboards) {
-            foreach ($leaderboards as $leaderboard) {
+        if($client_id){
+            $leaderboards = $this->Statistic_model->LeaderBoard($data);
 
-                $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
+            if ($leaderboards) {
+                foreach ($leaderboards as $leaderboard) {
 
-                $this->data['leaderboards'][] = array(
-                    'player_id' => $leaderboard['pb_player_id'],
-                    'name' => $info['first_name'] .' '. $info['last_name'],
-                    'image' => $info['image'],
-                    'exp' => $info['exp'],
-                    'email' => $info['email'],
-                    'level' => $info['level'],
-                    'point' => $leaderboard['value'],
-                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_added']))),
-                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_modified'])))
-                );
+                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
+
+                    $this->data['leaderboards'][] = array(
+                        'player_id' => $leaderboard['pb_player_id'],
+                        'name' => $info['first_name'] .' '. $info['last_name'],
+                        'image' => $info['image'],
+                        'exp' => $info['exp'],
+                        'email' => $info['email'],
+                        'level' => $info['level'],
+                        'point' => $leaderboard['value'],
+                        'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_added']))),
+                        'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_modified'])))
+                    );
+                }
             }
         }
 
         $data['sort'] = 'date_added';
         $data['order'] = 'DESC';
 
-        $results = $this->Player_model->getPlayers($data);
+        if($client_id){
+            $results = $this->Player_model->getPlayers($data);
 
-        foreach ($results as $player) {
-            $action = array();
+            foreach ($results as $player) {
+                $action = array();
 
-            $this->data['players'][] = array(
-                'pb_player_id'   => $player['_id'],
-                'username' => $player['username'],
-                'first_name'   => $player['first_name'],
-                'last_name' => $player['last_name'],
-                'nickname' => $player['nickname'],
-                'image'     => $player['image'],
-                'status'     => $player['status'],
-                'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_added']))),
-                'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_modified']))),
-                'exp'      => $player['exp'],
-                'email' => $player['email'],
-                'action'     => $action
-            );
+                $this->data['players'][] = array(
+                    'pb_player_id'   => $player['_id'],
+                    'username' => $player['username'],
+                    'first_name'   => $player['first_name'],
+                    'last_name' => $player['last_name'],
+                    'nickname' => $player['nickname'],
+                    'image'     => $player['image'],
+                    'status'     => $player['status'],
+                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_added']))),
+                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_modified']))),
+                    'exp'      => $player['exp'],
+                    'email' => $player['email'],
+                    'action'     => $action
+                );
+            }
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -128,51 +132,57 @@ class Dashboard extends MY_Controller
 //
 //        $this->data['daily_events'] = $this->Statistic_model->getDailyActionmeaturement($data);
 
-        $leaderboards = $this->Statistic_model->LeaderBoard($data);
-
         $this->data['leaderboards'] = array();
 
-        if ($leaderboards) {
-            foreach ($leaderboards as $leaderboard) {
+        if($client_id){
+            $leaderboards = $this->Statistic_model->LeaderBoard($data);
 
-                $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
+            if ($leaderboards) {
+                foreach ($leaderboards as $leaderboard) {
 
-                $this->data['leaderboards'][] = array(
-                    'player_id' => $leaderboard['pb_player_id'],
-                    'name' => $info['first_name'] .' '. $info['last_name'],
-                    'image' => $info['image'],
-                    'exp' => $info['exp'],
-                    'email' => $info['email'],
-                    'level' => $info['level'],
-                    'point' => $leaderboard['value'],
-                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_added']))),
-                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_modified'])))
-                );
+                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
+
+                    $this->data['leaderboards'][] = array(
+                        'player_id' => $leaderboard['pb_player_id'],
+                        'name' => $info['first_name'] .' '. $info['last_name'],
+                        'image' => $info['image'],
+                        'exp' => $info['exp'],
+                        'email' => $info['email'],
+                        'level' => $info['level'],
+                        'point' => $leaderboard['value'],
+                        'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_added']))),
+                        'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_modified'])))
+                    );
+                }
             }
         }
 
         $data['sort'] = 'date_added';
         $data['order'] = 'DESC';
 
-        $results = $this->Player_model->getPlayers($data);
+        if($client_id){
+            $results = $this->Player_model->getPlayers($data);
 
-        foreach ($results as $player) {
-            $action = array();
+            foreach ($results as $player) {
+                $action = array();
 
-            $this->data['players'][] = array(
-                'pb_player_id'   => $player['_id'],
-                'username' => $player['username'],
-                'first_name'   => $player['first_name'],
-                'last_name' => $player['last_name'],
-                'nickname' => $player['nickname'],
-                'image'     => $player['image'],
-                'status'     => $player['status'],
-                'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_added']))),
-                'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_modified']))),
-                'exp'      => $player['exp'],
-                'email' => $player['email'],
-                'action'     => $action
-            );
+                $this->data['players'][] = array(
+                    'pb_player_id'   => $player['_id'],
+                    'username' => $player['username'],
+                    'first_name'   => $player['first_name'],
+                    'last_name' => $player['last_name'],
+                    'nickname' => $player['nickname'],
+                    'image'     => $player['image'],
+                    'status'     => $player['status'],
+                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_added']))),
+                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_modified']))),
+                    'exp'      => $player['exp'],
+                    'email' => $player['email'],
+                    'level' => $player['level'],
+                    'point' => $player['points'],
+                    'action'     => $action
+                );
+            }
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
