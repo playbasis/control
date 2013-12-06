@@ -12,6 +12,6 @@ application/logs/*
 
 image/cache/*
 
-application/config/config.php
-application/config/constants.php
-application/config/mongodb.php
+*/config/config.php
+*/config/constants.php
+*/config/mongodb.php
