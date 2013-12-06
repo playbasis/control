@@ -78,7 +78,7 @@ class User_group extends MY_Controller{
 			$user_group_info = $this->User_group_model->getUserGroupInfo($user_group_id);
 		}
 
-		if($user_group_info){
+		if(isset($user_group_info)){
 
 		}
 	}
