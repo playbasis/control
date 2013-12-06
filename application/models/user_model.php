@@ -38,24 +38,24 @@ class User_model extends MY_Model
 
     }
 
-    public function getAllUsers($data = array()){
+    // public function getAllUsers($data = array()){
 
-        $users_data = array();
+    //     $users_data = array();
 
-        if(isset($data['start']) || isset($data['limit'])){
-            if($data['start'] < 0 ){
-                $data['start'] = 0;
-            }
-            if($data['limit'] < 1){
-                $data['limit'] = 20;
-            }
-        }
+    //     if(isset($data['start']) || isset($data['limit'])){
+    //         if($data['start'] < 0 ){
+    //             $data['start'] = 0;
+    //         }
+    //         if($data['limit'] < 1){
+    //             $data['limit'] = 20;
+    //         }
+    //     }
 
-        $users_data = $this->mongo_db->get("user");
+    //     $users_data = $this->mongo_db->get("user");
 
-        return $users_data;
+    //     return $users_data;
 
-    }
+    // }
 
     public function getTotalNumUsers(){
         return $this->mongo_db->count('user');
@@ -75,6 +75,7 @@ class User_model extends MY_Model
         $salt = $find_salt['salt'];
 
         $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
         $this->mongo_db->set('username', $data['username']);
         $this->mongo_db->set('firstname', $data['firstname']);
         $this->mongo_db->set('lastname', $data['lastname']);
@@ -95,9 +96,41 @@ class User_model extends MY_Model
             }
         }else{
             echo "Password not matched";
-        }
+        }        
+    }
 
-        
+    public function insertUser(){
+        $user_group_id = $this->input->post('user_group');
+        $username = $this->input->post('username');
+        $firstname = $this->input->post('firstname');
+        $email = $this->input->post('email');
+        $lastname = $this->input->post('lastname');
+        $status = $this->input->post('status');
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $salt = get_random_password(10,10);
+
+        $password = dohash($this->input->post('password'), $salt);
+
+        $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+        $data = array(
+            'user_group_id' => new MongoID($user_group_id),
+            'username' => $username,
+            'password' => $password,
+            'salt' => $salt,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'email' => $email,
+            'code' =>"",
+            'ip' => $ip,
+            'status' => ($status)?true:false,
+            'database' => "core",
+            'date_added' => $date_added
+            );
+
+        $this->mongo_db->insert('user', $data);
+
+
     }
 
 
@@ -110,9 +143,22 @@ class User_model extends MY_Model
         return $results;
     }
 
+    public function fetchEntireUsers(){
+        return $this->mongo_db->get('user');
+    }
+
+    public function fetchAUser($username){
+        $this->mongo_db->where('username', $username);
+        return $this->mongo_db->get('user');
+    }
+
     public function deleteUser($user_id){
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->delete("user");
+    }
+
+    public function get_user_groups(){
+        return $this->mongo_db->get('user_group');
     }
 
     public function login($u, $p){
