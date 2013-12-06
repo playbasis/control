@@ -157,5 +157,32 @@ class Domain extends MY_Controller
 
         $this->output->set_output(json_encode($json));
     }
+
+    public function delete() {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('site_id') && $this->error['warning'] == null) {
+
+            if($this->checkOwnerDomain($this->input->post('site_id'))){
+                $this->Domain_model->deleteDomain($this->input->post('site_id'));
+            }
+
+            $this->session->data['success'] = $this->lang->line('text_success');
+
+            redirect('/domain', 'refresh');
+        }
+
+        $this->getList(0);
+    }
 }
 ?>

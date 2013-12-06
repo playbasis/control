@@ -191,8 +191,7 @@ class Domain_model extends MY_Model
         return $secret;
     }
 
-    private function datetimeMongotoReadable($dateTimeMongo)
-    {
+    private function datetimeMongotoReadable($dateTimeMongo){
         if ($dateTimeMongo) {
             if (isset($dateTimeMongo->sec)) {
                 $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
@@ -203,6 +202,14 @@ class Domain_model extends MY_Model
             $dateTimeMongo = "0000-00-00 00:00:00";
         }
         return $dateTimeMongo;
+    }
+
+    public function deleteDomain($site_id){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id', new MongoID($site_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update('playbasis_client_site');
     }
 }
 ?>

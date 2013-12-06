@@ -129,7 +129,10 @@
                         </tr>
                     </table>
 
-                    <div id="users"></div>
+                    <iframe id="users" frameborder="0" style="overflow: hidden; height: 100%; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/users?client_id=<?php echo $list_client_id; ?>">
+
+                    </iframe>
+
                 </div>
                 <?php } ?>
                 <?php if ($list_client_id.""!=0) { ?>
@@ -183,7 +186,9 @@
                         </tr>
                     </table>
 
-                    <div id="domains"></div>
+                    <iframe id="domains" frameborder="0" style="overflow: hidden; height: 100%; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
+
+                    </iframe>
                 </div>
                 <?php } ?>
             <?php
@@ -205,7 +210,7 @@ function addNewDomain() {
     var plan_id = $('select[name=domain_plan_id]').val();
 
     $.ajax({
-        url: 'index.php?route=client/client/adddomain',
+        url: 'client/client/adddomain',
         type: 'POST',
         dataType: 'json',
         data: ({'domain_name' : domain_name, 'site_name' : site_name, 'date_start' : date_start, 'date_expire' : date_expire, 'limit_users' : limit_users, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $client_id; ?>'}),
@@ -217,8 +222,10 @@ function addNewDomain() {
             } else {
 
                 $('#notification').html(json['success']).addClass('success').show();
-                $('#domains').load('index.php?route=client/client/domain&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
-
+                //$('#domains').load('client/domain?client_id=<?php echo $list_client_id; ?>');
+                $('iframe').each(function() {
+                    this.contentWindow.location.reload(true);
+                });
             }
         }
 
@@ -242,7 +249,7 @@ function addNewUser() {
     var status = $('select[name=user_status]').val();
 
     $.ajax({
-        url: 'index.php?route=client/client/adduser&client_id=<?php echo $client_id; ?>',
+        url: baseUrlPath+'client/adduser?client_id=<?php echo $client_id; ?>',
         type: 'POST',
         dataType: 'json',
         data: ({'first_name' : first_name, 'last_name' : last_name, 'email' : email, 'username' : username, 'password' : password, 'user_group_id' : user_group_id, 'status' : status}),
@@ -254,8 +261,10 @@ function addNewUser() {
             } else {
 
                 $('#notification').html(json['success']).addClass('success').show();
-                $('#users').load('index.php?route=client/client/users&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
-
+                //$('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
+                $('iframe').each(function() {
+                    this.contentWindow.location.reload(true);
+                });
             }
         }
 
@@ -278,7 +287,7 @@ $('#users .pagination a').live('click', function() {
     return false;
 });
 
-$('#users').load('index.php?route=client/client/users&client_id=<?php echo $client_id; ?>');
+//$('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
 
 //--></script>
 
@@ -293,7 +302,7 @@ $('#domains .pagination a').live('click', function() {
     return false;
 });
 
-$('#domains').load('index.php?route=client/client/domain&client_id=<?php echo $client_id; ?>');
+//$('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
 
 //--></script>
 
@@ -302,12 +311,12 @@ $('#domains').load('index.php?route=client/client/domain&client_id=<?php echo $c
 function resetToken(site_id) {
 
     $.ajax({
-        url: 'index.php?route=client/client/reset',
+        url: baseUrlPath+'client/reset',
         type: 'post',
         data: 'site_id=' + site_id,
         dataType: 'json',
         success: function(json) {
-            $('#domains').load('index.php?route=client/client/domain&client_id=<?php echo $client_id; ?>');
+            $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
         }
     });
 

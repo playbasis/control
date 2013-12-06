@@ -400,5 +400,198 @@ class Client extends MY_Controller
 
         $this->output->set_output(json_encode($json));
     }
+
+    public function domain($offset=0) {
+
+        $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
+
+        $per_page = 10;
+
+        $this->load->model('Domain_model');
+        $this->load->model('Permission_model');
+        $this->load->model('Plan_model');
+
+        $this->load->library('pagination');
+
+        $this->data['domains'] = array();
+
+        $data = array(
+            'client_id' => $this->input->get('client_id'),
+            'start' => $offset,
+            'limit' => $per_page
+        );
+
+        $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
+
+        $total = $this->Domain_model->getTotalDomainsByClientId($data);
+
+        $results = $this->Domain_model->getDomainsByClientId($data);
+
+        $this->data['domains'] = array();
+
+        if ($results) {
+            foreach ($results as $result) {
+
+                $plan_id = $this->Permission_model->getPermissionBySiteId($result['_id']);
+
+                $this->data['domains'][] = array(
+                    'site_id' => $result['_id'],
+                    'client_id' => $result['client_id'],
+                    'plan_id' => $plan_id,
+                    'domain_name' => $result['domain_name'],
+                    'site_name' => $result['site_name'],
+                    'keys' => $result['api_key'],
+                    'secret' => $result['api_secret'],
+                    'date_start' => $result['date_start'],
+                    'date_expire' => $result['date_expire'],
+                    'limit_users' => $result['limit_users'],
+                    'status' => $result['status'],
+                    'date_added' => $result['date_added'],
+                    'date_modified' => $result['date_modified']
+                );
+            }
+        }
+
+        $data = array(
+            'sort' => 'sort_order',
+            'order' => 'ASC',
+        );
+
+        $plan_data = $this->Plan_model->getPlans($data);
+
+        if ($plan_data) {
+            foreach ($plan_data as $plan) {
+                $this->data['plan_data'][] = array(
+                    'plan_id' => $plan['plan_id'],
+                    'name' => $plan['name'],
+                );
+            }
+        }
+
+        $config['base_url'] = site_url('client/domain').$parameter_url;
+        $config['total_rows'] = $total;
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
+        $config['page_query_string'] = true;
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+
+        $this->load->vars($this->data);
+//        $this->load->view('client_domain');
+        $this->render_page('client_domain');
+    }
+
+    public function users($offset=0) {
+
+        $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
+
+        $per_page = 10;
+
+        $this->load->model('Domain_model');
+        $this->load->model('Permission_model');
+        $this->load->model('Plan_model');
+
+        $this->load->library('pagination');
+
+        $this->data['domains'] = array();
+
+        $data = array(
+            'client_id' => $this->input->get('client_id'),
+            'start' => $offset,
+            'limit' => $per_page
+        );
+
+        $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
+
+        $total = $this->Domain_model->getTotalDomainsByClientId($data);
+
+        $results = $this->Domain_model->getDomainsByClientId($data);
+
+        $this->data['users'] = array();
+
+        $results = $this->User_model->getUserToClient($this->request->get['client_id']);
+
+        if ($results) {
+            foreach ($results as $result) {
+
+                $user_data = $this->model_user_user->getUser($result['user_id']);
+                if($user_data) {
+                    $this->data['users'][] = array(
+                        'user_id' => $result['user_id'],
+                        'user_group_id' => $user_data['user_group_id'],
+                        'client_id' => $result['client_id'],
+                        'first_name' => $user_data['firstname'],
+                        'last_name' => $user_data['lastname'],
+                        'username' => $user_data['username'],
+                        'password' => $user_data['password'],
+                        'status' => $user_data['status'],
+                        'date_added' => $user_data['date_added'],
+                        'update' => $this->url->link('user/user/update', 'token=' . $this->session->data['token'] . '&user_id=' . $result['user_id'], 'SSL'),
+                        'href' => $this->url->link('client/client/deleteuser', 'token=' . $this->session->data['token'] . '&client_id=' . $result['client_id'] . '&user_id=' . $result['user_id'], 'SSL')
+                    );
+                }
+
+            }
+
+        }
+        if ($results) {
+            foreach ($results as $result) {
+
+                $plan_id = $this->Permission_model->getPermissionBySiteId($result['_id']);
+
+                $this->data['domains'][] = array(
+                    'site_id' => $result['site_id'],
+                    'client_id' => $result['client_id'],
+                    'plan_id' => $plan_id,
+                    'domain_name' => $result['domain_name'],
+                    'site_name' => $result['site_name'],
+                    'keys' => $result['api_key'],
+                    'secret' => $result['api_secret'],
+                    'date_start' => $result['date_start'],
+                    'date_expire' => $result['date_expire'],
+                    'limit_users' => $result['limit_users'],
+                    'status' => $result['status'],
+                    'date_added' => $result['date_added'],
+                    'date_modified' => $result['date_modified']
+                );
+            }
+        }
+
+        $data = array(
+            'sort' => 'sort_order',
+            'order' => 'ASC',
+        );
+
+        $plan_data = $this->Plan_model->getPlans($data);
+
+        if ($plan_data) {
+            foreach ($plan_data as $plan) {
+                $this->data['plan_data'][] = array(
+                    'plan_id' => $plan['plan_id'],
+                    'name' => $plan['name'],
+                );
+            }
+        }
+
+        $config['base_url'] = site_url('client/users').$parameter_url;
+        $config['total_rows'] = $total;
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
+        $config['page_query_string'] = true;
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+
+        $this->load->vars($this->data);
+//        $this->load->view('client_user');
+        $this->render_page('client_user');
+    }
 }
 ?>
