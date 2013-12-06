@@ -69,7 +69,11 @@ class User extends MY_Controller
         if(isset($_GET['filter_name'])){
             $this->data['users'] = $this->User_model->fetchAUser($_GET['filter_name']);
         }else{
-            $this->data['users'] = $this->User_model->fetchAllUsers($config['per_page'], $offset);    
+            $filter = array(
+                'limit' => $config['per_page'],
+                'start' => $offset
+            );
+            $this->data['users'] = $this->User_model->fetchAllUsers($filter);
         }
 
         $this->data['get_all_users'] = $this->User_model->fetchEntireUsers(); 
@@ -164,6 +168,32 @@ class User extends MY_Controller
         $this->data['main'] = 'user_form';
         $this->render_page('template');
 
+    }
+
+    public function autocomplete(){
+        $json = array();
+
+        if ($this->input->get('filter_name')) {
+
+            if ($this->input->get('filter_name')) {
+                $filter_name = $this->input->get('filter_name');
+            } else {
+                $filter_name = null;
+            }
+
+            $data = array(
+                'filter_name' => $filter_name
+            );
+
+            $results_user = $this->User_model->fetchAllUsers($data);
+
+            foreach ($results_user as $result) {
+                $json[] = array(
+                    'username' => html_entity_decode($result['username'], ENT_QUOTES, 'UTF-8'),
+                );
+            }
+        }
+        $this->output->set_output(json_encode($json));
     }
 
     public function login(){

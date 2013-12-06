@@ -14,7 +14,10 @@
             </div>
         </div>
         <div class="content">
-            <form action="index.php/user/delete" method="post" enctype="multipart/form-data" id="form">
+            <?php
+            $attributes = array('id' => 'form');
+            echo form_open('user/delete',$attributes);
+            ?>
                 <table class="list">
                     <thead>
                     <tr>
@@ -29,13 +32,20 @@
                     <tr class="filter">
                         <td></td>
                         <td><input type="text" name="filter_name" list="usernames1" value="" style="width:50%;" /></td>
-                        <datalist id = 'usernames1'>
-                            <?php if($users){ ?>
+                        <?php
+                        if(false){
+                        ?>
+                            <datalist id = 'usernames1'>
+                                <?php if($users){ ?>
                                 <?php foreach($get_all_users as $user){?>
-                                    <option value="<?php echo $user['username'];?>">
-                                <?php }?>
-                            <?php }?>
-                        </datalist>
+                                <option value="<?php echo $user['username'];?>">
+                                    <?php }?>
+                                    <?php }?>
+                            </datalist>
+                        <?php
+                        }
+                        ?>
+
                         <td></td>
                         <td></td>
                         <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>
@@ -62,14 +72,15 @@
                     <?php } ?>
                     </tbody>
                 </table>
-            </form>
+            <?php
+            echo form_close();
+            ?>
 
             <div class="pagination">
             	<?php 
                 if(!isset($_GET['filter_name'])){
                     echo $this->pagination->create_links();    
                 }
-            	//echo $pagination_links; 
             	?>
             </div>
         </div>
@@ -90,26 +101,27 @@ function filter() {
 }
 //--></script>
 
-<!--<script type="text/javascript">
+<script type="text/javascript">
 $('input[name=\'filter_name\']').autocomplete({
     delay: 0,
     source: function(request, response) {
         $.ajax({
-            url: baseUrlPath+'client/autocomplete?filter_name=' +  encodeURIComponent(request.term),
+            url: baseUrlPath+'user/autocomplete?filter_name=' +  encodeURIComponent(request.term),
             dataType: 'json',
             success: function(json) {
+                console.log(json);
                 response($.map(json, function(item) {
                     return {
-                        label: item.fullname,
-                        value: item.client_id,
-                        name: item.name
+                        label: item.username,
+                        username: item.username
                     }
                 }));
+                console.log(response);
             }
         });
     },
     select: function(event, ui) {
-        $('input[name=\'filter_name\']').val(ui.item.name);
+        $('input[name=\'filter_name\']').val(ui.item.username);
 
         return false;
     },
@@ -117,4 +129,4 @@ $('input[name=\'filter_name\']').autocomplete({
         return false;
     }
 });
-</script>//-->
+</script>

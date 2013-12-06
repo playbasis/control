@@ -113,10 +113,31 @@ class User_model extends MY_Model
 
     }
 
-    public function fetchAllUsers($limit, $offset){
-        
-        $this->mongo_db->limit($limit);
-        $this->mongo_db->offset($offset);
+    public function fetchAllUsers($data){
+        $this->set_site_mongodb(0);
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('username', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
         $results = $this->mongo_db->get("user");
 
         return $results;
