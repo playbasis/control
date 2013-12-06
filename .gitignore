@@ -1,5 +1,9 @@
 .DS_Store
 
+application/config/config.php
+application/config/constants.php
+application/config/mongodb.php
+
 application/cache/*
 !application/cache/index.html
 !application/cache/.htaccess
@@ -11,7 +15,3 @@ application/logs/*
 .idea/*
 
 image/cache/*
-
-*/config/config.php
-*/config/constants.php
-*/config/mongodb.php
