@@ -46,6 +46,30 @@ class User_group extends MY_Controller{
         $config['total_rows'] = $this->User_group_model->getTotalNumUsers();
         $config['per_page'] = 10;
 
+        $this->pagination->initialize($config);
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
+
+
+        if(isset($_GET['filter_name'])){
+        	$filter = array(
+        		'limit' => $config['per_page'],
+        		'start' => $offset
+        	);
+        }
+
 		$this->data['main'] = 'user_group';
 		$this->render_page('template');
 
@@ -59,7 +83,6 @@ class User_group extends MY_Controller{
         $this->data['form'] = 'user_group/insert/';
 
         //Rules need to be set
-
         if($_SERVER['REQUEST_METHOD'] =='POST'){
         	if($this->form_validation->run()){
         		$this->User_group_model->insertUserGroup();
