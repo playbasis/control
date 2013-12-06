@@ -38,25 +38,6 @@ class User_model extends MY_Model
 
     }
 
-    public function getAllUsers($data = array()){
-
-        $users_data = array();
-
-        if(isset($data['start']) || isset($data['limit'])){
-            if($data['start'] < 0 ){
-                $data['start'] = 0;
-            }
-            if($data['limit'] < 1){
-                $data['limit'] = 20;
-            }
-        }
-
-        $users_data = $this->mongo_db->get("user");
-
-        return $users_data;
-
-    }
-
     public function getTotalNumUsers(){
         return $this->mongo_db->count('user');
     }
@@ -96,16 +77,73 @@ class User_model extends MY_Model
         }else{
             echo "Password not matched";
         }
-
-        
     }
-
 
     public function fetchAllUsers($limit, $offset){
         
         $this->mongo_db->limit($limit);
         $this->mongo_db->offset($offset);
         $results = $this->mongo_db->get("user");
+
+        return $results;
+    }
+
+    public function getTotalUserByClientId($data){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
+        $user_data = $this->mongo_db->count("user_to_client");
+
+        return $user_data;
+    }
+
+    public function getUserByClientId($data){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
+        $user_data = $this->mongo_db->get("user_to_client");
+
+        return $user_data;
+    }
+
+    public function getUserGroups(){
+        $results = $this->mongo_db->get("user_group");
 
         return $results;
     }

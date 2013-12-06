@@ -129,7 +129,7 @@
                         </tr>
                     </table>
 
-                    <iframe id="users" frameborder="0" style="overflow: hidden; height: 100%; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/users?client_id=<?php echo $list_client_id; ?>">
+                    <iframe id="users" frameborder="0" style="overflow: hidden; min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/users?client_id=<?php echo $list_client_id; ?>">
 
                     </iframe>
 
@@ -186,7 +186,7 @@
                         </tr>
                     </table>
 
-                    <iframe id="domains" frameborder="0" style="overflow: hidden; height: 100%; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
+                    <iframe id="domains" frameborder="0" style="overflow: hidden; min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
 
                     </iframe>
                 </div>

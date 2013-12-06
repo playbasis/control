@@ -427,8 +427,6 @@ class Client extends MY_Controller
 
         $results = $this->Domain_model->getDomainsByClientId($data);
 
-        $this->data['domains'] = array();
-
         if ($results) {
             foreach ($results as $result) {
 
@@ -497,7 +495,7 @@ class Client extends MY_Controller
 
         $this->load->library('pagination');
 
-        $this->data['domains'] = array();
+        $this->data['users'] = array();
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
@@ -507,18 +505,14 @@ class Client extends MY_Controller
 
         $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
 
-        $total = $this->Domain_model->getTotalDomainsByClientId($data);
+        $total = $this->User_model->getTotalUserByClientId($data);
 
-        $results = $this->Domain_model->getDomainsByClientId($data);
-
-        $this->data['users'] = array();
-
-        $results = $this->User_model->getUserToClient($this->request->get['client_id']);
+        $results = $this->User_model->getUserByClientId($data);
 
         if ($results) {
             foreach ($results as $result) {
 
-                $user_data = $this->model_user_user->getUser($result['user_id']);
+                $user_data = $this->User_model->getUserInfo($result['user_id']);
                 if($user_data) {
                     $this->data['users'][] = array(
                         'user_id' => $result['user_id'],
@@ -527,55 +521,16 @@ class Client extends MY_Controller
                         'first_name' => $user_data['firstname'],
                         'last_name' => $user_data['lastname'],
                         'username' => $user_data['username'],
-                        'password' => $user_data['password'],
                         'status' => $user_data['status'],
                         'date_added' => $user_data['date_added'],
-                        'update' => $this->url->link('user/user/update', 'token=' . $this->session->data['token'] . '&user_id=' . $result['user_id'], 'SSL'),
-                        'href' => $this->url->link('client/client/deleteuser', 'token=' . $this->session->data['token'] . '&client_id=' . $result['client_id'] . '&user_id=' . $result['user_id'], 'SSL')
                     );
                 }
 
             }
 
         }
-        if ($results) {
-            foreach ($results as $result) {
 
-                $plan_id = $this->Permission_model->getPermissionBySiteId($result['_id']);
-
-                $this->data['domains'][] = array(
-                    'site_id' => $result['site_id'],
-                    'client_id' => $result['client_id'],
-                    'plan_id' => $plan_id,
-                    'domain_name' => $result['domain_name'],
-                    'site_name' => $result['site_name'],
-                    'keys' => $result['api_key'],
-                    'secret' => $result['api_secret'],
-                    'date_start' => $result['date_start'],
-                    'date_expire' => $result['date_expire'],
-                    'limit_users' => $result['limit_users'],
-                    'status' => $result['status'],
-                    'date_added' => $result['date_added'],
-                    'date_modified' => $result['date_modified']
-                );
-            }
-        }
-
-        $data = array(
-            'sort' => 'sort_order',
-            'order' => 'ASC',
-        );
-
-        $plan_data = $this->Plan_model->getPlans($data);
-
-        if ($plan_data) {
-            foreach ($plan_data as $plan) {
-                $this->data['plan_data'][] = array(
-                    'plan_id' => $plan['plan_id'],
-                    'name' => $plan['name'],
-                );
-            }
-        }
+        $this->data['groups'] = $this->User_model->getUserGroups();
 
         $config['base_url'] = site_url('client/users').$parameter_url;
         $config['total_rows'] = $total;
