@@ -159,7 +159,7 @@ class User extends MY_Controller
             $this->data['user'] = $user_info;    
         }
 
-        $this->data['user_groups'] = $this->User_model->get_user_groups();
+        $this->data['user_groups'] = $this->User_model->getUserGroups();
 
         $this->data['main'] = 'user_form';
         $this->render_page('template');
