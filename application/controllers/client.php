@@ -206,13 +206,8 @@ class Client extends MY_Controller
                     'image' => $image,
                     'quantity' => $domain_total,
                     'status' => $result['status'],
-<<<<<<< HEAD
-                    'selected'    => in_array($result['client_id'], $this->input->post('selected')
-                )
-=======
                     'selected'    => is_array($this->input->post('selected')) && in_array($result['client_id'], $this->input->post('selected')),
                 );
->>>>>>> 7eab98bcddeee01b94014570e97d9720b9f57747
             }
         }
 
