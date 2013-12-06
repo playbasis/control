@@ -66,9 +66,13 @@ class User extends MY_Controller
             $this->data['success'] = '';
         }
 
+        if(isset($_GET['filter_name'])){
+            $this->data['users'] = $this->User_model->fetchAUser($_GET['filter_name']);
+        }else{
+            $this->data['users'] = $this->User_model->fetchAllUsers($config['per_page'], $offset);    
+        }
 
-        //$this->data['selected'] = isset($this->input->post('selected') && in)
-        $this->data['users'] = $this->User_model->fetchAllUsers($config['per_page'], $offset);
+        $this->data['get_all_users'] = $this->User_model->fetchEntireUsers(); 
         $this->data['main'] = 'user';
         $this->render_page('template');
         
@@ -81,8 +85,6 @@ class User extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user/update/'.$user_id;
 
-        //if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
-
         //Rules need to be set
         $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
@@ -91,33 +93,74 @@ class User extends MY_Controller
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'trim|max_length[255]|xss_clean|check_space');
         
-
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             //Check to see if it passes the form validation
             if($this->form_validation->run()){
                 $this->User_model->editUser($user_id, $this->input->post());
             }else{
-                echo "not pass";
+                
             }
-
-            
-            
-
         }else{
             $this->getForm($user_id);
         }
-
         
     }
 
-    public function getForm($user_id){
+    public function insert(){
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'user/insert/';
+
+        //Rules need to be set
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space|required');
+        $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'trim|max_length[255]|xss_clean|check_space|required');
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->form_validation->run()){
+                $this->User_model->insertUser();
+                $this->session->data['success'] = $this->lang->line('text_success');
+                redirect('user/','refresh');
+            }else{
+                
+            }
+        }
+
+        $this->getForm();
+
+    }
+
+    public function delete(){
+
+        $selectedUsers = $this->input->post('selected');
+
+        foreach ($selectedUsers as $selectedUser){
+            $this->User_model->deleteUser($selectedUser);
+        }
+
+        redirect('user/');
+
+    }
+
+    public function getForm($user_id = 0){
 
         if((isset($user_id)) && $user_id !=0){
             $user_info = $this->User_model->getUserInfo($user_id);
         }
 
-        $this->data['user'] = $user_info;
+        if(isset($user_info)){
+            $this->data['user'] = $user_info;    
+        }
+
+        $this->data['user_groups'] = $this->User_model->get_user_groups();
+
         $this->data['main'] = 'user_form';
         $this->render_page('template');
 

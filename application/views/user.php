@@ -9,12 +9,12 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="location =  baseUrlPath+'client/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <button class="btn btn-info" onclick="location =  baseUrlPath+'user/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
         </div>
         <div class="content">
-            <form action="client/client/delete" method="post" enctype="multipart/form-data" id="form">
+            <form action="index.php/user/delete" method="post" enctype="multipart/form-data" id="form">
                 <table class="list">
                     <thead>
                     <tr>
@@ -28,15 +28,23 @@
                     <tbody>
                     <tr class="filter">
                         <td></td>
-                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
+                        <td><input type="text" name="filter_name" list="usernames1" value="" style="width:50%;" /></td>
+                        <datalist id = 'usernames1'>
+                            <?php if($users){ ?>
+                                <?php foreach($get_all_users as $user){?>
+                                    <option value="<?php echo $user['username'];?>">
+                                <?php }?>
+                            <?php }?>
+                        </datalist>
                         <td></td>
                         <td></td>
                         <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>
                     </tr>
-                    <?php if ($users) { ?>
+
+                    <?php if (isset($users)) { ?>
                         <?php foreach ($users as $user) { ?>
                         <tr>
-                            <td style="text-align: center;"><?php if ($user['selected']) { ?>
+                            <td style="text-align: center;"><?php if (isset($user['selected'])) { ?>
                                 <input type="checkbox" name="selected[]" value="<?php echo $user['_id']; ?>" checked="checked" />
                                 <?php } else { ?>
                                 <input type="checkbox" name="selected[]" value="<?php echo $user['_id']; ?>" />
@@ -47,18 +55,20 @@
                             <td class="right">[ <?php echo anchor('user/update/'.$user['_id'], 'Edit'); ?> ]</td>
                         </tr>
                             <?php } ?>
-                        <?php } else { ?>
+                    <?php } else { ?>
                     <tr>
                         <td class="center" colspan="9"><?php echo $text_no_results; ?></td>
                     </tr>
-                        <?php } ?>
+                    <?php } ?>
                     </tbody>
                 </table>
             </form>
 
             <div class="pagination">
             	<?php 
-            	echo $this->pagination->create_links();
+                if(!isset($_GET['filter_name'])){
+                    echo $this->pagination->create_links();    
+                }
             	//echo $pagination_links; 
             	?>
             </div>
@@ -68,7 +78,7 @@
 
 <script type="text/javascript"><!--
 function filter() {
-    url = baseUrlPath+'client';
+    url = baseUrlPath+'user';
 
     var filter_name = $('input[name=\'filter_name\']').attr('value');
 
@@ -80,7 +90,7 @@ function filter() {
 }
 //--></script>
 
-<script type="text/javascript"><!--
+<!--<script type="text/javascript">
 $('input[name=\'filter_name\']').autocomplete({
     delay: 0,
     source: function(request, response) {
@@ -107,4 +117,4 @@ $('input[name=\'filter_name\']').autocomplete({
         return false;
     }
 });
-//--></script>
+</script>//-->

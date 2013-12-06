@@ -14,7 +14,7 @@ $lang['error_warning']          = 'Warning: Please check the form carefully for 
 //Text
 //$lang['text_no_results']          = 'Result Not found.';
 //$lang['text_edit']                = 'Edit';
-$lang['text_success']           				= 'Success: You have modified the user!';
+$lang['text_success']           				= 'Success: You have modified a user!';
 //$lang['text_default']           				= 'Default';
 //$lang['text_image_manager']     				= 'Image Manager';
 //$lang['text_browse']            				= 'Browse Files';
@@ -36,3 +36,7 @@ $lang['form_lastname']							="Lastname";
 $lang['form_password']							="Password";
 $lang['form_confirm_password']					="Confirm Password";
 $lang['form_email']								="Email";
+$lang['form_user_group']						="User Group";
+
+// Button
+$lang['button_filter']							= 'Filter';
