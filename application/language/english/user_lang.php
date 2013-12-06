@@ -1,19 +1,19 @@
 <?php
 
 // Heading
-$lang['heading_title']          = 'User';
-$lang['title']          		= 'User';
+$lang['heading_title']          				= 'User';
+$lang['title']          						= 'User';
 
 // Error 
-$lang['error_warning']          = 'Warning: Please check the form carefully for errors!';
-//$lang['error_permission']       = 'Warning: You do not have permission to modify clients!';
-//$lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
-//$lang['error_required']				= 'Warning: Please check required field!!';
-//$lang['error_user']					= 'Error: Username not availble!!!';
+$lang['error_warning']          				= 'Warning: Please check the form carefully for errors!';
+//$lang['error_permission']       				= 'Warning: You do not have permission to modify clients!';
+//$lang['error_name']             				= 'Category Name must be between 2 and 32 characters!';
+//$lang['error_required']						= 'Warning: Please check required field!!';
+//$lang['error_user']							= 'Error: Username not availble!!!';
 
 //Text
-//$lang['text_no_results']          = 'Result Not found.';
-//$lang['text_edit']                = 'Edit';
+//$lang['text_no_results']          			= 'Result Not found.';
+//$lang['text_edit']                			= 'Edit';
 $lang['text_success']           				= 'Success: You have modified a user!';
 //$lang['text_default']           				= 'Default';
 //$lang['text_image_manager']     				= 'Image Manager';
@@ -40,3 +40,5 @@ $lang['form_user_group']						="User Group";
 
 // Button
 $lang['button_filter']							= 'Filter';
+$lang['button_insert']							= "Insert";
+$lang['button_delete']							= "Delete";
