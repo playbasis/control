@@ -32,20 +32,6 @@
                     <tr class="filter">
                         <td></td>
                         <td><input type="text" name="filter_name" list="usernames1" value="" style="width:50%;" /></td>
-                        <?php
-                        if(false){
-                        ?>
-                            <datalist id = 'usernames1'>
-                                <?php if($users){ ?>
-                                <?php foreach($get_all_users as $user){?>
-                                <option value="<?php echo $user['username'];?>">
-                                    <?php }?>
-                                    <?php }?>
-                            </datalist>
-                        <?php
-                        }
-                        ?>
-
                         <td></td>
                         <td></td>
                         <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>

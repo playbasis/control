@@ -201,15 +201,6 @@ class User_model extends MY_Model
         return $this->mongo_db->get("user_group");
     }
 
-    public function fetchEntireUsers(){
-        return $this->mongo_db->get('user');
-    }
-
-    public function fetchAUser($username){
-        $this->mongo_db->where('username', $username);
-        return $this->mongo_db->get('user');
-    }
-
     public function deleteUser($user_id){
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->delete("user");

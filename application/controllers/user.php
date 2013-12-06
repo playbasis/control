@@ -67,7 +67,10 @@ class User extends MY_Controller
         }
 
         if(isset($_GET['filter_name'])){
-            $this->data['users'] = $this->User_model->fetchAUser($_GET['filter_name']);
+            $filter = array(
+                'filter_name' => $_GET['filter_name']
+            );
+            $this->data['users'] = $this->User_model->fetchAllUsers($filter);
         }else{
             $filter = array(
                 'limit' => $config['per_page'],
@@ -76,7 +79,6 @@ class User extends MY_Controller
             $this->data['users'] = $this->User_model->fetchAllUsers($filter);
         }
 
-        $this->data['get_all_users'] = $this->User_model->fetchEntireUsers(); 
         $this->data['main'] = 'user';
         $this->render_page('template');
         
