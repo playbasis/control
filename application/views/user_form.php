@@ -1,5 +1,4 @@
 <div id="content" class="span10">
-<?php var_dump($user)?>
     <div class="box">
         <div class="heading">
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
@@ -47,6 +46,22 @@
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_email'); ?></td>
                                 <td><input type="email" name="email" size="100" value="<?php echo isset($user['email']) ? $user['email'] :  set_value('email'); ?>" /></td>
+                            </tr>
+                            <tr>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_user_group'); ?></td>
+                                <td>
+                                    <select name ="user_group">
+                                        <?php if($user_groups){?>
+                                            <?php foreach($user_groups as $user_group){?>
+                                                <?php if(isset($user['user_group_id']) && ($user['user_group_id']==$user_group['_id'])){?>
+                                                    <option value = "<?php echo $user_group['_id'];?>" selected><?php echo $user_group['name'];?></option>    
+                                                <?php }else{?>
+                                                    <option value = "<?php echo $user_group['_id'];?>"><?php echo $user_group['name'];?></option>
+                                                <?php }?>
+                                            <?php }?>
+                                        <?php }?>    
+                                    </select>
+                                </td>
                             </tr>
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_password'); ?></td>
