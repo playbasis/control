@@ -65,8 +65,9 @@ class User_group extends MY_Controller{
 
         if(isset($_GET['filter_name'])){
         	$filter = array(
-                    'filter' => $_GET['filter_name']
+                    'filter_name' => $_GET['filter_name']
                 );
+
             $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
         }else{
             $filter = array(
@@ -155,6 +156,32 @@ class User_group extends MY_Controller{
 
         redirect('user_group/');
 
+    }
+
+    public function autocomplete(){
+        $json = array();
+
+        if ($this->input->get('filter_name')) {
+
+            if ($this->input->get('filter_name')) {
+                $filter_name = $this->input->get('filter_name');
+            } else {
+                $filter_name = null;
+            }
+
+            $data = array(
+                'filter_name' => $filter_name
+            );
+
+            $results_usergroup = $this->User_group_model->fetchAllUserGroups($data);
+
+            foreach ($results_usergroup as $result) {
+                $json[] = array(
+                    'username' => html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'),
+                );
+            }
+        }
+        $this->output->set_output(json_encode($json));
     }
 
 }
