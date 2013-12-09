@@ -39,11 +39,25 @@
 	                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
 	                        <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>
 	                    </tr>
-            			<tr>
-            				<td>check</td>
-            				<td>name</td>
-            				<td>action</td>
-            			</tr>
+                        <?php if (isset($user_groups)){?>
+                            <?php foreach($user_groups as $user_group){?>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <?php if (isset($user['selected'])) { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $user_group['_id']; ?>" checked="checked" />
+                                    <?php } else { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $user_group['_id']; ?>" />
+                                    <?php } ?>
+                                </td>
+                                <td class="left"><?php echo $user_group['name'];?></td>
+                                <td class="right">[ <?php echo anchor('user_group/update/'.$user_group['_id'], "Edit");?> ]</td>
+                            </tr>
+                            <?php }?>
+                        <?php }else{?>
+                            <tr>
+                                <td class="center" colspan="9"><?php echo $text_no_results; ?></td>
+                            </tr>
+                        <?php }?>
             		</tbody>
             	</table>
             <?php form_close(); ?>	
