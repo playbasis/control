@@ -50,5 +50,34 @@ class User_group_model extends MY_model{
 		return $this->mongo_db->get('playbasis_feature');
 	}
 
+	public function insertUserGroup(){
+		$usergroup_name = $this->input->post('usergroup_name');
+		$permissions_access_modify = $this->input->post("permission");
+        
+		$data = array(
+			'name'=>$usergroup_name,
+			'permission'=> serialize($permissions_access_modify)
+			);
+
+		$this->mongo_db->insert('user_group', $data);
+	}
+
+	public function deleteUserGroup($usergroup_id){
+		$this->mongo_db->where('_id', new MongoID($usergroup_id));
+		$this->mongo_db->delete('user_group');
+	}
+
+	public function editUserGroup($user_group_id, $data){
+		$this->set_site_mongodb(0);
+
+		$this->mongo_db->where('_id', new MongoID($user_group_id));
+		$this->mongo_db->set('name', $data['usergroup_name']);
+		if(isset($data['permission'])){
+			$this->mongo_db->set('permission', serialize($data['permission']));	
+		}
+		$this->mongo_db->update('user_group');
+
+	}
+
 
 }
