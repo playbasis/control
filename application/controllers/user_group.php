@@ -65,15 +65,46 @@ class User_group extends MY_Controller{
 
         if(isset($_GET['filter_name'])){
         	$filter = array(
-        		'limit' => $config['per_page'],
-        		'start' => $offset
-        	);
+                    'filter' => $_GET['filter_name']
+                );
+            $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
+        }else{
+            $filter = array(
+                'limit' => $config['per_page'],
+                'start' => $offset
+            );
+            $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
         }
 
 		$this->data['main'] = 'user_group';
 		$this->render_page('template');
 
 	}
+
+
+    public function update($user_group_id){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'user_group/update/'.$user_group_id;
+
+        //Rules need to be set
+
+        //-->
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            if($this->form_validation->run()){
+                //$this->User_group_model->editUser($user_group_id, $this->input->post());
+            }else{
+
+            }
+        }else{
+            $this->getForm($user_group_id);
+        }
+
+    }
 
 	public function insert(){
 		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -96,14 +127,20 @@ class User_group extends MY_Controller{
         $this->getForm();
 	}
 
+
+
 	public function getForm($user_group_id = 0){
 		if((isset($user_group_id) && $user_group_id !=0)){
 			$user_group_info = $this->User_group_model->getUserGroupInfo($user_group_id);
 		}
 
 		if(isset($user_group_info)){
-
+            $this->data['user_group_info'] = $user_group_info;
 		}
+        
+        $this->data['all_features'] = $this->User_group_model->getAllFeatures();
+        $this->data['main'] = 'user_group_form';
+        $this->render_page('template');
 	}
 
 }

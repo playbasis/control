@@ -12,7 +12,7 @@ $lang['error_warning']          				= 'Warning: Please check the form carefully 
 //$lang['error_user']							= 'Error: Username not availble!!!';
 
 //Text
-//$lang['text_no_results']          			= 'Result Not found.';
+$lang['text_no_results']          				= 'Result Not found.';
 //$lang['text_edit']                			= 'Edit';
 $lang['text_success']           				= 'Success: You have modified a user!';
 //$lang['text_default']           				= 'Default';

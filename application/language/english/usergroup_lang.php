@@ -17,7 +17,7 @@ $lang['error_warning']          	= 'Warning: Please check the form carefully for
 //$lang['error_user']				= 'Error: Username not availble!!!';
 
 //Text
-//$lang['text_no_results']          = 'Result Not found.';
+$lang['text_no_results']          = 'Result Not found.';
 //$lang['text_edit']                = 'Edit';
 $lang['text_success']           	= 'Success: You have modified a user!';
 //$lang['text_default']           	= 'Default';
@@ -26,10 +26,18 @@ $lang['text_success']           	= 'Success: You have modified a user!';
 //$lang['text_clear']             	= 'Clear Image';
 //$lang['text_criteria']          	= 'Domain View';
 //$lang['text_confirm']			    = 'Remove cannot be undone! Are you sure you want to do this?';
+$lang['text_select_all']			= "Select All";
+$lang['text_unselect_all']			= "Unselect All";
 
 // Button
 $lang['button_filter']				= 'Filter';
 $lang['button_insert']				= "Insert";
 $lang['button_delete']				= "Delete";
+$lang['button_save']				= "Save";
+$lang['button_cancel']				= "Cancel";
 
+// Form
 
+$lang['form_usergroup_name']		= "User Group Name";
+$lang['form_access_permission']		= "Access Permissions";
+$lang['form_modify_permission']	 	= "Modify Permission";
