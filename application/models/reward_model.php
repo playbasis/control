@@ -37,9 +37,9 @@ class Reward_model extends MY_Model
 
     public function getReward($reward_id) {
 
-        $results = $this->mongo_db->where('_id', new MongoID($reward_id))
-            ->order_by(array('sort_order' => 'asc'))
-            ->get("playbasis_reward");
+        $this->mongo_db->where('_id', new MongoID($reward_id));
+        $this->mongo_db->order_by(array('sort_order' => 1));
+        $results = $this->mongo_db->get("playbasis_reward");
 
         return $results ? $results[0] : null;
     }
@@ -100,24 +100,18 @@ class Reward_model extends MY_Model
     }
 
     public function getRewardLimitByRewardId($plan_id, $reward_id) {
-        $reward_data = NULL;
 
-        $results = $this->mongo_db->where('reward_id', new MongoID($reward_id))
-            ->where('plan_id', (int)$plan_id)
-            ->get("playbasis_reward_to_client");
+        $this->mongo_db->where('reward_id', new MongoID($reward_id));
+        $this->mongo_db->where('plan_id', (int)$plan_id);
+        $results = $this->mongo_db->get("playbasis_reward_to_client");
 
-        if ($results) {
-            $reward_data = $results[0]['limit'];
-        }
-
-        return $reward_data;
+        return $results ? $results[0]['limit'] : null;
     }
 
     public function getRewardByClientId($client_id) {
-        $reward_data = array();
 
-        $reward_data = $this->mongo_db->where('client_id', new MongoID($client_id))
-            ->get("playbasis_reward_to_client");
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $reward_data =  $this->mongo_db->get("playbasis_reward_to_client");
 
         return $reward_data;
     }

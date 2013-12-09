@@ -141,10 +141,12 @@ class User extends MY_Controller
 
         //Rules need to be set
         $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('first_name', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('last_name', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+
+        $json = array();
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->form_validation->run()){
@@ -195,6 +197,30 @@ class User extends MY_Controller
         $this->getList(0);
     }
 
+    public function delete_ajax(){
+
+        $json = array();
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('user_id') && $this->error['warning'] == null) {
+
+            if($this->checkOwnerUser($this->input->post('user_id'))){
+
+                $this->User_model->deleteUser($this->input->post('user_id'));
+            }
+
+            $this->session->data['success'] = $this->lang->line('text_success');
+
+            $json['success'] =  $this->lang->line('text_success');
+        }
+
+        $this->output->set_output(json_encode($json));
+    }
+
     public function getForm($user_id = 0){
 
         if((isset($user_id)) && $user_id !=0){
@@ -241,6 +267,34 @@ class User extends MY_Controller
     private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'user')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkOwnerUser($user_id){
+
+        $error = null;
+
+        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+
+            $users = $this->User_model->getUserByClientId($this->User_model->getClientId());
+
+            $has = false;
+
+            foreach ($users as $user) {
+                if($user['user_id']."" == $user_id.""){
+                    $has = true;
+                }
+            }
+
+            if(!$has){
+                $error = $this->lang->line('error_permission');
+            }
+        }
+
+        if (!$error) {
             return true;
         } else {
             return false;

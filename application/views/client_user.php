@@ -159,7 +159,7 @@
         } else {
 
             $.ajax({
-                url: baseUrlPath+'user/delete',
+                url: baseUrlPath+'user/delete_ajax',
                 type: 'POST',
                 dataType: 'json',
                 data: ({'user_id' : user_id, 'client_id' : '<?php echo $client_id; ?>'}),

@@ -295,7 +295,6 @@ class Domain extends MY_Controller
         }
 
         if (!$error) {
-            echo "success";
             return true;
         } else {
             return false;

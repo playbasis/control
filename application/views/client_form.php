@@ -86,7 +86,7 @@
                             <td><input type="text" name="user_firstname" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_lastname'); ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_lastname'); ?></td>
                             <td><input type="text" name="user_lastname" value="" size="50" /></td>
                         </tr>
                         <tr>
