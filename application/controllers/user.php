@@ -26,8 +26,6 @@ class User extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         
         $this->getList(0);
-
-
     }
 
     public function page($offset = 0){
