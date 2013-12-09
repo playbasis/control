@@ -48,7 +48,7 @@
                             <td class="left"><div class="image"><img src="<?php echo $badge['image']; ?>" alt="" id="thumb" /></div></td>
                             <td class="left"><?php echo $badge['name']; ?></td>
                             <td class="right"><?php echo $badge['quantity']; ?></td>
-                            <td class="left"><?php echo $badge['status']; ?></td>
+                            <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right"><?php echo $badge['sort_order']; ?></td>
                             <td class="right">
                                 [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]

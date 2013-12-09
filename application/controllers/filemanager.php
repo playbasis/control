@@ -548,7 +548,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'common/filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 

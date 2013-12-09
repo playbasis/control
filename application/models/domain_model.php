@@ -181,27 +181,64 @@ class Domain_model extends MY_Model
         return $total;
     }
 
+    private function genAccessKey($site_id) {
+        $salt = "R0b3rt pl@yb@s1s";
+
+        $key = sprintf("%u",crc32(sha1($site_id).$salt));
+
+        return $key;
+    }
+
     private function genAccessSecret($site_id) {
         $salt = "R0b3rt pl@yb@s1s";
 
-        $site_info = $this->getDomain($site_id);
-
-        $secret = md5($site_info['site_name'] . (time() . $salt));
+        $secret = md5($site_id.time().$salt);
 
         return $secret;
     }
 
-    private function datetimeMongotoReadable($dateTimeMongo){
-        if ($dateTimeMongo) {
-            if (isset($dateTimeMongo->sec)) {
-                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
-            } else {
-                $dateTimeMongo = $dateTimeMongo;
-            }
-        } else {
-            $dateTimeMongo = "0000-00-00 00:00:00";
+    public function addDomain($data) {
+        $this->set_site_mongodb(0);
+
+        $data_insert = array(
+            'client_id' =>  new MongoID($data['client_id']),
+            'domain_name' => $data['domain_name']|'',
+            'site_name' => $data['site_name']|'' ,
+            'api_key'=> '',
+            'api_secret' => '',
+            'date_start' => null,
+            'date_expire' => null,
+            'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => (bool)$data['status'] ,
+            'deleted' => false,
+            'limit_users' => null ,
+            'last_send_limit_users' => null,
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+        );
+        if(isset($data['limit_users']) && $data['limit_users']){
+            $data_insert['limit_users'] = $data['limit_users'];
         }
-        return $dateTimeMongo;
+
+        if(isset($data['date_start']) && $data['date_start']){
+            $data_insert['date_start'] = new MongoDate(strtotime($data['date_start']));
+        }
+
+        if(isset($data['date_expire']) && $data['date_expire']){
+            $data_insert['date_expire'] = new MongoDate(strtotime($data['date_expire']));
+        }
+
+        $c = $this->mongo_db->insert('playbasis_client_site', $data_insert);
+
+        $keys = $this->genAccessKey($c);
+        $secret = $this->genAccessSecret($c);
+
+        $this->mongo_db->where('_id',  new MongoID($c));
+        $this->mongo_db->set('api_key', $keys);
+        $this->mongo_db->set('api_secret', $secret);
+        $this->mongo_db->update('playbasis_client_site');
+
+        return $c;
     }
 
     public function deleteDomain($site_id){

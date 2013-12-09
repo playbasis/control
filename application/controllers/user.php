@@ -92,25 +92,23 @@ class User extends MY_Controller
         $this->data['form'] = 'user/update/'.$user_id;
 
         //Rules need to be set
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean');
-        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'trim|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+        $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
         
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             //Check to see if it passes the form validation
             if($this->form_validation->run()){
                 $this->User_model->editUser($user_id, $this->input->post());
-            }else{
-                
+
+                redirect('user/','refresh');
             }
-        }else{
-            $this->getForm($user_id);
         }
-        
+        $this->getForm($user_id);
     }
 
     public function insert(){
@@ -122,20 +120,18 @@ class User extends MY_Controller
         $this->data['form'] = 'user/insert/';
 
         //Rules need to be set
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space|required');
-        $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'trim|max_length[255]|xss_clean|check_space|required');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+        $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->form_validation->run()){
                 $this->User_model->insertUser();
                 $this->session->data['success'] = $this->lang->line('text_success');
                 redirect('user/','refresh');
-            }else{
-                
             }
         }
 
@@ -143,16 +139,62 @@ class User extends MY_Controller
 
     }
 
-    public function delete(){
+    public function insert_ajax(){
 
-        $selectedUsers = $this->input->post('selected');
+        //Rules need to be set
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('first_name', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('last_name', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
 
-        foreach ($selectedUsers as $selectedUser){
-            $this->User_model->deleteUser($selectedUser);
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->form_validation->run()){
+
+                $user_id = $this->User_model->insertUser();
+
+                if ($user_id) {
+                    $data = array(
+                        'client_id' => $this->input->post('client_id'),
+                        'user_id' => $user_id
+                    );
+                    $this->User_model->addUserToClient($data);
+                }
+
+                $this->session->data['success'] = $this->lang->line('text_success');
+                $json['success'] =  $this->lang->line('text_success');
+            }
         }
 
-        redirect('user/');
+        $this->output->set_output(json_encode($json));
+    }
 
+    public function delete(){
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->error['warning'] = null;
+        
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+            $selectedUsers = $this->input->post('selected');
+
+            foreach ($selectedUsers as $selectedUser){
+                $this->User_model->deleteUser($selectedUser);
+            }
+
+            $this->session->data['success'] = $this->lang->line('text_success');
+
+            redirect('/user', 'refresh');
+        }
+
+        $this->getList(0);
     }
 
     public function getForm($user_id = 0){
@@ -196,6 +238,15 @@ class User extends MY_Controller
             }
         }
         $this->output->set_output(json_encode($json));
+    }
+
+    private function validateModify() {
+
+        if ($this->User_model->hasPermission('modify', 'user')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function login(){

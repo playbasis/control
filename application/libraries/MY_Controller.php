@@ -109,6 +109,10 @@ class  MY_Controller  extends  CI_Controller  {
         $this->data['lang'] = $lang['folder'];
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
+        $this->data['domain'] = '';
+        $this->data['domain_name'] = '';
+
+        $features = array();
 
         if($this->session->userdata('user_id')){
             $this->data['username'] = $this->User_model->getUserName();

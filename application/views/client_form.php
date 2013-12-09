@@ -108,7 +108,7 @@
                                     <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($groups) { ?>
                                     <?php foreach ($groups as $group) { ?>
-                                        <option value="<?php echo $group['user_group_id']; ?>"><?php echo $group['name']; ?></option>
+                                        <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
                                         <?php } ?>
                                     <?php } ?>
                                 </select>
@@ -129,7 +129,7 @@
                         </tr>
                     </table>
 
-                    <iframe id="users" frameborder="0" style="overflow: hidden; min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/users?client_id=<?php echo $list_client_id; ?>">
+                    <iframe id="users" frameborder="0" style="min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/users?client_id=<?php echo $list_client_id; ?>">
 
                     </iframe>
 
@@ -165,7 +165,7 @@
                                     <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($plan_data) { ?>
                                     <?php foreach ($plan_data as $plan) { ?>
-                                        <option value="<?php echo $plan['plan_id']; ?>"><?php echo $plan['name']; ?></option>
+                                        <option value="<?php echo $plan['_id']; ?>"><?php echo $plan['name']; ?></option>
                                         <?php } ?>
                                     <?php } ?>
                                 </select>
@@ -186,7 +186,7 @@
                         </tr>
                     </table>
 
-                    <iframe id="domains" frameborder="0" style="overflow: hidden; min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
+                    <iframe id="domains" frameborder="0" style="min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
 
                     </iframe>
                 </div>
@@ -210,10 +210,10 @@ function addNewDomain() {
     var plan_id = $('select[name=domain_plan_id]').val();
 
     $.ajax({
-        url: 'client/client/adddomain',
+        url: baseUrlPath+'domain/insert_ajax',
         type: 'POST',
         dataType: 'json',
-        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'date_start' : date_start, 'date_expire' : date_expire, 'limit_users' : limit_users, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $client_id; ?>'}),
+        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'date_start' : date_start, 'date_expire' : date_expire, 'limit_users' : limit_users, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
         success: function(json) {
             var notification = $('#notification');
 
@@ -222,7 +222,7 @@ function addNewDomain() {
             } else {
 
                 $('#notification').html(json['success']).addClass('success').show();
-                //$('#domains').load('client/domain?client_id=<?php echo $list_client_id; ?>');
+
                 $('iframe').each(function() {
                     this.contentWindow.location.reload(true);
                 });
@@ -249,10 +249,10 @@ function addNewUser() {
     var status = $('select[name=user_status]').val();
 
     $.ajax({
-        url: baseUrlPath+'client/adduser?client_id=<?php echo $client_id; ?>',
+        url: baseUrlPath+'user/insert_ajax',
         type: 'POST',
         dataType: 'json',
-        data: ({'first_name' : first_name, 'last_name' : last_name, 'email' : email, 'username' : username, 'password' : password, 'user_group_id' : user_group_id, 'status' : status}),
+        data: ({'firstname' : first_name, 'lastname' : last_name, 'email' : email, 'username' : username, 'password' : password, 'user_group' : user_group_id, 'status' : status, client_id : '<?php echo $list_client_id; ?>'}),
         success: function(json) {
             var notification = $('#notification');
 
@@ -261,7 +261,7 @@ function addNewUser() {
             } else {
 
                 $('#notification').html(json['success']).addClass('success').show();
-                //$('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
+
                 $('iframe').each(function() {
                     this.contentWindow.location.reload(true);
                 });
@@ -277,7 +277,7 @@ function addNewUser() {
 //--></script>
 
 <script type="text/javascript"><!--
-$('#users .pagination a').live('click', function() {
+/*$('#users .pagination a').live('click', function() {
     $('#users').fadeIn('slow');
 
     $('#users').load(this.href);
@@ -285,14 +285,14 @@ $('#users .pagination a').live('click', function() {
     $('#users').fadeOut('slow');
 
     return false;
-});
+});*/
 
 //$('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
 
 //--></script>
 
 <script type="text/javascript"><!--
-$('#domains .pagination a').live('click', function() {
+/*$('#domains .pagination a').live('click', function() {
     $('#domains').fadeIn('slow');
 
     $('#domains').load(this.href);
@@ -300,7 +300,7 @@ $('#domains .pagination a').live('click', function() {
     $('#domains').fadeOut('slow');
 
     return false;
-});
+});*/
 
 //$('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
 
@@ -311,12 +311,14 @@ $('#domains .pagination a').live('click', function() {
 function resetToken(site_id) {
 
     $.ajax({
-        url: baseUrlPath+'client/reset',
+        url: baseUrlPath+'domain/reset',
         type: 'post',
         data: 'site_id=' + site_id,
         dataType: 'json',
         success: function(json) {
-            $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
+            $('iframe').each(function() {
+                this.contentWindow.location.reload(true);
+            });
         }
     });
 

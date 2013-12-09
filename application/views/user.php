@@ -46,7 +46,7 @@
                                 <input type="checkbox" name="selected[]" value="<?php echo $user['_id']; ?>" />
                                 <?php } ?></td>
                             <td class="left"><?php echo $user['username']; ?></td>
-                            <td class="left"><?php if($user['status']){echo "Enabled";}else{echo "Disabled";};?></td>
+                            <td class="left"><?php echo ($user['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right"><?php echo datetimeMongotoReadable($user['date_added']); ?></td>
                             <td class="right">[ <?php echo anchor('user/update/'.$user['_id'], 'Edit'); ?> ]</td>
                         </tr>

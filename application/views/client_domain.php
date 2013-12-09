@@ -74,9 +74,6 @@
                 }
             });
 
-            // Fix click link # cross opencart unautherize
-            $('a[href="#"],a[href^="#"]').live('click',function(event){event.preventDefault();console.log('prevent redirected');});
-
             // Add class .active to current link
             $('ul.main-menu li a').each(function(){
                 if(this.href === window.location.href) {
@@ -110,11 +107,11 @@
     </tr>
     </thead>
     <?php $domain_row = 0; ?>
-    <?php if ($domains) { ?>
-        <?php foreach ($domains as $domain) { ?>
+    <?php if ($domains_data) { ?>
+        <?php foreach ($domains_data as $domain) { ?>
             <tbody id="domain-row<?php echo $domain_row; ?>">
             <tr>
-                <td class="left"><?php echo $domain['domain_name']; ?> [ <a href="#" class="button_reset_token" onclick="return resetToken(<?php echo $domain['site_id']; ?>);" ><?php echo $this->lang->line('text_reset_token'); ?></a> ]
+                <td class="left"><?php echo $domain['domain_name']; ?> [ <a href="#" class="button_reset_token" onclick="return resetToken('<?php echo $domain['site_id']; ?>');" ><?php echo $this->lang->line('text_reset_token'); ?></a> ]
                     <br /><span class="help">Keys:</span> <?php echo $domain['keys']; ?>
                     <br /><span class="help">Secret:</span> <?php echo $domain['secret']; ?>
                 </td>
@@ -122,32 +119,20 @@
                     <input type="text" name="domain_value[<?php echo $domain_row; ?>][limit_users]" value="<?php echo $domain['limit_users']; ?>" size="50" />
                 </td>
                 <td class="left">
-                    <input type="text" class="date" name="domain_value[<?php echo $domain_row; ?>][domain_start_date]" value="
-            <?php if (strtotime($domain['date_start'])) { ?>
-                  <?php echo date('Y-m-d', strtotime($domain['date_start'])); ?>
-                  <?php } else { ?>
-                    -
-                  <?php } ?>
-            " size="50" />
+                    <input type="text" class="date" name="domain_value[<?php echo $domain_row; ?>][domain_start_date]" value="<?php if (strtotime(datetimeMongotoReadable($domain['date_start']))) { ?><?php echo date('Y-m-d', strtotime(datetimeMongotoReadable($domain['date_start']))); ?><?php } else { ?>-<?php } ?>" size="50" />
                 </td>
                 <td class="left">
-                    <input type="text" class="date" name="domain_value[<?php echo $domain_row; ?>][domain_expire_date]" value="
-            <?php if (strtotime($domain['date_expire'])) { ?>
-                  <?php echo date('Y-m-d', strtotime($domain['date_expire'])); ?>
-                  <?php } else { ?>
-                    -
-                  <?php } ?>
-            " size="50" />
+                    <input type="text" class="date" name="domain_value[<?php echo $domain_row; ?>][domain_expire_date]" value="<?php if (strtotime(datetimeMongotoReadable($domain['date_expire']))) { ?><?php echo date('Y-m-d', strtotime(datetimeMongotoReadable($domain['date_expire']))); ?><?php } else { ?>-<?php } ?>" size="50" />
                 </td>
                 <td class="left">
                     <select name="domain_value[<?php echo $domain_row; ?>][plan_id]">
-                        <option value="0" selected="selected"><?php echo $text_select; ?></option>
+                        <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                         <?php if ($plan_data) { ?>
                             <?php foreach ($plan_data as $plan) { ?>
-                                <?php if ($domain['plan_id']==$plan['plan_id']) { ?>
-                                    <option value="<?php echo $plan['plan_id']; ?>" selected="selected"><?php echo $plan['name']; ?></option>
+                                <?php if ($domain['plan_id']==$plan['_id']) { ?>
+                                    <option value="<?php echo $plan['_id']; ?>" selected="selected"><?php echo $plan['name']; ?></option>
                                 <?php } else { ?>
-                                    <option value="<?php echo $plan['plan_id']; ?>"><?php echo $plan['name']; ?></option>
+                                    <option value="<?php echo $plan['_id']; ?>"><?php echo $plan['name']; ?></option>
                                 <?php } ?>
                             <?php } ?>
                         <?php } ?>
@@ -164,7 +149,7 @@
                     </select>
                 </td>
                 <td>
-                    <a onclick="deleteDomain(<?php echo $domain['client_id']; ?>, <?php echo $domain['site_id']; ?>);$('#domain-row<?php echo $domain_row; ?>').remove();" class="button"><span><?php echo $this->lang->line('button_remove'); ?></span></a>
+                    <a onclick="deleteDomain('<?php echo $domain['client_id']; ?>', '<?php echo $domain['site_id']; ?>');$('#domain-row<?php echo $domain_row; ?>').remove();" class="button"><span><?php echo $this->lang->line('button_remove'); ?></span></a>
                     <input type="hidden" name="domain_value[<?php echo $domain_row; ?>][client_id]" value="<?php echo $domain['client_id']; ?>" />
                     <input type="hidden" name="domain_value[<?php echo $domain_row; ?>][site_id]" value="<?php echo $domain['site_id']; ?>" />
                 </td>
@@ -190,7 +175,7 @@
         var site_id = siteId;
 
         $.ajax({
-            url: 'domain/delete',
+            url: baseUrlPath+'domain/delete',
             type: 'POST',
             dataType: 'json',
             data: ({'client_id' : client_id, 'site_id' : site_id}),
@@ -202,9 +187,26 @@
                 } else {
 
                     $('#notification').html(json['success']).addClass('success').show();
+                    location.reload(true);
                 }
             }
 
+        });
+
+        return false;
+
+    }
+
+    function resetToken(site_id) {
+
+        $.ajax({
+            url: baseUrlPath+'domain/reset',
+            type: 'post',
+            data: 'site_id=' + site_id,
+            dataType: 'json',
+            success: function(json) {
+                location.reload(true);
+            }
         });
 
         return false;

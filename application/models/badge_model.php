@@ -195,18 +195,4 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('badge_id',  new MongoID($badge_id));
         $this->mongo_db->delete('playbasis_badge_to_client');
     }
-
-    private function datetimeMongotoReadable($dateTimeMongo)
-    {
-        if ($dateTimeMongo) {
-            if (isset($dateTimeMongo->sec)) {
-                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
-            } else {
-                $dateTimeMongo = $dateTimeMongo;
-            }
-        } else {
-            $dateTimeMongo = "0000-00-00 00:00:00";
-        }
-        return $dateTimeMongo;
-    }
 }

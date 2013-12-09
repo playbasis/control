@@ -74,9 +74,6 @@
                 }
             });
 
-            // Fix click link # cross opencart unautherize
-            $('a[href="#"],a[href^="#"]').live('click',function(event){event.preventDefault();console.log('prevent redirected');});
-
             // Add class .active to current link
             $('ul.main-menu li a').each(function(){
                 if(this.href === window.location.href) {
@@ -101,10 +98,10 @@
     <thead>
     <tr>
         <td class="left"><?php echo $this->lang->line('column_title'); ?></td>
-        <td class="left" style="width:150px;"><?php echo $this->lang->line('column_username'); ?></td>
-        <td class="left" style="width:150px;"><?php echo $this->lang->line('column_group'); ?></td>
-        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-        <td style="width:100px;"></td>
+        <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
+        <td class="left"><?php echo $this->lang->line('column_group'); ?></td>
+        <td class="right"><?php echo $this->lang->line('column_status'); ?></td>
+        <td></td>
     </tr>
     </thead>
     <?php $user_row = 0; ?>
@@ -117,10 +114,10 @@
                 <select name="user_value[<?php echo $user_row; ?>][user_group_id]">
                     <?php if ($groups) { ?>
                         <?php foreach ($groups as $group) { ?>
-                            <?php if ($group['user_group_id']==$user['user_group_id']) { ?>
-                                <option value="<?php echo $group['user_group_id']; ?>" selected="selected"><?php echo $group['name']; ?></option>
+                            <?php if ($group['_id']==$user['user_group_id']) { ?>
+                                <option value="<?php echo $group['_id']; ?>" selected="selected"><?php echo $group['name']; ?></option>
                             <?php } else { ?>
-                                <option value="<?php echo $group['user_group_id']; ?>"><?php echo $group['name']; ?></option>
+                                <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
                             <?php } ?>
                         <?php } ?>
                     <?php } ?>
@@ -136,7 +133,7 @@
                     <?php } ?>
                 </select></td>
             <td class="left">
-                <a onclick="removeUser(<?php echo $user['user_id']; ?>);" class="button"><span><?php echo $this->lang->line('button_remove'); ?></span></a>
+                <a onclick="removeUser('<?php echo $user['user_id']; ?>');" class="button"><span><?php echo $this->lang->line('button_remove'); ?></span></a>
                 <input type="hidden" name="user_value[<?php echo $user_row; ?>][user_id]" value="<?php echo $user['user_id']; ?>" />
                 <input type="hidden" name="user_value[<?php echo $user_row; ?>][client_id]" value="<?php echo $user['client_id']; ?>" />
             </td>
@@ -162,7 +159,7 @@
         } else {
 
             $.ajax({
-                url: 'user/delete',
+                url: baseUrlPath+'user/delete',
                 type: 'POST',
                 dataType: 'json',
                 data: ({'user_id' : user_id, 'client_id' : '<?php echo $client_id; ?>'}),
@@ -176,7 +173,7 @@
                     } else {
 
                         $('#notification').html(json['success']).addClass('success').show();
-
+                        location.reload(true);
                     }
                 }
 

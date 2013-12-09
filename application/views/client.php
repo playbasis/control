@@ -14,7 +14,10 @@
             </div>
         </div>
         <div class="content">
-            <form action="client/client/delete" method="post" enctype="multipart/form-data" id="form">
+            <?php
+            $attributes = array('id' => 'form');
+            echo form_open('client/delete',$attributes);
+            ?>
                 <table class="list">
                     <thead>
                     <tr>
@@ -46,7 +49,7 @@
                             <td class="left"><img src="<?php echo $client['image']; ?>" alt="" id="thumb" /></td>
                             <td class="left"><?php echo $client['first_name']; ?> <?php echo $client['last_name']; ?></td>
                             <td class="right"><?php echo $client['quantity']; ?></td>
-                            <td class="right"><?php echo $client['status']; ?></td>
+                            <td class="right"><?php echo ($client['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right">
                                 [ <?php echo anchor('client/update/'.$client['client_id'], 'Edit'); ?> ]
                             </td>
@@ -59,7 +62,9 @@
                         <?php } ?>
                     </tbody>
                 </table>
-            </form>
+            <?php
+            echo form_close();
+            ?>
 
             <div class="pagination"><?php echo $pagination_links; ?></div>
         </div>

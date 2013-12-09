@@ -109,8 +109,15 @@ class User_model extends MY_Model
             'date_added' => $date_added
             );
 
-        $this->mongo_db->insert('user', $data);
+        return $this->mongo_db->insert('user', $data);
+    }
 
+    public function addUserToClient($data){
+        $data_insert = array(
+            'client_id' => new MongoID($data['client_id']),
+            'user_id' => new MongoID($data['user_id']),
+        );
+        return $this->mongo_db->insert('user_to_client', $data_insert);
     }
 
     public function fetchAllUsers($data){

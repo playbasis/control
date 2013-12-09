@@ -158,6 +158,84 @@ class Domain extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
+    public function insert() {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'domain/insert';
+
+        $this->form_validation->set_rules('domain_name', $this->lang->line('domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('plan_id', $this->lang->line('plan_id'), 'required');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if($this->form_validation->run() && $this->data['message'] == null){
+                $site_id = $this->Domain_model->addDomain($this->input->post());
+
+                if ($site_id) {
+                    $this->load->model('Permission_model');
+
+                    $data = array();
+                    $data['client_id'] = $this->input->post('client_id');
+                    $data['plan_id'] = $this->input->post('plan_id');
+                    $data['site_id'] = $site_id;
+                    $this->Permission_model->addPlanToPermission($data);
+                }
+
+                $this->session->data['success'] = $this->lang->line('text_success');
+
+                redirect('/domain', 'refresh');
+            }
+        }
+
+        $this->getForm();
+
+    }
+
+    public function insert_ajax() {
+
+        $this->form_validation->set_rules('domain_name', $this->lang->line('domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('plan_id', $this->lang->line('plan_id'), 'required');
+
+        $json = array();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if($this->form_validation->run() && $this->data['message'] == null){
+                $site_id = $this->Domain_model->addDomain($this->input->post());
+
+                if ($site_id) {
+                    $this->load->model('Permission_model');
+
+                    $data = array();
+                    $data['client_id'] = $this->input->post('client_id');
+                    $data['plan_id'] = $this->input->post('plan_id');
+                    $data['site_id'] = $site_id;
+                    $this->Permission_model->addPlanToPermission($data);
+                }
+
+                $this->session->data['success'] = $this->lang->line('text_success');
+                $json['success'] =  $this->lang->line('text_success');
+            }
+        }
+
+        $this->output->set_output(json_encode($json));
+    }
+
     public function delete() {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -174,6 +252,7 @@ class Domain extends MY_Controller
         if ($this->input->post('site_id') && $this->error['warning'] == null) {
 
             if($this->checkOwnerDomain($this->input->post('site_id'))){
+
                 $this->Domain_model->deleteDomain($this->input->post('site_id'));
             }
 
@@ -183,6 +262,44 @@ class Domain extends MY_Controller
         }
 
         $this->getList(0);
+    }
+
+    private function validateModify() {
+
+        if ($this->User_model->hasPermission('modify', 'domain')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkOwnerDomain($site_id){
+
+        $error = null;
+
+        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+
+            $sites = $this->Domain_model->getDomainsByClientId($this->User_model->getClientId());
+
+            $has = false;
+
+            foreach ($sites as $site) {
+                if($site['_id']."" == $site_id.""){
+                    $has = true;
+                }
+            }
+
+            if(!$has){
+                $error = $this->lang->line('error_permission');
+            }
+        }
+
+        if (!$error) {
+            echo "success";
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 ?>

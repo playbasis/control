@@ -26,7 +26,7 @@ class Client extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getList(0, site_url('client/page'));
+        $this->getList(0);
 
     }
 
@@ -37,7 +37,7 @@ class Client extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getList($offset, site_url('client/page'));
+        $this->getList($offset);
 
     }
 
@@ -61,11 +61,11 @@ class Client extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
-                $this->Client_model->addClient($this->input->post());
+                $clent_id = $this->Client_model->addClient($this->input->post());
 
                 $this->session->data['success'] = $this->lang->line('text_success');
 
-                redirect('/client', 'refresh');
+                redirect('/client/update/'.$clent_id, 'refresh');
             }
         }
 
@@ -130,7 +130,7 @@ class Client extends MY_Controller
         $this->getList(0, site_url('client'));
     }
 
-    public function getList($offset, $url) {
+    public function getList($offset) {
 
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
@@ -225,7 +225,7 @@ class Client extends MY_Controller
             $this->data['success'] = '';
         }
 
-        $config['base_url'] = $url.$parameter_url;
+        $config['base_url'] = site_url('client/page').$parameter_url;
         $config['total_rows'] = $total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
@@ -248,6 +248,7 @@ class Client extends MY_Controller
     private function getForm($client_id=null) {
 
         $this->load->model('Image_model');
+        $this->load->model('Plan_model');
 
         if (isset($client_id) && ($client_id != 0)) {
             $client_info = $this->Client_model->getClient($client_id);
@@ -324,6 +325,9 @@ class Client extends MY_Controller
 
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
+
+        $this->data['plan_data'] = $this->Plan_model->getPlans();
+        $this->data['groups'] = $this->User_model->getUserGroups();
 
         $this->data['main'] = 'client_form';
 
@@ -413,7 +417,7 @@ class Client extends MY_Controller
 
         $this->load->library('pagination');
 
-        $this->data['domains'] = array();
+        $this->data['domains_data'] = array();
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
@@ -432,7 +436,7 @@ class Client extends MY_Controller
 
                 $plan_id = $this->Permission_model->getPermissionBySiteId($result['_id']);
 
-                $this->data['domains'][] = array(
+                $this->data['domains_data'][] = array(
                     'site_id' => $result['_id'],
                     'client_id' => $result['client_id'],
                     'plan_id' => $plan_id,
@@ -455,16 +459,7 @@ class Client extends MY_Controller
             'order' => 'ASC',
         );
 
-        $plan_data = $this->Plan_model->getPlans($data);
-
-        if ($plan_data) {
-            foreach ($plan_data as $plan) {
-                $this->data['plan_data'][] = array(
-                    'plan_id' => $plan['plan_id'],
-                    'name' => $plan['name'],
-                );
-            }
-        }
+        $this->data['plan_data'] = $this->Plan_model->getPlans($data);
 
         $config['base_url'] = site_url('client/domain').$parameter_url;
         $config['total_rows'] = $total;
@@ -545,7 +540,6 @@ class Client extends MY_Controller
         $this->data['pagination_links'] = $this->pagination->create_links();
 
         $this->load->vars($this->data);
-//        $this->load->view('client_user');
         $this->render_page('client_user');
     }
 }
