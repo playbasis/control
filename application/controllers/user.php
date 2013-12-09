@@ -103,7 +103,7 @@ class User extends MY_Controller
             if($this->form_validation->run()){
                 $this->User_model->editUser($user_id, $this->input->post());
             }else{
-                
+                //Does not pass the validation!
             }
         }else{
             $this->getForm($user_id);
