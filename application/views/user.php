@@ -1,4 +1,6 @@
 <div id="content" class="span10">
+
+    <!-- Messages to display -->
     <?php if ($error_warning) { ?>
     <div class="warning"><?php echo $error_warning; ?></div>
     <?php } ?>
@@ -31,7 +33,7 @@
                     <tbody>
                     <tr class="filter">
                         <td></td>
-                        <td><input type="text" name="filter_name" list="usernames1" value="" style="width:50%;" /></td>
+                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
                         <td></td>
                         <td></td>
                         <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>

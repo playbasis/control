@@ -33,7 +33,6 @@
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_username'); ?></td>
                                 <td><input type="text" name="username" size="100" value="<?php echo isset($user['username']) ? $user['username'] :  set_value('username'); ?>" /></td>
-                                </td>
                             </tr>
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_firstname'); ?></td>

@@ -128,9 +128,9 @@ class User_model extends MY_Model
             $this->mongo_db->where('username', $regex);
         }
 
-        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-            $this->mongo_db->where('status', (bool)$data['filter_status']);
-        }
+        // if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+        //     $this->mongo_db->where('status', (bool)$data['filter_status']);
+        // }
 
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
