@@ -61,6 +61,57 @@
             		</tbody>
             	</table>
             <?php form_close(); ?>	
+            <div class="pagination">
+                <?php 
+                if(!isset($_GET['filter_name'])){
+                    echo $this->pagination->create_links();    
+                }
+                ?>
+            </div><!-- .pagination -->
     	</div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
+
+<script type="text/javascript"><!--
+function filter() {
+    url = baseUrlPath+'user_group';
+
+    var filter_name = $('input[name=\'filter_name\']').attr('value');
+
+    if (filter_name) {
+        url += '?filter_name=' + encodeURIComponent(filter_name);
+    }
+
+    location = url;
+}
+//--></script>
+
+<script type="text/javascript">
+$('input[name=\'filter_name\']').autocomplete({
+    delay: 0,
+    source: function(request, response) {
+        $.ajax({
+            url: baseUrlPath+'user_group/autocomplete?filter_name=' +  encodeURIComponent(request.term),
+            dataType: 'json',
+            success: function(json) {
+                console.log(json);
+                response($.map(json, function(item) {
+                    return {
+                        label: item.username,
+                        username: item.username
+                    }
+                }));
+                console.log(response);
+            }
+        });
+    },
+    select: function(event, ui) {
+        $('input[name=\'filter_name\']').val(ui.item.username);
+
+        return false;
+    },
+    focus: function(event, ui) {
+        return false;
+    }
+});
+</script>

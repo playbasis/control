@@ -65,8 +65,9 @@ class User_group extends MY_Controller{
 
         if(isset($_GET['filter_name'])){
         	$filter = array(
-                    'filter' => $_GET['filter_name']
+                    'filter_name' => $_GET['filter_name']
                 );
+
             $this->data['user_groups'] = $this->User_group_model->fetchAllUserGroups($filter);
         }else{
             $filter = array(
@@ -90,19 +91,18 @@ class User_group extends MY_Controller{
         $this->data['form'] = 'user_group/update/'.$user_group_id;
 
         //Rules need to be set
-
+        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         //-->
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             if($this->form_validation->run()){
-                //$this->User_group_model->editUser($user_group_id, $this->input->post());
-            }else{
-
+                $this->User_group_model->editUserGroup($user_group_id, $this->input->post());
+                redirect('user_group/','refresh');
             }
-        }else{
-            $this->getForm($user_group_id);
         }
+        $this->getForm($user_group_id);
+        
 
     }
 
@@ -114,10 +114,14 @@ class User_group extends MY_Controller{
         $this->data['form'] = 'user_group/insert/';
 
         //Rules need to be set
+        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        //-->
+
         if($_SERVER['REQUEST_METHOD'] =='POST'){
+            
         	if($this->form_validation->run()){
-        		$this->User_group_model->insertUserGroup();
         		$this->session->data['success'] = $this->lang->line('text_success');
+                $this->User_group_model->insertUserGroup();
                 redirect('user_group/','refresh');
         	}else{
 
@@ -142,5 +146,42 @@ class User_group extends MY_Controller{
         $this->data['main'] = 'user_group_form';
         $this->render_page('template');
 	}
+
+    public function delete(){
+        $selectedUserGroups = $this->input->post('selected');
+
+        foreach($selectedUserGroups as $selectedUserGroup){
+            $this->User_group_model->deleteUserGroup($selectedUserGroup);
+        }
+
+        redirect('user_group/');
+
+    }
+
+    public function autocomplete(){
+        $json = array();
+
+        if ($this->input->get('filter_name')) {
+
+            if ($this->input->get('filter_name')) {
+                $filter_name = $this->input->get('filter_name');
+            } else {
+                $filter_name = null;
+            }
+
+            $data = array(
+                'filter_name' => $filter_name
+            );
+
+            $results_usergroup = $this->User_group_model->fetchAllUserGroups($data);
+
+            foreach ($results_usergroup as $result) {
+                $json[] = array(
+                    'username' => html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'),
+                );
+            }
+        }
+        $this->output->set_output(json_encode($json));
+    }
 
 }
