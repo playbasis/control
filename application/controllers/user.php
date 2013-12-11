@@ -156,6 +156,7 @@ class User extends MY_Controller
 
             if($this->checkLimitUser($this->input->post('client_id'))){
                 $this->data['message'] = $this->lang->line('error_limit');
+                $json['error'] = $this->data['message'];
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -314,7 +315,7 @@ class User extends MY_Controller
         $data['client_id'] = $client_id;
         $users = $this->User_model->getTotalUserByClientId($data);
 
-        if ($users <= 10) {
+        if ($users > 10) {
             return true;
         } else {
             return false;

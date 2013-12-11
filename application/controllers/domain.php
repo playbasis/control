@@ -213,10 +213,12 @@ class Domain extends MY_Controller
 
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
+                $json['error'] = $this->data['message'];
             }
 
             if($this->checkLimitDomain($this->input->post('client_id'))){
                 $this->data['message'] = $this->lang->line('error_limit');
+                $json['error'] = $this->data['message'];
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -309,7 +311,7 @@ class Domain extends MY_Controller
         $data['client_id'] = $client_id;
         $domains = $this->Doamin_model->getTotalDomainsByClientId($data);
 
-        if ($domains <= 10) {
+        if ($domains > 10) {
             return true;
         } else {
             return false;
