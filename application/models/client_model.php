@@ -150,10 +150,10 @@ class Client_model extends MY_Model
             }
         }
 
-        $this->mongo_db->where('client_id', new MongoID($client_id));
-        $this->mongo_db->delete('user_to_client');
-
         if (isset($data['user_value'])) {
+
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->delete_all('user_to_client');
 
             foreach ($data['user_value'] as $user_value) {
 
@@ -234,7 +234,7 @@ class Client_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
         $this->mongo_db->where('is_custom', false);
-        $this->mongo_db->delete("playbasis_reward_to_client");
+        $this->mongo_db->delete_all("playbasis_reward_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
@@ -268,7 +268,7 @@ class Client_model extends MY_Model
     public function copyFeaturedToClient($data_filter){
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        $this->mongo_db->delete("playbasis_feature_to_client");
+        $this->mongo_db->delete_all("playbasis_feature_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
@@ -299,7 +299,7 @@ class Client_model extends MY_Model
     public function copyActionToClient($data_filter){
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        $this->mongo_db->delete("playbasis_action_to_client");
+        $this->mongo_db->delete_all("playbasis_action_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
@@ -331,7 +331,7 @@ class Client_model extends MY_Model
     public function copyJigsawToClient($data_filter){
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        $this->mongo_db->delete("playbasis_game_jigsaw_to_client");
+        $this->mongo_db->delete_all("playbasis_game_jigsaw_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 

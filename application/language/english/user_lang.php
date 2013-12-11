@@ -10,6 +10,7 @@ $lang['error_warning']          				= 'Warning: Please check the form carefully 
 //$lang['error_name']             				= 'Category Name must be between 2 and 32 characters!';
 //$lang['error_required']						= 'Warning: Please check required field!!';
 //$lang['error_user']							= 'Error: Username not availble!!!';
+$lang['error_limit']          				    = 'Error You can create 10 users.';
 
 //Text
 $lang['text_no_results']          				= 'Result Not found.';

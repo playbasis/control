@@ -151,7 +151,14 @@ class User extends MY_Controller
         $json = array();
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            if($this->form_validation->run()){
+
+            $this->data['message'] = null;
+
+            if($this->checkLimitUser($this->input->post('client_id'))){
+                $this->data['message'] = $this->lang->line('error_limit');
+            }
+
+            if($this->form_validation->run() && $this->data['message'] == null){
 
                 $user_id = $this->User_model->insertUser();
 
@@ -297,6 +304,17 @@ class User extends MY_Controller
         }
 
         if (!$error) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkLimitUser($client_id){
+        $data['client_id'] = $client_id;
+        $users = $this->User_model->getTotalUserByClientId($data);
+
+        if ($users <= 10) {
             return true;
         } else {
             return false;
