@@ -48,6 +48,8 @@ class User_group_model extends MY_model{
 		$this->mongo_db->set('name', $data['usergroup_name']);
 		if(isset($data['permission'])){
 			$this->mongo_db->set('permission', serialize($data['permission']));	
+		}else{
+			$this->mongo_db->set('permission', "");
 		}
 		$this->mongo_db->update('user_group');
 
