@@ -215,7 +215,7 @@ class Domain extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->checkLimitUser($this->input->post('client_id'))){
+            if($this->checkLimitDomain($this->input->post('client_id'))){
                 $this->data['message'] = $this->lang->line('error_limit');
             }
 
