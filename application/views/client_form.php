@@ -5,7 +5,7 @@
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
-                <button class="btn btn-info" onclick="location = baseUrlPath+'badge'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'client'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
         <div class="content">
@@ -86,7 +86,7 @@
                             <td><input type="text" name="user_firstname" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_lastname'); ?></td>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_lastname'); ?></td>
                             <td><input type="text" name="user_lastname" value="" size="50" /></td>
                         </tr>
                         <tr>

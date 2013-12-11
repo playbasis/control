@@ -183,20 +183,181 @@ class Client_model extends MY_Model
         $this->mongo_db->update('playbasis_client');
     }
 
-    public function copyRewardToClient($data_filter){
+    /****start Dupicate with another model but in codeigniter cannot load another model within model ****/
+    public function getPlan($plan_id) {
+        $this->set_site_mongodb(0);
 
+        $this->mongo_db->where('_id',  new MongoID($plan_id));
+        $results = $this->mongo_db->get("playbasis_plan");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function getReward($reward_id) {
+
+        $this->mongo_db->where('_id', new MongoID($reward_id));
+        $this->mongo_db->order_by(array('sort_order' => 1));
+        $results = $this->mongo_db->get("playbasis_reward");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function getFeature($feature_id) {
+
+        $this->mongo_db->where('_id', new MongoID($feature_id));
+        $this->mongo_db->order_by(array('sort_order' => 1));
+        $results = $this->mongo_db->get("playbasis_feature");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function getAction($action_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id',  new MongoID($action_id));
+        $results = $this->mongo_db->get("playbasis_action");
+
+        return $results ? $results[0] : null;
+    }
+    /****end Dupicate with another model but in codeigniter cannot load another model within model ****/
+
+    public function getJigsaw($jigsaw_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id',  new MongoID($jigsaw_id));
+        $results = $this->mongo_db->get("playbasis_jigsaw");
+
+        return $results ? $results[0] : null;
+    }
+
+    public function copyRewardToClient($data_filter){
+        $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
+        $this->mongo_db->where('is_custom', false);
+        $this->mongo_db->delete("playbasis_reward_to_client");
+
+        $plan_data = $this->getPlan($data_filter['plan_id']);
+
+        if ($plan_data['reward_to_plan']) {
+            foreach ($plan_data['reward_to_plan'] as $reward) {
+                $limit = empty($reward['limit'])? "NULL": (int)$reward['limit'];
+
+                $reward_data = $this->getReward($reward['reward_id']);
+
+                $insert_data = array(
+                    'reward_id' => new MongoID($reward['reward_id']) ,
+                    'client_id' => new MongoID($data_filter['client_id']) ,
+                    'site_id' => new MongoID($data_filter['site_id']) ,
+                    'group' => $reward_data['group'] ,
+                    'name' => $reward_data['name'] ,
+                    'description' => $reward_data['description'] ,
+                    'init_dataset' => $reward_data['init_dataset'],
+                    'limit' => $limit,
+                    'sort_order' => $reward_data['sort_order'],
+                    'status' =>  $reward_data['status'],
+                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'is_custom' => false,
+                );
+
+                $this->mongo_db->insert('playbasis_reward_to_client', $insert_data);
+            }
+        }
     }
 
     public function copyFeaturedToClient($data_filter){
+        $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
+        $this->mongo_db->delete("playbasis_feature_to_client");
 
+        $plan_data = $this->getPlan($data_filter['plan_id']);
+
+        if ($plan_data['feature_to_plan']) {
+            foreach ($plan_data['feature_to_plan'] as $feature_id) {
+
+                $feature_data = $this->getFeature($feature_id);
+
+                $insert_data = array(
+                    'feature_id' => new MongoID($feature_id) ,
+                    'client_id' => new MongoID($data_filter['client_id']) ,
+                    'site_id' => new MongoID($data_filter['site_id']) ,
+                    'name' => $feature_data['name'] ,
+                    'description' => $feature_data['description'] ,
+                    'sort_order' => $feature_data['sort_order'],
+                    'status' =>  $feature_data['status'],
+                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'link' => $feature_data['link'],
+                    'icon' => $feature_data['icon']
+                );
+
+                $this->mongo_db->insert('playbasis_feature_to_client', $insert_data);
+            }
+        }
     }
 
     public function copyActionToClient($data_filter){
+        $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
+        $this->mongo_db->delete("playbasis_action_to_client");
 
+        $plan_data = $this->getPlan($data_filter['plan_id']);
+
+        if ($plan_data['action_to_plan']) {
+            foreach ($plan_data['action_to_plan'] as $action_id) {
+
+                $action_data = $this->getAction($action_id);
+
+                $insert_data = array(
+                    'action_id' => new MongoID($action_id) ,
+                    'client_id' => new MongoID($data_filter['client_id']) ,
+                    'site_id' => new MongoID($data_filter['site_id']) ,
+                    'name' => $action_data['name'] ,
+                    'description' => $action_data['description'] ,
+                    'icon' => $action_data['icon'],
+                    'color' => $action_data['color'],
+                    'init_dataset' => $action_data['init_dataset'],
+                    'sort_order' => $action_data['sort_order'],
+                    'status' =>  $action_data['status'],
+                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                );
+
+                $this->mongo_db->insert('playbasis_action_to_client', $insert_data);
+            }
+        }
     }
 
     public function copyJigsawToClient($data_filter){
+        $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
+        $this->mongo_db->delete("playbasis_game_jigsaw_to_client");
 
+        $plan_data = $this->getPlan($data_filter['plan_id']);
+
+        if ($plan_data['jigsaw_to_plan']) {
+            foreach ($plan_data['jigsaw_to_plan'] as $jigsaw_id) {
+
+                $jigsaw_data = $this->getJigsaw($jigsaw_id);
+
+                $insert_data = array(
+                    'jigsaw_id' => new MongoID($jigsaw_id) ,
+                    'client_id' => new MongoID($data_filter['client_id']) ,
+                    'site_id' => new MongoID($data_filter['site_id']) ,
+                    'name' => $jigsaw_data['name'] ,
+                    'description' => $jigsaw_data['description'] ,
+                    'category' => $jigsaw_data['category'],
+                    'class_path' => $jigsaw_data['class_path'],
+                    'init_dataset' => $jigsaw_data['init_dataset'],
+                    'sort_order' => $jigsaw_data['sort_order'],
+                    'status' =>  $jigsaw_data['status'],
+                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                );
+
+                $this->mongo_db->insert('playbasis_game_jigsaw_to_client', $insert_data);
+            }
+        }
     }
 
 }

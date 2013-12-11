@@ -211,6 +211,8 @@ class User_model extends MY_Model
     public function deleteUser($user_id){
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->delete("user");
+        $this->mongo_db->where('user_id', new MongoID($user_id));
+        $this->mongo_db->delete("user_to_client");
     }
 
     public function login($u, $p){
