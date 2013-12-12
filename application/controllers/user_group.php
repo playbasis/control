@@ -100,6 +100,8 @@ class User_group extends MY_Controller{
                 $this->User_group_model->editUserGroup($user_group_id, $this->input->post());  
 
                 redirect('user_group/','refresh');
+            }else{
+                $this->data['temp_features'] = $this->input->post();
             }            
         }
         $this->getForm($user_group_id);
@@ -125,7 +127,7 @@ class User_group extends MY_Controller{
                 $this->User_group_model->insertUserGroup();
                 redirect('user_group/','refresh');
         	}else{
-
+                $this->data['temp_features'] = $this->input->post();
         	}
         }
 
