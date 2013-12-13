@@ -355,4 +355,68 @@ class User extends MY_Controller
         redirect('/', 'refresh');
     }
 
+
+
+    public function register(){
+
+        $this->load->model('Image_model');
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'register';
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+        $this->data['form'] = 'user/register';
+        $this->data['user_groups'] = $this->User_model->getUserGroups();
+
+        //Set rules for form regsitration
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('domain', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('site', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+
+
+        //Added
+        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
+            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
+        } elseif (!empty($client_info) && $client_info['image'] && (S3_IMAGE . $client_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $client_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+            $this->data['thumb'] = $this->Image_model->resize($client_info['image'], 100, 100);
+        } else {
+            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        }
+
+        if ($this->input->post('image')) {
+            $this->data['image'] = $this->input->post('image');
+        } elseif (!empty($client_info)) {
+            $this->data['image'] = $client_info['image'];
+        } else {
+            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        }
+
+        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+
+        //End Added
+
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->form_validation->run()){
+                $this->User_model->insertRegistration();                
+            }else{
+                $this->data['temp_fields'] = $this->input->post();
+            }
+        }
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
+    public function doregister(){
+        echo "<pre>";
+        var_dump($this->input->post());
+        echo "</pre>";
+    }
+
 }
