@@ -129,9 +129,10 @@
                         </tr>
                     </table>
 
-                    <iframe id="users" frameborder="0" style="min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/users?client_id=<?php echo $list_client_id; ?>">
+                    <div id="users"></div>
+                    <!--iframe id="users" frameborder="0" style="min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/users?client_id=<?php echo $list_client_id; ?>">
 
-                    </iframe>
+                    </iframe-->
 
                 </div>
                 <?php } ?>
@@ -186,9 +187,10 @@
                         </tr>
                     </table>
 
-                    <iframe id="domains" frameborder="0" style="min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
+                    <div id="domains"></div>
+                    <!--iframe id="domains" frameborder="0" style="min-height: 400px; width: 100%;" height="100%" width="100%" src="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>client/domain?client_id=<?php echo $list_client_id; ?>">
 
-                    </iframe>
+                    </iframe-->
                 </div>
                 <?php } ?>
             <?php
@@ -223,9 +225,11 @@ function addNewDomain() {
 
                 $('#notification').html(json['success']).addClass('success').show();
 
-                $('iframe').each(function() {
+                /*$('iframe').each(function() {
                     this.contentWindow.location.reload(true);
-                });
+                });*/
+
+                $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
             }
         }
 
@@ -262,9 +266,11 @@ function addNewUser() {
 
                 $('#notification').html(json['success']).addClass('success').show();
 
-                $('iframe').each(function() {
+                /*$('iframe').each(function() {
                     this.contentWindow.location.reload(true);
-                });
+                });*/
+
+                $('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
             }
         }
 
@@ -277,33 +283,29 @@ function addNewUser() {
 //--></script>
 
 <script type="text/javascript"><!--
-/*$('#users .pagination a').live('click', function() {
-    $('#users').fadeIn('slow');
+    $( document ).ready(function() {
+        $('#users .pagination a').live('click', function() {
 
-    $('#users').load(this.href);
+            $('#users').load(this.href);
 
-    $('#users').fadeOut('slow');
+            return false;
+        });
 
-    return false;
-});*/
-
-//$('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
-
+        $('#users').load(baseUrlPath+'client/users?client_id=<?php echo $list_client_id; ?>');
+    });
 //--></script>
 
 <script type="text/javascript"><!--
-/*$('#domains .pagination a').live('click', function() {
-    $('#domains').fadeIn('slow');
+    $( document ).ready(function() {
+        $('#domains .pagination a').live('click', function() {
 
-    $('#domains').load(this.href);
+            $('#domains').load(this.href);
 
-    $('#domains').fadeOut('slow');
+            return false;
+        });
 
-    return false;
-});*/
-
-//$('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
-
+        $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
+    });
 //--></script>
 
 <script type="text/javascript"><!--
@@ -316,9 +318,12 @@ function resetToken(site_id) {
         data: 'site_id=' + site_id,
         dataType: 'json',
         success: function(json) {
-            $('iframe').each(function() {
+            $/*('iframe').each(function() {
                 this.contentWindow.location.reload(true);
-            });
+            });*/
+
+            $('#domains').load(baseUrlPath+'client/domain?client_id=<?php echo $list_client_id; ?>');
+
         }
     });
 

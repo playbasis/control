@@ -382,6 +382,7 @@ class User extends MY_Controller
     public function register(){
 
         $this->load->model('Image_model');
+        $this->load->model('Permission_model');
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
@@ -414,6 +415,12 @@ class User extends MY_Controller
                 $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
 
                 $this->Client_model->whoandwhat($client_id, $site_info, $plan_id);
+
+                $data = array();
+                    $data['client_id'] = $client_id;
+                    $data['plan_id'] = $plan_id;
+                    $data['site_id'] = $site_info;
+                    $this->Permission_model->addPlanToPermission($data);
 
                 redirect('login');
             }else{
