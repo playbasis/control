@@ -8,9 +8,9 @@ class Client extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
-            redirect('/login', 'refresh');
-        }
+        // if(!$this->User_model->isLogged()){
+        //     redirect('/login', 'refresh');
+        // }
 
         $this->load->model('Client_model');
 
@@ -81,7 +81,7 @@ class Client extends MY_Controller
 
         $this->form_validation->set_rules('first_name', $this->lang->line('first_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
-        echo "Hello";
+
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerClient($client_id)) {
 
             $this->data['message'] = null;
@@ -528,9 +528,7 @@ class Client extends MY_Controller
             }
 
         }
-
         $this->data['list_client_id'] = $data['client_id'];
-
         $this->data['groups'] = $this->User_model->getUserGroups();
 
         $config['base_url'] = site_url('client/users').$parameter_url;

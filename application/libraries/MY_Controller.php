@@ -122,9 +122,11 @@ class  MY_Controller  extends  CI_Controller  {
                 $this->data['domain_name'] = $this->data['domain'];
 
                 $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
+                // var_dump($features);
             }else{
                 // super admin
                 $features = $this->Feature_model->getFeatures();
+                // var_dump($features);
             }
         }
 
