@@ -376,7 +376,7 @@ class User extends MY_Controller
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         $this->form_validation->set_rules('domain', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('site', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('site', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
 
 
         //Added
@@ -418,5 +418,7 @@ class User extends MY_Controller
         var_dump($this->input->post());
         echo "</pre>";
     }
+
+
 
 }
