@@ -360,5 +360,40 @@ class Client_model extends MY_Model
         }
     }
 
+    public function insertClient(){
+        $data = $this->input->post();
+
+        $data_insert_client = array(
+            'first_name'=>$data['firstname'],
+            'last_name'=>$data['lastname'],
+            'mobile'=>'',
+            'email'=>$data['email'],
+            'company'=>null,
+            'image'=>isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status'=>true,
+            'deleted'=>false,
+            'date_added'=> new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified'=>''
+        );
+
+        $this->mongo_db->insert('playbasis_client', $data_insert_client);
+
+        return $data_inserted_client_id = $data_insert_client['_id'];
+    }
+
+    public function whoandwhat($client_id, $site_id, $plan_id){
+        $data_filter = array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'plan_id' => $plan_id,
+            'status' => true
+        );
+
+        $this->copyRewardToClient($data_filter);
+        $this->copyFeaturedToClient($data_filter);
+        $this->copyActionToClient($data_filter);
+        $this->copyJigsawToClient($data_filter);
+    }
+
 }
 ?>

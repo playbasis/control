@@ -345,5 +345,11 @@ class Plan_model extends MY_Model
         $this->mongo_db->delete('playbasis_plan');
 
     }
+
+    public function getPlanID($name){
+        $this->mongo_db->where('name', $name);
+        $results =  $this->mongo_db->get('playbasis_plan')[0]['_id'];
+        return $results ? $results : null; 
+    }
 }
 ?>

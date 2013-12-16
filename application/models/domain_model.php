@@ -197,11 +197,15 @@ class Domain_model extends MY_Model
         return $secret;
     }
 
-    public function addDomain($data) {
+    public function addDomain($data, $client_id) {
         $this->set_site_mongodb(0);
 
+        if(isset($data['client_id'])){
+            $client_id = $data['client_id'];
+        }
+
         $data_insert = array(
-            'client_id' =>  new MongoID($data['client_id']),
+            'client_id' =>  new MongoID($client_id),
             'domain_name' => $data['domain_name']|'',
             'site_name' => $data['site_name']|'' ,
             'api_key'=> '',
@@ -209,7 +213,7 @@ class Domain_model extends MY_Model
             'date_start' => null,
             'date_expire' => null,
             'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
-            'status' => (bool)$data['status'] ,
+            'status' => true,
             'deleted' => false,
             'limit_users' => null ,
             'last_send_limit_users' => null,

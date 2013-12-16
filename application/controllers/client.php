@@ -81,16 +81,18 @@ class Client extends MY_Controller
 
         $this->form_validation->set_rules('first_name', $this->lang->line('first_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
-
+        echo "Hello";
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerClient($client_id)) {
 
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
+                
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
+
                 $this->Client_model->editClient($client_id, $this->input->post());
 
                 $this->session->data['success'] = $this->lang->line('text_success');
@@ -346,11 +348,13 @@ class Client extends MY_Controller
 
     private function checkOwnerClient($clientId){
 
+        $this->load->model('Domain_model');
+
         $error = null;
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $clients = $this->Client_model->getDomainsByClientId($this->User_model->getClientId());
+            $clients = $this->Domain_model->getDomainsByClientId($this->User_model->getClientId());
 
             $has = false;
 

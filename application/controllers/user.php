@@ -12,6 +12,9 @@ class User extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->load->model('User_model');
+        $this->load->model('Client_model');
+        $this->load->model('Plan_model');
+        $this->load->model('Domain_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -375,35 +378,25 @@ class User extends MY_Controller
         $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
-        $this->form_validation->set_rules('domain', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('site', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
-
-
-        //Added
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($client_info) && $client_info['image'] && (S3_IMAGE . $client_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $client_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($client_info['image'], 100, 100);
-        } else {
-            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
-
-        if ($this->input->post('image')) {
-            $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($client_info)) {
-            $this->data['image'] = $client_info['image'];
-        } else {
-            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
-
-        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-
-        //End Added
+        $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
 
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->form_validation->run()){
-                $this->User_model->insertRegistration();                
+                $user_info = $this->User_model->insertUser();//returns as data array of user_info
+
+                $client_id = $this->Client_model->insertClient();//returns only client id
+
+                $this->User_model->insertUserToClient($client_id, $user_info['_id']);//Does not return anything just inserts to 'user_to_client' table
+
+                $site_info = $this->Domain_model->addDomain($this->input->post(), $client_id); //returns an array of client_site
+
+                $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+
+                $this->Client_model->whoandwhat($client_id, $site_info, $plan_id);
+
+                redirect('login');
             }else{
                 $this->data['temp_fields'] = $this->input->post();
             }
@@ -411,12 +404,6 @@ class User extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-    }
-
-    public function doregister(){
-        echo "<pre>";
-        var_dump($this->input->post());
-        echo "</pre>";
     }
 
 

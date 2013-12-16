@@ -81,12 +81,23 @@ class User_model extends MY_Model
     }
 
     public function insertUser(){
-        $user_group_id = $this->input->post('user_group');
+
+        if($this->input->post('user_group')){
+            $user_group_id = $this->input->post('user_group');    
+        }else{
+            $this->mongo_db->where('name', 'BetaTest');
+            $user_group_id = $this->mongo_db->get('user_group')[0]['_id'];
+        }
+
         $username = $this->input->post('username');
         $firstname = $this->input->post('firstname');
         $email = $this->input->post('email');
         $lastname = $this->input->post('lastname');
-        $status = $this->input->post('status');
+        if($this->input->post('status')==null){
+            $status = true;
+        }else{
+            $status = $this->input->post('status');    
+        }
         $ip = $_SERVER['REMOTE_ADDR'];
         $salt = get_random_password(10,10);
 
@@ -111,7 +122,7 @@ class User_model extends MY_Model
 
         $this->mongo_db->insert('user', $data);
 
-        return $data['_id'];
+        return $data;
     }
 
     public function addUserToClient($data){
@@ -386,46 +397,6 @@ class User_model extends MY_Model
         return $this->admin_group_id;
     }
 
-    public function insertRegistration(){
-
-        $this->load->model('Domain_model');
-
-        $data = $this->input->post();
-
-        $data_insert_client = array(
-            'first_name'=>$data['firstname'],
-            'last_name'=>$data['lastname'],
-            'mobile'=>'',
-            'email'=>$data['email'],
-            'company'=>null,
-            'image'=>isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
-            'status'=>true,
-            'deleted'=>false,
-            'date_added'=> new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-            'date_modified'=>''
-        );
-
-        $this->mongo_db->insert('playbasis_client', $data_insert_client);
-
-        $data_inserted_client_id = $data_insert_client['_id'];
-
-        $data_insert_domain = array(
-            'client_id'=>$data_inserted_client_id,
-            'domain_name'=>$data['domain'],
-            'site_name'=>$data['site'],
-            'status'=>true
-            );
-
-        $this->Domain_model->addDomain($data_insert_domain);
-
-        $insert_user_id = $this->insertUser();
-
-        $this->insertUserToClient($data_inserted_client_id, $insert_user_id);
-
-
-    }
-
-
     public function insertUserToClient($client_id, $user_id){
 
         $data = array(
@@ -436,6 +407,8 @@ class User_model extends MY_Model
 
         $this->mongo_db->insert('user_to_client', $data);
     }
+
+    
 
 }
 ?>
