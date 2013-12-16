@@ -139,9 +139,12 @@ class Client_model extends MY_Model
                     'client_id' => $client_id,
                     'site_id' => $domain_value['site_id'],
                     'plan_id' => $domain_value['plan_id'],
-                    'status' => $domain_value['status']
+                    'status' => $domain_value['status'],
+                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
 
+                $this->addPlanToPermission($data_filter);
                 $this->copyRewardToClient($data_filter);
                 $this->copyFeaturedToClient($data_filter);
                 $this->copyActionToClient($data_filter);
@@ -150,10 +153,10 @@ class Client_model extends MY_Model
             }
         }
 
-        $this->mongo_db->where('client_id', new MongoID($client_id));
-        $this->mongo_db->delete('user_to_client');
-
         if (isset($data['user_value'])) {
+
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->delete_all('user_to_client');
 
             foreach ($data['user_value'] as $user_value) {
 
@@ -184,6 +187,23 @@ class Client_model extends MY_Model
     }
 
     /****start Dupicate with another model but in codeigniter cannot load another model within model ****/
+    public function addPlanToPermission($data){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->delete('playbasis_permission');
+
+        $data_insert = array(
+            'plan_id' =>  new MongoID($data['plan_id']),
+            'client_id' =>  new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id']),
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+        );
+
+        return $this->mongo_db->insert('playbasis_permission', $data_insert);
+    }
+
     public function getPlan($plan_id) {
         $this->set_site_mongodb(0);
 
@@ -234,7 +254,7 @@ class Client_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
         $this->mongo_db->where('is_custom', false);
-        $this->mongo_db->delete("playbasis_reward_to_client");
+        $this->mongo_db->delete_all("playbasis_reward_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
@@ -268,7 +288,7 @@ class Client_model extends MY_Model
     public function copyFeaturedToClient($data_filter){
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        $this->mongo_db->delete("playbasis_feature_to_client");
+        $this->mongo_db->delete_all("playbasis_feature_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
@@ -299,7 +319,7 @@ class Client_model extends MY_Model
     public function copyActionToClient($data_filter){
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        $this->mongo_db->delete("playbasis_action_to_client");
+        $this->mongo_db->delete_all("playbasis_action_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
@@ -331,7 +351,7 @@ class Client_model extends MY_Model
     public function copyJigsawToClient($data_filter){
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        $this->mongo_db->delete("playbasis_game_jigsaw_to_client");
+        $this->mongo_db->delete_all("playbasis_game_jigsaw_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 

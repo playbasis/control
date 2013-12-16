@@ -529,6 +529,8 @@ class Client extends MY_Controller
 
         }
 
+        $this->data['list_client_id'] = $data['client_id'];
+
         $this->data['groups'] = $this->User_model->getUserGroups();
 
         $config['base_url'] = site_url('client/users').$parameter_url;
