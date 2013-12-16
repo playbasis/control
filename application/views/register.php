@@ -24,41 +24,14 @@
 				<div id="pg1">
 					<table class="form">
 							
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#0C96CD;
-								float:left;
-								margin:10px;
-							"class="circle">User Details
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#0C96CD;float:left;margin:10px;"class="circle">
+							User Details
 						</div>
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#38393D;
-								float:left;
-								margin:10px;
-							"class="circle">Domain Details
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#38393D;float:left;margin:10px;"class="circle">
+							Domain Details
 						</div>
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#38393D;
-								float:left;
-								margin:10px;
-							"class="circle">Company Logo
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#38393D;float:left;margin:10px;"class="circle">
+							Company Logo
 						</div>	
 							
 						<tr>
@@ -103,41 +76,14 @@
 				<div id="pg2">
 					
 					<table class="form">
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#38393D;
-								float:left;
-								margin:10px;
-							"class="circle">User Details
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#38393D;float:left;margin:10px;"class="circle">
+							User Details
 						</div>
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#0C96CD;
-								float:left;
-								margin:10px;
-							"class="circle">Domain Details
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#0C96CD;float:left;margin:10px;"class="circle">
+							Domain Details
 						</div>
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#38393D;
-								float:left;
-								margin:10px;
-							"class="circle">Company Logo
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#38393D;float:left;margin:10px;"class="circle">
+							Company Logo
 						</div>	
 						
 						<tr>
@@ -156,41 +102,14 @@
 				</div>
 				<div id="pg3">
 					<table class="form">
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#38393D;
-								float:left;
-								margin:10px;
-							"class="circle">User Details
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#38393D;float:left;margin:10px;"class="circle">
+							User Details
 						</div>
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#38393D;
-								float:left;
-								margin:10px;
-							"class="circle">Domain Details
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#38393D;float:left;margin:10px;"class="circle">
+							Domain Details
 						</div>
-						<div style = "
-								width:120px;
-								height:120px;
-								border-radius:60px;
-								color:#fff;
-								line-height:120px;
-								text-align:center;
-								background:#0C96CD;
-								float:left;
-								margin:10px;
-							"class="circle">Company Logo
+						<div style = "width:120px;height:120px;border-radius:60px;color:#fff;line-height:120px;text-align:center;background:#0C96CD;float:left;margin:10px;"class="circle">
+							Company Logo
 						</div>	
 						<tr>
                             <td><?php echo $this->lang->line('form_logo_image'); ?>:</td>
