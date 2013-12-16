@@ -139,9 +139,12 @@ class Client_model extends MY_Model
                     'client_id' => $client_id,
                     'site_id' => $domain_value['site_id'],
                     'plan_id' => $domain_value['plan_id'],
-                    'status' => $domain_value['status']
+                    'status' => $domain_value['status'],
+                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
 
+                $this->addPlanToPermission($data_filter);
                 $this->copyRewardToClient($data_filter);
                 $this->copyFeaturedToClient($data_filter);
                 $this->copyActionToClient($data_filter);
@@ -184,6 +187,23 @@ class Client_model extends MY_Model
     }
 
     /****start Dupicate with another model but in codeigniter cannot load another model within model ****/
+    public function addPlanToPermission($data){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->delete('playbasis_permission');
+
+        $data_insert = array(
+            'plan_id' =>  new MongoID($data['plan_id']),
+            'client_id' =>  new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id']),
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+        );
+
+        return $this->mongo_db->insert('playbasis_permission', $data_insert);
+    }
+
     public function getPlan($plan_id) {
         $this->set_site_mongodb(0);
 
