@@ -414,6 +414,9 @@ class User extends MY_Controller
 
                 $data = $this->input->post();
                 $data['client_id'] = $client_id;
+                $data['limit_users'] = 1000;
+                $data['date_start'] = date("Y-m-d H:i:s");
+                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
 
                 $site_info = $this->Domain_model->addDomain($data); //returns an array of client_site
 
