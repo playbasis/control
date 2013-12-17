@@ -21,6 +21,11 @@ class Plan extends MY_Controller
 
     public function index() {
 
+        if(!$this->validateAccess()){
+            echo $this->lang->line('error_access');
+            return false;
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -358,7 +363,15 @@ class Plan extends MY_Controller
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'plan')) {
+        if ($this->User_model->hasPermission('modify', 'plan_setting')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'plan_setting')) {
             return true;
         } else {
             return false;

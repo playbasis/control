@@ -19,6 +19,11 @@ class Dashboard extends MY_Controller
 
     public function index(){
 
+        if(!$this->validateAccess()){
+            echo $this->lang->line('error_access');
+            return false;
+        }
+
         $this->load->model('User_model');
         $this->load->model('Domain_model');
         $this->load->model('Statistic_model');
@@ -220,5 +225,13 @@ class Dashboard extends MY_Controller
             $dateTimeMongo = "0000-00-00 00:00:00";
         }
         return $dateTimeMongo;
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'dashboard')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

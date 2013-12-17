@@ -21,6 +21,11 @@ class Rule extends MY_Controller
 
     public function index() {
 
+        if(!$this->validateAccess()){
+            echo $this->lang->line('error_access');
+            return false;
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -158,5 +163,13 @@ class Rule extends MY_Controller
                 'msg'=>'Error , invalid request format or missing parameter'
             )
         );
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'rule_set')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

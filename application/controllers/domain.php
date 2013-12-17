@@ -20,6 +20,12 @@ class Domain extends MY_Controller
     }
 
     public function index() {
+
+        if(!$this->validateAccess()){
+            echo $this->lang->line('error_access');
+            return false;
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -312,6 +318,14 @@ class Domain extends MY_Controller
         $domains = $this->Domain_model->getTotalDomainsByClientId($data);
 
         if ($domains > 10) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'domain')) {
             return true;
         } else {
             return false;

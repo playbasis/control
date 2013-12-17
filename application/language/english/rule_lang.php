@@ -52,5 +52,6 @@ $lang['entry_status']           		= 'Status:';
 // Error 
 $lang['error_warning']          	= 'Warning: Please check the form carefully for errors!';
 $lang['error_permission']       	= 'Warning: You do not have permission to modify rules!';
+$lang['error_access']       	= 'Warning: You do not have access to this page!';
 $lang['error_name']             	= 'Rule Name must be between 2 and 32 characters!';
 ?>

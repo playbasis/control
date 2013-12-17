@@ -20,6 +20,11 @@ class Client extends MY_Controller
     }
 
     public function index() {
+        if(!$this->validateAccess()){
+            echo $this->lang->line('error_access');
+            return false;
+        }
+        echo "hello";
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -339,7 +344,15 @@ class Client extends MY_Controller
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'client')) {
+        if ($this->User_model->hasPermission('modify', 'clients')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'clients')) {
             return true;
         } else {
             return false;
