@@ -122,7 +122,7 @@ class Client_model extends MY_Model
             foreach ($data['domain_value'] as $domain_value) {
 
                 $this->mongo_db->where('_id',  new MongoID($domain_value['site_id']));
-                $this->mongo_db->set('status', $domain_value['status']);
+                $this->mongo_db->set('status', (bool)$domain_value['status']);
                 if($domain_value['limit_users']){
                     $this->mongo_db->set('limit_users', $domain_value['limit_users']);
                 }
@@ -139,7 +139,7 @@ class Client_model extends MY_Model
                     'client_id' => $client_id,
                     'site_id' => $domain_value['site_id'],
                     'plan_id' => $domain_value['plan_id'],
-                    'status' => $domain_value['status'],
+                    'status' => (bool)$domain_value['status'],
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
@@ -160,6 +160,7 @@ class Client_model extends MY_Model
 
             foreach ($data['user_value'] as $user_value) {
 
+                var_dump($user_value['status']);
                 $this->mongo_db->where('client_id', new MongoID($user_value['user_id']));
                 $this->mongo_db->set('user_group_id',  new MongoID($user_value['user_group_id']));
                 $this->mongo_db->set('status',  (bool)$user_value['status']);
@@ -168,7 +169,7 @@ class Client_model extends MY_Model
                 $data_insert = array(
                     'client_id' => new MongoID($client_id),
                     'user_id' => new MongoID($user_value['user_id']),
-                    'status' => $user_value['status']|''
+                    'status' => (bool)$user_value['status']
                 );
                 $this->mongo_db->insert('user_to_client', $data_insert);
             }
@@ -274,7 +275,7 @@ class Client_model extends MY_Model
                     'init_dataset' => $reward_data['init_dataset'],
                     'limit' => $limit,
                     'sort_order' => $reward_data['sort_order'],
-                    'status' =>  $reward_data['status'],
+                    'status' =>  (bool)$reward_data['status'],
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'is_custom' => false,
@@ -304,7 +305,7 @@ class Client_model extends MY_Model
                     'name' => $feature_data['name'] ,
                     'description' => $feature_data['description'] ,
                     'sort_order' => $feature_data['sort_order'],
-                    'status' =>  $feature_data['status'],
+                    'status' =>  (bool)$feature_data['status'],
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'link' => $feature_data['link'],
@@ -338,7 +339,7 @@ class Client_model extends MY_Model
                     'color' => $action_data['color'],
                     'init_dataset' => $action_data['init_dataset'],
                     'sort_order' => $action_data['sort_order'],
-                    'status' =>  $action_data['status'],
+                    'status' =>  (bool)$action_data['status'],
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
@@ -370,7 +371,7 @@ class Client_model extends MY_Model
                     'class_path' => $jigsaw_data['class_path'],
                     'init_dataset' => $jigsaw_data['init_dataset'],
                     'sort_order' => $jigsaw_data['sort_order'],
-                    'status' =>  $jigsaw_data['status'],
+                    'status' =>  (bool)$jigsaw_data['status'],
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
