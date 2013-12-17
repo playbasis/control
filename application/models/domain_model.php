@@ -197,15 +197,11 @@ class Domain_model extends MY_Model
         return $secret;
     }
 
-    public function addDomain($data, $client_id) {
+    public function addDomain($data) {
         $this->set_site_mongodb(0);
 
-        if(isset($data['client_id'])){
-            $client_id = $data['client_id'];
-        }
-
         $data_insert = array(
-            'client_id' =>  new MongoID($client_id),
+            'client_id' =>  new MongoID($data['client_id']),
             'domain_name' => $data['domain_name']|'',
             'site_name' => $data['site_name']|'' ,
             'api_key'=> '',

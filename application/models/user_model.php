@@ -120,9 +120,7 @@ class User_model extends MY_Model
             'date_added' => $date_added
             );
 
-        $this->mongo_db->insert('user', $data);
-
-        return $data;
+        return $this->mongo_db->insert('user', $data);
     }
 
     public function addUserToClient($data){

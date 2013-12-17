@@ -315,6 +315,7 @@ class User extends MY_Controller
     }
 
     private function checkLimitUser($client_id){
+
         $data['client_id'] = $client_id;
         $users = $this->User_model->getTotalUserByClientId($data);
 
@@ -404,13 +405,17 @@ class User extends MY_Controller
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->form_validation->run()){
-                $user_info = $this->User_model->insertUser();//returns as data array of user_info
+                $user_id = $this->User_model->insertUser();
+                $user_info = $this->User_model->getUserInfo($user_id);
 
                 $client_id = $this->Client_model->insertClient();//returns only client id
 
                 $this->User_model->insertUserToClient($client_id, $user_info['_id']);//Does not return anything just inserts to 'user_to_client' table
 
-                $site_info = $this->Domain_model->addDomain($this->input->post(), $client_id); //returns an array of client_site
+                $data = $this->input->post();
+                $data['client_id'] = $client_id;
+
+                $site_info = $this->Domain_model->addDomain($data); //returns an array of client_site
 
                 $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
 

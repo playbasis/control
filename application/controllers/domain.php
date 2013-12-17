@@ -309,7 +309,7 @@ class Domain extends MY_Controller
 
     private function checkLimitDomain($client_id){
         $data['client_id'] = $client_id;
-        $domains = $this->Doamin_model->getTotalDomainsByClientId($data);
+        $domains = $this->Domain_model->getTotalDomainsByClientId($data);
 
         if ($domains > 10) {
             return true;
