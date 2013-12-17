@@ -160,7 +160,6 @@ class Client_model extends MY_Model
 
             foreach ($data['user_value'] as $user_value) {
 
-                var_dump($user_value['status']);
                 $this->mongo_db->where('client_id', new MongoID($user_value['user_id']));
                 $this->mongo_db->set('user_group_id',  new MongoID($user_value['user_group_id']));
                 $this->mongo_db->set('status',  (bool)$user_value['status']);
