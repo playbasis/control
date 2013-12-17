@@ -55,10 +55,6 @@
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_site');?>:</td>
 							<td><input type = "text" name="site_name" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['site_name'];}?>"></td>
 						</tr>
-						<tr>
-							<td><span class="required">*</span> <?php echo $this->lang->line('form_limit_users');?>:</td>
-							<td><input type="text" name="limit_users" size="50" value="1000"/></td>
-						</tr>
 					</table>
 				</div>
 					
