@@ -336,9 +336,11 @@ class Plan extends MY_Controller
         if ($rewards) {
             foreach ($rewards as $reward) {
                 $limit = null;
-                foreach($plan_info["reward_to_plan"] as $reward_to_plan){
-                    if($reward_to_plan['reward_id'] == $reward['_id']){
-                        $limit = $reward_to_plan['limit'];
+                if(!empty($plan_info)){
+                    foreach($plan_info["reward_to_plan"] as $reward_to_plan){
+                        if($reward_to_plan['reward_id'] == $reward['_id']){
+                            $limit = $reward_to_plan['limit'];
+                        }
                     }
                 }
                 $this->data['plan_rewards'][] = array(
