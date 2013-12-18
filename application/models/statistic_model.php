@@ -277,8 +277,13 @@ class Statistic_model extends MY_Model
     public function LeaderBoard($data){
         $this->set_site_mongodb(0);
 
+        $reward_filter = "point";
+        if (isset($data['reward_filter'])) {
+            $reward_filter = $data['reward_filter'];
+        }
+
         $this->mongo_db->select(array('_id'));
-        $this->mongo_db->where('name', 'exp');
+        $this->mongo_db->where('name', $reward_filter);
         $r =  $this->mongo_db->get('playbasis_reward');
 
         $this->mongo_db->select(array('_id','pb_player_id','value'));
@@ -300,24 +305,6 @@ class Statistic_model extends MY_Model
         }
 
         $LeaderBoardList =  $this->mongo_db->get('playbasis_reward_to_player');
-
-//        $LeaderBoardList = array();
-//
-//        foreach ($result as $player) {
-//            $info = $this->getPlayerInfo($player['pb_player_id']);
-//
-//            $LeaderBoardList[] = array(
-//                    'player_id'   => $info['_id'],
-//                    'player_name' => $info['first_name'] .' '. $info['last_name'],
-//                    'exp'         => $info['exp'],
-//                    'level'       => $info['level'],
-//                    'point'       => $player['value'],
-//                    'image'       => $info['image'],
-//                    'email'       => $info['email'],
-//                    'date_added'  => $info['date_added'],
-//                    'date_modified'  => $info['date_modified']
-//            );
-//        }
 
         return $LeaderBoardList;
     }

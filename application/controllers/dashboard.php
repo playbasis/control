@@ -83,6 +83,13 @@ class Dashboard extends MY_Controller
             foreach ($results as $player) {
                 $action = array();
 
+                $player_filter = array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'pb_player_id' => $player['_id']
+                );
+                $reward = $this->Player_model->getPlayerPoint($player_filter);
+
                 $this->data['players'][] = array(
                     'pb_player_id'   => $player['_id'],
                     'username' => $player['username'],
@@ -95,6 +102,8 @@ class Dashboard extends MY_Controller
                     'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_modified']))),
                     'exp'      => $player['exp'],
                     'email' => $player['email'],
+                    'level' => $player['level'],
+                    'point' => $reward,
                     'action'     => $action
                 );
             }
@@ -171,6 +180,13 @@ class Dashboard extends MY_Controller
             foreach ($results as $player) {
                 $action = array();
 
+                $player_filter = array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'pb_player_id' => $player['_id']
+                );
+                $reward = $this->Player_model->getPlayerPoint($player_filter);
+
                 $this->data['players'][] = array(
                     'pb_player_id'   => $player['_id'],
                     'username' => $player['username'],
@@ -184,7 +200,7 @@ class Dashboard extends MY_Controller
                     'exp'      => $player['exp'],
                     'email' => $player['email'],
                     'level' => $player['level'],
-                    'point' => $player['points'],
+                    'point' => $reward,
                     'action'     => $action
                 );
             }

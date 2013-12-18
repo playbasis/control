@@ -80,29 +80,26 @@ class Player_model extends MY_Model
 
         $player_data =  $this->mongo_db->get('playbasis_player');
 
-//        foreach ($results as $result) {
-//            $player_data[] = array(
-//                'pb_player_id' => $result['_id'],
-//                'username' => $result['username'],
-//                'first_name' => $result['first_name'],
-//                'last_name' => $result['last_name'],
-//                'email' => $result['email'],
-//                'nickname' => $result['nickname'],
-//                'gender' => $result['gender'] === '1' ? 'male' : 'female',
-//                'image' => $result['image'],
-//                'level' => $result['level'],
-//                'exp' => $result['exp'],
-//                'action' => $this->getPlayerAction($site_id, $client_id, $result['_id']),
-//                'status' => (bool)$result['status'],
-//                'date_added' => $this->datetimeMongotoReadable($result['date_added']),
-//                'date_modified' => $this->datetimeMongotoReadable($result['date_modified']),
-//                // 'points' => $this->getUserPoint($result['pb_player_id'] , $sql_reward),
-//                'points' => 0,
-//                'age' => $this->getAge($result['birth_date'])
-//            );
-//        }
-
         return $player_data;
+    }
+
+    public function getPlayerPoint($data){
+        $reward_filter = "point";
+        if (isset($data['reward_filter'])) {
+            $reward_filter = $data['reward_filter'];
+        }
+
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('name', $reward_filter);
+        $r =  $this->mongo_db->get('playbasis_reward');
+
+        $this->mongo_db->select('value');
+        $this->mongo_db->where('pb_player_id', new MongoID($data['pb_player_id']));
+        $this->mongo_db->where('reward_id', new MongoID($r[0]['_id']));
+
+        $point =  $this->mongo_db->get('playbasis_reward_to_player');
+
+        return $point ? $point[0]['value'] : 0;
     }
 
     private function getPlayerAction($site_id, $client_id, $player_id) {
