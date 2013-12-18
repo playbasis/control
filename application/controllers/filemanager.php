@@ -140,7 +140,7 @@ class FileManager extends MY_Controller
     }
 
     public function create() {
- 
+
         $json = array();
 
         if (isset($this->input->post['directory'])) {
