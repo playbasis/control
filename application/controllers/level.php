@@ -266,7 +266,12 @@ class Level extends MY_Controller
         }
 
         if (isset($level_id) && ($level_id != 0)) {
-            $level_info = $this->Level_model->getLevel($level_id);
+            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                    $level_info = $this->Level_model->getLevelSite($level_id);
+                }else{
+                    $level_info = $this->Level_model->getLevel($level_id);
+                }
+            
         }
 
         if(isset($level_id)){

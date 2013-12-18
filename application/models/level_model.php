@@ -23,6 +23,15 @@ class Level_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getLevelSite($level_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id',  new MongoID($level_id));
+        $results = $this->mongo_db->get("playbasis_client_exp_table");
+
+        return $results ? $results[0] : null;
+    }
+
     public function getLevels($data) {
         $level_data = array();
 
