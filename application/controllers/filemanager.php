@@ -42,8 +42,6 @@ class FileManager extends MY_Controller
             $this->data['fckeditor'] = false;
         }
 
-        $this->template = 'common/filemanager.tpl';
-
         $this->load->vars($this->data);
         $this->load->view('filemanager');
     }
@@ -142,8 +140,7 @@ class FileManager extends MY_Controller
     }
 
     public function create() {
-        $this->load->language('common/filemanager');
-
+ 
         $json = array();
 
         if (isset($this->input->post['directory'])) {
@@ -164,7 +161,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->user->hasPermission('modify', 'common/filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -178,7 +175,6 @@ class FileManager extends MY_Controller
     }
 
     public function delete() {
-        $this->load->language('common/filemanager');
 
         $json = array();
 
@@ -196,7 +192,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_select');
         }
 
-        if (!$this->user->hasPermission('modify', 'common/filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -240,7 +236,6 @@ class FileManager extends MY_Controller
     }
 
     public function move() {
-        $this->load->language('common/filemanager');
 
         $json = array();
 
@@ -268,7 +263,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->user->hasPermission('modify', 'common/filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -282,7 +277,6 @@ class FileManager extends MY_Controller
     }
 
     public function copy() {
-        $this->load->language('common/filemanager');
 
         $json = array();
 
@@ -312,7 +306,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_select');
         }
 
-        if (!$this->user->hasPermission('modify', 'common/filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -366,7 +360,6 @@ class FileManager extends MY_Controller
     }
 
     public function rename() {
-        $this->load->language('common/filemanager');
 
         $json = array();
 
@@ -394,7 +387,7 @@ class FileManager extends MY_Controller
             }
         }
 
-        if (!$this->user->hasPermission('modify', 'common/filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -408,7 +401,6 @@ class FileManager extends MY_Controller
     }
 
     public function upload() {
-        $this->load->language('common/filemanager');
 
         $json = array();
 
@@ -470,7 +462,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'common/filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -548,7 +540,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
+        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 

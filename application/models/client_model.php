@@ -14,6 +14,8 @@ class Client_model extends MY_Model
     public function getTotalClients($data){
         $this->set_site_mongodb(0);
 
+        $this->mongo_db->where('deleted', false);
+
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
             $this->mongo_db->where('first_name', $regex);
@@ -160,7 +162,6 @@ class Client_model extends MY_Model
 
             foreach ($data['user_value'] as $user_value) {
 
-                var_dump($user_value['status']);
                 $this->mongo_db->where('client_id', new MongoID($user_value['user_id']));
                 $this->mongo_db->set('user_group_id',  new MongoID($user_value['user_group_id']));
                 $this->mongo_db->set('status',  (bool)$user_value['status']);
