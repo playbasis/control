@@ -29,4 +29,8 @@ $lang['filter_date_start']						= 'Date Start';
 $lang['filter_date_end']						= 'Date End';
 $lang['filter_username']						= 'Username';
 $lang['filter_action_id']						= 'Action';
+
+//Error messages
+$lang['error_permission']       	= 'Warning: You do not have permission to modify rules!';
+$lang['error_access']				= 'Warning: You do not have permission to access this page!'
 ?>

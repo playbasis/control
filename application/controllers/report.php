@@ -19,6 +19,10 @@ class Report extends MY_Controller
 
     public function index() {
 
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -320,6 +324,14 @@ class Report extends MY_Controller
             $dateTimeMongo = "0000-00-00 00:00:00";
         }
         return $dateTimeMongo;
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'report')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 ?>

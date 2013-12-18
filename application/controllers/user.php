@@ -12,6 +12,9 @@ class User extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->load->model('User_model');
+        $this->load->model('Client_model');
+        $this->load->model('Plan_model');
+        $this->load->model('Domain_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -20,6 +23,11 @@ class User extends MY_Controller
     }
 
     public function index(){
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -192,6 +200,7 @@ class User extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
+
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             $selectedUsers = $this->input->post('selected');
 
@@ -283,6 +292,14 @@ class User extends MY_Controller
         }
     }
 
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'user')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function checkOwnerUser($user_id){
 
         $error = null;
@@ -312,6 +329,7 @@ class User extends MY_Controller
     }
 
     private function checkLimitUser($client_id){
+
         $data['client_id'] = $client_id;
         $users = $this->User_model->getTotalUserByClientId($data);
 
@@ -373,5 +391,69 @@ class User extends MY_Controller
         $this->User_model->logout();
         redirect('/', 'refresh');
     }
+
+
+
+    public function register(){
+
+        $this->load->model('Image_model');
+        $this->load->model('Permission_model');
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'register';
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+        $this->data['form'] = 'user/register';
+        $this->data['user_groups'] = $this->User_model->getUserGroups();
+
+        //Set rules for form regsitration
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
+
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->form_validation->run()){
+                $user_id = $this->User_model->insertUser();
+                $user_info = $this->User_model->getUserInfo($user_id);
+
+                $client_id = $this->Client_model->insertClient();//returns only client id
+
+                $this->User_model->insertUserToClient($client_id, $user_info['_id']);//Does not return anything just inserts to 'user_to_client' table
+
+                $data = $this->input->post();
+                $data['client_id'] = $client_id;
+                $data['limit_users'] = 1000;
+                $data['date_start'] = date("Y-m-d H:i:s");
+                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
+
+                $site_info = $this->Domain_model->addDomain($data); //returns an array of client_site
+
+                $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+
+                $this->Client_model->whoandwhat($client_id, $site_info, $plan_id);
+
+                $data = array();
+                    $data['client_id'] = $client_id;
+                    $data['plan_id'] = $plan_id;
+                    $data['site_id'] = $site_info;
+                    $this->Permission_model->addPlanToPermission($data);
+
+                redirect('login');
+            }else{
+                $this->data['temp_fields'] = $this->input->post();
+            }
+        }
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
+
 
 }

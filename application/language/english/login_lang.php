@@ -6,6 +6,7 @@ $lang['heading_title']  = 'Administration';
 $lang['text_heading']   = 'Administration';
 $lang['text_login']     = 'Please enter your login details.';
 $lang['text_forgotten'] = 'Forgotten Password';
+$lang['text_register']	= "Register New Account";
 
 // Entry
 $lang['entry_username'] = 'Username:';

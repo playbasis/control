@@ -13,6 +13,7 @@ class User_group extends MY_Controller{
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->load->model('User_group_model');
+        $this->load->model('User_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -20,6 +21,10 @@ class User_group extends MY_Controller{
 	}
 
 	public function index(){
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
 		$this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -100,6 +105,8 @@ class User_group extends MY_Controller{
                 $this->User_group_model->editUserGroup($user_group_id, $this->input->post());  
 
                 redirect('user_group/','refresh');
+            }else{
+                $this->data['temp_features'] = $this->input->post();
             }            
         }
         $this->getForm($user_group_id);
@@ -125,7 +132,7 @@ class User_group extends MY_Controller{
                 $this->User_group_model->insertUserGroup();
                 redirect('user_group/','refresh');
         	}else{
-
+                $this->data['temp_features'] = $this->input->post();
         	}
         }
 
@@ -183,6 +190,14 @@ class User_group extends MY_Controller{
             }
         }
         $this->output->set_output(json_encode($json));
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'user_group')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

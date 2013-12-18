@@ -8,9 +8,9 @@ class Client extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
-            redirect('/login', 'refresh');
-        }
+        // if(!$this->User_model->isLogged()){
+        //     redirect('/login', 'refresh');
+        // }
 
         $this->load->model('Client_model');
 
@@ -20,6 +20,9 @@ class Client extends MY_Controller
     }
 
     public function index() {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -87,10 +90,12 @@ class Client extends MY_Controller
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
+                
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
+
                 $this->Client_model->editClient($client_id, $this->input->post());
 
                 $this->session->data['success'] = $this->lang->line('text_success');
@@ -337,7 +342,15 @@ class Client extends MY_Controller
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'client')) {
+        if ($this->User_model->hasPermission('modify', 'clients')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'clients')) {
             return true;
         } else {
             return false;
@@ -346,11 +359,13 @@ class Client extends MY_Controller
 
     private function checkOwnerClient($clientId){
 
+        $this->load->model('Domain_model');
+
         $error = null;
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $clients = $this->Client_model->getDomainsByClientId($this->User_model->getClientId());
+            $clients = $this->Domain_model->getDomainsByClientId($this->User_model->getClientId());
 
             $has = false;
 
@@ -524,9 +539,7 @@ class Client extends MY_Controller
             }
 
         }
-
         $this->data['list_client_id'] = $data['client_id'];
-
         $this->data['groups'] = $this->User_model->getUserGroups();
 
         $config['base_url'] = site_url('client/users').$parameter_url;

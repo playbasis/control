@@ -42,6 +42,7 @@ $route['default_controller'] = "dashboard/home";
 $route['404_override'] = '';
 
 $route['login'] = 'user/login';
+$route['register'] = 'user/register';
 $route['logout'] = 'user/logout';
 
 

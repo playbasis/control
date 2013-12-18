@@ -122,15 +122,17 @@ class  MY_Controller  extends  CI_Controller  {
                 $this->data['domain_name'] = $this->data['domain'];
 
                 $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
+                // var_dump($features);
             }else{
                 // super admin
                 $features = $this->Feature_model->getFeatures();
+                // var_dump($features);
             }
         }
 
         foreach ($features as $value) {
             $this->data['features'][] = array(
-                'feature_id' => $value['feature_id'],
+                'feature_id' => $value['_id'],
                 'name' => $value['name'],
                 'icon' => $value['icon'],
                 'link' =>$value['link']

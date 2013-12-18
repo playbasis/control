@@ -21,6 +21,10 @@ class Player extends MY_Controller
 
     public function index() {
 
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->load->model('Image_model');
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -672,6 +676,14 @@ class Player extends MY_Controller
             $dateTimeMongo = "0000-00-00 00:00:00";
         }
         return $dateTimeMongo;
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'players')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 ?>

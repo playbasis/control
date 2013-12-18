@@ -11,7 +11,7 @@
     <div class="box">
 
     	<div class="heading">
-    		<h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
+    		<h1><img src="image/user-group.png" alt="" /> <?php echo $heading_title; ?></h1>
     		<div class="buttons">
 	    		<button class="btn btn-info" onclick="location =  baseUrlPath+'user_group/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
 	            <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>

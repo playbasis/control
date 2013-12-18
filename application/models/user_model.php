@@ -81,12 +81,23 @@ class User_model extends MY_Model
     }
 
     public function insertUser(){
-        $user_group_id = $this->input->post('user_group');
+
+        if($this->input->post('user_group')){
+            $user_group_id = $this->input->post('user_group');    
+        }else{
+            $this->mongo_db->where('name', 'BetaTest');
+            $user_group_id = $this->mongo_db->get('user_group')[0]['_id'];
+        }
+
         $username = $this->input->post('username');
         $firstname = $this->input->post('firstname');
         $email = $this->input->post('email');
         $lastname = $this->input->post('lastname');
-        $status = $this->input->post('status');
+        if($this->input->post('status')==null){
+            $status = true;
+        }else{
+            $status = $this->input->post('status');    
+        }
         $ip = $_SERVER['REMOTE_ADDR'];
         $salt = get_random_password(10,10);
 
@@ -383,5 +394,19 @@ class User_model extends MY_Model
         $this->session->set_userdata('admin_group_id',$this->admin_group_id );
         return $this->admin_group_id;
     }
+
+    public function insertUserToClient($client_id, $user_id){
+
+        $data = array(
+            'client_id'=> new MongoID($client_id),
+            'status' =>true,
+            'user_id'=>new MongoID($user_id)
+            );
+
+        $this->mongo_db->insert('user_to_client', $data);
+    }
+
+    
+
 }
 ?>
