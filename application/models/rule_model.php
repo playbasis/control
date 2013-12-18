@@ -300,7 +300,9 @@ class Rule_model extends MY_Model
         $sort=array();
         reset($array);
         foreach ($array as $ii => $va) {
-            $sort[$ii]=$va[$key];
+            if(isset($va[$key])){
+                $sort[$ii]=$va[$key];
+            }
         }
         asort($sort);
         foreach ($sort as $ii => $va) {
