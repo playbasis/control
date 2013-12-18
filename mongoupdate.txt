@@ -1,0 +1,10 @@
+playbasis_feature
+
+   "name": "File Manager",
+   "description": "",
+   "sort_order": NumberInt(0),
+   "icon": "icon-file",
+   "link": "filemanager",
+   "status": false,
+   "date_added": new Date(),
+   "date_modified": new Date()
