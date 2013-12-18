@@ -15,6 +15,8 @@ class Client_model extends MY_Model
         $this->set_site_mongodb(0);
         $this->mongo_db->where('deleted', false);
 
+        $this->mongo_db->where('deleted', false);
+
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
             $this->mongo_db->where('first_name', $regex);
