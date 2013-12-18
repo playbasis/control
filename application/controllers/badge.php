@@ -422,9 +422,9 @@ class Badge extends MY_Controller
             $badges = $this->Badge_model->getBadgeBySiteId($this->User_model->getSiteId());
 
             $has = false;
-
+    
             foreach ($badges as $badge) {
-                if($badge['_id']."" == $badgeId.""){
+                if($badge['badge_id']."" == $badgeId.""){
                     $has = true;
                 }
             }
