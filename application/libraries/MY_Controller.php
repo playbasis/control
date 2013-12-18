@@ -132,7 +132,7 @@ class  MY_Controller  extends  CI_Controller  {
 
         foreach ($features as $value) {
             $this->data['features'][] = array(
-                'feature_id' => $value['feature_id'],
+                'feature_id' => $value['_id'],
                 'name' => $value['name'],
                 'icon' => $value['icon'],
                 'link' =>$value['link']

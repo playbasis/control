@@ -23,6 +23,11 @@ class User extends MY_Controller
     }
 
     public function index(){
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -195,6 +200,7 @@ class User extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
+
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             $selectedUsers = $this->input->post('selected');
 
@@ -280,6 +286,14 @@ class User extends MY_Controller
     private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'user')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'user')) {
             return true;
         } else {
             return false;

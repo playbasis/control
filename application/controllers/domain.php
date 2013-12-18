@@ -22,8 +22,7 @@ class Domain extends MY_Controller
     public function index() {
 
         if(!$this->validateAccess()){
-            echo $this->lang->line('error_access');
-            return false;
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');

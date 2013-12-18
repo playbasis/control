@@ -22,8 +22,7 @@ class Badge extends MY_Controller
     public function index() {
 
         if(!$this->validateAccess()){
-            echo $this->lang->line('error_access');
-            return false;
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -54,7 +53,8 @@ class Badge extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'badge/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        //I took out the check_space because some badges may have spaces? - Joe
+        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkLimitBadge()) {
 
@@ -83,7 +83,8 @@ class Badge extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'badge/update/'.$badge_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        //I took out the check_space because some badges may have spaces? - Joe
+        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
 

@@ -71,6 +71,7 @@ $lang['entry_friend']				= 'Friend:';
 // Error 
 $lang['error_warning']          	= 'Warning: Please check the form carefully for errors!';
 $lang['error_permission']       	= 'Warning: You do not have permission to modify players!';
+$lang['error_access']       	= 'Warning: You do not have permission to access this page!';
 $lang['error_name']             	= 'Category Name must be between 2 and 32 characters!';
 $lang['error_email']           	= 'E-Mail Address does not appear to be valid!';
 $lang['error_telephone']       	= 'Telephone must be between 3 and 32 characters!';

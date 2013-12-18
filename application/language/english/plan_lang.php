@@ -42,6 +42,7 @@ $lang['entry_status']           				= 'Status:';
 // Error 
 $lang['error_warning']          				= 'Warning: Please check the form carefully for errors!';
 $lang['error_permission']       				= 'Warning: You do not have permission to modify plans!';
+$lang['error_access']       				= 'Warning: You do not have permission to access this page!';
 $lang['error_name']             				= 'Category Name must be between 2 and 32 characters!';
 $lang['error_required']						= 'Warning: Please check required field!!';
 $lang['error_user']							= 'Error: Username not availble!!!';

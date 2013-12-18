@@ -37,5 +37,6 @@ $lang['entry_collection']			= 'Collection:';
 // Error 
 $lang['error_warning']          = 'Warning: Please check the form carefully for errors!';
 $lang['error_permission']       = 'Warning: You do not have permission to modify levels!';
+$lang['error_access']       = 'Warning: You do not have permission to access this page!';
 $lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
 ?>

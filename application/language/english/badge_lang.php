@@ -46,6 +46,7 @@ $lang['text_no_client']				= 'No client assign to this badge';
 // Error 
 $lang['error_warning']          = 'Warning: Please check the form carefully for errors!';
 $lang['error_permission']       = 'Warning: You do not have permission to modify badges!';
+$lang['error_access']			= 'Warning: You do not have permission to access this page!';
 $lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
 $lang['error_limit']            = 'You have reached badges limit.';
 ?>
