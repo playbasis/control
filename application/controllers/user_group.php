@@ -21,9 +21,9 @@ class User_group extends MY_Controller{
 	}
 
 	public function index(){
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
+        // if(!$this->validateAccess()){
+        //     echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        // }
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
