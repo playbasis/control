@@ -67,12 +67,12 @@ class User_model extends MY_Model
             
             if(trim($data['password']) =="" || trim($data['confirm_password']=="")){
                 $this->mongo_db->update('user');
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/user', 'refresh');
             }else{
                 $this->mongo_db->set('password', dohash($data['password'],$salt));    
                 $this->mongo_db->update('user');
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/user', 'refresh');
             }
         }else{

@@ -112,8 +112,11 @@ class User extends MY_Controller
             if($this->form_validation->run()){
                 $this->User_model->editUser($user_id, $this->input->post());
 
-                redirect('user/','refresh');
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                redirect('/user', 'refresh');
+                
             }
+            
         }
         $this->getForm($user_id);
 
@@ -139,6 +142,8 @@ class User extends MY_Controller
             if($this->form_validation->run()){
                 $this->User_model->insertUser();
                 $this->session->data['success'] = $this->lang->line('text_success');
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
                 redirect('user/','refresh');
             }
         }
@@ -209,7 +214,7 @@ class User extends MY_Controller
             }
 
             $this->session->data['success'] = $this->lang->line('text_success');
-
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             redirect('/user', 'refresh');
         }
 
