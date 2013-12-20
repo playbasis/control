@@ -16,7 +16,7 @@ class Action_model extends MY_Model
 
         $results = $this->mongo_db->get("playbasis_action");
 
-        return $results
+        return $results;
     }
 
     public function getTotalActionReport($data) {
