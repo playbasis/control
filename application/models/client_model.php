@@ -182,27 +182,27 @@ class Client_model extends MY_Model
         if (isset($data['domain_value'])) {
             foreach ($data['domain_value'] as $domain_value) {
 
-                $this->mongo_db->where('_id',  new MongoID($domain_value['site_id']));
-                $this->mongo_db->set('status', (bool)$domain_value['status']);
-                if($domain_value['limit_users']){
-                    $this->mongo_db->set('limit_users', $domain_value['limit_users']);
-                }
-                if(isset($domain_value['domain_start_date']) || isset($domain_value['date_start'])){
-                    $date_start = (isset($domain_value['domain_start_date']) )? $domain_value['domain_start_date'] : $domain_value['date_start'];
-                    $this->mongo_db->set('date_start', new MongoDate(strtotime($date_start)));
-                }
-                if(isset($domain_value['domain_expire_date']) ||isset($domain_value['date_expire'])){
-                    $date_expire = (isset($domain_value['domain_expire_date']))?$domain_value['domain_expire_date'] :$domain_value['date_expire'];
-                    $this->mongo_db->set('date_expire', new MongoDate(strtotime($date_expire)));
-                }
-                $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-                $this->mongo_db->update('playbasis_client_site');
+                // $this->mongo_db->where('_id',  new MongoID($domain_value['site_id']));
+                // $this->mongo_db->set('status', (bool)$domain_value['status']);
+                // if($domain_value['limit_users']){
+                //     $this->mongo_db->set('limit_users', $domain_value['limit_users']);
+                // }
+                // if(isset($domain_value['domain_start_date']) || isset($domain_value['date_start'])){
+                //     $date_start = (isset($domain_value['domain_start_date']) )? $domain_value['domain_start_date'] : $domain_value['date_start'];
+                //     $this->mongo_db->set('date_start', new MongoDate(strtotime($date_start)));
+                // }
+                // if(isset($domain_value['domain_expire_date']) ||isset($domain_value['date_expire'])){
+                //     $date_expire = (isset($domain_value['domain_expire_date']))?$domain_value['domain_expire_date'] :$domain_value['date_expire'];
+                //     $this->mongo_db->set('date_expire', new MongoDate(strtotime($date_expire)));
+                // }
+                // $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+                // $this->mongo_db->update('playbasis_client_site');
 
                 $data_filter = array(
                     'client_id' => $client_id,
                     'site_id' => $domain_value['site_id'],
                     'plan_id' => $domain_value['plan_id'],
-                    'status' => (bool)$domain_value['status'],
+                    // 'status' => (bool)$domain_value['status'],
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
@@ -333,6 +333,7 @@ class Client_model extends MY_Model
         $this->mongo_db->delete_all("playbasis_feature_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
+
 
         if ($plan_data['feature_to_plan']) {
             foreach ($plan_data['feature_to_plan'] as $feature_id) {
