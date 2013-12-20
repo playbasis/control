@@ -101,24 +101,21 @@ class Plan extends MY_Controller
                 $this->load->model("Client_model");
                 $clients_by_plan = $this->Plan_model->getClientByPlan($plan_id); //returns: client_id, site_id, date_added, date_modified
 
-
                 
                 foreach($clients_by_plan as $client){
 
-                    $okay = $client['client_id'];
-                    $try = array('client_id'=>$okay);
-                    $a_client = $this->Domain_model->getDomainsByClientId($try);
-
+                    // $okay = $client['client_id'];
+                    $try = array('client_id'=>$client['client_id']);
+                    // $a_client = $this->Domain_model->getDomainsByClientId($try);
                     
-
-                    $data['domain_value'][] = array(
+                    // foreach($a_client as $c){
+                        $data['domain_value'][] = array(
                         'site_id'=>$client['site_id'],
                         'plan_id'=>$client['plan_id'],
-                        'status'=>$a_client[0]['status'],
-                        'date_start'=>$a_client[0]['date_start'],
-                        'date_expire'=>$a_client[0]['date_expire'],
-                        'limit_users'=>$a_client[0]['limit_users']
-                        );
+                        // 'status'=>$c[0]['status']
+                        );    
+                    // }
+                    
 
                     $this->Client_model->editClientPlan($client['client_id'], $data);
                 }
