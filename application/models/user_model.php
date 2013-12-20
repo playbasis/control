@@ -406,7 +406,21 @@ class User_model extends MY_Model
         $this->mongo_db->insert('user_to_client', $data);
     }
 
-    
+    public function updateSiteId($site_id){
+
+        if($this->checkSiteId($site_id) > 0){
+            $this->site_id = $site_id;
+            $this->session->set_userdata('site_id',$this->site_id );
+        }
+
+        return true;
+    }
+
+    private function checkSiteId($site_id){
+        $this->mongo_db->where('_id', new MongoID($site_id));
+        $this->mongo_db->where('client_id', new MongoID($this->client_id));
+        return $this->mongo_db->count('playbasis_client_site');
+    }
 
 }
 ?>
