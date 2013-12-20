@@ -124,11 +124,14 @@ class Rule extends MY_Controller
 
         if ($badges) {
             foreach ($badges as $badge) {
+
+                $badge_detail = $this->Badge_model->getBadge($badge['badge_id']);
+
                 $json['badges'][] = array(
                     'badge_id' => $badge['badge_id'],
-                    'name' => $badge['name'],
-                    'description' => $badge['description'],
-                    'image' => $badge['image']
+                    'name' => $badge_detail['name'],
+                    'description' => $badge_detail['description'],
+                    'image' => $badge_detail['image']
                 );
             }
         }
