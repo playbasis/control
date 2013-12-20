@@ -167,7 +167,7 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
                         <ul class="dropdown-menu">
                         
                             <?php foreach($domain_all as $a_domain){?>
-                                <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-user"></i> <?php echo $a_domain['site_name']. " - "; echo $a_domain['api_key'];?></a></li>
+                                <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-user"></i> <?php echo $a_domain['site_name'];?></a></li>
                             <?php }?>
                         </ul>
                     <?php }else{echo "";} ?>
