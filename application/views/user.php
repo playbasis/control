@@ -16,6 +16,11 @@
             </div>
         </div>
         <div class="content">
+            <?php if($this->session->flashdata('success')){ ?>
+                <div class="content messages half-width">
+                <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+                </div>
+            <?php }?>
             <?php
             $attributes = array('id' => 'form');
             echo form_open('user/delete',$attributes);
