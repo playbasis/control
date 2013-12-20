@@ -4,7 +4,7 @@ $lang['heading_title']          				= 'Domain';
 
 // Text
 // $lang['text_success']           				= 'Success: You have modified clients!';
-$lang['text_success']           				= 'Success: The reset secret was a success!';
+$lang['text_success']           				= 'You have successfully reset the secret!';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';
