@@ -41,10 +41,7 @@
                             <?php
                             echo form_password($pdata);
                             ?>
-                            <br />
-                            <?php
-                            echo anchor('forgot_password', $this->lang->line('text_forgotten'));
-                            ?>
+                            
                             <br/>
                             <?php
                             echo anchor('register', $this->lang->line('text_register'));

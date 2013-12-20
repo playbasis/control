@@ -149,29 +149,30 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
 
             <!-- start: Header Menu -->
             <div class="nav-no-collapse header-nav">
+            <?php //echo $site_id; echo "--".$domain['_id'];?>
+            <?php //var_dump($domain);?>
         <?php if (isset($username)) { ?>
-          <ul class="nav pull-right">
-            <li class="dropdown">
-              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                  <i>
-                      <?php echo $username; ?>
-                      <?php echo (isset($domain_name['site_name'])) ? '[' . $domain_name['site_name'] .']' : '' ; ?>
-                  </i>
-                  <span class="caret"></span>
-              </a>
-                <?php if(isset($domains)) { ?>
-                <ul class="dropdown-menu">
-                  <?php foreach ($domains as $domain) { ?>
-                        <?php echo ($domain['site_id'] == $site_id) ?  '<li selected="selected">' : '<li>' ; ?>
-                        <a href="<?php echo $domain['href']; ?>">
-                            <i class="icon-user"></i>
-                            <?php echo $domain['site_name']; ?>
-                        </a>
-                    </li>
-                  <?php } ?>
-                </ul>
-              <?php } ?>
+            <ul class="nav pull-right">
+
+
+                <li class="dropdown">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i>
+                            <?php echo $username; ?>
+                            <?php echo (isset($domain_name['site_name'])) ? '[' . $domain_name['site_name'] .']' : '' ; ?>
+                        </i>
+                        <span class="caret"></span>
+                    </a>
+                    <?php if(isset($domain_all)) { ?>
+                        <ul class="dropdown-menu">
+                        
+                            <?php foreach($domain_all as $a_domain){?>
+                                <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-user"></i> <?php echo $a_domain['site_name'];?></a></li>
+                            <?php }?>
+                        </ul>
+                    <?php }else{echo "";} ?>
                 </li>
+
                 <li class="dropdown">
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="icon-user icon-white"></i>
@@ -183,9 +184,9 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
                         </li>
                     </ul>
                 </li>
-                </ul>
-                <?php } ?>
-            </div>
+            </ul>
+        <?php } ?>
+                </div>
             <!-- end: Header Menu -->
 
         </div>
