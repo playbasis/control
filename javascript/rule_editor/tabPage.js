@@ -136,7 +136,7 @@ BadgeSet = {
     list:[],
     getBadgeImage:function(id){
         var output  = '';
-        if(this.list.length > 0){
+        if(this.list && this.list.length > 0){
             for(var index in this.list){
                 var b = this.list[index];
                 if(b.badge_id == id){

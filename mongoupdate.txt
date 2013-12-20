@@ -1,3 +1,5 @@
+insert
+
 playbasis_feature
 
    "name": "File Manager",
@@ -8,3 +10,12 @@ playbasis_feature
    "status": false,
    "date_added": new Date(),
    "date_modified": new Date()
+
+  "name": "Action",
+  "description": "",
+  "sort_order": NumberInt(2),
+  "icon": "fa-icon-magic",
+  "link": "action",
+  "status": true,
+  "date_added": new Date(),
+  "date_modified": new Date()
