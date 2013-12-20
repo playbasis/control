@@ -184,7 +184,7 @@ class Statistic extends CI_Controller
             foreach ($results as $result) {
                 $actions = array();
 
-                $player_action = $this->Player_model->getActionsByPlayerId($result['pb_player_id']);
+                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']['pb_player_id']);
 //                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
 
                 if ($player_action) {
@@ -198,7 +198,7 @@ class Statistic extends CI_Controller
                     }
                 }
 
-                $data_player = array('pb_player_id' => $result['pb_player_id']);
+                $data_player = array('pb_player_id' => $result['_id']['pb_player_id']);
                 $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
 
                 $badges = array();
@@ -207,15 +207,15 @@ class Statistic extends CI_Controller
 
                         $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
 
-                        if ($badge_info && (S3_IMAGE . $badge_info[0]['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info[0]['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $thumb = $this->Image_model->resize($badge_info[0]['image'], 40, 40);
+                        if ($badge_info && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $thumb = $this->Image_model->resize($badge_info['image'], 40, 40);
                         } else {
                             $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
                         }
 
                         $badges[] = array(
                             'badge_id' => $badge['badge_id'],
-                            'name' => $badge_info[0]['name'],
+                            'name' => $badge_info['name'],
                             'image' => $thumb,
                             'quantity' => $badge['value'],
                             'date_added' => $badge['date_added'],
@@ -232,7 +232,7 @@ class Statistic extends CI_Controller
                 }
 
                 $players[] = array(
-                    'pb_player_id' => $result['pb_player_id'],
+                    'pb_player_id' => $result['_id']['pb_player_id'],
                     'firstname' => $result['first_name'],
                     'lastname' => $result['last_name'],
                     'nickname' => $result['nickname'],

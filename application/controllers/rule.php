@@ -122,6 +122,8 @@ class Rule extends MY_Controller
 
         $badges = $this->Badge_model->getBadgeBySiteId($this->User_model->getSiteId());
 
+        $json =array();
+
         if ($badges) {
             foreach ($badges as $badge) {
 

@@ -672,7 +672,10 @@ class Player_model extends MY_Model
 
         $player_data = array();
         foreach ($results as $result) {
-            $player_data[] = array_merge($this->getPlayerById($result['_id']['pb_player_id']),$result);
+            $player_info = $this->getPlayerById($result['_id']['pb_player_id']);
+            // clean id from old system it's a mysql id generate
+            unset($player_info['pb_player_id']);
+            $player_data[] = array_merge($player_info,$result);
         }
 
         $output['result'] = $player_data;
