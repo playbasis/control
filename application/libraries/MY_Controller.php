@@ -115,12 +115,19 @@ class  MY_Controller  extends  CI_Controller  {
         $features = array();
 
         if($this->session->userdata('user_id')){
+
             $this->data['username'] = $this->User_model->getUserName();
 
             if($this->data['site_id']){
+
+
                 $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
                 $this->data['domain_name'] = $this->data['domain'];
 
+                $temp = array('client_id'=>$this->data['client_id']);
+                
+                $this->data['domain_all'] = $this->Domain_model->getDomainsByClientId($temp);
+                // var_dump($this->data['domain_all']);
                 $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
                 //var_dump($features);
             }else{
