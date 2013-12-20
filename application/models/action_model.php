@@ -11,6 +11,14 @@ class Action_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getActions(){
+        $this->set_site_mongodb(0);
+
+        $results = $this->mongo_db->get("playbasis_action");
+
+        return $results
+    }
+
     public function getTotalActionReport($data) {
 
         $this->set_site_mongodb(0);

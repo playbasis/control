@@ -310,14 +310,18 @@ class User_model extends MY_Model
                     }
                 }
 
-                $this->session->set_userdata('user_id',$this->user_id );
-                $this->session->set_userdata('username',$this->username );
-                $this->session->set_userdata('user_group_id',$this->user_group_id );
-                $this->session->set_userdata('database',$this->database );
-                $this->session->set_userdata('client_id',$this->client_id );
-                $this->session->set_userdata('site_id',$this->site_id );
-                $this->session->set_userdata('permission',$this->permission );
-                $this->session->set_userdata('ip',$ip );
+                if($this->client_id && $this->site_id){
+                    $this->session->set_userdata('user_id',$this->user_id );
+                    $this->session->set_userdata('username',$this->username );
+                    $this->session->set_userdata('user_group_id',$this->user_group_id );
+                    $this->session->set_userdata('database',$this->database );
+                    $this->session->set_userdata('client_id',$this->client_id );
+                    $this->session->set_userdata('site_id',$this->site_id );
+                    $this->session->set_userdata('permission',$this->permission );
+                    $this->session->set_userdata('ip',$ip );
+                }else {
+                    $this->session->unset_userdata('user_id');
+                }
 
             } else {
                 $this->session->unset_userdata('user_id');
