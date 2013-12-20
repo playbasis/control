@@ -3,7 +3,9 @@
 $lang['heading_title']          		= 'Badges List';
 
 // Text
-$lang['text_success']           		= 'Success: You have modified badges!';
+$lang['text_success']           		= 'You have successfully created a badge!';
+$lang['text_success_delete']           			= 'You have successfully deleted badge(s)!';
+$lang['text_success_update']           	= 'You have successfully updated a badge!';
 $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';

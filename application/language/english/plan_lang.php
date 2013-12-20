@@ -3,7 +3,9 @@
 $lang['heading_title']          				= 'Plan';
 
 // Text
-$lang['text_success']           				= 'Success: You have modified plans!';
+$lang['text_success']           				= 'You have successfully created a plan!';
+$lang['text_success_update']           			= 'You have successfully updated a plan!';
+$lang['text_success_delete']           			= 'You have successfully deleted plan(s)!';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';

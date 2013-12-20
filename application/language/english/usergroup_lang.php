@@ -20,7 +20,9 @@ $lang['error_user']				= 'Error: Username not availble!!!';
 //Text
 $lang['text_no_results']          = 'Result Not found.';
 //$lang['text_edit']                = 'Edit';
-$lang['text_success']           	= 'Success: You have modified a user!';
+$lang['text_success']           	= 'You have successfully created a user group!';
+$lang['text_success_update']        = 'You have successfully updated a user group!';
+$lang['text_success_delete']        = 'You have successfully deleted user group(s)!';
 //$lang['text_default']           	= 'Default';
 //$lang['text_image_manager']     	= 'Image Manager';
 //$lang['text_browse']            	= 'Browse Files';

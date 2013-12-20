@@ -104,6 +104,7 @@ class User_group extends MY_Controller{
             if($this->form_validation->run()){
                 $this->User_group_model->editUserGroup($user_group_id, $this->input->post());  
 
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('user_group/','refresh');
             }else{
                 $this->data['temp_features'] = $this->input->post();
@@ -130,6 +131,7 @@ class User_group extends MY_Controller{
         	if($this->form_validation->run()){
         		$this->session->data['success'] = $this->lang->line('text_success');
                 $this->User_group_model->insertUserGroup();
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
                 redirect('user_group/','refresh');
         	}else{
                 $this->data['temp_features'] = $this->input->post();
@@ -161,7 +163,7 @@ class User_group extends MY_Controller{
         foreach($selectedUserGroups as $selectedUserGroup){
             $this->User_group_model->deleteUserGroup($selectedUserGroup);
         }
-
+        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
         redirect('user_group/');
 
     }

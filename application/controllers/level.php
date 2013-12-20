@@ -69,8 +69,7 @@ class Level extends MY_Controller
                     $this->Level_model->addLevel($this->input->post());
                 }
 
-                $this->session->data['success'] = $this->lang->line('text_success');
-
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
                 redirect('/level', 'refresh');
             }
         }
@@ -104,8 +103,7 @@ class Level extends MY_Controller
                     $this->Level_model->editLevel($level_id, $this->input->post());
                 }
 
-                $this->session->data['success'] = $this->lang->line('text_success');
-
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/level', 'refresh');
             }
         }
@@ -138,7 +136,7 @@ class Level extends MY_Controller
                 }
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
 
             redirect('/level', 'refresh');
         }
@@ -311,7 +309,7 @@ class Level extends MY_Controller
         } elseif (!empty($level_info)) {
             $this->data['exp'] = $level_info['exp'];
         } else {
-            $this->data['exp'] = 0;
+            $this->data['exp'] = null;
         }
 
         if ($this->input->post('level')) {
@@ -319,7 +317,7 @@ class Level extends MY_Controller
         } elseif (!empty($level_info)) {
             $this->data['level'] = $level_info['level'];
         } else {
-            $this->data['level'] = 1;
+            $this->data['level'] = null;
         }
 
         if ($this->input->post('sort_order')) {

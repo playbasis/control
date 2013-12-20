@@ -66,7 +66,7 @@ class Client extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $clent_id = $this->Client_model->addClient($this->input->post());
 
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
                 redirect('/client/update/'.$clent_id, 'refresh');
             }
@@ -98,7 +98,7 @@ class Client extends MY_Controller
 
                 $this->Client_model->editClient($client_id, $this->input->post());
 
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
 
                 redirect('/client', 'refresh');
             }
@@ -127,7 +127,7 @@ class Client extends MY_Controller
                 }
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
 
             redirect('/client', 'refresh');
         }
