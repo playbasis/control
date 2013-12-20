@@ -20,6 +20,7 @@ $lang['text_no_results']          				= 'Result Not found.';
 $lang['text_success']           				= 'You have successfully created a user!';
 $lang['text_success_update']           			= 'You have successfully updated a user!';
 $lang['text_success_delete']           			= 'You have successfully deleted user(s)!';
+$lang['text_success_logout']           			= 'You have successfully logged out!';
 //$lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';

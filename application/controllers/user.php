@@ -213,7 +213,6 @@ class User extends MY_Controller
                 $this->User_model->deleteUser($selectedUser);
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             redirect('/user', 'refresh');
         }
@@ -394,6 +393,7 @@ class User extends MY_Controller
     public function logout(){
         $this->load->model('User_model');
         $this->User_model->logout();
+
         redirect('/', 'refresh');
     }
 
