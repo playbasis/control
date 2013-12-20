@@ -67,7 +67,7 @@ class Badge extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $this->Badge_model->addBadge($this->input->post());
 
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
                 redirect('/badge', 'refresh');
             }
@@ -97,7 +97,7 @@ class Badge extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $this->Badge_model->editBadge($badge_id, $this->input->post());
 
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
 
                 redirect('/badge', 'refresh');
             }
@@ -126,8 +126,7 @@ class Badge extends MY_Controller
                 }
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
-
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             redirect('/badge', 'refresh');
         }
 

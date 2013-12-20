@@ -6,7 +6,11 @@ $lang['heading_title']          = 'Level';
 $lang['text_image_manager']     = 'Image Manager';
 $lang['text_browse']            = 'Browse Files';
 $lang['text_clear']             = 'Clear Image';
-$lang['text_all']								= 'All';
+$lang['text_all']				= 'All';
+$lang['text_success']			= 'You have successfully created a level';
+$lang['text_success_update']	= 'You have successfully updated a level';
+$lang['text_success_delete']	= 'You have successfully deleted level(s)';
+
 
 // Button
 $lang['button_add']						= 'Add Badge';

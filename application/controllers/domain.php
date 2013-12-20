@@ -158,6 +158,8 @@ class Domain extends MY_Controller
 
             $json['success'] = $this->lang->line('text_success');
 
+            $this->session->set_flashdata('success', $this->lang->line('text_success'));
+
         }
 
         $this->output->set_output(json_encode($json));

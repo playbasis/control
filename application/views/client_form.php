@@ -9,6 +9,11 @@
             </div>
         </div>
         <div class="content">
+            <?php if($this->session->flashdata('success')){ ?>
+                <div class="content messages half-width">
+                <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+                </div>
+            <?php }?>
             <div id="tabs" class="htabs">
                 <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
                 <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>

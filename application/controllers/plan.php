@@ -65,7 +65,7 @@ class Plan extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $this->Plan_model->addPlan($this->input->post());
 
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
                 redirect('/plan', 'refresh');
             }
@@ -101,16 +101,7 @@ class Plan extends MY_Controller
                 $this->load->model("Client_model");
                 $clients_by_plan = $this->Plan_model->getClientByPlan($plan_id); //returns: client_id, site_id, date_added, date_modified
 
-                $okay = $clients_by_plan[0]['client_id'];
-                
-                $try = array(
-                    'client_id'=>$okay
-                    );
 
-                echo $try['client_id'];
-                $a_client = $this->Domain_model->getDomainsByClientId($try);
-
-                // var_dump($a_client);
                 
                 foreach($clients_by_plan as $client){
 
@@ -131,7 +122,7 @@ class Plan extends MY_Controller
 
                     $this->Client_model->editClientPlan($client['client_id'], $data);
                 }
-
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/plan', 'refresh');
             }
         }
@@ -163,10 +154,11 @@ class Plan extends MY_Controller
                 }
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
+            
 
         }
-
+        $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+        redirect('/plan', 'refresh');
         $this->getList(0);
     }
 
