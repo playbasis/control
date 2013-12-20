@@ -35,6 +35,10 @@ class Dashboard extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
+        if($this->input->get('site_id')){
+            $this->User_model->updateSiteId($this->input->get('site_id'));
+        }
+        
         $data = array(
             'client_id' => $client_id,
             'site_id' => $site_id,
@@ -131,6 +135,10 @@ class Dashboard extends MY_Controller
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
+
+        if($this->input->get('site_id')){
+            $this->User_model->updateSiteId($this->input->get('site_id'));
+        }
 
         $data = array(
             'client_id' => $client_id,
