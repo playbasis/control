@@ -190,7 +190,7 @@ class Client_model extends MY_Model
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 );
 
-                $this->addPlanToPermission($data_filter);
+//                $this->addPlanToPermission($data_filter);
                 $this->copyRewardToClient($data_filter);
                 $this->copyFeaturedToClient($data_filter);
                 $this->copyActionToClient($data_filter);
