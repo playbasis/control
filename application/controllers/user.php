@@ -183,11 +183,17 @@ class User extends MY_Controller
 
             if($this->form_validation->run()){
                 $user_id = $this->User_model->insertUser();
-                $this->User_model->insertUserToClient($client_id,$user_id);
-                $this->session->data['success'] = $this->lang->line('text_success');
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                redirect('user/','refresh');
+                if($user_id){
+                    $this->User_model->insertUserToClient($client_id,$user_id);
+                    $this->session->data['success'] = $this->lang->line('text_success');
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    redirect('user/','refresh');    
+                }else{
+                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    redirect('user/insert');
+                }
             }
         }
 

@@ -27,6 +27,7 @@ $lang['text_browse']            				= 'Browse Files';
 $lang['text_clear']             				= 'Clear Image';
 //$lang['text_criteria']          				= 'Domain View';
 //$lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
+$lang['text_fail']								= 'The username was already created, please use another username!';
 
 // Column Table
 $lang['column_username']            			= 'Username';
