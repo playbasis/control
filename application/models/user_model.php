@@ -310,7 +310,7 @@ class User_model extends MY_Model
                     }
                 }
 
-                if($this->client_id && $this->site_id){
+                if($this->getAdminGroupID()||$this->client_id && $this->site_id){
                     $this->session->set_userdata('user_id',$this->user_id );
                     $this->session->set_userdata('username',$this->username );
                     $this->session->set_userdata('user_group_id',$this->user_group_id );
