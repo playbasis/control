@@ -89,15 +89,12 @@ class User_model extends MY_Model
             $user_group_id = $this->mongo_db->get('user_group')[0]['_id'];
         }
 
-        $username = $this->input->post('username');
+        // $username = $this->input->post('username');
+        $username = $this->input->post('email');
         $firstname = $this->input->post('firstname');
         $email = $this->input->post('email');
         $lastname = $this->input->post('lastname');
-        if($this->input->post('status')==null){
-            $status = true;
-        }else{
-            $status = $this->input->post('status');    
-        }
+        
         $ip = $_SERVER['REMOTE_ADDR'];
         $salt = get_random_password(10,10);
 
@@ -115,10 +112,13 @@ class User_model extends MY_Model
             'email' => $email,
             'code' =>"",
             'ip' => $ip,
-            'status' => ($status)?true:false,
+            'status' => false,
             'database' => "core",
             'date_added' => $date_added
+            'random_key' => get_random_password();
             );
+
+        //SEND EMAIL WITH URL + RANDOM KEY
 
         return $this->mongo_db->insert('user', $data);
     }
@@ -424,6 +424,23 @@ class User_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($site_id));
         $this->mongo_db->where('client_id', new MongoID($this->client_id));
         return $this->mongo_db->count('playbasis_client_site');
+    }
+
+    public function checkRandomKey($random_key){
+        $this->mongo_db->where('random_key', $random_key);
+        $user = $this->mongo_db->get('user')
+
+        if($user){
+
+            $this->mongo_db->where('_id', new MongoID($user[0]['_id']));
+            $this->mongo_db->set('status', true);
+            $this->mongo_db->set('random_key', null);
+            $this->mongo_db->update('user');
+
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }
