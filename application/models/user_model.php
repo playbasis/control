@@ -102,7 +102,7 @@ class User_model extends MY_Model
 
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-        $random_key = get_random_password();
+        $random_key = get_random_password(8,8);
 
         $data = array(
             'user_group_id' => new MongoID($user_group_id),

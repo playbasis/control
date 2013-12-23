@@ -1,10 +1,53 @@
-Hello {firstname} {lastname}!
-<br/>
-<br/>
-Please click the link below to validate your user account:
-<br/>
-{url}
-<br>
-Your username is: {username}
-<br/>
-Your password is: {password}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Playbasis User Account Validation</title>
+		<style>
+			body{
+				font-family: Arial;
+			}
+			img {
+				margin: 0 auto;
+			}
+
+			h1, h2{
+				text-align: center;
+			}
+
+			a{
+				font-size: 20px;	
+			}
+			#container{
+				width:500px;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<img src="http://www.playbasis.com/assets/img/playbasis.png" alt="Playbasis" title="Playbasis"/>
+			<h1>Hello {firstname} {lastname}!</h1>
+			<br/>
+			<br/>
+			<h2>Please click the link below in order to use your Playbasis account:</h2>
+			<br/>
+			{url}
+			<br>
+			Your username is: {username}
+			<br/>
+			Your password is: {password}
+		</div>
+	</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <script src="http://code.jquery.com/jquery.js"></script>
+  </body>
+</html>
