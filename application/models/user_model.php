@@ -82,76 +82,83 @@ class User_model extends MY_Model
 
     public function insertUser(){
 
-        if($this->input->post('user_group')){
-            $user_group_id = $this->input->post('user_group');    
+        $this->mongo_db->where('username', $this->input->post('email'));
+
+        if($this->mongo_db->count('user')==0){
+            if($this->input->post('user_group')){
+                $user_group_id = $this->input->post('user_group');    
+            }else{
+                $this->mongo_db->where('name', 'BetaTest');
+                $user_group_id = $this->mongo_db->get('user_group')[0]['_id'];
+            }
+
+            // $username = $this->input->post('username');
+            $username = $this->input->post('email');
+            $firstname = $this->input->post('firstname');
+            $email = $this->input->post('email');
+            $lastname = $this->input->post('lastname');
+            
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $salt = get_random_password(10,10);
+
+            $password = dohash($this->input->post('password'), $salt);
+
+            $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+            $random_key = get_random_password(8,8);
+
+            $data = array(
+                'user_group_id' => new MongoID($user_group_id),
+                'username' => $username,
+                'password' => $password,
+                'salt' => $salt,
+                'firstname' => $firstname,
+                'lastname' => $lastname,
+                'email' => $email,
+                'code' =>"",
+                'ip' => $ip,
+                'status' => false,
+                'database' => "core",
+                'date_added' => $date_added,
+                'random_key' => $random_key
+                );
+
+            //SEND EMAIL WITH URL + RANDOM KEY
+
+            $this->load->library('email');
+            $this->load->library('parser');
+       
+            $validate_email = array(
+                'firstname' => $firstname,
+                'lastname' =>$lastname,
+                'username' =>$username,
+                'password' =>$this->input->post('password'),
+                'url' => site_url('enable_user?key='.$random_key)
+                );
+
+            $config['mailtype'] = 'html';
+            $config['charset'] = 'utf-8';
+            $subject = "Playbasis";
+            $htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
+
+            //email client to upgrade account
+            $this->email->initialize($config);
+            $this->email->clear();
+            $this->email->from('info@playbasis.com', 'Playbasis');
+            $this->email->to($email);
+            $this->email->bcc('test@playbasis.com');
+            $this->email->subject($subject);
+            $this->email->message($htmlMessage);
+            $this->email->send();
+
+            //END EMAIL STUFF
+
+            return $this->mongo_db->insert('user', $data);
         }else{
-            $this->mongo_db->where('name', 'BetaTest');
-            $user_group_id = $this->mongo_db->get('user_group')[0]['_id'];
+            return false;
         }
 
-        // $username = $this->input->post('username');
-        $username = $this->input->post('email');
-        $firstname = $this->input->post('firstname');
-        $email = $this->input->post('email');
-        $lastname = $this->input->post('lastname');
         
-        $ip = $_SERVER['REMOTE_ADDR'];
-        $salt = get_random_password(10,10);
-
-        $password = dohash($this->input->post('password'), $salt);
-
-        $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
-
-        $random_key = get_random_password(8,8);
-
-        $data = array(
-            'user_group_id' => new MongoID($user_group_id),
-            'username' => $username,
-            'password' => $password,
-            'salt' => $salt,
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'email' => $email,
-            'code' =>"",
-            'ip' => $ip,
-            'status' => false,
-            'database' => "core",
-            'date_added' => $date_added,
-            'random_key' => $random_key
-            );
-
-        //SEND EMAIL WITH URL + RANDOM KEY
-
-        $this->load->library('email');
-        $this->load->library('parser');
-   
-        $validate_email = array(
-            'firstname' => $firstname,
-            'lastname' =>$lastname,
-            'username' =>$username,
-            'password' =>$this->input->post('password'),
-            'url' => site_url('enable_user?key='.$random_key)
-            );
-
-        $config['mailtype'] = 'html';
-        $config['charset'] = 'utf-8';
-        $subject = "Playbasis";
-        $htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
-
-        //email client to upgrade account
-        $this->email->initialize($config);
-        $this->email->clear();
-        $this->email->from('info@playbasis.com', 'Playbasis');
-        $this->email->to($email);
-        echo $email;
-        $this->email->bcc('test@playbasis.com');
-        $this->email->subject($subject);
-        $this->email->message($htmlMessage);
-        $this->email->send();
-
-        //END EMAIL STUFF
-
-        return $this->mongo_db->insert('user', $data);
     }
 
     public function addUserToClient($data){
