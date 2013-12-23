@@ -8,6 +8,11 @@
             </div>
         </div>
         <div class="content">
+            <?php if($this->session->flashdata('fail')){ ?>
+                <div class="content messages half-width">
+                <div class="warning"><?php echo $this->session->flashdata('fail'); ?></div>
+                </div>
+            <?php }?>
             
             <?php
             if(validation_errors() || isset($message)) {
@@ -50,6 +55,7 @@
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_user_group'); ?></td>
                                 <td>
                                     <select name ="user_group">
+                                    <?php if(!$this->session->userdata('client_id')){?>
                                         <?php if($user_groups){?>
                                             <?php foreach($user_groups as $user_group){?>
                                                 <?php if(isset($user['user_group_id']) && ($user['user_group_id']==$user_group['_id'])){?>
@@ -59,6 +65,19 @@
                                                 <?php }?>
                                             <?php }?>
                                         <?php }?>    
+                                    <?php }else{?>
+                                        <?php if($user_groups){?>
+                                            <?php foreach($user_groups as $user_group){?>
+                                                <?php if($user_group['name']=='Admin'||$user_group['name']=='User'){?>
+                                                    <?php if(isset($user['user_group_id']) && ($user['user_group_id']==$user_group['_id'])){?>
+                                                        <option value = "<?php echo $user_group['_id'];?>" selected><?php echo $user_group['name'];?></option>    
+                                                    <?php }else{?>
+                                                        <option value = "<?php echo $user_group['_id'];?>"><?php echo $user_group['name'];?></option>
+                                                    <?php }?>
+                                                <?php }?>
+                                            <?php }?>
+                                        <?php }?>    
+                                    <?php }?>
                                     </select>
                                 </td>
                             </tr>
