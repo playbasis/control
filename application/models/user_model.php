@@ -102,6 +102,8 @@ class User_model extends MY_Model
 
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
+        $random_key = get_random_password();
+
         $data = array(
             'user_group_id' => new MongoID($user_group_id),
             'username' => $username,
@@ -114,11 +116,40 @@ class User_model extends MY_Model
             'ip' => $ip,
             'status' => false,
             'database' => "core",
-            'date_added' => $date_added
-            'random_key' => get_random_password();
+            'date_added' => $date_added,
+            'random_key' => $random_key
             );
 
         //SEND EMAIL WITH URL + RANDOM KEY
+
+        $this->load->library('email');
+        $this->load->library('parser');
+   
+        $validate_email = array(
+            'firstname' => $firstname,
+            'lastname' =>$lastname,
+            'username' =>$username,
+            'password' =>$this->input->post('password'),
+            'url' => site_url('enable_user?key='.$random_key)
+            );
+
+        $config['mailtype'] = 'html';
+        $config['charset'] = 'utf-8';
+        $subject = "Playbasis";
+        $htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
+
+        //email client to upgrade account
+        $this->email->initialize($config);
+        $this->email->clear();
+        $this->email->from('info@playbasis.com', 'Playbasis');
+        $this->email->to($email);
+        echo $email;
+        $this->email->bcc('test@playbasis.com');
+        $this->email->subject($subject);
+        $this->email->message($htmlMessage);
+        $this->email->send();
+
+        //END EMAIL STUFF
 
         return $this->mongo_db->insert('user', $data);
     }
@@ -428,7 +459,7 @@ class User_model extends MY_Model
 
     public function checkRandomKey($random_key){
         $this->mongo_db->where('random_key', $random_key);
-        $user = $this->mongo_db->get('user')
+        $user = $this->mongo_db->get('user');
 
         if($user){
 
