@@ -103,9 +103,9 @@ class Plan extends MY_Controller
 
                 foreach($clients_by_plan as $client){
 
-                    $data['domain_value'][] = array(
+                    $data['domain_value'] = array(
                         'site_id'=>$client['site_id'],
-                        'plan_id'=>$client['plan_id'],
+                        'plan_id'=>$plan_id,
                     );
 
                     $this->Client_model->editClientPlan($client['client_id'], $data);
@@ -141,9 +141,6 @@ class Plan extends MY_Controller
                     $this->error['warning'] = $p['name']." ".$this->lang->line('error_plan_client_inuse');
                 }
             }
-
-            
-
         }
         $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
         redirect('/plan', 'refresh');
@@ -308,7 +305,7 @@ class Plan extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        $data = array();
+        $data = array("filter_status" => true);
 
         $this->data['plan_features'] = array();
         $features = $this->Plan_model->getFeatures($data);
