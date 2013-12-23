@@ -30,10 +30,10 @@
             ?>
                 <div id="tab-general">
                         <table class="form">
-                            <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_username'); ?></td>
-                                <td><input type="text" name="username" size="100" value="<?php echo isset($user['username']) ? $user['username'] :  set_value('username'); ?>" /></td>
-                            </tr>
+                            <!--<tr>
+                                <td><span class="required">*</span> <?php //echo $this->lang->line('form_username'); ?></td>
+                                <td><input type="text" name="username" size="100" value="<?php //echo isset($user['username']) ? $user['username'] :  set_value('username'); ?>" /></td>
+                            </tr>-->
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_firstname'); ?></td>
                                 <td><input type="text" name="firstname" size="100" value="<?php echo isset($user['firstname']) ? $user['firstname'] :  set_value('firstname'); ?>" /></td>
@@ -70,7 +70,8 @@
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_confirm_password'); ?></td>
                                 <td><input type="password" name="confirm_password" size="100" /></td>
                             </tr>
-                            <tr>
+                            <?php if(!$this->session->userdata('client_id')){?>
+                            <<tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?></td>
                                 <td>
                                     <select name ="status">
@@ -84,6 +85,21 @@
                                     </select>
                                 </td>
                             </tr>
+                            <?php }?>
+                            <!--<tr>
+                                <td><span class="required">*</span> <?php //echo $this->lang->line('form_status'); ?></td>
+                                <td>
+                                    <select name ="status">
+                                        <?php //if($user['status']){?>
+                                            <option value = 1>Enabled</option>
+                                            <option value = 0>Disabled</option>
+                                        <?php //}else{ ?>
+                                            <option value =0>Disabled</option>
+                                            <option value =1>Enabled</option>
+                                        <?php //}?>    
+                                    </select>
+                                </td>
+                            </tr>-->
                         </table>
                 </div>
                 
