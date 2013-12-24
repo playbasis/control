@@ -20,7 +20,11 @@ $lang['column_level']          				= 'Level';
 $lang['column_exp']          				    = 'Exp';
 $lang['column_action_name']          			= 'Action';
 $lang['column_url']      				        = 'URL OR FILTER STRING';
-$lang['column_date_added']          			= 'DateTime';
+$lang['column_date_added']          			= 'Date Added';
+$lang['column_image']							= 'Image';
+$lang['column_action']							= 'Action';
+$lang['column_name']							= 'Action Name';
+$lang['column_status']							= 'Status';
 
 // Button
 $lang['button_filter']							= 'Filter';

@@ -16,7 +16,7 @@ class Action extends MY_Controller
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("level", $lang['folder']);
+        $this->lang->load("action", $lang['folder']);
     }
 
     public function index() {
@@ -83,39 +83,36 @@ class Action extends MY_Controller
         $this->getForm();
     }
 
-    public function update($level_id) {
+    public function update($action_id) {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'action/update/'.$level_id;
+        $this->data['form'] = 'action/update/'.$action_id;
 
-        $this->form_validation->set_rules('exp', $this->lang->line('exp'), 'trim|required|numeric|xss_clean|check_space');
-        $this->form_validation->set_rules('level', $this->lang->line('level'), 'trim|required|numeric|xss_clean|check_space');
+        // if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+        //     $this->data['message'] = null;
 
-            $this->data['message'] = null;
+        //     if (!$this->validateModify()) {
+        //         $this->data['message'] = $this->lang->line('error_permission');
+        //     }
 
-            if (!$this->validateModify()) {
-                $this->data['message'] = $this->lang->line('error_permission');
-            }
+        //     if($this->form_validation->run() && $this->data['message'] == null){
+        //         $this->Action_model->editLevel($level_id, $this->input->post());
+        //         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+        //             $this->Action_model->editLevelSite($level_id, $this->input->post());
+        //         }else{
+        //             $this->Action_model->editLevel($level_id, $this->input->post());
+        //         }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
-                $this->Action_model->editLevel($level_id, $this->input->post());
-                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $this->Action_model->editLevelSite($level_id, $this->input->post());
-                }else{
-                    $this->Action_model->editLevel($level_id, $this->input->post());
-                }
+        //         $this->session->data['success'] = $this->lang->line('text_success');
 
-                $this->session->data['success'] = $this->lang->line('text_success');
+        //         redirect('/level', 'refresh');
+        //     }
+        // }
 
-                redirect('/level', 'refresh');
-            }
-        }
-
-        $this->getForm($level_id);
+        $this->getForm($action_id);
     }
 
     public function delete() {
@@ -153,86 +150,26 @@ class Action extends MY_Controller
 
     private function getList($offset) {
 
-        $per_page = 50;
-
         $this->load->library('pagination');
-
         $config['base_url'] = site_url('action/page');
-
-        if ($this->input->get('sort')) {
-            $sort = $this->input->get('sort');
-        } else {
-            $sort = 'level';
-        }
-
-        if ($this->input->get('order')) {
-            $order = $this->input->get('order');
-        } else {
-            $order = 'ASC';
-        }
-
-        $limit = isset($params['limit']) ? $params['limit'] : $per_page ;
-
-        $data = array(
-            'sort'  => $sort,
-            'order' => $order,
-            'start' => $offset,
-            'limit' => $limit
-        );
-
-        $this->data['levels'] = array();
-
-        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-            $data['client_id'] = $this->User_model->getClientId();
-            $data['site_id'] = $this->User_model->getSiteId();
-
-            $results = $this->Action_model->getActionClient($data);
-
-            $total = count($results);
-        }else{
-            $results = $this->Action_model->getActions($data);
-
-            $total = $this->Action_model->getTotalActions($data);
-        }
-
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
-        } else {
-            $this->data['error_warning'] = '';
-        }
-
-        if (isset($this->session->data['success'])) {
-            $this->data['success'] = $this->session->data['success'];
-
-            unset($this->session->data['success']);
-        } else {
-            $this->data['success'] = '';
-        }
-
-        $setting_group_id = $this->User_model->getAdminGroupID();
-
-        $this->data['setting_group_id'] = $setting_group_id;
-
-        $this->data['actions'] = $results;
-
-        $config['total_rows'] = $total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+        $config['per_page'] = 10;
+        $config['total_rows'] = $this->Action_model->getTotalActions();
+        // $config["uri_segment"] = 3;
 
         $this->pagination->initialize($config);
 
-        $this->data['pagination_links'] = $this->pagination->create_links();
+        $filter = array(
+                'limit' => $config['per_page'],
+                'start' => $offset
+            );
 
-        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $this->data['actions'] = $this->Action_model->getActions($filter);
         $this->data['main'] = 'action';
-
-        $this->load->vars($this->data);
         $this->render_page('template');
+        
     }
 
-    private function getForm($level_id=null) {
+    private function getForm($action_id=null) {
 
         $this->load->model('Image_model');
 
@@ -260,19 +197,19 @@ class Action extends MY_Controller
             $this->data['error_warning'] = array();
         }
 
-        if (isset($level_id) && ($level_id != 0)) {
-            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                $level_info = $this->Level_model->getLevelSite($level_id);
-            }else{
-                $level_info = $this->Level_model->getLevel($level_id);
-            }
+        // if (isset($level_id) && ($level_id != 0)) {
+        //     if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+        //         $level_info = $this->Level_model->getLevelSite($level_id);
+        //     }else{
+        //         $level_info = $this->Level_model->getLevel($level_id);
+        //     }
 
-        }
+        // }
 
-        if(isset($level_id)){
-            $this->data['level_id'] = $level_id;
+        if(isset($action_id)){
+            $this->data['action_id'] = $action_id;
         } else {
-            $this->data['level_id'] = null;
+            $this->data['action_id'] = null;
         }
 
         if ($this->input->post('image')) {
