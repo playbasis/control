@@ -180,23 +180,20 @@ class Client_model extends MY_Model
 
     public function editClientPlan($client_id, $data){
         if (isset($data['domain_value'])) {
-            foreach ($data['domain_value'] as $domain_value) {
-
-                $data_filter = array(
-                    'client_id' => $client_id,
-                    'site_id' => $domain_value['site_id'],
-                    'plan_id' => $domain_value['plan_id'],
-                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
-                );
+            $data_filter = array(
+                'client_id' => $client_id,
+                'site_id' => $data['domain_value']['site_id'],
+                'plan_id' => $data['domain_value']['plan_id'],
+                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+            );
 
 //                $this->addPlanToPermission($data_filter);
-                $this->copyRewardToClient($data_filter);
-                $this->copyFeaturedToClient($data_filter);
-                $this->copyActionToClient($data_filter);
-                $this->copyJigsawToClient($data_filter);
+            $this->copyRewardToClient($data_filter);
+            $this->copyFeaturedToClient($data_filter);
+            $this->copyActionToClient($data_filter);
+            $this->copyJigsawToClient($data_filter);
 
-            }
         }
     }
 

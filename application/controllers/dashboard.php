@@ -20,8 +20,7 @@ class Dashboard extends MY_Controller
     public function index(){
 
         if(!$this->validateAccess()){
-            echo $this->lang->line('error_access');
-            return false;
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
         }
 
         if($this->input->get('site_id')){
@@ -126,8 +125,7 @@ class Dashboard extends MY_Controller
     public function home(){
 
         if(!$this->validateAccess()){
-            echo $this->lang->line('error_access');
-            return false;
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
         }
 
         if($this->input->get('site_id')){

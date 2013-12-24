@@ -89,6 +89,10 @@ class Plan_model extends MY_Model
     public function getFeatures($data){
         $this->set_site_mongodb(0);
 
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
         $sort_data = array(
             '_id',
             'name',

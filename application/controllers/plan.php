@@ -35,6 +35,10 @@ class Plan extends MY_Controller
 
     public function page($offset=0) {
 
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -103,7 +107,7 @@ class Plan extends MY_Controller
 
                 foreach($clients_by_plan as $client){
 
-                    $data['domain_value'][] = array(
+                    $data['domain_value'] = array(
                         'site_id'=>$client['site_id'],
                         'plan_id'=>$client['plan_id'],
                     );
@@ -141,9 +145,6 @@ class Plan extends MY_Controller
                     $this->error['warning'] = $p['name']." ".$this->lang->line('error_plan_client_inuse');
                 }
             }
-
-            
-
         }
         $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
         redirect('/plan', 'refresh');
@@ -308,7 +309,7 @@ class Plan extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        $data = array();
+        $data = array("filter_status" => true);
 
         $this->data['plan_features'] = array();
         $features = $this->Plan_model->getFeatures($data);
