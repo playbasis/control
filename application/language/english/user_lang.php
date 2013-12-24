@@ -19,6 +19,7 @@ $lang['text_no_results']          				= 'Result Not found.';
 //$lang['text_edit']                			= 'Edit';
 $lang['text_success']           				= 'You have successfully created a user!';
 $lang['text_success_update']           			= 'You have successfully updated a user!';
+$lang['text_success_update_user_account']           			= 'You have successfully changed your password!';
 $lang['text_success_delete']           			= 'You have successfully deleted user(s)!';
 $lang['text_success_logout']           			= 'You have successfully logged out!';
 //$lang['text_default']           				= 'Default';
@@ -27,6 +28,9 @@ $lang['text_browse']            				= 'Browse Files';
 $lang['text_clear']             				= 'Clear Image';
 //$lang['text_criteria']          				= 'Domain View';
 //$lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
+$lang['text_fail']								= 'The username was already created, please use another username!';
+$lang['text_edit_account']						= 'Edit Account';
+$lang['text_no_changes']						= 'No changes has been made!';
 
 // Column Table
 $lang['column_username']            			= 'Username';

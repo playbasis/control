@@ -52,11 +52,30 @@ class User extends MY_Controller
 
     public function getList($offset){
 
-        //Pagination set up
-        $this->load->library('pagination');
+        //Added
+        $client_id = $this->User_model->getClientId();
+
+        $this->load->library('pagination');        
         $config['base_url'] = site_url('user/page');
-        $config['total_rows'] = $this->User_model->getTotalNumUsers();
         $config['per_page'] = 10;
+
+        if($client_id){
+
+            $data = array(
+                'client_id'=>$client_id
+                );
+            $config['total_rows'] = $this->User_model->getTotalUserByClientId($data);
+        }else{
+            $config['total_rows'] = $this->User_model->getTotalNumUsers();
+        }
+
+        //End Added 
+
+        //Pagination set up
+        // $this->load->library('pagination');
+        // $config['base_url'] = site_url('user/page');
+        // $config['total_rows'] = $this->User_model->getTotalNumUsers();
+        // $config['per_page'] = 10;
 
         $this->pagination->initialize($config);
 
@@ -76,6 +95,7 @@ class User extends MY_Controller
         }
 
         if(isset($_GET['filter_name'])){
+
             $filter = array(
                 'filter_name' => $_GET['filter_name']
             );
@@ -85,7 +105,24 @@ class User extends MY_Controller
                 'limit' => $config['per_page'],
                 'start' => $offset
             );
-            $this->data['users'] = $this->User_model->fetchAllUsers($filter);
+
+            if($client_id){
+
+                $filter['client_id'] = $client_id;
+                $user_ids = $this->User_model->getUserByClientId($filter);
+
+                $UsersInfoForClientId = array();
+                foreach ($user_ids as $user_id){
+                    $UsersInfoForClientId[] = $this->User_model->getUserInfo($user_id['user_id']);
+                }
+
+                $this->data['users'] = $UsersInfoForClientId;
+
+
+            }else{
+                $this->data['users'] = $this->User_model->fetchAllUsers($filter);    
+            }
+            
         }
 
         $this->data['main'] = 'user';
@@ -102,7 +139,7 @@ class User extends MY_Controller
 
         //Rules need to be set
 
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
@@ -136,20 +173,32 @@ class User extends MY_Controller
         $this->data['form'] = 'user/insert/';
 
         //Rules need to be set
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
         $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            if($this->form_validation->run()){
-                $this->User_model->insertUser();
-                $this->session->data['success'] = $this->lang->line('text_success');
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                redirect('user/','refresh');
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            $client_id = $this->User_model->getClientId();
+
+            if($this->form_validation->run()){
+                $user_id = $this->User_model->insertUser();
+
+                if($user_id){
+                    $this->User_model->insertUserToClient($client_id,$user_id);
+                    $this->session->data['success'] = $this->lang->line('text_success');
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    redirect('user/','refresh');    
+                }else{
+                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    redirect('user/insert');
+                }
             }
         }
 
@@ -420,7 +469,7 @@ class User extends MY_Controller
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -454,7 +503,8 @@ class User extends MY_Controller
                     $data['site_id'] = $site_info;
                     $this->Permission_model->addPlanToPermission($data);
 
-                redirect('login');
+                echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
+                echo "<script>window.location.href = '".site_url()."';</script>";
             }else{
                 $this->data['temp_fields'] = $this->input->post();
             }
@@ -464,6 +514,54 @@ class User extends MY_Controller
         $this->render_page('template');
     }
 
+    public function enable_user(){
+        if($_GET['key']){
+            $random_key = $_GET['key'];
+            if($this->User_model->checkRandomKey($random_key)){
+                echo "<script>alert('Your account has been activated! We will redirect you to our login page.');</script>";
+                echo "<script>window.location.href = '".site_url()."';</script>";
+            }else{
+                echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
+                echo "<script>window.location.href = '".site_url()."';</script>";
+            }
+        }else{
+            redirect('login');
+        }
+        
+    }
+
+    public function edit_account(){
+        if($this->session->userdata('user_id')){
+
+            $this->data['message'] = null;
+            $user_id = $this->session->userdata('user_id');
+
+            $this->data['meta_description'] = $this->lang->line('meta_description');
+            $this->data['title'] = $this->lang->line('text_edit_account');
+            $this->data['form'] = 'user/edit_account';
+
+            $this->data['user_info'] = $this->User_model->getUserInfo($user_id);
+            $this->data['usergroup_name'] = $this->User_model->getUserGroupNameForUser($user_id);
+
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'matches[password]');
+
+            if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $data = array(
+                    'password'=>$this->input->post('password'),
+                    'confirm_password' =>$this->input->post('password_confirm'),
+                    'edit_account'=>true
+                    );
+                if($this->form_validation->run()){
+                    $this->User_model->editUser($user_id, $data);
+                }
+            }
+
+            $this->data['main'] = 'edit_account.php';
+            $this->render_page('template');
+
+        }
+    }
 
 
 }
