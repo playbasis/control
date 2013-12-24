@@ -422,22 +422,22 @@ class Client extends MY_Controller
 
     public function domain($offset=0) {
 
-        $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
+        // $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-        $per_page = 10;
+        // $per_page = 10;
 
         $this->load->model('Domain_model');
         $this->load->model('Permission_model');
         $this->load->model('Plan_model');
 
-        $this->load->library('pagination');
+        // $this->load->library('pagination');
 
         $this->data['domains_data'] = array();
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
-            'start' => $offset,
-            'limit' => $per_page
+            // 'start' => $offset,
+            // 'limit' => $per_page
         );
 
         $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
@@ -476,17 +476,17 @@ class Client extends MY_Controller
 
         $this->data['plan_data'] = $this->Plan_model->getPlans($data);
 
-        $config['base_url'] = site_url('client/domain').$parameter_url;
-        $config['total_rows'] = $total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
-        $config['page_query_string'] = true;
+        // $config['base_url'] = site_url('client/domain').$parameter_url;
+        // $config['total_rows'] = $total;
+        // $config['per_page'] = $per_page;
+        // $config["uri_segment"] = 3;
+        // $choice = $config["total_rows"] / $config["per_page"];
+        // $config['num_links'] = round($choice);
+        // $config['page_query_string'] = true;
 
-        $this->pagination->initialize($config);
+        // $this->pagination->initialize($config);
 
-        $this->data['pagination_links'] = $this->pagination->create_links();
+        // $this->data['pagination_links'] = $this->pagination->create_links();
 
         $this->load->vars($this->data);
 //        $this->load->view('client_domain');
@@ -495,22 +495,22 @@ class Client extends MY_Controller
 
     public function users($offset=0) {
 
-        $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
+        // $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-        $per_page = 10;
+        // $per_page = 10;
 
         $this->load->model('Domain_model');
         $this->load->model('Permission_model');
         $this->load->model('Plan_model');
 
-        $this->load->library('pagination');
+        // $this->load->library('pagination');
 
         $this->data['users'] = array();
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
-            'start' => $offset,
-            'limit' => $per_page
+            // 'start' => $offset,
+            // 'limit' => $per_page
         );
 
         $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
@@ -535,24 +535,22 @@ class Client extends MY_Controller
                         'date_added' => $user_data['date_added'],
                     );
                 }
-
             }
-
         }
         $this->data['list_client_id'] = $data['client_id'];
         $this->data['groups'] = $this->User_model->getUserGroups();
 
-        $config['base_url'] = site_url('client/users').$parameter_url;
-        $config['total_rows'] = $total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
-        $config['page_query_string'] = true;
+        // $config['base_url'] = site_url('client/users').$parameter_url;
+        // $config['total_rows'] = $total;
+        // $config['per_page'] = $per_page;
+        // $config["uri_segment"] = 3;
+        // $choice = $config["total_rows"] / $config["per_page"];
+        // $config['num_links'] = round($choice);
+        // $config['page_query_string'] = true;
 
-        $this->pagination->initialize($config);
+        // $this->pagination->initialize($config);
 
-        $this->data['pagination_links'] = $this->pagination->create_links();
+        // $this->data['pagination_links'] = $this->pagination->create_links();
 
         $this->load->vars($this->data);
         $this->render_page('client_user');

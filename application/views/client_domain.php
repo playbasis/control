@@ -69,7 +69,7 @@
     <?php } ?>
 </table>
 
-<div class="pagination"><?php echo $pagination_links; ?></div>
+<div class="pagination"><?php if(isset($pagination_links)){echo $pagination_links;} ?></div>
 <script type="text/javascript">
     $(function(){
 
