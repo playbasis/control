@@ -167,7 +167,7 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
                         <ul class="dropdown-menu">
                         
                             <?php foreach($domain_all as $a_domain){?>
-                                <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-user"></i> <?php echo $a_domain['site_name'];?></a></li>
+                                <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-asterisk"></i> <?php echo $a_domain['site_name'];?></a></li>
                             <?php }?>
                         </ul>
                     <?php }else{echo "";} ?>
@@ -179,16 +179,19 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
+                        <?php if($client_id){?>
+                            <li> <?php echo anchor('user/edit_account', "<i class='icon-cog'></i> Edit Account");?></li>
+                        <?php }?>
                         <li>
-                        <?php echo anchor('logout', "Logout"); ?>
+                        <?php echo anchor('logout', "<i class='icon-off'></i> Logout"); ?>
                         </li>
+
                     </ul>
                 </li>
             </ul>
         <?php } ?>
                 </div>
             <!-- end: Header Menu -->
-
         </div>
     </div>
 </div>

@@ -134,7 +134,7 @@ class User extends MY_Controller
 
         //Rules need to be set
 
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
@@ -464,7 +464,7 @@ class User extends MY_Controller
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -522,6 +522,38 @@ class User extends MY_Controller
         
     }
 
+    public function edit_account(){
+        if($this->session->userdata('user_id')){
+
+            $this->data['message'] = null;
+            $user_id = $this->session->userdata('user_id');
+
+            $this->data['meta_description'] = $this->lang->line('meta_description');
+            $this->data['title'] = $this->lang->line('text_edit_account');
+            $this->data['form'] = 'user/edit_account';
+
+            $this->data['user_info'] = $this->User_model->getUserInfo($user_id);
+            $this->data['usergroup_name'] = $this->User_model->getUserGroupNameForUser($user_id);
+
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'matches[password]');
+
+            if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $data = array(
+                    'password'=>$this->input->post('password'),
+                    'confirm_password' =>$this->input->post('password_confirm'),
+                    'edit_account'=>true
+                    );
+                if($this->form_validation->run()){
+                    $this->User_model->editUser($user_id, $data);
+                }
+            }
+
+            $this->data['main'] = 'edit_account.php';
+            $this->render_page('template');
+
+        }
+    }
 
 
 }
