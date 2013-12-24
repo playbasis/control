@@ -33,6 +33,10 @@ class Report extends MY_Controller
 
     public function page($offset=0) {
 
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -158,7 +162,8 @@ class Report extends MY_Controller
         $this->data['actions'] = array();
 
         if($client_id){
-            $this->data['actions'] = $this->Action_model->getActionClient($client_id);
+            $data_filter['client_id'] = $client_id;
+            $this->data['actions'] = $this->Action_model->getActionClient($data_filter);
         }
 
         $config['base_url'] = $url.$parameter_url;
@@ -179,10 +184,9 @@ class Report extends MY_Controller
         $this->data['filter_username'] = $filter_username;
         $this->data['filter_action_id'] = $filter_action_id;
 
-        $this->data['main'] = 'action';
+        $this->data['main'] = 'report_action';
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('action');
     }
 
     private function xlsBOF()

@@ -35,6 +35,10 @@ class Plan extends MY_Controller
 
     public function page($offset=0) {
 
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -105,7 +109,7 @@ class Plan extends MY_Controller
 
                     $data['domain_value'] = array(
                         'site_id'=>$client['site_id'],
-                        'plan_id'=>$plan_id,
+                        'plan_id'=>$client['plan_id'],
                     );
 
                     $this->Client_model->editClientPlan($client['client_id'], $data);

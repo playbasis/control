@@ -19,6 +19,14 @@ class Action_model extends MY_Model
         return $results;
     }
 
+    public function getTotalActions(){
+        $this->set_site_mongodb(0);
+
+        $results = $this->mongo_db->count("playbasis_action");
+
+        return $results;
+    }
+
     public function getTotalActionReport($data) {
 
         $this->set_site_mongodb(0);
@@ -55,20 +63,61 @@ class Action_model extends MY_Model
 
     }
 
-    public function getActionClient($client_id) {
+    public function getActionClient($data) {
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->select(array('action_id','name'));
-        $this->mongo_db->where('client_id',  new MongoID($client_id));
+        $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status'));
+
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $sort_data = array(
+            '_id',
+            'name',
+            'status',
+            'sort_order'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
         $results = $this->mongo_db->get("playbasis_action_to_client");
 
         $actions = array();
         $tmp = array();
         foreach ($results as $result) {
             if (!in_array($result['action_id'], $tmp)) {
-                $a = array();
-                $a['action_id'] = $result['action_id'];
-                $a['name'] = $result['name'];
+                $a = $result;
                 $actions[] = $a;
                 $tmp[] = $result['action_id'];
             }
@@ -76,6 +125,38 @@ class Action_model extends MY_Model
 
         return $actions;
     }
+
+    //dupicate function just count on getActionClient
+    /*public function getTotalActionClient($data) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status'));
+
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $results = $this->mongo_db->get("playbasis_action_to_client");
+
+        $actions = array();
+        $tmp = array();
+        foreach ($results as $result) {
+            if (!in_array($result['action_id'], $tmp)) {
+                $a = $result;
+                $actions[] = $a;
+                $tmp[] = $result['action_id'];
+            }
+        }
+
+        return count($actions);
+    }*/
 
     public function getActionReport($data) {
 

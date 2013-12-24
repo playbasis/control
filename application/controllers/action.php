@@ -33,6 +33,11 @@ class Action extends MY_Controller
     }
 
     public function page($offset=0) {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -46,7 +51,7 @@ class Action extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'level/insert';
+        $this->data['form'] = 'action/insert';
 
         $this->form_validation->set_rules('exp', $this->lang->line('exp'), 'trim|required|numeric|xss_clean|check_space');
         $this->form_validation->set_rules('level', $this->lang->line('level'), 'trim|required|numeric|xss_clean|check_space');
@@ -64,14 +69,14 @@ class Action extends MY_Controller
                     $data = $this->input->post();
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
-                    $this->Level_model->addLevelSite($data);
+                    $this->Action_model->addLevelSite($data);
                 }else{
-                    $this->Level_model->addLevel($this->input->post());
+                    $this->Action_model->addLevel($this->input->post());
                 }
 
                 $this->session->data['success'] = $this->lang->line('text_success');
 
-                redirect('/level', 'refresh');
+                redirect('/action', 'refresh');
             }
         }
 
@@ -83,7 +88,7 @@ class Action extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'level/update/'.$level_id;
+        $this->data['form'] = 'action/update/'.$level_id;
 
         $this->form_validation->set_rules('exp', $this->lang->line('exp'), 'trim|required|numeric|xss_clean|check_space');
         $this->form_validation->set_rules('level', $this->lang->line('level'), 'trim|required|numeric|xss_clean|check_space');
@@ -97,11 +102,11 @@ class Action extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
-                $this->Level_model->editLevel($level_id, $this->input->post());
+                $this->Action_model->editLevel($level_id, $this->input->post());
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $this->Level_model->editLevelSite($level_id, $this->input->post());
+                    $this->Action_model->editLevelSite($level_id, $this->input->post());
                 }else{
-                    $this->Level_model->editLevel($level_id, $this->input->post());
+                    $this->Action_model->editLevel($level_id, $this->input->post());
                 }
 
                 $this->session->data['success'] = $this->lang->line('text_success');
@@ -152,7 +157,7 @@ class Action extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('level/page');
+        $config['base_url'] = site_url('action/page');
 
         if ($this->input->get('sort')) {
             $sort = $this->input->get('sort');
@@ -181,28 +186,13 @@ class Action extends MY_Controller
             $data['client_id'] = $this->User_model->getClientId();
             $data['site_id'] = $this->User_model->getSiteId();
 
-            $total = $this->Level_model->getTotalLevelsSite($data);
+            $results = $this->Action_model->getActionClient($data);
 
-            $results = $this->Level_model->getLevelsSite($data);
+            $total = count($results);
         }else{
-            $total = $this->Level_model->getTotalLevels($data);
+            $results = $this->Action_model->getActions($data);
 
-            $results = $this->Level_model->getLevels($data);
-        }
-
-        if ($results) {
-            foreach ($results as $result) {
-
-                $this->data['levels'][] = array(
-                    'level_id' => $result['_id'],
-                    'level' => $result['level'],
-                    'title' => $result['level_title'],
-                    'exp' => number_format($result['exp'], 0),
-                    'status' => ($result['status']==false)? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'),
-                    'sort_order' => $result['sort_order'],
-                    'selected' => $this->input->post('selected') && in_array($result['level_id'], $this->input->post('selected')),
-                );
-            }
+            $total = $this->Action_model->getTotalActions($data);
         }
 
         if (isset($this->error['warning'])) {
@@ -219,6 +209,12 @@ class Action extends MY_Controller
             $this->data['success'] = '';
         }
 
+        $setting_group_id = $this->User_model->getAdminGroupID();
+
+        $this->data['setting_group_id'] = $setting_group_id;
+
+        $this->data['actions'] = $results;
+
         $config['total_rows'] = $total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
@@ -230,11 +226,10 @@ class Action extends MY_Controller
         $this->data['pagination_links'] = $this->pagination->create_links();
 
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
-        $this->data['main'] = 'level';
+        $this->data['main'] = 'action';
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('level');
     }
 
     private function getForm($level_id=null) {
@@ -341,16 +336,15 @@ class Action extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        $this->data['main'] = 'level_form';
+        $this->data['main'] = 'action_form';
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('level_form');
     }
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'level')) {
+        if ($this->User_model->hasPermission('modify', 'action')) {
             return true;
         } else {
             return false;
@@ -358,7 +352,7 @@ class Action extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'level')) {
+        if ($this->User_model->hasPermission('access', 'action')) {
             return true;
         } else {
             return false;
