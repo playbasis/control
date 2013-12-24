@@ -56,24 +56,54 @@ class User_model extends MY_Model
         $salt = $find_salt['salt'];
 
         $this->mongo_db->where('_id', new MongoID($user_id));
-        $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
-        $this->mongo_db->set('username', $data['username']);
-        $this->mongo_db->set('firstname', $data['firstname']);
-        $this->mongo_db->set('lastname', $data['lastname']);
-        $this->mongo_db->set('email', $data['email']);
-        $this->mongo_db->set('status', (bool)$data['status']);
 
+        if(isset($data['user_group']) && !is_null($data['user_group'])){
+            $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
+        }
+
+        if(isset($data['username']) && !is_null($data['username'])){
+            $this->mongo_db->set('username', $data['username']);    
+        }
+        
+        if(isset($data['firstname']) && !is_null($data['firstname'])){
+            $this->mongo_db->set('firstname', $data['firstname']);    
+        }
+        
+        if(isset($data['lastname']) && !is_null($data['lastname'])){
+            $this->mongo_db->set('lastname', $data['lastname']);    
+        }
+
+        if(isset($data['email']) && !is_null($data['email'])){
+            $this->mongo_db->set('email', $data['email']);    
+        }
+        
+        if(isset($data['status']) && !is_null($data['status'])){
+            $this->mongo_db->set('status', (bool)$data['status']);    
+        }
+        
         if($data['password'] == $data['confirm_password']){
             
             if(trim($data['password']) =="" || trim($data['confirm_password']=="")){
-                $this->mongo_db->update('user');
-                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                redirect('/user', 'refresh');
+                if(isset($data['edit_account'])){
+                    $this->session->set_flashdata('no_changes', $this->lang->line('text_no_changes'));
+                    redirect('user/edit_account');
+                }else{
+                    $this->mongo_db->update('user');
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                        
+                    redirect('/user', 'refresh');    
+                }
+                
             }else{
                 $this->mongo_db->set('password', dohash($data['password'],$salt));    
                 $this->mongo_db->update('user');
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                redirect('/user', 'refresh');
+                    if(isset($data['edit_account'])){
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_update_user_account'));
+                        redirect('user/edit_account');
+                    }else{
+                        redirect('/user', 'refresh');        
+                    }
             }
         }else{
             echo "Password not matched";
@@ -255,6 +285,21 @@ class User_model extends MY_Model
 
     public function getUserGroups(){
         return $this->mongo_db->get("user_group");
+    }
+
+    public function getUserGroupNameForUser($user_id){
+        $usergroups = $this->mongo_db->get('user_group');
+        $user = $this->getUserInfo($user_id);
+
+        $usergroup_name = "";
+        foreach($usergroups as $usergroup){
+            if($usergroup['_id']==$user['user_group_id']){
+                $usergroup_name = $usergroup['name'];
+                break; 
+            }
+        }
+
+        return $usergroup_name;
     }
 
     public function deleteUser($user_id){
