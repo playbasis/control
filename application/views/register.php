@@ -35,10 +35,10 @@
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_email');?>: </td>
 							<td><input type = "text" name="email" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['email'];}?>"></td>
 						</tr>
-						<tr>
-							<td><span class="required">*</span> <?php echo $this->lang->line('form_username');?>: </td>
-							<td><input type = "text" name="username" size="50" value ="<?php if(isset($temp_fields)){echo $temp_fields['username'];}?>"></td>
-						</tr>
+						<!--<tr>
+							<td><span class="required">*</span> <?php //echo $this->lang->line('form_username');?>: </td>
+							<td><input type = "text" name="username" size="50" value ="<?php //if(isset($temp_fields)){echo $temp_fields['username'];}?>"></td>
+						</tr>-->
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_password');?>: </td>
 							<td><input type = "password" name="password" size="50" value = ""></td>

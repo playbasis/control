@@ -90,7 +90,7 @@
                                 <td><input type="password" name="confirm_password" size="100" /></td>
                             </tr>
                             <?php if(!$this->session->userdata('client_id')){?>
-                            <<tr>
+                            <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?></td>
                                 <td>
                                     <select name ="status">
