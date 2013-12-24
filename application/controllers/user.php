@@ -498,7 +498,8 @@ class User extends MY_Controller
                     $data['site_id'] = $site_info;
                     $this->Permission_model->addPlanToPermission($data);
 
-                redirect('login');
+                echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
+                echo "<script>window.location.href = '".site_url()."';</script>";
             }else{
                 $this->data['temp_fields'] = $this->input->post();
             }
@@ -512,9 +513,11 @@ class User extends MY_Controller
         if($_GET['key']){
             $random_key = $_GET['key'];
             if($this->User_model->checkRandomKey($random_key)){
-                echo "IT EXISTS!!!";
+                echo "<script>alert('Your account has been activated! We will redirect you to our login page.');</script>";
+                echo "<script>window.location.href = '".site_url()."';</script>";
             }else{
-                echo "IT DOES NOT EXIST";
+                echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
+                echo "<script>window.location.href = '".site_url()."';</script>";
             }
         }else{
             redirect('login');
