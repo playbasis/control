@@ -175,7 +175,6 @@ class Action extends MY_Controller
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
-        echo $client_id;
         $config['base_url'] = site_url('action/page');
         if($client_id){
             $config['total_rows'] = $this->Action_model->getTotalActionsFromClient($filter);
