@@ -480,32 +480,40 @@ class User extends MY_Controller
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->form_validation->run()){
                 $user_id = $this->User_model->insertUser();
-                $user_info = $this->User_model->getUserInfo($user_id);
 
-                $client_id = $this->Client_model->insertClient();//returns only client id
+                if($user_id){
+                    $user_info = $this->User_model->getUserInfo($user_id);
 
-                $this->User_model->insertUserToClient($client_id, $user_info['_id']);//Does not return anything just inserts to 'user_to_client' table
+                    $client_id = $this->Client_model->insertClient();//returns only client id
 
-                $data = $this->input->post();
-                $data['client_id'] = $client_id;
-                $data['limit_users'] = 1000;
-                $data['date_start'] = date("Y-m-d H:i:s");
-                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
+                    $this->User_model->insertUserToClient($client_id, $user_info['_id']);//Does not return anything just inserts to 'user_to_client' table
 
-                $site_info = $this->Domain_model->addDomain($data); //returns an array of client_site
-
-                $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
-
-                $this->Client_model->whoandwhat($client_id, $site_info, $plan_id);
-
-                $data = array();
+                    $data = $this->input->post();
                     $data['client_id'] = $client_id;
-                    $data['plan_id'] = $plan_id;
-                    $data['site_id'] = $site_info;
-                    $this->Permission_model->addPlanToPermission($data);
+                    $data['limit_users'] = 1000;
+                    $data['date_start'] = date("Y-m-d H:i:s");
+                    $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
 
-                echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
-                echo "<script>window.location.href = '".site_url()."';</script>";
+                    $site_info = $this->Domain_model->addDomain($data); //returns an array of client_site
+
+                    $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+
+                    $this->Client_model->whoandwhat($client_id, $site_info, $plan_id);
+
+                    $data = array();
+                        $data['client_id'] = $client_id;
+                        $data['plan_id'] = $plan_id;
+                        $data['site_id'] = $site_info;
+                        $this->Permission_model->addPlanToPermission($data);
+
+                    echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
+                    echo "<script>window.location.href = '".site_url()."';</script>";    
+                }else{
+                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    redirect('register');
+                }
+
+                
             }else{
                 $this->data['temp_fields'] = $this->input->post();
             }
