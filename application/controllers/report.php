@@ -163,7 +163,8 @@ class Report extends MY_Controller
 
         if($client_id){
             $data_filter['client_id'] = $client_id;
-            $this->data['actions'] = $this->Action_model->getActionClient($data_filter);
+            $data_filter['site_id'] = $site_id;
+            $this->data['actions'] = $this->Action_model->getActionSite($data_filter);
         }
 
         $config['base_url'] = $url.$parameter_url;
