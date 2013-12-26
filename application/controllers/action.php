@@ -158,25 +158,36 @@ class Action extends MY_Controller
 
     private function getList($offset) {
 
-        if($this->User_model->getClientId()){
-            echo "Hello";
-        }
-
-
+        $client_id = $this->User_model->getClientId();
+        
         $this->load->library('pagination');
-        $config['base_url'] = site_url('action/page');
+
+        
         $config['per_page'] = 10;
-        $config['total_rows'] = $this->Action_model->getTotalActions();
+        $filter = array(
+                'limit' => $config['per_page'],
+                'start' => $offset,
+                'client_id'=>$client_id
+            );
+        $config['base_url'] = site_url('action/page');
+        if($client_id){
+            $config['total_rows'] = $this->Action_model->getTotalActionsFromClient($filter);
+        }else{
+            $config['total_rows'] = $this->Action_model->getTotalActions();    
+        }
+        
         $config["uri_segment"] = 3;
 
         $this->pagination->initialize($config);
 
-        $filter = array(
-                'limit' => $config['per_page'],
-                'start' => $offset
-            );
+        if($client_id){
+            $this->data['actions'] = $this->Action_model->getActionsFromClient($filter);
+        }else{
+            $this->data['actions'] = $this->Action_model->getActions($filter);    
+        }
+        
 
-        $this->data['actions'] = $this->Action_model->getActions($filter);
+
         $this->data['main'] = 'action';
         $this->render_page('template');
         

@@ -40,6 +40,33 @@ class Action_model extends MY_Model
         return $results;
     }
 
+    public function getActionsFromClient($data){
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
+        return $this->mongo_db->get('playbasis_action_to_client');
+
+    }
+
+    public function getTotalActionsFromClient($data){
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+
+        return $this->mongo_db->count('playbasis_action_to_client');
+
+    }
+
     public function getTotalActionReport($data) {
 
         $this->set_site_mongodb(0);
@@ -76,68 +103,68 @@ class Action_model extends MY_Model
 
     }
 
-    public function getActionClient($data) {
-        $this->set_site_mongodb(0);
+    // public function getActionClient($data) {
+    //     $this->set_site_mongodb(0);
 
-        $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status'));
+    //     $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status'));
 
-        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+    //     $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 
-        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
-            $this->mongo_db->where('name', $regex);
-        }
+    //     if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+    //         $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+    //         $this->mongo_db->where('name', $regex);
+    //     }
 
-        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-            $this->mongo_db->where('status', (bool)$data['filter_status']);
-        }
+    //     if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+    //         $this->mongo_db->where('status', (bool)$data['filter_status']);
+    //     }
 
-        $sort_data = array(
-            '_id',
-            'name',
-            'status',
-            'sort_order'
-        );
+    //     $sort_data = array(
+    //         '_id',
+    //         'name',
+    //         'status',
+    //         'sort_order'
+    //     );
 
-        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-            $order = -1;
-        } else {
-            $order = 1;
-        }
+    //     if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+    //         $order = -1;
+    //     } else {
+    //         $order = 1;
+    //     }
 
-        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
-        } else {
-            $this->mongo_db->order_by(array('name' => $order));
-        }
+    //     if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+    //         $this->mongo_db->order_by(array($data['sort'] => $order));
+    //     } else {
+    //         $this->mongo_db->order_by(array('name' => $order));
+    //     }
 
-        if (isset($data['start']) || isset($data['limit'])) {
-            if ($data['start'] < 0) {
-                $data['start'] = 0;
-            }
+    //     if (isset($data['start']) || isset($data['limit'])) {
+    //         if ($data['start'] < 0) {
+    //             $data['start'] = 0;
+    //         }
 
-            if ($data['limit'] < 1) {
-                $data['limit'] = 20;
-            }
+    //         if ($data['limit'] < 1) {
+    //             $data['limit'] = 20;
+    //         }
 
-            $this->mongo_db->limit((int)$data['limit']);
-            $this->mongo_db->offset((int)$data['start']);
-        }
+    //         $this->mongo_db->limit((int)$data['limit']);
+    //         $this->mongo_db->offset((int)$data['start']);
+    //     }
 
-        $results = $this->mongo_db->get("playbasis_action_to_client");
+    //     $results = $this->mongo_db->get("playbasis_action_to_client");
 
-        $actions = array();
-        $tmp = array();
-        foreach ($results as $result) {
-            if (!in_array($result['action_id'], $tmp)) {
-                $a = $result;
-                $actions[] = $a;
-                $tmp[] = $result['action_id'];
-            }
-        }
+    //     $actions = array();
+    //     $tmp = array();
+    //     foreach ($results as $result) {
+    //         if (!in_array($result['action_id'], $tmp)) {
+    //             $a = $result;
+    //             $actions[] = $a;
+    //             $tmp[] = $result['action_id'];
+    //         }
+    //     }
 
-        return $actions;
-    }
+    //     return $actions;
+    // }
 
     //dupicate function just count on getActionClient
     /*public function getTotalActionClient($data) {
@@ -268,7 +295,7 @@ class Action_model extends MY_Model
              'placeholder' => '',
              'sortOrder' => $data['sort'],
              'field_type' => 'text',
-             'value' => 'www.playbasis.com/*'
+             'value' => ''
             );
         $temp[1] = (object)array(
             'param_name' => 'regex',
@@ -276,7 +303,7 @@ class Action_model extends MY_Model
              'placeholder' => '',
              'sortOrder' => $data['sort'],
              'field_type' => 'boolean',
-             'value' => 'true',
+             'value' => false,
             );
 
         $init_dataset = serialize($temp);
@@ -307,7 +334,7 @@ class Action_model extends MY_Model
              'placeholder' => '',
              'sortOrder' => $data['sort'],
              'field_type' => 'text',
-             'value' => 'www.playbasis.com/*'
+             'value' => ''
             );
         $temp[1] = (object)array(
             'param_name' => 'regex',
@@ -315,7 +342,7 @@ class Action_model extends MY_Model
              'placeholder' => '',
              'sortOrder' => $data['sort'],
              'field_type' => 'boolean',
-             'value' => 'true',
+             'value' => false
             );
 
         $init_dataset = serialize($temp);
