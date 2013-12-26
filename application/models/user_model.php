@@ -313,20 +313,18 @@ class User_model extends MY_Model
 
         $this->set_site_mongodb(0);
         $this->mongo_db->select(array('salt'));
-        $this->mongo_db->where('username', db_clean($u, 40));
+        $this->mongo_db->where('username', db_clean($u, 255));
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user');
-
         if (count($Q) > 0) {
             $row = $Q[0];
 
             $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
-            $this->mongo_db->where('username', db_clean($u, 20));
+            $this->mongo_db->where('username', db_clean($u, 255));
             $this->mongo_db->where('password', db_clean(dohash($p, $row['salt']), 40));
             $this->mongo_db->where('status', true);
             $this->mongo_db->limit(1);
             $Q = $this->mongo_db->get('user');
-
             if (count($Q) > 0) {
 
                 $row = $Q[0];
@@ -342,7 +340,7 @@ class User_model extends MY_Model
                 $data = array('salt' => db_clean($salt, 40),
                     'password' => db_clean(dohash($p, $salt), 40)
                 );
-                $this->mongo_db->where('username', db_clean($u, 40));
+                $this->mongo_db->where('username', db_clean($u, 255));
                 $this->mongo_db->set('last_login', date('Y-m-d H:i:s'));
                 $this->mongo_db->set($data);
                 $this->mongo_db->update('user');

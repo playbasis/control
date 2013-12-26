@@ -7,6 +7,11 @@
 			<h1><img src="<?php echo base_url('image/user-group.png')?>" alt="" /><?php echo $heading_title_register;?></h1>
 		</div><!-- .heading -->
 		<div class="content" >
+			<?php if($this->session->flashdata('fail')){ ?>
+                <div class="content messages half-width">
+                <div class="warning"><?php echo $this->session->flashdata('fail'); ?></div>
+                </div>
+            <?php }?>
 			<?php if(validation_errors() || isset($message)) {?>
                 <div class="content messages half-width">
                     <?php echo validation_errors('<div class="warning">','</div>');
