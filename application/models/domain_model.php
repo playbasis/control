@@ -200,9 +200,13 @@ class Domain_model extends MY_Model
     public function addDomain($data) {
         $this->set_site_mongodb(0);
 
+        $domain = preg_replace("http://", "", $data['domain_name']);
+        $domain = preg_replace("https://", "", $domain);
+
+
         $data_insert = array(
             'client_id' =>  new MongoID($data['client_id']),
-            'domain_name' => $data['domain_name']|'',
+            'domain_name' => $domain|'',
             'site_name' => $data['site_name']|'' ,
             'api_key'=> '',
             'api_secret' => '',
@@ -247,6 +251,16 @@ class Domain_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($site_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update('playbasis_client_site');
+    }
+
+    public function checkDomainExists($data){
+
+        $domain = preg_replace("http://", "", $data['domain_name']);
+        $domain = preg_replace("https://", "", $domain);
+
+        $this->mongo_db->where('domain_name', $domain);
+        return $this->mongo_db->get('playbasis_client_site');
+
     }
 }
 ?>

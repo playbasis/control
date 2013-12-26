@@ -178,24 +178,7 @@ class Client_model extends MY_Model
         }
     }
 
-    public function editClientPlan($client_id, $data){
-        if (isset($data['domain_value'])) {
-            $data_filter = array(
-                'client_id' => $client_id,
-                'site_id' => $data['domain_value']['site_id'],
-                'plan_id' => $data['domain_value']['plan_id'],
-                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
-            );
 
-//                $this->addPlanToPermission($data_filter);
-            $this->copyRewardToClient($data_filter);
-            $this->copyFeaturedToClient($data_filter);
-            $this->copyActionToClient($data_filter);
-            $this->copyJigsawToClient($data_filter);
-
-        }
-    }
 
     public function deleteClient($client_id) {
         $this->set_site_mongodb(0);
@@ -424,18 +407,41 @@ class Client_model extends MY_Model
         return $data_inserted_client_id = $data_insert_client['_id'];
     }
 
-    public function whoandwhat($client_id, $site_id, $plan_id){
-        $data_filter = array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
-            'plan_id' => $plan_id,
-            'status' => true
-        );
+    // public function whoandwhat($client_id, $site_id, $plan_id){
+    //     $data_filter = array(
+    //         'client_id' => $client_id,
+    //         'site_id' => $site_id,
+    //         'plan_id' => $plan_id,
+    //         'status' => true
+    //     );
 
-        $this->copyRewardToClient($data_filter);
-        $this->copyFeaturedToClient($data_filter);
-        $this->copyActionToClient($data_filter);
-        $this->copyJigsawToClient($data_filter);
+    //     $this->copyRewardToClient($data_filter);
+    //     $this->copyFeaturedToClient($data_filter);
+    //     $this->copyActionToClient($data_filter);
+    //     $this->copyJigsawToClient($data_filter);
+    // }
+
+        public function editClientPlan($client_id, $data){
+        if (isset($data['domain_value'])) {
+            $data_filter = array(
+                'client_id' => $client_id,
+                'site_id' => $data['domain_value']['site_id'],
+                'plan_id' => $data['domain_value']['plan_id'],
+                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+            );
+
+            if($data['domain_value']['status']){
+                $data_filter['status'] = $data['domain_value']['status'];
+            }
+
+//                $this->addPlanToPermission($data_filter);
+            $this->copyRewardToClient($data_filter);
+            $this->copyFeaturedToClient($data_filter);
+            $this->copyActionToClient($data_filter);
+            $this->copyJigsawToClient($data_filter);
+
+        }
     }
 
 }
