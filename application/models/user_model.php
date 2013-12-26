@@ -524,5 +524,18 @@ class User_model extends MY_Model
         }
     }
 
+    public function findEmail($data){
+
+        $email = $data['email'];
+
+        $this->mongo_db->where('email', $email);
+        if($this->mongo_db->get('user')){
+            return $this->mongo_db->get('user');
+        }else{
+            return false;
+        }
+
+    }
+
 }
 ?>

@@ -45,6 +45,8 @@
                             <br/>
                             <?php
                             echo anchor('register', $this->lang->line('text_register'));
+                            echo "<br/>";
+                            echo anchor('forgot_password', $this->lang->line('text_forgot_password'));
                             ?>
                         </td>
                     </tr>

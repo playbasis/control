@@ -45,6 +45,7 @@ $route['login'] = 'user/login';
 $route['register'] = 'user/register';
 $route['logout'] = 'user/logout';
 $route['enable_user'] = 'user/enable_user';
+$route['forgot_password'] = '/user/forgot_password';
 
 
 /* End of file routes.php */
