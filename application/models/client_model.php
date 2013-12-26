@@ -431,7 +431,7 @@ class Client_model extends MY_Model
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
             );
 
-            if($data['domain_value']['status']){
+            if(isset($data['domain_value']['status'])){
                 $data_filter['status'] = $data['domain_value']['status'];
             }
 
