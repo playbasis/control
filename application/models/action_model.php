@@ -14,6 +14,11 @@ class Action_model extends MY_Model
     public function getActions($data = null){
         $this->set_site_mongodb(0);
 
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
                 $data['start'] = 0;
@@ -245,20 +250,6 @@ class Action_model extends MY_Model
 
         return $results;
 
-    }
-
-    private function datetimeMongotoReadable($dateTimeMongo)
-    {
-        if ($dateTimeMongo) {
-            if (isset($dateTimeMongo->sec)) {
-                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
-            } else {
-                $dateTimeMongo = $dateTimeMongo;
-            }
-        } else {
-            $dateTimeMongo = "0000-00-00 00:00:00";
-        }
-        return $dateTimeMongo;
     }
 
     public function getAllIcons(){

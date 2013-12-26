@@ -84,4 +84,43 @@
             <?php echo form_close();?>
         </div><!-- .content -->
     </div><!-- .box -->
-</div><!-- #content .span10 ->
+</div><!-- #content .span10 -->
+<script type="text/javascript">
+$('input[name=\'name\']').autocomplete({
+    delay: 0,
+    source: function(request, response) {
+        $.ajax({
+            url: baseUrlPath+'action/autocomplete?filter_name=' +  encodeURIComponent(request.term),
+            dataType: 'json',
+            success: function(json) {
+//                console.log(json);
+                response($.map(json, function(item) {
+                    return {
+                        label: item.name,
+                        name: item.name,
+                        description: item.description,
+                        icon: item.icon,
+                        color: item.color,
+                        sort_order: item.sort_order,
+                        status: item.status
+                    }
+                }));
+//                console.log(response);
+            }
+        });
+    },
+    select: function(event, ui) {
+        $('input[name=\'name\']').val(ui.item.name);
+        $('textarea[name=\'description\']').val(ui.item.description);
+        $('select[name=\'status\']').val(ui.item.status);
+        $('input[name=\'sort\']').val(ui.item.sort_order);
+        $('input:radio[name=\'icon\'][value='+ui.item.icon+']').click();
+        $('input:radio[name=\'color\'][value='+ui.item.color+']').click();
+
+        return false;
+    },
+    focus: function(event, ui) {
+        return false;
+    }
+});
+</script>

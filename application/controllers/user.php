@@ -69,13 +69,7 @@ class User extends MY_Controller
             $config['total_rows'] = $this->User_model->getTotalNumUsers();
         }
 
-        //End Added 
-
-        //Pagination set up
-        // $this->load->library('pagination');
-        // $config['base_url'] = site_url('user/page');
-        // $config['total_rows'] = $this->User_model->getTotalNumUsers();
-        // $config['per_page'] = 10;
+        //End Added
 
         $this->pagination->initialize($config);
 
@@ -94,36 +88,32 @@ class User extends MY_Controller
             $this->data['success'] = '';
         }
 
+        $filter = array(
+            'limit' => $config['per_page'],
+            'start' => $offset
+        );
         if(isset($_GET['filter_name'])){
-
-            $filter = array(
-                'filter_name' => $_GET['filter_name']
-            );
-            $this->data['users'] = $this->User_model->fetchAllUsers($filter);
-        }else{
-            $filter = array(
-                'limit' => $config['per_page'],
-                'start' => $offset
-            );
-
-            if($client_id){
-
-                $filter['client_id'] = $client_id;
-                $user_ids = $this->User_model->getUserByClientId($filter);
-
-                $UsersInfoForClientId = array();
-                foreach ($user_ids as $user_id){
-                    $UsersInfoForClientId[] = $this->User_model->getUserInfo($user_id['user_id']);
-                }
-
-                $this->data['users'] = $UsersInfoForClientId;
-
-
-            }else{
-                $this->data['users'] = $this->User_model->fetchAllUsers($filter);    
-            }
-            
+            $filter['filter_name'] = $_GET['filter_name'];
         }
+
+        if($client_id){
+
+            $filter['client_id'] = $client_id;
+            $user_ids = $this->User_model->getUserByClientId($filter);
+
+            $UsersInfoForClientId = array();
+            foreach ($user_ids as $user_id){
+                $UsersInfoForClientId[] = $this->User_model->getUserInfo($user_id['user_id']);
+            }
+
+            $this->data['users'] = $UsersInfoForClientId;
+
+
+        }else{
+            $this->data['users'] = $this->User_model->fetchAllUsers($filter);
+        }
+            
+
 
         $this->data['main'] = 'user';
         $this->render_page('template');
@@ -318,6 +308,8 @@ class User extends MY_Controller
     public function autocomplete(){
         $json = array();
 
+        $client_id = $this->User_model->getClientId();
+
         if ($this->input->get('filter_name')) {
 
             if ($this->input->get('filter_name')) {
@@ -330,7 +322,25 @@ class User extends MY_Controller
                 'filter_name' => $filter_name
             );
 
-            $results_user = $this->User_model->fetchAllUsers($data);
+            if($client_id){
+
+                $data['client_id'] = $client_id;
+                $user_ids = $this->User_model->getUserByClientId($data);
+
+                $UsersInfoForClientId = array();
+                foreach ($user_ids as $user_id){
+                    $user_info = $this->User_model->getUserInfo($user_id['user_id']);
+                    if(preg_match('/'.$filter_name.'/', $user_info['username'])){
+                        $UsersInfoForClientId[] = $user_info;
+                    }
+                }
+
+                $results_user = $UsersInfoForClientId;
+
+
+            }else{
+                $results_user = $this->User_model->fetchAllUsers($data);
+            }
 
             foreach ($results_user as $result) {
                 $json[] = array(
