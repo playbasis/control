@@ -8,6 +8,11 @@
             </div>
         </div><!-- .heading -->
         <div class="content">
+        <?php if($this->session->flashdata('success')){ ?>
+                <div class="content messages half-width">
+                <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+                </div>
+            <?php }?>
         <?php $attributes = array('id'=>'form');?>
         <?php echo form_open('action/delete', $attributes);?>
             <table class="list">
@@ -42,7 +47,7 @@
                                 <td class="left"><?php echo $action['name']; ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
                                 <td class="left"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
-                                <td class="right">[ <?php echo anchor('action/update/'.$action['_id'], 'Edit'); ?> ]</td>
+                                <td class="right">[ <?php echo anchor('action/update/'.$action['_id'], 'Edit'); ?> ]</td>   
                             </tr>
                         <?php }?>
                     <?php }?>
@@ -59,3 +64,47 @@
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
+
+<script type="text/javascript"><!--
+function filter() {
+    url = baseUrlPath+'user';
+
+    var filter_name = $('input[name=\'filter_name\']').attr('value');
+
+    if (filter_name) {
+        url += '?filter_name=' + encodeURIComponent(filter_name);
+    }
+
+    location = url;
+}
+//--></script>
+
+<script type="text/javascript">
+$('input[name=\'filter_name\']').autocomplete({
+    delay: 0,
+    source: function(request, response) {
+        $.ajax({
+            url: baseUrlPath+'user/autocomplete?filter_name=' +  encodeURIComponent(request.term),
+            dataType: 'json',
+            success: function(json) {
+                console.log(json);
+                response($.map(json, function(item) {
+                    return {
+                        label: item.username,
+                        username: item.username
+                    }
+                }));
+                console.log(response);
+            }
+        });
+    },
+    select: function(event, ui) {
+        $('input[name=\'filter_name\']').val(ui.item.username);
+
+        return false;
+    },
+    focus: function(event, ui) {
+        return false;
+    }
+});
+</script>

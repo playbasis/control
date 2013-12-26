@@ -17,6 +17,7 @@ class Action extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("action", $lang['folder']);
+        $this->lang->load("form_validation", $lang['folder']);
     }
 
     public function index() {
@@ -53,8 +54,9 @@ class Action extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'action/insert';
 
-        $this->form_validation->set_rules('exp', $this->lang->line('exp'), 'trim|required|numeric|xss_clean|check_space');
-        $this->form_validation->set_rules('level', $this->lang->line('level'), 'trim|required|numeric|xss_clean|check_space');
+        $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
+        $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -65,16 +67,19 @@ class Action extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
+
+                $data = $this->input->post();
+
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $data = $this->input->post();
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
-                    $this->Action_model->addLevelSite($data);
+                    $data['action_id'] = $this->Action_model->addAction($data);
+                    $this->Action_model->addActionToClient($data);
                 }else{
-                    $this->Action_model->addLevel($this->input->post());
+                    $this->Action_model->addAction($data);
                 }
 
-                $this->session->data['success'] = $this->lang->line('text_success');
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
                 redirect('/action', 'refresh');
             }
@@ -90,27 +95,30 @@ class Action extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'action/update/'.$action_id;
 
-        // if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+        $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
+        $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
 
-        //     $this->data['message'] = null;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+            $this->data['message'] = null;
 
         //     if (!$this->validateModify()) {
         //         $this->data['message'] = $this->lang->line('error_permission');
         //     }
 
-        //     if($this->form_validation->run() && $this->data['message'] == null){
-        //         $this->Action_model->editLevel($level_id, $this->input->post());
-        //         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-        //             $this->Action_model->editLevelSite($level_id, $this->input->post());
-        //         }else{
-        //             $this->Action_model->editLevel($level_id, $this->input->post());
-        //         }
+            if($this->form_validation->run() && $this->data['message'] == null){
 
-        //         $this->session->data['success'] = $this->lang->line('text_success');
+                $this->Action_model->editAction($action_id, $this->input->post());
 
-        //         redirect('/level', 'refresh');
-        //     }
-        // }
+                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                    $this->Action_model->editActionToClient($action_id, $this->input->post());
+                }
+
+                $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                redirect('action', 'refresh');
+            }
+        }
 
         $this->getForm($action_id);
     }
@@ -131,18 +139,18 @@ class Action extends MY_Controller
         if ($this->input->post('selected') && $this->error['warning'] == null) {
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                foreach ($this->input->post('selected') as $level_id) {
-                    $this->Level_model->deleteLevelSite($level_id);
+                foreach ($this->input->post('selected') as $action_id) {
+                    $this->Action_model->delete($action_id);
                 }
             }else{
-                foreach ($this->input->post('selected') as $level_id) {
-                    $this->Level_model->deleteLevel($level_id);
+                foreach ($this->input->post('selected') as $action_id) {
+                    $this->Action_model->delete($action_id);
                 }
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
 
-            redirect('/level', 'refresh');
+            redirect('/action', 'refresh');
         }
 
         $this->getList(0);
@@ -150,11 +158,16 @@ class Action extends MY_Controller
 
     private function getList($offset) {
 
+        if($this->User_model->getClientId()){
+            echo "Hello";
+        }
+
+
         $this->load->library('pagination');
         $config['base_url'] = site_url('action/page');
         $config['per_page'] = 10;
         $config['total_rows'] = $this->Action_model->getTotalActions();
-        // $config["uri_segment"] = 3;
+        $config["uri_segment"] = 3;
 
         $this->pagination->initialize($config);
 
@@ -212,66 +225,9 @@ class Action extends MY_Controller
             $this->data['action_id'] = null;
         }
 
-        if ($this->input->post('image')) {
-            $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($level_info)) {
-            $this->data['image'] = $level_info['image'];
-        } else {
-            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
-
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($level_info) && $level_info['image'] && (S3_IMAGE . $level_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $level_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($level_info['image'], 100, 100);
-        } else {
-            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
-
-        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-
-        if ($this->input->post('level_title')) {
-            $this->data['level_title'] = $this->input->post('level_title');
-        } elseif (!empty($level_info)) {
-            $this->data['level_title'] = $level_info['level_title'];
-        } else {
-            $this->data['level_title'] = '';
-        }
-
-        if ($this->input->post('exp')) {
-            $this->data['exp'] = $this->input->post('exp');
-        } elseif (!empty($level_info)) {
-            $this->data['exp'] = $level_info['exp'];
-        } else {
-            $this->data['exp'] = 0;
-        }
-
-        if ($this->input->post('level')) {
-            $this->data['level'] = $this->input->post('level');
-        } elseif (!empty($level_info)) {
-            $this->data['level'] = $level_info['level'];
-        } else {
-            $this->data['level'] = 1;
-        }
-
-        if ($this->input->post('sort_order')) {
-            $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($level_info)) {
-            $this->data['sort_order'] = $level_info['sort_order'];
-        } else {
-            $this->data['sort_order'] = 0;
-        }
-
-        if ($this->input->post('status')) {
-            $this->data['status'] = $this->input->post('status');
-        } elseif (!empty($level_info)) {
-            $this->data['status'] = $level_info['status'];
-        } else {
-            $this->data['status'] = false;
-        }
-
-        $this->data['client_id'] = $this->User_model->getClientId();
-        $this->data['site_id'] = $this->User_model->getSiteId();
+        $this->data['action'] = $this->Action_model->getAction($action_id);
+        $this->data['icons'] = $this->Action_model->getAllIcons();
+        $this->data['colors'] = array('blue', 'orange','red', 'green', 'yellow','pink');
 
         $this->data['main'] = 'action_form';
 
@@ -295,5 +251,7 @@ class Action extends MY_Controller
             return false;
         }
     }
+
+    
 }
 ?>

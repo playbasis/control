@@ -233,5 +233,179 @@ class Action_model extends MY_Model
         }
         return $dateTimeMongo;
     }
+
+    public function getAllIcons(){
+
+        $handle = fopen(base_url('stylesheet/custom/font-awesome.css'), 'r');
+        $all_icons = array();
+
+        if($handle){
+            while(($line = fgets($handle)) != false){
+                $fa_line = substr($line, 0, 3);
+                if($fa_line == ".fa"){
+                    $temp = explode(":b", $line);
+                    if((substr($temp[0], 1) != 'fa-icon-large')){
+                        $all_icons[] = substr($temp[0], 1);    
+                    }
+                }
+            }
+        }else{
+            echo "File of the font-awesome.css not found";
+        }
+
+        sort($all_icons);
+        return $all_icons;
+    }
+
+    public function addAction($data){
+
+        $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+        $temp[0] = (object)array(
+            'param_name' => 'url',
+             'label' => 'URL or filter String',
+             'placeholder' => '',
+             'sortOrder' => $data['sort'],
+             'field_type' => 'text',
+             'value' => 'www.playbasis.com/*'
+            );
+        $temp[1] = (object)array(
+            'param_name' => 'regex',
+             'label' => 'Regex',
+             'placeholder' => '',
+             'sortOrder' => $data['sort'],
+             'field_type' => 'boolean',
+             'value' => 'true',
+            );
+
+        $init_dataset = serialize($temp);
+
+        $data_insert = array(
+                'name'=>$data['name'],
+                'description'=>$data['description'],
+                'icon'=>$data['icon'],
+                'color'=>$data['color'],
+                'sort_order'=>$data['sort'],
+                'status'=>$data['status'],
+                'init_dataset'=>$init_dataset,
+                'date_added'=>$date_added,
+                'date_modified'=>$date_modified
+            );
+
+        return $this->mongo_db->insert('playbasis_action', $data_insert);
+
+    }
+
+    public function addActionToClient($data){
+        $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+        $temp[0] = (object)array(
+            'param_name' => 'url',
+             'label' => 'URL or filter String',
+             'placeholder' => '',
+             'sortOrder' => $data['sort'],
+             'field_type' => 'text',
+             'value' => 'www.playbasis.com/*'
+            );
+        $temp[1] = (object)array(
+            'param_name' => 'regex',
+             'label' => 'Regex',
+             'placeholder' => '',
+             'sortOrder' => $data['sort'],
+             'field_type' => 'boolean',
+             'value' => 'true',
+            );
+
+        $init_dataset = serialize($temp);
+
+        $data_insert = array(
+                'action_id'=>new MongoID($data['action_id']),
+                'client_id'=>new MongoID($data['client_id']),
+                'site_id'=>new MongoID($data['site_id']),
+                'name'=>$data['name'],
+                'description'=>$data['description'],
+                'icon'=>$data['icon'],
+                'color'=>$data['color'],
+                'init_dataset'=>$init_dataset,
+                'sort_order'=>$data['sort'],
+                'status'=>$data['status'],
+                'date_added'=>$date_added,
+                'date_modified'=>$date_modified
+            );
+
+        $this->mongo_db->insert('playbasis_action_to_client', $data_insert);
+    }
+
+    public function delete($action_id){
+        $this->mongo_db->where('_id', new MongoID($action_id));
+        $this->mongo_db->delete('playbasis_action');
+
+        $this->mongo_db->where('action_id', new MongoID($action_id));
+        $this->mongo_db->delete('playbasis_action_to_client');
+    }
+
+    public function editAction($action_id, $data){
+
+        $this->mongo_db->where('_id', new MongoID($action_id));
+
+        if(isset($data['name']) && !is_null($data['name'])){
+            $this->mongo_db->set('name', $data['name']);
+        }
+
+        if(isset($data['description']) && !is_null($data['description'])){
+            $this->mongo_db->set('description', $data['description']);
+        }        
+
+        if(isset($data['status']) && !is_null($data['status'])){
+            $this->mongo_db->set('status', $data['status']);
+        }
+
+        if(isset($data['sort']) && !is_null($data['sort'])){
+            $this->mongo_db->set('sort_order', $data['sort']);
+        }
+
+        if(isset($data['icon']) && !is_null($data['icon'])){
+            $this->mongo_db->set('icon', $data['icon']);
+        }
+
+        if(isset($data['color']) && !is_null($data['color'])){
+            $this->mongo_db->set('color', $data['color']);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+
+        $this->mongo_db->update('playbasis_action');
+
+    }
+
+    public function editActionToClient($action_id, $data){
+         $this->mongo_db->where('action_id', new MongoID($action_id));
+
+        if(isset($data['name']) && !is_null($data['name'])){
+            $this->mongo_db->set('name', $data['name']);
+        }
+
+        if(isset($data['description']) && !is_null($data['description'])){
+            $this->mongo_db->set('description', $data['description']);
+        }
+
+        if(isset($data['sort']) && !is_null($data['sort'])){
+            $this->mongo_db->set('sort_order', $data['sort']);
+        }
+
+        if(isset($data['icon']) && !is_null($data['icon'])){
+            $this->mongo_db->set('icon', $data['icon']);
+        }
+
+        if(isset($data['color']) && !is_null($data['color'])){
+            $this->mongo_db->set('color', $data['color']);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+
+        $this->mongo_db->update('playbasis_action_to_client');
+    }
 }
 ?>

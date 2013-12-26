@@ -3,7 +3,8 @@
 $lang['heading_title']          				= 'Action Report';
 
 // Text
-$lang['text_success']           				= 'Success: You have modified clients!';
+$lang['text_success']           				= 'You have successfully added an action!';
+$lang['text_success_delete']           			= 'You have successfully delete action(s)!';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';
@@ -33,4 +34,13 @@ $lang['filter_date_start']						= 'Date Start';
 $lang['filter_date_end']						= 'Date End';
 $lang['filter_username']						= 'Username';
 $lang['filter_action_id']						= 'Action';
+
+//Form
+$lang['form_action_name']						= 'Action Name';
+$lang['form_description']						= 'Description';
+$lang['form_status']							= 'Status';
+$lang['form_icon']								= 'Icon';
+$lang['form_color']								= 'Icon Color';
+$lang['form_sort']								= 'Sort Order';
+
 ?>
