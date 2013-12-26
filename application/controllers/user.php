@@ -404,7 +404,8 @@ class User extends MY_Controller
             $this->session->set_userdata('redirect', $this->input->get('back'));
         }
 
-        $this->form_validation->set_rules('username', $this->lang->line('username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('username', $this->lang->line('username'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        // $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('password'), 'trim|required');
 
         $lang = get_lang($this->session, $this->config);
