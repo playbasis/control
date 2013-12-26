@@ -255,8 +255,8 @@ class Domain_model extends MY_Model
 
     public function checkDomainExists($data){
 
-        $domain = preg_replace("http://", "", $data['domain_name']);
-        $domain = preg_replace("https://", "", $domain);
+        $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
+        $domain = preg_replace("/https:\/\//", "", $domain);
 
         $this->mongo_db->where('domain_name', $domain);
         return $this->mongo_db->get('playbasis_client_site');

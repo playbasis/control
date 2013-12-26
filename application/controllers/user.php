@@ -36,6 +36,14 @@ class User extends MY_Controller
         $this->getList(0);
     }
 
+    // public function test(){
+    //     $data = array('domain_name'=>'https://www.bankerslab.com');
+
+    //     var_dump($this->Domain_model->checkDomainExists($data));
+
+
+    // }
+
     public function page($offset = 0){
 
         if(!$this->validateAccess()){
