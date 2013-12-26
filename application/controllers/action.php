@@ -195,8 +195,8 @@ class Action extends MY_Controller
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
         }
-        $config['base_url'] = site_url('action/page');
 
+        $config['base_url'] = site_url('action/page');
         $config["uri_segment"] = 3;
 
         if($client_id){
@@ -211,7 +211,6 @@ class Action extends MY_Controller
 
         $this->data['main'] = 'action';
         $this->render_page('template');
-        
     }
 
     private function getForm($action_id=null) {

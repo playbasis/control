@@ -36,6 +36,14 @@ class User extends MY_Controller
         $this->getList(0);
     }
 
+    // public function test(){
+    //     $data = array('domain_name'=>'https://www.bankerslab.com');
+
+    //     var_dump($this->Domain_model->checkDomainExists($data));
+
+
+    // }
+
     public function page($offset = 0){
 
         if(!$this->validateAccess()){
@@ -593,6 +601,60 @@ class User extends MY_Controller
             $this->render_page('template');
 
         }
+    }
+
+    public function forgot_password(){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'register';
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+        $this->data['form'] = 'user/forgot_password';
+        
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->form_validation->run()){
+                $check_email = $this->User_model->findEmail($this->input->post());
+                if($check_email){
+
+                    echo "exits";
+
+                    // $random_key = get_random_password(8,8);
+
+                    // $this->load->library('email');
+                    // $this->load->library('parser');
+               
+                    // $validate_email = array(
+                    //     'firstname' => $firstname,
+                    //     'lastname' =>$lastname,
+                    //     'username' =>$username,
+                    //     'url' => site_url('enable_user?key='.$random_key)
+                    //     );
+
+                    // $config['mailtype'] = 'html';
+                    // $config['charset'] = 'utf-8';
+                    // $subject = "Playbasis";
+                    // $htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
+
+                    // //email client to upgrade account
+                    // $this->email->initialize($config);
+                    // $this->email->clear();
+                    // $this->email->from('info@playbasis.com', 'Playbasis');
+                    // $this->email->to($email);
+                    // $this->email->bcc('test@playbasis.com');
+                    // $this->email->subject($subject);
+                    // $this->email->message($htmlMessage);
+                    // $this->email->send();
+
+                }else{
+                    echo "Not exists";
+                }
+            }
+        }
+
+        $this->data['main'] = 'forgot_password';
+        $this->render_page('template');   
+
     }
 
 
