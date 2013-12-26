@@ -168,7 +168,14 @@ class Action extends MY_Controller
                 'limit' => $config['per_page'],
                 'start' => $offset,
                 'client_id'=>$client_id
+
             );
+
+        if(isset($_GET['filter_name'])){
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
+        echo $client_id;
         $config['base_url'] = site_url('action/page');
         if($client_id){
             $config['total_rows'] = $this->Action_model->getTotalActionsFromClient($filter);
@@ -186,11 +193,7 @@ class Action extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActions($filter);    
         }
         
-        if(isset($_GET['filter_name'])){
-            $filter['filter_name'] = $_GET['filter_name'];
-        }
-
-        $this->data['actions'] = $this->Action_model->getActions($filter);
+        
 
         $this->data['main'] = 'action';
         $this->render_page('template');
