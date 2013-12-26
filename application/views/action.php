@@ -67,7 +67,7 @@
 
 <script type="text/javascript"><!--
 function filter() {
-    url = baseUrlPath+'user';
+    url = baseUrlPath+'action';
 
     var filter_name = $('input[name=\'filter_name\']').attr('value');
 
@@ -84,14 +84,14 @@ $('input[name=\'filter_name\']').autocomplete({
     delay: 0,
     source: function(request, response) {
         $.ajax({
-            url: baseUrlPath+'user/autocomplete?filter_name=' +  encodeURIComponent(request.term),
+            url: baseUrlPath+'action/autocomplete?filter_name=' +  encodeURIComponent(request.term),
             dataType: 'json',
             success: function(json) {
                 console.log(json);
                 response($.map(json, function(item) {
                     return {
-                        label: item.username,
-                        username: item.username
+                        label: item.name,
+                        name: item.name
                     }
                 }));
                 console.log(response);
@@ -99,7 +99,7 @@ $('input[name=\'filter_name\']').autocomplete({
         });
     },
     select: function(event, ui) {
-        $('input[name=\'filter_name\']').val(ui.item.username);
+        $('input[name=\'filter_name\']').val(ui.item.name);
 
         return false;
     },

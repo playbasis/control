@@ -103,9 +103,9 @@ class Action extends MY_Controller
 
             $this->data['message'] = null;
 
-        //     if (!$this->validateModify()) {
-        //         $this->data['message'] = $this->lang->line('error_permission');
-        //     }
+             if (!$this->validateModify()) {
+                 $this->data['message'] = $this->lang->line('error_permission');
+             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
 
@@ -176,6 +176,10 @@ class Action extends MY_Controller
                 'start' => $offset
             );
 
+        if(isset($_GET['filter_name'])){
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
         $this->data['actions'] = $this->Action_model->getActions($filter);
         $this->data['main'] = 'action';
         $this->render_page('template');
@@ -210,15 +214,6 @@ class Action extends MY_Controller
             $this->data['error_warning'] = array();
         }
 
-        // if (isset($level_id) && ($level_id != 0)) {
-        //     if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-        //         $level_info = $this->Level_model->getLevelSite($level_id);
-        //     }else{
-        //         $level_info = $this->Level_model->getLevel($level_id);
-        //     }
-
-        // }
-
         if(isset($action_id)){
             $this->data['action_id'] = $action_id;
         } else {
@@ -233,6 +228,44 @@ class Action extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    public function autocomplete(){
+        $json = array();
+
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->input->get('filter_name')) {
+
+            if ($this->input->get('filter_name')) {
+                $filter_name = $this->input->get('filter_name');
+            } else {
+                $filter_name = null;
+            }
+
+            $data = array(
+                'filter_name' => $filter_name
+            );
+
+            if($client_id){
+                $data['client_id'] = $client_id;
+                $results_action = $this->Action_model->getActionClient($data);
+            }else{
+                $results_action = $this->Action_model->getActions($data);
+            }
+
+            foreach ($results_action as $result) {
+                $json[] = array(
+                    'name' => html_entity_decode($result['name'], ENT_QUOTES, 'UTF-8'),
+                    'description' => html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'),
+                    'icon' => html_entity_decode($result['icon'], ENT_QUOTES, 'UTF-8'),
+                    'color' => html_entity_decode($result['color'], ENT_QUOTES, 'UTF-8'),
+                    'sort_order' => html_entity_decode($result['sort_order'], ENT_QUOTES, 'UTF-8'),
+                    'status' => html_entity_decode($result['status'], ENT_QUOTES, 'UTF-8'),
+                );
+            }
+        }
+        $this->output->set_output(json_encode($json));
     }
 
     private function validateModify() {
