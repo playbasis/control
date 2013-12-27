@@ -75,10 +75,7 @@ class Action extends MY_Controller
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
                     $exits = $this->Action_model->checkActionExists($data);
-                    if(!$exits){
-                        $data['action_id'] = $this->Action_model->addAction($data);
-                        $this->Action_model->addActionToClient($data);
-                    }else{
+                    if($exits){
                         $data['action_id'] = $exits['_id'];
 
                         if($this->checkActionClientExists($data)){
@@ -86,6 +83,9 @@ class Action extends MY_Controller
                         }else{
                             $this->Action_model->addActionToClient($data);
                         }
+                    }else{
+                        $data['action_id'] = $this->Action_model->addAction($data);
+                        $this->Action_model->addActionToClient($data);
                     }
 
                 }else{
