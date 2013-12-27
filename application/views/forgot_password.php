@@ -1,10 +1,10 @@
 
 
 <div id="content" >
-	<div class = "box" style = "position: relative; max-width: 750px; margin:0 auto;">
+	<div class = "box" style = "position: relative; max-width: 400px; margin:0 auto;">
 		
 		<div class="heading">
-			<h1><img src="<?php echo base_url('image/user-group.png')?>" alt="" /><?php echo $heading_title_register;?></h1>
+			<h1><?php echo $heading_forgot_password;?></h1>
 		</div><!-- .heading -->
 		<div class="content" >
 			<?php if($this->session->flashdata('fail')){ ?>
@@ -28,7 +28,12 @@
 			<?php echo form_open_multipart($form, $attributes);?>
 				<div id="pg1">
 					<table class="form">
-						
+						<tr>
+							<br/>
+							Please provide your email, we will provide you a link to reset your password.
+							<br/>
+							<br/>
+						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_email');?>: </td>
 							<td><input type = "text" name="email" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['email'];}?>"></td>
@@ -39,7 +44,7 @@
 					<p style="float:left"><a href="<?php echo base_url();?>" id="cancel">Cancel</a>
 
 				
-				<p style="float:right"><a onclick="$('#form').submit();" class="button" id="submit">Register</a></p>
+				<p style="float:right"><a onclick="$('#form').submit();" class="button" id="submit">Submit</a></p>
 
 				
 			<?php echo form_close();?>

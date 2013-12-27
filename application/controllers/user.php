@@ -618,7 +618,7 @@ class User extends MY_Controller
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+        $this->data['heading_forgot_password'] = $this->lang->line('heading_forgot_password');
         $this->data['form'] = 'user/forgot_password';
         
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
@@ -654,9 +654,10 @@ class User extends MY_Controller
                     $this->email->subject($subject);
                     $this->email->message($htmlMessage);
                     $this->email->send();
-
+                    echo "<script>alert('A link has been sent to your email, please click on it and change your password.');</script>";
+                    echo "<script>window.location.href = '".site_url()."';</script>";   
                 }else{
-                    echo "Not exists";
+                    echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
                 }
             }
         }
@@ -668,7 +669,6 @@ class User extends MY_Controller
 
     public function reset_password(){
         if(isset($_GET['key'])){
-            echo "get key";
             $random_key = $_GET['key'];
             $user = $this->User_model->checkRandomPasswordKey($random_key);
             $data = array(
@@ -683,7 +683,7 @@ class User extends MY_Controller
             $this->data['meta_description'] = $this->lang->line('meta_description');
             $this->data['main'] = 'register';
             $this->data['title'] = $this->lang->line('title');
-            $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+            $this->data['heading_forgot_password'] = $this->lang->line('heading_forgot_password');
             $this->data['form'] = 'user/reset_password';
 
             $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -695,17 +695,20 @@ class User extends MY_Controller
                     $new_password = $this->input->post('password');
                     $user_id = $this->session->userdata('user')[0]['_id'];
 
-                    echo $this->User_model->insertNewPassword($user_id, $new_password);
+                    $this->User_model->insertNewPassword($user_id, $new_password);
                     $this->session->unset_userdata('user');
 
-                    // echo "<script>alert('Your password has been changed! We will redirect you to our login page.');</script>";
-                    // echo "<script>window.location.href = '".site_url()."';</script>";
+                    echo "<script>alert('Your password has been changed! We will redirect you to our login page.');</script>";
+                    echo "<script>window.location.href = '".site_url()."';</script>";
                 }
 
             }
 
             $this->data['main'] = 'reset_password_form';
             $this->render_page('template');
+        }else{
+            echo "<script>alert('The link has already been used.');</script>";
+            echo "<script>window.location.href = '".site_url()."';</script>";  
         }
     }
 

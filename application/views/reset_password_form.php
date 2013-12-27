@@ -1,8 +1,8 @@
 <div id="content" >
-	<div class = "box" style = "position: relative; max-width: 750px; margin:0 auto;">
+	<div class = "box" style = "position: relative; max-width: 400px; margin:0 auto;">
 		
 		<div class="heading">
-			<h1><img src="<?php echo base_url('image/user-group.png')?>" alt="" /><?php echo $heading_title_register;?></h1>
+			<h1><img src="<?php echo base_url('image/user-group.png')?>" alt="" /><?php echo $heading_forgot_password;?></h1>
 		</div><!-- .heading -->
 		<div class="content" >
 			<?php if(validation_errors() || isset($message)) {?>
@@ -35,7 +35,7 @@
 					<p style="float:left"><a href="<?php echo base_url();?>" id="cancel">Cancel</a>
 
 				
-				<p style="float:right"><a onclick="$('#form').submit();" class="button" id="submit">Register</a></p>
+				<p style="float:right"><a onclick="$('#form').submit();" class="button" id="submit">Change Password</a></p>
 
 				
 			<?php echo form_close();?>

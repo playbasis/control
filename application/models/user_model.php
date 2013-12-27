@@ -581,7 +581,6 @@ class User_model extends MY_Model
     }
 
     public function insertNewPassword($user_id, $new_password){
-        echo $new_password;
         $find_salt = $this->getUserInfo($user_id);
         $salt = $find_salt['salt'];
         $password = dohash($new_password, $salt);
