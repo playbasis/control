@@ -41,8 +41,8 @@
             						<option selected='selected' value="1">Enabled</option>
             						<option value="0">Disabled</option>
             					<?php }else{?>
+                                    <option value="1">Enabled</option>
             						<option selected='selected' value="0">Disabled</option>
-            						<option value="1">Enabled</option>
             					<?php }?>
             					</select>
             				</td>
