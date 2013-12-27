@@ -124,7 +124,10 @@ class User_model extends MY_Model
                 $user_group_id = $this->input->post('user_group');    
             }else{
                 $this->mongo_db->where('name', 'Admin');
-                $user_group_id = $this->mongo_db->get('user_group')[0]['_id'];
+                $user_group_id = $this->mongo_db->get('user_group');
+                if($user_group_id){
+                    $user_group_id = $user_group_id[0]['_id'];
+                }
             }
 
             // $username = $this->input->post('username');
