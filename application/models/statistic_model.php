@@ -289,7 +289,9 @@ class Statistic_model extends MY_Model
         $this->mongo_db->select(array('_id','pb_player_id','value'));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('reward_id', new MongoID($r[0]['_id']));
+        if($r){
+            $this->mongo_db->where('reward_id', new MongoID($r[0]['_id']));
+        }
         $this->mongo_db->order_by(array('value' => -1));
 
         if (isset($data['limit'])) {

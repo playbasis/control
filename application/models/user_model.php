@@ -493,8 +493,10 @@ class User_model extends MY_Model
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user_group');
 
-        $row = $Q[0];
-        $this->admin_group_id = $row['_id'];
+        $this->admin_group_id = null;
+        if($Q){
+            $this->admin_group_id = $Q[0]['_id'];
+        }
         $this->session->set_userdata('admin_group_id',$this->admin_group_id );
         return $this->admin_group_id;
     }

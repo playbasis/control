@@ -95,7 +95,10 @@ class Player_model extends MY_Model
 
         $this->mongo_db->select('value');
         $this->mongo_db->where('pb_player_id', new MongoID($data['pb_player_id']));
-        $this->mongo_db->where('reward_id', new MongoID($r[0]['_id']));
+
+        if($r){
+            $this->mongo_db->where('reward_id', new MongoID($r[0]['_id']));
+        }
 
         $point =  $this->mongo_db->get('playbasis_reward_to_player');
 
@@ -234,7 +237,7 @@ class Player_model extends MY_Model
             )
         );
 
-        $output['result'] = $donut_data["result"][0];
+        $output['result'] = $donut_data["result"] ? $donut_data["result"][0] : array();
         $output['total'] = $total;
 
         return $output;
@@ -802,10 +805,10 @@ class Player_model extends MY_Model
 
         $res = array();
 
-        $this->mongo_db->where('group',  'NONPOINT');
-        $this->mongo_db->where('name',  'badge');
-        $reward = $this->mongo_db->get("playbasis_reward");
-        $reward_badge_id = $reward ? $reward[0]["_id"] : null;
+//        $this->mongo_db->where('group',  'NONPOINT');
+//        $this->mongo_db->where('name',  'badge');
+//        $reward = $this->mongo_db->get("playbasis_reward");
+//        $reward_badge_id = $reward ? $reward[0]["_id"] : null;
 
         if (!empty($data['filter_sort'])) {
 
