@@ -188,11 +188,14 @@ class User extends MY_Controller
                 $user_id = $this->User_model->insertUser();
 
                 if($user_id){
-                    $data = array(
-                        'client_id' => $client_id,
-                        'user_id' => $user_id
-                    );
-                    $this->User_model->addUserToClient($data);
+                    if($client_id){
+                        $data = array(
+                            'client_id' => $client_id,
+                            'user_id' => $user_id
+                        );
+                        $this->User_model->addUserToClient($data);
+                    }
+
                     $this->session->data['success'] = $this->lang->line('text_success');
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
@@ -223,10 +226,10 @@ class User extends MY_Controller
 
             $this->data['message'] = null;
 
-            if($this->checkLimitUser($this->input->post('client_id'))){
+            /*if($this->checkLimitUser($this->input->post('client_id'))){
                 $this->data['message'] = $this->lang->line('error_limit');
                 $json['error'] = $this->data['message'];
-            }
+            }*/
 
             if($this->form_validation->run() && $this->data['message'] == null){
 
