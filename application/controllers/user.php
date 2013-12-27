@@ -668,7 +668,44 @@ class User extends MY_Controller
 
     public function reset_password(){
         if(isset($_GET['key'])){
-            
+            echo "get key";
+            $random_key = $_GET['key'];
+            $user = $this->User_model->checkRandomPasswordKey($random_key);
+            $data = array(
+                'user'=>$user
+                );
+            $this->session->set_userdata($data);
+        }
+
+        if($this->session->userdata('user')){
+            $user = $this->session->userdata('user');
+
+            $this->data['meta_description'] = $this->lang->line('meta_description');
+            $this->data['main'] = 'register';
+            $this->data['title'] = $this->lang->line('title');
+            $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+            $this->data['form'] = 'user/reset_password';
+
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+
+            if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+                if($this->form_validation->run()){
+                    $new_password = $this->input->post('password');
+                    $user_id = $this->session->userdata('user')[0]['_id'];
+
+                    echo $this->User_model->insertNewPassword($user_id, $new_password);
+                    $this->session->unset_userdata('user');
+
+                    // echo "<script>alert('Your password has been changed! We will redirect you to our login page.');</script>";
+                    // echo "<script>window.location.href = '".site_url()."';</script>";
+                }
+
+            }
+
+            $this->data['main'] = 'reset_password_form';
+            $this->render_page('template');
         }
     }
 

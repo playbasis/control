@@ -559,5 +559,33 @@ class User_model extends MY_Model
 
     }
 
+    public function checkRandomPasswordKey($random_key){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('password_key', $random_key);
+        $user = $this->mongo_db->get('user');
+
+        if($user){
+            $this->mongo_db->where('_id', new MongoID($user[0]['_id']));
+            $this->mongo_db->set('password_key', null);
+            $this->mongo_db->update('user');
+            return $user;
+        }else{
+            return false;
+        }
+    }
+
+    public function insertNewPassword($user_id, $new_password){
+        echo $new_password;
+        $find_salt = $this->getUserInfo($user_id);
+        $salt = $find_salt['salt'];
+        $password = dohash($new_password, $salt);
+
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('password', $password);
+        return $this->mongo_db->update('user');
+
+    }
+
 }
 ?>
