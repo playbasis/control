@@ -615,36 +615,34 @@ class User extends MY_Controller
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->form_validation->run()){
                 $check_email = $this->User_model->findEmail($this->input->post());
+
+
                 if($check_email){
+                    $random_key = get_random_password(8,8);
+                    $this->User_model->insertRandomKey($random_key, $check_email[0]['_id']);
+                    $email = $check_email[0]['email'];
+                    $subject = 'Reset your password';
 
-                    echo "exits";
-
-                    // $random_key = get_random_password(8,8);
-
-                    // $this->load->library('email');
-                    // $this->load->library('parser');
+                    $this->load->library('email');
+                    $this->load->library('parser');
                
-                    // $validate_email = array(
-                    //     'firstname' => $firstname,
-                    //     'lastname' =>$lastname,
-                    //     'username' =>$username,
-                    //     'url' => site_url('enable_user?key='.$random_key)
-                    //     );
+                    $data = array(
+                        'url' => site_url('reset_password?key='.$random_key)
+                        );
 
-                    // $config['mailtype'] = 'html';
-                    // $config['charset'] = 'utf-8';
-                    // $subject = "Playbasis";
-                    // $htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
+                    $config['mailtype'] = 'html';
+                    $config['charset'] = 'utf-8';
+                    $subject = "Playbasis";
+                    $htmlMessage = $this->parser->parse('reset_password.html', $data, true);
 
-                    // //email client to upgrade account
-                    // $this->email->initialize($config);
-                    // $this->email->clear();
-                    // $this->email->from('info@playbasis.com', 'Playbasis');
-                    // $this->email->to($email);
+                    $this->email->initialize($config);
+                    $this->email->clear();
+                    $this->email->from('info@playbasis.com', 'Playbasis');
+                    $this->email->to($email);
                     // $this->email->bcc('test@playbasis.com');
-                    // $this->email->subject($subject);
-                    // $this->email->message($htmlMessage);
-                    // $this->email->send();
+                    $this->email->subject($subject);
+                    $this->email->message($htmlMessage);
+                    $this->email->send();
 
                 }else{
                     echo "Not exists";
@@ -655,6 +653,12 @@ class User extends MY_Controller
         $this->data['main'] = 'forgot_password';
         $this->render_page('template');   
 
+    }
+
+    public function reset_password(){
+        if(isset($_GET['key'])){
+            
+        }
     }
 
 

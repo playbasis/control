@@ -150,7 +150,8 @@ class User_model extends MY_Model
                 'status' => false,
                 'database' => "core",
                 'date_added' => $date_added,
-                'random_key' => $random_key
+                'random_key' => $random_key,
+                'password_key'=> null
                 );
 
             //SEND EMAIL WITH URL + RANDOM KEY
@@ -529,11 +530,21 @@ class User_model extends MY_Model
         $email = $data['email'];
 
         $this->mongo_db->where('email', $email);
-        if($this->mongo_db->get('user')){
-            return $this->mongo_db->get('user');
+        $user = $this->mongo_db->get('user');
+
+        if($user){
+            return $user;
         }else{
             return false;
         }
+
+    }
+
+    public function insertRandomKey($random_key, $user_id){
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('random_key',$random_key);
+        
+        $this->mongo_db->update('user');
 
     }
 
