@@ -134,6 +134,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getLogClient($data, $action, $start, $end){
+        $this->set_site_mongodb(0);
         $this->mongo_db->select(array('_id','action_id','name','color','icon'));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
@@ -155,6 +156,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getCountLogClient($data, $action, $start, $end){
+        $this->set_site_mongodb(0);
         $this->mongo_db->select(array('_id','action_id','name','color','icon'));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));

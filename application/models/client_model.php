@@ -219,6 +219,7 @@ class Client_model extends MY_Model
     }
 
     public function getReward($reward_id) {
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($reward_id));
         $this->mongo_db->order_by(array('sort_order' => 1));
@@ -228,6 +229,7 @@ class Client_model extends MY_Model
     }
 
     public function getFeature($feature_id) {
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($feature_id));
         $this->mongo_db->order_by(array('sort_order' => 1));
@@ -256,6 +258,8 @@ class Client_model extends MY_Model
     }
 
     public function copyRewardToClient($data_filter){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
         $this->mongo_db->where('is_custom', false);
@@ -291,6 +295,8 @@ class Client_model extends MY_Model
     }
 
     public function copyFeaturedToClient($data_filter){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
         $this->mongo_db->delete_all("playbasis_feature_to_client");
@@ -323,6 +329,8 @@ class Client_model extends MY_Model
     }
 
     public function copyActionToClient($data_filter){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
         $this->mongo_db->delete_all("playbasis_action_to_client");
@@ -355,6 +363,8 @@ class Client_model extends MY_Model
     }
 
     public function copyJigsawToClient($data_filter){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
         $this->mongo_db->delete_all("playbasis_game_jigsaw_to_client");
@@ -387,6 +397,8 @@ class Client_model extends MY_Model
     }
 
     public function insertClient(){
+        $this->set_site_mongodb(0);
+
         $data = $this->input->post();
 
         $data_insert_client = array(
@@ -408,6 +420,8 @@ class Client_model extends MY_Model
     }
 
     public function editClientPlan($client_id, $data){
+        $this->set_site_mongodb(0);
+        
         if (isset($data['domain_value'])) {
             $data_filter = array(
                 'client_id' => $client_id,

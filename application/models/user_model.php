@@ -557,6 +557,8 @@ class User_model extends MY_Model
     }
 
     public function insertRandomPasswordKey($random_key, $user_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->set('password_key',$random_key);
         
@@ -581,6 +583,8 @@ class User_model extends MY_Model
     }
 
     public function insertNewPassword($user_id, $new_password){
+        $this->set_site_mongodb(0);
+        
         $find_salt = $this->getUserInfo($user_id);
         $salt = $find_salt['salt'];
         $password = dohash($new_password, $salt);

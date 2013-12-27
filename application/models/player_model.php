@@ -3,6 +3,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Player_model extends MY_Model
 {
     public function getPlayerById($player_id) {
+        $this->set_site_mongodb(0);
+
         $player_data = null;
 
         $this->mongo_db->where('_id', new MongoID($player_id));
@@ -34,6 +36,7 @@ class Player_model extends MY_Model
     }
 
     public function getPlayers($data) {
+        $this->set_site_mongodb(0);
 
         if (isset($data['client_id']) && isset($data['site_id'])) {
             $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -84,6 +87,8 @@ class Player_model extends MY_Model
     }
 
     public function getPlayerPoint($data){
+        $this->set_site_mongodb(0);
+
         $reward_filter = "point";
         if (isset($data['reward_filter'])) {
             $reward_filter = $data['reward_filter'];
@@ -106,6 +111,7 @@ class Player_model extends MY_Model
     }
 
     private function getPlayerAction($site_id, $client_id, $player_id) {
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
@@ -802,6 +808,7 @@ class Player_model extends MY_Model
     }
 
     private function filterMongoPlayer($data){
+        $this->set_site_mongodb(0);
 
         $res = array();
 

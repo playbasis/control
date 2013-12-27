@@ -351,6 +351,8 @@ class Plan_model extends MY_Model
     }
 
     public function getPlanID($name){
+        $this->set_site_mongodb(0);
+        
         $this->mongo_db->where('name', $name);
         $results =  $this->mongo_db->get('playbasis_plan');
         return $results ? $results[0]['_id'] : null;

@@ -157,6 +157,7 @@ class Domain_model extends MY_Model
     }
 
     public function resetToken ($site_id) {
+        $this->set_site_mongodb(0);
 
         $secret = $this->genAccessSecret($site_id);
 
@@ -254,6 +255,7 @@ class Domain_model extends MY_Model
     }
 
     public function checkDomainExists($data){
+        $this->set_site_mongodb(0);
 
         $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
         $domain = preg_replace("/https:\/\//", "", $domain);

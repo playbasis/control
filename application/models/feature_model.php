@@ -3,6 +3,7 @@
 class Feature_model extends MY_Model
 {
     public function getFeature($feature_id) {
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($feature_id));
         $this->mongo_db->order_by(array('sort_order' => 1));

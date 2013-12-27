@@ -195,7 +195,7 @@ class Rule_model extends MY_Model
     }
 
     public function deleteRule($ruleId,$siteId,$clientId){
-
+        $this->set_site_mongodb(0);
         $this->mongo_db->where('_id', new MongoID($ruleId));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
@@ -209,7 +209,7 @@ class Rule_model extends MY_Model
     }
 
     function changeRuleState($ruleId,$state,$siteId,$clientId){
-
+        $this->set_site_mongodb(0);
         $this->mongo_db->where('_id', new MongoID($ruleId));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
@@ -225,6 +225,7 @@ class Rule_model extends MY_Model
     }
 
     public function getRuleById($siteId,$clientId,$ruleId){
+        $this->set_site_mongodb(0);
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
 

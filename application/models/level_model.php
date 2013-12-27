@@ -33,6 +33,8 @@ class Level_model extends MY_Model
     }
 
     public function getLevels($data) {
+        $this->set_site_mongodb(0);
+
         $level_data = array();
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -107,6 +109,8 @@ class Level_model extends MY_Model
     }
 
     public function getLevelsSite($data) {
+        $this->set_site_mongodb(0);
+        
         $level_data = array();
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
