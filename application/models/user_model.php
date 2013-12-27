@@ -530,9 +530,9 @@ class User_model extends MY_Model
 
     }
 
-    public function insertRandomKey($random_key, $user_id){
+    public function insertRandomPasswordKey($random_key, $user_id){
         $this->mongo_db->where('_id', new MongoID($user_id));
-        $this->mongo_db->set('random_key',$random_key);
+        $this->mongo_db->set('password_key',$random_key);
         
         $this->mongo_db->update('user');
 

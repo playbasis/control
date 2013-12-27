@@ -630,7 +630,7 @@ class User extends MY_Controller
 
                 if($check_email){
                     $random_key = get_random_password(8,8);
-                    $this->User_model->insertRandomKey($random_key, $check_email[0]['_id']);
+                    $this->User_model->insertRandomPasswordKey($random_key, $check_email[0]['_id']);
                     $email = $check_email[0]['email'];
                     $subject = 'Reset your password';
 
