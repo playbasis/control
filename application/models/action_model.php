@@ -486,5 +486,14 @@ class Action_model extends MY_Model
         return $this->mongo_db->get('playbasis_action');
 
     }
+
+    public function checkActionClientExists($data){
+
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('name', utf8_strtolower($data['name']));
+        return $this->mongo_db->get('playbasis_action_to_client');
+
+    }
 }
 ?>

@@ -77,11 +77,16 @@ class Action extends MY_Controller
                     $exits = $this->Action_model->checkActionExists($data);
                     if(!$exits){
                         $data['action_id'] = $this->Action_model->addAction($data);
+                        $this->Action_model->addActionToClient($data);
                     }else{
                         $data['action_id'] = $exits['_id'];
-                    }
 
-                    $this->Action_model->addActionToClient($data);
+                        if($this->checkActionClientExists($data)){
+                            $this->Action_model->editActionToClient($data['action_id'], $data);
+                        }else{
+                            $this->Action_model->addActionToClient($data);
+                        }
+                    }
 
                 }else{
 
