@@ -188,7 +188,11 @@ class User extends MY_Controller
                 $user_id = $this->User_model->insertUser();
 
                 if($user_id){
-                    $this->User_model->insertUserToClient($client_id,$user_id);
+                    $data = array(
+                        'client_id' => $client_id,
+                        'user_id' => $user_id
+                    );
+                    $this->User_model->addUserToClient($data);
                     $this->session->data['success'] = $this->lang->line('text_success');
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
@@ -506,7 +510,11 @@ class User extends MY_Controller
 
                         $client_id = $this->Client_model->insertClient();//returns only client id
 
-                        $this->User_model->insertUserToClient($client_id, $user_info['_id']);//Does not return anything just inserts to 'user_to_client' table
+                        $data = array(
+                            'client_id' => $client_id,
+                            'user_id' => $user_info['_id']
+                        );
+                        $this->User_model->addUserToClient($data);//Does not return anything just inserts to 'user_to_client' table
 
                         $data = $this->input->post();
                         $data['client_id'] = $client_id;

@@ -195,6 +195,7 @@ class User_model extends MY_Model
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
             'user_id' => new MongoID($data['user_id']),
+            'status' =>true
         );
         return $this->mongo_db->insert('user_to_client', $data_insert);
     }
@@ -478,17 +479,6 @@ class User_model extends MY_Model
         $this->admin_group_id = $row['_id'];
         $this->session->set_userdata('admin_group_id',$this->admin_group_id );
         return $this->admin_group_id;
-    }
-
-    public function insertUserToClient($client_id, $user_id){
-
-        $data = array(
-            'client_id'=> new MongoID($client_id),
-            'status' =>true,
-            'user_id'=>new MongoID($user_id)
-            );
-
-        $this->mongo_db->insert('user_to_client', $data);
     }
 
     public function updateSiteId($site_id){
