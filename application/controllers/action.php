@@ -69,14 +69,27 @@ class Action extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
 
                 $data = $this->input->post();
+                $data['client_id'] = $this->User_model->getClientId();
+                $data['site_id'] = $this->User_model->getSiteId();
 
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $data['client_id'] = $this->User_model->getClientId();
-                    $data['site_id'] = $this->User_model->getSiteId();
-                    $data['action_id'] = $this->Action_model->addAction($data);
+
+                    $exits = $this->Action_model->checkActionExists($data);
+                    if(!$exits){
+                        $data['action_id'] = $this->Action_model->addAction($data);
+                    }else{
+                        $data['action_id'] = $exits['_id'];
+                    }
+
                     $this->Action_model->addActionToClient($data);
+
                 }else{
-                    $this->Action_model->addAction($data);
+
+                    $exits = $this->Action_model->checkActionExists($data);
+                    if(!$exits){
+                        $this->Action_model->addAction($data);
+                    }
+
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
@@ -109,10 +122,18 @@ class Action extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
 
-                $this->Action_model->editAction($action_id, $this->input->post());
+                $data = $this->input->post();
 
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $this->Action_model->editActionToClient($action_id, $this->input->post());
+
+                    $exits = $this->Action_model->checkActionExists($data);
+                    if(!$exits){
+                        $this->Action_model->editAction($action_id, $data);
+                    }
+
+                    $this->Action_model->editActionToClient($action_id, $data);
+                }else{
+                    $this->Action_model->editAction($action_id, $data);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
@@ -159,44 +180,37 @@ class Action extends MY_Controller
     private function getList($offset) {
 
         $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
         
         $this->load->library('pagination');
 
-        
         $config['per_page'] = 10;
+
         $filter = array(
                 'limit' => $config['per_page'],
                 'start' => $offset,
-                'client_id'=>$client_id
-
+                'client_id'=>$client_id,
+                'site_id'=>$site_id
             );
-
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
         $config['base_url'] = site_url('action/page');
-        if($client_id){
-            $config['total_rows'] = $this->Action_model->getTotalActionsFromClient($filter);
-        }else{
-            $config['total_rows'] = $this->Action_model->getTotalActions();    
-        }
-        
         $config["uri_segment"] = 3;
+
+        if($client_id){
+            $this->data['actions'] = $this->Action_model->getActionSite($filter);
+            $config['total_rows'] = $this->Action_model->getTotalActionSite($filter);
+        }else{
+            $this->data['actions'] = $this->Action_model->getActions($filter);
+            $config['total_rows'] = $this->Action_model->getTotalActions();
+        }
 
         $this->pagination->initialize($config);
 
-        if($client_id){
-            $this->data['actions'] = $this->Action_model->getActionsFromClient($filter);
-        }else{
-            $this->data['actions'] = $this->Action_model->getActions($filter);    
-        }
-        
-        
-
         $this->data['main'] = 'action';
         $this->render_page('template');
-        
     }
 
     private function getForm($action_id=null) {
@@ -247,6 +261,7 @@ class Action extends MY_Controller
         $json = array();
 
         $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
 
         if ($this->input->get('filter_name')) {
 
@@ -262,7 +277,8 @@ class Action extends MY_Controller
 
             if($client_id){
                 $data['client_id'] = $client_id;
-                $results_action = $this->Action_model->getActionClient($data);
+                $data['site_id'] = $site_id;
+                $results_action = $this->Action_model->getActionSite($data);
             }else{
                 $results_action = $this->Action_model->getActions($data);
             }

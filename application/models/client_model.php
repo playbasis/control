@@ -407,21 +407,7 @@ class Client_model extends MY_Model
         return $data_inserted_client_id = $data_insert_client['_id'];
     }
 
-    // public function whoandwhat($client_id, $site_id, $plan_id){
-    //     $data_filter = array(
-    //         'client_id' => $client_id,
-    //         'site_id' => $site_id,
-    //         'plan_id' => $plan_id,
-    //         'status' => true
-    //     );
-
-    //     $this->copyRewardToClient($data_filter);
-    //     $this->copyFeaturedToClient($data_filter);
-    //     $this->copyActionToClient($data_filter);
-    //     $this->copyJigsawToClient($data_filter);
-    // }
-
-        public function editClientPlan($client_id, $data){
+    public function editClientPlan($client_id, $data){
         if (isset($data['domain_value'])) {
             $data_filter = array(
                 'client_id' => $client_id,

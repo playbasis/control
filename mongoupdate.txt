@@ -19,3 +19,8 @@ playbasis_feature
   "status": true,
   "date_added": new Date(),
   "date_modified": new Date()
+
+
+update
+
+  "link":"user_permission"  -> "link":"user_group"
