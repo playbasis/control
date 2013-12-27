@@ -348,8 +348,8 @@ class Action_model extends MY_Model
                 'description'=>$data['description'],
                 'icon'=>$data['icon'],
                 'color'=>$data['color'],
-                'sort_order'=>$data['sort'],
-                'status'=>$data['status'],
+                'sort_order'=>(int)$data['sort'],
+                'status'=>(bool)$data['status'],
                 'init_dataset'=>$init_dataset,
                 'date_added'=>$date_added,
                 'date_modified'=>$date_modified
@@ -393,13 +393,13 @@ class Action_model extends MY_Model
                 'icon'=>$data['icon'],
                 'color'=>$data['color'],
                 'init_dataset'=>$init_dataset,
-                'sort_order'=>$data['sort'],
-                'status'=>$data['status'],
+                'sort_order'=>(int)$data['sort'],
+                'status'=>(bool)$data['status'],
                 'date_added'=>$date_added,
                 'date_modified'=>$date_modified
             );
 
-        $this->mongo_db->insert('playbasis_action_to_client', $data_insert);
+        return $this->mongo_db->insert('playbasis_action_to_client', $data_insert);
     }
 
     public function delete($action_id){
@@ -444,7 +444,7 @@ class Action_model extends MY_Model
 
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
-        $this->mongo_db->update('playbasis_action');
+        return $this->mongo_db->update('playbasis_action');
 
     }
 
@@ -475,7 +475,7 @@ class Action_model extends MY_Model
 
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
-        $this->mongo_db->update('playbasis_action_to_client');
+        return $this->mongo_db->update('playbasis_action_to_client');
     }
 
     public function checkActionExists($data){
@@ -483,8 +483,19 @@ class Action_model extends MY_Model
         $this->set_site_mongodb(0);
         
         $this->mongo_db->where('name', utf8_strtolower($data['name']));
-        return $this->mongo_db->get('playbasis_action');
+        $result = $this->mongo_db->get('playbasis_action');
 
+        return $result ? $result[0] : null;
+    }
+
+    public function checkActionClientExists($data){
+
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('name', utf8_strtolower($data['name']));
+        $result = $this->mongo_db->get('playbasis_action_to_client');
+
+        return $result ? $result[0] : null;
     }
 }
 ?>
