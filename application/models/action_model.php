@@ -349,7 +349,7 @@ class Action_model extends MY_Model
                 'icon'=>$data['icon'],
                 'color'=>$data['color'],
                 'sort_order'=>$data['sort'],
-                'status'=>$data['status'],
+                'status'=>(bool)$data['status'],
                 'init_dataset'=>$init_dataset,
                 'date_added'=>$date_added,
                 'date_modified'=>$date_modified
@@ -394,7 +394,7 @@ class Action_model extends MY_Model
                 'color'=>$data['color'],
                 'init_dataset'=>$init_dataset,
                 'sort_order'=>$data['sort'],
-                'status'=>$data['status'],
+                'status'=>(bool)$data['status'],
                 'date_added'=>$date_added,
                 'date_modified'=>$date_modified
             );
