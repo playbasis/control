@@ -319,6 +319,7 @@ class Action_model extends MY_Model
     }
 
     public function addAction($data){
+        $this->set_site_mongodb(0);
 
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
@@ -359,6 +360,8 @@ class Action_model extends MY_Model
     }
 
     public function addActionToClient($data){
+        $this->set_site_mongodb(0);
+
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
@@ -400,6 +403,8 @@ class Action_model extends MY_Model
     }
 
     public function delete($action_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoID($action_id));
         $this->mongo_db->delete('playbasis_action');
 
@@ -408,6 +413,8 @@ class Action_model extends MY_Model
     }
 
     public function editAction($action_id, $data){
+
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($action_id));
 
@@ -442,6 +449,8 @@ class Action_model extends MY_Model
     }
 
     public function editActionToClient($action_id, $data){
+        $this->set_site_mongodb(0);
+
          $this->mongo_db->where('action_id', new MongoID($action_id));
 
         if(isset($data['name']) && !is_null($data['name'])){
@@ -471,6 +480,8 @@ class Action_model extends MY_Model
 
     public function checkActionExists($data){
 
+        $this->set_site_mongodb(0);
+        
         $this->mongo_db->where('name', utf8_strtolower($data['name']));
         return $this->mongo_db->get('playbasis_action');
 
