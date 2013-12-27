@@ -39,10 +39,14 @@ class User_model extends MY_Model
     }
 
     public function getTotalNumUsers(){
+        $this->set_site_mongodb(0);
+
         return $this->mongo_db->count('user');
     }
 
     public function getUserInfo($user_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $results =  $this->mongo_db->get('user');  
 
@@ -111,6 +115,7 @@ class User_model extends MY_Model
     }
 
     public function insertUser(){
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('username', $this->input->post('email'));
 
@@ -192,6 +197,8 @@ class User_model extends MY_Model
     }
 
     public function addUserToClient($data){
+        $this->set_site_mongodb(0);
+
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
             'user_id' => new MongoID($data['user_id']),
@@ -285,10 +292,14 @@ class User_model extends MY_Model
     }
 
     public function getUserGroups(){
+        $this->set_site_mongodb(0);
+
         return $this->mongo_db->get("user_group");
     }
 
     public function getUserGroupNameForUser($user_id){
+        $this->set_site_mongodb(0);
+
         $usergroups = $this->mongo_db->get('user_group');
         $user = $this->getUserInfo($user_id);
 
@@ -304,6 +315,8 @@ class User_model extends MY_Model
     }
 
     public function deleteUser($user_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->delete("user");
         $this->mongo_db->where('user_id', new MongoID($user_id));
@@ -467,6 +480,8 @@ class User_model extends MY_Model
     }
 
     public function getAdminGroupID(){
+        $this->set_site_mongodb(0);
+
         if($this->session->userdata('admin_group_id'))
             return $this->session->userdata('admin_group_id');
 
@@ -492,12 +507,16 @@ class User_model extends MY_Model
     }
 
     private function checkSiteId($site_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoID($site_id));
         $this->mongo_db->where('client_id', new MongoID($this->client_id));
         return $this->mongo_db->count('playbasis_client_site');
     }
 
     public function checkRandomKey($random_key){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('random_key', $random_key);
         $user = $this->mongo_db->get('user');
 
@@ -515,6 +534,8 @@ class User_model extends MY_Model
     }
 
     public function findEmail($data){
+
+        $this->set_site_mongodb(0);
 
         $email = $data['email'];
 
