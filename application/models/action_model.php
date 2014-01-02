@@ -414,6 +414,10 @@ class Action_model extends MY_Model
 
     public function editAction($action_id, $data){
 
+        echo "<pre>";
+        var_dump($data);
+        echo "</pre>";
+
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($action_id));

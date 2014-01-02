@@ -49,7 +49,7 @@
             			</tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_sort'); ?></td>
-            				<td><input type="text" name="sort" size="100" value="0" /></td>
+            				<td><input type="text" name="sort" size="100" /></td>
             			</tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_icon'); ?> <i style="color: grey" class="<?php echo $action['icon']?> icon-4x"></i> <?php //echo substr($action['icon'], 8);?></td>

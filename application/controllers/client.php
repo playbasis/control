@@ -128,6 +128,7 @@ class Client extends MY_Controller
             foreach ($this->input->post('selected') as $client_id) {
                 if($this->checkOwnerClient($client_id)){
                     $this->Client_model->deleteClient($client_id);
+                    $this->Client_model->deleteClientPersmission($client_id);
                 }
             }
 
