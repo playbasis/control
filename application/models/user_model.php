@@ -135,6 +135,17 @@ class User_model extends MY_Model
             $firstname = $this->input->post('firstname');
             $email = $this->input->post('email');
             $lastname = $this->input->post('lastname');
+
+            if($this->User_model->getClientId()){
+                $status = false;
+            }else{
+                $status = $this->input->post('status');
+                if($status == "1"){
+                    $status = true;
+                }else{
+                    $status = false;
+                }
+            }
             
             $ip = $_SERVER['REMOTE_ADDR'];
             $salt = get_random_password(10,10);
@@ -155,7 +166,7 @@ class User_model extends MY_Model
                 'email' => $email,
                 'code' =>"",
                 'ip' => $ip,
-                'status' => false,
+                'status' => $status,
                 'database' => "core",
                 'date_added' => $date_added,
                 'random_key' => $random_key,
