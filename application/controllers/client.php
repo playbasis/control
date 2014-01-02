@@ -211,8 +211,9 @@ class Client extends MY_Controller
 
                 $this->data['clients'][] = array(
                     'client_id' => $result['_id'],
-                    'first_name' => $result['first_name'],
-                    'last_name' => $result['last_name'],
+                    'company'=> $result['company'],
+                    // 'first_name' => $result['first_name'], Remove this because we want to show only the company name..
+                    // 'last_name' => $result['last_name'], Remove this because we want to show only the company name..
                     'image' => $image,
                     'quantity' => $domain_total,
                     'status' => $result['status'],
@@ -265,6 +266,14 @@ class Client extends MY_Controller
             $this->data['list_client_id'] = $client_id;
         }else {
             $this->data['list_client_id'] = null;
+        }
+
+        if ($this->input->post('company')) {
+            $this->data['company'] = $this->input->post('company');
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['company'] = $client_info['company'];
+        } else {
+            $this->data['company'] = '';
         }
 
         if ($this->input->post('first_name')) {
