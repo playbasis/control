@@ -337,7 +337,7 @@ class Client_model extends MY_Model
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
-        if ($plan_data['action_to_plan']) {
+        if (isset($plan_data['action_to_plan'])) {
             foreach ($plan_data['action_to_plan'] as $action_id) {
 
                 $action_data = $this->getAction($action_id);
@@ -371,7 +371,7 @@ class Client_model extends MY_Model
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
-        if ($plan_data['jigsaw_to_plan']) {
+        if (isset($plan_data['jigsaw_to_plan'])) {
             foreach ($plan_data['jigsaw_to_plan'] as $jigsaw_id) {
 
                 $jigsaw_data = $this->getJigsaw($jigsaw_id);

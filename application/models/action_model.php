@@ -81,7 +81,17 @@ class Action_model extends MY_Model
 
     }
 
-     public function getActionClient($data) {
+    public function getActionSiteInfo($action_id, $site_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('action_id',  new MongoID($action_id));
+        $this->mongo_db->where('site_id',  new MongoID($site_id));
+        $results = $this->mongo_db->get("playbasis_action_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
+     public function getActionsClient($data) {
          $this->set_site_mongodb(0);
 
          $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status','date_added','date_modified'));
@@ -176,7 +186,7 @@ class Action_model extends MY_Model
         return count($actions);
     }*/
 
-    public function getActionSite($data) {
+    public function getActionsSite($data) {
         $this->set_site_mongodb(0);
 
         $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status','date_added','date_modified'));
@@ -228,7 +238,7 @@ class Action_model extends MY_Model
         return $this->mongo_db->get("playbasis_action_to_client");
     }
 
-    public function getTotalActionSite($data) {
+    public function getTotalActionsSite($data) {
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
@@ -428,14 +438,14 @@ class Action_model extends MY_Model
 
         if(isset($data['description']) && !is_null($data['description'])){
             $this->mongo_db->set('description', $data['description']);
-        }        
-
-        if(isset($data['status']) && !is_null($data['status'])){
-            $this->mongo_db->set('status', $data['status']);
         }
 
-        if(isset($data['sort']) && !is_null($data['sort'])){
-            $this->mongo_db->set('sort_order', $data['sort']);
+        if(isset($data['sort_order']) && !is_null($data['sort_order'])){
+            $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        }
+
+        if(isset($data['status']) && !is_null($data['status'])){
+            $this->mongo_db->set('status', (bool)$data['status']);
         }
 
         if(isset($data['icon']) && !is_null($data['icon'])){
@@ -465,8 +475,12 @@ class Action_model extends MY_Model
             $this->mongo_db->set('description', $data['description']);
         }
 
-        if(isset($data['sort']) && !is_null($data['sort'])){
-            $this->mongo_db->set('sort_order', $data['sort']);
+        if(isset($data['sort_order']) && !is_null($data['sort_order'])){
+            $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        }
+
+        if(isset($data['status']) && !is_null($data['status'])){
+            $this->mongo_db->set('status', (bool)$data['status']);
         }
 
         if(isset($data['icon']) && !is_null($data['icon'])){

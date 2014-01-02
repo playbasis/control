@@ -4,7 +4,7 @@
 $lang['heading_title']          				= 'User';
 $lang['heading_title_register']					= 'Register New User';
 $lang['heading_forgot_password']				= 'Forgot Password';
-$lang['title']          						= 'Email';
+$lang['title']          						= 'Users';
 
 // Error 
 $lang['error_warning']          				= 'Warning: Please check the form carefully for errors!';
@@ -29,12 +29,12 @@ $lang['text_browse']            				= 'Browse Files';
 $lang['text_clear']             				= 'Clear Image';
 //$lang['text_criteria']          				= 'Domain View';
 //$lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
-$lang['text_fail']								= 'The username was already created, please use another username!';
+$lang['text_fail']								= 'The email was already created, please use another email!';
 $lang['text_edit_account']						= 'Edit Account';
 $lang['text_no_changes']						= 'No changes has been made!';
 
 // Column Table
-$lang['column_username']            			= 'Username';
+$lang['column_username']            			= 'Email';
 $lang['column_status']          				= 'Status';
 $lang['column_date_added']      				= 'Date Added';
 $lang['column_action']          				= 'Action';

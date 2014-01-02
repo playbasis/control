@@ -205,8 +205,8 @@ class Action extends MY_Controller
         $config["uri_segment"] = 3;
 
         if($client_id){
-            $this->data['actions'] = $this->Action_model->getActionSite($filter);
-            $config['total_rows'] = $this->Action_model->getTotalActionSite($filter);
+            $this->data['actions'] = $this->Action_model->getActionsSite($filter);
+            $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
         }else{
             $this->data['actions'] = $this->Action_model->getActions($filter);
             $config['total_rows'] = $this->Action_model->getTotalActions();
@@ -252,7 +252,13 @@ class Action extends MY_Controller
             $this->data['action_id'] = null;
         }
 
-        $this->data['action'] = $this->Action_model->getAction($action_id);
+        $site_id = $this->User_model->getSiteId();
+
+        if($site_id){
+            $this->data['action'] = $this->Action_model->getActionSiteInfo($action_id, $site_id);
+        }else{
+            $this->data['action'] = $this->Action_model->getAction($action_id);
+        }
         $this->data['icons'] = $this->Action_model->getAllIcons();
         $this->data['colors'] = array('blue', 'orange','red', 'green', 'yellow','pink');
 
@@ -283,7 +289,7 @@ class Action extends MY_Controller
             if($client_id){
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
-                $results_action = $this->Action_model->getActionSite($data);
+                $results_action = $this->Action_model->getActionsSite($data);
             }else{
                 $results_action = $this->Action_model->getActions($data);
             }

@@ -38,18 +38,23 @@
             				<td>
             					<select name = 'status'>
             					<?php if($action['status']){?>
-            						<option selected = 'selected' value = <?php echo $action['status']; ?>>Enabled</option>
-            						<option value = 0>Disabled</option>
+            						<option selected='selected' value="1">Enabled</option>
+            						<option value="0">Disabled</option>
             					<?php }else{?>
-            						<option selected = 'selected' value = <?php echo $action['status']; ?>>Disabled</option>
-            						<option value = 1>Enabled</option>
+                                    <option value="1">Enabled</option>
+            						<option selected='selected' value="0">Disabled</option>
             					<?php }?>
             					</select>
             				</td>
             			</tr>
             			<tr>
+<<<<<<< HEAD
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_sort'); ?></td>
             				<td><input type="text" name="sort" size="100" /></td>
+=======
+                            <td><span class="required">*</span> <?php echo $this->lang->line('form_sort'); ?></td>
+                            <td><input type="text" name="sort_order" value="<?php echo isset($action['sort_order']) ? $action['sort_order'] : set_value('sort_order'); ?>" size="1" /></td>
+>>>>>>> 4c554bbb928f0a60b8ed45396ea2519872ed4ca5
             			</tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_icon'); ?> <i style="color: grey" class="<?php echo $action['icon']?> icon-4x"></i> <?php //echo substr($action['icon'], 8);?></td>
