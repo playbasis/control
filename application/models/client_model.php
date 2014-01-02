@@ -126,9 +126,7 @@ class Client_model extends MY_Model
 
                 $this->mongo_db->where('_id',  new MongoID($domain_value['site_id']));
                 $this->mongo_db->set('status', (bool)$domain_value['status']);
-                if($domain_value['limit_users']){
-                    $this->mongo_db->set('limit_users', $domain_value['limit_users']);
-                }
+                $this->mongo_db->set('limit_users', $domain_value['limit_users']);
                 if($domain_value['domain_start_date']){
                     $this->mongo_db->set('date_start', new MongoDate(strtotime($domain_value['domain_start_date'])));
                 }
