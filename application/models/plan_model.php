@@ -312,6 +312,9 @@ class Plan_model extends MY_Model
                 array_push($feature, new MongoId($feature_value));
             }
             $this->mongo_db->set('feature_to_plan', $feature);
+        }else{
+            $feature = array();
+            $this->mongo_db->set('feature_to_plan', $feature);
         }
         if (isset($data['action_data'])) {
             $action = array();
@@ -319,12 +322,18 @@ class Plan_model extends MY_Model
                 array_push($action, new MongoId($action_value));
             }
             $this->mongo_db->set('action_to_plan', $action);
+        }else{
+            $action = array();
+            $this->mongo_db->set('action_to_plan', $action);
         }
         if (isset($data['jigsaw_data'])) {
             $jigsaw = array();
             foreach ($data['jigsaw_data'] as $jigsaw_value) {
                 array_push($jigsaw, new MongoId($jigsaw_value));
             }
+            $this->mongo_db->set('jigsaw_to_plan', $jigsaw);
+        }else{
+            $jigsaw = array();
             $this->mongo_db->set('jigsaw_to_plan', $jigsaw);
         }
         if (isset($data['reward_data'])) {
