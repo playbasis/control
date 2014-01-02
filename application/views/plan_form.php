@@ -45,7 +45,8 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('entry_description'); ?></td>
-                        <td><input type="text" name="description" value="<?php echo $description; ?>" size="50" /></td>
+                        <td><textarea rows='7' name="description"><?php echo $description; ?></textarea></td>
+                        <!-- <td><input type="text" name="description" value="<?php //echo $description; ?>" size="50" /></td> -->
                     </tr>
                 </table>
             </div>

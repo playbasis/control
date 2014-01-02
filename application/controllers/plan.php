@@ -290,7 +290,11 @@ class Plan extends MY_Controller
         if ($this->input->post('action_data')) {
             $this->data['action_data'] = $this->input->post('action_data');
         } elseif (!empty($plan_info)){
-            $this->data['action_data'] = $plan_info["action_to_plan"];
+            if(isset($plan_info["action_to_plan"])){
+                $this->data['action_data'] = $plan_info["action_to_plan"];    
+            }else{
+                $this->data['action_data'] = array(); 
+            }
         } else {
             $this->data['action_data'] = array();
         }
@@ -298,7 +302,11 @@ class Plan extends MY_Controller
         if ($this->input->post('jigsaw_data')) {
             $this->data['jigsaw_data'] = $this->input->post('jigsaw_data');
         } elseif (!empty($plan_info)){
-            $this->data['jigsaw_data'] = $plan_info["jigsaw_to_plan"];
+            if(isset($plan_info["jigsaw_to_plan"])){
+                $this->data['jigsaw_data'] = $plan_info["jigsaw_to_plan"];    
+            }else{
+                $this->data['jigsaw_data'] = array(); 
+            }
         } else {
             $this->data['jigsaw_data'] = array();
         }
