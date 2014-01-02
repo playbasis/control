@@ -40,16 +40,16 @@
                                 <td><input type="text" name="username" size="100" value="<?php //echo isset($user['username']) ? $user['username'] :  set_value('username'); ?>" /></td>
                             </tr>-->
                             <tr>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_email'); ?></td>
+                                <td><input type="email" name="email" size="100" value="<?php echo isset($user['email']) ? $user['email'] :  set_value('email'); ?>" /></td>
+                            </tr>
+                            <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_firstname'); ?></td>
                                 <td><input type="text" name="firstname" size="100" value="<?php echo isset($user['firstname']) ? $user['firstname'] :  set_value('firstname'); ?>" /></td>
                             </tr>
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_lastname'); ?></td>
                                 <td><input type="text" name="lastname" size="100" value="<?php echo isset($user['lastname']) ? $user['lastname'] :  set_value('lastname'); ?>" /></td>
-                            </tr>
-                            <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_email'); ?></td>
-                                <td><input type="email" name="email" size="100" value="<?php echo isset($user['email']) ? $user['email'] :  set_value('email'); ?>" /></td>
                             </tr>
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_user_group'); ?></td>
@@ -89,22 +89,22 @@
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_confirm_password'); ?></td>
                                 <td><input type="password" name="confirm_password" size="100" /></td>
                             </tr>
-                            <?php if(!$this->session->userdata('client_id')){?>
-                            <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?></td>
+                            <?php //if(!$this->session->userdata('client_id')){?>
+                            <!-- <tr>
+                                <td><span class="required">*</span> <?php //echo $this->lang->line('form_status'); ?></td>
                                 <td>
                                     <select name ="status">
-                                        <?php if($user['status']){?>
+                                        <?php //if($user['status']){?>
                                             <option value = 1>Enabled</option>
                                             <option value = 0>Disabled</option>
-                                        <?php }else{ ?>
+                                        <?php //}else{ ?>
                                             <option value =0>Disabled</option>
                                             <option value =1>Enabled</option>
-                                        <?php }?>    
+                                        <?php //}?>    
                                     </select>
                                 </td>
-                            </tr>
-                            <?php }?>
+                            </tr> -->
+                            <?php //}?>
                             <!--<tr>
                                 <td><span class="required">*</span> <?php //echo $this->lang->line('form_status'); ?></td>
                                 <td>
