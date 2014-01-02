@@ -31,7 +31,8 @@ $lang['tab_user'] 								= 'Users';
 
 // Column
 $lang['column_image']							= 'Logo';
-$lang['column_name']            				= 'Name';
+// $lang['column_name']            				= 'Name';
+$lang['column_company_name']					= 'Company Name';
 $lang['column_domain']          				= 'Domains';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
@@ -60,6 +61,7 @@ $lang['entry_address_fax']           			= 'Fax:';
 $lang['entry_facebook']						= 'Facebook:';
 $lang['entry_twitter']							= 'Twitter:';
 $lang['entry_google']							= 'Google+:';
+$lang['entry_company_name']						= 'Company Name:';
 
 $lang['entry_username']						= 'Username:';
 $lang['entry_password']						= 'Password';
