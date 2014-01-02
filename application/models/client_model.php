@@ -442,5 +442,11 @@ class Client_model extends MY_Model
         }
     }
 
+    //Once the client is deleted, the permissions are deleted too
+    public function deleteClientPersmission($client_id){
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->delete('playbasis_permission');
+    }
+
 }
 ?>

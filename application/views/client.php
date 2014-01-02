@@ -43,7 +43,7 @@
                         <td></td>
                         <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>
                     </tr>
-                    <?php if ($clients) { ?>
+                    <?php if (isset($clients)) { ?>
                         <?php foreach ($clients as $client) { ?>
                         <tr>
                             <td style="text-align: center;"><?php if ($client['selected']) { ?>

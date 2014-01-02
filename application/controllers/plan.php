@@ -141,13 +141,15 @@ class Plan extends MY_Controller
                 $c = $this->Plan_model->getClientByPlan($plan_id);
                 if(empty($c)){
                     $this->Plan_model->deletePlan($plan_id);
+                    
                 }else{
                     $p = $this->Plan_model->getPlan($plan_id);
-                    $this->error['warning'] = $p['name']." ".$this->lang->line('error_plan_client_inuse');
+                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    redirect('/plan', 'refresh');
                 }
             }
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/plan', 'refresh');    
+            redirect('/plan', 'refresh');
         }
         
         

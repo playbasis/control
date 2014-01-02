@@ -142,7 +142,7 @@ class Action extends MY_Controller
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                redirect('action', 'refresh');
+                // redirect('action', 'refresh');
             }
         }
 

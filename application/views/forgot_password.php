@@ -30,7 +30,7 @@
 					<table class="form">
 						<tr>
 							<br/>
-							Please provide your email, we will provide you a link to reset your password.
+							Please provide your email, we will send you a link via email to reset your password.
 							<br/>
 							<br/>
 						</tr>
