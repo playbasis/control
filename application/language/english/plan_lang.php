@@ -28,6 +28,7 @@ $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_limit']            				= 'Limit';
 $lang['column_action']          				= 'Action';
+$lang['column_description']						= 'Description';
 
 
 // Entry
