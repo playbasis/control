@@ -87,6 +87,14 @@
                 <div id="tab-user">
                     <table class="form">
                         <tr>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_email'); ?></td>
+                            <td><input type="text" name="user_email" value="" size="50" /></td>
+                        </tr>
+                        <tr>
+                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_password'); ?></td>
+                            <td><input type="password" name="user_password" value="" size="50" /></td>
+                        </tr>
+                        <tr>
                             <td><span class="require">*</span> <?php echo $this->lang->line('entry_firstname'); ?></td>
                             <td><input type="text" name="user_firstname" value="" size="50" /></td>
                         </tr>
@@ -94,18 +102,10 @@
                             <td><span class="require">*</span> <?php echo $this->lang->line('entry_lastname'); ?></td>
                             <td><input type="text" name="user_lastname" value="" size="50" /></td>
                         </tr>
-                        <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_email'); ?></td>
-                            <td><input type="text" name="user_email" value="" size="50" /></td>
-                        </tr>
-                        <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_username'); ?></td>
+                        <!-- <tr>
+                            <td><span class="require">*</span> <?php //echo $this->lang->line('entry_username'); ?></td>
                             <td><input type="text" name="user_username" value="" size="50" /></td>
-                        </tr>
-                        <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_password'); ?></td>
-                            <td><input type="password" name="user_password" value="" size="50" /></td>
-                        </tr>
+                        </tr> -->
                         <tr>
                             <td><span class="require">*</span> <?php echo $this->lang->line('entry_group'); ?></td>
                             <td>
@@ -252,7 +252,8 @@ function addNewUser() {
     var first_name = $('input[name=user_firstname]').val();
     var last_name = $('input[name=user_lastname]').val();
     var email = $('input[name=user_email]').val();
-    var username = $('input[name=user_username]').val();
+    // var username = $('input[name=user_username]').val();
+    var username = email;
     var password = $('input[name=user_password]').val();
     var user_group_id = $('select[name=user_group]').val();
     var status = $('select[name=user_status]').val();
