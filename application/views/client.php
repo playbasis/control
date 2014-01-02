@@ -27,8 +27,8 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                        <!-- <td class="left" style="width:72px;"><?php //echo $this->lang->line('column_image'); ?></td> -->
+                        <td class="left"><?php echo $this->lang->line('column_company_name'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_domain'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
@@ -37,7 +37,7 @@
                     <tbody>
                     <tr class="filter">
                         <td></td>
-                        <td></td>
+                        <!-- <td></td> -->
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
                         <td></td>
                         <td></td>
@@ -51,8 +51,8 @@
                                 <?php } else { ?>
                                 <input type="checkbox" name="selected[]" value="<?php echo $client['client_id']; ?>" />
                                 <?php } ?></td>
-                            <td class="left"><img src="<?php echo $client['image']; ?>" alt="" id="thumb" /></td>
-                            <td class="left"><?php echo $client['first_name']; ?> <?php echo $client['last_name']; ?></td>
+                            <!-- <td class="left"><img src="<?php //echo $client['image']; ?>" alt="" id="thumb" /></td> -->
+                            <td class="left"><?php echo $client['company']; ?></td>
                             <td class="right"><?php echo $client['quantity']; ?></td>
                             <td class="right"><?php echo ($client['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right">
