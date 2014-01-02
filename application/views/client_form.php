@@ -21,6 +21,7 @@
                 <?php if ($list_client_id.""!=0) { ?><a href="#tab-user"><?php echo $this->lang->line('tab_user'); ?></a><?php } ?>
                 <?php if ($list_client_id.""!=0) { ?><a href="#tab-domain"><?php echo $this->lang->line('tab_domain'); ?></a><?php } ?>
             </div>
+            <div id ="notification" class="half-width"></div>
             <?php
             if(validation_errors() || isset($message)) {
                 ?>
@@ -42,6 +43,10 @@
             ?>
                 <div id="tab-general">
                     <table class="form">
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_company_name'); ?></td>
+                            <td><input type="text" name="company" value="<?php echo $company; ?>" size="50" /></td>
+                        </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_firstname'); ?></td>
                             <td><input type="text" name="first_name" value="<?php echo $first_name; ?>" size="50" /></td>
@@ -215,6 +220,16 @@ function addNewDomain() {
     var limit_users = $('input[name=limit_users]').val();
     var status = $('select[name=domain_status]').val();
     var plan_id = $('select[name=domain_plan_id]').val();
+
+    var date_start_another = new Date(date_start);
+    var date_expire_another = new Date(date_expire);
+
+    $('#notification').html("").removeClass('warning').hide();
+
+    if(date_start_another >= date_expire_another){
+        $('#notification').html("Hello there").addClass('warning').show();
+        return false;
+    }
 
     $.ajax({
         url: baseUrlPath+'domain/insert_ajax',
