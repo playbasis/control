@@ -85,6 +85,7 @@ class Client_model extends MY_Model
         $this->set_site_mongodb(0);
 
         $insert_data = array(
+            'company' => isset($data['company'])?$data['company']: '',
             'first_name' => isset($data['first_name'])?$data['first_name'] : '' ,
             'last_name' => isset($data['last_name'])?$data['last_name'] : '' ,
             'mobile' => isset($data['mobile'])?$data['mobile'] : '' ,
@@ -161,7 +162,7 @@ class Client_model extends MY_Model
 
             foreach ($data['user_value'] as $user_value) {
 
-                $this->mongo_db->where('client_id', new MongoID($user_value['user_id']));
+                $this->mongo_db->where('_id', new MongoID($user_value['user_id']));
                 $this->mongo_db->set('user_group_id',  new MongoID($user_value['user_group_id']));
                 $this->mongo_db->set('status',  (bool)$user_value['status']);
                 $this->mongo_db->update('user');
