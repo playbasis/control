@@ -48,13 +48,8 @@
             				</td>
             			</tr>
             			<tr>
-<<<<<<< HEAD
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_sort'); ?></td>
-            				<td><input type="text" name="sort" size="100" /></td>
-=======
                             <td><span class="required">*</span> <?php echo $this->lang->line('form_sort'); ?></td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($action['sort_order']) ? $action['sort_order'] : set_value('sort_order'); ?>" size="1" /></td>
->>>>>>> 4c554bbb928f0a60b8ed45396ea2519872ed4ca5
             			</tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_icon'); ?> <i style="color: grey" class="<?php echo $action['icon']?> icon-4x"></i> <?php //echo substr($action['icon'], 8);?></td>
