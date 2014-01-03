@@ -19,7 +19,7 @@ class Client_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
-            $this->mongo_db->where('first_name', $regex);
+            $this->mongo_db->where('company', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
@@ -37,7 +37,7 @@ class Client_model extends MY_Model
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
-            $this->mongo_db->where('first_name', $regex);
+            $this->mongo_db->where('company', $regex);
         }
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {

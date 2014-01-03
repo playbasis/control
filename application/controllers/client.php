@@ -427,8 +427,7 @@ class Client extends MY_Controller
 
             foreach ($results_client as $result) {
                 $json[] = array(
-                    'name' => html_entity_decode($result['first_name'], ENT_QUOTES, 'UTF-8'),
-                    'fullname' => html_entity_decode($result['first_name'] . ' ' . $result['last_name'], ENT_QUOTES, 'UTF-8'),
+                    'company' => html_entity_decode($result['company'], ENT_QUOTES, 'UTF-8'),
                 );
             }
 

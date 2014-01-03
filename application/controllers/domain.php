@@ -215,8 +215,8 @@ class Domain extends MY_Controller
     public function insert_ajax() {
 
         $this->form_validation->set_rules('domain_name', $this->lang->line('entry_domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('site_name', $this->lang->line('entry_site_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('limit_users', $this->lang->line('limit_users'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space|numeric');
+        $this->form_validation->set_rules('site_name', $this->lang->line('entry_site_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('limit_users', $this->lang->line('limit_users'), 'trim|xss_clean|check_space|numeric');
         $this->form_validation->set_rules('plan_id', $this->lang->line('plan_id'), 'required');
 
         $json = array();

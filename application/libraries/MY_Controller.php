@@ -128,7 +128,7 @@ class  MY_Controller  extends  CI_Controller  {
                 
                 $this->data['domain_all'] = $this->Domain_model->getDomainsByClientId($temp);
                 // var_dump($this->data['domain_all']);
-                $features = $this->Feature_model->getFeatureByClientId($this->User_model->getClientId());
+                $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
                 //var_dump($features);
             }else{
                 // super admin

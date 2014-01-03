@@ -100,9 +100,9 @@ $('input[name=\'filter_name\']').autocomplete({
             success: function(json) {
                 response($.map(json, function(item) {
                     return {
-                        label: item.fullname,
+                        label: item.company,
                         value: item.client_id,
-                        name: item.name
+                        name: item.company
                     }
                 }));
             }
