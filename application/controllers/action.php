@@ -55,6 +55,7 @@ class Action extends MY_Controller
         $this->data['form'] = 'action/insert';
 
         $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
 
@@ -74,9 +75,9 @@ class Action extends MY_Controller
 
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-                    $exits = $this->Action_model->checkActionExists($data);
-                    if($exits){
-                        $data['action_id'] = $exits['_id'];
+                    $exists = $this->Action_model->checkActionExists($data);
+                    if($exists){
+                        $data['action_id'] = $exists['_id'];
 
                         if($this->Action_model->checkActionClientExists($data)){
                             $this->Action_model->editActionToClient($data['action_id'], $data);
@@ -90,8 +91,8 @@ class Action extends MY_Controller
 
                 }else{
 
-                    $exits = $this->Action_model->checkActionExists($data);
-                    if(!$exits){
+                    $exists = $this->Action_model->checkActionExists($data);
+                    if(!$exists){
                         $this->Action_model->addAction($data);
                     }
 
@@ -218,6 +219,41 @@ class Action extends MY_Controller
         $this->render_page('template');
     }
 
+    public function getListForAjax($offset) {
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        
+        $this->load->library('pagination');
+
+        $config['per_page'] = 10;
+
+        $filter = array(
+                'limit' => $config['per_page'],
+                'start' => $offset,
+                'client_id'=>$client_id,
+                'site_id'=>$site_id
+            );
+        if(isset($_GET['filter_name'])){
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
+        $config['base_url'] = site_url('action/page');
+        $config["uri_segment"] = 3;
+
+        if($client_id){
+            $this->data['actions'] = $this->Action_model->getActionsSite($filter);
+            $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
+        }else{
+            $this->data['actions'] = $this->Action_model->getActions($filter);
+            $config['total_rows'] = $this->Action_model->getTotalActions();
+        }
+
+        $this->pagination->initialize($config);
+
+        $this->render_page('action_ajax');
+    }
+
     private function getForm($action_id=null) {
 
         $this->load->model('Image_model');
@@ -323,6 +359,22 @@ class Action extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    public function increase_order($action_id){
+
+        $this->Action_model->increaseOrderByOne($action_id);
+        // redirect('action', 'refresh');
+
+        $json = array('success'=>'Okay!');
+
+        $this->output->set_output(json_encode($json));
+
+    }
+
+    public function decrease_order($action_id){
+        $this->Action_model->decreaseOrderByOne($action_id);
+        redirect('action', 'refresh');
     }
 
     

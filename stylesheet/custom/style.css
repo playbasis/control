@@ -211,7 +211,7 @@ h6 {
 }
 
 .red {
-	color: #FA603D;
+	color: #FF0000;
 }
 
 .blue {
@@ -220,6 +220,14 @@ h6 {
 
 .yellow {
 	color: #FABB3D;
+}
+
+.pink {
+	color: #E42B75;
+}
+
+.orange{
+	color: #FA5133;
 }
 
 .well {

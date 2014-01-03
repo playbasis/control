@@ -30,7 +30,7 @@
             				<td><input type="text" name="name" size="100" value="<?php echo isset($action['name']) ? $action['name'] :  set_value('name'); ?>" /></td>
             			</tr>
             			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_description'); ?></td>
+            				<td><?php echo $this->lang->line('form_description'); ?></td>
             				<td><textarea name ="description" rows="4"><?php echo isset($action['description']) ? $action['description'] :  set_value('description'); ?></textarea>
             			</tr>
             			<tr>
@@ -48,7 +48,7 @@
             				</td>
             			</tr>
             			<tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('form_sort'); ?></td>
+                            <td><?php echo $this->lang->line('form_sort'); ?></td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($action['sort_order']) ? $action['sort_order'] : set_value('sort_order'); ?>" size="1" /></td>
             			</tr>
             			<tr>

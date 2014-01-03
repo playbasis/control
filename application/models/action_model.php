@@ -31,7 +31,7 @@ class Action_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-
+        $this->mongo_db->order_by(array('sort_order' => 1));
         $results = $this->mongo_db->get("playbasis_action");
 
         return $results;
@@ -338,7 +338,7 @@ class Action_model extends MY_Model
             'param_name' => 'url',
              'label' => 'URL or filter String',
              'placeholder' => '',
-             'sortOrder' => $data['sort'],
+             'sortOrder' => $data['sort_order'],
              'field_type' => 'text',
              'value' => ''
             );
@@ -346,7 +346,7 @@ class Action_model extends MY_Model
             'param_name' => 'regex',
              'label' => 'Regex',
              'placeholder' => '',
-             'sortOrder' => $data['sort'],
+             'sortOrder' => $data['sort_order'],
              'field_type' => 'boolean',
              'value' => false,
             );
@@ -358,7 +358,7 @@ class Action_model extends MY_Model
                 'description'=>$data['description'],
                 'icon'=>$data['icon'],
                 'color'=>$data['color'],
-                'sort_order'=>(int)$data['sort'],
+                'sort_order'=>(int)$data['sort_order'],
                 'status'=>(bool)$data['status'],
                 'init_dataset'=>$init_dataset,
                 'date_added'=>$date_added,
@@ -424,9 +424,9 @@ class Action_model extends MY_Model
 
     public function editAction($action_id, $data){
 
-        echo "<pre>";
-        var_dump($data);
-        echo "</pre>";
+        // echo "<pre>";
+        // var_dump($data);
+        // echo "</pre>";
 
         $this->set_site_mongodb(0);
 
@@ -514,6 +514,40 @@ class Action_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_action_to_client');
 
         return $result ? $result[0] : null;
+    }
+
+    public function increaseOrderByOne($action_id){
+        $this->mongo_db->where('_id', new MongoId($action_id));
+        $theAction = $this->mongo_db->get('playbasis_action');
+
+        $currentSort = $theAction[0]['sort_order'];
+        
+        $newSort = $currentSort+1;
+
+        $this->mongo_db->where('_id', new MongoID($action_id));
+        $this->mongo_db->set('sort_order', $newSort);
+        $this->mongo_db->update('playbasis_action');
+
+    }
+
+    public function decreaseOrderByOne($action_id){
+
+        $this->mongo_db->where('_id', new MongoId($action_id));
+        $theAction = $this->mongo_db->get('playbasis_action');
+
+        $currentSort = $theAction[0]['sort_order'];
+        
+        if($currentSort != 0){
+            $newSort = $currentSort-1;    
+            
+            $this->mongo_db->where('_id', new MongoID($action_id));
+            $this->mongo_db->set('sort_order', $newSort);
+            $this->mongo_db->update('playbasis_action');
+        }
+        
+
+        
+
     }
 }
 ?>
