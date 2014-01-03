@@ -196,7 +196,8 @@ class Action extends MY_Controller
                 'limit' => $config['per_page'],
                 'start' => $offset,
                 'client_id'=>$client_id,
-                'site_id'=>$site_id
+                'site_id'=>$site_id,
+                'sort'=>'sort_order'
             );
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
@@ -232,7 +233,8 @@ class Action extends MY_Controller
                 'limit' => $config['per_page'],
                 'start' => $offset,
                 'client_id'=>$client_id,
-                'site_id'=>$site_id
+                'site_id'=>$site_id,
+                'sort'=>'sort_order'
             );
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
@@ -363,7 +365,14 @@ class Action extends MY_Controller
 
     public function increase_order($action_id){
 
-        $this->Action_model->increaseOrderByOne($action_id);
+        if($this->User_model->getClientId()){
+            $client_id = $this->User_model->getClientId();
+            $this->Action_model->increaseOrderByOneClient($action_id, $client_id);
+        }else{
+            $this->Action_model->increaseOrderByOne($action_id);    
+        }
+
+        
         // redirect('action', 'refresh');
 
         $json = array('success'=>'Okay!');
@@ -371,6 +380,8 @@ class Action extends MY_Controller
         $this->output->set_output(json_encode($json));
 
     }
+
+
 
     public function decrease_order($action_id){
         $this->Action_model->decreaseOrderByOne($action_id);
