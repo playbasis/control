@@ -364,7 +364,6 @@ class Action extends MY_Controller
     public function increase_order($action_id){
 
         $this->Action_model->increaseOrderByOne($action_id);
-        // redirect('action', 'refresh');
 
         $json = array('success'=>'Okay!');
 

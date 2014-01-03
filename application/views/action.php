@@ -108,33 +108,35 @@ function filter() {
 //--></script>
 
 <script type="text/javascript">
-$('input[name=\'filter_name\']').autocomplete({
-    delay: 0,
-    source: function(request, response) {
-        $.ajax({
-            url: baseUrlPath+'action/autocomplete?filter_name=' +  encodeURIComponent(request.term),
-            dataType: 'json',
-            success: function(json) {
-                console.log(json);
-                response($.map(json, function(item) {
-                    return {
-                        label: item.name,
-                        name: item.name
+    $('input[name=\'filter_name\']').live("focus", function (event) {
+        $(this).autocomplete({
+            delay: 0,
+            source: function(request, response) {
+                $.ajax({
+                    url: baseUrlPath+'action/autocomplete?filter_name=' +  encodeURIComponent(request.term),
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json);
+                        response($.map(json, function(item) {
+                            return {
+                                label: item.name,
+                                name: item.name
+                            }
+                        }));
+                        console.log(response);
                     }
-                }));
-                console.log(response);
+                });
+            },
+            select: function(event, ui) {
+                $('input[name=\'filter_name\']').val(ui.item.name);
+
+                return false;
+            },
+            focus: function(event, ui) {
+                return false;
             }
         });
-    },
-    select: function(event, ui) {
-        $('input[name=\'filter_name\']').val(ui.item.name);
-
-        return false;
-    },
-    focus: function(event, ui) {
-        return false;
-    }
-});
+    });
 </script>
 
 
