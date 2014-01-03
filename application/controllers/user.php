@@ -149,12 +149,25 @@ class User extends MY_Controller
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             //Check to see if it passes the form validation
-            if($this->form_validation->run()){
-                $this->User_model->editUser($user_id, $this->input->post());
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                redirect('/user', 'refresh');
-                
+            if($this->form_validation->run()){
+                $data = array();
+                $data['email'] = $this->input->post('email');
+                if(!$this->User_model->findEmail($data)){
+                    $this->User_model->editUser($user_id, $this->input->post());
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                    redirect('/user', 'refresh');
+                }else{
+                    $user = $this->User_model->getUserInfo($user_id);
+                    if($user['username'] != $data['email']){
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                        redirect('/user/update/'.$user_id);    
+                    }
+                    $this->User_model->editUser($user_id, $this->input->post());
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                    redirect('/user', 'refresh');
+                }
             }
             
         }
@@ -214,11 +227,13 @@ class User extends MY_Controller
     public function insert_ajax(){
 
         //Rules need to be set
-        $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
+        $this->form_validation->set_rules('password_confirm', $this->lang->line('form_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('user_group', $this->lang->line('form_user_group'), 'required');
 
         $json = array();
 
@@ -233,6 +248,11 @@ class User extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
 
+                $email = $this->input->post('email');
+                $data['email'] = $email;
+                $check_email = $this->User_model->findEmail($data);
+
+                if(!$check_email){
                 $user_id = $this->User_model->insertUser();
 
                 if ($user_id) {
@@ -245,6 +265,13 @@ class User extends MY_Controller
 
                 $this->session->data['success'] = $this->lang->line('text_success');
                 $json['success'] =  $this->lang->line('text_success');
+                }else{
+                    $json['error'] = 'The Email provided already exists';
+                }
+
+                
+            }else{
+                $json['error'] = "Please provide the neccessary fields below or check if there are any errors.";
             }
         }
 

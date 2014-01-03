@@ -44,38 +44,39 @@ $lang['column_tab_friend']						= 'Friend';
 
 
 // Entry
-$lang['entry_firstname']           			= 'Firstname:';
-$lang['entry_lastname']           				= 'Lastname:';
-$lang['entry_email']           				= 'Email:';
+$lang['entry_firstname']           				= 'Firstname';
+$lang['entry_lastname']           				= 'Lastname';
+$lang['entry_email']           					= 'Email';
 $lang['entry_mobile']           				= 'Mobile:';
-$lang['entry_image']           				= 'Image:';
-$lang['entry_sort_order']           			= 'Sort Order:';
-$lang['entry_status']           				= 'Status:';
-$lang['entry_address_firstname']        		= 'Firstname:';
-$lang['entry_address_lastname']        		= 'Lastname:';
-$lang['entry_address_address']          		= 'Address:';
-$lang['entry_address_country']           		= 'Country:';
-$lang['entry_address_postcode']        		= 'Postcode:';
-$lang['entry_address_telephone']      			= 'Telephone:';
-$lang['entry_address_fax']           			= 'Fax:';
-$lang['entry_facebook']						= 'Facebook:';
-$lang['entry_twitter']							= 'Twitter:';
-$lang['entry_google']							= 'Google+:';
-$lang['entry_company_name']						= 'Company Name:';
+$lang['entry_image']           					= 'Image';
+$lang['entry_sort_order']           			= 'Sort Order';
+$lang['entry_status']           				= 'Status';
+$lang['entry_address_firstname']        		= 'Firstname';
+$lang['entry_address_lastname']        			= 'Lastname';
+$lang['entry_address_address']          		= 'Address';
+$lang['entry_address_country']           		= 'Country';
+$lang['entry_address_postcode']        			= 'Postcode';
+$lang['entry_address_telephone']      			= 'Telephone';
+$lang['entry_address_fax']           			= 'Fax';
+$lang['entry_facebook']							= 'Facebook';
+$lang['entry_twitter']							= 'Twitter';
+$lang['entry_google']							= 'Google+';
+$lang['entry_company_name']						= 'Company Name';
 
 $lang['entry_username']						= 'Username:';
 $lang['entry_password']						= 'Password';
+$lang['entry_password_confirm']						= 'Confirm Password';
 $lang['entry_new_password']					= 'New Password';
 $lang['entry_group']							= 'Group';
 
-$lang['entry_domain_name']						= 'Domain:';
-$lang['entry_site_name']						= 'Site:';
-$lang['entry_key']								= 'API Keys:';
-$lang['entry_secret']							= 'API Secret:';
-$lang['entry_start_date']						= 'Start Date:';
-$lang['entry_expire_date']						= 'Expire Date:';
-$lang['limit_users']						    = 'Limit Users:';
-$lang['entry_plan']							= 'Plan:';
+$lang['entry_domain_name']						= 'Domain';
+$lang['entry_site_name']						= 'Site';
+$lang['entry_key']								= 'API Keys';
+$lang['entry_secret']							= 'API Secret';
+$lang['entry_start_date']						= 'Start Date';
+$lang['entry_expire_date']						= 'Expire Date';
+$lang['limit_users']						    = 'Limit Users';
+$lang['entry_plan']								= 'Plan';
 
 // Button
 $lang['button_filter']							= 'Filter';
@@ -95,9 +96,9 @@ $lang['column_domain_date_expire']     = 'Date Expire';
 $lang['column_domain_limit_users']     = 'Limit Users';
 
 // User
-$lang['column_title']					= 'Title';
-$lang['column_group']					= 'Group';
-$lang['column_username']				= 'Username';
+$lang['column_title']					= 'Full Name';
+$lang['column_group']					= 'User Group';
+$lang['column_username']				= 'Email';
 $lang['column_password']				= 'Password';
 
 // Error 

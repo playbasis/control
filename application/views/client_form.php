@@ -11,15 +11,15 @@
         <div class="content">
             <?php if($this->session->flashdata('success')){ ?>
                 <div class="content messages half-width">
-                <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+                <div id = "notification2" class="success"><?php echo $this->session->flashdata('success'); ?></div>
                 </div>
             <?php }?>
             <div id="tabs" class="htabs">
-                <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
-                <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>
+                <a href="#tab-general" onclick= removeNotifications();><?php echo $this->lang->line('tab_general'); ?></a>
+                <a href="#tab-data" onclick= removeNotifications();><?php echo $this->lang->line('tab_data'); ?></a>
                 <!-- <a href="#tab-address"><?php echo $this->lang->line('tab_address'); ?></a> -->
-                <?php if ($list_client_id.""!=0) { ?><a href="#tab-user"><?php echo $this->lang->line('tab_user'); ?></a><?php } ?>
-                <?php if ($list_client_id.""!=0) { ?><a href="#tab-domain"><?php echo $this->lang->line('tab_domain'); ?></a><?php } ?>
+                <?php if ($list_client_id.""!=0) { ?><a href="#tab-user" onclick= removeNotifications(); ><?php echo $this->lang->line('tab_user'); ?></a><?php } ?>
+                <?php if ($list_client_id.""!=0) { ?><a href="#tab-domain" onclick= removeNotifications();><?php echo $this->lang->line('tab_domain'); ?></a><?php } ?>
             </div>
             <div id ="notification" class="half-width"></div>
             <?php
@@ -44,19 +44,19 @@
                 <div id="tab-general">
                     <table class="form">
                         <tr>
-                            <td><?php echo $this->lang->line('entry_company_name'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_company_name'); ?>:</td>
                             <td><input type="text" name="company" value="<?php echo $company; ?>" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_firstname'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_firstname'); ?>:</td>
                             <td><input type="text" name="first_name" value="<?php echo $first_name; ?>" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_lastname'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_lastname'); ?>:</td>
                             <td><input type="text" name="last_name" value="<?php echo $last_name; ?>" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_email'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_email'); ?>:</td>
                             <td><input type="text" name="email" value="<?php echo $email; ?>"size="50"  /></td>
                         </tr>
                         <tr>
@@ -92,19 +92,23 @@
                 <div id="tab-user">
                     <table class="form">
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_email'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_email'); ?></td>
                             <td><input type="text" name="user_email" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_password'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password'); ?></td>
                             <td><input type="password" name="user_password" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_firstname'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password_confirm'); ?></td>
+                            <td><input type="password" name="user_password_confirm" value="" size="50" /></td>
+                        </tr>
+                        <tr>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_firstname'); ?></td>
                             <td><input type="text" name="user_firstname" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_lastname'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_lastname'); ?></td>
                             <td><input type="text" name="user_lastname" value="" size="50" /></td>
                         </tr>
                         <!-- <tr>
@@ -115,7 +119,7 @@
                             <td><span class="require">*</span> <?php echo $this->lang->line('entry_group'); ?></td>
                             <td>
                                 <select name="user_group">
-                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
+                                    <option value="" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($groups) { ?>
                                     <?php foreach ($groups as $group) { ?>
                                         <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
@@ -150,30 +154,30 @@
                 <div id="tab-domain">
                     <table class="form">
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_domain_name'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_domain_name'); ?>:</td>
                             <td><input type="text" name="domain_name" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_site_name'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_site_name'); ?>:</td>
                             <td><input type="text" name="domain_site_name" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_start_date'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_start_date'); ?>:</td>
                             <td><input type="text" class="date" name="domain_start_date" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_expire_date'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_expire_date'); ?>:</td>
                             <td><input type="text" class="date" name="domain_expire_date" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('limit_users'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('limit_users'); ?>:</td>
                             <td><input type="text" name="limit_users" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_plan'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_plan'); ?>:</td>
                             <td>
                                 <select name="domain_plan_id">
-                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
+                                    <option value="" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($plan_data) { ?>
                                     <?php foreach ($plan_data as $plan) { ?>
                                         <option value="<?php echo $plan['_id']; ?>"><?php echo $plan['name']; ?></option>
@@ -183,7 +187,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_status'); ?></td>
+                            <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td>
                                 <select name="domain_status">
                                     <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -227,7 +231,7 @@ function addNewDomain() {
     $('#notification').html("").removeClass('warning').hide();
 
     if(date_start_another >= date_expire_another){
-        $('#notification').html("Hello there").addClass('warning').show();
+        $('#notification').html("<?php echo $this->lang->line('entry_start_date');?> cannot be after the <?php echo $this->lang->line('entry_expire_date');?> ").addClass('warning').show();
         return false;
     }
 
@@ -270,14 +274,17 @@ function addNewUser() {
     // var username = $('input[name=user_username]').val();
     var username = email;
     var password = $('input[name=user_password]').val();
+    var password_confirm = $('input[name=user_password_confirm]').val();
     var user_group_id = $('select[name=user_group]').val();
     var status = $('select[name=user_status]').val();
+
+    $('#notification').html("").removeClass('warning').hide().removeClass('success');
 
     $.ajax({
         url: baseUrlPath+'user/insert_ajax',
         type: 'POST',
         dataType: 'json',
-        data: ({'firstname' : first_name, 'lastname' : last_name, 'email' : email, 'username' : username, 'password' : password, 'user_group' : user_group_id, 'status' : status, client_id : '<?php echo $list_client_id; ?>'}),
+        data: ({'firstname' : first_name, 'lastname' : last_name, 'email' : email, 'username' : username, 'password' : password, 'password_confirm' : password_confirm, 'user_group' : user_group_id, 'status' : status, client_id : '<?php echo $list_client_id; ?>'}),
         success: function(json) {
             var notification = $('#notification');
 
@@ -285,7 +292,7 @@ function addNewUser() {
                 $('#notification').html(json['error']).addClass('warning').show();
             } else {
 
-                $('#notification').html(json['success']).addClass('success').show();
+                $('#notification').html(json['success']).addClass('success').show().removeClass('warning');
 
                 /*$('iframe').each(function() {
                     this.contentWindow.location.reload(true);
@@ -391,4 +398,11 @@ $('#languages a').tabs();
         $('.date').datepicker({dateFormat: 'yy-mm-dd'});
 
     })
+</script>
+
+<script>
+function removeNotifications(){
+    $('#notification').removeClass().html(""); 
+    $('#notification2').removeClass().html("");
+}
 </script>

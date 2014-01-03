@@ -282,7 +282,11 @@ class Plan extends MY_Controller
         if ($this->input->post('feature_data')) {
             $this->data['feature_data'] = $this->input->post('feature_data');
         } elseif (!empty($plan_info)){
-            $this->data['feature_data'] = $plan_info["feature_to_plan"];
+            if(isset($plan_info['feature_to_plan'])){
+                $this->data['feature_data'] = $plan_info['feature_to_plan'];
+            }else{
+                $this->data['feature_data'] = array();    
+            }
         } else {
             $this->data['feature_data'] = array();
         }
@@ -290,7 +294,7 @@ class Plan extends MY_Controller
         if ($this->input->post('action_data')) {
             $this->data['action_data'] = $this->input->post('action_data');
         } elseif (!empty($plan_info)){
-            if(isset($plan_info["action_to_plan"])){
+            if(isset($plan_info['action_to_plan'])){
                 $this->data['action_data'] = $plan_info["action_to_plan"];    
             }else{
                 $this->data['action_data'] = array(); 

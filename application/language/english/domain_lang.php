@@ -5,6 +5,7 @@ $lang['heading_title']          				= 'Domain';
 // Text
 // $lang['text_success']           				= 'Success: You have modified clients!';
 $lang['text_success']           				= 'You have successfully reset the secret!';
+$lang['text_success_insert']					= 'You have successfully inserted a domain!';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';
@@ -64,13 +65,13 @@ $lang['entry_password']						= 'Password';
 $lang['entry_new_password']					= 'New Password';
 $lang['entry_group']							= 'Group';
 
-$lang['entry_domain_name']						= 'Domain:';
-$lang['entry_site_name']						= 'Site:';
+$lang['entry_domain_name']						= 'Domain';
+$lang['entry_site_name']						= 'Site';
 $lang['entry_key']								= 'API Keys:';
 $lang['entry_secret']							= 'API Secret:';
-$lang['entry_start_date']						= 'Start Date:';
-$lang['entry_expire_date']						= 'Expire Date:';
-$lang['entry_plan']							= 'Plan:';
+$lang['entry_start_date']						= 'Start Date';
+$lang['entry_expire_date']						= 'Expire Date';
+$lang['entry_plan']								= 'Plan';
 
 // Button
 $lang['button_filter']							= 'Filter';

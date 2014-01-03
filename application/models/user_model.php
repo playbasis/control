@@ -65,9 +65,9 @@ class User_model extends MY_Model
             $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
         }
 
-        if(isset($data['username']) && !is_null($data['username'])){
-            $this->mongo_db->set('username', $data['username']);    
-        }
+        // if(isset($data['username']) && !is_null($data['username'])){
+        //     $this->mongo_db->set('username', $data['username']);    
+        // }
         
         if(isset($data['firstname']) && !is_null($data['firstname'])){
             $this->mongo_db->set('firstname', $data['firstname']);    
@@ -78,7 +78,8 @@ class User_model extends MY_Model
         }
 
         if(isset($data['email']) && !is_null($data['email'])){
-            $this->mongo_db->set('email', $data['email']);    
+            $this->mongo_db->set('email', $data['email']);
+            $this->mongo_db->set('username', $data['email']);    
         }
         
         if(isset($data['status']) && !is_null($data['status'])){
@@ -109,9 +110,7 @@ class User_model extends MY_Model
                         redirect('/user', 'refresh');        
                     }
             }
-        }else{
-            echo "Password not matched";
-        }        
+        }      
     }
 
     public function insertUser(){

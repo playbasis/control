@@ -86,7 +86,9 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/update/'.$client_id;
 
-        $this->form_validation->set_rules('first_name', $this->lang->line('first_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[1]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerClient($client_id)) {
@@ -429,6 +431,7 @@ class Client extends MY_Controller
                     'fullname' => html_entity_decode($result['first_name'] . ' ' . $result['last_name'], ENT_QUOTES, 'UTF-8'),
                 );
             }
+
         }
 
         $this->output->set_output(json_encode($json));
