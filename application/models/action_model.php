@@ -581,10 +581,24 @@ class Action_model extends MY_Model
             $this->mongo_db->set('sort_order', $newSort);
             $this->mongo_db->update('playbasis_action');
         }
-        
+    }
 
-        
+    public function decreaseOrderByOneClient($action_id, $client_id){
 
+        $this->mongo_db->where('action_id', new MongoId($action_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $theAction = $this->mongo_db->get('playbasis_action_to_client');
+
+        $currentSort = $theAction[0]['sort_order'];
+        
+        if($currentSort != 0){
+            $newSort = $currentSort-1;    
+
+            $this->mongo_db->where('action_id', new MongoID($action_id));
+            $this->mongo_db->where('client_id', new MongoId($client_id));
+            $this->mongo_db->set('sort_order', $newSort);
+            $this->mongo_db->update('playbasis_action_to_client');
+        }
     }
 }
 ?>

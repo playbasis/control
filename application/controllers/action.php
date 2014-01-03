@@ -383,8 +383,18 @@ class Action extends MY_Controller
 
 
     public function decrease_order($action_id){
-        $this->Action_model->decreaseOrderByOne($action_id);
-        redirect('action', 'refresh');
+
+        if($this->User_model->getClientId()){
+            $client_id = $this->User_model->getClientId();
+            $this->Action_model->decreaseOrderByOneClient($action_id, $client_id);
+        }else{
+            $this->Action_model->decreaseOrderByOne($action_id);    
+        }
+        // redirect('action', 'refresh');
+
+        $json = array('success'=>'Okay!');
+
+        $this->output->set_output(json_encode($json));
     }
 
     

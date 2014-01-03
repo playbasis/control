@@ -157,3 +157,21 @@ $( ".push_down" ).live( "click", function() {
 });
 
 </script>
+
+<script type = "text/javascript">
+
+$( ".push_up" ).live( "click", function() {
+  
+    $.ajax({
+        url: baseUrlPath+'action/decrease_order/'+$(this).attr('alt'),
+        dataType: "json"
+    }).done(function(data) {
+        console.log("We are herer");
+        $('#actions').load(baseUrlPath+'action/getListForAjax/0');
+    });
+
+
+  return false;
+});
+
+</script>
