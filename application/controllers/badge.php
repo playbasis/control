@@ -197,7 +197,9 @@ class Badge extends MY_Controller
 
             $this->load->model('Reward_model');
 
-            $badges = $this->Badge_model->getBadgeBySiteId($site_id, $per_page, $offset);
+            $badge_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'offset' =>$offset, 'sort'=>'sort_order');
+
+            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
 
@@ -236,6 +238,8 @@ class Badge extends MY_Controller
 
                     }
                 }
+
+                $badges= $this->vsort($this->data['badges'], 'sort_order');
 
             }
 
@@ -328,7 +332,9 @@ class Badge extends MY_Controller
 
             $this->load->model('Reward_model');
 
-            $badges = $this->Badge_model->getBadgeBySiteId($site_id, $per_page, $offset);
+            $badge_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'offset' => $offset, 'sort'=>'sort_order');
+
+            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
 
@@ -367,6 +373,8 @@ class Badge extends MY_Controller
 
                     }
                 }
+
+                $badges= $this->vsort($this->data['badges'], 'sort_order');
 
             }
 
@@ -561,7 +569,9 @@ class Badge extends MY_Controller
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $badges = $this->Badge_model->getBadgeBySiteId($this->User_model->getSiteId());
+            $bade_data = array('site_id'=>$this->User_model->getSiteId());
+
+            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
             $has = false;
     
@@ -611,6 +621,24 @@ class Badge extends MY_Controller
         $this->output->set_output(json_encode($json));
 
         // redirect('badge', 'refresh');
+    }
+
+    private function vsort (&$array, $key, $order='asc') {
+        $res=array();
+        $sort=array();
+        reset($array);
+        foreach ($array as $ii => $va) {
+            $sort[$ii]=$va[$key];
+        }
+        if(strtolower($order) == 'asc'){
+            asort($sort);
+        }else{
+            arsort($sort);
+        }
+        foreach ($sort as $ii => $va) {
+            $res[$ii]=$array[$ii];
+        }
+        $array=$res;
     }
 
 }

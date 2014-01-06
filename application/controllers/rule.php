@@ -120,7 +120,9 @@ class Rule extends MY_Controller
     public function loadBadges() {
         $this->load->model('Badge_model');
 
-        $badges = $this->Badge_model->getBadgeBySiteId($this->User_model->getSiteId());
+        $badge_data = array ('site_id'=>$this->User_model->getSiteId(), 'sort'=>'sort_order');
+
+        $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
         $json =array();
 
