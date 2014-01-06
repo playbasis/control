@@ -60,20 +60,25 @@ class Badge extends MY_Controller
         //I took out the check_space because some badges may have spaces? - Joe
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
-        if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkLimitBadge()) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $this->data['message'] = null;
+            if($this->checkLimitBadge()){
+                $this->data['message'] = null;
 
-            if (!$this->validateModify()) {
-                $this->data['message'] = $this->lang->line('error_permission');
-            }
+                if (!$this->validateModify()) {
+                    $this->data['message'] = $this->lang->line('error_permission');
+                }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
-                $this->Badge_model->addBadge($this->input->post());
+                if($this->form_validation->run() && $this->data['message'] == null){
+                    $this->Badge_model->addBadge($this->input->post());
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                redirect('/badge', 'refresh');
+                    redirect('/badge', 'refresh');
+                }    
+            }else{
+                $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
+                redirect('/badge/insert', 'refresh');
             }
         }
 
@@ -451,4 +456,19 @@ class Badge extends MY_Controller
             return false;
         }
     }
+
+    public function increase_order($badge_id){
+
+        $this->Badge_model->increaseOrderByOne($badge_id);
+
+        redirect('badge', 'refresh');
+
+    }
+
+    public function decrease_order($badge_id){
+        $this->Badge_model->decreaseOrderByOne($badge_id);
+
+        redirect('badge', 'refresh');
+    }
+
 }
