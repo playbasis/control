@@ -61,15 +61,15 @@
 
                                         <?php if($client_id){
 
-                                            echo anchor('action/increase_order/'.$action['action_id'], 'Push Down', array('class'=>'push_down', 'alt'=>$action['action_id']));
+                                            echo anchor('action/increase_order/'.$action['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
                                         }else{
-                                            echo anchor('action/increase_order/'.$action['_id'], 'Push Down', array('class'=>'push_down', 'alt'=>$action['_id']));
+                                            echo anchor('action/increase_order/'.$action['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
                                         }
                                         ?>
                                         <?php if($client_id){
-                                            echo anchor('action/decrease_order/'.$action['action_id'], 'Push Up', array('class'=>'push_up', 'alt'=>$action['action_id']));
+                                            echo anchor('action/decrease_order/'.$action['action_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
                                         }else{
-                                            echo anchor('action/decrease_order/'.$action['_id'], 'Push Up', array('class'=>'push_up', 'alt'=>$action['_id']));
+                                            echo anchor('action/decrease_order/'.$action['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
                                         }
                                         ?>
                                         </td>   

@@ -143,7 +143,7 @@ class Action extends MY_Controller
                     $this->Action_model->editActionToClient($action_id, $data);
                 }
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('action', 'refresh');
             }
         }
