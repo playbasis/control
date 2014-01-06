@@ -195,4 +195,35 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('badge_id',  new MongoID($badge_id));
         $this->mongo_db->delete('playbasis_badge_to_client');
     }
+
+    public function increaseOrderByOne($badge_id){
+        $this->mongo_db->where('_id', new MongoID($badge_id));
+        $badge = $this->mongo_db->get('playbasis_badge');
+
+        $currentOrder = $badge[0]['sort_order'];
+        $newOrder = $currentOrder + 1;
+
+        $this->mongo_db->where('_id', new MongoID($badge_id));
+        $this->mongo_db->set('sort_order', $newOrder);
+        $this->mongo_db->update('playbasis_badge');
+
+    }
+
+    public function decreaseOrderByOne($badge_id){
+        $this->mongo_db->where('_id', new MongoID($badge_id));
+        $badge = $this->mongo_db->get('playbasis_badge');
+
+        $currentOrder = $badge[0]['sort_order'];
+
+        if($currentOrder != 0){
+            $newOrder = $currentOrder - 1;
+
+            $this->mongo_db->where('_id', new MongoID($badge_id));
+            $this->mongo_db->set('sort_order', $newOrder);
+            $this->mongo_db->update('playbasis_badge');    
+        }
+        
+    }
+
+
 }

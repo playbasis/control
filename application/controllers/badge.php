@@ -272,6 +272,138 @@ class Badge extends MY_Controller
 //        $this->render_page('badge');
     }
 
+    public function getListForAjax($offset) {
+
+        $per_page = 10;
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('badge/page');
+
+
+        $this->load->model('Badge_model');
+        $this->load->model('Image_model');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $setting_group_id = $this->User_model->getAdminGroupID();
+
+        $this->data['badges'] = array();
+        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $slot_total = 0;
+        $this->data['slots'] = $slot_total;
+
+        if ($this->User_model->getUserGroupId() == $setting_group_id) {
+
+            $data['limit'] = $per_page;
+            $data['start'] = $offset;
+
+            $results = $this->Badge_model->getBadges($data);
+
+            $badge_total = $this->Badge_model->getTotalBadges($data);
+
+            foreach ($results as $result) {
+
+                if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
+                    $image = $this->Image_model->resize($result['image'], 50, 50);
+                } else {
+                    $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                }
+
+                $this->data['badges'][] = array(
+                    'badge_id' => $result['_id'],
+                    'name' => $result['name'],
+                    'hint' => $result['hint'],
+                    'quantity' => $result['quantity'],
+                    'status' => $result['status'],
+                    'image' => $image,
+                    'sort_order'  => $result['sort_order'],
+                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
+                );
+            }
+        }
+        else {
+
+            $this->load->model('Reward_model');
+
+            $badges = $this->Badge_model->getBadgeBySiteId($site_id, $per_page, $offset);
+
+            $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
+
+            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($site_id);
+
+            if ($reward_limit_data) {
+
+                $slot_total = $reward_limit_data[0]['limit'] - $badge_total;
+
+                $this->data['slots'] = $slot_total;
+                $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+
+                foreach ($badges as $badge) {
+
+                    $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
+
+                    if($badge_info){
+
+                        if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $image = $this->Image_model->resize($badge_info['image'], 50, 50);
+                        }
+                        else {
+                            $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                        }
+
+                        $this->data['badges'][] = array(
+                            'badge_id' => $badge_info['_id'],
+                            'name' => $badge_info['name'],
+                            'hint' => $badge_info['hint'],
+                            'quantity' => $badge_info['quantity'],
+                            'status' => $badge_info['status'],
+                            'image' => $image,
+                            'sort_order'  => $badge_info['sort_order'],
+                            'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
+                        );
+
+                    }
+                }
+
+            }
+
+        }
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
+
+        $config['total_rows'] = $badge_total;
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+
+        $this->data['main'] = 'badge';
+        $this->data['setting_group_id'] = $setting_group_id;
+
+        $this->load->vars($this->data);
+        // $this->render_page('template');
+//        $this->render_page('badge');
+
+        $this->render_page('badge_ajax');
+    }
+
     private function getForm($badge_id=null) {
 
         $this->load->model('Image_model');
@@ -461,14 +593,22 @@ class Badge extends MY_Controller
 
         $this->Badge_model->increaseOrderByOne($badge_id);
 
-        redirect('badge', 'refresh');
+        $json = array('success'=>'Okay!');
+
+        $this->output->set_output(json_encode($json));
+
+        // redirect('badge', 'refresh');
 
     }
 
     public function decrease_order($badge_id){
         $this->Badge_model->decreaseOrderByOne($badge_id);
 
-        redirect('badge', 'refresh');
+        $json = array('success'=>'Okay!');
+
+        $this->output->set_output(json_encode($json));
+
+        // redirect('badge', 'refresh');
     }
 
 }
