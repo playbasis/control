@@ -130,9 +130,6 @@
                         <td class="center" colspan="2"><?php echo $this->lang->line('text_no_results'); ?></td>
                     </tr>
                         <?php } ?>
-                    <tr>
-                        <td class="center" colspan="2">&nbsp;</td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
