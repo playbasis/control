@@ -81,7 +81,6 @@ class Badge extends MY_Controller
                 redirect('/badge/insert', 'refresh');
             }
         }
-
         $this->getForm();
     }
 

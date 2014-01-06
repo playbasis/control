@@ -10,7 +10,7 @@ $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
-$lang['text_reach_limit_badge']			= 'You have already reached the limit of creating badges, please contact Playbasis';
+$lang['text_reach_limit_badge']			= 'You have reached the limit of creating badges, please contact Playbasis';
 $lang['text_no_results']				= 'You do not have any badges created';
 
 // Tab
