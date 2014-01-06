@@ -167,6 +167,7 @@ class Badge extends MY_Controller
 
             $data['limit'] = $per_page;
             $data['start'] = $offset;
+            $data['sort'] = 'sort_order';
 
             $results = $this->Badge_model->getBadges($data);
 
@@ -297,6 +298,7 @@ class Badge extends MY_Controller
 
             $data['limit'] = $per_page;
             $data['start'] = $offset;
+            $data['sort'] = 'sort_order';
 
             $results = $this->Badge_model->getBadges($data);
 

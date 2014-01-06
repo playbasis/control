@@ -12,6 +12,7 @@ class Badge_model extends MY_Model
     }
 
     public function getBadges($data = array()) {
+
         $this->set_site_mongodb(0);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
@@ -82,6 +83,26 @@ class Badge_model extends MY_Model
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('site_id',  new MongoID($site_id));
+
+        $sort_data = array(
+            '_id',
+            'name',
+            'status',
+            'sort_order'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
 
         if ($limit || $offset) {
             if ($offset < 0) {
