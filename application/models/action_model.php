@@ -398,7 +398,7 @@ class Action_model extends MY_Model
             'param_name' => 'url',
              'label' => 'URL or filter String',
              'placeholder' => '',
-             'sortOrder' => $data['sort'],
+             'sortOrder' => $data['sort_order'],
              'field_type' => 'text',
              'value' => ''
             );
@@ -406,7 +406,7 @@ class Action_model extends MY_Model
             'param_name' => 'regex',
              'label' => 'Regex',
              'placeholder' => '',
-             'sortOrder' => $data['sort'],
+             'sortOrder' => $data['sort_order'],
              'field_type' => 'boolean',
              'value' => false
             );
@@ -422,7 +422,7 @@ class Action_model extends MY_Model
                 'icon'=>$data['icon'],
                 'color'=>$data['color'],
                 'init_dataset'=>$init_dataset,
-                'sort_order'=>(int)$data['sort'],
+                'sort_order'=>(int)$data['sort_order'],
                 'status'=>(bool)$data['status'],
                 'date_added'=>$date_added,
                 'date_modified'=>$date_modified
