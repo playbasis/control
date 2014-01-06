@@ -140,6 +140,7 @@ class Action extends MY_Controller
                     $this->Action_model->editActionToClient($action_id, $data);
                 }else{
                     $this->Action_model->editAction($action_id, $data);
+                    $this->Action_model->editActionToClient($action_id, $data);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
@@ -167,7 +168,7 @@ class Action extends MY_Controller
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
                 foreach ($this->input->post('selected') as $action_id) {
-                    $this->Action_model->delete($action_id);
+                    $this->Action_model->deleteActionClient($action_id);
                 }
             }else{
                 foreach ($this->input->post('selected') as $action_id) {

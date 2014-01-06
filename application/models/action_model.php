@@ -425,7 +425,8 @@ class Action_model extends MY_Model
                 'sort_order'=>(int)$data['sort_order'],
                 'status'=>(bool)$data['status'],
                 'date_added'=>$date_added,
-                'date_modified'=>$date_modified
+                'date_modified'=>$date_modified,
+                'is_custom' => true
             );
 
         return $this->mongo_db->insert('playbasis_action_to_client', $data_insert);
@@ -437,7 +438,12 @@ class Action_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($action_id));
         $this->mongo_db->delete('playbasis_action');
 
-        $this->mongo_db->where('action_id', new MongoID($action_id));
+    }
+
+    public function deleteActionClient($action_id){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id', new MongoId($action_id));
         $this->mongo_db->delete('playbasis_action_to_client');
     }
 
