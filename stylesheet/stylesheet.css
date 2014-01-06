@@ -397,7 +397,7 @@ table.form > tbody > tr > td {
 .scrollbox {
 	border: 1px solid #CCCCCC;
 	width: 350px;
-	height: 100px;
+	height: 175px;
 	background: #FFFFFF;
 	overflow-y: scroll;
 }
