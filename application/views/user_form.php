@@ -58,7 +58,7 @@
                                     <?php if(!$this->session->userdata('client_id')){?>
                                         <?php if($user_groups){?>
                                             <?php foreach($user_groups as $user_group){?>
-                                                <?php if(isset($user['user_group_id']) && ($user['user_group_id']==$user_group['_id'])){?>
+                                                <?php if((isset($user['user_group_id']) && $user['user_group_id']==$user_group['_id'])|| $user_group['_id'] == set_value('user_group')){?>
                                                     <option value = "<?php echo $user_group['_id'];?>" selected><?php echo $user_group['name'];?></option>    
                                                 <?php }else{?>
                                                     <option value = "<?php echo $user_group['_id'];?>"><?php echo $user_group['name'];?></option>
@@ -94,7 +94,7 @@
                                 <td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?></td>
                                 <td>
                                     <select name ="status">
-                                        <?php if($user['status']){?>
+                                        <?php if($user['status']||set_value('status')==1){?>
                                             <option value = 1>Enabled</option>
                                             <option value = 0>Disabled</option>
                                         <?php }else{ ?>
