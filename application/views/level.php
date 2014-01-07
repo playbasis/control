@@ -31,7 +31,6 @@
                         <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_exp'); ?></td>
                         <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
-                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_sort_order'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -48,7 +47,6 @@
                             <td class="left"><?php echo $level['title']; ?></td>
                             <td class="right"><?php echo $level['exp']; ?></td>
                             <td class="left"><?php echo $level['status']; ?></td>
-                            <td class="right"><?php echo $level['sort_order']; ?></td>
                             <td class="right">
                                 [ <?php echo anchor('level/update/'.$level['level_id'], 'Edit'); ?> ]
                              </td>
