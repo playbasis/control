@@ -1,7 +1,7 @@
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
-            <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
+            <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title_user; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'user'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
@@ -40,19 +40,19 @@
                                 <td><input type="text" name="username" size="100" value="<?php //echo isset($user['username']) ? $user['username'] :  set_value('username'); ?>" /></td>
                             </tr>-->
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_email'); ?></td>
-                                <td><input type="email" name="email" size="100" value="<?php echo isset($user['email']) ? $user['email'] :  set_value('email'); ?>" /></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_email'); ?>:</td>
+                                <td><input type="email" name="email" size="100" value="<?php echo isset($user['email']) ? $user['email'] :  set_value('email'); ?>" class="tooltips" data-placement="right" title="Email address is used to log into the system"/></td>
                             </tr>
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_firstname'); ?></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_firstname'); ?>:</td>
                                 <td><input type="text" name="firstname" size="100" value="<?php echo isset($user['firstname']) ? $user['firstname'] :  set_value('firstname'); ?>" /></td>
                             </tr>
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_lastname'); ?></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_lastname'); ?>:</td>
                                 <td><input type="text" name="lastname" size="100" value="<?php echo isset($user['lastname']) ? $user['lastname'] :  set_value('lastname'); ?>" /></td>
                             </tr>
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_user_group'); ?></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_user_group'); ?>:</td>
                                 <td>
                                     <select name ="user_group">
                                     <?php if(!$this->session->userdata('client_id')){?>
@@ -82,16 +82,16 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_password'); ?></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_password'); ?>:</td>
                                 <td><input type="password" name="password" size="100" /></td>
                             </tr>
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_confirm_password'); ?></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_confirm_password'); ?>:</td>
                                 <td><input type="password" name="confirm_password" size="100" /></td>
                             </tr>
                             <?php if(!$this->session->userdata('client_id')){?>
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?>:</td>
                                 <td>
                                     <select name ="status">
                                         <?php if($user['status']||set_value('status')==1){?>

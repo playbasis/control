@@ -1,6 +1,6 @@
 <?php
 // Heading
-$lang['heading_title']          = 'Client';
+$lang['heading_title']          = 'Clients';
 $lang['title']          = 'Client';
 
 //Text
@@ -47,8 +47,8 @@ $lang['column_tab_friend']						= 'Friend';
 $lang['entry_firstname']           				= 'Firstname';
 $lang['entry_lastname']           				= 'Lastname';
 $lang['entry_email']           					= 'Email';
-$lang['entry_mobile']           				= 'Mobile:';
-$lang['entry_image']           					= 'Image';
+$lang['entry_mobile']           				= 'Contact No.';
+$lang['entry_image']           					= 'Company Image';
 $lang['entry_sort_order']           			= 'Sort Order';
 $lang['entry_status']           				= 'Status';
 $lang['entry_address_firstname']        		= 'Firstname';
@@ -67,7 +67,7 @@ $lang['entry_username']						= 'Username:';
 $lang['entry_password']						= 'Password';
 $lang['entry_password_confirm']						= 'Confirm Password';
 $lang['entry_new_password']					= 'New Password';
-$lang['entry_group']							= 'Group';
+$lang['entry_group']							= 'User Group';
 
 $lang['entry_domain_name']						= 'Domain';
 $lang['entry_site_name']						= 'Site';
@@ -76,7 +76,7 @@ $lang['entry_secret']							= 'API Secret';
 $lang['entry_start_date']						= 'Start Date';
 $lang['entry_expire_date']						= 'Expire Date';
 $lang['limit_users']						    = 'Limit Users';
-$lang['entry_plan']								= 'Plan';
+$lang['entry_plan']								= 'Plan Setting';
 
 // Button
 $lang['button_filter']							= 'Filter';
@@ -88,11 +88,11 @@ $lang['entry_domain']					= 'Domain';
 $lang['text_no_domain']				= 'No domain found!!';
 $lang['column_domain_no'] 				= 'No.';
 $lang['column_domain_name'] 			= 'Domain';
-$lang['column_domain_plan'] 			= 'Package';
+$lang['column_domain_plan'] 			= 'Plan Setting';
 $lang['column_domain_status'] 			= 'Status';
 $lang['column_domain_modified'] 		= 'Date Modified.';
-$lang['column_domain_date_start']      = 'Date Start';
-$lang['column_domain_date_expire']     = 'Date Expire';
+$lang['column_domain_date_start']      = 'Start Date';
+$lang['column_domain_date_expire']     = 'Expire Date';
 $lang['column_domain_limit_users']     = 'Limit Users';
 
 // User

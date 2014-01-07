@@ -31,7 +31,7 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         
         $this->getList(0);
@@ -53,7 +53,7 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         
         $this->getList($offset);
@@ -132,7 +132,7 @@ class User extends MY_Controller
     public function update($user_id){
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user/update/'.$user_id;
 
@@ -182,7 +182,7 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user/insert/';
 
@@ -288,7 +288,7 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->error['warning'] = null;
@@ -497,7 +497,7 @@ class User extends MY_Controller
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'login';
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
 
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -520,7 +520,7 @@ class User extends MY_Controller
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+        $this->data['heading_title_user_register'] = $this->lang->line('heading_title_user_register');
         $this->data['form'] = 'user/register';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
 

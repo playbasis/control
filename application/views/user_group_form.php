@@ -31,11 +31,11 @@
 		
 				<table class = "form">
 					<tr>
-						<td><span class="required">*</span> <?php echo $this->lang->line('form_usergroup_name'); ?></td>
+						<td><span class="required">*</span> <?php echo $this->lang->line('form_usergroup_name'); ?>:</td>
 						<td><input type ="text" name = "usergroup_name" size = "100" value = "<?php echo isset($user_group_info['name'])? $user_group_info['name'] : set_value('usergroup_name') ?>" /></td>
 					</tr>
 					<tr>
-						<td><span class="required">*</span> <?php echo $this->lang->line('form_access_permission'); ?></td>
+						<td><span class="required">*</span> <?php echo $this->lang->line('form_access_permission'); ?>:</td>
 						<td>
 							<div class="scrollbox">
 								<?php if(isset($temp_features) && (isset($all_features))){?>
@@ -99,7 +99,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><span class="required">*</span> <?php echo $this->lang->line('form_modify_permission'); ?></td>
+						<td><span class="required">*</span> <?php echo $this->lang->line('form_modify_permission'); ?>:</td>
 						<td>
 							<div class = "scrollbox">
 								<?php if(isset($temp_features) && (isset($all_features))){?>

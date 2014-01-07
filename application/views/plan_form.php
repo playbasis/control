@@ -11,7 +11,6 @@
     <div class="content">
         <div id="tabs" class="htabs">
             <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
-            <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>
             <a href="#tab-feature"><?php echo $this->lang->line('tab_feature'); ?></a>
             <a href="#tab-reward"><?php echo $this->lang->line('tab_reward'); ?></a>
             <a href="#tab-jigsaw"><?php echo $this->lang->line('tab_jigsaw'); ?></a>
@@ -40,20 +39,16 @@
             <div id="tab-general">
                 <table class="form">
                     <tr>
-                        <td><?php echo $this->lang->line('entry_name'); ?></td>
+                        <td><?php echo $this->lang->line('entry_name'); ?>:</td>
                         <td><input type="text" name="name" value="<?php echo $name; ?>" size="50" /></td>
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('entry_description'); ?></td>
+                        <td><?php echo $this->lang->line('entry_description'); ?>:</td>
                         <td><textarea rows='7' name="description"><?php echo $description; ?></textarea></td>
                         <!-- <td><input type="text" name="description" value="<?php //echo $description; ?>" size="50" /></td> -->
                     </tr>
-                </table>
-            </div>
-            <div id="tab-data">
-                <table class="form">
                     <tr>
-                        <td><?php echo $this->lang->line('entry_status'); ?></td>
+                        <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                         <td><select name="status">
                             <?php if ($status) { ?>
                             <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -64,19 +59,14 @@
                             <?php } ?>
                         </select></td>
                     </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('entry_sort_order'); ?></td>
-                        <td><input type="text" name="sort_order" value="<?php echo $sort_order; ?>" size="1" /></td>
-                    </tr>
                 </table>
             </div>
-
             <div id="tab-feature">
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'feature_data\']').attr('checked', this.checked);" /></td>
+                        <td class="left"><?php echo $this->lang->line('column_name_feature'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -109,7 +99,7 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_name_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -138,8 +128,8 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'jigsaw_data\']').attr('checked', this.checked);" /></td>
+                        <td class="left"><?php echo $this->lang->line('column_name_jigsaw'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -152,7 +142,7 @@
                                 <?php } else { ?>
                                 <input type="checkbox" name="jigsaw_data[]" value="<?php echo $jigsaw['jigsaw_id']; ?>" />
                                 <?php } ?></td>
-                            <td class="left"><?php echo $jigsaw['name']; ?></td>
+                            <td class="left"><?php echo ucfirst($jigsaw['name']); ?></td>
                         </tr>
                             <?php } ?>
                         <?php } else { ?>
@@ -171,7 +161,7 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_name_reward'); ?></td>
                         <td class="left" style="width: 150px;"><?php echo $this->lang->line('column_limit'); ?></td>
                     </tr>
                     </thead>
@@ -179,9 +169,24 @@
                     <?php if ($plan_rewards) { ?>
                         <?php foreach ($plan_rewards as $reward) { ?>
                         <tr>
-                            <td class="left"><?php echo $reward['name']; ?></td>
+                            <td class="left"><?php echo ucfirst($reward['name']); ?></td>
                             <td class="left">
-                                <input type="text" name="reward_data[<?php echo $reward['reward_id']; ?>][limit]" value="<?php echo $reward['limit']; ?>" style="width:50px;" />
+                                <input type="text" 
+                                        name="reward_data[<?php echo $reward['reward_id']; ?>][limit]" 
+                                        value="<?php echo $reward['limit']; ?>" 
+                                        style="width:50px;" 
+                                        class="tooltips" 
+                                        data-placement="left" 
+                                        title="Maximum number of 
+                                        <?php 
+                                            switch ($reward['name']){ 
+                                                case "badge": echo $reward['name'].'s'; 
+                                                break; 
+                                                case "exp": echo $reward['name'].'s'; 
+                                                break; 
+                                                case "point": echo $reward['name'].'s'; 
+                                                break;
+                                        }?> . If left blank, it is considered unlimited"/>
                                 <input type="hidden" name="reward_data[<?php echo $reward['reward_id']; ?>][reward_id]" value="<?php echo $reward['reward_id']; ?>" />
                             </td>
                         </tr>
