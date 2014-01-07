@@ -58,6 +58,8 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
+        $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -115,8 +117,11 @@ class Action extends MY_Controller
         $this->data['form'] = 'action/update/'.$action_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
+        $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
