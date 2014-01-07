@@ -192,6 +192,14 @@ body > #container {
 	-khtml-border-radius: 5px 5px 5px 5px;
 	border-radius: 5px 5px 5px 5px;
 }
+
+.warning-limit-user {
+	padding: 10px 10px 10px 33px;
+	margin-bottom: 0px;
+	background: #FFD1D1 url('../image/warning.png') 10px center no-repeat;
+	border: 1px solid #F8ACAC;
+	color: #555555;
+}
 .attention {
 	padding: 10px 10px 10px 33px;
 	margin-bottom: 15px;

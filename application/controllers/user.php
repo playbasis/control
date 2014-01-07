@@ -19,6 +19,7 @@ class User extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("user", $lang['folder']);
+        $this->lang->load("login", $lang['folder']);
 
     }
 
@@ -461,9 +462,9 @@ class User extends MY_Controller
             $this->session->set_userdata('redirect', $this->input->get('back'));
         }
 
-        $this->form_validation->set_rules('username', $this->lang->line('username'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('username', $this->lang->line('entry_username'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         // $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('password', $this->lang->line('password'), 'trim|required');
+        $this->form_validation->set_rules('password', $this->lang->line('entry_password'), 'trim|required');
 
         $lang = get_lang($this->session, $this->config);
 

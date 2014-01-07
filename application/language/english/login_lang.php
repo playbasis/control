@@ -10,8 +10,8 @@ $lang['text_register']	= "Register New Account";
 $lang['text_forgot_password']	= "Forgot Password";
 
 // Entry
-$lang['entry_username'] = 'Email:';
-$lang['entry_password'] = 'Password:';
+$lang['entry_username'] = 'Email';
+$lang['entry_password'] = 'Password';
 
 // Button
 $lang['button_login']   = 'Login';

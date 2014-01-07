@@ -37,16 +37,16 @@
                 <div id="tab-general">
                         <table class="form">
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?></td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?>:</td>
                                 <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" />
                                 </td>
                             </tr>
                             <tr>
-                                <td><?php echo $this->lang->line('entry_hint'); ?></td>
+                                <td><?php echo $this->lang->line('entry_hint'); ?>:</td>
                                 <td><textarea name="hint" cols="40" rows="5"><?php echo isset($hint) ? $hint : set_value('hint'); ?></textarea></td>
                             </tr>
                             <tr>
-                                <td><?php echo $this->lang->line('entry_description'); ?></td>
+                                <td><?php echo $this->lang->line('entry_description'); ?>:</td>
                                 <td><textarea name="description" id="description"><?php echo isset($description) ? $description : set_value('description'); ?></textarea></td>
                             </tr>
                         </table>
@@ -55,19 +55,20 @@
                 <div id="tab-data">
                     <table class="form">
                         <tr>
-                            <td><?php echo $this->lang->line('entry_image'); ?></td>
+                            <td><?php echo $this->lang->line('entry_image'); ?>:</td>
                             <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" />
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
                                 <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_quantity'); ?></td>
+                            <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_stackable'); ?></td>
+                            <td><?php echo $this->lang->line('entry_stackable'); ?>:</td>
                             <td><select name="stackable">
-                                <?php if ($stackable) { ?>
+                                <?php if ($stackable || set_value('stackable')==1) { ?>
+                                <?php //if (set_value('stackable')==1) { ?>
                                 <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
                                 <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
                                 <?php } else { ?>
@@ -77,7 +78,7 @@
                             </select></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_substract'); ?></td>
+                            <td><?php echo $this->lang->line('entry_substract'); ?>:</td>
                             <td><select name="substract">
                                 <?php if ($substract) { ?>
                                 <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -89,7 +90,7 @@
                             </select></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_sort_order'); ?></td>
+                            <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>

@@ -128,9 +128,12 @@
 <body>
 
 <?php
+
+// $check_limit['total'] = 10;
+// $check_limit['limit_user'] = 10;
 if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit['total'] > ((int)$check_limit['limit_user'] * 0.95)){
     ?>
-<div class="message-error">You currently have <?php echo $check_limit['total']; ?> users registered out of your plan's limit of <?php echo $check_limit['limit_user']; ?> users.
+<div class="warning-limit-user">You currently have <?php echo $check_limit['total']; ?> users registered out of your plan's limit of <?php echo $check_limit['limit_user']; ?> users.
     To avoid losing new users, please contact us to upgrade your plan.</div>
     <?php
 };
