@@ -121,8 +121,14 @@
                                 <select name="user_group">
                                     <option value="" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($groups) { ?>
-                                    <?php foreach ($groups as $group) { ?>
-                                        <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
+                                        <?php foreach ($groups as $group) { ?>
+                                            <?php if($this->session->userdata('client_id')){?>
+                                                <?php if($group['name']=='User'||$group['name']=='Admin'){?> 
+                                                    <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
+                                                <?php }?>
+                                            <?php }else{?>
+                                                <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
+                                            <?php }?>
                                         <?php } ?>
                                     <?php } ?>
                                 </select>
