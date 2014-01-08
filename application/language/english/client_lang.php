@@ -48,7 +48,7 @@ $lang['entry_firstname']           				= 'Firstname';
 $lang['entry_lastname']           				= 'Lastname';
 $lang['entry_email']           					= 'Email';
 $lang['entry_mobile']           				= 'Contact No.';
-$lang['entry_image']           					= 'Company Image';
+$lang['entry_image']           					= 'Client Image';
 $lang['entry_sort_order']           			= 'Sort Order';
 $lang['entry_status']           				= 'Status';
 $lang['entry_address_firstname']        		= 'Firstname';
@@ -61,7 +61,7 @@ $lang['entry_address_fax']           			= 'Fax';
 $lang['entry_facebook']							= 'Facebook';
 $lang['entry_twitter']							= 'Twitter';
 $lang['entry_google']							= 'Google+';
-$lang['entry_company_name']						= 'Company Name';
+$lang['entry_company_name']						= 'Client Name';
 
 $lang['entry_username']						= 'Username:';
 $lang['entry_password']						= 'Password';
