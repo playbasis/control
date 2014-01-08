@@ -112,7 +112,7 @@
                                 <?php } else { ?>
                                 <input type="checkbox" name="action_data[]" value="<?php echo $action['action_id']; ?>" />
                                 <?php } ?></td>
-                            <td class="left"><?php echo $action['name']; ?></td>
+                            <td class="left"><?php echo ucfirst($action['name']); ?></td>
                         </tr>
                             <?php } ?>
                         <?php } else { ?>
