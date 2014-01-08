@@ -234,30 +234,27 @@
 <!-- start sort well -->
 <div class="well clearfix">
 
-
-    <button class='btn submit_filter_btn btn-primary'><i class='fa-icon-th'></i> &nbsp;View Users</button>
-
     <div class="common-filter">
-        <span>Sort by: </span>
+        <span>Search : </span>
 
-        <div class="btn-group" data-toggle="buttons-radio" data-option-key="sortBy">
-            <button type="button" class="btn options btn-small" data-option-value="level">Level</button>
-            <button type="button" class="btn options btn-small" data-option-value="point">Point</button>
-            <button type="button" class="btn options btn-small" data-option-value="name">Name</button>
-        </div>
+        <input type="text" name="filter_name" value="" style="width:50%;" class="ui-autocomplete-input" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
 
-        <div class="btn-group" data-toggle="buttons-radio" data-option-key="sortAscending">
-            <button type="button" class="btn options active btn-small" data-option-value="true">Low-High</button>
-            <button type="button" class="btn options btn-small" data-option-value="false">High-Low</button>
-        </div>
+        <span>Sort by : </span>
 
-        <div class="btn-group" data-toggle="buttons-radio" data-option-key="filter">
-            <button type="button" class="btn options btn-small" data-option-value="0">Unknow</button>
-            <button type="button" class="btn options btn-small" data-option-value="1">Male</button>
-            <button type="button" class="btn options btn-small" data-option-value="2">Female</button>
-            <button type="button" class="btn options active btn-small" data-option-value="*">All</button>
+        <input type="button" class="btn active" value="None" />
+        <input type="button" class="btn" value="Level" />
+        <input type="button" class="btn" value="Point" />
+        <input type="button" class="btn" value="Name" />
+
+        <span>Order by : </span>
+
+        <div data-option-key="sortBy" data-toggle="buttons-radio" class="btn-group">
+            <input type="button" class="btn" value="Low-High" />
+            <input type="button" class="btn" value="High-Low" />
         </div>
     </div>
+
+    <button class='btn submit_filter_btn btn-primary'><i class='fa-icon-th'></i> &nbsp;View Users</button>
 
     <div class="pull-right paginator" style="margin-top:3px; display:none;">
         <span id="current_result">1-100</span>

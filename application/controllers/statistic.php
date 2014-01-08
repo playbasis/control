@@ -184,7 +184,8 @@ class Statistic extends CI_Controller
             foreach ($results as $result) {
                 $actions = array();
 
-                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']['pb_player_id']);
+//                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']['pb_player_id']);
+                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']);
 //                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
 
                 if ($player_action) {
@@ -198,7 +199,8 @@ class Statistic extends CI_Controller
                     }
                 }
 
-                $data_player = array('pb_player_id' => $result['_id']['pb_player_id']);
+//                $data_player = array('pb_player_id' => $result['_id']['pb_player_id']);
+                $data_player = array('pb_player_id' => $result['_id']);
                 $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
 
                 $badges = array();
@@ -232,7 +234,8 @@ class Statistic extends CI_Controller
                 }
 
                 $players[] = array(
-                    'pb_player_id' => $result['_id']['pb_player_id'],
+//                    'pb_player_id' => $result['_id']['pb_player_id'],
+                    'pb_player_id' => $result['_id'],
                     'firstname' => $result['first_name'],
                     'lastname' => $result['last_name'],
                     'nickname' => $result['nickname'],
