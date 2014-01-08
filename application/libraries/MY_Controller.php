@@ -140,14 +140,27 @@ class  MY_Controller  extends  CI_Controller  {
 
                 $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
                 //var_dump($features);
+
+                
                 foreach ($features as $value) {
-                    $this->data['features'][] = array(
-                        'feature_id' => $value['_id'],
-                        'name' => $value['name'],
-                        'icon' => $value['icon'],
-                        'link' =>$value['link']
-                    );
+                    if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['name']))))){
+                        $this->data['features'][] = array(
+                            'feature_id' => $value['_id'],
+                            'name' => $value['name'],
+                            'icon' => $value['icon'],
+                            'link' =>$value['link']
+                        );
+                    }                        
                 }
+
+                // foreach ($features as $value) {
+                //     $this->data['features'][] = array(
+                //         'feature_id' => $value['_id'],
+                //         'name' => $value['name'],
+                //         'icon' => $value['icon'],
+                //         'link' =>$value['link']
+                //     );
+                // }
             }else{
                 if($this->data['client_id']){
                     $this->data['check_domain_exists'] = false;
