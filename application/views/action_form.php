@@ -37,7 +37,7 @@
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?></td>
             				<td>
             					<select name = 'status'>
-            					<?php if($action['status']){?>
+            					<?php if($action['status'] || set_value('status')){?>
             						<option selected='selected' value="1">Enabled</option>
             						<option value="0">Disabled</option>
             					<?php }else{?>
@@ -58,7 +58,7 @@
             						<?php if(isset($icons)){?>
             							<?php for($i = 0 ; $i<count($icons); $i++){?>
             								<div class="<?php if($i%2==0){echo 'even';}else{echo 'odd';}?>">
-            									<input type="radio" <?php if($icons[$i]==$action['icon']){echo "checked = 'checked'";}?> name="icon" value="<?php echo $icons[$i];?>"> <i style="color:grey" class="<?php echo $icons[$i];?> icon-large"></i> <?php echo ucfirst(substr($icons[$i], 8));?>
+            									<input type="radio" <?php if($icons[$i]==$action['icon'] || $icons[$i]==set_value('icon')){echo "checked = 'checked'";}?> name="icon" value="<?php echo $icons[$i];?>"> <i style="color:grey" class="<?php echo $icons[$i];?> icon-large"></i> <?php echo ucfirst(substr($icons[$i], 8));?>
             								</div>
             							<?php }?>
             						<?php }?>
@@ -72,7 +72,7 @@
             						<?php if(isset($colors)){?>
             							<?php for($i=0; $i<count($colors);$i++){?>
             								<div class="<?php if($i%2==0){echo 'even';}else{echo 'odd';}?>">
-            									<input type="radio" name="color" <?php if($colors[$i]==$action['color']){echo "checked = 'checked'";}?> value="<?php echo $colors[$i];?>"> <span class="<?php echo $colors[$i];?>"><?php echo ucfirst($colors[$i]);?></span>		
+            									<input type="radio" name="color" <?php if($colors[$i]==$action['color'] || $colors[$i]==set_value('color')){echo "checked = 'checked'";}?> value="<?php echo $colors[$i];?>"> <span class="<?php echo $colors[$i];?>"><?php echo ucfirst($colors[$i]);?></span>		
             								</div>
             							<?php }?>
             						<?php }?>

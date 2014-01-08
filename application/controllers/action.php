@@ -57,7 +57,9 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -115,8 +117,11 @@ class Action extends MY_Controller
         $this->data['form'] = 'action/update/'.$action_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
+        $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
@@ -140,9 +145,10 @@ class Action extends MY_Controller
                     $this->Action_model->editActionToClient($action_id, $data);
                 }else{
                     $this->Action_model->editAction($action_id, $data);
+                    $this->Action_model->editActionToClient($action_id, $data);
                 }
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('action', 'refresh');
             }
         }
@@ -167,7 +173,7 @@ class Action extends MY_Controller
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
                 foreach ($this->input->post('selected') as $action_id) {
-                    $this->Action_model->delete($action_id);
+                    $this->Action_model->deleteActionClient($action_id);
                 }
             }else{
                 foreach ($this->input->post('selected') as $action_id) {
@@ -196,7 +202,8 @@ class Action extends MY_Controller
                 'limit' => $config['per_page'],
                 'start' => $offset,
                 'client_id'=>$client_id,
-                'site_id'=>$site_id
+                'site_id'=>$site_id,
+                'sort'=>'sort_order'
             );
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
@@ -232,7 +239,8 @@ class Action extends MY_Controller
                 'limit' => $config['per_page'],
                 'start' => $offset,
                 'client_id'=>$client_id,
-                'site_id'=>$site_id
+                'site_id'=>$site_id,
+                'sort'=>'sort_order'
             );
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
@@ -363,7 +371,14 @@ class Action extends MY_Controller
 
     public function increase_order($action_id){
 
-        $this->Action_model->increaseOrderByOne($action_id);
+        if($this->User_model->getClientId()){
+            $client_id = $this->User_model->getClientId();
+            $this->Action_model->increaseOrderByOneClient($action_id, $client_id);
+        }else{
+            $this->Action_model->increaseOrderByOne($action_id);    
+        }
+
+        // redirect('action', 'refresh');
 
         $json = array('success'=>'Okay!');
 
@@ -371,9 +386,21 @@ class Action extends MY_Controller
 
     }
 
+
+
     public function decrease_order($action_id){
-        $this->Action_model->decreaseOrderByOne($action_id);
-        redirect('action', 'refresh');
+
+        if($this->User_model->getClientId()){
+            $client_id = $this->User_model->getClientId();
+            $this->Action_model->decreaseOrderByOneClient($action_id, $client_id);
+        }else{
+            $this->Action_model->decreaseOrderByOne($action_id);    
+        }
+        // redirect('action', 'refresh');
+
+        $json = array('success'=>'Okay!');
+
+        $this->output->set_output(json_encode($json));
     }
 
     

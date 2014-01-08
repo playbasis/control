@@ -33,7 +33,7 @@
 
                     <table class="form">
                         <tr>
-                            <td><?php echo $this->lang->line('entry_name'); ?></td>
+                            <td><?php echo $this->lang->line('entry_name'); ?>:</td>
                             <td><input type="text" name="level_title" value="<?php echo isset($level_title) ? $level_title :  set_value('level_title'); ?>" size="50" /></td>
                         </tr>
                     </table>
@@ -42,27 +42,27 @@
                 <div id="tab-data">
                     <table class="form">
                         <tr>
-                            <td><?php echo $this->lang->line('entry_image'); ?></td>
+                            <td><?php echo $this->lang->line('entry_image'); ?>:</td>
                             <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" />
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
                                 <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span><?php echo $this->lang->line('entry_exp'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_exp'); ?>:</td>
                             <td><input type="text" name="exp" value="<?php echo isset($exp) ? $exp : set_value('exp'); ?>"  /></td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span><?php echo $this->lang->line('entry_level'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_level'); ?>:</td>
                             <td><input type="text" name="level" value="<?php echo isset($level) ? $level : set_value('level'); ?>"  /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_sort_order'); ?></td>
+                            <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_status'); ?></td>
+                            <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td><select name="status">
-                                <?php if ($status) { ?>
+                                <?php if ($status || $status != set_value('status')) { ?>
                                 <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
                                 <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
                                 <?php } else { ?>

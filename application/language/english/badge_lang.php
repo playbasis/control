@@ -10,6 +10,8 @@ $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
+$lang['text_reach_limit_badge']			= 'You have reached the limit of creating badges, please contact Playbasis';
+$lang['text_no_results']				= 'You do not have any badges created';
 
 // Tab
 $lang['tab_colection']					= 'Collection';
@@ -24,17 +26,17 @@ $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 
 // Entry
-$lang['entry_name']             		= 'Name:';
-$lang['entry_description']				= 'Description:';
-$lang['entry_hint']					= 'Hint:';
-$lang['entry_sort_order']           	= 'Sort Order:';
-$lang['entry_parent']           		= 'Parent:';
-$lang['entry_collection']         		= 'Collection:';
-$lang['entry_stackable']        	   	= 'Stackable:';
-$lang['entry_quantity']           		= 'Quantity:';
-$lang['entry_substract']           	= 'Substract:';
-$lang['entry_status']         			= 'Status:';
-$lang['entry_image']          			= 'Image:';
+$lang['entry_name']             		= 'Name';
+$lang['entry_description']				= 'Description';
+$lang['entry_hint']						= 'Hint';
+$lang['entry_sort_order']           	= 'Sort Order';
+$lang['entry_parent']           		= 'Parent';
+$lang['entry_collection']         		= 'Collection';
+$lang['entry_stackable']        	   	= 'Stackable';
+$lang['entry_quantity']           		= 'Quantity';
+$lang['entry_substract']           		= 'Substract';
+$lang['entry_status']         			= 'Status';
+$lang['entry_image']          			= 'Image';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';

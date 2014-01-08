@@ -303,7 +303,6 @@ class Plan_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('status', (bool)$data['status']);
-        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
         if (isset($data['feature_data'])) {

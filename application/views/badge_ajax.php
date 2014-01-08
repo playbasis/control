@@ -1,32 +1,4 @@
-<div id="content" class="span10">
-    <?php if ($error_warning) { ?>
-    <div class="warning"><?php echo $error_warning; ?></div>
-    <?php } ?>
-    <?php if ($success) { ?>
-    <div class="success"><?php echo $success; ?></div>
-    <?php } ?>
-    <div class="box">
-        <div class="heading">
-            <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
-            <?php
-            if($user_group_id != $setting_group_id){
-            ?>
-            <div class="buttons">
-                <button class="btn btn-info" onclick="location = baseUrlPath+'badge/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
-                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
-            </div>
-            <?php
-            }
-            ?>
-        </div>
-        <div class="content">
-            <?php if($this->session->flashdata('success')){ ?>
-                <div class="content messages half-width">
-                <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
-                </div>
-            <?php }?>
-            <div id="actions">
-                <?php
+<?php
                 $attributes = array('id' => 'form');
                 echo form_open('badge/delete',$attributes);
                 ?>
@@ -58,7 +30,7 @@
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
                                 <td class="right">
                                     [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
-                                    <?php if($client_id){?>
+                                   <?php if($client_id){?>
                                         <?php echo anchor('badge/increase_order/'.$badge['badge_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none'));?>
                                         <?php echo anchor('badge/decrease_order/'.$badge['badge_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none' ));?>
                                     <?php }?>
@@ -74,48 +46,3 @@
                     </table>
                 <?php
                 echo form_close();?>
-            </div><!-- #actions -->
-                <?php
-                    if($pagination_links != ''){
-                        echo $pagination_links;
-                    }
-                ?>
-        </div>
-    </div>
-</div>
-
-<script type="text/javascript">
-
-$('.push_down').live("click", function(){
-
-    $.ajax({
-        url : baseUrlPath+'badge/increase_order/'+ $(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        console.log("Testing");
-        $('#actions').load(baseUrlPath+'badge/getListForAjax/0');
-    });
-
-
-  return false;
-
-});
-</script>
-
-
-<script type="text/javascript">
-$('.push_up').live("click", function(){
-    $.ajax({
-        url : baseUrlPath+'badge/decrease_order/'+ $(this).attr('alt'),
-        dataType: "json"
-    }).done(function(data) {
-        console.log("Testing");
-        $('#actions').load(baseUrlPath+'badge/getListForAjax/0');
-    });
-
-
-  return false;
-});
-
-</script>
-

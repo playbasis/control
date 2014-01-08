@@ -45,22 +45,22 @@
                     <table class="form">
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_company_name'); ?>:</td>
-                            <td><input type="text" name="company" value="<?php echo $company; ?>" size="50" /></td>
+                            <td><input type="text" name="company" value="<?php echo $company; ?>" size="50" class="tooltips" data-placement="right" title="Please provide the company name in full (example: Playbasis Pte. Ltd.)"/></td>
                         </tr>
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_firstname'); ?>:</td>
-                            <td><input type="text" name="first_name" value="<?php echo $first_name; ?>" size="50" /></td>
+                            <td><input type="text" name="first_name" value="<?php echo $first_name; ?>" size="50" class="tooltips" data-placement="right" title="Firstname of main contact person of the company"/></td>
                         </tr>
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_lastname'); ?>:</td>
-                            <td><input type="text" name="last_name" value="<?php echo $last_name; ?>" size="50" /></td>
+                            <td><input type="text" name="last_name" value="<?php echo $last_name; ?>" size="50" class="tooltips" data-placement="right" title="Lastname of main contact person of the company"/></td>
                         </tr>
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_email'); ?>:</td>
-                            <td><input type="text" name="email" value="<?php echo $email; ?>"size="50"  /></td>
+                            <td><input type="text" name="email" value="<?php echo $email; ?>"size="50" class="tooltips" data-placement="right" title="Email address of main contact person of the company" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_mobile'); ?></td>
+                            <td><?php echo $this->lang->line('entry_mobile'); ?>:</td>
                             <td><input type="text" name="mobile" value="<?php echo $mobile; ?>" size="50" /></td>
                         </tr>
                     </table>
@@ -68,13 +68,13 @@
                 <div id="tab-data">
                     <table class="form">
                         <tr>
-                            <td><?php echo $this->lang->line('entry_image'); ?></td>
+                            <td><?php echo $this->lang->line('entry_image'); ?>:</td>
                             <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" />
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
                                 <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $no_image; ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_status'); ?></td>
+                            <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td><select name="status">
                                 <?php if ($status) { ?>
                                 <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -92,23 +92,23 @@
                 <div id="tab-user">
                     <table class="form">
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_email'); ?></td>
-                            <td><input type="text" name="user_email" value="" size="50" /></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_email'); ?>:</td>
+                            <td><input type="text" name="user_email" value="" size="50" class="tooltips" data-placement="right" title="Email address is used to log into the system"/></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password'); ?>:</td>
                             <td><input type="password" name="user_password" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password_confirm'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_password_confirm'); ?>:</td>
                             <td><input type="password" name="user_password_confirm" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_firstname'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_firstname'); ?>:</td>
                             <td><input type="text" name="user_firstname" value="" size="50" /></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_lastname'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_lastname'); ?>:</td>
                             <td><input type="text" name="user_lastname" value="" size="50" /></td>
                         </tr>
                         <!-- <tr>
@@ -116,20 +116,26 @@
                             <td><input type="text" name="user_username" value="" size="50" /></td>
                         </tr> -->
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_group'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_group'); ?>:</td>
                             <td>
                                 <select name="user_group">
                                     <option value="" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
                                     <?php if ($groups) { ?>
-                                    <?php foreach ($groups as $group) { ?>
-                                        <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
+                                        <?php foreach ($groups as $group) { ?>
+                                            <?php if($this->session->userdata('client_id')){?>
+                                                <?php if($group['name']=='User'||$group['name']=='Admin'){?> 
+                                                    <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
+                                                <?php }?>
+                                            <?php }else{?>
+                                                <option value="<?php echo $group['_id']; ?>"><?php echo $group['name']; ?></option>
+                                            <?php }?>
                                         <?php } ?>
                                     <?php } ?>
                                 </select>
                             </td>
                         </tr>
                         <tr>
-                            <td><span class="require">*</span> <?php echo $this->lang->line('entry_status'); ?></td>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td>
                                 <select name="user_status">
                                     <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -155,11 +161,11 @@
                     <table class="form">
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_domain_name'); ?>:</td>
-                            <td><input type="text" name="domain_name" value="" size="50" /></td>
+                            <td><input type="text" name="domain_name" value="" size="50" class="tooltips" data-placement="right" title="Client's domain name (example: www.playbasis.com)"/></td>
                         </tr>
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_site_name'); ?>:</td>
-                            <td><input type="text" name="domain_site_name" value="" size="50" /></td>
+                            <td><input type="text" name="domain_site_name" value="" size="50" class="tooltips" data-placement="right" title="Client's site name (example: Playbasis)"/></td>
                         </tr>
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_start_date'); ?>:</td>
@@ -171,7 +177,7 @@
                         </tr>
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('limit_users'); ?>:</td>
-                            <td><input type="text" name="limit_users" value="" size="50" /></td>
+                            <td><input type="text" name="limit_users" value="" size="50" class="tooltips" data-placement="right" title="Number of users that the client can create"/></td>
                         </tr>
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_plan'); ?>:</td>

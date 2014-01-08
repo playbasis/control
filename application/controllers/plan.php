@@ -56,7 +56,28 @@ class Plan extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'plan/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+
+        // var_dump($this->input->post('reward_data'));
+
+        // $check_rewards = false;
+        // foreach ($this->input->post('reward_data') as $data){
+        //     if ($data['limit']!=""){
+        //         $check_rewards = true;
+        //     }
+        // }
+        
+        // $rewards = $this->Plan_model->getRewards(array());
+
+        // foreach($rewards as $reward){
+        //     $this->form_validation->set_rules('reward_data['.$reward['_id'].'][limit]',ucfirst($reward['name']) , 'xss_clean|is_numeric');
+        // }
+        // if($check_rewards){
+            // $this->form_validation->set_rules('reward_data['limit']', $this->lang->line('entry_reward'), 'numeric|xss_clean');
+        // }
+
+
+        
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -66,12 +87,20 @@ class Plan extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
+            foreach($this->input->post('reward_data') as $reward){
+                if(!is_numeric($reward['limit']) && $reward['limit']!=null){
+                    $this->data['message'] = "Please provide only numeric characters in the Rewards";
+                    break;
+                }
+            }
+
             if($this->form_validation->run() && $this->data['message'] == null){
                 $this->Plan_model->addPlan($this->input->post());
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
                 redirect('/plan', 'refresh');
+
             }
         }
 

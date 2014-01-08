@@ -1,6 +1,6 @@
 <?php
 // Heading
-$lang['heading_title']          				= 'Plan';
+$lang['heading_title']          				= 'Plan Setting';
 
 // Text
 $lang['text_success']           				= 'You have successfully created a plan!';
@@ -16,14 +16,17 @@ $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure yo
 
 
 // Tab
-$lang['tab_reward']							= 'Reward';
-$lang['tab_jigsaw'] 							= 'Jigsaw';
-$lang['tab_feature'] 							= 'Feature';
-$lang['tab_action'] 							= 'Action';
+$lang['tab_reward']								= 'Rewards';
+$lang['tab_jigsaw'] 							= 'Jigsaws';
+$lang['tab_feature'] 							= 'Features';
+$lang['tab_action'] 							= 'Actions';
 
 
 // Column
-$lang['column_name']            				= 'Name';
+$lang['column_name_action']            			= 'Actions';
+$lang['column_name_feature']					= 'Features';
+$lang['column_name_reward']						= 'Rewards';
+$lang['column_name_jigsaw']						= 'Jigsaws';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_limit']            				= 'Limit';
@@ -32,11 +35,12 @@ $lang['column_description']						= 'Description';
 
 
 // Entry
-$lang['entry_name']           					= 'Name:';
-$lang['entry_description']           			= 'Description:';
-$lang['entry_image']           				= 'Image:';
-$lang['entry_sort_order']           			= 'Sort Order:';
-$lang['entry_status']           				= 'Status:';
+$lang['entry_name']           					= 'Plan Setting Name';
+$lang['entry_description']           			= 'Description';
+$lang['entry_image']           					= 'Image';
+$lang['entry_sort_order']           			= 'Sort Order';
+$lang['entry_status']           				= 'Status';
+$lang['entry_reward']           				= 'Reward data';
 
 
 // Domain

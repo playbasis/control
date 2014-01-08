@@ -29,14 +29,14 @@ $lang['column_badge_name'] 		= 'Badge';
 $lang['tab_reward']				= 'Reward';
 
 // Entry
-$lang['entry_name']           		= 'Title:';
-$lang['entry_image']				= 'Point:';
-$lang['entry_exp']					= 'Exp:';
-$lang['entry_status']				= 'Status:';
-$lang['entry_sort_order']			= 'Sort Order:';
-$lang['entry_level']				= 'Level:';
-$lang['entry_badge']				= 'Badge:';
-$lang['entry_collection']			= 'Collection:';
+$lang['entry_name']           		= 'Title';
+$lang['entry_image']				= 'Point';
+$lang['entry_exp']					= 'Exp';
+$lang['entry_status']				= 'Status';
+$lang['entry_sort_order']			= 'Sort Order';
+$lang['entry_level']				= 'Level';
+$lang['entry_badge']				= 'Badge';
+$lang['entry_collection']			= 'Collection';
 
 // Error 
 $lang['error_warning']          = 'Warning: Please check the form carefully for errors!';

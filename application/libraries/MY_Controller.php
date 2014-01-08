@@ -111,7 +111,7 @@ class  MY_Controller  extends  CI_Controller  {
         $this->data['site_id'] = $this->User_model->getSiteId();
         $this->data['domain'] = '';
         $this->data['domain_name'] = '';
-
+        $this->data['check_domain_exists'] = true;
         $features = array();
 
         if($this->session->userdata('user_id')){
@@ -126,28 +126,58 @@ class  MY_Controller  extends  CI_Controller  {
 
                 $temp = array('client_id'=>$this->data['client_id']);
                 
-                $this->data['domain_all'] = $this->Domain_model->getDomainsByClientId($temp);
+                // $this->data['domain_all'] = $this->Domain_model->getDomainsByClientId($temp);
+                $allDomains = $this->Domain_model->getDomainsByClientId($temp);
+                $activeDomains = array();
+
+                foreach ($allDomains as $aDomain){
+                    if($aDomain['status']){
+                        $activeDomains[] = $aDomain;    
+                    }
+                }
+                $this->data['domain_all'] = $activeDomains;
                 // var_dump($this->data['domain_all']);
+
                 $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
                 //var_dump($features);
+                foreach ($features as $value) {
+                    $this->data['features'][] = array(
+                        'feature_id' => $value['_id'],
+                        'name' => $value['name'],
+                        'icon' => $value['icon'],
+                        'link' =>$value['link']
+                    );
+                }
             }else{
+                $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
+                if($this->data['client_id']&&$this->data['domain']==null){
+                    $this->data['check_domain_exists'] = false;
+                }else{
+                    $features = $this->Feature_model->getFeatures();    
+                    foreach ($features as $value) {
+                        $this->data['features'][] = array(
+                            'feature_id' => $value['_id'],
+                            'name' => $value['name'],
+                            'icon' => $value['icon'],
+                            'link' =>$value['link']
+                        );
+                    }
+                }
+
                 // super admin
-                $features = $this->Feature_model->getFeatures();
+                
                 //var_dump($features);
             }
         }
 
-        foreach ($features as $value) {
-            $this->data['features'][] = array(
-                'feature_id' => $value['_id'],
-                'name' => $value['name'],
-                'icon' => $value['icon'],
-                'link' =>$value['link']
-            );
+        if ($this->data['check_domain_exists']){
+            $this->load->vars($this->data);
+            $this->load->view($view);
+        }else{
+            $this->load->vars($this->data);
+            $this->load->view('no_domain');
         }
-
-        $this->load->vars($this->data);
-        $this->load->view($view);
+        
     }
 
 }

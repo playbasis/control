@@ -19,6 +19,7 @@ class User extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("user", $lang['folder']);
+        $this->lang->load("login", $lang['folder']);
 
     }
 
@@ -30,7 +31,7 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         
         $this->getList(0);
@@ -52,7 +53,7 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         
         $this->getList($offset);
@@ -131,20 +132,22 @@ class User extends MY_Controller
     public function update($user_id){
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user/update/'.$user_id;
 
         //Rules need to be set
 
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         if($this->input->post('password')!=''){
             $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space');
             $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         }
+        $this->form_validation->set_rules('user_group', "", '');
+        $this->form_validation->set_rules('status', "", '');
         
         if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
@@ -179,17 +182,20 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'user/insert/';
 
         //Rules need to be set
         // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[255]|xss_clean|check_space|required');
         $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('user_group', "", '');
+        $this->form_validation->set_rules('status', "", '');
+
 
 
 
@@ -282,7 +288,7 @@ class User extends MY_Controller
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->error['warning'] = null;
@@ -456,9 +462,9 @@ class User extends MY_Controller
             $this->session->set_userdata('redirect', $this->input->get('back'));
         }
 
-        $this->form_validation->set_rules('username', $this->lang->line('username'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('username', $this->lang->line('entry_username'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         // $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('password', $this->lang->line('password'), 'trim|required');
+        $this->form_validation->set_rules('password', $this->lang->line('entry_password'), 'trim|required');
 
         $lang = get_lang($this->session, $this->config);
 
@@ -491,7 +497,7 @@ class User extends MY_Controller
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'login';
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
 
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -514,7 +520,7 @@ class User extends MY_Controller
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
+        $this->data['heading_title_user_register'] = $this->lang->line('heading_title_user_register');
         $this->data['form'] = 'user/register';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
 

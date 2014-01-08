@@ -122,3 +122,11 @@
     ga('create', 'UA-39586205-1', 'pbapp.net');
     ga('send', 'pageview');
 </script>
+
+<script type="text/javascript">
+
+$(function(){
+    $('.tooltips').tooltip();    
+});
+
+</script>

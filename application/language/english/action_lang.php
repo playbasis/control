@@ -4,6 +4,7 @@ $lang['heading_title']          				= 'Action';
 
 // Text
 $lang['text_success']           				= 'You have successfully added an action!';
+$lang['text_success_update']           				= 'You have successfully updated an action!';
 $lang['text_success_delete']           			= 'You have successfully delete action(s)!';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';

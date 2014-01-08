@@ -605,5 +605,11 @@ class User_model extends MY_Model
 
     }
 
+    public function disableUser($user_id){
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('status', false);
+        $this->mongo_db->update('user');
+    }
+
 }
 ?>

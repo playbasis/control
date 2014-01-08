@@ -1,7 +1,7 @@
 <?php
 
 // Heading
-$lang['heading_title']          				= 'User';
+$lang['heading_title_user']          			= 'Users';
 $lang['heading_title_register']					= 'Register New User';
 $lang['heading_forgot_password']				= 'Forgot Password';
 $lang['title']          						= 'Users';

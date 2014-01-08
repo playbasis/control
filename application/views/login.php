@@ -31,13 +31,13 @@
                         <td style="text-align: center;" rowspan="4"><img src="<?php echo base_url();?>image/login.png" alt="<?php echo $this->lang->line('text_login'); ?>" /></td>
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('entry_username'); ?><br />
+                        <td><?php echo $this->lang->line('entry_username'); ?>:<br />
                             <?php
                             echo form_input($udata);
                             ?>
                             <br />
                             <br />
-                            <?php echo $this->lang->line('entry_password'); ?><br />
+                            <?php echo $this->lang->line('entry_password'); ?>:<br />
                             <?php
                             echo form_password($pdata);
                             ?>
@@ -75,3 +75,6 @@ $('#form input').keydown(function(e) {
     }
 });
 //--></script>
+
+
+
