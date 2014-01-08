@@ -24,6 +24,7 @@ foreach($players as $p){
 	$collection_summary = $db -> playbasis_summary_of_player_beta;
 	
 	$item = array(
+				'_id' => new MongoId($p['_id']),
 				'client_id' => new MongoId($p['client_id']),
 				'site_id' => new MongoId($p['site_id']),
 				'cl_player_id' => $p['cl_player_id']
@@ -129,11 +130,13 @@ foreach($players as $p){
 	$p['value'] = $action + $reward;
 	
 	$item = array(
+				'_id' => new MongoId($p['_id']),
 				'client_id' => new MongoId($p['client_id']),
 				'site_id' => new MongoId($p['site_id']),
 				'cl_player_id' => $p['cl_player_id']
   				);	
 	$set = array(
+				'_id' => new MongoId($p['_id']),
 				'client_id' => new MongoId($p['client_id']),
 				'site_id' => new MongoId($p['site_id']),
 				'cl_player_id' => $p['cl_player_id'],
