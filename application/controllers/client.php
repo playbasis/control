@@ -104,6 +104,14 @@ class Client extends MY_Controller
 
                 $this->Client_model->editClient($client_id, $this->input->post());
 
+                if($this->input->post('status')==false){
+                    $data = array('client_id'=>$client_id);
+                    $results = $this->User_model->getUserByClientId($data);
+                    foreach($results as $result){
+                        $user_id = $result['user_id'];
+                        $this->User_model->disableUser($user_id);
+                    }    
+                }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
 
                 redirect('/client', 'refresh');
@@ -137,7 +145,7 @@ class Client extends MY_Controller
                     $results = $this->User_model->getUserByClientId($data);
                     foreach($results as $result){
                         $user_id = $result['user_id'];
-                        $this->User_model->disableUser($user_id);
+                        $this->User_model->deleteUser($user_id);
                     }
                 }
             }
