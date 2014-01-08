@@ -149,8 +149,7 @@ class  MY_Controller  extends  CI_Controller  {
                     );
                 }
             }else{
-                $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
-                if($this->data['client_id']&&$this->data['domain']==null){
+                if($this->data['client_id']){
                     $this->data['check_domain_exists'] = false;
                 }else{
                     $features = $this->Feature_model->getFeatures();    
