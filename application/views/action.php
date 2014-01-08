@@ -48,7 +48,7 @@
                                         <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" />
                                         <?php } ?></td>
                                     <td class="left"><?php echo "<i style='color:grey' class='".$action['icon']." icon-4x'></i>"; ?></td>
-                                    <td class="left"><?php echo $action['name']; ?></td>
+                                    <td class="right"><?php echo ucfirst($action['name']); ?></td>
                                     <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
                                     <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
                                     <td class="right"><?php echo $action['sort_order'];?></td>
