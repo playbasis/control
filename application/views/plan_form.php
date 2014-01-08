@@ -180,13 +180,13 @@
                                         title="Maximum number of 
                                         <?php 
                                             switch ($reward['name']){ 
-                                                case "badge": echo $reward['name'].'s'; 
+                                                case "badge": echo ucfirst($reward['name']).'s'; 
                                                 break; 
-                                                case "exp": echo $reward['name'].'s'; 
+                                                case "exp": echo ucfirst($reward['name']).'s'; 
                                                 break; 
-                                                case "point": echo $reward['name'].'s'; 
+                                                case "point": echo ucfirst($reward['name']).'s'; 
                                                 break;
-                                        }?> . If left blank, it is considered unlimited"/>
+                                        }?>. if left blank, it is considered unlimited"/>
                                 <input type="hidden" name="reward_data[<?php echo $reward['reward_id']; ?>][reward_id]" value="<?php echo $reward['reward_id']; ?>" />
                             </td>
                         </tr>
