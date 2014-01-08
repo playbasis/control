@@ -26,15 +26,15 @@
             	<div id="tab-general">
             		<table class="form">
             			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_action_name'); ?></td>
+            				<td><span class="required">*</span> <?php echo $this->lang->line('form_action_name'); ?>:</td>
             				<td><input type="text" name="name" size="100" value="<?php echo isset($action['name']) ? $action['name'] :  set_value('name'); ?>" /></td>
             			</tr>
             			<tr>
-            				<td><?php echo $this->lang->line('form_description'); ?></td>
+            				<td><?php echo $this->lang->line('form_description'); ?>:</td>
             				<td><textarea name ="description" rows="4"><?php echo isset($action['description']) ? $action['description'] :  set_value('description'); ?></textarea>
             			</tr>
             			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?></td>
+            				<td><span class="required">*</span> <?php echo $this->lang->line('form_status'); ?>:</td>
             				<td>
             					<select name = 'status'>
             					<?php if($action['status'] || set_value('status')){?>
@@ -48,11 +48,11 @@
             				</td>
             			</tr>
             			<tr>
-                            <td><?php echo $this->lang->line('form_sort'); ?></td>
+                            <td><?php echo $this->lang->line('form_sort'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($action['sort_order']) ? $action['sort_order'] : set_value('sort_order'); ?>" size="1" /></td>
             			</tr>
             			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_icon'); ?> <i style="color: grey" class="<?php echo $action['icon']?> icon-4x"></i> <?php //echo substr($action['icon'], 8);?></td>
+            				<td><span class="required">*</span> <?php echo $this->lang->line('form_icon'); ?>: <i style="color: grey" class="<?php echo $action['icon']?> icon-4x"></i> <?php //echo substr($action['icon'], 8);?></td>
             				<td>
             					<div class="scrollbox" style="height: 200px">
             						<?php if(isset($icons)){?>
@@ -66,7 +66,7 @@
             				</td>
             			</tr>
             			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_color'); ?> </td>
+            				<td><span class="required">*</span> <?php echo $this->lang->line('form_color'); ?>:</td>
             				<td>
             					<div class="scrollbox">
             						<?php if(isset($colors)){?>
