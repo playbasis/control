@@ -596,7 +596,7 @@ class Player_model extends MY_Model
         return $result;
     }
 
-    public function getIsotopePlayer($data) {
+    /*public function getIsotopePlayer($data) {
 
         $this->set_site_mongodb(0);
 
@@ -692,18 +692,125 @@ class Player_model extends MY_Model
 
         return $output;
 
+    }*/
+
+    public function getIsotopePlayer($data) {
+
+        $this->set_site_mongodb(0);
+
+        $res = $this->filterMongoPlayer($data);
+
+        if(isset($res['action_id_value'])){
+            $this->mongo_db->where($res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $this->mongo_db->where($res['action_value']);
+        }
+        if(isset($res['reward_id_value'])){
+            $this->mongo_db->where($res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $this->mongo_db->where($res['reward_value']);
+        }
+        if(isset($res['level_value'])){
+            $this->mongo_db->where($res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $this->mongo_db->where($res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $this->mongo_db->where($res['gender_value']);
+        }
+        /*if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $this->mongo_db->where($show_level);
+        }*/
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+
+        if (isset($data['order'])) {
+            if (strtolower($data['order']) == 'desc') {
+                $order = -1;
+            }else{
+                $order = 1;
+            }
+        }else{
+            $order = 1;
+        }
+
+        $sort_data = array(
+            'first_name',
+            'exp',
+            'level',
+            'status'
+        );
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        }else{
+            $this->mongo_db->order_by(array('level' => $order));
+        }
+
+        if (!empty($data['start']) || !empty($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 100;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
+        $results =  $this->mongo_db->get('playbasis_summary_of_player_beta');
+
+        $output['result'] = $results;
+        $output['total'] = $this->getIsotopeTotalPlayer($data);;
+
+        return $output;
+
     }
 
-//    public function getIsotopeTotalPlayer($data = array()) {
-//
-//        $this->set_site_mongodb(0);
-//
-//        $res = $this->filterMongoPlayer($data);
-//
-//        $result = $this->mongoQueryPlayer($data, $res);
-//
-//        return count($result);
-//    }
+    public function getIsotopeTotalPlayer($data = array()) {
+
+        $this->set_site_mongodb(0);
+
+        $res = $this->filterMongoPlayer($data);
+
+        if(isset($res['action_id_value'])){
+            $this->mongo_db->where($res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $this->mongo_db->where($res['action_value']);
+        }
+        if(isset($res['reward_id_value'])){
+            $this->mongo_db->where($res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $this->mongo_db->where($res['reward_value']);
+        }
+        if(isset($res['level_value'])){
+            $this->mongo_db->where($res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $this->mongo_db->where($res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $this->mongo_db->where($res['gender_value']);
+        }
+        /*if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $this->mongo_db->where($show_level);
+        }*/
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+
+        return $this->mongo_db->count('playbasis_summary_of_player_beta');
+    }
 
     public function getActionsByPlayerId($pb_player_id) {
 
@@ -895,12 +1002,12 @@ class Player_model extends MY_Model
                             $level_pos = strrpos($filter['value'], '-');
 
                             if ($level_pos === false) {
-                                $res['level_value'] =  array('value.level' => (int)$filter['value']);
+                                $res['level_value'] =  array('level' => (int)$filter['value']);
                             } else {
                                 $level_explode = explode('-', $filter['value']);
                                 $level_explode = $this->check_array($level_explode);
 
-                                $res['level_value'] =  array('value.level' => array('$gte' => (int)$level_explode[0], '$lte' => (int)$level_explode[1]));
+                                $res['level_value'] =  array('level' => array('$gte' => (int)$level_explode[0], '$lte' => (int)$level_explode[1]));
                             };
                         }
                         break;
@@ -908,21 +1015,21 @@ class Player_model extends MY_Model
                         $exp_pos = strrpos($filter['value'], '-');
 
                         if ($exp_pos === false) {
-                            $res['exp_value'] =  array('value.exp' => (int)$filter['value']);
+                            $res['exp_value'] =  array('exp' => (int)$filter['value']);
                         } else {
                             $exp_explode = explode('-', $filter['value']);
                             $exp_explode = $this->check_array($exp_explode);
 
-                            $res['exp_value'] =  array('value.exp' => array('$gte' => (int)$exp_explode[0], '$lte' => (int)$exp_explode[1]));
+                            $res['exp_value'] =  array('exp' => array('$gte' => (int)$exp_explode[0], '$lte' => (int)$exp_explode[1]));
                         };
 
                         break;
                     case 'gender':
                         if (isset($filter['value'])) {
                             if ($filter['value']=='Male') {
-                                $res['gender_value'] = array('value.gender' => 1);
+                                $res['gender_value'] = array('gender' => 1);
                             } else if ($filter['value']=='Female') {
-                                $res['gender_value'] = array('value.gender' => 2);
+                                $res['gender_value'] = array('gender' => 2);
                             };
                         }
                         break;
@@ -930,21 +1037,21 @@ class Player_model extends MY_Model
                         $action_pos = strrpos($filter['value'], '-');
 
                         if ($action_pos === false) {
-                            $res['gender_value'] =  array('value.gender' => (int)$filter['value']);
+                            $res['gender_value'] =  array('gender' => (int)$filter['value']);
                         } else {
                             $gender_explode = explode('-', $filter['value']);
                             $gender_explode = $this->check_array($gender_explode);
 
-                            $res['gender_value'] =  array('value.gender' => array('$gte' => (int)$gender_explode[0], '$lte' => (int)$gender_explode[1]));
+                            $res['gender_value'] =  array('gender' => array('$gte' => (int)$gender_explode[0], '$lte' => (int)$gender_explode[1]));
                         };
 
                         break;
                     case 'gender_value':
                         if (isset($filter['value'])) {
                             if ($filter['value']=='m') {
-                                $res['gender_value'] = array('value.gender' => 1);
+                                $res['gender_value'] = array('gender' => 1);
                             } else if ($filter['value']=='f') {
-                                $res['gender_value'] = array('value.gender' => 2);
+                                $res['gender_value'] = array('gender' => 2);
                             };
                         }
                         break;
