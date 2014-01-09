@@ -70,7 +70,7 @@ $lang['entry_new_password']					= 'New Password';
 $lang['entry_group']							= 'User Group';
 
 $lang['entry_domain_name']						= 'Domain';
-$lang['entry_site_name']						= 'Site';
+$lang['entry_site_name']						= 'Site Name';
 $lang['entry_key']								= 'API Keys';
 $lang['entry_secret']							= 'API Secret';
 $lang['entry_start_date']						= 'Start Date';

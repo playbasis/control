@@ -30,7 +30,7 @@
 					<table class="form">
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_email');?>: </td>
-							<td><input type = "text" name="email" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['email'];}?>"></td>
+							<td><input type = "text" name="email" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['email'];}?>" class="tooltips" data-placement="right" title="Your Email address is used to log into the system"></td>
 						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_password');?>: </td>
@@ -55,11 +55,11 @@
 						</tr>-->
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_domain');?>:</td>
-							<td><input type = "text" name="domain_name" size="50" value = "<?php if(isset($temp_fields)){echo $temp_fields['domain_name'];}?>"></td>
+							<td><input type = "text" name="domain_name" size="50" value = "<?php if(isset($temp_fields)){echo $temp_fields['domain_name'];}?>" class="tooltips" data-placement="right" title="Your domain name (example: www.playbasis.com)"></td>
 						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_site');?>:</td>
-							<td><input type = "text" name="site_name" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['site_name'];}?>"></td>
+							<td><input type = "text" name="site_name" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['site_name'];}?>" class="tooltips" data-placement="right" title="Your Site name (example: Playbasis)"></td>
 						</tr>
 					</table>
 				</div>
