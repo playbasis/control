@@ -520,7 +520,7 @@ class User extends MY_Controller
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title_user_register'] = $this->lang->line('heading_title_user_register');
+        $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
         $this->data['form'] = 'user/register';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
 
