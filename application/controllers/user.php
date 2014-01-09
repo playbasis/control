@@ -537,11 +537,13 @@ class User extends MY_Controller
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             if($this->form_validation->run()){
-                $user_id = $this->User_model->insertUser();
+                // $user_id = $this->User_model->insertUser();
                 $domain = $this->Domain_model->checkDomainExists($this->input->post());
 
-                if($user_id){
-                    if(!$domain){
+                // if($user_id){
+                if(!$domain){    
+                    // if(!$domain){
+                    if($user_id = $this->User_model->insertUser()){
                         $user_info = $this->User_model->getUserInfo($user_id);
 
                         $client_id = $this->Client_model->insertClient();//returns only client id
@@ -581,13 +583,21 @@ class User extends MY_Controller
                         $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
                         redirect('login', 'refresh');        
                     }else{
-                        $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
+                        // $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
+                        // redirect('register');
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
                         redirect('register');    
                     }
                     
                 }else{
-                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                    redirect('register');
+                    // $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    // redirect('register');
+                    $data = array('email' => $this->input->post('email'));
+                    if($this->User_model->findEmail($data)){
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    }
+                    $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
+                    redirect('register', 'refresh');   
                 }
 
                 
