@@ -59,12 +59,16 @@
 							<td><input type = "text" name="username" size="50" value ="<?php //if(isset($temp_fields)){echo $temp_fields['username'];}?>"></td>
 						</tr>-->
 						<tr>
+							<td><span class="required">*</span> <?php echo $this->lang->line('form_company_name');?>:</td>
+							<td><input type = "text" name="company_name" size="50" value = "<?php if(isset($temp_fields)){echo $temp_fields['company_name'];}?>" class="tooltips" data-placement="right" title="Please provide your company name in full (example: Playbasis Pte. Ltd.)"></td>			
+						</tr>
+						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_domain');?>:</td>
 							<td><input type = "text" name="domain_name" size="50" value = "<?php if(isset($temp_fields)){echo $temp_fields['domain_name'];}?>" class="tooltips" data-placement="right" title="Your domain name (example: www.playbasis.com)"></td>
 						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_site');?>:</td>
-							<td><input type = "text" name="site_name" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['site_name'];}?>" class="tooltips" data-placement="right" title="Your Site name (example: Playbasis)"></td>
+							<td><input type = "text" name="site_name" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['site_name'];}?>" class="tooltips" data-placement="right" title="Your Site name (example: Playbasis Official Website)"></td>
 						</tr>
 					</table>
 				</div>

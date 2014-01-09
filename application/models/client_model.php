@@ -409,7 +409,7 @@ class Client_model extends MY_Model
             'last_name'=>$data['lastname'],
             'mobile'=>'',
             'email'=>$data['email'],
-            'company'=>null,
+            'company'=>$data['company_name'],
             'image'=>isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status'=>true,
             'deleted'=>false,

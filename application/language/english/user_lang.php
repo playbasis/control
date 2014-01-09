@@ -54,6 +54,7 @@ $lang['form_domain']							="Domain";
 $lang['form_site']								="Site Name";
 $lang['form_logo_image']						="Company Logo Image";
 $lang['form_limit_users']						="Limit Users";
+$lang['form_company_name']						="Company Name";
 
 
 // Button
