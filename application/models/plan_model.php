@@ -253,13 +253,20 @@ class Plan_model extends MY_Model
     public function addPlan($data) {
         $this->set_site_mongodb(0);
 
+        if(isset($data['sort_order'])){
+            $sort_order = (int)$data['sort_order'];
+        }else{
+            $sort_order = 0;
+        }
+
         $dinsert = array(
             'name' => $data['name']|'' ,
             'description' => $data['description']|'',
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'status' => (bool)$data['status'],
-            'sort_order' => (int)$data['sort_order']|1
+            // 'sort_order' => (int)$data['sort_order']|1
+            'sort_order' => $sort_order
         );
         if (isset($data['feature_data'])) {
             $feature = array();
