@@ -76,9 +76,6 @@ class Plan extends MY_Controller
             // $this->form_validation->set_rules('reward_data['limit']', $this->lang->line('entry_reward'), 'numeric|xss_clean');
         // }
 
-
-        
-
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
             $this->data['message'] = null;
@@ -92,6 +89,12 @@ class Plan extends MY_Controller
                     $this->data['message'] = "Please provide only numeric characters in the Rewards";
                     break;
                 }
+            }
+
+            $plan_name = $this->input->post('name');
+
+            if($this->Plan_model->checkPlanExistsByName($plan_name)){
+                $this->data['message'] = "The Plan name provided already exists.";
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){

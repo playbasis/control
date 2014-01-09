@@ -372,5 +372,19 @@ class Plan_model extends MY_Model
         $results =  $this->mongo_db->get('playbasis_plan');
         return $results ? $results[0]['_id'] : null;
     }
+
+    public function checkPlanExistsByName($plan_name){
+        $this->mongo_db->select(array('name'));
+        $plan_names = $this->mongo_db->get('playbasis_plan');
+
+        foreach($plan_names as $plan){
+            if(trim(strtolower($plan['name'])) == strtolower($plan_name)){
+                return true;
+            }
+        }
+
+        return false;
+
+    }
 }
 ?>
