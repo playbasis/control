@@ -23,6 +23,7 @@ $lang['text_no_results']          = 'Result Not found.';
 $lang['text_success']           	= 'You have successfully created a user group!';
 $lang['text_success_update']        = 'You have successfully updated a user group!';
 $lang['text_success_delete']        = 'You have successfully deleted user group(s)!';
+$lang['text_fail_users_exists']		= 'The User group(s) are in use by a user, it cannot be deleted.';
 //$lang['text_default']           	= 'Default';
 //$lang['text_image_manager']     	= 'Image Manager';
 //$lang['text_browse']            	= 'Browse Files';

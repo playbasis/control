@@ -91,5 +91,9 @@ class User_group_model extends MY_model{
         return $results;
     }
 
+    public function checkUsersInUserGroup($user_group_id){
+    	$this->mongo_db->where('user_group_id', new MongoID($user_group_id));
+    	return $this->mongo_db->get('user');
+    }
 
 }

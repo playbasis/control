@@ -166,7 +166,15 @@ class User_group extends MY_Controller{
         $selectedUserGroups = $this->input->post('selected');
 
         foreach($selectedUserGroups as $selectedUserGroup){
-            $this->User_group_model->deleteUserGroup($selectedUserGroup);
+
+            $check = $this->User_group_model->checkUsersInUserGroup($selectedUserGroup);
+
+            if($check==null){
+                $this->User_group_model->deleteUserGroup($selectedUserGroup);
+            }else{
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail_users_exists'));
+                redirect('/user_group', 'refresh');
+            }
         }
         $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
         redirect('user_group/');

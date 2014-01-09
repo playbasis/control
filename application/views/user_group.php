@@ -24,6 +24,11 @@
                 <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
                 </div>
             <?php }?>
+            <?php if($this->session->flashdata('fail')){ ?>
+                <div class="content messages half-width">
+                <div class="warning"><?php echo $this->session->flashdata('fail'); ?></div>
+                </div>
+            <?php }?>
     		<?php
             $attributes = array('id' => 'form');
             echo form_open('user_group/delete',$attributes);
