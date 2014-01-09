@@ -581,7 +581,7 @@ class User extends MY_Controller
                         $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
                         redirect('login', 'refresh');        
                     }else{
-                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                        $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
                         redirect('register');    
                     }
                     

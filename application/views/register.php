@@ -12,6 +12,11 @@
                 <div class="warning"><?php echo $this->session->flashdata('fail'); ?></div>
                 </div>
             <?php }?>
+            <?php if($this->session->flashdata('fail_domain_exists')){ ?>
+                <div class="content messages half-width">
+                <div class="warning"><?php echo $this->session->flashdata('fail_domain_exists'); ?></div>
+                </div>
+            <?php }?>
 			<?php if(validation_errors() || isset($message)) {?>
                 <div class="content messages half-width">
                     <?php echo validation_errors('<div class="warning">','</div>');
