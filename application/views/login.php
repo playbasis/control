@@ -26,6 +26,11 @@
             $attributes = array('id' => 'form');
             echo form_open('login',$attributes);
             ?>
+            <?php if($this->session->flashdata('email_sent')){ ?>
+                <div class="content messages half-width">
+                <div class="success"><?php echo $this->session->flashdata('email_sent'); ?></div>
+                </div>
+            <?php }?>
                 <table style="width: 100%;">
                     <tr>
                         <td style="text-align: center;" rowspan="4"><img src="<?php echo base_url();?>image/login.png" alt="<?php echo $this->lang->line('text_login'); ?>" /></td>

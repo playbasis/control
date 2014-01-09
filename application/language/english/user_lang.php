@@ -30,6 +30,7 @@ $lang['text_clear']             				= 'Clear Image';
 //$lang['text_criteria']          				= 'Domain View';
 //$lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
 $lang['text_fail']								= 'The email was already created, please use another email!';
+$lang['text_email_sent']						= 'We have sent you an email, please click the link provided to activate your account.';
 $lang['text_edit_account']						= 'Edit Account';
 $lang['text_no_changes']						= 'No changes has been made!';
 

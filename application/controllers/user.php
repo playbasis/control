@@ -576,8 +576,10 @@ class User extends MY_Controller
                             $data['site_id'] = $site_id;
                             $this->Permission_model->addPlanToPermission($data);
 
-                        echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
-                        echo "<script>window.location.href = '".site_url()."';</script>";        
+                        // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
+                        // echo "<script>window.location.href = '".site_url()."';</script>";    
+                        $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
+                        redirect('login', 'refresh');        
                     }else{
                         $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
                         redirect('register');    
