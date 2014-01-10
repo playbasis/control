@@ -707,11 +707,10 @@ class User extends MY_Controller
                     $this->data['message'] = $this->lang->line('error_no_email');
                 }
             }
+        }else{
+            $this->data['main'] = 'forgot_password';
+            $this->render_page('template');       
         }
-
-        $this->data['main'] = 'forgot_password';
-        $this->render_page('template');   
-
     }
 
     public function reset_password(){
