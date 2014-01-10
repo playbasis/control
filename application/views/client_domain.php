@@ -84,7 +84,8 @@
         var site_id = siteId;
 
         $.ajax({
-            url: baseUrlPath+'domain/delete',
+            // url: baseUrlPath+'domain/delete',
+            url: baseUrlPath+'domain/deleteAjax',
             type: 'POST',
             dataType: 'json',
             data: ({'client_id' : client_id, 'site_id' : site_id}),

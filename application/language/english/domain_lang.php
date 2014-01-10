@@ -6,6 +6,7 @@ $lang['heading_title']          				= 'Domain';
 // $lang['text_success']           				= 'Success: You have modified clients!';
 $lang['text_success']           				= 'You have successfully reset the secret!';
 $lang['text_success_insert']					= 'You have successfully inserted a domain!';
+$lang['text_success_delete']					= 'You have successfully deleted a domain!';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';

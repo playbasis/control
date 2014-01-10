@@ -296,6 +296,30 @@ class Domain extends MY_Controller
         $this->getList(0);
     }
 
+    public function deleteAjax() {
+
+        $json = array();
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('site_id') && $this->error['warning'] == null) {
+
+            if($this->checkOwnerDomain($this->input->post('site_id'))){
+
+                $this->Domain_model->deleteDomain($this->input->post('site_id'));
+            }
+
+            $this->session->data['success'] = $this->lang->line('text_success_delete');
+
+            $json['success'] = $this->lang->line('text_success_delete');
+        }
+
+        $this->output->set_output(json_encode($json));
+    }
+
     private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'domain')) {
