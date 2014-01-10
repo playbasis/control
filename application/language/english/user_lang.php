@@ -14,6 +14,7 @@ $lang['error_name']             				= 'Category Name must be between 2 and 32 ch
 $lang['error_required']							= 'Warning: Please check required field!!';
 $lang['error_user']								= 'Error: Username not availble!!!';
 $lang['error_limit']          				    = 'Error You can create 10 users.';
+$lang['error_no_email']							= 'The Email provided was not found in our server, please make sure you have typed it correctly';
 
 //Text
 $lang['text_no_results']          				= 'Result Not found.';

@@ -703,7 +703,8 @@ class User extends MY_Controller
                     echo "<script>alert('A link has been sent to your email, please click on it and change your password.');</script>";
                     echo "<script>window.location.href = '".site_url()."';</script>";   
                 }else{
-                    echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
+                    // echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
+                    $this->data['message'] = $this->lang->line('error_no_email');
                 }
             }
         }
