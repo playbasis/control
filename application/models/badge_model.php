@@ -84,7 +84,7 @@ class Badge_model extends MY_Model
 
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
-        if ($data['limit'] || $data['offset']) {
+        if (isset($data['limit']) || isset($data['offset'])) {
             if ($data['offset'] < 0) {
                 $data['offset'] = 0;
             }

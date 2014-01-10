@@ -268,7 +268,7 @@ class Client_model extends MY_Model
 
         if ($plan_data['reward_to_plan']) {
             foreach ($plan_data['reward_to_plan'] as $reward) {
-                $limit = empty($reward['limit'])? "NULL": (int)$reward['limit'];
+                $limit = empty($reward['limit'])? null: (int)$reward['limit'];
 
                 $reward_data = $this->getReward($reward['reward_id']);
 

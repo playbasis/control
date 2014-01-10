@@ -550,15 +550,21 @@ class Badge extends MY_Controller
                     }
                 }
             }
-
-            if(isset($limit_badge) && $limit_badge <= $badges_count){
-                $error = $this->lang->line('error_limit');
+         
+            if(isset($limit_badge)){
+                if($badges_count >= $limit_badge){
+                    $over_limit = true;
+                }else{
+                    $over_limit = false;
+                }
+            }else{
+                $over_limit = false;
             }
         }
 
-        if (!$error) {
+        if(!$over_limit){
             return true;
-        } else {
+        }else{
             return false;
         }
     }
@@ -569,7 +575,7 @@ class Badge extends MY_Controller
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $bade_data = array('site_id'=>$this->User_model->getSiteId());
+            $badge_data = array('site_id'=>$this->User_model->getSiteId());
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
