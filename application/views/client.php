@@ -52,7 +52,7 @@
                                 <input type="checkbox" name="selected[]" value="<?php echo $client['client_id']; ?>" />
                                 <?php } ?></td>
                             <!-- <td class="left"><img src="<?php //echo $client['image']; ?>" alt="" id="thumb" /></td> -->
-                            <td class="left"><?php echo $client['company']; ?></td>
+                            <td class="left"><?php echo ($client['company']) ? $client['company'] : $client['first_name']." ".$client['last_name'] ?></td>
                             <td class="right"><?php echo $client['quantity']; ?></td>
                             <td class="right"><?php echo ($client['status'])? "Enabled" : "Disabled"; ?></td>
                             <td class="right">

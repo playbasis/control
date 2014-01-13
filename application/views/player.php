@@ -235,22 +235,38 @@
 <div class="well clearfix">
 
     <div class="common-filter">
-        <span>Search : </span>
+        <div class="left">
+            <span>Search : </span>
 
-        <input type="text" name="filter_name" value="" style="width:50%;" class="ui-autocomplete-input" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+            <input type="text" name="filter_name" value="" style="width:50%;" class="ui-autocomplete-input filter_name" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+        </div>
+        <div class="left">
+            <span>Gender : </span>
 
-        <span>Sort by : </span>
+            <div data-option-key="gender" data-toggle="buttons-radio" class="btn-group">
+                <input type="button" class="gender btn active" value="None" />
+                <input type="button" class="gender btn" value="Male" />
+                <input type="button" class="gender btn" value="Female" />
+                <input type="button" class="gender btn" value="Unknown" />
+            </div>
+        </div>
+        <div class="left">
+            <span>Sort by : </span>
 
-        <input type="button" class="btn active" value="None" />
-        <input type="button" class="btn" value="Level" />
-        <input type="button" class="btn" value="Point" />
-        <input type="button" class="btn" value="Name" />
+            <div data-option-key="sortBy" data-toggle="buttons-radio" class="btn-group">
+                <input type="button" class="sort btn active" value="None" />
+                <input type="button" class="sort btn" value="Level" />
+                <input type="button" class="sort btn" value="Point" />
+                <input type="button" class="sort btn" value="Name" />
+            </div>
+        </div>
+        <div class="left"
+            <span>Order by : </span>
 
-        <span>Order by : </span>
-
-        <div data-option-key="sortBy" data-toggle="buttons-radio" class="btn-group">
-            <input type="button" class="btn" value="Low-High" />
-            <input type="button" class="btn" value="High-Low" />
+            <div data-option-key="orderBy" data-toggle="buttons-radio" class="btn-group">
+                <input type="button" class="order btn" value="Low-High" />
+                <input type="button" class="order btn" value="High-Low" />
+            </div>
         </div>
     </div>
 

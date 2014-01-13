@@ -321,12 +321,16 @@ isotopeMan = {
       return;
     }
 
+    var sortOrder = isotopeMan.getSortOrder();
     $.ajax({
       url: baseUrlPath+'statistic/isotope',
       data: {
         filter_page: page,
-        filter_sort: filter[0].replace('&filter_sort=', '')
-        // filter_selected: filter[1].replace('&filter_selected=', '')
+        filter_sort: filter[0].replace('?filter_sort=', ''),
+        filter_name: isotopeMan.getSearchName(),
+        filter_order: sortOrder[1],
+        sort: sortOrder[0]
+        // filter_selected: filter[1].replace('?filter_selected=', '')
       },
       dataType: 'json',
       beforeSend: function () {
@@ -471,6 +475,11 @@ isotopeMan = {
 
     });
 
+    var gender = $('.gender.active').val();
+    if(gender && gender != "None"){
+        filter_sort += 'gender:' + gender + '|';
+    }
+
     // validate field
       // level required ? number only,  format xx - xx
       // action required ? number only, format xx - xx
@@ -481,6 +490,36 @@ isotopeMan = {
 //    console.log('filter_sort : ' + filter_sort);
 //    console.log('filter_selected : ' + filter_selected);
     return [filter_sort, filter_selected];
+  },
+
+  getSortOrder: function() {
+
+    var sort = $('.sort.active').val();
+    if(sort && sort != "None"){
+        if(sort == 'Name'){
+            sort = 'first_name';
+        }else{
+            sort = sort.toLowerCase();
+        }
+    }else{
+        sort = '';
+    }
+    var filter_order = $('.order.active').val();
+    if(filter_order){
+        if(filter_order == "High-Low"){
+            filter_order = 'desc';
+        }else{
+            filter_order = 'asc';
+        }
+    }else{
+        filter_order = 'asc';
+    }
+
+    return [sort, filter_order];
+  },
+
+  getSearchName: function() {
+    return $(".filter_name").val();
   }
 }
 

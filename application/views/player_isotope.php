@@ -84,7 +84,7 @@
                             <i class="<?php echo $action['icon']; ?> icon-2x"></i>
                         </div>
                         <?php } ?>
-                        <span class="isot-player-common-action-quantity"><?php echo $action['value']; ?></span>
+                        <span class="isot-player-common-action-quantity"><?php echo $action['total']; ?></span>
                         <span class="isot-player-common-action-name"><?php echo $action['name']; ?></span>
 
                     </li>

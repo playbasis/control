@@ -230,8 +230,8 @@ class Client extends MY_Controller
                 $this->data['clients'][] = array(
                     'client_id' => $result['_id'],
                     'company'=> $result['company'],
-                    // 'first_name' => $result['first_name'], Remove this because we want to show only the company name..
-                    // 'last_name' => $result['last_name'], Remove this because we want to show only the company name..
+                    'first_name' => $result['first_name'],
+                    'last_name' => $result['last_name'],
                     'image' => $image,
                     'quantity' => $domain_total,
                     'status' => $result['status'],

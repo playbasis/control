@@ -169,7 +169,7 @@ class Player_model extends MY_Model
         return $result;
     }
 
-    public function getDonutMaxLevel($data = array()){
+    /*public function getDonutMaxLevel($data = array()){
 
         $this->set_site_mongodb(0);
 
@@ -534,9 +534,9 @@ class Player_model extends MY_Model
         $output['result'] = $donut_data['result'];
         $output['total'] = $total;
         return $output;
-    }
+    }*/
 
-    public function getDonutTotalPlayer($data = array()) {
+    //public function getDonutTotalPlayer($data = array()) {
         //level_value gender_value reward_id reward_value action id action_value
         //choose parameter level gender reward action
 
@@ -552,7 +552,7 @@ class Player_model extends MY_Model
             |lelel:1-6|gender:m|action:like
             |lelel:1-6|gender:m|action:like:1-100|reward:coin
         */
-        $this->set_site_mongodb(0);
+        /*$this->set_site_mongodb(0);
 
         $res = $this->filterMongoPlayer($data);
 
@@ -592,6 +592,433 @@ class Player_model extends MY_Model
         $this->mongo_db->where($match);
 
         $result =  $this->mongo_db->count('playbasis_summary_of_player');
+
+        return $result;
+    }*/
+
+    public function getDonutMaxLevel($data = array()){
+
+        $this->set_site_mongodb(0);
+
+        $res = $this->filterMongoPlayer($data);
+
+        $match = array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id'])
+        );
+
+        if(isset($res['action_id_value'])){
+            $match = array_merge($match, $res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $match = array_merge($match, $res['action_value']);
+        }
+
+        if(isset($res['reward_id_value'])){
+            $match = array_merge($match, $res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $match = array_merge($match, $res['reward_value']);
+        }
+
+        if(isset($res['level_value'])){
+            $match = array_merge($match, $res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $match = array_merge($match, $res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $match = array_merge($match, $res['gender_value']);
+        }
+        if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $match = array_merge($match, $show_level);
+        }
+
+        $this->mongo_db->where($match);
+
+        $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+
+        $donut_data = $this->mongo_db->command(
+            array(
+                'aggregate' => "playbasis_summary_of_player_beta",
+                'pipeline' => array(
+                    array('$match' => $match,
+                    ),
+                    array(
+                        '$group' => array(
+                            '_id' => '$level',
+                            'value' => array('$sum' => 1)
+                        ),
+                    ),
+                    array(
+                        '$project' => array(
+                            '_id' => 0,
+                            'level' => '$_id',
+                            'value' => 1,
+                        )
+                    ),
+                    array(
+                        '$sort' => array(
+                            'level' => -1
+                        ),
+                    ),
+                    array(
+                        '$limit' => 1
+                    )
+                )
+            )
+        );
+
+        $output['result'] = $donut_data["result"] ? $donut_data["result"][0] : array();
+        $output['total'] = $total;
+
+        return $output;
+    }
+
+    public function getDonutLevel($data) {
+
+        $this->set_site_mongodb(0);
+
+        $donut_data = array();
+
+        $res = $this->filterMongoPlayer($data);
+
+        $match = array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id'])
+        );
+
+        if(isset($res['action_id_value'])){
+            $match = array_merge($match, $res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $match = array_merge($match, $res['action_value']);
+        }
+
+        if(isset($res['reward_id_value'])){
+            $match = array_merge($match, $res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $match = array_merge($match, $res['reward_value']);
+        }
+
+        if(isset($res['level_value'])){
+            $match = array_merge($match, $res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $match = array_merge($match, $res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $match = array_merge($match, $res['gender_value']);
+        }
+        if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $match = array_merge($match, $show_level);
+        }
+
+        $this->mongo_db->where($match);
+
+        $result =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+
+        if(isset($data['filter_sort']) && isset($data['filter_sort'][0]) && isset($data['filter_sort'][0]['level'])){
+            $level = $data['filter_sort'][0]['level'];
+        }else{
+            $level = '';
+        }
+
+        $donut_data[] = array(
+            'level' => $level,
+            'value' => $result
+        );
+        return $donut_data;
+
+    }
+
+    public function getDonutGender($data) {
+
+        $this->set_site_mongodb(0);
+
+        $res = $this->filterMongoPlayer($data);
+
+        $match = array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id'])
+        );
+
+        if(isset($res['action_id_value'])){
+            $match = array_merge($match, $res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $match = array_merge($match, $res['action_value']);
+        }
+
+        if(isset($res['reward_id_value'])){
+            $match = array_merge($match, $res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $match = array_merge($match, $res['reward_value']);
+        }
+
+        if(isset($res['level_value'])){
+            $match = array_merge($match, $res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $match = array_merge($match, $res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $match = array_merge($match, $res['gender_value']);
+        }
+        if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $match = array_merge($match, $show_level);
+        }
+
+        $this->mongo_db->where($match);
+
+        $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+
+        $donut_data = $this->mongo_db->command(
+            array(
+                'aggregate' => "playbasis_summary_of_player_beta",
+                'pipeline' => array(
+                    array('$match' => $match,
+                    ),
+                    array(
+                        '$group' => array(
+                            '_id' => '$gender',
+                            'value' => array('$sum' => 1)
+                        ),
+                    ),
+                    array(
+                        '$project' => array(
+                            '_id' => 0,
+                            'gender_id' => '$_id',
+                            'value' => 1,
+                        )
+                    ),
+                    array(
+                        '$sort' => array(
+                            'gender' => -1
+                        ),
+                    )
+                )
+            )
+        );
+
+        $output['result'] = $donut_data['result'];
+        $output['total'] = $total;
+        return $output;
+    }
+
+    public function getDonutAction($data = array()){
+
+        $this->set_site_mongodb(0);
+
+        $res = $this->filterMongoPlayer($data);
+
+        $match = array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id'])
+        );
+
+        if(isset($res['action_id_value'])){
+            $match = array_merge($match, $res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $match = array_merge($match, $res['action_value']);
+        }
+
+        if(isset($res['reward_id_value'])){
+            $match = array_merge($match, $res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $match = array_merge($match, $res['reward_value']);
+        }
+
+        if(isset($res['level_value'])){
+            $match = array_merge($match, $res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $match = array_merge($match, $res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $match = array_merge($match, $res['gender_value']);
+        }
+        if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $match = array_merge($match, $show_level);
+        }
+
+        $this->mongo_db->where($match);
+
+        $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+
+        $donut_data = $this->mongo_db->command(
+            array(
+                'aggregate' => "playbasis_summary_of_player_beta",
+                'pipeline' => array(
+                    array('$match' => $match,
+                    ),
+                    array(
+                        '$group' => array(
+                            '_id' => '$value.action_'.$res['action_id_check'].'.action_value',
+                            'value' => array('$sum' => 1)
+                        ),
+                    ),
+                    array(
+                        '$project' => array(
+                            '_id' => 0,
+                            'action_value' => '$_id',
+                            'value' => 1,
+                        )
+                    ),
+                    array(
+                        '$sort' => array(
+                            'action_value' => 1
+                        ),
+                    ),
+                )
+            )
+        );
+
+        $output['result'] = $donut_data['result'];
+        $output['total'] = $total;
+        return $output;
+    }
+
+    public function getDonutReward($data = array()){
+
+        $this->set_site_mongodb(0);
+
+        $res = $this->filterMongoPlayer($data);
+
+        $match = array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id'])
+        );
+
+        if(isset($res['action_id_value'])){
+            $match = array_merge($match, $res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $match = array_merge($match, $res['action_value']);
+        }
+
+        if(isset($res['reward_id_value'])){
+            $match = array_merge($match, $res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $match = array_merge($match, $res['reward_value']);
+        }
+
+        if(isset($res['level_value'])){
+            $match = array_merge($match, $res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $match = array_merge($match, $res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $match = array_merge($match, $res['gender_value']);
+        }
+        if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $match = array_merge($match, $show_level);
+        }
+
+        $this->mongo_db->where($match);
+
+        $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+
+        $donut_data = $this->mongo_db->command(
+            array(
+                'aggregate' => "playbasis_summary_of_player_beta",
+                'pipeline' => array(
+                    array('$match' => $match,
+                    ),
+                    array(
+                        '$group' => array(
+                            '_id' => '$value.reward_'.$res['reward_id_check'].'.reward_value',
+                            'value' => array('$sum' => 1)
+                        ),
+                    ),
+                    array(
+                        '$project' => array(
+                            '_id' => 0,
+                            'reward_value' => '$_id',
+                            'value' => 1,
+                        )
+                    ),
+                    array(
+                        '$sort' => array(
+                            'reward_value' => 1
+                        ),
+                    ),
+                )
+            )
+        );
+
+        $output['result'] = $donut_data['result'];
+        $output['total'] = $total;
+        return $output;
+    }
+
+    public function getDonutTotalPlayer($data = array()) {
+        //level_value gender_value reward_id reward_value action id action_value
+        //choose parameter level gender reward action
+
+        //reuturn
+        // >options
+        // >chart data
+        /*
+            parameter set :
+            ==============
+            |level
+            |level:1-6
+            |level:1-6|gender
+            |lelel:1-6|gender:m|action:like
+            |lelel:1-6|gender:m|action:like:1-100|reward:coin
+        */
+        $this->set_site_mongodb(0);
+
+        $res = $this->filterMongoPlayer($data);
+
+        $match = array(
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => new MongoID($data['site_id'])
+        );
+
+        if(isset($res['action_id_value'])){
+            $match = array_merge($match, $res['action_id_value']);
+        }
+        if(isset($res['action_value'])){
+            $match = array_merge($match, $res['action_value']);
+        }
+
+        if(isset($res['reward_id_value'])){
+            $match = array_merge($match, $res['reward_id_value']);
+        }
+        if(isset($res['reward_value'])){
+            $match = array_merge($match, $res['reward_value']);
+        }
+
+        if(isset($res['level_value'])){
+            $match = array_merge($match, $res['level_value']);
+        }
+        if(isset($res['exp_value'])){
+            $match = array_merge($match, $res['exp_value']);
+        }
+        if(isset($res['gender_value'])){
+            $match = array_merge($match, $res['gender_value']);
+        }
+        if(!isset($data['show_level_0'])){
+            $show_level = array('level' => array('$ne' => 0));
+            $match = array_merge($match, $show_level);
+        }
+
+        $this->mongo_db->where($match);
+
+        $result =  $this->mongo_db->count('playbasis_summary_of_player_beta');
 
         return $result;
     }
@@ -700,6 +1127,11 @@ class Player_model extends MY_Model
 
         $res = $this->filterMongoPlayer($data);
 
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('first_name', $regex);
+        }
+
         if(isset($res['action_id_value'])){
             $this->mongo_db->where($res['action_id_value']);
         }
@@ -743,11 +1175,22 @@ class Player_model extends MY_Model
             'first_name',
             'exp',
             'level',
-            'status'
+            'status',
+            'point'
         );
 
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-            $this->mongo_db->order_by(array($data['sort'] => $order));
+            if($data['sort'] == 'point'){
+
+                $this->mongo_db->where('name', 'point');
+                $results = $this->mongo_db->get("playbasis_reward");
+
+                $point_id  = ($results) ? $results[0] : null;
+
+                $this->mongo_db->order_by(array('value.reward_'.$point_id.'.reward_value' => $order));
+            }else{
+                $this->mongo_db->order_by(array($data['sort'] => $order));
+            }
         }else{
             $this->mongo_db->order_by(array('level' => $order));
         }
@@ -779,6 +1222,11 @@ class Player_model extends MY_Model
         $this->set_site_mongodb(0);
 
         $res = $this->filterMongoPlayer($data);
+
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('first_name', $regex);
+        }
 
         if(isset($res['action_id_value'])){
             $this->mongo_db->where($res['action_id_value']);
@@ -987,12 +1435,12 @@ class Player_model extends MY_Model
 
                         if($reward_id != ''){
                             if ($reward_pos === false) {
-                                $res['reward_value'] =  array('value.reward_'.$reward_id.'.value' => (int)$filter['value']);
+                                $res['reward_value'] =  array('value.reward_'.$reward_id.'.reward_value' => (int)$filter['value']);
                             } else {
                                 $reward_explode = explode('-', $filter['value']);
                                 $reward_explode = $this->check_array($reward_explode);
 
-                                $res['reward_value'] =  array('value.reward_'.$reward_id.'.value' => array('$gte' => (int)$reward_explode[0], '$lte' => (int)$reward_explode[1]));
+                                $res['reward_value'] =  array('value.reward_'.$reward_id.'.reward_value' => array('$gte' => (int)$reward_explode[0], '$lte' => (int)$reward_explode[1]));
                             };
                         }
 

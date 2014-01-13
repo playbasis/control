@@ -156,13 +156,13 @@ class Statistic extends CI_Controller
             $page = 1;
         }
 
-        if ($this->input->get('filter_name')) {
-            $filter_name = $this->input->get('filter_name');
-        } else {
-            $filter_name = null;
-        }
-
         $data = $this->filterData();
+
+        if ($this->input->get('filter_name')) {
+            $data['filter_name'] = $this->input->get('filter_name');
+        } else {
+            $data['filter_name'] = null;
+        }
 
         $iso_data = $this->Player_model->getIsotopePlayer($data);
 
@@ -182,13 +182,13 @@ class Statistic extends CI_Controller
 
         if ($results) {
             foreach ($results as $result) {
-                $actions = array();
+//                $actions = array();
 
 //                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']['pb_player_id']);
                 $player_action = $this->Player_model->getActionsByPlayerId($result['_id']);
 //                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
 
-                if ($player_action) {
+                /*if ($player_action) {
                     foreach ($player_action as $action) {
                         $actions[] = array(
                             'action_id' => $action['action_id'],
@@ -197,7 +197,7 @@ class Statistic extends CI_Controller
                             'icon' => $action['icon']
                         );
                     }
-                }
+                }*/
 
 //                $data_player = array('pb_player_id' => $result['_id']['pb_player_id']);
                 $data_player = array('pb_player_id' => $result['_id']);
@@ -248,7 +248,8 @@ class Statistic extends CI_Controller
                     'gender' => $result['gender'],
                     'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_added']))),
                     'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_modified']))),
-                    'action' => $actions,
+//                    'action' => $actions,
+                    'action' => $player_action,
                     'badges' => $badges
                 );
 
