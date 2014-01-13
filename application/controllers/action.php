@@ -95,7 +95,23 @@ class Action extends MY_Controller
 
                     $exists = $this->Action_model->checkActionExists($data);
                     if(!$exists){
-                        $this->Action_model->addAction($data);
+                        
+                        if($this->input->post('client_id') != 'admin_only'){
+                            $this->load->model('Domain_model');
+
+                            $data_admin = $this->input->post();
+                            $data_admin['action_id'] = $this->Action_model->addAction($data);
+                            $domains = $this->Domain_model->getDomainsByClientId($data_admin);
+
+                            foreach($domains as $domain){
+                                $data_admin['site_id'] = $domain['_id'];
+                                $this->Action_model->addActionToClient($data_admin);
+                            }
+                        }else{
+                            $this->Action_model->addAction($data);
+                        }
+                    }else{
+                        //Tell them that the action already exists
                     }
 
                 }
@@ -303,8 +319,12 @@ class Action extends MY_Controller
         }else{
             $this->data['action'] = $this->Action_model->getAction($action_id);
         }
+
+        $this->load->model('Client_model');
+
         $this->data['icons'] = $this->Action_model->getAllIcons();
         $this->data['colors'] = array('blue', 'orange','red', 'green', 'yellow','pink');
+        $this->data['clients'] = $this->Client_model->getClients($data = array());
 
         $this->data['main'] = 'action_form';
 

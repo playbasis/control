@@ -47,6 +47,21 @@
             					</select>
             				</td>
             			</tr>
+                        <tr>
+                            <?php if(!$client_id && !isset($action['_id'])){?>
+                            <td><?php echo $this->lang->line('form_client');?>:</td>
+                            <td>
+                                <select name = 'client_id'>
+                                    <?php if(isset($clients)){?>
+                                    <option value = 'admin_only'>Admin Only</option>
+                                        <?php foreach($clients as $client){?>
+                                            <option value ="<?php echo $client['_id']?>"><?php echo $client['company'];?></option>
+                                        <?php }?>
+                                    <?php }?>
+                                </select>
+                            </td>    
+                            <?php }?>
+                        </tr>
             			<tr>
                             <td><?php echo $this->lang->line('form_sort'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($action['sort_order']) ? $action['sort_order'] : set_value('sort_order'); ?>" size="1" /></td>

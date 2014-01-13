@@ -44,5 +44,6 @@ $lang['form_status']							= 'Status';
 $lang['form_icon']								= 'Icon';
 $lang['form_color']								= 'Icon Color';
 $lang['form_sort']								= 'Sort Order';
+$lang['form_client']							= 'Client';
 
 ?>
