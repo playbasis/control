@@ -27,6 +27,7 @@ $lang['column_action']          		= 'Action';
 
 // Entry
 $lang['entry_name']             		= 'Name';
+$lang['entry_for_client']             	= 'Client';
 $lang['entry_description']				= 'Description';
 $lang['entry_hint']						= 'Hint';
 $lang['entry_sort_order']           	= 'Sort Order';

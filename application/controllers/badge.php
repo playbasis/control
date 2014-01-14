@@ -71,11 +71,45 @@ class Badge extends MY_Controller
                 }
 
                 if($this->form_validation->run() && $this->data['message'] == null){
-                    $this->Badge_model->addBadge($this->input->post());
 
-                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    if(isset($client_id)){
 
-                    redirect('/badge', 'refresh');
+                        $badge_data = $this->input->post();
+
+                        $this->Badge_model->addBadge($badge_data);
+
+                        $this->session->set_flashdata('success', $this->lang->line('text_success'));
+
+                        redirect('/badge', 'refresh');
+                    }else{
+
+                        $badge_data = $this->input->post();
+
+                        if($badge_data['client_id'] != 'all_clients'){
+                            $this->load->model('Client_model');
+                            $clients_sites = $this->Client_model->getSitesByClientId($badge_data['client_id']);
+
+                            $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
+
+                            foreach ($clients_sites as $client){
+                                $badge_data['site_id'] = $client['_id']; 
+                                $this->Badge_model->addBadgeToClient($badge_data);
+                            }    
+                        }elseif ($badge_data['client_id'] == 'all_clients'){
+                            $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);   
+
+                            $this->load->model('Client_model');
+                            $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
+
+                            foreach($all_sites_clients as $site){
+                                $badge_data['site_id'] = $site['_id'];
+                                $badge_data['client_id'] = $site['client_id'];
+                                $this->Badge_model->addBadgeToClient($badge_data);
+                            }
+                        }
+                        redirect('/badge', 'refresh');
+                    }
+
                 }    
             }else{
                 $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
@@ -225,7 +259,8 @@ class Badge extends MY_Controller
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }
 
-                        $this->data['badges'][] = array(
+                        if(!$badge_info['deleted']){
+                            $this->data['badges'][] = array(
                             'badge_id' => $badge_info['_id'],
                             'name' => $badge_info['name'],
                             'hint' => $badge_info['hint'],
@@ -234,8 +269,8 @@ class Badge extends MY_Controller
                             'image' => $image,
                             'sort_order'  => $badge_info['sort_order'],
                             'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                        );
-
+                            );    
+                        }
                     }
                 }
 
@@ -360,16 +395,19 @@ class Badge extends MY_Controller
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }
 
-                        $this->data['badges'][] = array(
-                            'badge_id' => $badge_info['_id'],
-                            'name' => $badge_info['name'],
-                            'hint' => $badge_info['hint'],
-                            'quantity' => $badge_info['quantity'],
-                            'status' => $badge_info['status'],
-                            'image' => $image,
-                            'sort_order'  => $badge_info['sort_order'],
-                            'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                        );
+                        if(!$badge_info['deleted']){
+                            $this->data['badges'][] = array(
+                                'badge_id' => $badge_info['_id'],
+                                'name' => $badge_info['name'],
+                                'hint' => $badge_info['hint'],
+                                'quantity' => $badge_info['quantity'],
+                                'status' => $badge_info['status'],
+                                'image' => $image,
+                                'sort_order'  => $badge_info['sort_order'],
+                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
+                            );    
+                        }
+                        
 
                     }
                 }
@@ -510,6 +548,8 @@ class Badge extends MY_Controller
             $this->data['badge_id'] = null;
         }
 
+        $this->load->model('Client_model');
+        $this->data['to_clients'] = $this->Client_model->getClients($data = array());
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
@@ -531,42 +571,48 @@ class Badge extends MY_Controller
 
     private function checkLimitBadge(){
 
-        $error = null;
+        if(isset($client)){
 
-        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+            $error = null;
 
-            $this->load->model('Reward_model');
+            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
+                $this->load->model('Reward_model');
 
-            $badges_count = $this->Badge_model->getTotalBadgeBySiteId($this->User_model->getSiteId());
+                $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
 
-            foreach ($plan_limit as $plan) {
-                if($plan['site_id'] == $this->input->post('site_id')){
-                    if($plan['name'] == 'badge'){
-                        if($plan['limit']){
-                            $limit_badge =  $plan['limit'];
+                $badges_count = $this->Badge_model->getTotalBadgeBySiteId($this->User_model->getSiteId());
+
+                foreach ($plan_limit as $plan) {
+                    if($plan['site_id'] == $this->input->post('site_id')){
+                        if($plan['name'] == 'badge'){
+                            if($plan['limit']){
+                                $limit_badge =  $plan['limit'];
+                            }
                         }
                     }
                 }
-            }
-         
-            if(isset($limit_badge)){
-                if($badges_count >= $limit_badge){
-                    $over_limit = true;
+             
+                if(isset($limit_badge)){
+                    if($badges_count >= $limit_badge){
+                        $over_limit = true;
+                    }else{
+                        $over_limit = false;
+                    }
                 }else{
                     $over_limit = false;
                 }
-            }else{
-                $over_limit = false;
             }
+
+            if(!$over_limit){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return true;
         }
 
-        if(!$over_limit){
-            return true;
-        }else{
-            return false;
-        }
     }
 
     private function checkOwnerBadge($badgeId){
@@ -584,7 +630,7 @@ class Badge extends MY_Controller
             foreach ($badges as $badge) {
                 if($badge['badge_id']."" == $badgeId.""){
                     $has = true;
-                }
+                }    
             }
 
             if(!$has){

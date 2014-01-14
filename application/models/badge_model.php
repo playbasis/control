@@ -55,7 +55,7 @@ class Badge_model extends MY_Model
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
-
+        $this->mongo_db->where('deleted', false);
         $badges_data = $this->mongo_db->get("playbasis_badge");
 
         return $badges_data;
@@ -72,7 +72,7 @@ class Badge_model extends MY_Model
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
-
+        $this->mongo_db->where('deleted', false);
         $total = $this->mongo_db->count("playbasis_badge");
 
         return $total;
@@ -99,6 +99,18 @@ class Badge_model extends MY_Model
 
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
+        // $returnThis = array();
+        // $allBadges = $this->getBadges();
+
+        // foreach($allBadges as $badge){
+        //     foreach($results as $result){
+        //         if(!$badge['deleted'] && $badge['_id']==$result['badge_id']){
+        //             $returnThis[] = $result;
+        //         }
+        //     }
+        // }
+
+        // return $returnThis;
         return $results;
     }
 
@@ -183,6 +195,31 @@ class Badge_model extends MY_Model
         return $output;
     }
 
+    // public function addBadge($data) {
+    //     $this->set_site_mongodb(0);
+
+    //     $b = $this->mongo_db->insert('playbasis_badge', array(
+    //         'stackable' => (int)$data['stackable']|0 ,
+    //         'substract' => (int)$data['substract']|0,
+    //         'quantity' => (int)$data['quantity']|0 ,
+    //         'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+    //         'status' => (bool)$data['status'],
+    //         'sort_order' => (int)$data['sort_order']|1,
+    //         'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+    //         'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+    //         'name' => $data['name']|'' ,
+    //         'description' => $data['description']|'',
+    //         'hint' => $data['hint']|'' ,
+    //         'language_id' => (int)1,
+    //     ));
+
+    //     $this->mongo_db->insert('playbasis_badge_to_client', array(
+    //         'client_id' => new MongoID($data['client_id']),
+    //         'site_id' => new MongoID($data['site_id']),
+    //         'badge_id' => new MongoID($b)
+    //     ));
+    // }
+
     public function addBadge($data) {
         $this->set_site_mongodb(0);
 
@@ -199,12 +236,16 @@ class Badge_model extends MY_Model
             'description' => $data['description']|'',
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
+            'deleted'=>false
         ));
+        return $b;
+    }
 
+    public function addBadgeToClient($data){
         $this->mongo_db->insert('playbasis_badge_to_client', array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
-            'badge_id' => new MongoID($b)
+            'badge_id' => new MongoID($data['badge_id'])
         ));
     }
 
@@ -236,9 +277,11 @@ class Badge_model extends MY_Model
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($badge_id));
-        $this->mongo_db->delete('playbasis_badge');
-        $this->mongo_db->where('badge_id',  new MongoID($badge_id));
-        $this->mongo_db->delete('playbasis_badge_to_client');
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update('playbasis_badge');
+        
+        // $this->mongo_db->where('badge_id',  new MongoID($badge_id));
+        // $this->mongo_db->delete('playbasis_badge_to_client');
     }
 
     public function increaseOrderByOne($badge_id){

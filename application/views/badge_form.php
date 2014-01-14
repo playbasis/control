@@ -41,6 +41,21 @@
                                 <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" />
                                 </td>
                             </tr>
+                            <tr>    
+                                <?php if(!$client_id && !$name){?>
+                                    <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
+                                    <td>
+                                        <select name="client_id">
+                                            <?php if(isset($to_clients)){?>
+                                            <option value = 'all_clients'>All Clients</option>
+                                                <?php foreach($to_clients as $client){?>
+                                                    <option value ="<?php echo $client['_id']?>"><?php echo $client['company'];?></option>
+                                                <?php }?>
+                                            <?php }?>
+                                        </select>
+                                    </td>
+                                <?php }?>
+                            </tr>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_hint'); ?>:</td>
                                 <td><textarea name="hint" cols="40" rows="5"><?php echo isset($hint) ? $hint : set_value('hint'); ?></textarea></td>
@@ -107,10 +122,10 @@
                         </tr>
                     </table>
                 </div>
-
-                <input type="hidden" name="client_id" value="<?php echo $client_id; ?>" id="client_id" />
-                <input type="hidden" name="site_id" value="<?php echo $site_id; ?>" id="site_id" />
-
+                <?php if($client_id){?>
+                    <input type="hidden" name="client_id" value="<?php echo $client_id; ?>" id="client_id" />
+                    <input type="hidden" name="site_id" value="<?php echo $site_id; ?>" id="site_id" />
+                <?php }?>
             <?php
             echo form_close();
             ?>

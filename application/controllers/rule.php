@@ -127,16 +127,19 @@ class Rule extends MY_Controller
         $json =array();
 
         if ($badges) {
+
             foreach ($badges as $badge) {
 
                 $badge_detail = $this->Badge_model->getBadge($badge['badge_id']);
 
-                $json['badges'][] = array(
-                    'badge_id' => $badge['badge_id'],
-                    'name' => $badge_detail['name'],
-                    'description' => $badge_detail['description'],
-                    'image' => $badge_detail['image']
-                );
+                if(!$badge_detail['deleted']){
+                    $json['badges'][] = array(
+                        'badge_id' => $badge['badge_id'],
+                        'name' => $badge_detail['name'],
+                        'description' => $badge_detail['description'],
+                        'image' => $badge_detail['image']
+                    );    
+                }
             }
         }
 
