@@ -80,6 +80,9 @@ class User extends MY_Controller
 
         //End Added
 
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
+
         $this->pagination->initialize($config);
 
 
