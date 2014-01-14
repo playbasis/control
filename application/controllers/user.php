@@ -667,12 +667,13 @@ class User extends MY_Controller
         $this->data['heading_forgot_password'] = $this->lang->line('heading_forgot_password');
         $this->data['form'] = 'user/forgot_password';
         
-        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            if($this->form_validation->run()){
-                $check_email = $this->User_model->findEmail($this->input->post());
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|check_space');
 
+        $this->data['message'] = null;
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            if($this->form_validation->run() && $this->data['message'] == null){
+                $check_email = $this->User_model->findEmail($this->input->post());
 
                 if($check_email){
                     $random_key = get_random_password(8,8);
@@ -704,13 +705,17 @@ class User extends MY_Controller
                     echo "<script>window.location.href = '".site_url()."';</script>";   
                 }else{
                     // echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
-                    $this->data['message'] = $this->lang->line('error_no_email');
+                    // $this->data['message'] = $this->lang->line('error_no_email');
+                    $this->session->set_flashdata('fail', $this->lang->line('error_no_email'));
+                    redirect('forgot_password', 'refresh');
                 }
             }
-        }else{
-            $this->data['main'] = 'forgot_password';
-            $this->render_page('template');       
+
+
         }
+        $this->data['main'] = 'forgot_password';
+        $this->render_page('template');       
+        
     }
 
     public function reset_password(){
