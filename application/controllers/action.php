@@ -228,6 +228,7 @@ class Action extends MY_Controller
         $config['base_url'] = site_url('action/page');
         $config["uri_segment"] = 3;
 
+
         if($client_id){
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
@@ -235,6 +236,9 @@ class Action extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActions($filter);
             $config['total_rows'] = $this->Action_model->getTotalActions();
         }
+
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
 
         $this->pagination->initialize($config);
 
