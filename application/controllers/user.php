@@ -483,6 +483,8 @@ class User extends MY_Controller
                 $pw = $this->input->post('password');
                 $this->User_model->login($u, $pw);
 
+                $this->session->set_userdata('multi_login', $this->User_model->setMultiLoginKey($this->session->userdata('user_id')));
+
                 if ($this->session->userdata('user_id')) {
                     if ($this->session->userdata('redirect')) {
                         $redirect = $this->session->userdata('redirect');

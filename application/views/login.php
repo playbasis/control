@@ -31,6 +31,11 @@
                 <div class="success"><?php echo $this->session->flashdata('email_sent'); ?></div>
                 </div>
             <?php }?>
+            <?php if($this->session->flashdata('multi_login')){ ?>
+                <div class="content messages half-width">
+                <div class="warning"><?php echo $this->session->flashdata('multi_login'); ?></div>
+                </div>
+            <?php }?>
                 <table style="width: 100%;">
                     <tr>
                         <td style="text-align: center;" rowspan="4"><img src="<?php echo base_url();?>image/login.png" alt="<?php echo $this->lang->line('text_login'); ?>" /></td>

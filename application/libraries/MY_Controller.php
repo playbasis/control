@@ -112,9 +112,17 @@ class  MY_Controller  extends  CI_Controller  {
         $this->data['domain'] = '';
         $this->data['domain_name'] = '';
         $this->data['check_domain_exists'] = true;
+
+
         $features = array();
 
         if($this->session->userdata('user_id')){
+
+            if($this->session->userdata('multi_login') != $this->User_model->getMultiLogin($this->session->userdata('user_id'))){
+                $this->User_model->logout();
+                $this->session->set_flashdata('multi_login', 'You have been logged out due to concurrent login');
+                redirect('login', 'refresh');
+            }
 
             $this->data['username'] = $this->User_model->getUserName();
 

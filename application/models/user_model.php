@@ -428,6 +428,7 @@ class User_model extends MY_Model
                     $this->session->set_userdata('site_id',$this->site_id );
                     $this->session->set_userdata('permission',$this->permission );
                     $this->session->set_userdata('ip',$ip );
+
                 }else {
                     $this->session->unset_userdata('user_id');
                 }
@@ -609,6 +610,20 @@ class User_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->set('status', false);
         $this->mongo_db->update('user');
+    }
+
+    public function getMultiLogin($user_id){
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $key = $this->mongo_db->get('user');
+        return $key[0]['multi_login'];
+    }
+
+    public function setMultiLoginKey($user_id){
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $hashed = do_hash(get_random_password().$user_id);
+        $this->mongo_db->set('multi_login', $hashed);
+        $this->mongo_db->update('user');
+        return $hashed;
     }
 
 }
