@@ -82,11 +82,37 @@ class Badge_model extends MY_Model
 
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('name', $regex);
+        }
 
-        if (isset($data['limit']) || isset($data['offset'])) {
-            if ($data['offset'] < 0) {
-                $data['offset'] = 0;
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $sort_data = array(
+            '_id',
+            'name',
+            'status',
+            'sort_order'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
             }
 
             if ($data['limit'] < 1) {
@@ -94,9 +120,11 @@ class Badge_model extends MY_Model
             }
 
             $this->mongo_db->limit((int)$data['limit']);
-            $this->mongo_db->offset((int)$data['offset']);
+            $this->mongo_db->offset((int)$data['start']);
         }
 
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
         // $returnThis = array();
@@ -158,11 +186,20 @@ class Badge_model extends MY_Model
     //     return $results;
     // }
 
-    public function getTotalBadgeBySiteId($site_id) {
+    public function getTotalBadgeBySiteId($data) {
 
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->where('site_id',  new MongoID($site_id));
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
         $total = $this->mongo_db->count("playbasis_badge_to_client");
 
         return $total;
@@ -245,7 +282,20 @@ class Badge_model extends MY_Model
         $this->mongo_db->insert('playbasis_badge_to_client', array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
-            'badge_id' => new MongoID($data['badge_id'])
+            'badge_id' => new MongoID($data['badge_id']),
+            'stackable' => (int)$data['stackable']|0 ,
+            'substract' => (int)$data['substract']|0,
+            'quantity' => (int)$data['quantity']|0 ,
+            'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => (bool)$data['status'],
+            'sort_order' => (int)$data['sort_order']|1,
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'name' => $data['name']|'' ,
+            'description' => $data['description']|'',
+            'hint' => $data['hint']|'' ,
+            'language_id' => (int)1,
+            'deleted'=>false
         ));
     }
 
@@ -273,6 +323,32 @@ class Badge_model extends MY_Model
 
     }
 
+    public function editBadgeToClient($badge_id, $data) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('badde_id',  new MongoID($badge_id));
+        $this->mongo_db->set('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->set('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('stackable', (int)$data['stackable']);
+        $this->mongo_db->set('substract', (int)$data['substract']);
+        $this->mongo_db->set('quantity', (int)$data['quantity']);
+        $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('hint', $data['hint']);
+        $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->update('playbasis_badge_to_client');
+
+        if (isset($data['image'])) {
+            $this->mongo_db->where('_id', new MongoID($badge_id));
+            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->update('playbasis_badge_to_client');
+        }
+
+    }
+
     public function deleteBadge($badge_id) {
         $this->set_site_mongodb(0);
 
@@ -280,6 +356,19 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update('playbasis_badge');
         
+        // $this->mongo_db->where('badge_id',  new MongoID($badge_id));
+        // $this->mongo_db->delete('playbasis_badge_to_client');
+    }
+
+    public function deleteBadgeClient($badge_id, $data) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('badge_id', new MongoID($badge_id));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update('playbasis_badge_to_client');
+
         // $this->mongo_db->where('badge_id',  new MongoID($badge_id));
         // $this->mongo_db->delete('playbasis_badge_to_client');
     }
