@@ -34,7 +34,8 @@
                         <?php foreach ($domain_list as $domain) { ?>
                         <tr>
                             <td class="left">
-                                <?php echo $domain['domain_name']; ?> [ <?php echo anchor('domain', $this->lang->line('text_reset_token'), array('onclick' => "resetSecret('".$domain['site_id']."');return false;")); ?> ]
+                                <?php echo $domain['domain_name']; ?> [ <?php echo anchor('domain', $this->lang->line('text_reset_token'), array('onclick' => "confirmation('".$domain['site_id']."'); return false;")); ?> ]
+                                <!--<?php //echo $domain['domain_name']; ?> [ <?php //echo anchor('domain', $this->lang->line('text_reset_token'), array('onclick' => "resetSecret('".$domain['site_id']."');return false;")); ?> ]-->
                                 <br /><span class="help">Keys:</span> <?php echo $domain['keys']; ?>
                                 <br /><span class="help">Secret:</span> <?php echo $domain['secret']; ?>
                             </td>
@@ -79,7 +80,6 @@
 <script type="text/javascript"><!--
 
 function resetSecret(site_id) {
-
     $.ajax({
         url: baseUrlPath+'domain/reset',
         type: 'POST',
@@ -96,3 +96,12 @@ function resetSecret(site_id) {
 }
 
 //--></script>
+
+<script type="text/javascript">
+    function confirmation(site_id){
+        var decision = confirm('Are you sure you want to reset the key?');
+        if (decision){
+            resetSecret(site_id);
+        }
+    }
+</script>
