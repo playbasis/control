@@ -253,11 +253,11 @@ class Engine extends REST_Controller
 				$input['jigsaw_name'] = $jigsaw['name'];
 				$input['jigsaw_category'] = $jigsaw['category'];
 				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
-				if(isset($jigsaw['config']['action_id']))
+				if(isset($jigsaw['config']['action_id']) && !empty($jigsaw['config']['action_id']))
 					$jigsaw['config']['action_id'] = new MongoId($jigsaw['config']['action_id']);
-				if(isset($jigsaw['config']['reward_id']))
+				if(isset($jigsaw['config']['reward_id']) && !empty($jigsaw['config']['reward_id']))
 					$jigsaw['config']['reward_id'] = new MongoId($jigsaw['config']['reward_id']);
-				if(isset($jigsaw['config']['item_id']))
+				if(isset($jigsaw['config']['item_id']) && !empty($jigsaw['config']['item_id']))
 					$jigsaw['config']['item_id'] = new MongoId($jigsaw['config']['item_id']);
 				$input['input'] = $jigsaw['config'];
 				$exInfo = array();
