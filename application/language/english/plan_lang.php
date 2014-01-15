@@ -32,6 +32,7 @@ $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_limit']            				= 'Limit';
 $lang['column_action']          				= 'Action';
 $lang['column_description']						= 'Description';
+$lang['column_plan_name']						= 'Plan Name';						
 
 
 // Entry
