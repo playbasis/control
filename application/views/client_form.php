@@ -371,7 +371,7 @@ function resetToken(site_id) {
 function image_upload(field, thumb) {
     $('#dialog').remove();
 
-    $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
+    $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
 
     $('#dialog').dialog({
         title: '<?php echo $this->lang->line('text_image_manager'); ?>',
@@ -387,8 +387,8 @@ function image_upload(field, thumb) {
             }
         },
         bgiframe: false,
-        width: 800,
-        height: 400,
+        width: 200,
+        height: 100,
         resizable: false,
         modal: false
     });
