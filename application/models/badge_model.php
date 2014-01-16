@@ -11,6 +11,15 @@ class Badge_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getBadgeToClient($badge_id){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('_id',  new MongoID($badge_id));
+        $results = $this->mongo_db->get("playbasis_badge_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
     public function getBadges($data = array()) {
 
         $this->set_site_mongodb(0);
@@ -326,9 +335,9 @@ class Badge_model extends MY_Model
     public function editBadgeToClient($badge_id, $data) {
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->where('badde_id',  new MongoID($badge_id));
+        $this->mongo_db->where('_id',  new MongoID($badge_id));
         $this->mongo_db->set('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->set('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('site_id', new MongoID($data['site_id']));    
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
@@ -349,6 +358,30 @@ class Badge_model extends MY_Model
 
     }
 
+    public function editBadgeToClientFromAdmin($badge_id, $data) {
+        $this->set_site_mongodb(0);
+        
+        $this->mongo_db->where('badge_id',  new MongoID($badge_id));
+        $this->mongo_db->set('stackable', (int)$data['stackable']);
+        $this->mongo_db->set('substract', (int)$data['substract']);
+        $this->mongo_db->set('quantity', (int)$data['quantity']);
+        $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('hint', $data['hint']);
+        $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->update_all('playbasis_badge_to_client');
+
+        if (isset($data['image'])) {
+            $this->mongo_db->where('badge_id', new MongoID($badge_id));
+            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $this->mongo_db->update_all('playbasis_badge_to_client');
+        }
+
+    }
+
     public function deleteBadge($badge_id) {
         $this->set_site_mongodb(0);
 
@@ -360,21 +393,18 @@ class Badge_model extends MY_Model
         // $this->mongo_db->delete('playbasis_badge_to_client');
     }
 
-    public function deleteBadgeClient($badge_id, $data) {
+    public function deleteBadgeClient($badge_id) {
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->where('badge_id', new MongoID($badge_id));
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('_id',  new MongoID($badge_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update('playbasis_badge_to_client');
 
-        // $this->mongo_db->where('badge_id',  new MongoID($badge_id));
-        // $this->mongo_db->delete('playbasis_badge_to_client');
     }
 
     public function increaseOrderByOne($badge_id){
         $this->mongo_db->where('_id', new MongoID($badge_id));
+
         $badge = $this->mongo_db->get('playbasis_badge');
 
         $currentOrder = $badge[0]['sort_order'];
@@ -401,6 +431,38 @@ class Badge_model extends MY_Model
         }
         
     }
+
+    public function increaseOrderByOneClient($badge_id){
+        $this->mongo_db->where('_id', new MongoID($badge_id));
+
+        $badge = $this->mongo_db->get('playbasis_badge_to_client');
+
+        $currentOrder = $badge[0]['sort_order'];
+        $newOrder = $currentOrder + 1;
+
+        $this->mongo_db->where('_id', new MongoID($badge_id));
+        $this->mongo_db->set('sort_order', $newOrder);
+        $this->mongo_db->update('playbasis_badge_to_client');
+
+    }
+
+    public function decreaseOrderByOneClient($badge_id){
+        $this->mongo_db->where('_id', new MongoID($badge_id));
+        $badge = $this->mongo_db->get('playbasis_badge_to_client');
+
+        $currentOrder = $badge[0]['sort_order'];
+
+        if($currentOrder != 0){
+            $newOrder = $currentOrder - 1;
+
+            $this->mongo_db->where('_id', new MongoID($badge_id));
+            $this->mongo_db->set('sort_order', $newOrder);
+            $this->mongo_db->update('playbasis_badge_to_client');    
+        }
+        
+    }
+
+
 
 
 }

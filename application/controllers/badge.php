@@ -72,11 +72,15 @@ class Badge extends MY_Controller
 
                 if($this->form_validation->run() && $this->data['message'] == null){
 
-                    if(isset($client_id)){
+                    if($this->User_model->getClientId()){
 
                         $badge_data = $this->input->post();
 
-                        $this->Badge_model->addBadge($badge_data);
+                        $badge_id = $this->Badge_model->addBadge($badge_data);
+
+                        $badge_data['badge_id'] = $badge_id;
+
+                        $this->Badge_model->addBadgeToClient($badge_data);
 
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
@@ -138,7 +142,13 @@ class Badge extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
-                $this->Badge_model->editBadge($badge_id, $this->input->post());
+                if($this->User_model->getClientId()){
+                    $this->Badge_model->editBadgeToClient($badge_id, $this->input->post());
+                }else{
+                    $this->Badge_model->editBadge($badge_id, $this->input->post()); 
+                    
+                    $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $this->input->post());   
+                }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
 
@@ -165,7 +175,13 @@ class Badge extends MY_Controller
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             foreach ($this->input->post('selected') as $badge_id) {
                 if($this->checkOwnerBadge($badge_id)){
-                    $this->Badge_model->deleteBadge($badge_id);
+                    
+                    if($this->User_model->getClientId()){
+                        $this->Badge_model->deleteBadgeClient($badge_id);
+                    }else{
+                        $this->Badge_model->deleteBadge($badge_id);    
+                    }
+                    
                 }
             }
 
@@ -198,7 +214,6 @@ class Badge extends MY_Controller
         $this->data['slots'] = $slot_total;
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
-
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
@@ -226,18 +241,16 @@ class Badge extends MY_Controller
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
                 );
             }
-        }
-        else {
-
+        }else{
             $this->load->model('Reward_model');
 
-            $badge_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'offset' =>$offset, 'sort'=>'sort_order');
+            $badge_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
 
-            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($site_id);
+            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($badge_data);
 
             if ($reward_limit_data) {
 
@@ -248,7 +261,7 @@ class Badge extends MY_Controller
 
                 foreach ($badges as $badge) {
 
-                    $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
+                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
 
                     if($badge_info){
 
@@ -367,13 +380,13 @@ class Badge extends MY_Controller
 
             $this->load->model('Reward_model');
 
-            $badge_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'offset' => $offset, 'sort'=>'sort_order');
+            $badge_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'start' => $offset, 'sort'=>'sort_order');
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
 
-            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($site_id);
+            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($badge_data);
 
             if ($reward_limit_data) {
 
@@ -384,7 +397,7 @@ class Badge extends MY_Controller
 
                 foreach ($badges as $badge) {
 
-                    $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
+                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
 
                     if($badge_info){
 
@@ -457,7 +470,12 @@ class Badge extends MY_Controller
         $this->load->model('Image_model');
 
         if (isset($badge_id) && ($badge_id != 0)) {
-            $badge_info = $this->Badge_model->getBadge($badge_id);
+            if($this->User_model->getClientId()){
+                $badge_info = $this->Badge_model->getBadgeToClient($badge_id);
+            }else{
+                $badge_info = $this->Badge_model->getBadge($badge_id);    
+            }
+            
         }
 
         if ($this->input->post('name')) {
@@ -624,11 +642,10 @@ class Badge extends MY_Controller
             $badge_data = array('site_id'=>$this->User_model->getSiteId());
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
-
             $has = false;
     
             foreach ($badges as $badge) {
-                if($badge['badge_id']."" == $badgeId.""){
+                if($badge['_id']."" == $badgeId.""){
                     $has = true;
                 }    
             }
@@ -655,9 +672,13 @@ class Badge extends MY_Controller
 
     public function increase_order($badge_id){
 
-        $this->Badge_model->increaseOrderByOne($badge_id);
-
-        $json = array('success'=>'Okay!');
+        if($this->User_model->getClientId()){
+            $this->Badge_model->increaseOrderByOneClient($badge_id);   
+        }else{
+            $this->Badge_model->increaseOrderByOne($badge_id);    
+        }
+        
+        $json = array('success'=>'Okay increase!');
 
         $this->output->set_output(json_encode($json));
 
@@ -666,9 +687,14 @@ class Badge extends MY_Controller
     }
 
     public function decrease_order($badge_id){
-        $this->Badge_model->decreaseOrderByOne($badge_id);
 
-        $json = array('success'=>'Okay!');
+        if($this->User_model->getClientId()){
+            $this->Badge_model->decreaseOrderByOneClient($badge_id);
+        }else{
+            $this->Badge_model->decreaseOrderByOne($badge_id);    
+        }
+
+        $json = array('success'=>'Okay decrease!');
 
         $this->output->set_output(json_encode($json));
 
