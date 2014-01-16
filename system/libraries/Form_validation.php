@@ -1380,6 +1380,46 @@ class CI_Form_validation {
     {
         return (bool) ! preg_match( '/\\s/', $str);
     }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Validate URL format
+     *
+     * @access  public
+     * @param   string
+     * @return  string
+     */
+    function valid_url_format($str){
+        $pattern = "|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i";
+        if (!preg_match($pattern, $str)){
+            return FALSE;
+        }
+ 
+        return TRUE;
+    }       
+ 
+    // --------------------------------------------------------------------
+     
+ 
+    /**
+     * Validates that a URL is accessible. Also takes ports into consideration. 
+     * Note: If you see "php_network_getaddresses: getaddrinfo failed: nodename nor servname provided, or not known" 
+     *          then you are having DNS resolution issues and need to fix Apache
+     *
+     * @access  public
+     * @param   string
+     * @return  string
+     */
+    function url_exists($url){                                   
+        $url_data = parse_url($url); // scheme, host, port, path, query
+        if(!fsockopen($url_data['host'], isset($url_data['port']) ? $url_data['port'] : 80)){
+            // $this->set_message('url_exists', 'The Domain (URL) you entered is not accessible.');
+            return false;
+        }          
+         
+        return true;
+    }  
 }
 // END Form Validation Class
 

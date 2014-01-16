@@ -64,7 +64,7 @@
 						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_domain');?>:</td>
-							<td><input type = "text" name="domain_name" size="50" value = "<?php if(isset($temp_fields)){echo $temp_fields['domain_name'];}?>" class="tooltips" data-placement="right" title="Your domain name (example: www.playbasis.com)"></td>
+							<td><input type = "text" name="domain_name" size="50" value = "<?php if(isset($temp_fields)){echo $temp_fields['domain_name'];}?>" class="tooltips" data-placement="right" title="Your domain name (example: http://www.playbasis.com)"></td>
 						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_site');?>:</td>
