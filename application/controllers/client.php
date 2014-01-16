@@ -137,9 +137,10 @@ class Client extends MY_Controller
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             foreach ($this->input->post('selected') as $client_id) {
                 if($this->checkOwnerClient($client_id)){
-
                     $this->Client_model->deleteClient($client_id);
                     $this->Client_model->deleteClientPersmission($client_id);
+
+                    $this->Domain_model->deleteDomainByClientId($client_id);
 
                     $data = array('client_id'=>$client_id);
                     $results = $this->User_model->getUserByClientId($data);

@@ -260,6 +260,14 @@ class Domain_model extends MY_Model
         $this->mongo_db->update('playbasis_client_site');
     }
 
+    public function deleteDomainByClientId($client_id){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update_all('playbasis_client_site');
+    }
+
     public function checkDomainExists($data){
         $this->set_site_mongodb(0);
 
