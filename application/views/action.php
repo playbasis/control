@@ -149,7 +149,10 @@ $( ".push_down" ).live( "click", function() {
         dataType: "json"
     }).done(function(data) {
         var getListForAjax = 'action/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>'
+        var getNum = '<?php echo $this->uri->segment(3);?>';
+        if(!getNum){
+            getNum = 0;
+        }
         $('#actions').load(baseUrlPath+getListForAjax+getNum);
         console.log(baseUrlPath+getListForAjax+getNum);
         // $('#actions').load(baseUrlPath+'action/getListForAjax/0');
@@ -170,7 +173,10 @@ $( ".push_up" ).live( "click", function() {
         dataType: "json"
     }).done(function(data) {
         var getListForAjax = 'action/getListForAjax/';
-        var getNum = '<?php echo $this->uri->segment(3);?>'
+        var getNum = '<?php echo $this->uri->segment(3);?>';
+        if(!getNum){
+            getNum = 0;
+        }
         $('#actions').load(baseUrlPath+getListForAjax+getNum);
         // $('#actions').load(baseUrlPath+'action/getListForAjax/0');
     });
