@@ -153,11 +153,6 @@ class Action extends MY_Controller
 
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-                    $exits = $this->Action_model->checkActionExists($data);
-                    if(!$exits){
-                        $this->Action_model->editAction($action_id, $data);
-                    }
-
                     $this->Action_model->editActionToClient($action_id, $data);
                 }else{
                     $this->Action_model->editAction($action_id, $data);
