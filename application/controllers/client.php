@@ -87,7 +87,7 @@ class Client extends MY_Controller
         $this->data['form'] = 'client/update/'.$client_id;
 
         $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
 
