@@ -606,5 +606,13 @@ class Action_model extends MY_Model
             $this->mongo_db->update('playbasis_action_to_client');
         }
     }
+
+    public function checkActionIsPublic($action_id){
+        $this->mongo_db->where('action_id', $action_id);
+        return $this->mongo_db->get('playbasis_action_to_client');
+    }
+
+
+
 }
 ?>

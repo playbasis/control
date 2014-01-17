@@ -340,25 +340,31 @@ class Client_model extends MY_Model
 
         if (isset($plan_data['action_to_plan'])) {
             foreach ($plan_data['action_to_plan'] as $action_id) {
+                $this->mongo_db->where('client_id', $data_filter['client_id']);
+                $this->mongo_db->where('site_id',$data_filter['site_id']);
+                $this->mongo_db->where('action_id', $action_id);
+                $allClients = $this->mongo_db->get('playbasis_action_to_client');
 
-                $action_data = $this->getAction($action_id);
+                if(!$allClients){
+                    $action_data = $this->getAction($action_id);
 
-                $insert_data = array(
-                    'action_id' => new MongoID($action_id) ,
-                    'client_id' => new MongoID($data_filter['client_id']) ,
-                    'site_id' => new MongoID($data_filter['site_id']) ,
-                    'name' => $action_data['name'] ,
-                    'description' => $action_data['description'] ,
-                    'icon' => $action_data['icon'],
-                    'color' => $action_data['color'],
-                    'init_dataset' => $action_data['init_dataset'],
-                    'sort_order' => $action_data['sort_order'],
-                    'status' =>  (bool)$action_data['status'],
-                    'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                    'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
-                );
+                    $insert_data = array(
+                        'action_id' => new MongoID($action_id) ,
+                        'client_id' => new MongoID($data_filter['client_id']) ,
+                        'site_id' => new MongoID($data_filter['site_id']) ,
+                        'name' => $action_data['name'] ,
+                        'description' => $action_data['description'] ,
+                        'icon' => $action_data['icon'],
+                        'color' => $action_data['color'],
+                        'init_dataset' => $action_data['init_dataset'],
+                        'sort_order' => $action_data['sort_order'],
+                        'status' =>  (bool)$action_data['status'],
+                        'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                    );
 
-                $this->mongo_db->insert('playbasis_action_to_client', $insert_data);
+                    $this->mongo_db->insert('playbasis_action_to_client', $insert_data);    
+                }
             }
         }
     }

@@ -99,7 +99,9 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"></td>
+
                         <td class="left"><?php echo $this->lang->line('column_name_action'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_name_owner'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -113,12 +115,13 @@
                                 <input type="checkbox" name="action_data[]" value="<?php echo $action['action_id']; ?>" />
                                 <?php } ?></td>
                             <td class="left"><?php echo ucfirst($action['name']); ?></td>
+                            <td class="left"><?php echo ($action['is_public'])?"Public":"Private"; ?></td>
                         </tr>
                             <?php } ?>
                         <?php } else { ?>
-                    <tr>
-                        <td class="center" colspan="2"><?php echo $this->lang->line('text_no_results'); ?></td>
-                    </tr>
+                        <tr>
+                            <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        </tr>
                         <?php } ?>
                     </tbody>
                 </table>

@@ -28,6 +28,7 @@ $lang['column_action']							= 'Action';
 $lang['column_name']							= 'Action Name';
 $lang['column_status']							= 'Status';
 $lang['column_order']							= 'Order';
+$lang['column_owner']							= 'Owner';
 
 // Button
 $lang['button_filter']							= 'Filter';
