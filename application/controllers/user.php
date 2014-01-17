@@ -530,15 +530,15 @@ class User extends MY_Controller
         $this->data['user_groups'] = $this->User_model->getUserGroups();
 
         //Set rules for form regsitration
-        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
-        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        // $this->form_validation->set_rules('username', $this->lang->line('form_username'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
+        $this->form_validation->set_rules('company_name', $this->lang->line('form_company_name'), 'trim|required|max_length[100]|xss_clean');
         $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
         $this->form_validation->set_rules('site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
-        $this->form_validation->set_rules('company_name', $this->lang->line('form_company_name'), 'trim|required|max_length[100]|xss_clean');
+        
 
 
 
