@@ -49,16 +49,12 @@
                                             <?php if(isset($to_clients)){?>
                                             <option value = 'all_clients'>All Clients</option>
                                                 <?php foreach($to_clients as $client){?>
-                                                    <option value ="<?php echo $client['_id']?>"><?php echo $client['company'];?></option>
+                                                    <option value ="<?php echo $client['_id']?>"><?php echo $client['company'] ? $client['company'] : $client['first_name']." ".$client['last_name'];?></option>
                                                 <?php }?>
                                             <?php }?>
                                         </select>
                                     </td>
                                 <?php }?>
-                            </tr>
-                            <tr>
-                                <td><?php echo $this->lang->line('entry_hint'); ?>:</td>
-                                <td><textarea name="hint" cols="40" rows="5"><?php echo isset($hint) ? $hint : set_value('hint'); ?></textarea></td>
                             </tr>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_description'); ?>:</td>
