@@ -24,6 +24,7 @@ $lang['tab_action'] 							= 'Actions';
 
 // Column
 $lang['column_name_action']            			= 'Actions';
+$lang['column_name_owner']            			= 'Owner';
 $lang['column_name_feature']					= 'Features';
 $lang['column_name_reward']						= 'Rewards';
 $lang['column_name_jigsaw']						= 'Jigsaws';

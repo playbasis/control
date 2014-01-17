@@ -228,7 +228,16 @@ class Action extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
         }else{
-            $this->data['actions'] = $this->Action_model->getActions($filter);
+            // $this->data['actions'] = $this->Action_model->getActions($filter);
+            $allActions = $this->Action_model->getActions($filter);
+
+            foreach ($allActions as &$action){
+                $actionIsPublic = $this->checkActionIsPublic($action['_id']);
+                $action['is_public'] =  $actionIsPublic;
+            }
+
+            $this->data['actions'] = $allActions;
+
             $config['total_rows'] = $this->Action_model->getTotalActions();
         }
 
@@ -268,7 +277,15 @@ class Action extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
         }else{
-            $this->data['actions'] = $this->Action_model->getActions($filter);
+            // $this->data['actions'] = $this->Action_model->getActions($filter);
+            $allActions = $this->Action_model->getActions($filter);
+
+            foreach ($allActions as &$action){
+                $actionIsPublic = $this->checkActionIsPublic($action['_id']);
+                $action['is_public'] =  $actionIsPublic;
+            }
+
+            $this->data['actions'] = $allActions;
             $config['total_rows'] = $this->Action_model->getTotalActions();
         }
 
@@ -420,6 +437,22 @@ class Action extends MY_Controller
         $json = array('success'=>'Okay!');
 
         $this->output->set_output(json_encode($json));
+    }
+
+    public function checkActionIsPublic($action_id){
+        $allActionsFromClients = $this->Action_model->checkActionIsPublic($action_id);
+
+        if(isset($allActionsFromClients[0]['client_id'])){
+            $firstAction = $allActionsFromClients[0]['client_id'];
+            foreach($allActionsFromClients as $action){
+                if($action['client_id'] != $firstAction){
+                    return true;
+                }
+            }
+            return false;            
+        }else{
+            return true;
+        }
     }
 
     
