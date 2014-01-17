@@ -2,23 +2,32 @@ insert
 
 playbasis_feature
 
-   "name": "File Manager",
-   "description": "",
-   "sort_order": NumberInt(0),
-   "icon": "icon-file",
-   "link": "filemanager",
-   "status": false,
-   "date_added": new Date(),
-   "date_modified": new Date()
+    "name": "File Manager",
+    "description": "",
+    "sort_order": NumberInt(0),
+    "icon": "icon-file",
+    "link": "filemanager",
+    "status": false,
+    "date_added": new Date(),
+    "date_modified": new Date()
 
-  "name": "Action",
-  "description": "",
-  "sort_order": NumberInt(2),
-  "icon": "fa-icon-magic",
-  "link": "action",
-  "status": true,
-  "date_added": new Date(),
-  "date_modified": new Date()
+    "name": "Action",
+    "description": "",
+    "sort_order": NumberInt(2),
+    "icon": "fa-icon-magic",
+    "link": "action",
+    "status": true,
+    "date_added": new Date(),
+    "date_modified": new Date()
+
+    "name": "Goods",
+    "description": "",
+    "sort_order": NumberInt(10),
+    "icon": "fa-icon-gift",
+    "link": "goods",
+    "status": true,
+    "date_added": new Date(),
+    "date_modified": new Date()
 
 
 update
