@@ -5,7 +5,7 @@ ini_set('max_execution_time', 300000);
 /***** CONNECTION TO MONGODB *****/
 $username = "user" ;
 $password = "pass" ;
-$database_mongo = "core";
+$database_mongo = "core_production";
 //$connection = new MongoClient("mongodb://$username:$password@localhost/myproject");
 $connection = new MongoClient("mongodb://localhost/".$database_mongo);
 $db = $connection->$database_mongo;
