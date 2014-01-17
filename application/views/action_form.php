@@ -55,7 +55,11 @@
                                     <?php if(isset($clients)){?>
                                     <option value = 'admin_only'>Admin Only</option>
                                         <?php foreach($clients as $client){?>
-                                            <option value ="<?php echo $client['_id']?>"><?php echo $client['company'];?></option>
+                                            <?php if(trim($client['company'])=="" || !isset($client['company'])){?>
+                                                <option value ="<?php echo $client['_id']?>"><?php echo $client['first_name']." ".$client['last_name'];?></option>    
+                                            <?php }else{?>
+                                                <option value ="<?php echo $client['_id']?>"><?php echo $client['company'];?></option>
+                                            <?php }?>
                                         <?php }?>
                                     <?php }?>
                                 </select>
