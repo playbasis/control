@@ -289,8 +289,6 @@ class Badge extends MY_Controller
                     }
                 }
 
-                $badges= $this->vsort($this->data['badges'], 'sort_order');
-
             }
 
         }
@@ -324,7 +322,6 @@ class Badge extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('badge');
     }
 
     public function getListForAjax($offset) {
@@ -339,7 +336,6 @@ class Badge extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
 
-        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
@@ -427,11 +423,7 @@ class Badge extends MY_Controller
 
                     }
                 }
-
-                $badges= $this->vsort($this->data['badges'], 'sort_order');
-
             }
-
         }
 
         if (isset($this->error['warning'])) {
@@ -462,9 +454,6 @@ class Badge extends MY_Controller
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
-        // $this->render_page('template');
-//        $this->render_page('badge');
-
         $this->render_page('badge_ajax');
     }
 
@@ -684,9 +673,6 @@ class Badge extends MY_Controller
         $json = array('success'=>'Okay increase!');
 
         $this->output->set_output(json_encode($json));
-
-        // redirect('badge', 'refresh');
-
     }
 
     public function decrease_order($badge_id){
@@ -700,26 +686,6 @@ class Badge extends MY_Controller
         $json = array('success'=>'Okay decrease!');
 
         $this->output->set_output(json_encode($json));
-
-        // redirect('badge', 'refresh');
-    }
-
-    private function vsort (&$array, $key, $order='asc') {
-        $res=array();
-        $sort=array();
-        reset($array);
-        foreach ($array as $ii => $va) {
-            $sort[$ii]=$va[$key];
-        }
-        if(strtolower($order) == 'asc'){
-            asort($sort);
-        }else{
-            arsort($sort);
-        }
-        foreach ($sort as $ii => $va) {
-            $res[$ii]=$array[$ii];
-        }
-        $array=$res;
     }
 
     public function checkBadgeIsPublic($badge_id){
