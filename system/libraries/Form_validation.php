@@ -1413,7 +1413,7 @@ class CI_Form_validation {
      */
     function url_exists($url){                                   
         $url_data = parse_url($url); // scheme, host, port, path, query
-        if(!fsockopen($url_data['host'], isset($url_data['port']) ? $url_data['port'] : 80)){
+        if(!@fsockopen($url_data['host'], isset($url_data['port']) ? $url_data['port'] : 80)){
             // $this->set_message('url_exists', 'The Domain (URL) you entered is not accessible.');
             return false;
         }          
