@@ -277,7 +277,15 @@ class Action extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
         }else{
-            $this->data['actions'] = $this->Action_model->getActions($filter);
+            // $this->data['actions'] = $this->Action_model->getActions($filter);
+            $allActions = $this->Action_model->getActions($filter);
+
+            foreach ($allActions as &$action){
+                $actionIsPublic = $this->checkActionIsPublic($action['_id']);
+                $action['is_public'] =  $actionIsPublic;
+            }
+
+            $this->data['actions'] = $allActions;
             $config['total_rows'] = $this->Action_model->getTotalActions();
         }
 

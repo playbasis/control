@@ -6,6 +6,9 @@
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                     <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
+                    <?php if(!$client_id){?>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_owner'); ?></td>
+                    <?php }?>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     <td class="right" style="width:100px;"><?php echo $this->lang->line('column_order'); ?></td>
@@ -17,6 +20,9 @@
                         <td></td>
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
+                        <?php if(!$client_id){?>
+                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_owner'); ?></td>
+                        <?php }?>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -33,6 +39,9 @@
                                         <?php } ?></td>
                                     <td class="left"><?php echo "<i style='color:grey' class='".$action['icon']." icon-4x'></i>"; ?></td>
                                     <td class="right"><?php echo ucfirst($action['name']); ?></td>
+                                    <?php if(!$client_id){?>
+                                        <td class="right"><?php echo ($action['is_public'])? "Public": "Private"; ?></td>
+                                    <?php }?> 
                                     <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
                                     <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
                                     <td class="right"><?php echo $action['sort_order'];?></td>

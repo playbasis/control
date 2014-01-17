@@ -462,7 +462,10 @@ class Badge_model extends MY_Model
         
     }
 
-
+    public function checkBadgeIsPublic($badge_id){
+        $this->mongo_db->where('badge_id', $badge_id);
+        return $this->mongo_db->get('playbasis_badge_to_client');
+    }
 
 
 }

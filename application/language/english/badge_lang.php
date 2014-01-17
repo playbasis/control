@@ -24,6 +24,7 @@ $lang['column_sort_order']      		= 'Sort Order';
 $lang['column_quantity']          		= 'Quantity';
 $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
+$lang['column_owner']	          		= 'Owner';
 
 // Entry
 $lang['entry_name']             		= 'Name';

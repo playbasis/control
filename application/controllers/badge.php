@@ -229,7 +229,7 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }
-
+                $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
                     'name' => $result['name'],
@@ -239,6 +239,7 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
+                    'is_public'=>$badgeIsPublic
                 );
             }
         }else{
@@ -271,7 +272,7 @@ class Badge extends MY_Controller
                         else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }
-
+                        
                         if(!$badge_info['deleted']){
                             $this->data['badges'][] = array(
                             'badge_id' => $badge_info['_id'],
@@ -284,6 +285,7 @@ class Badge extends MY_Controller
                             'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
                             );    
                         }
+                        
                     }
                 }
 
@@ -363,7 +365,7 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }
-
+                $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
                     'name' => $result['name'],
@@ -373,6 +375,7 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
+                    'is_public' => $badgeIsPublic
                 );
             }
         }
@@ -717,6 +720,22 @@ class Badge extends MY_Controller
             $res[$ii]=$array[$ii];
         }
         $array=$res;
+    }
+
+    public function checkBadgeIsPublic($badge_id){
+        $allBadgesFromClients = $this->Badge_model->checkBadgeIsPublic($badge_id);
+
+        if(isset($allBadgesFromClients[0]['client_id'])){
+            $firstBadge = $allBadgesFromClients[0]['client_id'];
+            foreach($allBadgesFromClients as $badge){
+                if($badge['client_id'] != $firstBadge){
+                    return true;
+                }
+            }
+            return false;    
+        }else{
+            return true;
+        }
     }
 
 }
