@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
-class Badge extends MY_Controller
+class Goods extends MY_Controller
 {
     public function __construct()
     {
@@ -12,11 +12,11 @@ class Badge extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Badge_model');
+        $this->load->model('Goods_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
-        $this->lang->load("badge", $lang['folder']);
+        $this->lang->load("goods", $lang['folder']);
     }
 
     public function index() {
@@ -31,7 +31,7 @@ class Badge extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getList(0);
-        
+
     }
 
     public function page($offset=0) {
@@ -55,15 +55,15 @@ class Badge extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'badge/insert';
+        $this->data['form'] = 'goods/insert';
 
-        //I took out the check_space because some badges may have spaces? - Joe
+        //I took out the check_space because some goods may have spaces? - Joe
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('stackable', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if($this->checkLimitBadge()){
+            if($this->checkLimitGoods()){
                 $this->data['message'] = null;
 
                 if (!$this->validateModify()) {
@@ -74,66 +74,66 @@ class Badge extends MY_Controller
 
                     if($this->User_model->getClientId()){
 
-                        $badge_data = $this->input->post();
+                        $goods_data = $this->input->post();
 
-                        $badge_id = $this->Badge_model->addBadge($badge_data);
+                        $goods_id = $this->Goods_model->addGoods($goods_data);
 
-                        $badge_data['badge_id'] = $badge_id;
+                        $goods_data['goods_id'] = $goods_id;
 
-                        $this->Badge_model->addBadgeToClient($badge_data);
+                        $this->Goods_model->addGoodsToClient($goods_data);
 
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                        redirect('/badge', 'refresh');
+                        redirect('/goods', 'refresh');
                     }else{
 
-                        $badge_data = $this->input->post();
+                        $goods_data = $this->input->post();
 
-                        if($badge_data['client_id'] != 'all_clients'){
+                        if($goods_data['client_id'] != 'all_clients'){
                             $this->load->model('Client_model');
-                            $clients_sites = $this->Client_model->getSitesByClientId($badge_data['client_id']);
+                            $clients_sites = $this->Client_model->getSitesByClientId($goods_data['client_id']);
 
-                            $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
+                            $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
 
                             foreach ($clients_sites as $client){
-                                $badge_data['site_id'] = $client['_id']; 
-                                $this->Badge_model->addBadgeToClient($badge_data);
-                            }    
-                        }elseif ($badge_data['client_id'] == 'all_clients'){
-                            $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);   
+                                $goods_data['site_id'] = $client['_id'];
+                                $this->Goods_model->addGoodsToClient($goods_data);
+                            }
+                        }elseif ($goods_data['client_id'] == 'all_clients'){
+                            $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
 
                             $this->load->model('Client_model');
                             $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
 
                             foreach($all_sites_clients as $site){
-                                $badge_data['site_id'] = $site['_id'];
-                                $badge_data['client_id'] = $site['client_id'];
-                                $this->Badge_model->addBadgeToClient($badge_data);
+                                $goods_data['site_id'] = $site['_id'];
+                                $goods_data['client_id'] = $site['client_id'];
+                                $this->Goods_model->addGoodsToClient($goods_data);
                             }
                         }
-                        redirect('/badge', 'refresh');
+                        redirect('/goods', 'refresh');
                     }
 
-                }    
+                }
             }else{
-                $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
-                redirect('/badge/insert', 'refresh');
+                $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_goods'));
+                redirect('/goods/insert', 'refresh');
             }
         }
         $this->getForm();
     }
 
-    public function update($badge_id) {
+    public function update($goods_id) {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'badge/update/'.$badge_id;
+        $this->data['form'] = 'goods/update/'.$goods_id;
 
-        //I took out the check_space because some badges may have spaces? - Joe
+        //I took out the check_space because some goods may have spaces? - Joe
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
-        if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
+        if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerGoods($goods_id)) {
 
             $this->data['message'] = null;
 
@@ -143,20 +143,20 @@ class Badge extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
-                    $this->Badge_model->editBadgeToClient($badge_id, $this->input->post());
+                    $this->Goods_model->editGoodsToClient($goods_id, $this->input->post());
                 }else{
-                    $this->Badge_model->editBadge($badge_id, $this->input->post()); 
-                    
-                    $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $this->input->post());   
+                    $this->Goods_model->editGoods($goods_id, $this->input->post());
+
+                    $this->Goods_model->editGoodsToClientFromAdmin($goods_id, $this->input->post());
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
 
-                redirect('/badge', 'refresh');
+                redirect('/goods', 'refresh');
             }
         }
 
-        $this->getForm($badge_id);
+        $this->getForm($goods_id);
     }
 
     public function delete() {
@@ -173,20 +173,20 @@ class Badge extends MY_Controller
         }
 
         if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $badge_id) {
-                if($this->checkOwnerBadge($badge_id)){
-                    
+            foreach ($this->input->post('selected') as $goods_id) {
+                if($this->checkOwnerGoods($goods_id)){
+
                     if($this->User_model->getClientId()){
-                        $this->Badge_model->deleteBadgeClient($badge_id);
+                        $this->Goods_model->deleteGoodsClient($goods_id);
                     }else{
-                        $this->Badge_model->deleteBadge($badge_id);    
+                        $this->Goods_model->deleteGoods($goods_id);
                     }
-                    
+
                 }
             }
 
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/badge', 'refresh');
+            redirect('/goods', 'refresh');
         }
 
         $this->getList(0);
@@ -198,17 +198,16 @@ class Badge extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('badge/page');
+        $config['base_url'] = site_url('goods/page');
 
 
-        $this->load->model('Badge_model');
+        $this->load->model('Goods_model');
         $this->load->model('Image_model');
 
-        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        $this->data['badges'] = array();
+        $this->data['goods_list'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
@@ -218,9 +217,9 @@ class Badge extends MY_Controller
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
 
-            $results = $this->Badge_model->getBadges($data);
+            $results = $this->Goods_model->getGoodsList($data);
 
-            $badge_total = $this->Badge_model->getTotalBadges($data);
+            $goods_total = $this->Goods_model->getTotalGoods($data);
 
             foreach ($results as $result) {
 
@@ -229,9 +228,9 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }
-                $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
-                $this->data['badges'][] = array(
-                    'badge_id' => $result['_id'],
+                $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
+                $this->data['goods_list'][] = array(
+                    'goods_id' => $result['_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
@@ -239,58 +238,56 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public'=>$badgeIsPublic
+                    'is_public'=>$goodsIsPublic
                 );
             }
         }else{
             $this->load->model('Reward_model');
 
-            $badge_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
+            $goods_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
-            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
+            $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
 
-            $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
+            $reward_limit_data = $this->Reward_model->getGoodsRewardBySiteId($site_id);
 
-            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($badge_data);
+            $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
             if ($reward_limit_data) {
 
-                $slot_total = $reward_limit_data[0]['limit'] - $badge_total;
+                $slot_total = $reward_limit_data[0]['limit'] - $goods_total;
 
                 $this->data['slots'] = $slot_total;
                 $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
-                foreach ($badges as $badge) {
+                foreach ($goods_list as $goods) {
 
-                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
+                    $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
 
-                    if($badge_info){
+                    if($goods_info){
 
-                        if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $image = $this->Image_model->resize($badge_info['image'], 50, 50);
+                        if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $image = $this->Image_model->resize($goods_info['image'], 50, 50);
                         }
                         else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }
-                        
-                        if(!$badge_info['deleted']){
-                            $this->data['badges'][] = array(
-                            'badge_id' => $badge_info['_id'],
-                            'name' => $badge_info['name'],
-                            'hint' => $badge_info['hint'],
-                            'quantity' => $badge_info['quantity'],
-                            'status' => $badge_info['status'],
-                            'image' => $image,
-                            'sort_order'  => $badge_info['sort_order'],
-                            'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                            );    
+
+                        if(!$goods_info['deleted']){
+                            $this->data['goods_list'][] = array(
+                                'goods_id' => $goods_info['_id'],
+                                'name' => $goods_info['name'],
+                                'hint' => $goods_info['hint'],
+                                'quantity' => $goods_info['quantity'],
+                                'status' => $goods_info['status'],
+                                'image' => $image,
+                                'sort_order'  => $goods_info['sort_order'],
+                                'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
+                            );
                         }
-                        
+
                     }
                 }
-
             }
-
         }
 
         if (isset($this->error['warning'])) {
@@ -307,7 +304,7 @@ class Badge extends MY_Controller
             $this->data['success'] = '';
         }
 
-        $config['total_rows'] = $badge_total;
+        $config['total_rows'] = $goods_total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
@@ -317,7 +314,7 @@ class Badge extends MY_Controller
 
         $this->data['pagination_links'] = $this->pagination->create_links();
 
-        $this->data['main'] = 'badge';
+        $this->data['main'] = 'goods';
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
@@ -330,16 +327,16 @@ class Badge extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('badge/page');
+        $config['base_url'] = site_url('goods/page');
 
 
-        $this->load->model('Badge_model');
+        $this->load->model('Goods_model');
         $this->load->model('Image_model');
 
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        $this->data['badges'] = array();
+        $this->data['goods_list'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $slot_total = 0;
         $this->data['slots'] = $slot_total;
@@ -350,9 +347,9 @@ class Badge extends MY_Controller
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
 
-            $results = $this->Badge_model->getBadges($data);
+            $results = $this->Goods_model->getGoods($data);
 
-            $badge_total = $this->Badge_model->getTotalBadges($data);
+            $goods_total = $this->Goods_model->getTotalGoods($data);
 
             foreach ($results as $result) {
 
@@ -361,9 +358,9 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }
-                $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
-                $this->data['badges'][] = array(
-                    'badge_id' => $result['_id'],
+                $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
+                $this->data['goods_list'][] = array(
+                    'goods_id' => $result['_id'],
                     'name' => $result['name'],
                     'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
@@ -371,7 +368,7 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public' => $badgeIsPublic
+                    'is_public' => $goodsIsPublic
                 );
             }
         }
@@ -379,48 +376,46 @@ class Badge extends MY_Controller
 
             $this->load->model('Reward_model');
 
-            $badge_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'start' => $offset, 'sort'=>'sort_order');
+            $goods_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'start' => $offset, 'sort'=>'sort_order');
 
-            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
+            $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
 
-            $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
+            $reward_limit_data = $this->Reward_model->getGoodsRewardBySiteId($site_id);
 
-            $badge_total = $this->Badge_model->getTotalBadgeBySiteId($badge_data);
+            $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
             if ($reward_limit_data) {
 
-                $slot_total = $reward_limit_data[0]['limit'] - $badge_total;
+                $slot_total = $reward_limit_data[0]['limit'] - $goods_total;
 
                 $this->data['slots'] = $slot_total;
                 $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
-                foreach ($badges as $badge) {
+                foreach ($goods_list as $goods) {
 
-                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
+                    $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
 
-                    if($badge_info){
+                    if($goods_info){
 
-                        if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $image = $this->Image_model->resize($badge_info['image'], 50, 50);
+                        if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $image = $this->Image_model->resize($goods_info['image'], 50, 50);
                         }
                         else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                         }
 
-                        if(!$badge_info['deleted']){
-                            $this->data['badges'][] = array(
-                                'badge_id' => $badge_info['_id'],
-                                'name' => $badge_info['name'],
-                                'hint' => $badge_info['hint'],
-                                'quantity' => $badge_info['quantity'],
-                                'status' => $badge_info['status'],
+                        if(!$goods_info['deleted']){
+                            $this->data['goods_list'][] = array(
+                                'goods_id' => $goods_info['_id'],
+                                'name' => $goods_info['name'],
+                                'hint' => $goods_info['hint'],
+                                'quantity' => $goods_info['quantity'],
+                                'status' => $goods_info['status'],
                                 'image' => $image,
-                                'sort_order'  => $badge_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                            );    
+                                'sort_order'  => $goods_info['sort_order'],
+                                'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
+                            );
                         }
-                        
-
                     }
                 }
             }
@@ -440,7 +435,7 @@ class Badge extends MY_Controller
             $this->data['success'] = '';
         }
 
-        $config['total_rows'] = $badge_total;
+        $config['total_rows'] = $goods_total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
@@ -450,62 +445,62 @@ class Badge extends MY_Controller
 
         $this->data['pagination_links'] = $this->pagination->create_links();
 
-        $this->data['main'] = 'badge';
+        $this->data['main'] = 'goods';
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
-        $this->render_page('badge_ajax');
+        $this->render_page('goods_ajax');
     }
 
-    private function getForm($badge_id=null) {
+    private function getForm($goods_id=null) {
 
         $this->load->model('Image_model');
 
-        if (isset($badge_id) && ($badge_id != 0)) {
+        if (isset($goods_id) && ($goods_id != 0)) {
             if($this->User_model->getClientId()){
-                $badge_info = $this->Badge_model->getBadgeToClient($badge_id);
+                $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
             }else{
-                $badge_info = $this->Badge_model->getBadge($badge_id);    
+                $goods_info = $this->Goods_model->getGoods($goods_id);
             }
-            
+
         }
 
         if ($this->input->post('name')) {
             $this->data['name'] = $this->input->post('name');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['name'] = $badge_info['name'];
+        } elseif (isset($goods_id) && ($goods_id != 0)) {
+            $this->data['name'] = $goods_info['name'];
         } else {
             $this->data['name'] = '';
         }
 
         if ($this->input->post('description')) {
             $this->data['description'] = $this->input->post('description');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['description'] = $badge_info['description'];
+        } elseif (isset($goods_id) && ($goods_id != 0)) {
+            $this->data['description'] = $goods_info['description'];
         } else {
             $this->data['description'] = '';
         }
 
         if ($this->input->post('hint')) {
             $this->data['hint'] = $this->input->post('hint');
-        } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['hint'] = $badge_info['hint'];
+        } elseif (isset($goods_id) && ($goods_id != 0)) {
+            $this->data['hint'] = $goods_info['hint'];
         } else {
             $this->data['hint'] = '';
         }
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($badge_info)) {
-            $this->data['image'] = $badge_info['image'];
+        } elseif (!empty($goods_info)) {
+            $this->data['image'] = $goods_info['image'];
         } else {
             $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }
 
         if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($badge_info) && $badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($badge_info['image'], 100, 100);
+        } elseif (!empty($goods_info) && $goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+            $this->data['thumb'] = $this->Image_model->resize($goods_info['image'], 100, 100);
         } else {
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }
@@ -514,48 +509,48 @@ class Badge extends MY_Controller
 
         if ($this->input->post('sort_order')) {
             $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($badge_info)) {
-            $this->data['sort_order'] = $badge_info['sort_order'];
+        } elseif (!empty($goods_info)) {
+            $this->data['sort_order'] = $goods_info['sort_order'];
         } else {
             $this->data['sort_order'] = 0;
         }
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
-        } elseif (!empty($badge_info)) {
-            $this->data['status'] = $badge_info['status'];
+        } elseif (!empty($goods_info)) {
+            $this->data['status'] = $goods_info['status'];
         } else {
             $this->data['status'] = 1;
         }
 
         if ($this->input->post('stackable')) {
             $this->data['stackable'] = $this->input->post('stackable');
-        } elseif (!empty($badge_info)) {
-            $this->data['stackable'] = $badge_info['stackable'];
+        } elseif (!empty($goods_info)) {
+            $this->data['stackable'] = $goods_info['stackable'];
         } else {
             $this->data['stackable'] = 1;
         }
 
         if ($this->input->post('substract')) {
             $this->data['substract'] = $this->input->post('substract');
-        } elseif (!empty($badge_info)) {
-            $this->data['substract'] = $badge_info['substract'];
+        } elseif (!empty($goods_info)) {
+            $this->data['substract'] = $goods_info['substract'];
         } else {
             $this->data['substract'] = 1;
         }
 
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
-        } elseif (!empty($badge_info)) {
-            $this->data['quantity'] = $badge_info['quantity'];
+        } elseif (!empty($goods_info)) {
+            $this->data['quantity'] = $goods_info['quantity'];
         } else {
             $this->data['quantity'] = 1;
         }
 
-        if (isset($badge_id)) {
-            $this->data['badge_id'] = $badge_id;
+        if (isset($goods_id)) {
+            $this->data['goods_id'] = $goods_id;
         } else {
-            $this->data['badge_id'] = null;
+            $this->data['goods_id'] = null;
         }
 
         $this->load->model('Client_model');
@@ -563,23 +558,22 @@ class Badge extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        $this->data['main'] = 'badge_form';
+        $this->data['main'] = 'goods_form';
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('badge_form');
     }
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'badge')) {
+        if ($this->User_model->hasPermission('modify', 'goods')) {
             return true;
         } else {
             return false;
         }
     }
 
-    private function checkLimitBadge(){
+    private function checkLimitGoods(){
 
         if(isset($client)){
 
@@ -591,20 +585,20 @@ class Badge extends MY_Controller
 
                 $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
 
-                $badges_count = $this->Badge_model->getTotalBadgeBySiteId($this->User_model->getSiteId());
+                $goods_list_count = $this->Goods_model->getTotalGoodsBySiteId($this->User_model->getSiteId());
 
                 foreach ($plan_limit as $plan) {
                     if($plan['site_id'] == $this->input->post('site_id')){
-                        if($plan['name'] == 'badge'){
+                        if($plan['name'] == 'goods'){
                             if($plan['limit']){
-                                $limit_badge =  $plan['limit'];
+                                $limit_goods =  $plan['limit'];
                             }
                         }
                     }
                 }
-             
-                if(isset($limit_badge)){
-                    if($badges_count >= $limit_badge){
+
+                if(isset($limit_goods)){
+                    if($goods_list_count >= $limit_goods){
                         $over_limit = true;
                     }else{
                         $over_limit = false;
@@ -625,21 +619,21 @@ class Badge extends MY_Controller
 
     }
 
-    private function checkOwnerBadge($badgeId){
+    private function checkOwnerGoods($goodsId){
 
         $error = null;
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $badge_data = array('site_id'=>$this->User_model->getSiteId());
+            $goods_data = array('site_id'=>$this->User_model->getSiteId());
 
-            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
+            $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
             $has = false;
-    
-            foreach ($badges as $badge) {
-                if($badge['_id']."" == $badgeId.""){
+
+            foreach ($goods_list as $goods) {
+                if($goods['_id']."" == $goodsId.""){
                     $has = true;
-                }    
+                }
             }
 
             if(!$has){
@@ -655,32 +649,32 @@ class Badge extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'badge')) {
+        if ($this->User_model->hasPermission('access', 'goods')) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function increase_order($badge_id){
+    public function increase_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $this->Badge_model->increaseOrderByOneClient($badge_id);   
+            $this->Goods_model->increaseOrderByOneClient($goods_id);
         }else{
-            $this->Badge_model->increaseOrderByOne($badge_id);    
+            $this->Goods_model->increaseOrderByOne($goods_id);
         }
-        
+
         $json = array('success'=>'Okay increase!');
 
         $this->output->set_output(json_encode($json));
     }
 
-    public function decrease_order($badge_id){
+    public function decrease_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $this->Badge_model->decreaseOrderByOneClient($badge_id);
+            $this->Goods_model->decreaseOrderByOneClient($goods_id);
         }else{
-            $this->Badge_model->decreaseOrderByOne($badge_id);    
+            $this->Goods_model->decreaseOrderByOne($goods_id);
         }
 
         $json = array('success'=>'Okay decrease!');
@@ -688,17 +682,35 @@ class Badge extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
-    public function checkBadgeIsPublic($badge_id){
-        $allBadgesFromClients = $this->Badge_model->checkBadgeIsPublic($badge_id);
+    private function vsort (&$array, $key, $order='asc') {
+        $res=array();
+        $sort=array();
+        reset($array);
+        foreach ($array as $ii => $va) {
+            $sort[$ii]=$va[$key];
+        }
+        if(strtolower($order) == 'asc'){
+            asort($sort);
+        }else{
+            arsort($sort);
+        }
+        foreach ($sort as $ii => $va) {
+            $res[$ii]=$array[$ii];
+        }
+        $array=$res;
+    }
 
-        if(isset($allBadgesFromClients[0]['client_id'])){
-            $firstBadge = $allBadgesFromClients[0]['client_id'];
-            foreach($allBadgesFromClients as $badge){
-                if($badge['client_id'] != $firstBadge){
+    public function checkGoodsIsPublic($goods_id){
+        $allGoodsFromClients = $this->Goods_model->checkGoodsIsPublic($goods_id);
+
+        if(isset($allGoodsFromClients[0]['client_id'])){
+            $firstGoods = $allGoodsFromClients[0]['client_id'];
+            foreach($allGoodsFromClients as $goods){
+                if($goods['client_id'] != $firstGoods){
                     return true;
                 }
             }
-            return false;    
+            return false;
         }else{
             return true;
         }
