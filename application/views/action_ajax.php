@@ -21,7 +21,7 @@
                         <td></td>
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
                         <?php if(!$client_id){?>
-                            <td class="right" style="width:100px;"><?php echo $this->lang->line('column_owner'); ?></td>
+                            <td></td>
                         <?php }?>
                         <td></td>
                         <td></td>
