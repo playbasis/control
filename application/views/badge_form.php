@@ -49,7 +49,11 @@
                                             <?php if(isset($to_clients)){?>
                                             <option value = 'all_clients'>All Clients</option>
                                                 <?php foreach($to_clients as $client){?>
+                                                    <?php if(trim($client['company'])=="" || !isset($client['company'])){?>
+                                                        <option value ="<?php echo $client['_id']?>"><?php echo $client['first_name']." ".$client['last_name'];?></option>
+                                                    <?php }else{?>
                                                     <option value ="<?php echo $client['_id']?>"><?php echo $client['company'];?></option>
+                                                    <?php }?>
                                                 <?php }?>
                                             <?php }?>
                                         </select>
