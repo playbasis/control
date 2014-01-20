@@ -238,7 +238,7 @@ class Plan extends MY_Controller
                     'name' => $result['name'],
                     'description' => $result['description'],
                     'status' => $result['status'],
-                    'selected'    => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
+                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
                 );
             }
         }
@@ -426,6 +426,8 @@ class Plan extends MY_Controller
             }
         }
 
+        $this->data['clients_in_plan'] = $this->getClientsByPlanId($plan_id);
+
         $this->data['main'] = 'plan_form';
 
         $this->load->vars($this->data);
@@ -464,6 +466,22 @@ class Plan extends MY_Controller
         }else{
             return true;
         }
+    }
+
+    public function getClientsByPlanId($plan_id){
+        $allClientsInThisPlan = $this->Plan_model->getClientByPlan($plan_id);
+
+        $listOfClients = array();
+        $this->load->model('Client_model');
+        foreach ($allClientsInThisPlan as $client){
+            $get_client = $this->Client_model->getClient($client['client_id']);
+            if($get_client != null){
+                $listOfClients[] = $get_client;        
+            }
+        }
+
+        return $listOfClients;
+        //return $allClientsInThisPlan;
     }
 }
 ?>

@@ -13,6 +13,7 @@ $lang['text_browse']            				= 'Browse Files';
 $lang['text_clear']             				= 'Clear Image';
 $lang['text_criteria']          				= 'Domain View';
 $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
+$lang['text_no_clients']			           	= 'There are no clients using this Plan Setting';
 
 
 // Tab
@@ -20,6 +21,7 @@ $lang['tab_reward']								= 'Rewards';
 $lang['tab_jigsaw'] 							= 'Conditions';
 $lang['tab_feature'] 							= 'Features';
 $lang['tab_action'] 							= 'Actions';
+$lang['tab_clients'] 							= 'Clients in Plan Setting';
 
 
 // Column
@@ -33,7 +35,8 @@ $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_limit']            				= 'Limit';
 $lang['column_action']          				= 'Action';
 $lang['column_description']						= 'Description';
-$lang['column_plan_name']						= 'Plan Name';						
+$lang['column_plan_name']						= 'Plan Name';		
+$lang['column_clients']							= 'Current Clients';				
 
 
 // Entry
