@@ -1,0 +1,79 @@
+playbasis_action_log
+
+pb_plyer_id 	{
+   "pb_plyer_id": NumberInt(1)
+}
+client_player
+{
+   "pb_player_id": NumberInt(1),
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
+}
+action_client_player
+{
+   "action_id": NumberInt(1),
+   "pb_player_id": NumberInt(1),
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
+}
+client_action_log
+{
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1),
+   "action_id": NumberInt(1),
+   "date_added": NumberInt(1)
+}
+
+
+
+playbasis_action_to_client
+
+client	{
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
+}
+unique_action {
+   "action_id": NumberInt(1),
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
+}
+
+
+jigsaw_log
+
+player_rule_jigsaw
+{
+   "pb_player_id": NumberInt(1),
+   "rule_id": NumberInt(1),
+   "jigsaw_id": NumberInt(1)
+}
+
+
+
+playbasis_rule
+
+client	{
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
+}
+
+
+
+playbasis_reward_to_player
+
+reward_player_client
+{
+   "reward_id": NumberInt(1),
+   "pb_player_id": NumberInt(1),
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
+}
+
+
+
+playbasis_summary_of_player_beta
+
+client	{
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
+}
