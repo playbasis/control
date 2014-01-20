@@ -39,7 +39,7 @@
             <div id="tab-general">
                 <table class="form">
                     <tr>
-                        <td><?php echo $this->lang->line('entry_name'); ?>:</td>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?>:</td>
                         <td><input type="text" name="name" value="<?php echo $name; ?>" size="50" /></td>
                     </tr>
                     <tr>

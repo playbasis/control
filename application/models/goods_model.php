@@ -2,19 +2,19 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Goods_model extends MY_Model
 {
-    public function getGoods($badge_id) {
+    public function getGoods($goods_id) {
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->where('_id',  new MongoID($badge_id));
+        $this->mongo_db->where('_id',  new MongoID($goods_id));
         $results = $this->mongo_db->get("playbasis_goods");
 
         return $results ? $results[0] : null;
     }
 
-    public function getGoodsToClient($badge_id){
+    public function getGoodsToClient($goods_id){
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->where('_id',  new MongoID($badge_id));
+        $this->mongo_db->where('_id',  new MongoID($goods_id));
         $results = $this->mongo_db->get("playbasis_goods_to_client");
 
         return $results ? $results[0] : null;
@@ -65,7 +65,7 @@ class Goods_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
         $this->mongo_db->where('deleted', false);
-        $goods_list_data = $this->mongo_db->get("playbasis_badge");
+        $goods_list_data = $this->mongo_db->get("playbasis_goods");
 
         return $goods_list_data;
     }
@@ -82,7 +82,7 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
         $this->mongo_db->where('deleted', false);
-        $total = $this->mongo_db->count("playbasis_badge");
+        $total = $this->mongo_db->count("playbasis_goods");
 
         return $total;
     }
@@ -134,7 +134,7 @@ class Goods_model extends MY_Model
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-        $results = $this->mongo_db->get("playbasis_badge_to_client");
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
 
         return $results;
     }
@@ -153,7 +153,7 @@ class Goods_model extends MY_Model
         }
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-        $total = $this->mongo_db->count("playbasis_badge_to_client");
+        $total = $this->mongo_db->count("playbasis_goods_to_client");
 
         return $total;
     }
@@ -161,7 +161,7 @@ class Goods_model extends MY_Model
     public function getCommonGoods(){
         $this->set_site_mongodb(0);
 
-        $results = $this->mongo_db->get("playbasis_badge");
+        $results = $this->mongo_db->get("playbasis_goods");
 
         $goods_list = array();
 

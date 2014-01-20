@@ -56,8 +56,10 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/insert';
 
-        $this->form_validation->set_rules('first_name', $this->lang->line('first_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
+        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('entry_email'), 'trim|required|valid_email');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 

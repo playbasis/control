@@ -146,7 +146,7 @@ class User extends MY_Controller
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean');
         if($this->input->post('password')!=''){
-            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space');
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|max_length[255]|xss_clean|check_space|min_length[5]');
             $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         }
         $this->form_validation->set_rules('user_group', "", '');
@@ -531,7 +531,7 @@ class User extends MY_Controller
 
         //Set rules for form regsitration
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
-        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
@@ -553,14 +553,13 @@ class User extends MY_Controller
                     if($user_id = $this->User_model->insertUser()){
                         $user_info = $this->User_model->getUserInfo($user_id);
 
-                        $client_id = $this->Client_model->insertClient();//returns only client id
+                        $client_id = $this->Client_model->insertClient();
 
                         $data = array(
                             'client_id' => $client_id,
                             'user_id' => $user_info['_id']
                         );
-                        $this->User_model->addUserToClient($data);//Does not return anything just inserts to 'user_to_client' table
-
+                        $this->User_model->addUserToClient($data);
                         $data = $this->input->post();
                         $data['client_id'] = $client_id;
                         $data['limit_users'] = 1000;
