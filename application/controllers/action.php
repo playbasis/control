@@ -57,7 +57,7 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('status', "", '');
 
@@ -136,7 +136,7 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -152,7 +152,10 @@ class Action extends MY_Controller
                 $data = $this->input->post();
 
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-
+                    $client_id = $this->User_model->getClientId();
+                    $data['client_id'] = $client_id;
+                    $site_id = $this->User_model->getSiteId();
+                    $data['site_id'] = $site_id;
                     $this->Action_model->editActionToClient($action_id, $data);
                 }else{
                     $this->Action_model->editAction($action_id, $data);
