@@ -124,7 +124,7 @@ class Rule extends MY_Controller
 
         $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
-        $json =array();
+        /*$json =array();
 
         if ($badges) {
 
@@ -143,7 +143,9 @@ class Rule extends MY_Controller
             }
         }
 
-        $this->output->set_output(json_encode($json));
+        $this->output->set_output(json_encode($json));*/
+
+        $this->output->set_output(json_encode($badges));
 
     }
 
