@@ -53,9 +53,9 @@ class Level extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'level/insert';
 
-        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'), 'trim|required|numeric|xss_clean|check_space');
+        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level', $this->lang->line('entry_level'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        // $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level_title', "", '');
         $this->form_validation->set_rules('sort_order', "", '');
 
@@ -92,9 +92,9 @@ class Level extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'level/update/'.$level_id;
 
-        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'), 'trim|required|numeric|xss_clean|check_space');
+        $this->form_validation->set_rules('exp', $this->lang->line('entry_exp'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level', $this->lang->line('entry_level'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        // $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level_title', "", '');
         $this->form_validation->set_rules('sort_order', "", '');
 
