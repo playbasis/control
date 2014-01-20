@@ -61,6 +61,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -137,6 +138,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
