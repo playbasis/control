@@ -189,8 +189,6 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb(0);
 
         $b = $this->mongo_db->insert('playbasis_goods', array(
-            'stackable' => (int)$data['stackable']|0 ,
-            'substract' => (int)$data['substract']|0,
             'quantity' => (int)$data['quantity']|0 ,
             'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
@@ -201,6 +199,7 @@ class Goods_model extends MY_Model
             'description' => $data['description']|'',
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
+            'redeem' => serialize($data['redeem']),
             'deleted'=>false
         ));
         return $b;
@@ -211,8 +210,6 @@ class Goods_model extends MY_Model
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
             'goods_id' => new MongoID($data['goods_id']),
-            'stackable' => (int)$data['stackable']|0 ,
-            'substract' => (int)$data['substract']|0,
             'quantity' => (int)$data['quantity']|0 ,
             'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
@@ -223,6 +220,7 @@ class Goods_model extends MY_Model
             'description' => $data['description']|'',
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
+            'redeem' => serialize($data['redeem']),
             'deleted'=>false
         ));
     }
@@ -231,8 +229,6 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
-        $this->mongo_db->set('stackable', (int)$data['stackable']);
-        $this->mongo_db->set('substract', (int)$data['substract']);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
@@ -241,6 +237,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->set('redeem', serialize($data['redeem']));
         $this->mongo_db->update('playbasis_goods');
 
         if (isset($data['image'])) {
@@ -256,9 +253,7 @@ class Goods_model extends MY_Model
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $this->mongo_db->set('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->set('site_id', new MongoID($data['site_id']));    
-        $this->mongo_db->set('stackable', (int)$data['stackable']);
-        $this->mongo_db->set('substract', (int)$data['substract']);
+        $this->mongo_db->set('site_id', new MongoID($data['site_id']));
         $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
@@ -267,6 +262,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->set('redeem', serialize($data['redeem']));
         $this->mongo_db->update('playbasis_goods_to_client');
 
         if (isset($data['image'])) {
@@ -281,8 +277,6 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb(0);
         
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
-        $this->mongo_db->set('stackable', (int)$data['stackable']);
-        $this->mongo_db->set('substract', (int)$data['substract']);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
@@ -291,6 +285,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->set('redeem', serialize($data['redeem']));
         $this->mongo_db->update_all('playbasis_goods_to_client');
 
         if (isset($data['image'])) {
@@ -377,11 +372,5 @@ class Goods_model extends MY_Model
         }
         
     }
-
-    public function checkGoodsIsPublic($goods_id){
-        $this->mongo_db->where('goods_id', $goods_id);
-        return $this->mongo_db->get('playbasis_goods_to_client');
-    }
-
 
 }

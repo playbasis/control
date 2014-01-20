@@ -57,9 +57,7 @@ class Goods extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/insert';
 
-        //I took out the check_space because some goods may have spaces? - Joe
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('stackable', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -228,7 +226,7 @@ class Goods extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }
-                $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
+
                 $this->data['goods_list'][] = array(
                     'goods_id' => $result['_id'],
                     'name' => $result['name'],
@@ -237,55 +235,45 @@ class Goods extends MY_Controller
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public'=>$goodsIsPublic
+                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected')))
                 );
             }
         }else{
-            $this->load->model('Reward_model');
 
             $goods_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
             $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
 
-            $reward_limit_data = $this->Reward_model->getGoodsRewardBySiteId($site_id);
-
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
-            if ($reward_limit_data) {
+            $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
-                $slot_total = $reward_limit_data[0]['limit'] - $goods_total;
+            foreach ($goods_list as $goods) {
 
-                $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+                $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
 
-                foreach ($goods_list as $goods) {
+                if($goods_info){
 
-                    $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
-
-                    if($goods_info){
-
-                        if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $image = $this->Image_model->resize($goods_info['image'], 50, 50);
-                        }
-                        else {
-                            $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                        }
-
-                        if(!$goods_info['deleted']){
-                            $this->data['goods_list'][] = array(
-                                'goods_id' => $goods_info['_id'],
-                                'name' => $goods_info['name'],
-                                'hint' => $goods_info['hint'],
-                                'quantity' => $goods_info['quantity'],
-                                'status' => $goods_info['status'],
-                                'image' => $image,
-                                'sort_order'  => $goods_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
-                            );
-                        }
-
+                    if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                        $image = $this->Image_model->resize($goods_info['image'], 50, 50);
                     }
+                    else {
+                        $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                    }
+
+                    if(!$goods_info['deleted']){
+                        $this->data['goods_list'][] = array(
+                            'goods_id' => $goods_info['_id'],
+                            'name' => $goods_info['name'],
+                            'hint' => $goods_info['hint'],
+                            'quantity' => $goods_info['quantity'],
+                            'status' => $goods_info['status'],
+                            'image' => $image,
+                            'sort_order'  => $goods_info['sort_order'],
+                            'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
+                        );
+                    }
+
                 }
             }
         }
@@ -374,48 +362,38 @@ class Goods extends MY_Controller
         }
         else {
 
-            $this->load->model('Reward_model');
-
             $goods_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'start' => $offset, 'sort'=>'sort_order');
 
             $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
 
-            $reward_limit_data = $this->Reward_model->getGoodsRewardBySiteId($site_id);
-
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
-            if ($reward_limit_data) {
+            $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
-                $slot_total = $reward_limit_data[0]['limit'] - $goods_total;
+            foreach ($goods_list as $goods) {
 
-                $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+                $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
 
-                foreach ($goods_list as $goods) {
+                if($goods_info){
 
-                    $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
+                    if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                        $image = $this->Image_model->resize($goods_info['image'], 50, 50);
+                    }
+                    else {
+                        $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                    }
 
-                    if($goods_info){
-
-                        if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $image = $this->Image_model->resize($goods_info['image'], 50, 50);
-                        }
-                        else {
-                            $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                        }
-
-                        if(!$goods_info['deleted']){
-                            $this->data['goods_list'][] = array(
-                                'goods_id' => $goods_info['_id'],
-                                'name' => $goods_info['name'],
-                                'hint' => $goods_info['hint'],
-                                'quantity' => $goods_info['quantity'],
-                                'status' => $goods_info['status'],
-                                'image' => $image,
-                                'sort_order'  => $goods_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
-                            );
-                        }
+                    if(!$goods_info['deleted']){
+                        $this->data['goods_list'][] = array(
+                            'goods_id' => $goods_info['_id'],
+                            'name' => $goods_info['name'],
+                            'hint' => $goods_info['hint'],
+                            'quantity' => $goods_info['quantity'],
+                            'status' => $goods_info['status'],
+                            'image' => $image,
+                            'sort_order'  => $goods_info['sort_order'],
+                            'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
+                        );
                     }
                 }
             }

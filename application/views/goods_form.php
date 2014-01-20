@@ -76,33 +76,14 @@
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_stackable'); ?>:</td>
-                            <td><select name="stackable">
-                                <?php if ($stackable || set_value('stackable')==1) { ?>
-                                <?php //if (set_value('stackable')==1) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_substract'); ?>:</td>
-                            <td><select name="substract">
-                                <?php if ($substract) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
-                        </tr>
-                        <tr>
                             <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_redeem_with'); ?>:</td>
+                            <td><input type="checkbox" value="Point" />
+                                <input type="checkbox" value="Badge" />
+                            </td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?></td>
