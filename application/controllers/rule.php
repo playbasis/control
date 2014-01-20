@@ -141,11 +141,11 @@ class Rule extends MY_Controller
                     );    
                 }
             }
-        }
+        }*/
 
-        $this->output->set_output(json_encode($json));*/
+        $json['badges'] = $badges;
 
-        $this->output->set_output(json_encode($badges));
+        $this->output->set_output(json_encode($json));
 
     }
 
