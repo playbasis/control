@@ -58,6 +58,7 @@ class Badge extends MY_Controller
         $this->data['form'] = 'badge/insert';
 
         //I took out the check_space because some badges may have spaces? - Joe
+        //OK - Wee
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('stackable', "", '');
 
@@ -131,7 +132,9 @@ class Badge extends MY_Controller
         $this->data['form'] = 'badge/update/'.$badge_id;
 
         //I took out the check_space because some badges may have spaces? - Joe
+        //OK - Wee
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('stackable', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
 
@@ -204,7 +207,6 @@ class Badge extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
 
-        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
