@@ -135,11 +135,8 @@ class Badge extends MY_Controller
         //I took out the check_space because some badges may have spaces? - Joe
         //OK - Wee
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-<<<<<<< HEAD
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
-=======
->>>>>>> b5a8f85541bbf74e7e810aad2142045b0f9e5904
         $this->form_validation->set_rules('stackable', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
