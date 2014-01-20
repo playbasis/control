@@ -40,15 +40,15 @@
                                 <br /><span class="help">Secret:</span> <?php echo $domain['secret']; ?>
                             </td>
                             <td class="right">
-                                <?php if (strtotime($domain['date_start'])) { ?>
-                                <?php echo date('Y-m-d', strtotime($domain['date_start'])); ?>
+                                <?php if ($domain['date_start']) { ?>
+                                <?php echo datetimeMongotoReadable($domain['date_start']);?>
                                 <?php } else { ?>
                                 -
                                 <?php } ?>
                             </td>
                             <td class="right">
-                                <?php if (strtotime($domain['date_expire'])) { ?>
-                                <?php echo date('Y-m-d', strtotime($domain['date_expire'])); ?>
+                                <?php if ($domain['date_expire']) { ?>
+                                <?php echo datetimeMongotoReadable($domain['date_expire']);?>
                                 <?php } else { ?>
                                 -
                                 <?php } ?>
