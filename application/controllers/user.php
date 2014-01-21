@@ -589,27 +589,18 @@ class User extends MY_Controller
                         $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
                         redirect('login', 'refresh');        
                     }else{
-                        // $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
-                        // redirect('register');
-                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                        redirect('register');    
+                        $this->data['fail_email_exists'] = $this->lang->line('text_fail');   
                     }
                     
                 }else{
-                    // $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                    // redirect('register');
                     $data = array('email' => $this->input->post('email'));
                     if($this->User_model->findEmail($data)){
-                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                        $this->data['fail_email_exists'] = $this->lang->line('text_fail');
                     }
-                    $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
-                    redirect('register', 'refresh');   
+                    $this->data['fail_domain_exists'] = $this->lang->line('text_fail_domain_exists');
                 }
-
-                
-            }else{
-                $this->data['temp_fields'] = $this->input->post();
             }
+            $this->data['temp_fields'] = $this->input->post();
         }
 
         $this->load->vars($this->data);
