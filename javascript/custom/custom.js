@@ -893,7 +893,7 @@ function initialize_circle(circleStatsItem) {
       color = "#b9e672";
       break;
     case 'yellowCircle':
-      color = "#109648";
+      color = "#e7e572";
       break;
     case 'pinkCircle':
       color = "#e42b75";

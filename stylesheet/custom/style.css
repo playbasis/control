@@ -826,7 +826,7 @@ ul.messages li .message {
 
 .notification-small.yellow,
 .notification.yellow {
-	border-color: #F4A506;
+	border-color: 	;
 	background-color: #FABB3D;
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, hsl(40, 95%, 76%)), color-stop(100%, hsl(40, 95%, 61%)));
 	background-image: -webkit-linear-gradient(top, hsl(40, 95%, 76%), hsl(40, 95%, 61%));
@@ -2255,8 +2255,8 @@ footer p {
 .circleStatsItem.lightorange, .circleStatsItem.lightorange i {color:#f4a70c; }
 .circleStatsItem.blue, .circleStatsItem.blue i {color:#2fabe9; }
 .circleStatsItem.green, .circleStatsItem.green i {color:#b9e672; }
-/*.circleStatsItem.yellow, .circleStatsItem.yellow i {color:#e7e572; }*/
-.circleStatsItem.yellow, .circleStatsItem.yellow i {color:#109648; }
+.circleStatsItem.yellow, .circleStatsItem.yellow i {color:#e7e572; }
+/*.circleStatsItem.yellow, .circleStatsItem.yellow i {color:#109648; }*/
 .circleStatsItem.pink, .circleStatsItem.pink i {color:#e42b75; }
 
 .circleStatsItem input {
