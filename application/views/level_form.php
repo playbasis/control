@@ -55,10 +55,10 @@
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_level'); ?>:</td>
                             <td><input type="text" name="level" value="<?php echo isset($level) ? $level : set_value('level'); ?>"  /></td>
                         </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
-                            <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
-                        </tr>
+                        <!--<tr>
+                            <td><?php //echo $this->lang->line('entry_sort_order'); ?>:</td>
+                            <td><input type="text" name="sort_order" value="<?php //echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
+                        </tr>-->
                         <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td><select name="status">

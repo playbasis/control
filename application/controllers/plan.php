@@ -238,7 +238,7 @@ class Plan extends MY_Controller
                     'name' => $result['name'],
                     'description' => $result['description'],
                     'status' => $result['status'],
-                    'selected'    => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
+                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
                 );
             }
         }
@@ -262,6 +262,20 @@ class Plan extends MY_Controller
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
 
         $this->pagination->initialize($config);
 
@@ -426,6 +440,8 @@ class Plan extends MY_Controller
             }
         }
 
+        $this->data['clients_in_plan'] = $this->getClientsByPlanId($plan_id);
+
         $this->data['main'] = 'plan_form';
 
         $this->load->vars($this->data);
@@ -464,6 +480,22 @@ class Plan extends MY_Controller
         }else{
             return true;
         }
+    }
+
+    public function getClientsByPlanId($plan_id){
+        $allClientsInThisPlan = $this->Plan_model->getClientByPlan($plan_id);
+
+        $listOfClients = array();
+        $this->load->model('Client_model');
+        foreach ($allClientsInThisPlan as $client){
+            $get_client = $this->Client_model->getClient($client['client_id']);
+            if($get_client != null){
+                $listOfClients[] = $get_client;        
+            }
+        }
+
+        return $listOfClients;
+        //return $allClientsInThisPlan;
     }
 }
 ?>

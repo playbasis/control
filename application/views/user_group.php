@@ -72,11 +72,11 @@
             	</table>
             <?php form_close(); ?>	
             <div class="pagination">
-                <?php 
-                if(!isset($_GET['filter_name'])){
-                    echo $this->pagination->create_links();    
-                }
-                ?>
+                <ul class='ul_rule_pagination_container'>
+                    <?php if(!isset($_GET['filter_name'])){?>
+                        <?php echo $this->pagination->create_links();?>
+                    <?php } ?>
+                </ul>
             </div><!-- .pagination -->
     	</div><!-- .content -->
     </div><!-- .box -->

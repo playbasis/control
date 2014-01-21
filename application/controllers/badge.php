@@ -61,6 +61,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -137,6 +138,7 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
+        $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
@@ -317,6 +319,20 @@ class Badge extends MY_Controller
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
 
         $this->pagination->initialize($config);
 
@@ -564,7 +580,7 @@ class Badge extends MY_Controller
         }
 
         $this->load->model('Client_model');
-        $this->data['to_clients'] = $this->Client_model->getClients($data = array());
+        $this->data['to_clients'] = $this->Client_model->getClients(array());
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 

@@ -83,6 +83,20 @@ class User extends MY_Controller
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
 
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
         $this->pagination->initialize($config);
 
 
@@ -589,27 +603,18 @@ class User extends MY_Controller
                         $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
                         redirect('login', 'refresh');        
                     }else{
-                        // $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
-                        // redirect('register');
-                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                        redirect('register');    
+                        $this->data['fail_email_exists'] = $this->lang->line('text_fail');   
                     }
                     
                 }else{
-                    // $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                    // redirect('register');
                     $data = array('email' => $this->input->post('email'));
                     if($this->User_model->findEmail($data)){
-                        $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                        $this->data['fail_email_exists'] = $this->lang->line('text_fail');
                     }
-                    $this->session->set_flashdata('fail_domain_exists', $this->lang->line('text_fail_domain_exists'));
-                    redirect('register', 'refresh');   
+                    $this->data['fail_domain_exists'] = $this->lang->line('text_fail_domain_exists');
                 }
-
-                
-            }else{
-                $this->data['temp_fields'] = $this->input->post();
             }
+            $this->data['temp_fields'] = $this->input->post();
         }
 
         $this->load->vars($this->data);
@@ -742,7 +747,7 @@ class User extends MY_Controller
             $this->data['heading_forgot_password'] = $this->lang->line('heading_forgot_password');
             $this->data['form'] = 'user/reset_password';
 
-            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
             $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
 
             if($_SERVER['REQUEST_METHOD'] == 'POST'){

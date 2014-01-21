@@ -554,7 +554,7 @@ class Goods extends MY_Controller
         }
 
         $this->load->model('Client_model');
-        $this->data['to_clients'] = $this->Client_model->getClients($data = array());
+        $this->data['to_clients'] = $this->Client_model->getClients(array());
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 

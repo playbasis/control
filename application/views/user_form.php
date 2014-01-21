@@ -68,7 +68,8 @@
                                     <?php }else{?>
                                         <?php if($user_groups){?>
                                             <?php foreach($user_groups as $user_group){?>
-                                                <?php if($user_group['name']=='Admin'||$user_group['name']=='User'){?>
+                                                <?php //if($user_group['name']=='Super User'||$user_group['name']=='User'){?>
+                                                <?php if($user_group['name'] != "Top Administrator"){?>
                                                     <?php if(isset($user['user_group_id']) && ($user['user_group_id']==$user_group['_id'])){?>
                                                         <option value = "<?php echo $user_group['_id'];?>" selected><?php echo $user_group['name'];?></option>    
                                                     <?php }else{?>

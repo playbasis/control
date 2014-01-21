@@ -301,7 +301,7 @@ class Client_model extends MY_Model
         $plan_data = $this->getPlan($data_filter['plan_id']);
 
 
-        if ($plan_data['feature_to_plan']) {
+        if (isset($plan_data['feature_to_plan'])) {
             foreach ($plan_data['feature_to_plan'] as $feature_id) {
 
                 $feature_data = $this->getFeature($feature_id);

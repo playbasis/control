@@ -183,7 +183,7 @@ class Level_model extends MY_Model
             // 'tags' => $data['tags']|'' ,
             'tags' => (isset($data['tags']))?$data['tags']:0,
             'status' => (bool)$data['status'],
-            'sort_order' => (int)$data['sort_order']|1,
+            // 'sort_order' => (int)$data['sort_order']|1,
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
         );
