@@ -67,9 +67,9 @@ class Player_model extends MY_Model
             return array();
         $this->set_site_mongodb($site_id);
         if($fields)
-            $this->mongo_db()->select($fields);
-        $this->mongo_db()->where_in('cl_player_id', $list_id);
-        $this->mongo_db()->where('site_id', $site_id);
+            $this->mongo_db->select($fields);
+        $this->mongo_db->where_in('cl_player_id', $list_id);
+        $this->mongo_db->where('site_id', $site_id);
         $result = $this->mongo_db->get('playbasis_player');
         return $result;
     }
@@ -77,8 +77,8 @@ class Player_model extends MY_Model
 	{
 		$this->set_site_mongodb($site_id);
 		if($fields)
-			$this->mongo_db()->select($fields);
-		$this->mongo_db()->limit($limit, $offset);
+			$this->mongo_db->select($fields);
+		$this->mongo_db->limit($limit, $offset);
         $result = $this->mongo_db->get('playbasis_player');
         return $result;
     }

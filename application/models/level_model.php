@@ -18,23 +18,23 @@ class Level_model extends MY_Model
         $level_range = array($level, intval($level)+1);
 
         //check if client have their own exp table setup
-        $this->mongo_db()->select("level,exp AS min_exp,level_title,image");
-        $this->mongo_db()->where('client_id', $client_id);
-        $this->mongo_db()->where('site_id', $site_id);
-        $this->mongo_db()->where_in("level", $level_range);
-        $this->mongo_db()->where("status", '1');
-        $this->mongo_db()->order_by('exp');
-        $this->mongo_db()->limit(2);
+        $this->mongo_db->select("level,exp AS min_exp,level_title,image");
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_in("level", $level_range);
+        $this->mongo_db->where("status", '1');
+        $this->mongo_db->order_by('exp');
+        $this->mongo_db->limit(2);
         $levela = $this->mongo_db->get('playbasis_client_exp_table');
 
         if(empty($levela))
         {
             //get level from default exp table instead
-            $this->mongo_db()->select("level,exp AS min_exp,level_title,image");
-            $this->mongo_db()->where_in("level", $level_range);
-            $this->mongo_db()->where("status", '1');
-            $this->mongo_db()->order_by('exp');
-            $this->mongo_db()->limit(2);
+            $this->mongo_db->select("level,exp AS min_exp,level_title,image");
+            $this->mongo_db->where_in("level", $level_range);
+            $this->mongo_db->where("status", '1');
+            $this->mongo_db->order_by('exp');
+            $this->mongo_db->limit(2);
             $levela = $this->mongo_db->get('playbasis_exp_table');
 
         }
@@ -53,19 +53,19 @@ class Level_model extends MY_Model
     {
         $this->set_site_mongodb($site_id);
         //check if client have their own exp table setup
-        $this->mongo_db()->select("level,exp AS min_exp,level_title,image");
-        $this->mongo_db()->where('client_id', $client_id);
-        $this->mongo_db()->where('site_id', $site_id);
-        $this->mongo_db()->where("status", '1');
-        $this->mongo_db()->order_by('exp');
+        $this->mongo_db->select("level,exp AS min_exp,level_title,image");
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where("status", '1');
+        $this->mongo_db->order_by('exp');
         $leveldata = $this->mongo_db->get('playbasis_client_exp_table');
 
         if(empty($leveldata))
         {
             //get level from default exp table instead
-            $this->mongo_db()->select("level,exp AS min_exp,level_title,image");
-            $this->mongo_db()->where("status", '1');
-            $this->mongo_db()->order_by('exp');
+            $this->mongo_db->select("level,exp AS min_exp,level_title,image");
+            $this->mongo_db->where("status", '1');
+            $this->mongo_db->order_by('exp');
             $leveldata = $this->mongo_db->get('playbasis_exp_table');
 
         }
