@@ -56,8 +56,10 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/insert';
 
-        $this->form_validation->set_rules('first_name', $this->lang->line('first_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
+        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('email', $this->lang->line('entry_email'), 'trim|required|valid_email');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -262,6 +264,21 @@ class Client extends MY_Controller
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
         $config['page_query_string'] = true;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
 
         $this->pagination->initialize($config);
 

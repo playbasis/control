@@ -57,7 +57,7 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('status', "", '');
 
@@ -136,7 +136,7 @@ class Action extends MY_Controller
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('icon', $this->lang->line('form_icon'), 'trim|required|xss_clean|check_space');
         $this->form_validation->set_rules('color', $this->lang->line('form_color'), 'trim|required|xss_clean|check_space');
-        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space');
+        $this->form_validation->set_rules('sort_order', $this->lang->line('form_sort'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('status', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -152,7 +152,10 @@ class Action extends MY_Controller
                 $data = $this->input->post();
 
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-
+                    $client_id = $this->User_model->getClientId();
+                    $data['client_id'] = $client_id;
+                    $site_id = $this->User_model->getSiteId();
+                    $data['site_id'] = $site_id;
                     $this->Action_model->editActionToClient($action_id, $data);
                 }else{
                     $this->Action_model->editAction($action_id, $data);
@@ -243,6 +246,20 @@ class Action extends MY_Controller
 
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
 
         $this->pagination->initialize($config);
 
@@ -340,7 +357,7 @@ class Action extends MY_Controller
 
         $this->data['icons'] = $this->Action_model->getAllIcons();
         $this->data['colors'] = array('blue', 'orange','red', 'green', 'yellow','pink');
-        $this->data['clients'] = $this->Client_model->getClients($data = array());
+        $this->data['clients'] = $this->Client_model->getClients(array());
 
         $this->data['main'] = 'action_form';
 

@@ -7,14 +7,16 @@
 			<h1><img src="<?php echo base_url('image/user-group.png')?>" alt="" /><?php echo $heading_title_register;?></h1>
 		</div><!-- .heading -->
 		<div class="content" >
-			<?php if($this->session->flashdata('fail')){ ?>
+			<?php //if($this->session->flashdata('fail')){ ?>
+			<?php if(isset($fail_email_exists)){ ?>
                 <div class="content messages half-width">
-                <div class="warning"><?php echo $this->session->flashdata('fail'); ?></div>
+                <div class="warning"><?php echo $fail_email_exists; ?></div>
                 </div>
             <?php }?>
-            <?php if($this->session->flashdata('fail_domain_exists')){ ?>
+            <?php //if($this->session->flashdata('fail_domain_exists')){ ?>
+            <?php if(isset($fail_domain_exists)){ ?>
                 <div class="content messages half-width">
-                <div class="warning"><?php echo $this->session->flashdata('fail_domain_exists'); ?></div>
+                <div class="warning"><?php echo $fail_domain_exists; ?></div>
                 </div>
             <?php }?>
 			<?php if(validation_errors() || isset($message)) {?>

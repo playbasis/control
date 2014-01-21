@@ -490,7 +490,11 @@ class Action_model extends MY_Model
     public function editActionToClient($action_id, $data){
         $this->set_site_mongodb(0);
 
-         $this->mongo_db->where('action_id', new MongoID($action_id));
+        $this->mongo_db->where('action_id', new MongoID($action_id));
+
+        if(isset($data['client_id']) && !is_null($data['client_id'])){
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));            
+        }
 
         if(isset($data['name']) && !is_null($data['name'])){
             $this->mongo_db->set('name', utf8_strtolower($data['name']));

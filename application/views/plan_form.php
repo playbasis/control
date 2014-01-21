@@ -15,6 +15,9 @@
             <a href="#tab-reward"><?php echo $this->lang->line('tab_reward'); ?></a>
             <a href="#tab-jigsaw"><?php echo $this->lang->line('tab_jigsaw'); ?></a>
             <a href="#tab-action"><?php echo $this->lang->line('tab_action'); ?></a>
+            <?php if($name!=""){?>
+                <a href="#tab-clients"><?php echo $this->lang->line('tab_clients'); ?></a>
+            <?php }?>
 
         </div>
         <?php
@@ -39,7 +42,7 @@
             <div id="tab-general">
                 <table class="form">
                     <tr>
-                        <td><?php echo $this->lang->line('entry_name'); ?>:</td>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?>:</td>
                         <td><input type="text" name="name" value="<?php echo $name; ?>" size="50" /></td>
                     </tr>
                     <tr>
@@ -205,7 +208,34 @@
                     </tbody>
                 </table>
             </div>
-
+            <?php if($name!=""){?>
+                <div id="tab-clients">
+                    <table class="list">
+                        <thead>
+                        <tr>
+                            <td class="left">Company Name</td>
+                            <td class="left">Main contact Person</td>
+                            <td class="left">Email</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php if ($clients_in_plan) { ?>
+                            <?php foreach ($clients_in_plan as $client) { ?>
+                            <tr>
+                                <td class="left"><?php echo $client['company'];?></td>
+                                <td class="left"><?php echo $client['first_name']." ".$client['last_name'];?></td>
+                                <td class="left"><?php echo $client['email'];?></td>
+                            </tr>
+                                <?php } ?>
+                            <?php } else { ?>
+                            <tr>
+                                <td class="center" colspan="3"><?php echo $this->lang->line('text_no_clients'); ?></td>
+                            </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php }?>
         <?php
         echo form_close();
         ?>

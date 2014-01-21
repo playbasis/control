@@ -59,13 +59,14 @@
                         <?php } ?>
                     </tbody>
                 </table>
-            <?php
-            echo form_close();
-
-            if($pagination_links != ''){
-                echo $pagination_links;
-            }
-            ?>
+            <?php echo form_close();?>
+            <div class="pagination">
+                <ul class='ul_rule_pagination_container'>
+                    <?php if($pagination_links != ''){?>
+                        <?php echo $pagination_links;?>
+                    <?php }?>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
