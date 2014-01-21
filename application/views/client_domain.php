@@ -35,7 +35,7 @@
                 </td>
                 <td class="left">
                     <select name="domain_value[<?php echo $domain_row; ?>][plan_id]">
-                        <option value="0" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
+                        <!-- <option value="0" selected="selected"><?php //echo $this->lang->line('text_select'); ?></option> -->
                         <?php if ($plan_data) { ?>
                             <?php foreach ($plan_data as $plan) { ?>
                                 <?php if ($domain['plan_id']==$plan['_id']) { ?>
