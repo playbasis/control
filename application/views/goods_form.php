@@ -5,7 +5,7 @@
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
-                <button class="btn btn-info" onclick="location = baseUrlPath+'badge'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'goods'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
         <div class="content">
@@ -80,22 +80,44 @@
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_redeem_with'); ?>:</td>
-                            <td><input type="checkbox" value="Point" />
-                                <input type="checkbox" value="Badge" />
-                            </td>
-                        </tr>
-                        <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?></td>
                             <td><select name="status">
-                                <?php if ($status) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
+                                    <?php if ($status) { ?>
+                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } else { ?>
+                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } ?>
+                                </select></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_redeem_with'); ?>:</td>
+                            <td>
+                                <button id="point-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
+                                <div class="point">
+                                    <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span><input type="text" name="point" size="100" value="<?php echo isset($point) ? $point :  set_value('point'); ?>" />
+                                </div>
+                                <?php
+                                if($badge_list){
+                                ?>
+                                <br>
+                                <button id="badge-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
+                                <div class="badges">
+                                    <?php
+                                    foreach($badge_list as $badge){
+                                    ?>
+                                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
+                                        <input type="text" name="reward_badge['<?php echo $badge['_id']; ?>']" size="100" value="<?php echo set_value('reward_badge['.$badge['_id'].']'); ?>" /><br/>
+                                    <?php
+                                    }
+                                    ?>
+                                </div>
+                                <?php
+                                }
+                                ?>
+
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -152,5 +174,12 @@ function image_upload(field, thumb) {
 //--></script>
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
-$('#languages a').tabs();
+
+$(document).ready(function(){
+    $(".point").hide();
+    $(".badges").hide();
+    $("#point-entry").click(function() {$(".point").toggle()});
+    $("#badge-entry").click(function() {$(".badges").toggle()});
+});
+
 //--></script>

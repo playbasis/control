@@ -38,6 +38,8 @@ $lang['entry_redeem_with']        	   	= 'Redeem with';
 $lang['entry_quantity']           		= 'Quantity';
 $lang['entry_status']         			= 'Status';
 $lang['entry_image']          			= 'Image';
+$lang['entry_point']           		    = 'Point';
+$lang['entry_badge']           		    = 'Badge';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';

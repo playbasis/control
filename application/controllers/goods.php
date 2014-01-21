@@ -198,8 +198,6 @@ class Goods extends MY_Controller
 
         $config['base_url'] = site_url('goods/page');
 
-
-        $this->load->model('Goods_model');
         $this->load->model('Image_model');
 
         $site_id = $this->User_model->getSiteId();
@@ -317,8 +315,6 @@ class Goods extends MY_Controller
 
         $config['base_url'] = site_url('goods/page');
 
-
-        $this->load->model('Goods_model');
         $this->load->model('Image_model');
 
         $site_id = $this->User_model->getSiteId();
@@ -433,6 +429,7 @@ class Goods extends MY_Controller
     private function getForm($goods_id=null) {
 
         $this->load->model('Image_model');
+        $this->load->model('Badge_model');
 
         if (isset($goods_id) && ($goods_id != 0)) {
             if($this->User_model->getClientId()){
@@ -532,9 +529,12 @@ class Goods extends MY_Controller
         }
 
         $this->load->model('Client_model');
-        $this->data['to_clients'] = $this->Client_model->getClients($data = array());
+        $this->data['to_clients'] = $this->Client_model->getClients(array());
         $this->data['client_id'] = $this->User_model->getClientId();
-        $this->data['site_id'] = $this->User_model->getSiteId();
+        $site_id = $this->User_model->getSiteId();
+        $this->data['site_id'] = $site_id;
+
+        $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $site_id ));
 
         $this->data['main'] = 'goods_form';
 
