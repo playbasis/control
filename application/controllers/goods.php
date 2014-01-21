@@ -68,11 +68,33 @@ class Goods extends MY_Controller
                     $this->data['message'] = $this->lang->line('error_permission');
                 }
 
+                $point_empty = true;
+                $badge_empty = true;
+                $redeem = array();
+
+                if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
+                    $point_empty = false;
+                    $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
+                }
+
+                foreach($this->input->post('reward_badge') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $badge_empty = false;
+                        $redeem['badge'][] = array('badge_id'=>$rbk,
+                                          'badge_value'=>(int)$this->input->post('reward_point'));
+                    }
+                }
+
+                if($point_empty && $badge_empty){
+                    $this->data['message'] = $this->lang->line('error_redeem');
+                }
+
+                $goods_data = $this->input->post();
+                $goods_data['redeem'] = $redeem;
+
                 if($this->form_validation->run() && $this->data['message'] == null){
 
                     if($this->User_model->getClientId()){
-
-                        $goods_data = $this->input->post();
 
                         $goods_id = $this->Goods_model->addGoods($goods_data);
 
@@ -82,10 +104,8 @@ class Goods extends MY_Controller
 
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                        redirect('/goods', 'refresh');
+                        //redirect('/goods', 'refresh');
                     }else{
-
-                        $goods_data = $this->input->post();
 
                         if($goods_data['client_id'] != 'all_clients'){
                             $this->load->model('Client_model');
@@ -109,13 +129,13 @@ class Goods extends MY_Controller
                                 $this->Goods_model->addGoodsToClient($goods_data);
                             }
                         }
-                        redirect('/goods', 'refresh');
+                        //redirect('/goods', 'refresh');
                     }
 
                 }
             }else{
                 $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_goods'));
-                redirect('/goods/insert', 'refresh');
+                //redirect('/goods/insert', 'refresh');
             }
         }
         $this->getForm();
@@ -128,7 +148,6 @@ class Goods extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/update/'.$goods_id;
 
-        //I took out the check_space because some goods may have spaces? - Joe
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerGoods($goods_id)) {
@@ -139,13 +158,37 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
+            $point_empty = true;
+            $badge_empty = true;
+            $redeem = array();
+
+            if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
+                $point_empty = false;
+                $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
+            }
+
+            foreach($this->input->post('reward_badge') as $rbk => $rb){
+                if($rb != '' || $rb != 0){
+                    $badge_empty = false;
+                    $redeem['badge'][] = array('badge_id'=>$rbk,
+                        'badge_value'=>(int)$this->input->post('reward_point'));
+                }
+            }
+
+            if($point_empty && $badge_empty){
+                $this->data['message'] = $this->lang->line('error_redeem');
+            }
+
+            $goods_data = $this->input->post();
+            $goods_data['redeem'] = $redeem;
+
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
-                    $this->Goods_model->editGoodsToClient($goods_id, $this->input->post());
+                    $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
                 }else{
-                    $this->Goods_model->editGoods($goods_id, $this->input->post());
+                    $this->Goods_model->editGoods($goods_id, $goods_data);
 
-                    $this->Goods_model->editGoodsToClientFromAdmin($goods_id, $this->input->post());
+                    $this->Goods_model->editGoodsToClientFromAdmin($goods_id, $goods_data);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
@@ -498,28 +541,28 @@ class Goods extends MY_Controller
             $this->data['status'] = 1;
         }
 
-        if ($this->input->post('stackable')) {
-            $this->data['stackable'] = $this->input->post('stackable');
-        } elseif (!empty($goods_info)) {
-            $this->data['stackable'] = $goods_info['stackable'];
-        } else {
-            $this->data['stackable'] = 1;
-        }
-
-        if ($this->input->post('substract')) {
-            $this->data['substract'] = $this->input->post('substract');
-        } elseif (!empty($goods_info)) {
-            $this->data['substract'] = $goods_info['substract'];
-        } else {
-            $this->data['substract'] = 1;
-        }
-
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
         } elseif (!empty($goods_info)) {
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
             $this->data['quantity'] = 1;
+        }
+
+        if ($this->input->post('reward_point')) {
+            $this->data['reward_point'] = $this->input->post('reward_point');
+        } elseif (!empty($goods_info)) {
+            $this->data['reward_point'] = isset($goods_info['redeem']['point']) ? $goods_info['redeem']['point']['point_value'] : 0;
+        } else {
+            $this->data['reward_point'] = 0;
+        }
+
+        if ($this->input->post('reward_badge')) {
+            $this->data['reward_badge'] = $this->input->post('reward_badge');
+        } elseif (!empty($goods_info)) {
+            $this->data['reward_badge'] = isset($goods_info['redeem']['badge']) ? $goods_info['redeem']['badge'] : array();
+        } else {
+            $this->data['reward_badge'] = array();
         }
 
         if (isset($goods_id)) {

@@ -16,6 +16,7 @@ $lang['text_no_results']				= 'You do not have any goods created';
 // Tab
 $lang['tab_colection']					= 'Collection';
 $lang['tab_assign']					= 'Assign';
+$lang['tab_redeem']					= 'Redeem';
 
 // Column
 $lang['column_image']					= 'Image';
@@ -56,4 +57,5 @@ $lang['error_permission']       = 'Warning: You do not have permission to modify
 $lang['error_access']			= 'Warning: You do not have permission to access this page!';
 $lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
 $lang['error_limit']            = 'You have reached goods limit.';
+$lang['error_redeem']           = 'Please provide point or badge.';
 ?>

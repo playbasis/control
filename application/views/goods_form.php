@@ -14,7 +14,11 @@
                 <div class="warning"><?php echo $this->session->flashdata('limit_reached'); ?></div>
                 </div>
             <?php }?>
-            <div id="tabs" class="htabs"><a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a><a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a></div>
+            <div id="tabs" class="htabs">
+                <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
+                <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>
+                <a href="#tab-redeem"><?php echo $this->lang->line('tab_redeem'); ?></a>
+            </div>
             <?php
             if(validation_errors() || isset($message)) {
                 ?>
@@ -91,6 +95,10 @@
                                     <?php } ?>
                                 </select></td>
                         </tr>
+                    </table>
+                </div>
+                <div id="tab-redeem">
+                    <table class="form">
                         <tr>
                             <td><?php echo $this->lang->line('entry_redeem_with'); ?>:</td>
                             <td>
@@ -99,7 +107,7 @@
                                     <div class="point">
                                         <div class="goods-panel">
                                             <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
-                                            <input type="text" name="point" size="100" class="orange" value="<?php echo isset($point) ? $point :  set_value('point'); ?>" />
+                                            <input type="text" name="reward_point" size="100" class="orange" value="<?php echo isset($reward_point) ? $reward_point :  set_value('reward_point'); ?>" />
                                         </div>
                                     </div>
                                     <?php
@@ -109,14 +117,15 @@
                                         <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
                                         <div class="badges">
                                             <div class="goods-panel">
-                                            <?php
-                                            foreach($badge_list as $badge){
+                                                <?php
+                                                var_dump($reward_badge);
+                                                foreach($badge_list as $badge){
+                                                    ?>
+                                                    <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
+                                                    <input type="text" name="reward_badge[<?php echo $badge['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo set_value('reward_badge['.$badge['_id'].']'); ?>" /><br/>
+                                                <?php
+                                                }
                                                 ?>
-                                                <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
-                                                <input type="text" name="reward_badge['<?php echo $badge['_id']; ?>']" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo set_value('reward_badge['.$badge['_id'].']'); ?>" /><br/>
-                                            <?php
-                                            }
-                                            ?>
                                             </div>
                                         </div>
                                     <?php

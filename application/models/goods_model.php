@@ -197,7 +197,6 @@ class Goods_model extends MY_Model
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'name' => $data['name']|'' ,
             'description' => $data['description']|'',
-            'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
             'redeem' => serialize($data['redeem']),
             'deleted'=>false
@@ -218,7 +217,6 @@ class Goods_model extends MY_Model
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'name' => $data['name']|'' ,
             'description' => $data['description']|'',
-            'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
             'redeem' => serialize($data['redeem']),
             'deleted'=>false
@@ -235,7 +233,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
-        $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', serialize($data['redeem']));
         $this->mongo_db->update('playbasis_goods');
@@ -260,7 +257,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
-        $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', serialize($data['redeem']));
         $this->mongo_db->update('playbasis_goods_to_client');
@@ -283,7 +279,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
-        $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', serialize($data['redeem']));
         $this->mongo_db->update_all('playbasis_goods_to_client');
