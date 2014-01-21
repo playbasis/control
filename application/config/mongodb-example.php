@@ -17,7 +17,7 @@
  */
 
 $config['default']['mongo_hostbase'] = '127.0.0.1:27017';
-$config['default']['mongo_database'] = 'core_production';
+$config['default']['mongo_database'] = 'core';
 $config['default']['mongo_username'] = '';
 $config['default']['mongo_password'] = '';
 $config['default']['mongo_persist']  = FALSE;

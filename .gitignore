@@ -15,3 +15,6 @@ node_server/*.log
 node_twitter/*.log
 .DS_Store
 *.xcuserstate
+
+# for iodocs
+iodocs/public/data/apiconfig.json
