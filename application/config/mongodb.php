@@ -16,17 +16,6 @@
  * ['mongo_host_db_flag']   If running in auth mode and the user does not have global read/write then set this to true
  */
 
-/*$config['default']['mongo_hostbase'] = 'dev.pbapp.net:27017';
-$config['default']['mongo_database'] = 'pbapp';
-$config['default']['mongo_username'] = 'admin';
-$config['default']['mongo_password'] = 'mongodbpasswordplaybasis';
-$config['default']['mongo_persist']  = FALSE;
-$config['default']['mongo_persist_key']	 = 'ci_persist';
-$config['default']['mongo_replica_set']  = FALSE;
-$config['default']['mongo_query_safety'] = 'safe';
-$config['default']['mongo_suppress_connect_error'] = TRUE;
-$config['default']['mongo_host_db_flag']   = FALSE;*/
-
 $config['default']['mongo_hostbase'] = '127.0.0.1:27017';
 $config['default']['mongo_database'] = 'core';
 $config['default']['mongo_username'] = '';
