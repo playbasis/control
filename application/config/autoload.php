@@ -64,7 +64,7 @@ $autoload['libraries'] = array('session','email','form_validation','image','s3')
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url','form','text','html','date','lang','security','random','utf8','mongodbdatetime');
+$autoload['helper'] = array('url','form','text','html','date','lang','security','random','utf8','mongodbdatetime','string');
 
 
 /*

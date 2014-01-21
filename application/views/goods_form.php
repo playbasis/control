@@ -94,29 +94,35 @@
                         <tr>
                             <td><?php echo $this->lang->line('entry_redeem_with'); ?>:</td>
                             <td>
-                                <button id="point-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
-                                <div class="point">
-                                    <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span><input type="text" name="point" size="100" value="<?php echo isset($point) ? $point :  set_value('point'); ?>" />
-                                </div>
-                                <?php
-                                if($badge_list){
-                                ?>
-                                <br>
-                                <button id="badge-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
-                                <div class="badges">
+                                <div class="well" style="max-width: 400px;">
+                                    <button id="point-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
+                                    <div class="point">
+                                        <div class="goods-panel">
+                                            <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
+                                            <input type="text" name="point" size="100" class="orange" value="<?php echo isset($point) ? $point :  set_value('point'); ?>" />
+                                        </div>
+                                    </div>
                                     <?php
-                                    foreach($badge_list as $badge){
-                                    ?>
-                                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
-                                        <input type="text" name="reward_badge['<?php echo $badge['_id']; ?>']" size="100" value="<?php echo set_value('reward_badge['.$badge['_id'].']'); ?>" /><br/>
+                                    if($badge_list){
+                                        ?>
+                                        <br>
+                                        <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
+                                        <div class="badges">
+                                            <div class="goods-panel">
+                                            <?php
+                                            foreach($badge_list as $badge){
+                                                ?>
+                                                <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
+                                                <input type="text" name="reward_badge['<?php echo $badge['_id']; ?>']" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo set_value('reward_badge['.$badge['_id'].']'); ?>" /><br/>
+                                            <?php
+                                            }
+                                            ?>
+                                            </div>
+                                        </div>
                                     <?php
                                     }
                                     ?>
                                 </div>
-                                <?php
-                                }
-                                ?>
-
                             </td>
                         </tr>
                     </table>
