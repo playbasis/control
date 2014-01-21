@@ -31,7 +31,7 @@
                         <td class="left"><?php echo $this->lang->line('column_company_name'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_domain'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-                        <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
+                        <td class="right" style="width:240px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -41,7 +41,10 @@
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
                         <td></td>
                         <td></td>
-                        <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>
+                        <td class="right">
+                            <a onclick="clear_filter();" id="clear_filter" class="button"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                            <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                        </td>
                     </tr>
                     <?php if (isset($clients)) { ?>
                         <?php foreach ($clients as $client) { ?>
@@ -120,3 +123,15 @@ $('input[name=\'filter_name\']').autocomplete({
     }
 });
 //--></script>
+
+<script type="text/javascript">
+    <?php if (!isset($_GET['filter_name'])){?>
+        $("#clear_filter").hide();
+    <?php }else{?>
+        $("#clear_filter").show();
+    <?php }?>
+
+    function clear_filter(){
+        window.location.replace(baseUrlPath+'client');
+    }
+</script>
