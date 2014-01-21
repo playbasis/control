@@ -9,6 +9,7 @@
 # local config
 application/config/database.php
 application/config/config.php
+application/config/mongodb.php
 .idea/*
 node_server/*.log
 node_twitter/*.log
