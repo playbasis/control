@@ -309,7 +309,7 @@ class Engine extends REST_Controller
 									$this->social_model->sendFacebookNotification($client_id, $site_id, $fbData['facebook_id'], $eventMessage, '');
 							}
 						}
-						else if(is_null($jigsawConfig['item_id']) or $jigsawConfig['item_id'] == '')
+						else if(is_null($jigsawConfig['item_id']) || $jigsawConfig['item_id'] == '')
 						{
 							//item_id is null, process standard point-based rewards (exp, point)
 							if($jigsawConfig['reward_name'] == 'exp')

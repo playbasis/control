@@ -37,7 +37,7 @@ class jigsaw extends MY_Model
 		assert(is_array($input));
 		assert($input['pb_player_id']);
 		//always true if reward type is point
-		if(is_null($config['item_id']) or $config['item_id'] == '')
+		if(is_null($config['item_id']) || $config['item_id'] == '')
 			return $this->checkReward($config['reward_id'], $input['site_id']);
 		//if reward type is badge
 		switch($config['reward_name'])
