@@ -35,6 +35,7 @@ $lang['text_unselect_all']			= "Unselect All";
 
 // Button
 $lang['button_filter']				= 'Filter';
+$lang['button_clear_filter']		= ' Clear filter';
 $lang['button_insert']				= "Insert";
 $lang['button_delete']				= "Delete";
 $lang['button_save']				= "Save";

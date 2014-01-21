@@ -42,7 +42,10 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="right"><a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a></td>
+                        <td class="right">
+                            <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
+                            <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
+                        </td>
                     </tr>
                     
                         <?php if(isset($actions)){?>
@@ -194,4 +197,16 @@ $( ".push_up" ).live( "click", function() {
   return false;
 });
 
+</script>
+
+<script type="text/javascript">
+    <?php if (!isset($_GET['filter_name'])){?>
+        $("#clear_filter").hide();
+    <?php }else{?>
+        $("#clear_filter").show();
+    <?php }?>
+
+    function clear_filter(){
+        window.location.replace(baseUrlPath+'action');
+    }
 </script>

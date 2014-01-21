@@ -32,6 +32,7 @@ $lang['column_owner']							= 'Owner';
 
 // Button
 $lang['button_filter']							= 'Filter';
+$lang['button_clear_filter']					= 'Clear filter';
 $lang['button_download']						= 'Download';
 $lang['filter_date_start']						= 'Date Start';
 $lang['filter_date_end']						= 'Date End';

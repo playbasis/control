@@ -80,6 +80,7 @@ $lang['entry_plan']								= 'Plan Setting';
 
 // Button
 $lang['button_filter']							= 'Filter';
+$lang['button_clear_filter']					= 'Clear filter';
 $lang['button_add_domain']						= 'Add Domain';
 $lang['button_add_user']						= 'Add User';
 

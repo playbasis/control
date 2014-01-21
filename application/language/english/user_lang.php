@@ -60,5 +60,6 @@ $lang['form_company_name']						="Company Name";
 
 // Button
 $lang['button_filter']							= 'Filter';
+$lang['button_clear_filter']					= 'Clear filter';
 $lang['button_insert']							= "Insert";
 $lang['button_delete']							= "Delete";
