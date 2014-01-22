@@ -57,9 +57,7 @@ class Goods extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/insert';
 
-        //I took out the check_space because some goods may have spaces? - Joe
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('stackable', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -70,11 +68,32 @@ class Goods extends MY_Controller
                     $this->data['message'] = $this->lang->line('error_permission');
                 }
 
+                $point_empty = true;
+                $badge_empty = true;
+                $redeem = array();
+
+                if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
+                    $point_empty = false;
+                    $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
+                }
+
+                foreach($this->input->post('reward_badge') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $badge_empty = false;
+                        $redeem['badge'][$rbk] = (int)$rb;
+                    }
+                }
+
+                if($point_empty && $badge_empty){
+                    $this->data['message'] = $this->lang->line('error_redeem');
+                }
+
+                $goods_data = $this->input->post();
+                $goods_data['redeem'] = $redeem;
+
                 if($this->form_validation->run() && $this->data['message'] == null){
 
                     if($this->User_model->getClientId()){
-
-                        $goods_data = $this->input->post();
 
                         $goods_id = $this->Goods_model->addGoods($goods_data);
 
@@ -86,8 +105,6 @@ class Goods extends MY_Controller
 
                         redirect('/goods', 'refresh');
                     }else{
-
-                        $goods_data = $this->input->post();
 
                         if($goods_data['client_id'] != 'all_clients'){
                             $this->load->model('Client_model');
@@ -130,7 +147,6 @@ class Goods extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/update/'.$goods_id;
 
-        //I took out the check_space because some goods may have spaces? - Joe
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerGoods($goods_id)) {
@@ -141,13 +157,36 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
+            $point_empty = true;
+            $badge_empty = true;
+            $redeem = array();
+
+            if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
+                $point_empty = false;
+                $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
+            }
+
+            foreach($this->input->post('reward_badge') as $rbk => $rb){
+                if($rb != '' || $rb != 0){
+                    $badge_empty = false;
+                    $redeem['badge'][$rbk] = (int)$rb;
+                }
+            }
+
+            if($point_empty && $badge_empty){
+                $this->data['message'] = $this->lang->line('error_redeem');
+            }
+
+            $goods_data = $this->input->post();
+            $goods_data['redeem'] = $redeem;
+
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
-                    $this->Goods_model->editGoodsToClient($goods_id, $this->input->post());
+                    $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
                 }else{
-                    $this->Goods_model->editGoods($goods_id, $this->input->post());
+                    $this->Goods_model->editGoods($goods_id, $goods_data);
 
-                    $this->Goods_model->editGoodsToClientFromAdmin($goods_id, $this->input->post());
+                    $this->Goods_model->editGoodsToClientFromAdmin($goods_id, $goods_data);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
@@ -200,8 +239,6 @@ class Goods extends MY_Controller
 
         $config['base_url'] = site_url('goods/page');
 
-
-        $this->load->model('Goods_model');
         $this->load->model('Image_model');
 
         $site_id = $this->User_model->getSiteId();
@@ -232,7 +269,6 @@ class Goods extends MY_Controller
                 $this->data['goods_list'][] = array(
                     'goods_id' => $result['_id'],
                     'name' => $result['name'],
-                    'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
                     'status' => $result['status'],
                     'image' => $image,
@@ -242,50 +278,34 @@ class Goods extends MY_Controller
                 );
             }
         }else{
-            $this->load->model('Reward_model');
 
             $goods_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
             $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
 
-            $reward_limit_data = $this->Reward_model->getGoodsRewardBySiteId($site_id);
-
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
-            if ($reward_limit_data) {
+            $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
-                $slot_total = $reward_limit_data[0]['limit'] - $goods_total;
+            foreach ($goods_list as $goods) {
 
-                $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+                if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
+                    $image = $this->Image_model->resize($goods['image'], 50, 50);
+                }
+                else {
+                    $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                }
 
-                foreach ($goods_list as $goods) {
-
-                    $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
-
-                    if($goods_info){
-
-                        if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $image = $this->Image_model->resize($goods_info['image'], 50, 50);
-                        }
-                        else {
-                            $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                        }
-
-                        if(!$goods_info['deleted']){
-                            $this->data['goods_list'][] = array(
-                                'goods_id' => $goods_info['_id'],
-                                'name' => $goods_info['name'],
-                                'hint' => $goods_info['hint'],
-                                'quantity' => $goods_info['quantity'],
-                                'status' => $goods_info['status'],
-                                'image' => $image,
-                                'sort_order'  => $goods_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
-                            );
-                        }
-
-                    }
+                if(!$goods['deleted']){
+                    $this->data['goods_list'][] = array(
+                        'goods_id' => $goods['_id'],
+                        'name' => $goods['name'],
+                        'quantity' => $goods['quantity'],
+                        'status' => $goods['status'],
+                        'image' => $image,
+                        'sort_order'  => $goods['sort_order'],
+                        'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                    );
                 }
             }
         }
@@ -329,8 +349,6 @@ class Goods extends MY_Controller
 
         $config['base_url'] = site_url('goods/page');
 
-
-        $this->load->model('Goods_model');
         $this->load->model('Image_model');
 
         $site_id = $this->User_model->getSiteId();
@@ -342,12 +360,11 @@ class Goods extends MY_Controller
         $this->data['slots'] = $slot_total;
 
         if ($this->User_model->getUserGroupId() == $setting_group_id) {
-
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
 
-            $results = $this->Goods_model->getGoods($data);
+            $results = $this->Goods_model->getGoodsList($data);
 
             $goods_total = $this->Goods_model->getTotalGoods($data);
 
@@ -362,61 +379,43 @@ class Goods extends MY_Controller
                 $this->data['goods_list'][] = array(
                     'goods_id' => $result['_id'],
                     'name' => $result['name'],
-                    'hint' => $result['hint'],
                     'quantity' => $result['quantity'],
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public' => $goodsIsPublic
+                    'is_public'=>$goodsIsPublic
                 );
             }
-        }
-        else {
+        }else{
 
-            $this->load->model('Reward_model');
-
-            $goods_data = array('site_id'=>$site_id, 'limit'=>$per_page, 'start' => $offset, 'sort'=>'sort_order');
+            $goods_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
             $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
 
-            $reward_limit_data = $this->Reward_model->getGoodsRewardBySiteId($site_id);
-
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
-            if ($reward_limit_data) {
+            $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
 
-                $slot_total = $reward_limit_data[0]['limit'] - $goods_total;
+            foreach ($goods_list as $goods) {
 
-                $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+                if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
+                    $image = $this->Image_model->resize($goods['image'], 50, 50);
+                }
+                else {
+                    $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                }
 
-                foreach ($goods_list as $goods) {
-
-                    $goods_info = $this->Goods_model->getGoodsToClient($goods['_id']);
-
-                    if($goods_info){
-
-                        if ($goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $image = $this->Image_model->resize($goods_info['image'], 50, 50);
-                        }
-                        else {
-                            $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                        }
-
-                        if(!$goods_info['deleted']){
-                            $this->data['goods_list'][] = array(
-                                'goods_id' => $goods_info['_id'],
-                                'name' => $goods_info['name'],
-                                'hint' => $goods_info['hint'],
-                                'quantity' => $goods_info['quantity'],
-                                'status' => $goods_info['status'],
-                                'image' => $image,
-                                'sort_order'  => $goods_info['sort_order'],
-                                'selected' => ($this->input->post('selected') && in_array($goods_info['_id'], $this->input->post('selected'))),
-                            );
-                        }
-                    }
+                if(!$goods['deleted']){
+                    $this->data['goods_list'][] = array(
+                        'goods_id' => $goods['_id'],
+                        'name' => $goods['name'],
+                        'quantity' => $goods['quantity'],
+                        'status' => $goods['status'],
+                        'image' => $image,
+                        'sort_order'  => $goods['sort_order'],
+                        'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                    );
                 }
             }
         }
@@ -455,6 +454,7 @@ class Goods extends MY_Controller
     private function getForm($goods_id=null) {
 
         $this->load->model('Image_model');
+        $this->load->model('Badge_model');
 
         if (isset($goods_id) && ($goods_id != 0)) {
             if($this->User_model->getClientId()){
@@ -462,7 +462,6 @@ class Goods extends MY_Controller
             }else{
                 $goods_info = $this->Goods_model->getGoods($goods_id);
             }
-
         }
 
         if ($this->input->post('name')) {
@@ -481,20 +480,12 @@ class Goods extends MY_Controller
             $this->data['description'] = '';
         }
 
-        if ($this->input->post('hint')) {
-            $this->data['hint'] = $this->input->post('hint');
-        } elseif (isset($goods_id) && ($goods_id != 0)) {
-            $this->data['hint'] = $goods_info['hint'];
-        } else {
-            $this->data['hint'] = '';
-        }
-
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
         } elseif (!empty($goods_info)) {
             $this->data['image'] = $goods_info['image'];
         } else {
-            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+            $this->data['image'] = 'no_image.jpg';
         }
 
         if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
@@ -523,28 +514,28 @@ class Goods extends MY_Controller
             $this->data['status'] = 1;
         }
 
-        if ($this->input->post('stackable')) {
-            $this->data['stackable'] = $this->input->post('stackable');
-        } elseif (!empty($goods_info)) {
-            $this->data['stackable'] = $goods_info['stackable'];
-        } else {
-            $this->data['stackable'] = 1;
-        }
-
-        if ($this->input->post('substract')) {
-            $this->data['substract'] = $this->input->post('substract');
-        } elseif (!empty($goods_info)) {
-            $this->data['substract'] = $goods_info['substract'];
-        } else {
-            $this->data['substract'] = 1;
-        }
-
         if ($this->input->post('quantity')) {
             $this->data['quantity'] = $this->input->post('quantity');
         } elseif (!empty($goods_info)) {
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
             $this->data['quantity'] = 1;
+        }
+
+        if ($this->input->post('reward_point')) {
+            $this->data['reward_point'] = $this->input->post('reward_point');
+        } elseif (!empty($goods_info)) {
+            $this->data['reward_point'] = isset($goods_info['redeem']['point']) ? $goods_info['redeem']['point']['point_value'] : 0;
+        } else {
+            $this->data['reward_point'] = 0;
+        }
+
+        if ($this->input->post('reward_badge')) {
+            $this->data['reward_badge'] = $this->input->post('reward_badge');
+        } elseif (!empty($goods_info)) {
+            $this->data['reward_badge'] = isset($goods_info['redeem']['badge']) ? $goods_info['redeem']['badge'] : array();
+        } else {
+            $this->data['reward_badge'] = array();
         }
 
         if (isset($goods_id)) {
@@ -556,12 +547,31 @@ class Goods extends MY_Controller
         $this->load->model('Client_model');
         $this->data['to_clients'] = $this->Client_model->getClients(array());
         $this->data['client_id'] = $this->User_model->getClientId();
-        $this->data['site_id'] = $this->User_model->getSiteId();
+        $site_id = $this->User_model->getSiteId();
+        $this->data['site_id'] = $site_id;
+
+        $setting_group_id = $this->User_model->getAdminGroupID();
+
+        $this->data['badge_list'] = array();
+        if ($this->User_model->getUserGroupId() != $setting_group_id) {
+            $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $site_id ));
+        }
+        if (!empty($goods_info)) {
+            $goods_private = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+            if(!$this->checkGoodsIsPublic($goods_private['goods_id'])){
+                $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $goods_private['site_id'] ));
+            }
+        }
+
 
         $this->data['main'] = 'goods_form';
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    public function getBadgeForGoods(){
+
     }
 
     private function validateModify() {

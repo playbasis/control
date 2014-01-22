@@ -153,7 +153,7 @@ class Badge extends MY_Controller
                 if($this->User_model->getClientId()){
                     $this->Badge_model->editBadgeToClient($badge_id, $this->input->post());
                 }else{
-                    $this->Badge_model->editBadge($badge_id, $this->input->post()); 
+                    $this->Badge_model->editBadge($badge_id, $this->input->post());
                     
                     $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $this->input->post());   
                 }
@@ -520,7 +520,7 @@ class Badge extends MY_Controller
         } elseif (!empty($badge_info)) {
             $this->data['image'] = $badge_info['image'];
         } else {
-            $this->data['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+            $this->data['image'] = 'no_image.jpg';
         }
 
         if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {

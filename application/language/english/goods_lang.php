@@ -16,6 +16,7 @@ $lang['text_no_results']				= 'You do not have any goods created';
 // Tab
 $lang['tab_colection']					= 'Collection';
 $lang['tab_assign']					= 'Assign';
+$lang['tab_redeem']					= 'Redeem';
 
 // Column
 $lang['column_image']					= 'Image';
@@ -34,11 +35,12 @@ $lang['entry_hint']						= 'Hint';
 $lang['entry_sort_order']           	= 'Sort Order';
 $lang['entry_parent']           		= 'Parent';
 $lang['entry_collection']         		= 'Collection';
-$lang['entry_stackable']        	   	= 'Stackable';
+$lang['entry_redeem_with']        	   	= 'Redeem with';
 $lang['entry_quantity']           		= 'Quantity';
-$lang['entry_substract']           		= 'Substract';
 $lang['entry_status']         			= 'Status';
 $lang['entry_image']          			= 'Image';
+$lang['entry_point']           		    = 'Point';
+$lang['entry_badge']           		    = 'Badge';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';
@@ -55,4 +57,5 @@ $lang['error_permission']       = 'Warning: You do not have permission to modify
 $lang['error_access']			= 'Warning: You do not have permission to access this page!';
 $lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
 $lang['error_limit']            = 'You have reached goods limit.';
+$lang['error_redeem']           = 'Please provide point or badge.';
 ?>
