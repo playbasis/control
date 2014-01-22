@@ -57,7 +57,6 @@ class Level extends MY_Controller
         $this->form_validation->set_rules('level', $this->lang->line('entry_level'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         // $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level_title', "", '');
-        $this->form_validation->set_rules('sort_order', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -96,7 +95,6 @@ class Level extends MY_Controller
         $this->form_validation->set_rules('level', $this->lang->line('entry_level'), 'trim|required|numeric|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         // $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('level_title', "", '');
-        $this->form_validation->set_rules('sort_order', "", '');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
@@ -208,7 +206,6 @@ class Level extends MY_Controller
                     'title' => $result['level_title'],
                     'exp' => number_format($result['exp'], 0),
                     'status' => ($result['status']==false)? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'),
-                    'sort_order' => $result['sort_order'],
                     'selected' => $this->input->post('selected') && in_array($result['level_id'], $this->input->post('selected')),
                 );
             }
@@ -343,14 +340,6 @@ class Level extends MY_Controller
             $this->data['level'] = $level_info['level'];
         } else {
             $this->data['level'] = null;
-        }
-
-        if ($this->input->post('sort_order')) {
-            $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($level_info)) {
-            $this->data['sort_order'] = $level_info['sort_order'];
-        } else {
-            $this->data['sort_order'] = 0;
         }
 
         if ($this->input->post('status')) {
