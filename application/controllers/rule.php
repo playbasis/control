@@ -145,9 +145,7 @@ class Rule extends MY_Controller
 
         $json['badges'] = $badges;
 
-        $this->output->set_output(json_encode($json));*/
-
-        $this->output->set_output(json_encode($badges));
+        $this->output->set_output(json_encode($json));
 
     }
 
