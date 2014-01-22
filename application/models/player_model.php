@@ -412,11 +412,11 @@ class Player_model extends MY_Model
 		$limit = $result['limit_users'];
 		if(!$limit)
 			return; //client has no user limit
-		$last_send = $result['last_send_limit_users']->sec;
+		$last_send = $result['last_send_limit_users']?$result['last_send_limit_users']->sec:null;
 		$next_send = $last_send + (7 * 24 * 60 * 60); //next week from last send
 		if($next_send > time())
 			return; //not time to send yet
-		$this->site_db()->where(array(
+		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id
 		));
@@ -427,7 +427,7 @@ class Player_model extends MY_Model
 			$this->mongo_db->where(array(
                 'client_id' => $client_id
             ));
-			$result = $this->mongo_db-get('user_to_client');
+			$result = $this->mongo_db->get('user_to_client');
             $user_id_list=array();
 			foreach ($result as $r)
                 array_push($user_id_list,$r['user_id']);
