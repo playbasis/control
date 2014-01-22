@@ -50,7 +50,7 @@ class Player_model extends MY_Model
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		$result['pb_player_id'] = $result['_id'];
+		// $result['pb_player_id'] = $result['_id'];
 		unset($result['_id']);
 		if(isset($result['date_added']))
 		{

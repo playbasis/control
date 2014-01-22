@@ -146,9 +146,16 @@ class Player extends REST_Controller
             'email',
             'exp',
             'level',
-            'date_added AS registered',
+            'date_added',
             'birth_date'
         ));
+
+        foreach ($player['player'] as &$p){
+        	unset($p['_id']);
+        	$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
+        	$p['registered'] = datetimeMongotoReadable($p['date_added']);
+        	unset($p['date_added']);
+        }
 
         $this->response($this->resp->setRespond($player), 200);
     }
