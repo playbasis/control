@@ -743,7 +743,7 @@ class Player extends REST_Controller
             $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 
         $level= $this->level_model->getLevelDetail($level, $validToken['client_id'], $validToken['site_id']);
-//        $this->response($this->resp->setRespond($level), 200);
+        $this->response($this->resp->setRespond($level), 200);
     }
     public function levels_get()
     {

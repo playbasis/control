@@ -15,7 +15,7 @@ class Level_model extends MY_Model
         $this->set_site_mongodb($site_id);
 
         $leveldata = array();
-        $level_range = array($level, intval($level)+1);
+        $level_range = array(intval($level), intval($level)+1);
 
         //check if client have their own exp table setup
         $this->mongo_db->select(array("level","exp","level_title","image"));
@@ -39,11 +39,12 @@ class Level_model extends MY_Model
 
         }
         $i = 0;
+
         foreach($levela as $l){
             $l['min_exp'] = $l['exp'];
-//            var_Dump($levela[$i+1]);
             $l['max_exp'] = (isset($levela[$i+1]))?intval($levela[$i+1]['exp'])-1:null;
             unset($l['exp']);
+            unset($l['_id']);
             $leveldata = $l;
             break;
         }
@@ -74,7 +75,10 @@ class Level_model extends MY_Model
 
         $i = 0;
         foreach($leveldata as &$l){
-            $l['max_exp'] = (isset($leveldata[$i+1]))?intval($leveldata[$i+1]['min_exp'])-1:null;
+            $l['min_exp'] = $l['exp'];
+            $l['max_exp'] = (isset($leveldata[$i+1]))?intval($leveldata[$i+1]['exp'])-1:null;
+            unset($l['exp']);
+            unset($l['_id']);
             $i++;
         }
 
