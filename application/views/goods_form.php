@@ -49,7 +49,7 @@
                                 <?php if(!$client_id && !$name){?>
                                     <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
                                     <td>
-                                        <select name="client_id">
+                                        <select id="client-choose" name="client_id">
                                             <?php if(isset($to_clients)){?>
                                             <option value = 'all_clients'>All Clients</option>
                                                 <?php foreach($to_clients as $client){?>
@@ -110,6 +110,7 @@
                                             <input type="text" name="reward_point" size="100" class="orange" value="<?php echo isset($reward_point) ? $reward_point :  set_value('reward_point'); ?>" />
                                         </div>
                                     </div>
+                                    <div id="badge-panel">
                                     <?php
                                     if($badge_list){
                                         ?>
@@ -118,11 +119,21 @@
                                         <div class="badges">
                                             <div class="goods-panel">
                                                 <?php
-                                                var_dump($reward_badge);
                                                 foreach($badge_list as $badge){
                                                     ?>
                                                     <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
-                                                    <input type="text" name="reward_badge[<?php echo $badge['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo set_value('reward_badge['.$badge['_id'].']'); ?>" /><br/>
+                                                    <input type="text" name="reward_badge[<?php echo $badge['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_badge['.$badge['_id'].']')){
+                                                        echo set_value('reward_badge['.$badge['_id'].']');
+                                                    }else{
+                                                        if($reward_badge){
+                                                            foreach($reward_badge as $rbk => $rb){
+                                                                if($rbk == $badge['_id']){
+                                                                    echo $rb;
+                                                                    continue;
+                                                                }
+                                                            }
+                                                        }
+                                                    } ?>" /><br/>
                                                 <?php
                                                 }
                                                 ?>
@@ -131,6 +142,7 @@
                                     <?php
                                     }
                                     ?>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -198,3 +210,23 @@ $(document).ready(function(){
 });
 
 //--></script>
+<?php if(!$client_id && !$name){?>
+<script type="text/javascript"><!--
+
+    $(document).ready(function(){
+        $("#client-choose").click(function() {
+            var c = $(this).val();
+            if(c != "all_clients"){
+                $.ajax({
+                    url: "test.html",
+                    data: { client_id: c },
+                    context: document.body
+                }).done(function(data) {
+                    $("#badge-panel").html(data);
+                });
+            }
+        });
+    });
+
+    //--></script>
+<?php } ?>

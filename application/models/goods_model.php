@@ -20,6 +20,15 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getGoodsOfClientPrivate($goods_id){
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('goods_id',  new MongoID($goods_id));
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
+
+        return $results ? $results[0] : null;
+    }
+
     public function getGoodsList($data = array()) {
 
         $this->set_site_mongodb(0);
@@ -132,8 +141,8 @@ class Goods_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+//        $this->mongo_db->where('deleted', false);
+//        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
         $results = $this->mongo_db->get("playbasis_goods_to_client");
 
         return $results;
@@ -198,7 +207,7 @@ class Goods_model extends MY_Model
             'name' => $data['name']|'' ,
             'description' => $data['description']|'',
             'language_id' => (int)1,
-            'redeem' => serialize($data['redeem']),
+            'redeem' => $data['redeem'],
             'deleted'=>false
         ));
         return $b;
@@ -218,7 +227,7 @@ class Goods_model extends MY_Model
             'name' => $data['name']|'' ,
             'description' => $data['description']|'',
             'language_id' => (int)1,
-            'redeem' => serialize($data['redeem']),
+            'redeem' => $data['redeem'],
             'deleted'=>false
         ));
     }
@@ -234,7 +243,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
-        $this->mongo_db->set('redeem', serialize($data['redeem']));
+        $this->mongo_db->set('redeem', $data['redeem']);
         $this->mongo_db->update('playbasis_goods');
 
         if (isset($data['image'])) {
@@ -258,7 +267,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
-        $this->mongo_db->set('redeem', serialize($data['redeem']));
+        $this->mongo_db->set('redeem', $data['redeem']);
         $this->mongo_db->update('playbasis_goods_to_client');
 
         if (isset($data['image'])) {
@@ -280,7 +289,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
-        $this->mongo_db->set('redeem', serialize($data['redeem']));
+        $this->mongo_db->set('redeem', $data['redeem']);
         $this->mongo_db->update_all('playbasis_goods_to_client');
 
         if (isset($data['image'])) {
@@ -366,6 +375,11 @@ class Goods_model extends MY_Model
             $this->mongo_db->update('playbasis_goods_to_client');
         }
         
+    }
+
+    public function checkGoodsIsPublic($goods_id){
+        $this->mongo_db->where('goods_id', $goods_id);
+        return $this->mongo_db->get('playbasis_goods_to_client');
     }
 
 }
