@@ -5,7 +5,7 @@
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
-                <button class="btn btn-info" onclick="location = baseUrlPath+'badge'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'goods'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
         <div class="content">
@@ -14,7 +14,11 @@
                 <div class="warning"><?php echo $this->session->flashdata('limit_reached'); ?></div>
                 </div>
             <?php }?>
-            <div id="tabs" class="htabs"><a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a><a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a></div>
+            <div id="tabs" class="htabs">
+                <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
+                <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>
+                <a href="#tab-redeem"><?php echo $this->lang->line('tab_redeem'); ?></a>
+            </div>
             <?php
             if(validation_errors() || isset($message)) {
                 ?>
@@ -45,7 +49,7 @@
                                 <?php if(!$client_id && !$name){?>
                                     <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
                                     <td>
-                                        <select name="client_id">
+                                        <select id="client-choose" name="client_id">
                                             <?php if(isset($to_clients)){?>
                                             <option value = 'all_clients'>All Clients</option>
                                                 <?php foreach($to_clients as $client){?>
@@ -76,45 +80,71 @@
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('entry_stackable'); ?>:</td>
-                            <td><select name="stackable">
-                                <?php if ($stackable || set_value('stackable')==1) { ?>
-                                <?php //if (set_value('stackable')==1) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_substract'); ?>:</td>
-                            <td><select name="substract">
-                                <?php if ($substract) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
-                        </tr>
-                        <tr>
                             <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?></td>
                             <td><select name="status">
-                                <?php if ($status) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
+                                    <?php if ($status) { ?>
+                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } else { ?>
+                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } ?>
+                                </select></td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="tab-redeem">
+                    <table class="form">
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_redeem_with'); ?>:</td>
+                            <td>
+                                <div class="well" style="max-width: 400px;">
+                                    <button id="point-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
+                                    <div class="point">
+                                        <div class="goods-panel">
+                                            <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
+                                            <input type="text" name="reward_point" size="100" class="orange" value="<?php echo isset($reward_point) ? $reward_point :  set_value('reward_point'); ?>" />
+                                        </div>
+                                    </div>
+                                    <div id="badge-panel">
+                                    <?php
+                                    if($badge_list){
+                                        ?>
+                                        <br>
+                                        <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
+                                        <div class="badges">
+                                            <div class="goods-panel">
+                                                <?php
+                                                foreach($badge_list as $badge){
+                                                    ?>
+                                                    <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
+                                                    <input type="text" name="reward_badge[<?php echo $badge['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_badge['.$badge['_id'].']')){
+                                                        echo set_value('reward_badge['.$badge['_id'].']');
+                                                    }else{
+                                                        if($reward_badge){
+                                                            foreach($reward_badge as $rbk => $rb){
+                                                                if($rbk == $badge['_id']){
+                                                                    echo $rb;
+                                                                    continue;
+                                                                }
+                                                            }
+                                                        }
+                                                    } ?>" /><br/>
+                                                <?php
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                    <?php
+                                    }
+                                    ?>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -171,5 +201,32 @@ function image_upload(field, thumb) {
 //--></script>
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
-$('#languages a').tabs();
+
+$(document).ready(function(){
+    $(".point").hide();
+    $(".badges").hide();
+    $("#point-entry").click(function() {$(".point").toggle()});
+    $("#badge-entry").click(function() {$(".badges").toggle()});
+});
+
 //--></script>
+<?php if(!$client_id && !$name){?>
+<script type="text/javascript"><!--
+
+    $(document).ready(function(){
+        $("#client-choose").click(function() {
+            var c = $(this).val();
+            if(c != "all_clients"){
+                $.ajax({
+                    url: "test.html",
+                    data: { client_id: c },
+                    context: document.body
+                }).done(function(data) {
+                    $("#badge-panel").html(data);
+                });
+            }
+        });
+    });
+
+    //--></script>
+<?php } ?>

@@ -570,14 +570,6 @@ table.form > tbody > tr > td {
 	top: 3px;
 }
 
-.right {
-    /*float: right;*/
-}
-
-.left {
-    /*float: left;*/
-}
-
 .radius-small {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -599,4 +591,21 @@ table.form > tbody > tr > td {
     margin: 0;
     padding: 5px 20px;
     border-radius: 0 0 5px 5px;
+}
+
+.goods-panel input, .goods-panel span{
+    margin: 10px 0;
+}
+
+.goods-panel input.orange {
+    border-color: #f4a70c !important;
+}
+.goods-panel input.green {
+    border-color: #b9e672 !important;
+}
+.goods-panel input.yellow {
+    border-color: #109648 !important;
+}
+.goods-panel input.blue {
+    border-color: #2fabe9 !important;
 }
