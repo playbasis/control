@@ -31,9 +31,9 @@ class Point_model extends MY_Model
 			'name' => strtolower($data['reward_name'])
 		));
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
-		if($result)
-			return $result[0]['reward_id'];
-		return array();
+		/*if($result)
+			return $result[0]['reward_id'];*/
+		return $result ? $result[0]['reward_id'] : array();
 	}
 }
 ?>
