@@ -141,8 +141,8 @@ class Goods_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-//        $this->mongo_db->where('deleted', false);
-//        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
         $results = $this->mongo_db->get("playbasis_goods_to_client");
 
         return $results;

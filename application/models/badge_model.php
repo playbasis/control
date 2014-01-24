@@ -151,49 +151,57 @@ class Badge_model extends MY_Model
         return $results;
     }
 
-    // public function getBadgeBySiteId($site_id, $limit=null, $offset=null) {
+    public function getBadgeByClientId($data = array()) {
 
-    //     $this->set_site_mongodb(0);
+        $this->set_site_mongodb(0);
 
-    //     $this->mongo_db->where('site_id',  new MongoID($site_id));
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $this->mongo_db->where('name', $regex);
+        }
 
-    //     $sort_data = array(
-    //         '_id',
-    //         'name',
-    //         'status',
-    //         'sort_order'
-    //     );
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
 
-    //     if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
-    //         $order = -1;
-    //     } else {
-    //         $order = 1;
-    //     }
+        $sort_data = array(
+            '_id',
+            'name',
+            'status',
+            'sort_order'
+        );
 
-    //     if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-    //         $this->mongo_db->order_by(array($data['sort'] => $order));
-    //     } else {
-    //         $this->mongo_db->order_by(array('name' => $order));
-    //     }
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
 
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
 
-    //     if ($limit || $offset) {
-    //         if ($offset < 0) {
-    //             $offset = 0;
-    //         }
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
 
-    //         if ($limit < 1) {
-    //             $limit = 20;
-    //         }
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
 
-    //         $this->mongo_db->limit((int)$limit);
-    //         $this->mongo_db->offset((int)$offset);
-    //     }
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
 
-    //     $results = $this->mongo_db->get("playbasis_badge_to_client");
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $results = $this->mongo_db->get("playbasis_badge_to_client");
 
-    //     return $results;
-    // }
+        return $results;
+    }
 
     public function getTotalBadgeBySiteId($data) {
 
