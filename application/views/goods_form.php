@@ -205,8 +205,8 @@ $('#tabs a').tabs();
 $(document).ready(function(){
     $(".point").hide();
     $(".badges").hide();
-    $("#point-entry").click(function() {$(".point").toggle()});
-    $("#badge-entry").click(function() {$(".badges").toggle()});
+    $("#point-entry").live('click', function() {$(".point").toggle()});
+    $("#badge-entry").live('click', function() {$(".badges").toggle()});
 });
 
 //--></script>
@@ -218,12 +218,15 @@ $(document).ready(function(){
             var c = $(this).val();
             if(c != "all_clients"){
                 $.ajax({
-                    url: "test.html",
+                    url: baseUrlPath+'goods/getBadgeForGoods',
                     data: { client_id: c },
                     context: document.body
                 }).done(function(data) {
                     $("#badge-panel").html(data);
+                    $(".badges").hide();
                 });
+            }else{
+                $("#badge-panel").html();
             }
         });
     });
