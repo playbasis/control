@@ -214,7 +214,7 @@ $(document).ready(function(){
 <script type="text/javascript"><!--
 
     $(document).ready(function(){
-        $("#client-choose").click(function() {
+        $("#client-choose").choose(function() {
             var c = $(this).val();
             if(c != "all_clients"){
                 $.ajax({
