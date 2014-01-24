@@ -214,7 +214,7 @@ $(document).ready(function(){
 <script type="text/javascript"><!--
 
     $(document).ready(function(){
-        $("#client-choose").choose(function() {
+        $("#client-choose").change(function() {
             console.log("input selector");
             var c = $(this).val();
             if(c != "all_clients"){
