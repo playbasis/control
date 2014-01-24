@@ -448,6 +448,7 @@ class User_model extends MY_Model
         $this->session->unset_userdata('database');
         $this->session->unset_userdata('permission');
         $this->session->unset_userdata('ip');
+        $this->session->unset_userdata('admin_group_id');
 
         $this->user_id = '';
         $this->username = '';
@@ -456,6 +457,7 @@ class User_model extends MY_Model
         $this->user_group_id = '';
         $this->database = '';
         $this->permission = '';
+        $this->admin_group_id = '';
     }
 
     public function hasPermission($key, $value) {
@@ -496,7 +498,6 @@ class User_model extends MY_Model
 
     public function getAdminGroupID(){
         $this->set_site_mongodb(0);
-
         if($this->session->userdata('admin_group_id'))
             return $this->session->userdata('admin_group_id');
 
@@ -509,6 +510,7 @@ class User_model extends MY_Model
         if($Q){
             $this->admin_group_id = $Q[0]['_id'];
         }
+
         $this->session->set_userdata('admin_group_id',$this->admin_group_id );
         return $this->admin_group_id;
     }

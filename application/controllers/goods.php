@@ -57,7 +57,7 @@ class Goods extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/insert';
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -77,13 +77,15 @@ class Goods extends MY_Controller
                     $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
                 }
 
-                foreach($this->input->post('reward_badge') as $rbk => $rb){
-                    if($rb != '' || $rb != 0){
-                        $badge_empty = false;
-                        $redeem['badge'][$rbk] = (int)$rb;
+                if($this->input->post('reward_badge')){
+                    foreach($this->input->post('reward_badge') as $rbk => $rb){
+                        if($rb != '' || $rb != 0){
+                            $badge_empty = false;
+                            $redeem['badge'][$rbk] = (int)$rb;
+                        }
                     }
                 }
-
+                
                 if($point_empty && $badge_empty){
                     $this->data['message'] = $this->lang->line('error_redeem');
                 }
@@ -147,7 +149,7 @@ class Goods extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'goods/update/'.$goods_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerGoods($goods_id)) {
 
@@ -166,13 +168,14 @@ class Goods extends MY_Controller
                 $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
             }
 
-            foreach($this->input->post('reward_badge') as $rbk => $rb){
-                if($rb != '' || $rb != 0){
-                    $badge_empty = false;
-                    $redeem['badge'][$rbk] = (int)$rb;
+            if($this->input->post('reward_badge')){
+                foreach($this->input->post('reward_badge') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $badge_empty = false;
+                        $redeem['badge'][$rbk] = (int)$rb;
+                    }
                 }
             }
-
             if($point_empty && $badge_empty){
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
@@ -278,7 +281,6 @@ class Goods extends MY_Controller
                 );
             }
         }else{
-
             $goods_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
             $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
