@@ -215,6 +215,7 @@ $(document).ready(function(){
 
     $(document).ready(function(){
         $("#client-choose").choose(function() {
+            console.log("input selector");
             var c = $(this).val();
             if(c != "all_clients"){
                 $.ajax({
