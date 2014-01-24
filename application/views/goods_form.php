@@ -215,8 +215,8 @@ $(document).ready(function(){
 
     $(document).ready(function(){
         $("#client-choose").change(function() {
-            console.log("input selector");
             var c = $(this).val();
+            $("#badge-panel").html("");
             if(c != "all_clients"){
                 $.ajax({
                     url: baseUrlPath+'goods/getBadgeForGoods',
@@ -226,8 +226,6 @@ $(document).ready(function(){
                     $("#badge-panel").html(data);
                     $(".badges").hide();
                 });
-            }else{
-                $("#badge-panel").html();
             }
         });
     });
