@@ -21,7 +21,7 @@
                 <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
                 </div>
             <?php }?>
-            <div id="actions">
+            <div id="goods">
                 <?php
                 $attributes = array('id' => 'form');
                 echo form_open('goods/delete',$attributes);
@@ -75,11 +75,15 @@
                 <?php
                 echo form_close();?>
             </div><!-- #actions -->
-                <?php
-                    if($pagination_links != ''){
-                        echo $pagination_links;
-                    }
-                ?>
+                <div class="pagination">
+                    <ul class='ul_rule_pagination_container'>
+                    <?php
+                        if($pagination_links != ''){
+                            echo $pagination_links;
+                        }
+                    ?>
+                    </ul>
+                </div>
         </div>
     </div>
 </div>
@@ -89,16 +93,16 @@
 $('.push_down').live("click", function(){
 
     $.ajax({
-        url : baseUrlPath+'badge/increase_order/'+ $(this).attr('alt'),
+        url : baseUrlPath+'goods/increase_order/'+ $(this).attr('alt'),
         dataType: "json"
     }).done(function(data) {
         console.log("Testing");
-        var getListForAjax = 'badge/getListForAjax/';
+        var getListForAjax = 'goods/getListForAjax/';
         var getNum = '<?php echo $this->uri->segment(3);?>';
         if(!getNum){
             getNum = 0;
         }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
+        $('#goods').load(baseUrlPath+getListForAjax+getNum);
     });
 
 
@@ -111,16 +115,16 @@ $('.push_down').live("click", function(){
 <script type="text/javascript">
 $('.push_up').live("click", function(){
     $.ajax({
-        url : baseUrlPath+'badge/decrease_order/'+ $(this).attr('alt'),
+        url : baseUrlPath+'goods/decrease_order/'+ $(this).attr('alt'),
         dataType: "json"
     }).done(function(data) {
         console.log("Testing");
-        var getListForAjax = 'badge/getListForAjax/';
+        var getListForAjax = 'goods/getListForAjax/';
         var getNum = '<?php echo $this->uri->segment(3);?>';
         if(!getNum){
             getNum = 0;
         }
-        $('#actions').load(baseUrlPath+getListForAjax+getNum);
+        $('#goods').load(baseUrlPath+getListForAjax+getNum);
     });
 
 

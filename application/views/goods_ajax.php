@@ -18,26 +18,26 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (isset($badges)) { ?>
-                            <?php foreach ($badges as $badge) { ?>
+                            <?php if (isset($goods_list)) { ?>
+                            <?php foreach ($goods_list as $goods) { ?>
                             <tr>
-                                <td style="text-align: center;"><?php if ($badge['selected']) { ?>
-                                    <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" checked="checked" />
+                                <td style="text-align: center;"><?php if ($goods['selected']) { ?>
+                                    <input type="checkbox" name="selected[]" value="<?php echo $goods['goods_id']; ?>" checked="checked" />
                                     <?php } else { ?>
-                                    <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" />
+                                    <input type="checkbox" name="selected[]" value="<?php echo $goods['goods_id']; ?>" />
                                     <?php } ?></td>
-                                <td class="left"><div class="image"><img src="<?php echo $badge['image']; ?>" alt="" id="thumb" /></div></td>
-                                <td class="left"><?php echo $badge['name']; ?></td>
+                                <td class="left"><div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" /></div></td>
+                                <td class="left"><?php echo $goods['name']; ?></td>
                                 <?php if(!$client_id){?>
-                                    <td class="left"><?php echo ($badge['is_public'])?"Public":"Private"; ?></td>
+                                    <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>
                                 <?php }?>
-                                <td class="right"><?php echo $badge['quantity']; ?></td>
-                                <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
-                                <td class="right"><?php echo $badge['sort_order']; ?></td>
+                                <td class="right"><?php echo $goods['quantity']; ?></td>
+                                <td class="left"><?php echo ($goods['status'])? "Enabled" : "Disabled"; ?></td>
+                                <td class="right"><?php echo $goods['sort_order']; ?></td>
                                 <td class="right">
-                                    [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
-                                    <?php echo anchor('badge/increase_order/'.$badge['badge_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none'));?>
-                                    <?php echo anchor('badge/decrease_order/'.$badge['badge_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none' ));?>
+                                    [ <?php echo anchor('goods/update/'.$goods['goods_id'], 'Edit'); ?> ]
+                                    <?php echo anchor('goods/increase_order/'.$goods['goods_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$goods['goods_id'], 'style'=>'text-decoration:none'));?>
+                                    <?php echo anchor('goods/decrease_order/'.$goods['goods_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$goods['goods_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>
                             </tr>
                                 <?php } ?>
