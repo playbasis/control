@@ -151,7 +151,7 @@ class Player extends REST_Controller
         ));
 
         foreach ($player['player'] as &$p){
-        	unset($p['_id']);
+//        	unset($p['_id']);
         	$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
         	$p['registered'] = datetimeMongotoReadable($p['date_added']);
         	unset($p['date_added']);

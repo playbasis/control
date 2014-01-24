@@ -45,13 +45,12 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($site_id);
         if($fields)
 			$this->mongo_db->select($fields);
+        $this->mongo_db->select(array(), array('_id'));
 		$this->mongo_db->where('_id', $id);
 		$result = $this->mongo_db->get('playbasis_player');
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		// $result['pb_player_id'] = $result['_id'];
-		unset($result['_id']);
 		if(isset($result['date_added']))
 		{
 			$result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
@@ -68,6 +67,7 @@ class Player_model extends MY_Model
         $this->set_site_mongodb($site_id);
         if($fields)
             $this->mongo_db->select($fields);
+        $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where_in('cl_player_id', $list_id);
         $this->mongo_db->where('site_id', $site_id);
         $result = $this->mongo_db->get('playbasis_player');
@@ -131,14 +131,13 @@ class Player_model extends MY_Model
 			'reward_id',
 			'value'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
 			'pb_player_id' => $pb_player_id,
 			'badge_id' => null,
 		));
 		$result = $this->mongo_db->get('playbasis_reward_to_player');
-		$count = count($result);
-		for($i=0; $i < $count; ++$i)
-			unset($result[$i]['_id']);
+
 		return $result;
 	}
 	public function getPlayerPoint($pb_player_id, $reward_id, $site_id)
@@ -148,14 +147,13 @@ class Player_model extends MY_Model
 			'reward_id',
 			'value'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
 			'pb_player_id' => $pb_player_id,
 			'reward_id' => $reward_id
 		));
 		$result = $this->mongo_db->get('playbasis_reward_to_player');
-		$count = count($result);
-		for($i=0; $i < $count; ++$i)
-			unset($result[$i]['_id']);
+
 		return $result;
 	}
 	public function getLastActionPerform($pb_player_id, $site_id)
@@ -166,6 +164,7 @@ class Player_model extends MY_Model
 			'action_name',
 			'date_added'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
 		$result = $this->mongo_db->get('playbasis_action_log');
@@ -174,7 +173,6 @@ class Player_model extends MY_Model
 		$result = $result[0];
 		$result['time'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 		unset($result['date_added']);
-		unset($result['_id']);
 		return $result;
 	}
 	public function getActionPerform($pb_player_id, $action_id, $site_id)
@@ -185,6 +183,7 @@ class Player_model extends MY_Model
 			'action_name',
 			'date_added'
         ));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
             'pb_player_id' => $pb_player_id,
             'action_id' => $action_id
@@ -196,7 +195,6 @@ class Player_model extends MY_Model
 		$result = $result[0];
 		$result['time'] = date('Y-m-d H:i:s', $result['date_added']->sec);
 		unset($result['date_added']);
-		unset($result['_id']);
 		return $result;
 	}
 	public function getActionCount($pb_player_id, $action_id, $site_id)
@@ -212,11 +210,11 @@ class Player_model extends MY_Model
 			'action_id',
 			'action_name'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where($fields);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		$result = ($result) ? $result[0] : array();
 		$result['count'] = $count;
-		unset($result['_id']);
 		return $result;
 	}
 	public function getBadge($pb_player_id, $site_id)
@@ -228,34 +226,41 @@ class Player_model extends MY_Model
 			'claimed',
 			'redeemed'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
 		$badges = $this->mongo_db->get('playbasis_reward_to_player');
         if(!$badges)
             return array();
 		$playerBadges = array();
+
 		foreach($badges as $badge)
         {
-            //get badge data
-			$this->mongo_db->select(array(
-				'image',
-				'name',
-				'description',
-			));
-			$this->mongo_db->where(array(
-				'_id' => $badge['badge_id'],
-				'deleted' => false
-			));
-			$result = $this->mongo_db->get('playbasis_badge');
-			if(!$result)
-				continue;
-			$result = $result[0];
-            $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
-			$badge['name'] = $result['name'];
-			$badge['description'] = $result['description'];
-			$badge['amount'] = $badge['value'];
-			unset($badge['value']);
-			unset($badge['_id']);
-			array_push($playerBadges, $badge);
+            if(isset($badge['badge_id'])){
+
+                //get badge data
+                $this->mongo_db->select(array(
+                    'image',
+                    'name',
+                    'description',
+                ));
+                $this->mongo_db->select(array(),array('_id'));
+                $this->mongo_db->where(array(
+                    'badge_id' => $badge['badge_id'],
+                    'site_id' => $site_id,
+//                    'deleted' => false
+                ));
+                $result = $this->mongo_db->get('playbasis_badge_to_client');
+
+                if(!$result)
+                    continue;
+                $result = $result[0];
+                $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
+                $badge['name'] = $result['name'];
+                $badge['description'] = $result['description'];
+                $badge['amount'] = $badge['value'];
+                unset($badge['value']);
+                array_push($playerBadges, $badge);
+            }
         }
 		return $playerBadges;
 	}
@@ -329,6 +334,7 @@ class Player_model extends MY_Model
 			'cl_player_id',
 			'value'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
 			'reward_id' => $result['reward_id'],
 			'client_id' => $client_id,
@@ -344,7 +350,6 @@ class Player_model extends MY_Model
 			$result[$i][$ranked_by] = $result[$i]['value'];
 			unset($result[$i]['cl_player_id']);
 			unset($result[$i]['value']);
-			unset($result[$i]['_id']);
 		}
 		return $result;
 	}
@@ -374,6 +379,7 @@ class Player_model extends MY_Model
 				'cl_player_id',
 				'value'
 			));
+            $this->mongo_db->select(array(),array('_id'));
 			$this->mongo_db->where(array(
 				'reward_id' => $reward_id,
 				'client_id' => $client_id,
@@ -389,7 +395,6 @@ class Player_model extends MY_Model
 				$ranking[$i][$name] = $ranking[$i]['value'];
 				unset($ranking[$i]['cl_player_id']);
 				unset($ranking[$i]['value']);
-				unset($ranking[$i]['_id']);
 			}
 			$result[$name] = $ranking;
 		}

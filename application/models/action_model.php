@@ -19,12 +19,7 @@ class Action_model extends MY_Model
 			'name' => strtolower($data['action_name'])
 		));
 		$result = $this->mongo_db->get('playbasis_action_to_client');
-		if($result && $result[0])
-		{
-			unset($result[0]['_id']);
-			return $result[0]['action_id'];
-		}
-		return array();
+		return $result ? $result[0]['action_id'] : array() ;
 	}
 }
 ?>

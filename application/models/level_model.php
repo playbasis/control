@@ -19,6 +19,7 @@ class Level_model extends MY_Model
 
         //check if client have their own exp table setup
         $this->mongo_db->select(array("level","exp","level_title","image"));
+        $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where_in("level", $level_range);
@@ -31,6 +32,7 @@ class Level_model extends MY_Model
         {
             //get level from default exp table instead
             $this->mongo_db->select(array("level","exp","level_title","image"));
+            $this->mongo_db->select(array(),array('_id'));
             $this->mongo_db->where_in("level", $level_range);
             $this->mongo_db->where("status", true);
             $this->mongo_db->order_by(array('exp' => 1));
@@ -44,7 +46,6 @@ class Level_model extends MY_Model
             $l['min_exp'] = $l['exp'];
             $l['max_exp'] = (isset($levela[$i+1]))?intval($levela[$i+1]['exp'])-1:null;
             unset($l['exp']);
-            unset($l['_id']);
             $leveldata = $l;
             break;
         }
@@ -57,6 +58,7 @@ class Level_model extends MY_Model
         $this->set_site_mongodb($site_id);
         //check if client have their own exp table setup
         $this->mongo_db->select(array("level","exp","level_title","image"));
+        $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where("status", true);
@@ -67,6 +69,7 @@ class Level_model extends MY_Model
         {
             //get level from default exp table instead
             $this->mongo_db->select(array("level","exp","level_title","image"));
+            $this->mongo_db->select(array(),array('_id'));
             $this->mongo_db->where("status", true);
             $this->mongo_db->order_by(array('exp' => 1));
             $leveldata = $this->mongo_db->get('playbasis_exp_table');
@@ -78,7 +81,6 @@ class Level_model extends MY_Model
             $l['min_exp'] = $l['exp'];
             $l['max_exp'] = (isset($leveldata[$i+1]))?intval($leveldata[$i+1]['exp'])-1:null;
             unset($l['exp']);
-            unset($l['_id']);
             $i++;
         }
 

@@ -200,28 +200,26 @@ class Social_model extends MY_Model
 			'client_id',
 			'site_id'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('facebook_page_id', $facebook_page_id);
 		$result = $this->mongo_db->get('playbasis_facebook_page_to_client');
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		unset($result['_id']);
+//		unset($result['_id']);
 		return $result;
 	}
 	public function getClientFromHashTag($hashtag)
 	{
 		assert(is_string($hashtag));
 		$this->set_site_mongodb(0);
-		$this->mongo_db->select(array(
-			'client_id',
-			'site_id'
-		));
+		$this->mongo_db->select(array('client_id','site_id'));
+		$this->mongo_db->select(array(), array('_id'));
 		$this->mongo_db->where('hashtag', $hashtag);
 		$result = $this->mongo_db->get('playbasis_hashtag_to_client');
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		unset($result['_id']);
 		return $result;
 	}
 	public function getClientFromHost($host)
@@ -232,12 +230,13 @@ class Social_model extends MY_Model
 			'client_id',
 			'site_id'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('host', $host);
 		$result = $this->mongo_db->get('playbasis_hosts_to_client');
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		unset($result['_id']);
+//		unset($result['_id']);
 		return $result;
 	}
 	public function getPBPlayerIdFromFacebookId($facebook_id, $client_id, $site_id)
