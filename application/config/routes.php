@@ -83,6 +83,7 @@ $route['Player/'.ANY_STRING.'/point/'.ANY_STRING] = 'player/point/$1/$2';
 $route['Player/point/'.ANY_STRING] = 'player/point/0/$1';
 $route['Player/'.ANY_STRING.'/point'] = 'player/points/$1';
 $route['Player/point'] = 'player/point/';
+$route['Player/'.ANY_STRING.'/point_history'] = 'player/point_history/$1';
 
 $route['Player/'.ANY_STRING.'/action/'.ANY_STRING.'/(time|count)'] = 'player/action/$1/$2/$3';
 $route['Player/action/'.ANY_STRING.'/(time|count)'] = 'player/action/0/$1/$2';
