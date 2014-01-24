@@ -492,6 +492,7 @@ class Player_model extends MY_Model
     	}
     	$this->mongo_db->where('pb_player_id', $pb_player_id);
     	$this->mongo_db->where('site_id', $site_id);
+    	$this->mongo_db->where_ne('reward_id', null);
     	$this->mongo_db->limit($limit, $offset);
     	$this->mongo_db->select(array('reward_id', 'reward_name', 'value', 'message', 'date_added','action_log_id'));
     	$this->mongo_db->select(array(), array('_id'));
