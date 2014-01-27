@@ -443,6 +443,8 @@ class jigsaw extends MY_Model
 	}
 	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
 	{
+		// return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
+
 		$urlFragment = parse_url($inputUrl);
 		//check posible index page
 		if(!$urlFragment['path'])
@@ -460,10 +462,15 @@ class jigsaw extends MY_Model
 		if(isset($urlFragment['fragment']) && $urlFragment['fragment'])
 			$inputUrl .= '#' . $urlFragment['fragment'];
 		//compare url
-		if($isRegEx)
+		if($isRegEx){
+			if(!preg_match('/^\//', $compareUrl))
+				$compareUrl = "/".$compareUrl;
+			if(!preg_match('/\/$/', $compareUrl))
+				$compareUrl = $compareUrl."/";
 			$match = preg_match($compareUrl, $inputUrl);
-		else
+		}else{
 			$match = (string) $compareUrl === (string) $inputUrl;
+		}
 		return $match;
 		//e.g.
 		//inputurl domain/forum/hello-my-new-notebook
