@@ -145,7 +145,7 @@ class User_group extends MY_Controller{
         $this->data['form'] = 'user_group/insert/';
 
         //Rules need to be set
-        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+        $this->form_validation->set_rules('usergroup_name', $this->lang->line('form_usergroup_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         //-->
 
         if($_SERVER['REQUEST_METHOD'] =='POST'){
