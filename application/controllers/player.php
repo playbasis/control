@@ -53,6 +53,7 @@ class Player extends REST_Controller
 		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+		$player['player']['cl_player_id'] = $player_id;
 		$this->response($this->resp->setRespond($player), 200);
 	}
 	public function index_post($player_id = '')
@@ -92,6 +93,7 @@ class Player extends REST_Controller
 		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+		$player['player']['cl_player_id'] = $player_id;
 		$this->response($this->resp->setRespond($player), 200);
 	}
     /*public function list_get()
@@ -152,9 +154,20 @@ class Player extends REST_Controller
 
         foreach ($player['player'] as &$p){
 //        	unset($p['_id']);
-        	$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
+        	if(!isset($p['birth_date'])){
+        		$p['birth_date'] = null;	
+        	}else{
+        		$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
+        	}
         	$p['registered'] = datetimeMongotoReadable($p['date_added']);
         	unset($p['date_added']);
+
+        	$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+			'cl_player_id' => $p['cl_player_id']
+			)));
+
+        	$p['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
+        	$p['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
         }
 
         $this->response($this->resp->setRespond($player), 200);
