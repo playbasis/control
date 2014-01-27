@@ -214,8 +214,9 @@ $(document).ready(function(){
 <script type="text/javascript"><!--
 
     $(document).ready(function(){
-        $("#client-choose").click(function() {
+        $("#client-choose").change(function() {
             var c = $(this).val();
+            $("#badge-panel").html("");
             if(c != "all_clients"){
                 $.ajax({
                     url: baseUrlPath+'goods/getBadgeForGoods',
@@ -225,8 +226,6 @@ $(document).ready(function(){
                     $("#badge-panel").html(data);
                     $(".badges").hide();
                 });
-            }else{
-                $("#badge-panel").html();
             }
         });
     });
