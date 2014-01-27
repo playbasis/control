@@ -23,6 +23,11 @@ class Badge extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		if($badgeId)
 		{
+            try {
+                $badgeId = new MongoId($badgeId);
+            }catch (MongoException $ex) {
+                $badgeId = null;
+            }
 			//get badge by specific id
 			$badge['badge'] = $this->badge_model->getBadge(array_merge($validToken, array(
 				'badge_id' => new MongoId($badgeId)

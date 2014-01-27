@@ -21,6 +21,11 @@ class Badge_model extends MY_Model
             'deleted' => false
 		));
         $badges = $this->mongo_db->get('playbasis_badge_to_client');
+        if($badges){
+            foreach($badges as &$badge){
+                $badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
+            }
+        }
 		return $badges;
 	}
 	public function getBadge($data)
@@ -36,6 +41,9 @@ class Badge_model extends MY_Model
             'deleted' => false
         ));
 		$result = $this->mongo_db->get('playbasis_badge_to_client');
+        if($result){
+            $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
+        }
 		return $result ? $result[0] : array();
 	}
 }
