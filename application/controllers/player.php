@@ -131,7 +131,7 @@ class Player extends REST_Controller
             'list_player_id'
         ));
         if($required)
-            $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         $validToken = $this->auth_model->findToken($this->input->post('token'));
         if(!$validToken)
             $this->response($this->error->setError('INVALID_TOKEN'), 200);
