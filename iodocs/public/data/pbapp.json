@@ -796,31 +796,69 @@
                 }
             ]
         },
-		{
-			"name": "Engine API",
-			"methods": [
-				{
-					"MethodName": "Action Config",
-					"Synopsis": "Returns names of actions that can trigger game rules within a client’s website.",
-					"HTTPMethod": "GET",
-					"URI": "/Engine/actionConfig",
-					"RequiresOAuth": "N",
-					"parameters": []
-				},
-				{
-					"MethodName": "Rule",
-					"Synopsis": "Process an action through all the game rules defined for a client’ to give to player, if the action trigger custom-point reward that doesn't specify reward name"
-						},
-						{
-							"Name": "quantity",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "amount of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward quantity"
-						}
-					]
-				}
-			]
-		}
+        {
+            "name": "Engine API",
+            "methods": [
+                {
+                    "MethodName": "Action Config",
+                    "Synopsis": "Returns names of actions that can trigger game rules within a client’s website.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Engine/actionConfig",
+                    "RequiresOAuth": "N",
+                    "parameters": []
+                },
+                {
+                    "MethodName": "Rule",
+                    "Synopsis": "Process an action through all the game rules defined for a client’s website.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Engine/rule",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "action",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of action performed"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "url",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "URL of the page that trigger the action or any identifier string - Used for logging, URL specific rules, and rules that trigger only when a specific identifier string is supplied"
+                        },
+                        {
+                            "Name": "reward",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward name"
+                        },
+                        {
+                            "Name": "quantity",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "amount of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward quantity"
+                        }
+                    ]
+                }
+            ]
+        }
 	]
 }
