@@ -471,6 +471,43 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "Point History",
+                    "Synopsis": "Returns history points of player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/point_history",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "point_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the point-based reward to query"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        }
+                    ]
+                },
 				{
 					"MethodName": "Action Time",
 					"Synopsis": "Returns the last time that player performed the specified action.",
