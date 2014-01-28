@@ -67,7 +67,7 @@ class Player_model extends MY_Model
         $this->set_site_mongodb($site_id);
         if($fields)
             $this->mongo_db->select($fields);
-//        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where_in('cl_player_id', $list_id);
         $this->mongo_db->where('site_id', $site_id);
         $result = $this->mongo_db->get('playbasis_player');
@@ -483,5 +483,43 @@ class Player_model extends MY_Model
 			'last_send_limit_users' => $mongoDate
 		));
     }
+
+    public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit){
+
+
+    	if($reward_id){
+    		$this->mongo_db->where('reward_id', $reward_id);	
+    	}
+    	$this->mongo_db->where('pb_player_id', $pb_player_id);
+    	$this->mongo_db->where('site_id', $site_id);
+    	$this->mongo_db->where_ne('reward_id', null);
+    	$this->mongo_db->limit($limit, $offset);
+    	$this->mongo_db->select(array('reward_id', 'reward_name', 'value', 'message', 'date_added','action_log_id'));
+    	$this->mongo_db->select(array(), array('_id'));
+    	$event_log = $this->mongo_db->get('playbasis_event_log');
+
+
+		foreach($event_log as &$event){
+			$actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
+
+			if($actionAndStringFilter){
+				$event['action_name'] = $actionAndStringFilter['action_name'];
+				$event['string_filter'] = $actionAndStringFilter['url'];	
+			}
+			unset($event['action_log_id']);
+		}
+
+
+		return $event_log;
+    }
+
+    private function getActionNameAndStringFilter($action_log_id){
+    	$this->mongo_db->select(array('action_name', 'url'));
+    	$this->mongo_db->select(array(), array('_id'));
+    	$this->mongo_db->where('_id', new MongoID($action_log_id));
+    	$returnThis = $this->mongo_db->get('playbasis_action_log');
+    	return ($returnThis)?$returnThis[0]:array();
+    }
+
 }
 ?>
