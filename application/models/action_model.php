@@ -370,7 +370,8 @@ class Action_model extends MY_Model
              'value' => false,
             );
 
-        $init_dataset = serialize($temp);
+//        $init_dataset = serialize($temp);
+        $init_dataset = $temp;
 
         $data_insert = array(
                 'name'=>utf8_strtolower($data['name']),
@@ -411,7 +412,8 @@ class Action_model extends MY_Model
              'value' => false
             );
 
-        $init_dataset = serialize($temp);
+//        $init_dataset = serialize($temp);
+        $init_dataset = $temp;
 
         $data_insert = array(
                 'action_id'=>new MongoID($data['action_id']),

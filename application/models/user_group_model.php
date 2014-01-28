@@ -36,7 +36,8 @@ class User_group_model extends MY_model{
         
 		$data = array(
 			'name'=>$usergroup_name,
-			'permission'=> serialize($permissions_access_modify)
+//			'permission'=> serialize($permissions_access_modify)
+			'permission'=> $permissions_access_modify
 			);
 
 		$this->mongo_db->insert('user_group', $data);
@@ -54,7 +55,8 @@ class User_group_model extends MY_model{
 		$this->mongo_db->where('_id', new MongoID($user_group_id));
 		$this->mongo_db->set('name', $data['usergroup_name']);
 		if(isset($data['permission'])){
-			$this->mongo_db->set('permission', serialize($data['permission']));	
+//			$this->mongo_db->set('permission', serialize($data['permission']));
+			$this->mongo_db->set('permission', $data['permission']);
 		}else{
 			$this->mongo_db->set('permission', "");
 		}

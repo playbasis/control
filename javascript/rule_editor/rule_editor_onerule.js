@@ -133,7 +133,6 @@ oneRuleMan = {
             this.nodeList.push(new Node(jigsaws[index]));
         }
 
-
         //Test Render nodelist
         for(var index in this.nodeList){
             chainMan.chain.append(this.nodeList[index].getHTML());

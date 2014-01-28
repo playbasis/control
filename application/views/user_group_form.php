@@ -63,7 +63,8 @@
 										<?php }?>
 									<?php }?>
 								<?php }elseif((isset($all_features))&&(isset($user_group_info))){?>
-									<?php $permissions = array(); $permissions = unserialize($user_group_info['permission']);?>
+									<?php //$permissions = array(); $permissions = unserialize($user_group_info['permission']);?>
+									<?php $permissions = array(); $permissions = $user_group_info['permission'];?>
 									<?php if(isset($permissions['access'])){ ?>
 										<?php $permissions_access = $permissions['access'];?>
 										<?php for($i = 0; $i<count($all_features); $i++){?>
@@ -127,7 +128,8 @@
 										<?php }?>
 									<?php }?>
 								<?php }elseif(isset($all_features)&&(isset($user_group_info))){?>
-									<?php $permissions = array(); $permissions = unserialize($user_group_info['permission']);?>
+									<?php //$permissions = array(); $permissions = unserialize($user_group_info['permission']);?>
+									<?php $permissions = array(); $permissions = $user_group_info['permission'];?>
 									<?php if(isset($permissions['modify'])){ ?>
 										<?php $permissions_modify = $permissions['modify'];?>
 										<?php for($i = 0; $i<count($all_features); $i++){?>
