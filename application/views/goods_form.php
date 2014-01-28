@@ -107,7 +107,7 @@
                                     <div class="point">
                                         <div class="goods-panel">
                                             <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
-                                            <input type="text" name="reward_point" size="100" class="orange" value="<?php echo isset($reward_point) ? $reward_point :  set_value('reward_point'); ?>" />
+                                            <input type="text" name="reward_point" size="100" class="orange tooltips" value="<?php echo isset($reward_point) ? $reward_point :  set_value('reward_point'); ?>" data-placement="right" title="The number of Points needed to redeem the Goods"/>
                                         </div>
                                     </div>
                                     <div id="badge-panel">
@@ -122,7 +122,7 @@
                                                 foreach($badge_list as $badge){
                                                     ?>
                                                     <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
-                                                    <input type="text" name="reward_badge[<?php echo $badge['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_badge['.$badge['_id'].']')){
+                                                    <input type="text" name="reward_badge[<?php echo $badge['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php if(set_value('reward_badge['.$badge['_id'].']')){
                                                         echo set_value('reward_badge['.$badge['_id'].']');
                                                     }else{
                                                         if($reward_badge){
@@ -133,7 +133,7 @@
                                                                 }
                                                             }
                                                         }
-                                                    } ?>" /><br/>
+                                                    } ?>" data-placement="right" title="The number of Badges needed to redeem the Goods"/><br/>
                                                 <?php
                                                 }
                                                 ?>
