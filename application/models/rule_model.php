@@ -21,7 +21,8 @@ class Rule_model extends MY_Model
             if(count($results)>0){
                 foreach ($results as &$rowx) {
                     $rowx['specific_id'] = $rowx['action_id']."";
-                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
+//                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
+                    $rowx['dataSet'] = $rowx['init_dataset'];
 //                    $rowx['id']=1;#hard code set id to be '1'
                     $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='ACTION';
@@ -55,7 +56,8 @@ class Rule_model extends MY_Model
             if(count($results)>0){
                 foreach ($results as &$rowx) {
                     $rowx['id']=$rowx['jigsaw_id']."";
-                    $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
+//                    $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
+                    $rowx['dataSet'] = $rowx['init_dataset'];
                     $rowx['specific_id']= $rowx['jigsaw_id']."";//'';//no specific id for contion so using the same id with jigsaw id.
                     $rowx['category']='CONDITION';
                     unset($rowx['jigsaw_id']);
@@ -101,7 +103,8 @@ class Rule_model extends MY_Model
             if(count($ds)>0){
                 foreach ($ds as &$rowx) {
                     $rowx['specific_id'] = $rowx['reward_id']."";
-                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
+//                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
+                    $rowx['dataSet'] = $rowx['init_dataset'];
 //                    $rowx['id']=2;#hard code set id to be '2'
                     $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='REWARD';
@@ -123,7 +126,8 @@ class Rule_model extends MY_Model
                     $ds2[0]['specific_id'] = $ds2[0]['jigsaw_id']."";//'';
                     $ds2[0]['jigsaw_category'] = 'REWARD';
 
-                    $ds2[0]['dataSet'] = unserialize(trim($ds2[0]['init_dataset']));
+//                    $ds2[0]['dataSet'] = unserialize(trim($ds2[0]['init_dataset']));
+                    $ds2[0]['dataSet'] = $ds2[0]['init_dataset'];
                     unset($ds2[0]['jigsaw_id']);
                     unset($ds2[0]['init_dataset']);
                     array_push($ds, $ds2[0]);
@@ -158,7 +162,8 @@ class Rule_model extends MY_Model
                 'name' => $input['name'],
                 'description' => $input['description'],
                 'tags' => $input['tags'],
-                'jigsaw_set' => serialize($input['jigsaw_set']),
+//                'jigsaw_set' => serialize($input['jigsaw_set']),
+                'jigsaw_set' => $input['jigsaw_set'],
                 'active_status' => (bool)$input['active_status'],
                 'date_added' => new MongoDate(strtotime($input['date_added'])),
                 'date_modified' => new MongoDate(strtotime($input['date_modified']))
@@ -179,7 +184,8 @@ class Rule_model extends MY_Model
             $this->mongo_db->set('name', $input['name']);
             $this->mongo_db->set('description', $input['description']);
             $this->mongo_db->set('tags', $input['tags']);
-            $this->mongo_db->set('jigsaw_set',serialize($input['jigsaw_set']));
+//            $this->mongo_db->set('jigsaw_set',serialize($input['jigsaw_set']));
+            $this->mongo_db->set('jigsaw_set',$input['jigsaw_set']);
             $this->mongo_db->set('active_status', (bool)$input['active_status']);
             $this->mongo_db->set('date_modified', new MongoDate(strtotime($input['date_modified'])));
             $res = $this->mongo_db->update('playbasis_rule');
@@ -328,7 +334,8 @@ class Rule_model extends MY_Model
 
     private function unserializeRuleSet($dataSet){
         foreach ($dataSet AS &$rowx) {
-            $rowx['jigsaw_set'] = unserialize(trim($rowx['jigsaw_set']));
+//            $rowx['jigsaw_set'] = unserialize(trim($rowx['jigsaw_set']));
+            $rowx['jigsaw_set'] = $rowx['jigsaw_set'];
             $rowx['date_added'] = $this->datetimeMongotoReadable($rowx['date_added']);
             $rowx['date_modified'] = $this->datetimeMongotoReadable($rowx['date_modified']);
         }

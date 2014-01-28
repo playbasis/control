@@ -407,7 +407,8 @@ class User_model extends MY_Model
 
                 if(count($Q3)>0){
                     $row3 = $Q3[0];
-                    $permissions = unserialize($row3['permission']);
+//                    $permissions = unserialize($row3['permission']);
+                    $permissions = $row3['permission'];
                 }else{
                     $this->session->unset_userdata('user_id');
                     return;
