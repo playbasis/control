@@ -326,7 +326,8 @@ class Client_model extends MY_Model
 		assert($logData['site_id']);
 		assert(is_string($logData['domain_name']));
 		if(isset($logData['input']))
-			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
+//			$logData['input'] = serialize(array_merge($logData['input'], $jigsawOptionData));
+			$logData['input'] = array_merge($logData['input'], $jigsawOptionData);
 		else
 			$logData['input'] = 'NO-INPUT';
 		$this->set_site_mongodb($logData['site_id']);

@@ -340,7 +340,8 @@ class Social_model extends MY_Model
 	}
 	private function bigIntToString($number)
 	{
-		$numStr = serialize($number);
+//		$numStr = serialize($number);
+		$numStr = $number;
 		return substr($numStr, 2, -1);
 	}
 }

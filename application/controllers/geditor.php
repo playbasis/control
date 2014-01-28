@@ -84,7 +84,8 @@ class Geditor extends REST_Controller{
 		$jigsawSet = $this->gameModel->getJigsaw($ruleId);
 
 		//unserialize data
-		$jigsawSet = unserialize($jigsawSet['jigsaw_set']);
+//		$jigsawSet = unserialize($jigsawSet['jigsaw_set']);
+		$jigsawSet = $jigsawSet['jigsaw_set'];
 
 		$data = array(
 			'status'	=> true,

@@ -99,6 +99,11 @@ $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
 $route['Badges'] = 'badge/index';
 
+//badge API
+$route['Goods/'.ANY_STRING] = 'goods/index/$1';
+$route['Goods']  = 'goods/index';
+$route['Goods'] = 'goods/index';
+
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
 $route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';

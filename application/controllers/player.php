@@ -50,6 +50,7 @@ class Player extends REST_Controller
 			'date_added',
 			'birth_date'
 		));
+
 		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
@@ -89,6 +90,7 @@ class Player extends REST_Controller
 			'date_added',
 			'birth_date'
 		));
+
 		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
@@ -155,6 +157,9 @@ class Player extends REST_Controller
         	$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
         	$p['registered'] = datetimeMongotoReadable($p['date_added']);
         	unset($p['date_added']);
+            $p['last_login'] = $this->player_model->getLastEventTime($p['_id'], $site_id, 'LOGIN');
+            $p['last_logout'] = $this->player_model->getLastEventTime($p['_id'], $site_id, 'LOGOUT');
+            unset($p['_id']);
         }
 
         $this->response($this->resp->setRespond($player), 200);
@@ -190,10 +195,9 @@ class Player extends REST_Controller
 			'image',
 			'exp',
 			'level',
-			'date_added AS registered',
+			'date_added',
 			'birth_date'
 		));
-
         //percent exp of level
         $level = $this->level_model->getLevelDetail($player['player']['level'], $validToken['client_id'], $validToken['site_id']);
         $base_exp = $level['min_exp'];
@@ -253,7 +257,7 @@ class Player extends REST_Controller
             'email',
 			'exp',
 			'level',
-			'date_added AS registered',
+			'date_added',
 			'birth_date'
 		));
 

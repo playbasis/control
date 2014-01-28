@@ -767,6 +767,35 @@
 				}
 			]
 		},
+        {
+            "name": "Goods API",
+            "methods": [
+                {
+                    "MethodName": "Goods List Info",
+                    "Synopsis": "Returns information about all available goods for the current site.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Goods",
+                    "RequiresOAuth": "N",
+                    "parameters": []
+                },
+                {
+                    "MethodName": "Goods Info",
+                    "Synopsis": "Returns information about the goods with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Goods/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods id to query"
+                        }
+                    ]
+                }
+            ]
+        },
 		{
 			"name": "Engine API",
 			"methods": [
@@ -780,45 +809,7 @@
 				},
 				{
 					"MethodName": "Rule",
-					"Synopsis": "Process an action through all the game rules defined for a client’s website.",
-					"HTTPMethod": "POST",
-					"URI": "/Engine/rule",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "token",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "access token returned from Auth"
-						},
-						{
-							"Name": "action",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "name of action performed"
-						},
-						{
-							"Name": "player_id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						},
-						{
-							"Name": "url",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "URL of the page that trigger the action or any identifier string - Used for logging, URL specific rules, and rules that trigger only when a specific identifier string is supplied"
-						},
-						{
-							"Name": "reward",
-							"Required": "N",
-							"Default": "",
-							"Type": "string",
-							"Description": "name of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward name"
+					"Synopsis": "Process an action through all the game rules defined for a client’ to give to player, if the action trigger custom-point reward that doesn't specify reward name"
 						},
 						{
 							"Name": "quantity",

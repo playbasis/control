@@ -89,7 +89,8 @@ class jigsaw extends MY_Model
 			return false;
 		}
 		$timeNow = time();
-		$log = unserialize($result['input']);
+//		$log = unserialize($result['input']);
+		$log = $result['input'];
 		if($config['interval'] == 0) //if config time = 0 reduce counter and return false
 		{
 			$log['remaining_counter'] -= 1;
@@ -157,7 +158,8 @@ class jigsaw extends MY_Model
 			return true;
 		}
 		$timeNow = time();
-		$log = unserialize($result['input']);
+//		$log = unserialize($result['input']);
+		$log = $result['input'];
 		$lastTime = $result['date_added']->sec;
 		$timeDiff = (int) ($timeNow - $lastTime);
 		if($timeDiff > $log['remaining_cooldown'])
@@ -249,7 +251,8 @@ class jigsaw extends MY_Model
 			$exInfo['next_trigger'] = strtotime("next " . $config['day_of_week'] . " " . $config['time_of_day']);
 			return true;
 		}
-		$logInput = unserialize($result['input']);
+//		$logInput = unserialize($result['input']);
+		$logInput = $result['input'];
 		if(strtotime('now') >= $logInput['next_trigger'])
 		{
 			$exInfo['next_trigger'] = strtotime("next " . $config['day_of_week'] . " " . $config['time_of_day']);
@@ -275,7 +278,8 @@ class jigsaw extends MY_Model
 			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
 			return true;
 		}
-		$logInput = unserialize($result['input']);
+//		$logInput = unserialize($result['input']);
+		$logInput = $result['input'];
 		if(strtotime('now') >= $logInput['next_trigger'])
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
@@ -307,7 +311,8 @@ class jigsaw extends MY_Model
 			$exInfo['next_trigger'] = $nextTrigger->getTimestamp();
 			return true;
 		}
-		$logInput = unserialize($result['input']);
+//		$logInput = unserialize($result['input']);
+		$logInput = $result['input'];
 		if(time() >= $logInput['next_trigger'])
 		{
 			$nextTrigger = new DateTime();

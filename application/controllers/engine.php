@@ -35,7 +35,8 @@ class Engine extends REST_Controller
 		$actionConfig = array();
 		foreach($ruleSet as $rule)
 		{
-			$jigsawSet = unserialize($rule['jigsaw_set']);
+//			$jigsawSet = unserialize($rule['jigsaw_set']);
+			$jigsawSet = $rule['jigsaw_set'];
 			$actionId = $jigsawSet[0]['config']['action_id'];
 			$actionInput = $jigsawSet[0]['config'];
 			if(isset($actionConfig[$actionId]))
@@ -245,7 +246,8 @@ class Engine extends REST_Controller
 		{
 			$input['rule_id'] = new MongoId($rule['rule_id']);
 			$input['rule_name'] = $rule['name'];
-			$jigsawSet = unserialize($rule['jigsaw_set']);
+//			$jigsawSet = unserialize($rule['jigsaw_set']);
+			$jigsawSet = $rule['jigsaw_set'];
 			foreach($jigsawSet as $jigsaw)
 			{
 				$jigsaw_id = new MongoId($jigsaw['id']);
