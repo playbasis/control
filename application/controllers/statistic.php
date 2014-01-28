@@ -235,7 +235,7 @@ class Statistic extends CI_Controller
 
                 $players[] = array(
 //                    'pb_player_id' => $result['_id']['pb_player_id'],
-                    'pb_player_id' => $result['_id'],
+                    'pb_player_id' => $result['_id']."",
                     'firstname' => $result['first_name'],
                     'lastname' => $result['last_name'],
                     'nickname' => $result['nickname'],

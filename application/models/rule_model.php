@@ -273,7 +273,10 @@ class Rule_model extends MY_Model
                 $output = $results;
                 /*Cut time string off*/
                 foreach($output as  &$value){
-                    $value['rule_id'] = $value["_id"];
+                    $value['rule_id'] = $value["_id"]."";
+                    $value['client_id'] = $value["client_id"]."";
+                    $value['site_id'] = $value["site_id"]."";
+                    $value['action_id'] = $value["action_id"]."";
                     foreach ($value as $k2 => &$v2) {
                         if($k2 == "date_added"){
                             $value[$k2] = substr($this->datetimeMongotoReadable($value[$k2]) , 0 ,-8);
