@@ -204,7 +204,8 @@ class Badge extends MY_Controller
                             $this->Badge_model->deleteBadgeClient($badge_id);
                         }
                     }else{
-                        $this->Badge_model->deleteBadge($badge_id);    
+                        $this->Badge_model->deleteBadge($badge_id); 
+                        $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);   
                     }
                     
                 }

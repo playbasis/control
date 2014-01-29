@@ -511,5 +511,11 @@ class Badge_model extends MY_Model
         return isset($badge[0]['sponsor'])?$badge[0]['sponsor']:null;
     }
 
+    public function deleteClientBadgeFromAdmin($badge_id){
+        $this->mongo_db->where('badge_id', new MongoID($badge_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update_all('playbasis_badge_to_client');
+    }
+
 
 }
