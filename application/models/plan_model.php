@@ -86,6 +86,21 @@ class Plan_model extends MY_Model
         return $results;
     }
 
+    public function getClientByPlanOnlyClient($plan_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->select(array('client_id'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('plan_id',  new MongoID($plan_id));
+        $results = $this->mongo_db->get("playbasis_permission");
+
+        $client_id_list = array();
+        foreach($results as $r){
+            $client_id_list[$r['client_id'].""] = $r;
+        }
+        return $client_id_list;
+    }
+
     public function getFeatures($data){
         $this->set_site_mongodb(0);
 
