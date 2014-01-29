@@ -113,7 +113,7 @@
                                     <div id="badge-panel">
                                     <?php
                                     if($badge_list){
-                                        ?>
+                                    ?>
                                         <br>
                                         <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
                                         <div class="badges">
@@ -134,6 +134,39 @@
                                                             }
                                                         }
                                                     } ?>" data-placement="right" title="The number of Badges needed to redeem the Goods"/><br/>
+                                                <?php
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                    <?php
+                                    }
+                                    ?>
+                                    </div>
+                                    <div id="reward-panel">
+                                    <?php
+                                    if($point_list){
+                                    ?>
+                                        <br>
+                                        <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_rewards'); ?></button>
+                                        <div class="rewards">
+                                            <div class="goods-panel">
+                                                <?php
+                                                foreach($point_list as $point){
+                                                    ?>
+                                                    <?php echo $point['name']; ?>
+                                                    <input type="text" name="reward_reward[<?php echo $point['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['_id'].']')){
+                                                        echo set_value('reward_reward['.$point['_id'].']');
+                                                    }else{
+                                                        if($reward_reward){
+                                                            foreach($reward_reward as $rbk => $rb){
+                                                                if($rbk == $point['_id']){
+                                                                    echo $rb;
+                                                                    continue;
+                                                                }
+                                                            }
+                                                        }
+                                                    } ?>" /><br/>
                                                 <?php
                                                 }
                                                 ?>
@@ -201,8 +234,10 @@ $('#tabs a').tabs();
 $(document).ready(function(){
     $(".point").hide();
     $(".badges").hide();
+    $(".rewards").hide();
     $("#point-entry").live('click', function() {$(".point").toggle()});
     $("#badge-entry").live('click', function() {$(".badges").toggle()});
+    $("#reward-entry").live('click', function() {$(".rewards").toggle()});
 });
 
 //--></script>
@@ -213,6 +248,7 @@ $(document).ready(function(){
         $("#client-choose").change(function() {
             var c = $(this).val();
             $("#badge-panel").html("");
+            $("#reward-panel").html("");
             if(c != "all_clients"){
                 $.ajax({
                     url: baseUrlPath+'goods/getBadgeForGoods',
@@ -221,6 +257,14 @@ $(document).ready(function(){
                 }).done(function(data) {
                     $("#badge-panel").html(data);
                     $(".badges").hide();
+                });
+                $.ajax({
+                    url: baseUrlPath+'goods/getCustomForGoods',
+                    data: { client_id: c },
+                    context: document.body
+                }).done(function(data) {
+                    $("#reward-panel").html(data);
+                    $(".rewards").hide();
                 });
             }
         });

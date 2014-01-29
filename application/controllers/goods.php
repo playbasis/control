@@ -70,6 +70,7 @@ class Goods extends MY_Controller
 
             $point_empty = true;
             $badge_empty = true;
+            $custom_empty = true;
             $redeem = array();
 
             if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
@@ -86,7 +87,16 @@ class Goods extends MY_Controller
                 }
             }
 
-            if($point_empty && $badge_empty){
+            if($this->input->post('reward_reward')){
+                foreach($this->input->post('reward_reward') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $custom_empty = false;
+                        $redeem['custom'][$rbk] = (int)$rb;
+                    }
+                }
+            }
+
+            if($point_empty && $badge_empty && $custom_empty){
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
@@ -112,17 +122,19 @@ class Goods extends MY_Controller
 
                     $this->load->model('Client_model');
 
-                    if($goods_data['admin_client_id'] != 'all_clients'){
+                    if(isset($goods_data['admin_client_id']) && $goods_data['admin_client_id'] != 'all_clients'){
 
                         $clients_sites = $this->Client_model->getSitesByClientId($goods_data['admin_client_id']);
 
                         $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
 
+                        $goods_data['client_id'] = $goods_data['admin_client_id'];
+
                         foreach ($clients_sites as $client){
                             $goods_data['site_id'] = $client['_id'];
                             $this->Goods_model->addGoodsToClient($goods_data);
                         }
-                    }elseif ($goods_data['admin_client_id'] == 'all_clients'){
+                    }else{
                         $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
 
                         $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
@@ -160,6 +172,7 @@ class Goods extends MY_Controller
 
             $point_empty = true;
             $badge_empty = true;
+            $custom_empty = true;
             $redeem = array();
 
             if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
@@ -175,7 +188,17 @@ class Goods extends MY_Controller
                     }
                 }
             }
-            if($point_empty && $badge_empty){
+
+            if($this->input->post('reward_reward')){
+                foreach($this->input->post('reward_reward') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $custom_empty = false;
+                        $redeem['custom'][$rbk] = (int)$rb;
+                    }
+                }
+            }
+
+            if($point_empty && $badge_empty && $custom_empty){
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
@@ -486,6 +509,7 @@ class Goods extends MY_Controller
 
         $this->load->model('Image_model');
         $this->load->model('Badge_model');
+        $this->load->model('Reward_model');
 
         if (isset($goods_id) && ($goods_id != 0)) {
             if($this->User_model->getClientId()){
@@ -569,6 +593,14 @@ class Goods extends MY_Controller
             $this->data['reward_badge'] = array();
         }
 
+        if ($this->input->post('reward_reward')) {
+            $this->data['reward_reward'] = $this->input->post('reward_reward');
+        } elseif (!empty($goods_info)) {
+            $this->data['reward_reward'] = isset($goods_info['redeem']['custom']) ? $goods_info['redeem']['custom'] : array();
+        } else {
+            $this->data['reward_reward'] = array();
+        }
+
         if (isset($goods_id)) {
             $this->data['goods_id'] = $goods_id;
         } else {
@@ -594,6 +626,16 @@ class Goods extends MY_Controller
             }
         }
 
+        $this->data['point_list'] = array();
+        if ($this->User_model->getUserGroupId() != $setting_group_id) {
+            $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($site_id);
+        }
+        if (!empty($goods_info)) {
+            $goods_private = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
+            if(!$this->checkGoodsIsPublic($goods_private['goods_id'])){
+                $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($goods_private['site_id']);
+            }
+        }
 
         $this->data['main'] = 'goods_form';
 
@@ -616,12 +658,12 @@ class Goods extends MY_Controller
 
     public function getCustomForGoods(){
         if($this->input->get('client_id')){
-            $this->load->model('Badge_model');
+            $this->load->model('Reward_model');
 
-            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId(array("client_id" => $this->input->get('client_id') ));
+            $this->data['point_list'] = $this->Reward_model->getAnotherRewardByClientId($this->input->get('client_id'));
 
             $this->load->vars($this->data);
-            $this->render_page('goods_badge_list_ajax');
+            $this->render_page('goods_reward_list_ajax');
         }else{
             $this->output->set_status_header('404');
         }

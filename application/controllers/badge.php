@@ -89,13 +89,12 @@ class Badge extends MY_Controller
 
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                        // redirect('/badge', 'refresh');
+                        redirect('/badge', 'refresh');
                     }else{
 
                         $this->load->model('Client_model');
 
                         $badge_data = $this->input->post();
-
 
                         if(isset($badge_data['sponsor'])){
                             $badge_data['sponsor'] = true;
@@ -103,18 +102,19 @@ class Badge extends MY_Controller
                             $badge_data['sponsor'] = false;
                         }
 
-                        if($badge_data['admin_client_id'] != 'all_clients'){
+                        if(isset($badge_data['admin_client_id']) && $badge_data['admin_client_id'] != 'all_clients'){
 
                             $clients_sites = $this->Client_model->getSitesByClientId($badge_data['admin_client_id']);
 
                             $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
 
+                            $badge_data['client_id'] = $badge_data['admin_client_id'];
+
                             foreach ($clients_sites as $client){
                                 $badge_data['site_id'] = $client['_id']; 
-                                $badge_data['client_id'] = $client['client_id'];
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }    
-                        }elseif ($badge_data['admin_client_id'] == 'all_clients'){
+                        }else{
                             $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);   
 
                             $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
@@ -125,13 +125,13 @@ class Badge extends MY_Controller
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }
                         }
-                        // redirect('/badge', 'refresh');
+                        redirect('/badge', 'refresh');
                     }
 
                 }    
             }else{
                 $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
-                // redirect('/badge/insert', 'refresh');
+                redirect('/badge/insert', 'refresh');
             }
         }
         $this->getForm();

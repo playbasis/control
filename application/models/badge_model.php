@@ -231,8 +231,6 @@ class Badge_model extends MY_Model
         $this->mongo_db->or_where(array('sponsor'=>null, 'sponsor'=>false));
         // $this->mongo_db->where('sponsor', null);
         $total = $this->mongo_db->count("playbasis_badge_to_client");
-        var_dump($total);
-        echo $data['site_id'];
         return $total;
     }
 
