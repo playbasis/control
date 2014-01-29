@@ -624,8 +624,8 @@ class Badge extends MY_Controller
 
     private function checkLimitBadge(){
 
-        if(isset($client)){
-
+        // if(isset($client)){
+        if($this->User_model->getClientId()){
             $error = null;
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
@@ -634,7 +634,12 @@ class Badge extends MY_Controller
 
                 $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
 
-                $badges_count = $this->Badge_model->getTotalBadgeBySiteId($this->User_model->getSiteId());
+                $data = array(
+                        'site_id'=>$this->User_model->getSiteId()
+                    );
+                // $badges_count = $this->Badge_model->getTotalBadgeBySiteId($data);
+                $badges_count = $this->Badge_model->getTotalBadgeBySiteIdWithoutSponsor($data);
+                
 
                 foreach ($plan_limit as $plan) {
                     if($plan['site_id'] == $this->input->post('site_id')){

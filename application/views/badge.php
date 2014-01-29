@@ -53,7 +53,7 @@
                                         <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" />
                                     <?php } ?>
                                 <?php }else{?> 
-                                    <?php if(!isset($badge['sponsor'])){?> 
+                                    <?php if(!(isset($badge['sponsor']) && $badge['sponsor'])){?> 
                                     <?php if ($badge['selected']) { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" checked="checked" />
                                     <?php } else { ?>
@@ -75,11 +75,10 @@
                                     <?php if(!$client_id){?>
                                         [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
                                     <?php }else{?>
-                                        <?php if(!isset($badge['sponsor'])){?> 
+                                        <?php if(!(isset($badge['sponsor']) && $badge['sponsor'])){?> 
                                             [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
                                         <?php }?>
                                     <?php }?>
-                                    
                                     <?php echo anchor('badge/increase_order/'.$badge['badge_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('badge/decrease_order/'.$badge['badge_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>

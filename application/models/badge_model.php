@@ -222,6 +222,20 @@ class Badge_model extends MY_Model
         return $total;
     }
 
+    public function getTotalBadgeBySiteIdWithoutSponsor($data){
+
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->or_where(array('sponsor'=>null, 'sponsor'=>false));
+        // $this->mongo_db->where('sponsor', null);
+        $total = $this->mongo_db->count("playbasis_badge_to_client");
+        var_dump($total);
+        echo $data['site_id'];
+        return $total;
+    }
+
     public function getCommonBadges(){
         $this->set_site_mongodb(0);
 
@@ -291,12 +305,13 @@ class Badge_model extends MY_Model
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
             'deleted'=>false,
-            'sponsor'=>$data['sponsor']
+            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
         ));
         return $b;
     }
 
     public function addBadgeToClient($data){
+        $this->set_site_mongodb(0);
         $this->mongo_db->insert('playbasis_badge_to_client', array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
@@ -314,7 +329,7 @@ class Badge_model extends MY_Model
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
             'deleted'=>false,
-            'sponsor'=>$data['sponsor']
+            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
         ));
     }
 
@@ -334,6 +349,8 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('language_id', (int)1);
         if(isset($data['sponsor'])){
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
+        }else{
+            $this->mongo_db->set('sponsor', false);
         }
         $this->mongo_db->update('playbasis_badge');
 
@@ -363,6 +380,8 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('language_id', (int)1);
         if(isset($data['sponsor'])){
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
+        }else{
+            $this->mongo_db->set('sponsor', false);
         }
         $this->mongo_db->update('playbasis_badge_to_client');
 
@@ -388,6 +407,11 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
+        if(isset($data['sponsor'])){
+            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
+        }else{
+            $this->mongo_db->set('sponsor', false);
+        }
         $this->mongo_db->update_all('playbasis_badge_to_client');
 
         if (isset($data['image'])) {
