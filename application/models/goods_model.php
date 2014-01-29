@@ -21,6 +21,13 @@ class Goods_model extends MY_Model
             'deleted' => false
         ));
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
+        if($goods){
+            foreach($goods as &$g){
+                $g['goods_id'] = $g['goods_id']."";
+                $g['date_start'] = $g['date_start'] ? datetimeMongotoReadable($g['date_start']) : null;
+                $g['date_expire'] = $g['date_expire'] ? datetimeMongotoReadable($g['date_expire']) : null;
+            }
+        }
         return $goods;
     }
     public function getGoods($data)
@@ -36,6 +43,18 @@ class Goods_model extends MY_Model
             'deleted' => false
         ));
         $result = $this->mongo_db->get('playbasis_goods_to_client');
+        if(isset($result[0]['goods_id']))
+        {
+            $result[0]['goods_id'] = $result[0]['goods_id']."";
+        }
+        if(isset($result[0]['date_start']))
+        {
+            $result[0]['date_start'] = datetimeMongotoReadable($result[0]['date_start']);
+        }
+        if(isset($result[0]['date_expire']))
+        {
+            $result[0]['date_expire'] = datetimeMongotoReadable($result[0]['date_expire']);
+        }
         return $result ? $result[0] : array();
     }
 }
