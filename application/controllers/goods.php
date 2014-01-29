@@ -613,6 +613,19 @@ class Goods extends MY_Controller
         }
     }
 
+    public function getCustomForGoods(){
+        if($this->input->get('client_id')){
+            $this->load->model('Badge_model');
+
+            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId(array("client_id" => $this->input->get('client_id') ));
+
+            $this->load->vars($this->data);
+            $this->render_page('goods_badge_list_ajax');
+        }else{
+            $this->output->set_status_header('404');
+        }
+    }
+
     private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'goods')) {

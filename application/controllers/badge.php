@@ -262,7 +262,7 @@ class Badge extends MY_Controller
 
             if ($reward_limit_data) {
 
-                $slot_total = $reward_limit_data[0]['limit'] - $badge_total;
+                $slot_total = $reward_limit_data['limit'] - $badge_total;
 
                 $this->data['slots'] = $slot_total;
                 $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
@@ -410,7 +410,7 @@ class Badge extends MY_Controller
 
             if ($reward_limit_data) {
 
-                $slot_total = $reward_limit_data[0]['limit'] - $badge_total;
+                $slot_total = $reward_limit_data['limit'] - $badge_total;
 
                 $this->data['slots'] = $slot_total;
                 $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);

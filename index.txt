@@ -77,3 +77,21 @@ client	{
    "client_id": NumberInt(1),
    "site_id": NumberInt(1)
 }
+
+
+
+playbasis_badge_to_client
+
+site_badge
+{
+   "site_id": NumberInt(1),
+   "badge_id": NumberInt(1),
+   "deleted": NumberInt(1)
+}
+client_site_badge
+{
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1),
+   "badge_id": NumberInt(1),
+   "deleted": NumberInt(1)
+}
