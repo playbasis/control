@@ -59,23 +59,6 @@ class Plan extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('description', $this->lang->line('column_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
 
-        // var_dump($this->input->post('reward_data'));
-
-        // $check_rewards = false;
-        // foreach ($this->input->post('reward_data') as $data){
-        //     if ($data['limit']!=""){
-        //         $check_rewards = true;
-        //     }
-        // }
-        
-        // $rewards = $this->Plan_model->getRewards(array());
-
-        // foreach($rewards as $reward){
-        //     $this->form_validation->set_rules('reward_data['.$reward['_id'].'][limit]',ucfirst($reward['name']) , 'xss_clean|is_numeric');
-        // }
-        // if($check_rewards){
-            // $this->form_validation->set_rules('reward_data['limit']', $this->lang->line('entry_reward'), 'numeric|xss_clean');
-        // }
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -483,7 +466,8 @@ class Plan extends MY_Controller
     }
 
     public function getClientsByPlanId($plan_id){
-        $allClientsInThisPlan = $this->Plan_model->getClientByPlan($plan_id);
+
+        $allClientsInThisPlan = $this->Plan_model->getClientByPlanOnlyClient($plan_id);
 
         $listOfClients = array();
         $this->load->model('Client_model');

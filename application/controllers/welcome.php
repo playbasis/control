@@ -1,6 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+defined('BASEPATH') OR exit('No direct script access allowed');
+require APPPATH . '/libraries/MY_Controller.php';
+class Welcome extends MY_Controller {
+//class Welcome extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -17,10 +20,34 @@ class Welcome extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see http://codeigniter.com/user_guide/general/urls.html
 	 */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->model('User_model');
+        if(!$this->User_model->isLogged()){
+            redirect('/login', 'refresh');
+        }
+
+
+        $lang = get_lang($this->session, $this->config);
+        $this->lang->load($lang['name'], $lang['folder']);
+    }
+
 	public function index()
 	{
 		$this->load->view('welcome_message');
 	}
+
+    public function test(){
+        $this->load->model('Reward_model');
+
+        $data = array(
+            'plan_id' => "52d910df8d8c89002d000124",
+            'reward_id' => "52d910da8d8c89002d0000b8"
+        );
+        $this->Reward_model->getRewards($data);
+    }
 }
 
 /* End of file welcome.php */

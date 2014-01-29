@@ -49,7 +49,7 @@
                                 <?php if(!$client_id && !$name){?>
                                     <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
                                     <td>
-                                        <select id="client-choose" name="client_id">
+                                        <select id="client-choose" name="admin_client_id">
                                             <?php if(isset($to_clients)){?>
                                             <option value = 'all_clients'>All Clients</option>
                                                 <?php foreach($to_clients as $client){?>
@@ -148,10 +148,6 @@
                         </tr>
                     </table>
                 </div>
-                <?php if($client_id){?>
-                    <input type="hidden" name="client_id" value="<?php echo $client_id; ?>" id="client_id" />
-                    <input type="hidden" name="site_id" value="<?php echo $site_id; ?>" id="site_id" />
-                <?php }?>
             <?php
             echo form_close();
             ?>

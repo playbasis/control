@@ -82,6 +82,8 @@ class Badge extends MY_Controller
                         $badge_id = $this->Badge_model->addBadge($badge_data);
 
                         $badge_data['badge_id'] = $badge_id;
+                        $badge_data['client_id'] = $this->User_model->getClientId();
+                        $badge_data['site_id'] = $this->User_model->getSiteId();
 
                         $this->Badge_model->addBadgeToClient($badge_data);
 
@@ -90,7 +92,10 @@ class Badge extends MY_Controller
                         redirect('/badge', 'refresh');
                     }else{
 
+                        $this->load->model('Client_model');
+
                         $badge_data = $this->input->post();
+
 
                         if(isset($badge_data['sponsor'])){
                             $badge_data['sponsor'] = true;
@@ -98,9 +103,9 @@ class Badge extends MY_Controller
                             $badge_data['sponsor'] = false;
                         }
 
-                        if($badge_data['client_id'] != 'all_clients'){
-                            $this->load->model('Client_model');
-                            $clients_sites = $this->Client_model->getSitesByClientId($badge_data['client_id']);
+                        if($badge_data['admin_client_id'] != 'all_clients'){
+
+                            $clients_sites = $this->Client_model->getSitesByClientId($badge_data['admin_client_id']);
 
                             $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
 
@@ -108,10 +113,9 @@ class Badge extends MY_Controller
                                 $badge_data['site_id'] = $client['_id']; 
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }    
-                        }elseif ($badge_data['client_id'] == 'all_clients'){
+                        }elseif ($badge_data['admin_client_id'] == 'all_clients'){
                             $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);   
 
-                            $this->load->model('Client_model');
                             $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
 
                             foreach($all_sites_clients as $site){
@@ -155,13 +159,17 @@ class Badge extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
+            $badge_data = $this->input->post();
+
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
-                    $this->Badge_model->editBadgeToClient($badge_id, $this->input->post());
+                    $badge_data['client_id'] = $this->User_model->getClientId();
+                    $badge_data['site_id'] = $this->User_model->getSiteId();
+                    $this->Badge_model->editBadgeToClient($badge_id, $badge_data);
                 }else{
-                    $this->Badge_model->editBadge($badge_id, $this->input->post());
+                    $this->Badge_model->editBadge($badge_id, $badge_data);
                     
-                    $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $this->input->post());   
+                    $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $badge_data);
                 }
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
@@ -610,7 +618,6 @@ class Badge extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('badge_form');
     }
 
     private function validateModify() {
