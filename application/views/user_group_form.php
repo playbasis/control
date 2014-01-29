@@ -37,7 +37,7 @@
 					<tr>
 						<td><span class="required">*</span> <?php echo $this->lang->line('form_access_permission'); ?>:</td>
 						<td>
-							<div class="scrollbox">
+							<div class="scrollbox tooltips" data-placement="right" title="What features / menus can the user group have access to">
 								<?php if(isset($temp_features) && (isset($all_features))){?>
 									<?php if(isset($temp_features['permission']['access'])){?>
 										<?php $temp_features_access = $temp_features['permission']['access'];?>
@@ -102,7 +102,7 @@
 					<tr>
 						<td><span class="required">*</span> <?php echo $this->lang->line('form_modify_permission'); ?>:</td>
 						<td>
-							<div class = "scrollbox">
+							<div class = "scrollbox tooltips" data-placement="right" title="What features / menus can the user group modify">
 								<?php if(isset($temp_features) && (isset($all_features))){?>
 									<?php if(isset($temp_features['permission']['modify'])){?>
 										<?php $temp_features_modify = $temp_features['permission']['modify'];?>

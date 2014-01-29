@@ -290,7 +290,8 @@ class Badge_model extends MY_Model
             'description' => $data['description']|'',
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
-            'deleted'=>false
+            'deleted'=>false,
+            'sponsor'=>$data['sponsor']
         ));
         return $b;
     }
@@ -312,7 +313,8 @@ class Badge_model extends MY_Model
             'description' => $data['description']|'',
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
-            'deleted'=>false
+            'deleted'=>false,
+            'sponsor'=>$data['sponsor']
         ));
     }
 
@@ -330,6 +332,9 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
+        if(isset($data['sponsor'])){
+            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
+        }
         $this->mongo_db->update('playbasis_badge');
 
         if (isset($data['image'])) {
@@ -356,6 +361,9 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
+        if(isset($data['sponsor'])){
+            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
+        }
         $this->mongo_db->update('playbasis_badge_to_client');
 
         if (isset($data['image'])) {
@@ -473,6 +481,12 @@ class Badge_model extends MY_Model
     public function checkBadgeIsPublic($badge_id){
         $this->mongo_db->where('badge_id', $badge_id);
         return $this->mongo_db->get('playbasis_badge_to_client');
+    }
+
+    public function checkBadgeIsSponsor($badge_id){
+        $this->mongo_db->where('badge_id', new MongoID($badge_id));
+        $badge = $this->mongo_db->get('playbasis_badge_to_client');
+        return isset($badge[0]['sponsor'])?$badge[0]['sponsor']:null;
     }
 
 

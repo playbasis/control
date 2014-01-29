@@ -45,11 +45,24 @@
                             <?php if (isset($badges)) { ?>
                             <?php foreach ($badges as $badge) { ?>
                             <tr>
-                                <td style="text-align: center;"><?php if ($badge['selected']) { ?>
-                                    <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" checked="checked" />
+                                <td style="text-align: center;">
+                                <?php if (!$client_id){?>
+                                    <?php if ($badge['selected']) { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" checked="checked" />
                                     <?php } else { ?>
-                                    <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" />
-                                    <?php } ?></td>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" />
+                                    <?php } ?>
+                                <?php }else{?> 
+                                    <?php if(!isset($badge['sponsor'])){?> 
+                                    <?php if ($badge['selected']) { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" checked="checked" />
+                                    <?php } else { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $badge['badge_id']; ?>" />
+                                    <?php } ?>
+                                    <?php }?>
+                                <?php }?>
+                                   
+                                </td>
                                 <td class="left"><div class="image"><img src="<?php echo $badge['image']; ?>" alt="" id="thumb" /></div></td>
                                 <td class="left"><?php echo $badge['name']; ?></td>
                                 <?php if(!$client_id){?>
@@ -59,7 +72,14 @@
                                 <td class="left"><?php echo ($badge['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $badge['sort_order']; ?></td>
                                 <td class="right">
-                                    [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
+                                    <?php if(!$client_id){?>
+                                        [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
+                                    <?php }else{?>
+                                        <?php if(!isset($badge['sponsor'])){?> 
+                                            [ <?php echo anchor('badge/update/'.$badge['badge_id'], 'Edit'); ?> ]
+                                        <?php }?>
+                                    <?php }?>
+                                    
                                     <?php echo anchor('badge/increase_order/'.$badge['badge_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none'));?>
                                     <?php echo anchor('badge/decrease_order/'.$badge['badge_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$badge['badge_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>
