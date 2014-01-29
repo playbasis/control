@@ -474,10 +474,11 @@ class Plan extends MY_Controller
         foreach ($allClientsInThisPlan as $client){
             $get_client = $this->Client_model->getClient($client['client_id']);
             if($get_client != null){
-                $listOfClients[] = $get_client;        
+                if(!$get_client['deleted']){
+                    $listOfClients[] = $get_client;                
+                }
             }
         }
-
         return $listOfClients;
         //return $allClientsInThisPlan;
     }
