@@ -231,8 +231,6 @@ class Badge_model extends MY_Model
         $this->mongo_db->or_where(array('sponsor'=>null, 'sponsor'=>false));
         // $this->mongo_db->where('sponsor', null);
         $total = $this->mongo_db->count("playbasis_badge_to_client");
-        var_dump($total);
-        echo $data['site_id'];
         return $total;
     }
 
@@ -511,6 +509,12 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('badge_id', new MongoID($badge_id));
         $badge = $this->mongo_db->get('playbasis_badge_to_client');
         return isset($badge[0]['sponsor'])?$badge[0]['sponsor']:null;
+    }
+
+    public function deleteClientBadgeFromAdmin($badge_id){
+        $this->mongo_db->where('badge_id', new MongoID($badge_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update_all('playbasis_badge_to_client');
     }
 
 
