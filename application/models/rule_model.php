@@ -128,6 +128,9 @@ class Rule_model extends MY_Model
 
 //                    $ds2[0]['dataSet'] = unserialize(trim($ds2[0]['init_dataset']));
                     $ds2[0]['dataSet'] = $ds2[0]['init_dataset'];
+                    $ds2[0]['id']=$ds2[0]['jigsaw_id']."";
+                    $ds2[0]['category']='REWARD';
+
                     unset($ds2[0]['jigsaw_id']);
                     unset($ds2[0]['init_dataset']);
                     array_push($ds, $ds2[0]);
@@ -246,6 +249,10 @@ class Rule_model extends MY_Model
 
             if(count($ds)>0){
                 $ds[0]['rule_id'] = $ds[0]['_id']."";
+                $ds[0]['site_id'] = $ds[0]['site_id']."";
+                $ds[0]['client_id'] = $ds[0]['client_id']."";
+                $ds[0]['action_id'] = $ds[0]['action_id']."";
+                $ds[0]['_id'] = $ds[0]['_id']."";
                 $output = $ds;
             }
 
@@ -273,7 +280,10 @@ class Rule_model extends MY_Model
                 $output = $results;
                 /*Cut time string off*/
                 foreach($output as  &$value){
-                    $value['rule_id'] = $value["_id"];
+                    $value['rule_id'] = $value["_id"]."";
+                    $value['client_id'] = $value["client_id"]."";
+                    $value['site_id'] = $value["site_id"]."";
+                    $value['action_id'] = $value["action_id"]."";
                     foreach ($value as $k2 => &$v2) {
                         if($k2 == "date_added"){
                             $value[$k2] = substr($this->datetimeMongotoReadable($value[$k2]) , 0 ,-8);

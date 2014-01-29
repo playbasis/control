@@ -33,3 +33,7 @@ playbasis_feature
 update
 
   "link":"user_permission"  -> "link":"user_group"
+
+remove
+
+    "name":{$in:['Monitor','Backup\/Restore','System','Error Log']}

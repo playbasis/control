@@ -124,25 +124,12 @@ class Rule extends MY_Controller
 
         $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
 
-        /*$json =array();
-
-        if ($badges) {
-
-            foreach ($badges as $badge) {
-
-                $badge_detail = $this->Badge_model->getBadge($badge['badge_id']);
-
-                if(!$badge_detail['deleted']){
-                    $json['badges'][] = array(
-                        'badge_id' => $badge['badge_id'],
-                        'name' => $badge_detail['name'],
-                        'description' => $badge_detail['description'],
-                        'image' => $badge_detail['image']
-                    );    
-                }
-            }
-        }*/
-
+        foreach($badges as &$b){
+            $b['_id'] = $b['_id']."";
+            $b['badge_id'] = $b['badge_id']."";
+            $b['client_id'] = $b['client_id']."";
+            $b['site_id'] = $b['site_id']."";
+        }
         $json['badges'] = $badges;
 
         $this->output->set_output(json_encode($json));
