@@ -158,8 +158,8 @@
                                                     <input type="text" name="reward_reward[<?php echo $point['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['_id'].']')){
                                                         echo set_value('reward_reward['.$point['_id'].']');
                                                     }else{
-                                                        if($reward_badge){
-                                                            foreach($reward_badge as $rbk => $rb){
+                                                        if($reward_reward){
+                                                            foreach($reward_reward as $rbk => $rb){
                                                                 if($rbk == $point['_id']){
                                                                     echo $rb;
                                                                     continue;

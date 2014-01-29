@@ -69,6 +69,7 @@ class Goods extends MY_Controller
 
             $point_empty = true;
             $badge_empty = true;
+            $custom_empty = true;
             $redeem = array();
 
             if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
@@ -85,7 +86,16 @@ class Goods extends MY_Controller
                 }
             }
 
-            if($point_empty && $badge_empty){
+            if($this->input->post('reward_reward')){
+                foreach($this->input->post('reward_reward') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $custom_empty = false;
+                        $redeem['custom'][$rbk] = (int)$rb;
+                    }
+                }
+            }
+
+            if($point_empty && $badge_empty && $custom_empty){
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
@@ -160,6 +170,7 @@ class Goods extends MY_Controller
 
             $point_empty = true;
             $badge_empty = true;
+            $custom_empty = true;
             $redeem = array();
 
             if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
@@ -175,7 +186,17 @@ class Goods extends MY_Controller
                     }
                 }
             }
-            if($point_empty && $badge_empty){
+
+            if($this->input->post('reward_reward')){
+                foreach($this->input->post('reward_reward') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $custom_empty = false;
+                        $redeem['custom'][$rbk] = (int)$rb;
+                    }
+                }
+            }
+
+            if($point_empty && $badge_empty && $custom_empty){
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
@@ -568,6 +589,14 @@ class Goods extends MY_Controller
             $this->data['reward_badge'] = isset($goods_info['redeem']['badge']) ? $goods_info['redeem']['badge'] : array();
         } else {
             $this->data['reward_badge'] = array();
+        }
+
+        if ($this->input->post('reward_reward')) {
+            $this->data['reward_reward'] = $this->input->post('reward_reward');
+        } elseif (!empty($goods_info)) {
+            $this->data['reward_reward'] = isset($goods_info['redeem']['custom']) ? $goods_info['redeem']['custom'] : array();
+        } else {
+            $this->data['reward_reward'] = array();
         }
 
         if (isset($goods_id)) {
