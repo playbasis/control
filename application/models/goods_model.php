@@ -317,6 +317,15 @@ class Goods_model extends MY_Model
 
     }
 
+    public function deleteGoodsClientFromAdmin($goods_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('goods_id',  new MongoID($goods_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update_all('playbasis_goods_to_client');
+
+    }
+
     public function increaseOrderByOne($goods_id){
         $this->mongo_db->where('_id', new MongoID($goods_id));
 

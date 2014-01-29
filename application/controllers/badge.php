@@ -89,12 +89,18 @@ class Badge extends MY_Controller
 
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                        redirect('/badge', 'refresh');
+                        // redirect('/badge', 'refresh');
                     }else{
 
                         $this->load->model('Client_model');
 
                         $badge_data = $this->input->post();
+
+                        if(isset($badge_data['sponsor'])){
+                            $badge_data['sponsor'] = true;
+                        }else{
+                            $badge_data['sponsor'] = false;
+                        }
 
                         if(isset($badge_data['admin_client_id']) && $badge_data['admin_client_id'] != 'all_clients'){
 
@@ -106,6 +112,7 @@ class Badge extends MY_Controller
 
                             foreach ($clients_sites as $client){
                                 $badge_data['site_id'] = $client['_id']; 
+                                $badge_data['client_id'] = $client['client_id'];
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }    
                         }else{
@@ -119,13 +126,13 @@ class Badge extends MY_Controller
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }
                         }
-                        redirect('/badge', 'refresh');
+                        // redirect('/badge', 'refresh');
                     }
 
                 }    
             }else{
                 $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
-                redirect('/badge/insert', 'refresh');
+                // redirect('/badge/insert', 'refresh');
             }
         }
         $this->getForm();
@@ -194,7 +201,9 @@ class Badge extends MY_Controller
                 if($this->checkOwnerBadge($badge_id)){
                     
                     if($this->User_model->getClientId()){
-                        $this->Badge_model->deleteBadgeClient($badge_id);
+                        if(!$this->Badge_model->checkBadgeIsSponsor($badge_id)){
+                            $this->Badge_model->deleteBadgeClient($badge_id);
+                        }
                     }else{
                         $this->Badge_model->deleteBadge($badge_id);    
                     }
@@ -255,7 +264,8 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public'=>$badgeIsPublic
+                    'is_public'=>$badgeIsPublic,
+                    // 'sponsor' => $result['sponsor']
                 );
             }
         }else{
@@ -299,14 +309,12 @@ class Badge extends MY_Controller
                             'image' => $image,
                             'sort_order'  => $badge_info['sort_order'],
                             'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                            );    
+                            'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null
+                            );
                         }
-                        
                     }
                 }
-
             }
-
         }
 
         if (isset($this->error['warning'])) {
@@ -582,10 +590,25 @@ class Badge extends MY_Controller
             $this->data['quantity'] = 1;
         }
 
+        if ($this->input->post('sponsor')) {
+            // echo $this->input->post('sponsor');
+            $this->data['sponsor'] = $this->input->post('sponsor');
+        } elseif (!empty($badge_info)) {
+            $this->data['sponsor'] = isset($badge_info['sponsor'])?$badge_info['sponsor']:null;
+        } else {
+            $this->data['sponsor'] = false;
+        }
+
         if (isset($badge_id)) {
             $this->data['badge_id'] = $badge_id;
         } else {
             $this->data['badge_id'] = null;
+        }
+
+        if($this->User_model->getClientId()){
+            if($this->data['sponsor']){
+                redirect('badge', 'refresh');
+            }
         }
 
         $this->load->model('Client_model');
@@ -610,8 +633,8 @@ class Badge extends MY_Controller
 
     private function checkLimitBadge(){
 
-        if(isset($client)){
-
+        // if(isset($client)){
+        if($this->User_model->getClientId()){
             $error = null;
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
@@ -620,7 +643,12 @@ class Badge extends MY_Controller
 
                 $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
 
-                $badges_count = $this->Badge_model->getTotalBadgeBySiteId($this->User_model->getSiteId());
+                $data = array(
+                        'site_id'=>$this->User_model->getSiteId()
+                    );
+                // $badges_count = $this->Badge_model->getTotalBadgeBySiteId($data);
+                $badges_count = $this->Badge_model->getTotalBadgeBySiteIdWithoutSponsor($data);
+                
 
                 foreach ($plan_limit as $plan) {
                     if($plan['site_id'] == $this->input->post('site_id')){

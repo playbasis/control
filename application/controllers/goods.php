@@ -58,6 +58,7 @@ class Goods extends MY_Controller
         $this->data['form'] = 'goods/insert';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('reward_point', $this->lang->line('entry_point'), 'is_numeric|trim|xss_clean|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -159,6 +160,7 @@ class Goods extends MY_Controller
         $this->data['form'] = 'goods/update/'.$goods_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('reward_point', $this->lang->line('entry_point'), 'is_numeric|trim|xss_clean|greater_than[-1]|less_than[2147483647]|');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerGoods($goods_id)) {
 
@@ -244,6 +246,7 @@ class Goods extends MY_Controller
                         $this->Goods_model->deleteGoodsClient($goods_id);
                     }else{
                         $this->Goods_model->deleteGoods($goods_id);
+                        $this->Goods_model->deleteGoodsClientFromAdmin($goods_id);
                     }
 
                 }

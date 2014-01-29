@@ -39,7 +39,7 @@
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?>:</td>
                                 <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" />
-                                </td>
+                            </td>
                             </tr>
                             <tr>    
                                 <?php if(!$client_id && !$name){?>
@@ -60,6 +60,14 @@
                                     </td>
                                 <?php }?>
                             </tr>
+                            <?php if(!$client_id){?>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_sponsor'); ?>:</td>
+                                <td>
+                                    <input type="checkbox" name="sponsor" value = 1 <?php echo ($sponsor)?'checked':'unchecked'?> class="tooltips" data-placement="right" title="Sponsor badge cannot be modified by clients"/>
+                                </td>
+                            </tr>
+                            <?php }?>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_hint'); ?>:</td>
                                 <td><textarea name="hint" cols="40" rows="5"><?php echo isset($hint) ? $hint : set_value('hint'); ?></textarea></td>
@@ -177,3 +185,12 @@ function image_upload(field, thumb) {
 $('#tabs a').tabs();
 $('#languages a').tabs();
 //--></script>
+
+
+<script type="text/javascript">
+
+$("#sponsor").hover(function (){
+
+});
+
+</script>

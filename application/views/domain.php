@@ -72,7 +72,11 @@
             <?php
             echo form_close();
             ?>
-            <div class="pagination"><?php echo $pagination_links; ?></div>
+            <div class="pagination">
+                <ul class='ul_rule_pagination_container'>
+                    <?php echo $pagination_links; ?>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

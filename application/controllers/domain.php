@@ -141,6 +141,20 @@ class Domain extends MY_Controller
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
 
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
         $this->pagination->initialize($config);
 
         $this->data['pagination_links'] = $this->pagination->create_links();

@@ -153,9 +153,24 @@ class Plan extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
+        $this->load->model('Client_model');
+
         if ($this->input->post('selected') && $this->error['warning'] == null) {
             foreach ($this->input->post('selected') as $plan_id) {
-                $c = $this->Plan_model->getClientByPlan($plan_id);
+
+                $all_clients_in_plan = $this->Plan_model->getClientByPlan($plan_id);
+
+                $c = array();
+
+                foreach ($all_clients_in_plan as $client){
+                    $the_client_id = $client['client_id'];
+
+                    $temp = $this->Client_model->getClient($the_client_id);
+                    if (!$temp['deleted']){
+                        $c[] = $temp;
+                    }
+                }
+
                 if(empty($c)){
                     $this->Plan_model->deletePlan($plan_id);
                     
@@ -474,10 +489,11 @@ class Plan extends MY_Controller
         foreach ($allClientsInThisPlan as $client){
             $get_client = $this->Client_model->getClient($client['client_id']);
             if($get_client != null){
-                $listOfClients[] = $get_client;        
+                if(!$get_client['deleted']){
+                    $listOfClients[] = $get_client;                
+                }
             }
         }
-
         return $listOfClients;
         //return $allClientsInThisPlan;
     }
