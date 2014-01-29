@@ -409,7 +409,8 @@ class Badge extends MY_Controller
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public' => $badgeIsPublic
+                    'is_public' => $badgeIsPublic,
+                    'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null
                 );
             }
         }
@@ -455,6 +456,7 @@ class Badge extends MY_Controller
                                 'image' => $image,
                                 'sort_order'  => $badge_info['sort_order'],
                                 'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
+                                'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null
                             );    
                         }
                         
