@@ -5,29 +5,12 @@ class Reward_model extends MY_Model
     public function getBadgeRewardBySiteId($site_id) {
 
         $this->set_site_mongodb(0);
-//        $reward_data = array();
 
         $this->mongo_db->where('site_id',  new MongoID($site_id));
         $this->mongo_db->where('group',  'NONPOINT');
         $this->mongo_db->where('name',  'badge');
         $results = $this->mongo_db->get("playbasis_reward_to_client");
 
-        /*foreach ($results as $result) {
-            $reward_info = $this->getReward($result['reward_id']);
-            if($reward_info){
-                $reward_data[] = array(
-                    'reward_id' => $result['_id'],
-                    'site_id' => $result['site_id'],
-                    'client_id' => $result['client_id'],
-                    'limit' => $result['limit'],
-                    'group' => $reward_info['group'],
-                    'name' => $reward_info['name'],
-                    'description' => $reward_info['description']
-                );
-            }
-        }*/
-
-//        return $reward_data;
         return $results ? $results[0] : null;
     }
 

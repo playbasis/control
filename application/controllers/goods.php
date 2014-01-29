@@ -61,82 +61,79 @@ class Goods extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            if($this->checkLimitGoods()){
-                $this->data['message'] = null;
+            $this->data['message'] = null;
 
-                if (!$this->validateModify()) {
-                    $this->data['message'] = $this->lang->line('error_permission');
-                }
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
 
-                $point_empty = true;
-                $badge_empty = true;
-                $redeem = array();
+            $point_empty = true;
+            $badge_empty = true;
+            $redeem = array();
 
-                if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
-                    $point_empty = false;
-                    $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
-                }
+            if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
+                $point_empty = false;
+                $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
+            }
 
-                if($this->input->post('reward_badge')){
-                    foreach($this->input->post('reward_badge') as $rbk => $rb){
-                        if($rb != '' || $rb != 0){
-                            $badge_empty = false;
-                            $redeem['badge'][$rbk] = (int)$rb;
-                        }
+            if($this->input->post('reward_badge')){
+                foreach($this->input->post('reward_badge') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $badge_empty = false;
+                        $redeem['badge'][$rbk] = (int)$rb;
                     }
                 }
-                
-                if($point_empty && $badge_empty){
-                    $this->data['message'] = $this->lang->line('error_redeem');
-                }
+            }
 
-                $goods_data = $this->input->post();
-                $goods_data['redeem'] = $redeem;
+            if($point_empty && $badge_empty){
+                $this->data['message'] = $this->lang->line('error_redeem');
+            }
 
-                if($this->form_validation->run() && $this->data['message'] == null){
+            $goods_data = $this->input->post();
+            $goods_data['redeem'] = $redeem;
 
-                    if($this->User_model->getClientId()){
+            if($this->form_validation->run() && $this->data['message'] == null){
 
-                        $goods_id = $this->Goods_model->addGoods($goods_data);
+                if($this->User_model->getClientId()){
 
-                        $goods_data['goods_id'] = $goods_id;
+                    $goods_id = $this->Goods_model->addGoods($goods_data);
 
-                        $this->Goods_model->addGoodsToClient($goods_data);
+                    $goods_data['goods_id'] = $goods_id;
+                    $goods_data['client_id'] = $this->User_model->getClientId();
+                    $goods_data['site_id'] = $this->User_model->getSiteId();
 
-                        $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    $this->Goods_model->addGoodsToClient($goods_data);
 
-                        redirect('/goods', 'refresh');
-                    }else{
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                        if($goods_data['client_id'] != 'all_clients'){
-                            $this->load->model('Client_model');
-                            $clients_sites = $this->Client_model->getSitesByClientId($goods_data['client_id']);
+                    redirect('/goods', 'refresh');
+                }else{
 
-                            $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
+                    $this->load->model('Client_model');
 
-                            foreach ($clients_sites as $client){
-                                $goods_data['site_id'] = $client['_id'];
-                                $this->Goods_model->addGoodsToClient($goods_data);
-                            }
-                        }elseif ($goods_data['client_id'] == 'all_clients'){
-                            $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
+                    if($goods_data['admin_client_id'] != 'all_clients'){
 
-                            $this->load->model('Client_model');
-                            $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
+                        $clients_sites = $this->Client_model->getSitesByClientId($goods_data['admin_client_id']);
 
-                            foreach($all_sites_clients as $site){
-                                $goods_data['site_id'] = $site['_id'];
-                                $goods_data['client_id'] = $site['client_id'];
-                                $this->Goods_model->addGoodsToClient($goods_data);
-                            }
+                        $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
+
+                        foreach ($clients_sites as $client){
+                            $goods_data['site_id'] = $client['_id'];
+                            $this->Goods_model->addGoodsToClient($goods_data);
                         }
-                        redirect('/goods', 'refresh');
-                    }
+                    }elseif ($goods_data['admin_client_id'] == 'all_clients'){
+                        $goods_data['goods_id'] = $this->Goods_model->addGoods($goods_data);
 
+                        $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
+
+                        foreach($all_sites_clients as $site){
+                            $goods_data['site_id'] = $site['_id'];
+                            $goods_data['client_id'] = $site['client_id'];
+                            $this->Goods_model->addGoodsToClient($goods_data);
+                        }
+                    }
+                    redirect('/goods', 'refresh');
                 }
-            }else{
-                $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_goods'));
-                redirect('/goods/insert', 'refresh');
             }
         }
         $this->getForm();
@@ -185,6 +182,8 @@ class Goods extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
+                    $goods_data['client_id'] = $this->User_model->getClientId();
+                    $goods_data['site_id'] = $this->User_model->getSiteId();
                     $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
                 }else{
                     $this->Goods_model->editGoods($goods_id, $goods_data);
@@ -633,52 +632,6 @@ class Goods extends MY_Controller
         } else {
             return false;
         }
-    }
-
-    private function checkLimitGoods(){
-
-        if(isset($client)){
-
-            $error = null;
-
-            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-
-                $this->load->model('Reward_model');
-
-                $plan_limit = $this->Reward_model->getRewardByClientId($this->User_model->getClientId());
-
-                $goods_list_count = $this->Goods_model->getTotalGoodsBySiteId($this->User_model->getSiteId());
-
-                foreach ($plan_limit as $plan) {
-                    if($plan['site_id'] == $this->input->post('site_id')){
-                        if($plan['name'] == 'goods'){
-                            if($plan['limit']){
-                                $limit_goods =  $plan['limit'];
-                            }
-                        }
-                    }
-                }
-
-                if(isset($limit_goods)){
-                    if($goods_list_count >= $limit_goods){
-                        $over_limit = true;
-                    }else{
-                        $over_limit = false;
-                    }
-                }else{
-                    $over_limit = false;
-                }
-            }
-
-            if(!$over_limit){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return true;
-        }
-
     }
 
     private function checkOwnerGoods($goodsId){
