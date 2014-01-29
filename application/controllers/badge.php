@@ -162,9 +162,13 @@ class Badge extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
-                    $badge_data['client_id'] = $this->User_model->getClientId();
-                    $badge_data['site_id'] = $this->User_model->getSiteId();
-                    $this->Badge_model->editBadgeToClient($badge_id, $badge_data);
+                    if(!$this->Badge_model->checkBadgeIsSponsor($badge_id)){
+                        $badge_data['client_id'] = $this->User_model->getClientId();
+                        $badge_data['site_id'] = $this->User_model->getSiteId();
+                        $this->Badge_model->editBadgeToClient($badge_id, $badge_data);
+                    }else{
+                        redirect('/badge', 'refresh');
+                    }
                 }else{
                     $this->Badge_model->editBadge($badge_id, $badge_data);
                     
@@ -200,6 +204,8 @@ class Badge extends MY_Controller
                     if($this->User_model->getClientId()){
                         if(!$this->Badge_model->checkBadgeIsSponsor($badge_id)){
                             $this->Badge_model->deleteBadgeClient($badge_id);
+                        }else{
+                            redirect('/badge', 'refresh');
                         }
                     }else{
                         $this->Badge_model->deleteBadge($badge_id); 

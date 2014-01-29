@@ -494,7 +494,7 @@ class Badge_model extends MY_Model
     }
 
     public function checkBadgeIsSponsor($badge_id){
-        $this->mongo_db->where('badge_id', new MongoID($badge_id));
+        $this->mongo_db->where('_id', new MongoID($badge_id));
         $badge = $this->mongo_db->get('playbasis_badge_to_client');
         return isset($badge[0]['sponsor'])?$badge[0]['sponsor']:null;
     }
