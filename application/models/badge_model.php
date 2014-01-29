@@ -13,7 +13,7 @@ class Badge_model extends MY_Model
 	{
 		//get badge ids
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select(array('badge_id','image','name','description','hint'));
+		$this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor'));
 		$this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
@@ -23,6 +23,7 @@ class Badge_model extends MY_Model
         $badges = $this->mongo_db->get('playbasis_badge_to_client');
         if($badges){
             foreach($badges as &$badge){
+                $badge['badge_id'] = $badge['badge_id']."";
                 $badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
             }
         }
@@ -32,7 +33,7 @@ class Badge_model extends MY_Model
 	{
 		//get badge id
 		$this->set_site_mongodb($data['site_id']);
-        $this->mongo_db->select(array('badge_id','image','name','description','hint'));
+        $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
@@ -42,6 +43,7 @@ class Badge_model extends MY_Model
         ));
 		$result = $this->mongo_db->get('playbasis_badge_to_client');
         if($result){
+            $result[0]['badge_id'] = $result[0]['badge_id']."";
             $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
         }
 		return $result ? $result[0] : array();

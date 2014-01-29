@@ -37,7 +37,7 @@ class Goods extends REST_Controller
         }
         else
         {
-            //get all badge relate to  clients
+            //get all goods relate to clients
             $badgesList['goods_list'] = $this->goods_model->getAllGoods($validToken);
             $this->response($this->resp->setRespond($badgesList), 200);
         }

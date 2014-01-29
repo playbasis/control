@@ -37,8 +37,10 @@ class jigsaw extends MY_Model
 		assert(is_array($input));
 		assert($input['pb_player_id']);
 		//always true if reward type is point
-		if(is_null($config['item_id']) || $config['item_id'] == '')
-			return $this->checkReward($config['reward_id'], $input['site_id']);
+		if(is_null($config['item_id']) || $config['item_id'] == ''){
+            return $this->checkReward($config['reward_id'], $input['site_id']);
+        }
+
 		//if reward type is badge
 		switch($config['reward_name'])
 		{
@@ -442,8 +444,10 @@ class jigsaw extends MY_Model
 		));
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		$result = $result[0];
-		if(is_null($result['limit']))
-			return true;
+		if(is_null($result['limit'])){
+            return true;
+        }
+
 		return $result['limit'] > 0;
 	}
 	private function matchUrl($inputUrl, $compareUrl, $isRegEx)

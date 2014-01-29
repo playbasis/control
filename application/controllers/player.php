@@ -227,6 +227,7 @@ class Player extends REST_Controller
 			$point['reward_name'] = $this->point_model->getRewardNameById(array_merge($validToken, array(
                 'reward_id' => $point['reward_id']
             )));
+            $point['reward_id'] = $point['reward_id']."";
             ksort($point);
         }
         $player['player']['points'] = $points;
@@ -290,6 +291,7 @@ class Player extends REST_Controller
             $point['reward_name'] = $this->point_model->getRewardNameById(array_merge($validToken, array(
                 'reward_id' => $point['reward_id']
             )));
+            $point['reward_id'] = $point['reward_id']."";
             ksort($point);
         }
         $player['player']['points'] = $points;

@@ -70,8 +70,12 @@ class Client_model extends MY_Model
 			'jigsaw_id' => $jigsawId
 		));
 		$jigsawProcessor = $this->mongo_db->get('playbasis_game_jigsaw_to_client');
-		assert($jigsawProcessor);
-		return $jigsawProcessor[0]['class_path'];
+        if($jigsawProcessor){
+            assert($jigsawProcessor);
+            return $jigsawProcessor[0]['class_path'];
+        }else{
+            return null;
+        }
 	}
 	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clPlayerId, $clientId, $siteId, $overrideOldValue = FALSE)
 	{
@@ -355,22 +359,24 @@ class Client_model extends MY_Model
 	{
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
+            'badge_id',
 			'name',
 			'description',
 			'image',
 			'hint'
 		));
+        $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
-			'_id' => $badgeId,
+            'site_id' => $site_id,
+            'badge_id' => $badgeId,
 			'deleted' => false
 		));
-		$badge = $this->mongo_db->get('playbasis_badge');
+		$badge = $this->mongo_db->get('playbasis_badge_to_client');
 		if(!$badge)
 			return null;
 		$badge = $badge[0];
+        $badge['badge_id'] = $badge['badge_id']."";
 		$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
-		$badge['badge_id'] = $badge['_id'];
-		unset($badge['_id']);
 		return $badge;
 	}
 }
