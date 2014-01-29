@@ -136,18 +136,6 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
         $results = $this->mongo_db->get("playbasis_badge_to_client");
 
-        // $returnThis = array();
-        // $allBadges = $this->getBadges();
-
-        // foreach($allBadges as $badge){
-        //     foreach($results as $result){
-        //         if(!$badge['deleted'] && $badge['_id']==$result['badge_id']){
-        //             $returnThis[] = $result;
-        //         }
-        //     }
-        // }
-
-        // return $returnThis;
         return $results;
     }
 

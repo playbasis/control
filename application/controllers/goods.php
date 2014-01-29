@@ -122,6 +122,12 @@ class Goods extends MY_Controller
 
                     $this->load->model('Client_model');
 
+                    if(isset($goods_data['sponsor'])){
+                        $goods_data['sponsor'] = true;
+                    }else{
+                        $goods_data['sponsor'] = false;
+                    }
+
                     if(isset($goods_data['admin_client_id']) && $goods_data['admin_client_id'] != 'all_clients'){
 
                         $clients_sites = $this->Client_model->getSitesByClientId($goods_data['admin_client_id']);
@@ -207,9 +213,14 @@ class Goods extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
-                    $goods_data['client_id'] = $this->User_model->getClientId();
-                    $goods_data['site_id'] = $this->User_model->getSiteId();
-                    $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
+
+                    if(!$this->Goods_model->checkGoodsIsSponsor($goods_id)){
+                        $goods_data['client_id'] = $this->User_model->getClientId();
+                        $goods_data['site_id'] = $this->User_model->getSiteId();
+                        $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
+                    }else{
+                        redirect('/goods', 'refresh');
+                    }
                 }else{
                     $this->Goods_model->editGoods($goods_id, $goods_data);
 
@@ -243,7 +254,11 @@ class Goods extends MY_Controller
                 if($this->checkOwnerGoods($goods_id)){
 
                     if($this->User_model->getClientId()){
-                        $this->Goods_model->deleteGoodsClient($goods_id);
+                        if(!$this->Goods_model->checkGoodsIsSponsor($goods_id)){
+                            $this->Goods_model->deleteGoodsClient($goods_id);
+                        }else{
+                            redirect('/goods', 'refresh');
+                        }
                     }else{
                         $this->Goods_model->deleteGoods($goods_id);
                         $this->Goods_model->deleteGoodsClientFromAdmin($goods_id);
@@ -332,6 +347,7 @@ class Goods extends MY_Controller
                         'image' => $image,
                         'sort_order'  => $goods['sort_order'],
                         'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                        'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null
                     );
                 }
             }
@@ -456,6 +472,7 @@ class Goods extends MY_Controller
                         'image' => $image,
                         'sort_order'  => $goods['sort_order'],
                         'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                        'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null
                     );
                 }
             }
@@ -602,10 +619,24 @@ class Goods extends MY_Controller
             $this->data['reward_reward'] = array();
         }
 
+        if ($this->input->post('sponsor')) {
+            $this->data['sponsor'] = $this->input->post('sponsor');
+        } elseif (!empty($goods_info)) {
+            $this->data['sponsor'] = isset($goods_info['sponsor'])?$goods_info['sponsor']:null;
+        } else {
+            $this->data['sponsor'] = false;
+        }
+
         if (isset($goods_id)) {
             $this->data['goods_id'] = $goods_id;
         } else {
             $this->data['goods_id'] = null;
+        }
+
+        if($this->User_model->getClientId()){
+            if($this->data['sponsor']){
+                redirect('/goods', 'refresh');
+            }
         }
 
         $this->load->model('Client_model');

@@ -208,7 +208,8 @@ class Goods_model extends MY_Model
             'description' => $data['description']|'',
             'language_id' => (int)1,
             'redeem' => $data['redeem'],
-            'deleted'=>false
+            'deleted'=>false,
+            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
         ));
         return $b;
     }
@@ -228,7 +229,8 @@ class Goods_model extends MY_Model
             'description' => $data['description']|'',
             'language_id' => (int)1,
             'redeem' => $data['redeem'],
-            'deleted'=>false
+            'deleted'=>false,
+            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
         ));
     }
 
@@ -244,6 +246,11 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
+        if(isset($data['sponsor'])){
+            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
+        }else{
+            $this->mongo_db->set('sponsor', false);
+        }
         $this->mongo_db->update('playbasis_goods');
 
         if (isset($data['image'])) {
@@ -268,6 +275,11 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
+        if(isset($data['sponsor'])){
+            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
+        }else{
+            $this->mongo_db->set('sponsor', false);
+        }
         $this->mongo_db->update('playbasis_goods_to_client');
 
         if (isset($data['image'])) {
@@ -290,6 +302,11 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
+        if(isset($data['sponsor'])){
+            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
+        }else{
+            $this->mongo_db->set('sponsor', false);
+        }
         $this->mongo_db->update_all('playbasis_goods_to_client');
 
         if (isset($data['image'])) {
@@ -384,6 +401,12 @@ class Goods_model extends MY_Model
             $this->mongo_db->update('playbasis_goods_to_client');
         }
         
+    }
+
+    public function checkGoodsIsSponsor($goods_id){
+        $this->mongo_db->where('_id', new MongoID($goods_id));
+        $badge = $this->mongo_db->get('playbasis_goods_to_client');
+        return isset($badge[0]['sponsor'])?$badge[0]['sponsor']:null;
     }
 
     public function checkGoodsIsPublic($goods_id){

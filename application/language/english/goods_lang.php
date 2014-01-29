@@ -42,6 +42,7 @@ $lang['entry_image']          			= 'Image';
 $lang['entry_point']           		    = 'Point';
 $lang['entry_badge']           		    = 'Badge';
 $lang['entry_rewards']           		= 'Reward';
+$lang['entry_sponsor']           		= 'Sponsor';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';

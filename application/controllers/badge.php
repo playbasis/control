@@ -73,11 +73,11 @@ class Badge extends MY_Controller
                     $this->data['message'] = $this->lang->line('error_permission');
                 }
 
+                $badge_data = $this->input->post();
+
                 if($this->form_validation->run() && $this->data['message'] == null){
 
                     if($this->User_model->getClientId()){
-
-                        $badge_data = $this->input->post();
 
                         $badge_id = $this->Badge_model->addBadge($badge_data);
 
@@ -93,8 +93,6 @@ class Badge extends MY_Controller
                     }else{
 
                         $this->load->model('Client_model');
-
-                        $badge_data = $this->input->post();
 
                         if(isset($badge_data['sponsor'])){
                             $badge_data['sponsor'] = true;

@@ -60,6 +60,14 @@
                                     </td>
                                 <?php }?>
                             </tr>
+                            <?php if(!$client_id){?>
+                                <tr>
+                                    <td><?php echo $this->lang->line('entry_sponsor'); ?>:</td>
+                                    <td>
+                                        <input type="checkbox" name="sponsor" value = 1 <?php echo ($sponsor)?'checked':'unchecked'?> class="tooltips" data-placement="right" title="Sponsor badge cannot be modified by clients"/>
+                                    </td>
+                                </tr>
+                            <?php }?>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_description'); ?>:</td>
                                 <td><textarea name="description" id="description"><?php echo isset($description) ? $description : set_value('description'); ?></textarea></td>

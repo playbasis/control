@@ -61,7 +61,6 @@
                                     <?php } ?>
                                     <?php }?>
                                 <?php }?>
-                                   
                                 </td>
                                 <td class="left"><div class="image"><img src="<?php echo $badge['image']; ?>" alt="" id="thumb" /></div></td>
                                 <td class="left"><?php echo $badge['name']; ?></td>
