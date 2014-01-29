@@ -89,7 +89,7 @@ class Badge extends MY_Controller
 
                         $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                        redirect('/badge', 'refresh');
+                        // redirect('/badge', 'refresh');
                     }else{
 
                         $this->load->model('Client_model');
@@ -111,6 +111,7 @@ class Badge extends MY_Controller
 
                             foreach ($clients_sites as $client){
                                 $badge_data['site_id'] = $client['_id']; 
+                                $badge_data['client_id'] = $client['client_id'];
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }    
                         }elseif ($badge_data['admin_client_id'] == 'all_clients'){
@@ -124,13 +125,13 @@ class Badge extends MY_Controller
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }
                         }
-                        redirect('/badge', 'refresh');
+                        // redirect('/badge', 'refresh');
                     }
 
                 }    
             }else{
                 $this->session->set_flashdata('limit_reached', $this->lang->line('text_reach_limit_badge'));
-                redirect('/badge/insert', 'refresh');
+                // redirect('/badge/insert', 'refresh');
             }
         }
         $this->getForm();
