@@ -43,6 +43,8 @@ $lang['entry_point']           		    = 'Point';
 $lang['entry_badge']           		    = 'Badge';
 $lang['entry_rewards']           		= 'Reward';
 $lang['entry_sponsor']           		= 'Sponsor';
+$lang['entry_start_date']				= 'Start Date';
+$lang['entry_expire_date']				= 'Expire Date';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';

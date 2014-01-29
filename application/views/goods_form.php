@@ -72,6 +72,18 @@
                                 <td><?php echo $this->lang->line('entry_description'); ?>:</td>
                                 <td><textarea name="description" id="description"><?php echo isset($description) ? $description : set_value('description'); ?></textarea></td>
                             </tr>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
+                                <td>
+                                    <input type="text" class="date" name="date_start" value="<?php if (strtotime(datetimeMongotoReadable($date_start))) { ?><?php echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start))); ?><?php } else { ?>-<?php } ?>" size="50" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
+                                <td>
+                                    <input type="text" class="date" name="date_expire" value="<?php if (strtotime(datetimeMongotoReadable($date_expire))) { ?><?php echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_expire))); ?><?php } else { ?>-<?php } ?>" size="50" />
+                                </td>
+                            </tr>
                         </table>
 
                 </div>
@@ -209,6 +221,13 @@ CKEDITOR.replace('description', {
 });
 
 //--></script>
+<script type="text/javascript">
+    $(function(){
+
+        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+
+    })
+</script>
 <script type="text/javascript"><!--
 function image_upload(field, thumb) {
     $('#dialog').remove();

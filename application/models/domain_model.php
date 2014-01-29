@@ -225,20 +225,16 @@ class Domain_model extends MY_Model
             $data_insert['limit_users'] = $data['limit_users'];
         }
 
-        $date_start_another = strtotime($data['date_start']);
-        $date_expire_another = strtotime($data['date_expire']);
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
 
-        if($date_start_another < $date_expire_another){
-            if(isset($data['date_start']) && $data['date_start']){
-            $data_insert['date_start'] = new MongoDate(strtotime($data['date_start']));
+            if($date_start_another < $date_expire_another){
+                $data_insert['date_start'] = new MongoDate($date_start_another);
+                $data_insert['date_expire'] = new MongoDate($date_expire_another);
             }
-
-            if(isset($data['date_expire']) && $data['date_expire']){
-                $data_insert['date_expire'] = new MongoDate(strtotime($data['date_expire']));
-            }    
         }
 
-        
         $c = $this->mongo_db->insert('playbasis_client_site', $data_insert);
 
         $keys = $this->genAccessKey($c);

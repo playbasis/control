@@ -197,7 +197,7 @@ class Goods_model extends MY_Model
     public function addGoods($data) {
         $this->set_site_mongodb(0);
 
-        $b = $this->mongo_db->insert('playbasis_goods', array(
+        $data_insert =  array(
             'quantity' => (int)$data['quantity']|0 ,
             'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => (bool)$data['status'],
@@ -209,13 +209,28 @@ class Goods_model extends MY_Model
             'language_id' => (int)1,
             'redeem' => $data['redeem'],
             'deleted'=>false,
-            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
-        ));
+            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false,
+            'date_start' => null,
+            'date_expire' => null,
+        );
+
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if($date_start_another < $date_expire_another){
+                $data_insert['date_start'] = new MongoDate($date_start_another);
+                $data_insert['date_expire'] = new MongoDate($date_expire_another);
+            }
+        }
+
+        $b = $this->mongo_db->insert('playbasis_goods',$data_insert);
         return $b;
     }
 
     public function addGoodsToClient($data){
-        $this->mongo_db->insert('playbasis_goods_to_client', array(
+
+        $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
             'goods_id' => new MongoID($data['goods_id']),
@@ -230,8 +245,22 @@ class Goods_model extends MY_Model
             'language_id' => (int)1,
             'redeem' => $data['redeem'],
             'deleted'=>false,
-            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
-        ));
+            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false,
+            'date_start' => null,
+            'date_expire' => null,
+        );
+
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if($date_start_another < $date_expire_another){
+                $data_insert['date_start'] = new MongoDate($date_start_another);
+                $data_insert['date_expire'] = new MongoDate($date_expire_another);
+            }
+        }
+
+        $this->mongo_db->insert('playbasis_goods_to_client', $data_insert);
     }
 
     public function editGoods($goods_id, $data) {
@@ -251,6 +280,20 @@ class Goods_model extends MY_Model
         }else{
             $this->mongo_db->set('sponsor', false);
         }
+
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if($date_start_another < $date_expire_another){
+                    $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                    $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            }
+        }else{
+            $this->mongo_db->set('date_start', null);
+            $this->mongo_db->set('date_expire', null);
+        }
+
         $this->mongo_db->update('playbasis_goods');
 
         if (isset($data['image'])) {
@@ -280,6 +323,20 @@ class Goods_model extends MY_Model
         }else{
             $this->mongo_db->set('sponsor', false);
         }
+
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if($date_start_another < $date_expire_another){
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            }
+        }else{
+            $this->mongo_db->set('date_start', null);
+            $this->mongo_db->set('date_expire', null);
+        }
+
         $this->mongo_db->update('playbasis_goods_to_client');
 
         if (isset($data['image'])) {
@@ -302,11 +359,26 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
+
         if(isset($data['sponsor'])){
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         }else{
             $this->mongo_db->set('sponsor', false);
         }
+
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if($date_start_another < $date_expire_another){
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            }
+        }else{
+            $this->mongo_db->set('date_start', null);
+            $this->mongo_db->set('date_expire', null);
+        }
+
         $this->mongo_db->update_all('playbasis_goods_to_client');
 
         if (isset($data['image'])) {

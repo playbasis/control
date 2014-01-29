@@ -627,6 +627,22 @@ class Goods extends MY_Controller
             $this->data['sponsor'] = false;
         }
 
+        if ($this->input->post('date_start')) {
+            $this->data['date_start'] = $this->input->post('date_start');
+        } elseif (!empty($goods_info)) {
+            $this->data['date_start'] = $goods_info['date_start'];
+        } else {
+            $this->data['date_start'] = "";
+        }
+
+        if ($this->input->post('date_expire')) {
+            $this->data['date_expire'] = $this->input->post('date_expire');
+        } elseif (!empty($goods_info)) {
+            $this->data['date_expire'] = $goods_info['date_expire'];
+        } else {
+            $this->data['date_expire'] = "";
+        }
+
         if (isset($goods_id)) {
             $this->data['goods_id'] = $goods_id;
         } else {
