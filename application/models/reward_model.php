@@ -100,13 +100,22 @@ class Reward_model extends MY_Model
     }
 
     public function getAnotherRewardBySiteId($site_id) {
-
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('site_id',  new MongoID($site_id));
         $this->mongo_db->where('group',  'POINT');
-        $this->mongo_db->where_ne('name',  'badge');
-        $this->mongo_db->where_ne('name',  'exp');
+        $this->mongo_db->where_not_in('name',  array('badge','exp','point'));
+        $results = $this->mongo_db->get("playbasis_reward_to_client");
+
+        return $results;
+    }
+
+    public function getAnotherRewardByClientId($client_id) {
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->where('client_id',  new MongoID($client_id));
+        $this->mongo_db->where('group',  'POINT');
+        $this->mongo_db->where_not_in('name',  array('badge','exp','point'));
         $results = $this->mongo_db->get("playbasis_reward_to_client");
 
         return $results;

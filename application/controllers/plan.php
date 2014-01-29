@@ -132,7 +132,7 @@ class Plan extends MY_Controller
                     $this->Client_model->editClientPlan($client['client_id'], $data);
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                redirect('/plan', 'refresh');  
+                redirect('/plan', 'refresh');
             }
 
         }

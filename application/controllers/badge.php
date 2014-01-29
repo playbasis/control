@@ -96,17 +96,19 @@ class Badge extends MY_Controller
 
                         $badge_data = $this->input->post();
 
-                        if($badge_data['admin_client_id'] != 'all_clients'){
+                        if(isset($badge_data['admin_client_id']) && $badge_data['admin_client_id'] != 'all_clients'){
 
                             $clients_sites = $this->Client_model->getSitesByClientId($badge_data['admin_client_id']);
 
                             $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);
 
+                            $badge_data['client_id'] = $badge_data['admin_client_id'];
+
                             foreach ($clients_sites as $client){
                                 $badge_data['site_id'] = $client['_id']; 
                                 $this->Badge_model->addBadgeToClient($badge_data);
                             }    
-                        }elseif ($badge_data['admin_client_id'] == 'all_clients'){
+                        }else{
                             $badge_data['badge_id'] = $this->Badge_model->addBadge($badge_data);   
 
                             $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
