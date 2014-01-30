@@ -53,7 +53,8 @@ class Player_model extends MY_Model
 		$result = $result[0];
 		if(isset($result['date_added']))
 		{
-			$result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
+			// $result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
+			$result['registered'] = datetimeMongotoReadable($result['date_added']);
 			unset($result['date_added']);
 	    }
 		if(isset($result['birth_date']) && $result['birth_date'])

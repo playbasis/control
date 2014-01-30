@@ -126,6 +126,56 @@ class Player extends REST_Controller
 
         $this->response($this->resp->setRespond($player), 200);
     }*/
+
+//     public function list_post()
+//     {
+//         $required = $this->input->checkParam(array(
+//             'token',
+//             'list_player_id'
+//         ));
+//         if($required)
+//             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+//         $validToken = $this->auth_model->findToken($this->input->post('token'));
+//         if(!$validToken)
+//             $this->response($this->error->setError('INVALID_TOKEN'), 200);
+//         $site_id = $validToken['site_id'];
+//         $list_player_id = explode(",", $this->input->post('list_player_id'));
+//         //read player information
+//         $player['player'] = $this->player_model->readListPlayer($list_player_id, $site_id, array(
+//             'cl_player_id',
+//             'username',
+//             'first_name',
+//             'last_name',
+//             'gender',
+//             'image',
+//             'email',
+//             'exp',
+//             'level',
+//             'date_added',
+//             'birth_date'
+//         ));
+
+//         foreach ($player['player'] as &$p){
+// //        	unset($p['_id']);
+//         	if(!isset($p['birth_date'])){
+//         		$p['birth_date'] = null;	
+//         	}else{
+//         		$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
+//         	}
+//         	$p['registered'] = datetimeMongotoReadable($p['date_added']);
+//         	unset($p['date_added']);
+            
+//         	$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+// 			'cl_player_id' => $p['cl_player_id']
+// 			)));
+
+//         	$p['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
+//         	$p['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+//         }
+
+//         $this->response($this->resp->setRespond($player), 200);
+//     }
+
     public function list_post()
     {
         $required = $this->input->checkParam(array(
@@ -140,40 +190,30 @@ class Player extends REST_Controller
         $site_id = $validToken['site_id'];
         $list_player_id = explode(",", $this->input->post('list_player_id'));
         //read player information
-        $player['player'] = $this->player_model->readListPlayer($list_player_id, $site_id, array(
-            'cl_player_id',
-            'username',
-            'first_name',
-            'last_name',
-            'gender',
-            'image',
+		for($i = 0; $i<count($list_player_id); $i++){
+			$data = array('client_id'=>$validToken['client_id'], 'site_id'=>$site_id, 'cl_player_id'=>$list_player_id[$i]);
+			$pb_player_id = $this->player_model->getPlaybasisId($data);
+
+			$player['player'][] = $this->player_model->readPlayer($pb_player_id, $site_id, array('cl_player_id','username',
+			'first_name',
+			'last_name',
+			'gender',
+			'image',
             'email',
-            'exp',
-            'level',
-            'date_added',
-            'birth_date'
-        ));
-
-        foreach ($player['player'] as &$p){
-//        	unset($p['_id']);
-        	if(!isset($p['birth_date'])){
-        		$p['birth_date'] = null;	
-        	}else{
-        		$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
-        	}
-        	$p['registered'] = datetimeMongotoReadable($p['date_added']);
-        	unset($p['date_added']);
-            
-        	$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
-			'cl_player_id' => $p['cl_player_id']
-			)));
-
-        	$p['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
-        	$p['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
-        }
+			'exp',
+			'level',
+			'date_added',
+			'birth_date'));
+			
+			$player['player'][$i]['last_login']= $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
+			$player['player'][$i]['last_logout']= $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+		}     
 
         $this->response($this->resp->setRespond($player), 200);
+
     }
+
+    
 	public function details_get($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
