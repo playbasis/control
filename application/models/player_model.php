@@ -255,6 +255,7 @@ class Player_model extends MY_Model
                 if(!$result)
                     continue;
                 $result = $result[0];
+                $badge['badge_id'] = $badge['badge_id']."";
                 $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
                 $badge['name'] = $result['name'];
                 $badge['description'] = $result['description'];

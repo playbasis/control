@@ -250,7 +250,11 @@ class Engine extends REST_Controller
 			$jigsawSet = $rule['jigsaw_set'];
 			foreach($jigsawSet as $jigsaw)
 			{
-				$jigsaw_id = new MongoId($jigsaw['id']);
+                try {
+                    $jigsaw_id = new MongoId($jigsaw['id']);
+                }catch (MongoException $ex) {
+                    $jigsaw_id = "";
+                }
 				$input['jigsaw_id'] = $jigsaw_id;
 				$input['jigsaw_name'] = $jigsaw['name'];
 				$input['jigsaw_category'] = $jigsaw['category'];
