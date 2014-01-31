@@ -66,6 +66,10 @@ class Error extends CI_Model
 			$errorData['message'] = "Reward not available";
 			$errorData['error_code'] = '0401';
 			break;
+        case 'GOODS_NOT_FOUND':
+            $errorData['message'] = "Goods not available";
+            $errorData['error_code'] = '0501';
+            break;
 		default:
 			$errorData['message'] = "Unknow";
 			$errorData['error_code'] = '9999';
