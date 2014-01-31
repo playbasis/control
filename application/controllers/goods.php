@@ -208,6 +208,10 @@ class Goods extends REST_Controller
         return false;
     }
 
+    private function getRedeemGoods($pb_player_id, $goods, $amount, $validToken){
+
+    }
+
     public function test_get()
     {
         $validToken = $this->auth_model->findToken($this->input->get('token'));
@@ -337,8 +341,15 @@ class Goods extends REST_Controller
         }
 
         echo "<pre>";
-        var_dump($redeemResult);
+        var_dump($redeemResult['events']);
+        var_dump(count($redeemResult['events']));
         echo "</pre>";
+
+        if(isset($redeemResult['events']) && count($redeemResult['events']) > 0){
+            return $redeemResult;
+        }else{
+
+        }
 
         
     }
