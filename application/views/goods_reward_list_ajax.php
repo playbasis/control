@@ -9,7 +9,7 @@ if($point_list){
             foreach($point_list as $point){
                 ?>
                 <?php echo $point['name']; ?>
-                <input type="text" name="reward_reward[<?php echo $point['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="" /><br/>
+                <input type="text" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="" /><br/>
             <?php
             }
             ?>

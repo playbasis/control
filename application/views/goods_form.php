@@ -142,12 +142,12 @@
                                                 foreach($badge_list as $badge){
                                                     ?>
                                                     <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" />
-                                                    <input type="text" name="reward_badge[<?php echo $badge['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php if(set_value('reward_badge['.$badge['_id'].']')){
-                                                        echo set_value('reward_badge['.$badge['_id'].']');
+                                                    <input type="text" name="reward_badge[<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php if(set_value('reward_badge['.$badge['badge_id'].']')){
+                                                        echo set_value('reward_badge['.$badge['badge_id'].']');
                                                     }else{
                                                         if($reward_badge){
                                                             foreach($reward_badge as $rbk => $rb){
-                                                                if($rbk == $badge['_id']){
+                                                                if($rbk == $badge['badge_id']){
                                                                     echo $rb;
                                                                     continue;
                                                                 }
@@ -175,12 +175,12 @@
                                                 foreach($point_list as $point){
                                                     ?>
                                                     <?php echo $point['name']; ?>
-                                                    <input type="text" name="reward_reward[<?php echo $point['_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['_id'].']')){
-                                                        echo set_value('reward_reward['.$point['_id'].']');
+                                                    <input type="text" name="reward_reward[<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php if(set_value('reward_reward['.$point['reward_id'].']')){
+                                                        echo set_value('reward_reward['.$point['reward_id'].']');
                                                     }else{
                                                         if($reward_reward){
                                                             foreach($reward_reward as $rbk => $rb){
-                                                                if($rbk == $point['_id']){
+                                                                if($rbk == $point['reward_id']){
                                                                     echo $rb;
                                                                     continue;
                                                                 }
