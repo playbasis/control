@@ -827,6 +827,31 @@ class Player extends REST_Controller
         $level= $this->level_model->getLevelsDetail($validToken['client_id'], $validToken['site_id']);
         $this->response($this->resp->setRespond($level), 200);
     }
+    public function goods_get($player_id='')
+    {
+        $required = $this->input->checkParam(array(
+            'api_key'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if(!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+        $site_id = $validToken['site_id'];
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        //get player goods
+        $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $site_id);
+        $this->response($this->resp->setRespond($goodsList), 200);
+    }
 	public function test_get()
 	{
 		echo '<pre>';

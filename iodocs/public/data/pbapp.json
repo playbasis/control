@@ -772,6 +772,22 @@
                             "Description": "number of results to return for each point type"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Goods",
+                    "Synopsis": "Returns information about all the goods list that a player has redeem.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/goods",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 }
 			]
 		},
@@ -892,6 +908,48 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "amount of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward quantity"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Redeem API",
+            "methods": [
+                {
+                    "MethodName": "Redeem",
+                    "Synopsis": "Redeem Goods for a client’s website.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/goods",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "goods_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods id of goods store"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to give to player"
                         }
                     ]
                 }

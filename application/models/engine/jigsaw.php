@@ -413,10 +413,11 @@ class jigsaw extends MY_Model
 			'substract',
 			'quantity'));
 		$this->mongo_db->where(array(
-			'_id' => $badgeId,
+            'site_id' => $site_id,
+			'badge_id' => $badgeId,
 			'deleted' => false
 		));
-		$badgeInfo = $this->mongo_db->get('playbasis_badge');
+		$badgeInfo = $this->mongo_db->get('playbasis_badge_to_client');
 		if(!$badgeInfo || !$badgeInfo[0])
 			return false;
 		$badgeInfo = $badgeInfo[0];

@@ -95,14 +95,15 @@ $route['Player/badge'] = 'player/badge/0';
 $route['Player/'.ANY_STRING.'/badge/'.ANY_STRING.'/claim'] = 'player/claimBadge/$1/$2';
 $route['Player/'.ANY_STRING.'/badge/'.ANY_STRING.'/redeem'] = 'player/redeemBadge/$1/$2';
 
+$route['Player/'.ANY_STRING.'/goods'] = 'player/goods/$1';
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
 $route['Badges'] = 'badge/index';
 
-//badge API
+//Goods API
 $route['Goods/'.ANY_STRING] = 'goods/index/$1';
-$route['Goods']  = 'goods/index';
 $route['Goods'] = 'goods/index';
 
 //engine API
@@ -110,6 +111,10 @@ $route['Engine/actionConfig']	= 'engine/getActionConfig';
 $route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
 $route['Engine/facebook']	= 'engine/rule/facebook';
+
+//redeem API
+$route['Redeem/goods/'.ANY_STRING] = 'redeem/good/$1';
+$route['Redeem/goods/'] = 'redeem/good/0';
 
 //misc
 $route['test']	= 'playbasis/test';

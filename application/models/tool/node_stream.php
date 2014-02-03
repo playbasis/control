@@ -76,9 +76,22 @@ class Node_stream extends MY_Model
 				)
 			);
 		}
+        elseif(isset($data['goods']))
+        {
+            $activityFormat['object']['goods'] = array(
+                'id' => $data['goods']['goods_id'],
+                'name' => $data['goods']['name'],
+                'image' => array(
+                    'url' => $data['goods']['image'],
+                    'width' => 76,
+                    'height' => 76
+                )
+            );
+        }
 		else
 		{
 			$activityFormat['object']['badge'] = NULL;
+            $activityFormat['object']['goods'] = NULL;
 		}
 		$activityFormat['object']['level'] = isset($data['level']) ? $data['level'] : NULL;
 		$activityFormat['object']['point'] = isset($data['point']) ? $data['point'] : NULL;
