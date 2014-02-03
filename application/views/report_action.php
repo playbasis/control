@@ -45,8 +45,8 @@
                     <td class="left"><?php echo $this->lang->line('column_player_id'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
                     <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_level'); ?></td>
-                    <td class="left"><?php echo $this->lang->line('column_exp'); ?></td>
+                    <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
+                    <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
                     <td class="right"><?php echo $this->lang->line('column_action_name'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_url'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
@@ -60,8 +60,8 @@
                         <td class="left"><?php echo $report['cl_player_id']; ?></td>
                         <td class="left"><?php echo $report['username']; ?></td>
                         <td class="left"><?php echo $report['email']; ?></td>
-                        <td class="left"><?php echo $report['level']; ?></td>
-                        <td class="left"><?php echo $report['exp']; ?></td>
+                        <!-- <td class="left"><?php //echo $report['level']; ?></td>
+                        <td class="left"><?php //echo $report['exp']; ?></td> -->
                         <td class="right"><?php echo $report['action_name']; ?></td>
                         <td class="right"><?php echo $report['url']; ?></td>
                         <td class="right"><?php echo $report['date_added']; ?></td>
