@@ -212,17 +212,19 @@ class Client_model extends MY_Model
 			'quantity'
 		));
 		$this->mongo_db->where(array(
-			'_id' => $badgeId,
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+			'badge_id' => $badgeId,
 			'deleted' => false
 		));
-		$result = $this->mongo_db->get('playbasis_badge');
+		$result = $this->mongo_db->get('playbasis_badge_to_client');
 		if(!$result)
 			return;
 		$badgeInfo = $result[0];
 		$mongoDate = new MongoDate(time());
 		if($badgeInfo['substract'])
 		{
-			$remainingQuantity = $badgeInfo['quantity'] - $quantity;
+			$remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
 			if($remainingQuantity < 0)
 			{
 				$remainingQuantity = 0;
@@ -230,8 +232,10 @@ class Client_model extends MY_Model
 			}
 			$this->mongo_db->set('quantity', $remainingQuantity);
 			$this->mongo_db->set('date_modified', $mongoDate);
-			$this->mongo_db->where('_id', $badgeId);
-			$this->mongo_db->update('playbasis_badge');
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+			$this->mongo_db->where('badge_id', $badgeId);
+			$this->mongo_db->update('playbasis_badge_to_client');
 		}
 		//update player badge table
 		$this->mongo_db->where(array(
@@ -379,5 +383,84 @@ class Client_model extends MY_Model
 		$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
 		return $badge;
 	}
+    public function updateplayerGoods($goodsId, $quantity, $pbPlayerId, $clPlayerId, $client_id, $site_id)
+    {
+        assert(isset($goodsId));
+        assert(isset($quantity));
+        assert(isset($pbPlayerId));
+        //update badge master table
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array(
+            'quantity'
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'goods_id' => $goodsId,
+            'deleted' => false
+        ));
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+        if(!$result)
+            return;
+        $goodsInfo = $result[0];
+        $mongoDate = new MongoDate(time());
+
+        $remainingQuantity = $goodsInfo['quantity'] - $quantity;
+        if($remainingQuantity < 0)
+        {
+            $remainingQuantity = 0;
+            $quantity = $goodsInfo['quantity'];
+        }
+        $this->mongo_db->set('quantity', $remainingQuantity);
+        $this->mongo_db->set('date_modified', $mongoDate);
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('goods_id', $goodsId);
+        $this->mongo_db->update('playbasis_goods_to_client');
+
+        //update player badge table
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pbPlayerId,
+            'goods_id' => $goodsId
+        ));
+        $hasBadge = $this->mongo_db->count('playbasis_goods_to_player');
+        if($hasBadge)
+        {
+            $this->mongo_db->where(array(
+                'pb_player_id' => $pbPlayerId,
+                'goods_id' => $goodsId
+            ));
+            $this->mongo_db->set('date_modified', $mongoDate);
+            $this->mongo_db->inc('value', intval($quantity));
+            $this->mongo_db->update('playbasis_goods_to_player');
+        }
+        else
+        {
+            $this->mongo_db->insert('playbasis_goods_to_player', array(
+                'pb_player_id' => $pbPlayerId,
+                'cl_player_id' => $clPlayerId,
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'goods_id' => $goodsId,
+                'value' => intval($quantity),
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate
+            ));
+        }
+    }
+
+    public function getRewardName($input)
+    {
+        $this->set_site_mongodb($input['site_id']);
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->where(array(
+            'client_id' => $input['client_id'],
+            'site_id' => $input['site_id'],
+            'reward_id' => new MongoId($input['reward_id'])
+        ));
+        $result = $this->mongo_db->get('playbasis_reward_to_client');
+
+        return $result ? $result[0]['name'] : null;
+    }
 }
 ?>

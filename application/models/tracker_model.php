@@ -54,6 +54,8 @@ class Tracker_model extends MY_Model
             'site_id'		=> $input['site_id'],
             'goods_id'		=> $input['goods_id'],
             'goods_name'	=> $input['goods_name'],
+            'redeem'        => $input['redeem'],
+            'amount'        => $input['amount'],
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));

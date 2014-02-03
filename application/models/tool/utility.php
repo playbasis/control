@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Utility extends CI_Model
 {
-	public function getEventMessage($eventType, $amount = 'some', $pointName = 'points', $badgeName = 'a', $newLevel = '', $objectiveName = '')
+	public function getEventMessage($eventType, $amount = 'some', $pointName = 'points', $badgeName = 'a', $newLevel = '', $objectiveName = '', $goodsName = '')
 	{
 		switch($eventType)
 		{
@@ -18,6 +18,8 @@ class Utility extends CI_Model
 			return 'logged out';
 		case 'objective':
 			return 'completed an objective "'.$objectiveName.'"';
+        case 'goods':
+            return "redeem $goodsName goods";
 		default:
 			return 'did a thing';
 		}
