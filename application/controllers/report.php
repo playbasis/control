@@ -68,7 +68,7 @@ class Report extends MY_Controller
     private function getActionList($offset, $url){
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-        $per_page = 100;
+        $per_page = 10;
         $parameter_url = "?t=".rand();
 
         $this->load->library('pagination');
@@ -151,8 +151,8 @@ class Report extends MY_Controller
                 'username'          => $player['username'],
                 'image'             => $thumb,
                 'email'             => $player['email'],
-                'exp'               => $player['exp'],
-                'level'             => $player['level'],
+                // 'exp'               => $player['exp'],
+                // 'level'             => $player['level'],
                 'action_name'       => $result['action_name'],
                 'url'               => $result['url'],
                 'date_added'        => $this->datetimeMongotoReadable($result['date_added'])
@@ -175,6 +175,20 @@ class Report extends MY_Controller
         $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
         $config['page_query_string'] = true;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
 
         $this->pagination->initialize($config);
 
