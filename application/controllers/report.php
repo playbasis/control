@@ -47,6 +47,10 @@ class Report extends MY_Controller
 
     public function action() {
 
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -56,6 +60,10 @@ class Report extends MY_Controller
     }
 
     public function action_page($offset=0) {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
