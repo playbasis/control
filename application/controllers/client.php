@@ -392,7 +392,7 @@ class Client extends MY_Controller
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'clients')) {
+        if ($this->User_model->hasPermission('modify', 'client')) {
             return true;
         } else {
             return false;
@@ -400,7 +400,7 @@ class Client extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'clients')) {
+        if ($this->User_model->hasPermission('access', 'client')) {
             return true;
         } else {
             return false;
