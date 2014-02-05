@@ -161,7 +161,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -192,7 +192,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_select');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -263,7 +263,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -306,7 +306,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_select');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -387,7 +387,7 @@ class FileManager extends MY_Controller
             }
         }
 
-        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -462,7 +462,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
@@ -540,7 +540,7 @@ class FileManager extends MY_Controller
             $json['error'] = $this->lang->line('error_directory');
         }
 
-        if (!$this->User_model->hasPermission('modify', 'file_manager')) {
+        if (!$this->User_model->hasPermission('modify', 'filemanager')) {
             $json['error'] = $this->lang->line('error_permission');
         }
 
