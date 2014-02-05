@@ -4,7 +4,7 @@
             <h1><img src="image/report.png" alt="" /> <?php echo $heading_title; ?></h1>
         </div>
         <div class="content">
-        <div id="tabs" class="htabs"><a href="<?php echo site_url('report/action');?>" style="display:inline;" class="selected" >Tab1</a><a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Tab2</a></div>
+        <div id="tabs" class="htabs"><a href="<?php echo site_url('report/action');?>" style="display:inline;">Tab1</a><a href="<?php echo site_url('report/rewards_badges');?>" class="selected" style="display:inline;">Tab2</a></div>
             <div class="report-filter">
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
@@ -22,14 +22,21 @@
                         <?php echo $this->lang->line('filter_action_id'); ?>
                     <select name="filter_action_id">
                         <option value="0"><?php echo "All"; ?></option>
-                        <?php foreach ($actions as $action) { ?>
-                        <?php if ($action['action_id'] == $filter_action_id) { ?>
-                            <option value="<?php echo $action['action_id']; ?>" selected="selected"><?php echo $action['name']; ?></option>
-                            <?php } else { ?>
-                            <option value="<?php echo $action['action_id']; ?>"><?php echo $action['name']; ?></option>
-                            <?php } ?>
-                        <?php } ?>
+                        <?php //foreach ($actions as $action) { ?>
+                        <?php //if ($action['action_id'] == $filter_action_id) { ?>
+                            <!-- <option value="<?php //echo $action['action_id']; ?>" selected="selected"><?php //echo $action['name']; ?></option> -->
+                            <?php //} else { ?>
+                            <!-- <option value="<?php //echo $action['action_id']; ?>"><?php //echo $action['name']; ?></option> -->
+                            <?php //} ?>
+                        <?php //} ?>
+
+                        <?php foreach ($badge_rewards as $br){?>
+                            <option value="<?php echo $br['_id']?>"><?php echo $br['name'];?></option>
+                        <?php }?>
+
+                        
                     </select>
+
                 </span>
                 <span>
                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -48,8 +55,8 @@
                     <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
                     <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
                     <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
-                    <td class="right"><?php echo $this->lang->line('column_action_name'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_url'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_reward_name'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_reward_value'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
                 </thead>
@@ -63,8 +70,23 @@
                         <td class="left"><?php echo $report['email']; ?></td>
                         <!-- <td class="left"><?php //echo $report['level']; ?></td>
                         <td class="left"><?php //echo $report['exp']; ?></td> -->
-                        <td class="right"><?php echo $report['action_name']; ?></td>
-                        <td class="right"><?php echo $report['url']; ?></td>
+                        <td class="right">
+                            <?php 
+                            // if(isset($report['badge_name'])){
+                            //     echo $report['badge_name'];
+                            // }
+                            // if(isset($report['reward_name'])){
+                            //     echo $report['reward_name']['name'];
+                            // }
+                            if(isset($report['badge_name'])&&$report['badge_name']!=null){
+                                echo $report['badge_name'];
+                            }
+                            if(isset($report['reward_name'])&&$report['reward_name']!=null){
+                                echo $report['reward_name']['name'];
+                            }
+                            ?>
+                        </td>
+                        <td class="right"><?php echo $report['value']; ?></td>
                         <td class="right"><?php echo $report['date_added']; ?></td>
                     </tr>
                         <?php } ?>
@@ -86,7 +108,7 @@
 <script type="text/javascript"><!--
 function filter() {
     var d = new Date().getTime();
-    url = baseUrlPath+'report/action?t='+d;
+    url = baseUrlPath+'report_reward/reward_badge?t='+d;
 
     var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -153,3 +175,4 @@ $(document).ready(function() {
     $('#date-end').datepicker({dateFormat: 'yy-mm-dd'});
 });
 //--></script>
+

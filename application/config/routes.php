@@ -47,6 +47,7 @@ $route['logout'] = 'user/logout';
 $route['enable_user'] = 'user/enable_user';
 $route['forgot_password'] = '/user/forgot_password';
 $route['reset_password'] = '/user/reset_password';
+$route['report/rewards_badges'] = 'report_reward';
 
 $route['404_override'] = 'error/error_404';
 

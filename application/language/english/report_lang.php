@@ -21,6 +21,8 @@ $lang['column_exp']          				    = 'Exp';
 $lang['column_action_name']          			= 'Action';
 $lang['column_url']      				        = 'URL OR FILTER STRING';
 $lang['column_date_added']          			= 'DateTime';
+$lang['column_reward_name']						= 'Reward';
+$lang['column_reward_value']					= 'Value';
 
 // Button
 $lang['button_filter']							= 'Filter';
