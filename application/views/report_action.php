@@ -4,7 +4,7 @@
             <h1><img src="image/report.png" alt="" /> <?php echo $heading_title; ?></h1>
         </div>
         <div class="content">
-        <div id="tabs" class="htabs"><a href="<?php echo site_url('report/action');?>" style="display:inline;" class="selected" >Tab1</a><a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Tab2</a></div>
+        <div id="tabs" class="htabs"><a href="<?php echo site_url('report/action');?>" style="display:inline;" class="selected" >Actions</a><a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a></div>
             <div class="report-filter">
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>

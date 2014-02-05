@@ -4,7 +4,7 @@
             <h1><img src="image/report.png" alt="" /> <?php echo $heading_title; ?></h1>
         </div>
         <div class="content">
-        <div id="tabs" class="htabs"><a href="<?php echo site_url('report/action');?>" style="display:inline;">Tab1</a><a href="<?php echo site_url('report/rewards_badges');?>" class="selected" style="display:inline;">Tab2</a></div>
+        <div id="tabs" class="htabs"><a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a><a href="<?php echo site_url('report/rewards_badges');?>" class="selected" style="display:inline;">Rewards</a></div>
             <div class="report-filter">
                 <span>
                         <?php echo $this->lang->line('filter_date_start'); ?>
@@ -22,21 +22,14 @@
                         <?php echo $this->lang->line('filter_action_id'); ?>
                     <select name="filter_action_id">
                         <option value="0"><?php echo "All"; ?></option>
-                        <?php //foreach ($actions as $action) { ?>
-                        <?php //if ($action['action_id'] == $filter_action_id) { ?>
-                            <!-- <option value="<?php //echo $action['action_id']; ?>" selected="selected"><?php //echo $action['name']; ?></option> -->
-                            <?php //} else { ?>
-                            <!-- <option value="<?php //echo $action['action_id']; ?>"><?php //echo $action['name']; ?></option> -->
-                            <?php //} ?>
-                        <?php //} ?>
-
                         <?php foreach ($badge_rewards as $br){?>
+                            <?php if ($br['_id'] == $filter_action_id) { ?>
+                            <option selected="selected" value="<?php echo $br['_id']?>"><?php echo $br['name'];?></option>
+                            <?php }else{?>
                             <option value="<?php echo $br['_id']?>"><?php echo $br['name'];?></option>
+                            <?php }?>
                         <?php }?>
-
-                        
                     </select>
-
                 </span>
                 <span>
                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -72,12 +65,6 @@
                         <td class="left"><?php //echo $report['exp']; ?></td> -->
                         <td class="right">
                             <?php 
-                            // if(isset($report['badge_name'])){
-                            //     echo $report['badge_name'];
-                            // }
-                            // if(isset($report['reward_name'])){
-                            //     echo $report['reward_name']['name'];
-                            // }
                             if(isset($report['badge_name'])&&$report['badge_name']!=null){
                                 echo $report['badge_name'];
                             }

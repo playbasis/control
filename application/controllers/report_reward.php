@@ -42,6 +42,34 @@ class Report_reward extends MY_Controller{
         $this->getRewardsList($offset, site_url('report_reward/page'));
     }
 
+    public function reward_badge() {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getRewardsList(0, site_url('report_reward/page'));
+    }
+
+    public function reward_badge_page($offset=0) {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getRewardsList($offset, site_url('report_reward/page'));
+    }
+
     public function getRewardsList($offset, $url){
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
@@ -216,33 +244,7 @@ class Report_reward extends MY_Controller{
     }
 
 
-    public function reward_badge() {
-
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-        $this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-        $this->getRewardsList(0, site_url('report/action_page'));
-    }
-
-    public function reward_badge_page($offset=0) {
-
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-        $this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-        $this->getRewardsList($offset, site_url('report/action_page'));
-    }
+    
 
 
     private function validateAccess(){

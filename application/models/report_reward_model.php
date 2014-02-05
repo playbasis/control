@@ -32,6 +32,14 @@ class Report_reward_model extends MY_Model{
             $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lte' => new MongoDate(strtotime($data['date_modified']))));
         }
 
+        if (isset($data['action_id']) && $data['action_id'] != ''){
+            $badgereward = array(
+                    'reward_id' => new MongoID($data['action_id']), 
+                    'badge_id' => new MongoID($data['action_id'])                
+                );
+            $this->mongo_db->or_where($badgereward);
+        }
+
         $results = $this->mongo_db->count("playbasis_reward_to_player");
 
         return $results;
@@ -62,9 +70,13 @@ class Report_reward_model extends MY_Model{
             $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lte' => new MongoDate(strtotime($data['date_modified']))));
         }
 
-        // if (isset($data['action_id']) && $data['action_id'] != 0) {
-        //     $this->mongo_db->where('action_id',  new MongoID($data['action_id']));
-        // }
+        if (isset($data['action_id']) && $data['action_id'] != ''){
+            $badgereward = array(
+                    'reward_id' => new MongoID($data['action_id']), 
+                    'badge_id' => new MongoID($data['action_id'])                
+                );
+            $this->mongo_db->or_where($badgereward);
+        }
 
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
