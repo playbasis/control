@@ -246,7 +246,7 @@ class Statistic_model extends MY_Model
     public function getMonthlyActionmeaturement($data) {
         $this->set_site_mongodb(0);
 
-        if($data['client']){
+        if($data['client_id']){
             $this->mongo_db->select(array('_id','action_id','name','color','icon'));
 
             $this->mongo_db->where('client_id', new MongoID($data['client_id']));
