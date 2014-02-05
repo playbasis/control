@@ -1,8 +1,8 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
-class Report extends MY_Controller
-{
+
+class Report_reward extends MY_Controller{
+
     public function __construct()
     {
         parent::__construct();
@@ -17,7 +17,32 @@ class Report extends MY_Controller
         $this->lang->load("report", $lang['folder']);
     }
 
-    public function index() {
+    public function index(){
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getRewardsList(0, site_url('report_reward/page'));
+    }
+
+    public function page($offset = 0){
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->getRewardsList($offset, site_url('report_reward/page'));
+    }
+
+    public function reward_badge() {
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -28,10 +53,10 @@ class Report extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getActionList(0, site_url('report/page'));
+        $this->getRewardsList(0, site_url('report_reward/page'));
     }
 
-    public function page($offset=0) {
+    public function reward_badge_page($offset=0) {
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -42,46 +67,18 @@ class Report extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->getActionList($offset, site_url('report/page'));
+        $this->getRewardsList($offset, site_url('report_reward/page'));
     }
 
-    public function action() {
-
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-        $this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-        $this->getActionList(0, site_url('report/action_page'));
-    }
-
-    public function action_page($offset=0) {
-
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-        $this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-        $this->getActionList($offset, site_url('report/action_page'));
-    }
-
-    private function getActionList($offset, $url){
+    public function getRewardsList($offset, $url){
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-        $per_page = 10;
+        $per_page = 100;
         $parameter_url = "?t=".rand();
 
         $this->load->library('pagination');
 
-        $this->load->model('Action_model');
+        $this->load->model('Report_reward_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
 
@@ -118,7 +115,7 @@ class Report extends MY_Controller
 
         $limit =($this->input->get('limit')) ? $this->input->get('limit') : $per_page ;
 
-        $this->data['reports'] = array();
+        
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -126,8 +123,8 @@ class Report extends MY_Controller
         $data = array(
             'client_id'              => $client_id,
             'site_id'                => $site_id,
-            'date_start'	         => $filter_date_start,
-            'date_expire'	         => $filter_date_end,
+            'date_start'             => $filter_date_start,
+            'date_expire'            => $filter_date_end,
             'username'               => $filter_username,
             'action_id'              => $filter_action_id,
             'start'                  => $offset,
@@ -137,14 +134,18 @@ class Report extends MY_Controller
         $report_total = 0;
 
         $results = array();
-
         if($client_id){
-            $report_total = $this->Action_model->getTotalActionReport($data);
+            $report_total = $this->Report_reward_model->getTotalReportReward($data);
 
-            $results = $this->Action_model->getActionReport($data);
+            $results = $this->Report_reward_model->getReportReward($data);
         }
 
+        $this->data['reports'] = array();
+
         foreach ($results as $result) {
+
+            $budget_name = null;
+            $reward_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id']);
 
@@ -154,16 +155,23 @@ class Report extends MY_Controller
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
             }
 
+            if($result['reward_id'] != null){
+                $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
+            }else{
+                $this->load->model('Badge_model');
+                $badge_info = $this->Badge_model->getBadge($result['badge_id']);
+                $badge_name = $badge_info['name'];
+            }
+
             $this->data['reports'][] = array(
                 'cl_player_id'      => $player['cl_player_id'],
                 'username'          => $player['username'],
                 'image'             => $thumb,
                 'email'             => $player['email'],
-                // 'exp'               => $player['exp'],
-                // 'level'             => $player['level'],
-                'action_name'       => $result['action_name'],
-                'url'               => $result['url'],
-                'date_added'        => $this->datetimeMongotoReadable($result['date_added'])
+                'date_added'        => datetimeMongotoReadable($result['date_added']),
+                'reward_name'       => isset($reward_name)?$reward_name:null,
+                'badge_name'        => isset($badge_name)?$badge_name:null,
+                'value'             => $result['value']
             );
         }
 
@@ -172,7 +180,29 @@ class Report extends MY_Controller
         if($client_id){
             $data_filter['client_id'] = $client_id;
             $data_filter['site_id'] = $site_id;
-            $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
+            // $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
+
+            $badges_reward = $this->Report_reward_model->getRewardsBadgesSite($data_filter);
+
+            $all_badges_reward = array();
+            foreach($badges_reward as $br){
+                if($br['reward_id']!=null){
+                    $reward = $this->Report_reward_model->getRewardName($br['reward_id']);
+                    if(!in_array($reward, $all_badges_reward)){
+                        $all_badges_reward[] = $this->Report_reward_model->getRewardName($br['reward_id']);
+                    }
+                }
+
+                if($br['badge_id']!=null){
+                    $this->load->model('Badge_model');
+                    $badge_info = $this->Badge_model->getBadge($br['badge_id']);
+                    if(!in_array($badge_info, $all_badges_reward)){
+                        $all_badges_reward [] = $badge_info;    
+                    }
+                }
+            }
+            $this->data['badge_rewards'] = $all_badges_reward;
+
         }
 
         $config['base_url'] = $url.$parameter_url;
@@ -207,158 +237,26 @@ class Report extends MY_Controller
         $this->data['filter_username'] = $filter_username;
         $this->data['filter_action_id'] = $filter_action_id;
 
-        $this->data['main'] = 'report_action';
+        $this->data['main'] = 'report_reward';
         $this->load->vars($this->data);
         $this->render_page('template');
-    }
-
-    private function xlsBOF()
-    {
-        echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
-        return;
-    }
-    private function xlsEOF()
-    {
-        echo pack("ss", 0x0A, 0x00);
-        return;
-    }
-    private function xlsWriteNumber($Row, $Col, $Value)
-    {
-        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);
-        echo pack("d", $Value);
-        return;
-    }
-    private function xlsWriteLabel($Row, $Col, $Value )
-    {
-        $L = strlen($Value);
-        echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
-        echo $Value;
-        return;
-    }
-
-    private function array2csv(array &$array)
-    {
-        if (count($array) == 0) {
-            return null;
-        }
-        ob_start();
-        $df = fopen("php://output", 'w');
-        fputcsv($df, array_keys(reset($array)));
-        foreach ($array as $row) {
-            fputcsv($df, $row);
-        }
-        fclose($df);
-        return ob_get_clean();
-    }
-
-    function download_send_headers($filename) {
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Content-Type: application/force-download");
-        header("Content-Type: application/octet-stream");
-        header("Content-Type: application/download");
-        header("Content-Disposition: attachment;filename={$filename}");
-        header("Content-Transfer-Encoding: binary");
-    }
-
-    public function actionDownload() {
-
-        $this->load->model('Action_model');
-        $this->load->model('Player_model');
-
-        if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
-        } else {
-            $filter_date_start = '';
-        }
-
-        if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-        } else {
-            $filter_date_end = '';
-        }
-
-        if ($this->input->get('username')) {
-            $filter_username = $this->input->get('username');
-        } else {
-            $filter_username = '';
-        }
-
-        if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-        } else {
-            $filter_action_id = 0;
-        }
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
-        $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'	         => $filter_date_start,
-            'date_expire'	         => $filter_date_end,
-            'username'               => $filter_username,
-            'action_id'              => $filter_action_id
-        );
-
-        $filename = md5(date('YmdH').$filter_date_start.$site_id.$filter_date_end.$filter_username.$filter_action_id).".xls";
-
-        $this->download_send_headers("ActionReport_" . date("YmdHis") . ".xls");
-
-        $this->xlsBOF();
-
-        $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
-        $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
-        $this->xlsWriteLabel(0,2,$this->lang->line('column_email'));
-        $this->xlsWriteLabel(0,3,$this->lang->line('column_level'));
-        $this->xlsWriteLabel(0,4,$this->lang->line('column_exp'));
-        $this->xlsWriteLabel(0,5,$this->lang->line('column_action_name'));
-        $this->xlsWriteLabel(0,6,$this->lang->line('column_url'));
-        $this->xlsWriteLabel(0,7,$this->lang->line('column_date_added'));
-        $xlsRow = 1;
-
-        $results = $this->Action_model->getActionReport($data, true);
-
-        foreach($results as $row)
-        {
-            $player = $this->Player_model->getPlayerById($row['pb_player_id']);
-
-            $this->xlsWriteNumber($xlsRow,0,$player['cl_player_id']);
-            $this->xlsWriteLabel($xlsRow,1,$player['username']);
-            $this->xlsWriteLabel($xlsRow,2,$player['email']);
-            $this->xlsWriteLabel($xlsRow,3,$player['level']);
-            $this->xlsWriteLabel($xlsRow,4,$player['exp']);
-            $this->xlsWriteLabel($xlsRow,5,$row['action_name']);
-            $this->xlsWriteLabel($xlsRow,6,$row['url']);
-            $this->xlsWriteLabel($xlsRow,7,$this->datetimeMongotoReadable($row['date_added']));
-            $xlsRow++;
-        }
-        $this->xlsEOF();
 
     }
 
-    private function datetimeMongotoReadable($dateTimeMongo)
-    {
-        if ($dateTimeMongo) {
-            if (isset($dateTimeMongo->sec)) {
-                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
-            } else {
-                $dateTimeMongo = $dateTimeMongo;
-            }
-        } else {
-            $dateTimeMongo = "0000-00-00 00:00:00";
-        }
-        return $dateTimeMongo;
-    }
+
+    
+
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'report/action')) {
+        if ($this->User_model->hasPermission('access', 'report')) {
             return true;
         } else {
             return false;
         }
     }
+
+
+
 }
+
 ?>
