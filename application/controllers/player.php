@@ -679,7 +679,7 @@ class Player extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'players')) {
+        if ($this->User_model->hasPermission('access', 'player')) {
             return true;
         } else {
             return false;

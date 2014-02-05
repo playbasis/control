@@ -448,7 +448,7 @@ class Plan extends MY_Controller
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'plan_setting')) {
+        if ($this->User_model->hasPermission('modify', 'plan')) {
             return true;
         } else {
             return false;
@@ -456,7 +456,7 @@ class Plan extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'plan_setting')) {
+        if ($this->User_model->hasPermission('access', 'plan')) {
             return true;
         } else {
             return false;

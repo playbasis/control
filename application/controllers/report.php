@@ -295,7 +295,7 @@ class Report extends MY_Controller
             'action_id'              => $filter_action_id
         );
 
-        $filename = md5(date('YmdH').$filter_date_start.$site_id.$filter_date_end.$filter_username.$filter_action_id).".xlsx";
+        $filename = md5(date('YmdH').$filter_date_start.$site_id.$filter_date_end.$filter_username.$filter_action_id).".xls";
 
         $this->download_send_headers("ActionReport_" . date("YmdHis") . ".xls");
 
@@ -346,7 +346,7 @@ class Report extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'report')) {
+        if ($this->User_model->hasPermission('access', 'report/action')) {
             return true;
         } else {
             return false;

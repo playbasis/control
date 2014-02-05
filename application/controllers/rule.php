@@ -164,7 +164,7 @@ class Rule extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'rule_set')) {
+        if ($this->User_model->hasPermission('access', 'rule')) {
             return true;
         } else {
             return false;

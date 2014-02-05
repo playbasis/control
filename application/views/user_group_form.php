@@ -43,7 +43,7 @@
 										<?php $temp_features_access = $temp_features['permission']['access'];?>
 
 										<?php for($i = 0; $i<count($all_features); $i++){?>
-										<?php $feature_lowercase = implode("_", explode(" ",strtolower($all_features[$i]['name'])));?>
+										<?php $feature_lowercase = implode("_", explode(" ",strtolower($all_features[$i]['link'])));?>
 											<?php if(in_array($feature_lowercase, $temp_features_access)){?>
 												<div class = '<?php if(($i%2) == 0){echo "even";}else{echo "odd";}?>'>
 													<input type="checkbox" checked = "checked" name="permission[access][]" value="<?php echo $feature_lowercase?>"> <?php echo $all_features[$i]['name'];?>

@@ -255,7 +255,7 @@ class Dashboard extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'dashboard')) {
+        if ($this->User_model->hasPermission('access', '/')) {
             return true;
         } else {
             return false;
