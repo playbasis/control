@@ -151,7 +151,7 @@ class  MY_Controller  extends  CI_Controller  {
 
                 
                 foreach ($features as $value) {
-                    if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['name']))))){
+                    if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
                         $this->data['features'][] = array(
                             'feature_id' => $value['_id'],
                             'name' => $value['name'],
