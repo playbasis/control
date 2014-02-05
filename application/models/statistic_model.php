@@ -246,34 +246,42 @@ class Statistic_model extends MY_Model
     public function getMonthlyActionmeaturement($data) {
         $this->set_site_mongodb(0);
 
-        $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $actions =  $this->mongo_db->get('playbasis_action_to_client');
+        if($data['client']){
+            $this->mongo_db->select(array('_id','action_id','name','color','icon'));
 
-        foreach ($actions as &$action) {
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $actions =  $this->mongo_db->get('playbasis_action_to_client');
 
-            $r1 =  $this->getCountLogClient($data, $action, '-1 month', null);
+            foreach ($actions as &$action) {
 
-            $action['value'] = (int)$r1;
+                $r1 =  $this->getCountLogClient($data, $action, '-1 month', null);
 
-            $action['circle'] = $action['color']."Circle";
-            $action['class'] = $action['icon'];
+                $action['value'] = (int)$r1;
 
-            $r2 =  $this->getCountLogClient($data, $action, '-2 month', '-1 month');
+                $action['circle'] = $action['color']."Circle";
+                $action['class'] = $action['icon'];
 
-            $action['count_of_last_month'] =  (int)$r2;
+                $r2 =  $this->getCountLogClient($data, $action, '-2 month', '-1 month');
 
-            //zero check
-            $rateFactor = ($action['count_of_last_month'])? $action['count_of_last_month'] : 1;
+                $action['count_of_last_month'] =  (int)$r2;
 
-            //advancement rate
-            $action['advancement_direction'] = ($action['value'] - $action['count_of_last_month']) >= 0 ? '+' : '-';
-            $action['advancement_difference'] = abs($action['value'] - $action['count_of_last_month']);
-            $action['advancement_rate'] = abs(floor((($action['value'] - $action['count_of_last_month'])*100)/$rateFactor));
+                //zero check
+                $rateFactor = ($action['count_of_last_month'])? $action['count_of_last_month'] : 1;
+
+                //advancement rate
+                $action['advancement_direction'] = ($action['value'] - $action['count_of_last_month']) >= 0 ? '+' : '-';
+                $action['advancement_difference'] = abs($action['value'] - $action['count_of_last_month']);
+                $action['advancement_rate'] = abs(floor((($action['value'] - $action['count_of_last_month'])*100)/$rateFactor));
+            }
+
+            return $actions;    
+        }else{
+            return array();
         }
 
-        return $actions;
+
+        
     }
 
     public function LeaderBoard($data){
