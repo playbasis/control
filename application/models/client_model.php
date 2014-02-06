@@ -2,8 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Client_model extends MY_Model
 {
-    public function getClient($client_id) {
-        $this->set_site_mongodb(0);
+    public function getClient($client_id, $site_id) {
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('_id',  new MongoID($client_id));
         $results = $this->mongo_db->get("playbasis_client");

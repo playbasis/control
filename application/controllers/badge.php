@@ -162,7 +162,7 @@ class Badge extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
-                    if(!$this->Badge_model->checkBadgeIsSponsor($badge_id)){
+                    if(!$this->Badge_model->checkBadgeIsSponsor($badge_id, $this->User_model->getSiteId())){
                         $badge_data['client_id'] = $this->User_model->getClientId();
                         $badge_data['site_id'] = $this->User_model->getSiteId();
                         $this->Badge_model->editBadgeToClient($badge_id, $badge_data);
@@ -171,7 +171,7 @@ class Badge extends MY_Controller
                     }
                 }else{
                     $this->Badge_model->editBadge($badge_id, $badge_data);
-                    
+                    #todo broken for check all client all database
                     $this->Badge_model->editBadgeToClientFromAdmin($badge_id, $badge_data);
                 }
 
@@ -202,13 +202,15 @@ class Badge extends MY_Controller
                 if($this->checkOwnerBadge($badge_id)){
                     
                     if($this->User_model->getClientId()){
-                        if(!$this->Badge_model->checkBadgeIsSponsor($badge_id)){
-                            $this->Badge_model->deleteBadgeClient($badge_id);
+                        if(!$this->Badge_model->checkBadgeIsSponsor($badge_id, $this->User_model->getSiteId())){
+                            $site_id = $this->User_model->getSiteId();
+                            $this->Badge_model->deleteBadgeClient($badge_id, $site_id);
                         }else{
                             redirect('/badge', 'refresh');
                         }
                     }else{
-                        $this->Badge_model->deleteBadge($badge_id); 
+                        $this->Badge_model->deleteBadge($badge_id);
+                        #todo cannot check all database
                         $this->Badge_model->deleteClientBadgeFromAdmin($badge_id);   
                     }
                     
@@ -246,6 +248,7 @@ class Badge extends MY_Controller
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
+            $data['site_id'] = $site_id;
 
             $results = $this->Badge_model->getBadges($data);
 
@@ -258,6 +261,7 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }
+                #todo cannot check all database
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
@@ -292,7 +296,7 @@ class Badge extends MY_Controller
 
                 foreach ($badges as $badge) {
 
-                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
+                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id'],$site_id);
 
                     if($badge_info){
 
@@ -391,6 +395,7 @@ class Badge extends MY_Controller
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
+            $data['site_id'] = $site_id;
 
             $results = $this->Badge_model->getBadges($data);
 
@@ -403,6 +408,7 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }
+                #todo cannot check all database
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
@@ -439,7 +445,7 @@ class Badge extends MY_Controller
 
                 foreach ($badges as $badge) {
 
-                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id']);
+                    $badge_info = $this->Badge_model->getBadgeToClient($badge['_id'],$site_id);
 
                     if($badge_info){
 
@@ -507,7 +513,8 @@ class Badge extends MY_Controller
 
         if (isset($badge_id) && ($badge_id != 0)) {
             if($this->User_model->getClientId()){
-                $badge_info = $this->Badge_model->getBadgeToClient($badge_id);
+                $site_id = $this->User_model->getSiteId();
+                $badge_info = $this->Badge_model->getBadgeToClient($badge_id,$site_id);
             }else{
                 $badge_info = $this->Badge_model->getBadge($badge_id);    
             }
@@ -754,6 +761,7 @@ class Badge extends MY_Controller
     }
 
     public function checkBadgeIsPublic($badge_id){
+        #todo cannot check all database
         $allBadgesFromClients = $this->Badge_model->checkBadgeIsPublic($badge_id);
 
         if(isset($allBadgesFromClients[0]['client_id'])){

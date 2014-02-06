@@ -694,8 +694,17 @@ class Goods extends MY_Controller
     public function getBadgeForGoods(){
         if($this->input->get('client_id')){
             $this->load->model('Badge_model');
+            $this->load->model('Domain_model');
 
-            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId(array("client_id" => $this->input->get('client_id') ));
+            $data_client = array("client_id" => $this->input->get('client_id') );
+
+            $site = $this->Domain_model->getDomainsByClientId($data_client);
+
+            $site = $site ? $site[0] : null;
+
+            $data_client["site_id"] = $site["_id"];
+
+            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId($data_client);
 
             $this->load->vars($this->data);
             $this->render_page('goods_badge_list_ajax');
