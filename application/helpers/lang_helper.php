@@ -11,5 +11,3 @@ function get_lang($session, $config){
     }
     return $lang;
 }
-
-?>
