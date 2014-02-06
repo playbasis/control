@@ -126,7 +126,7 @@ function filter() {
 
 function downloadFile() {
     var d = new Date().getTime();
-    url = baseUrlPath+'report/actionDownload?t='+d;
+    url = baseUrlPath+'report_reward/getRewardsToDownload?t='+d;
 
     var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 

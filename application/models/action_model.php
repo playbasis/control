@@ -618,7 +618,39 @@ class Action_model extends MY_Model
         return $this->mongo_db->get('playbasis_action_to_client');
     }
 
+    public function getActionsForDownload($data){
 
+        if(isset($data['username']) && $data['username'] != null){
+            $this->mongo_db->where('username', $data['username']);
+            $player_info = $this->mongo_db->get('playbasis_player');
+            $player_id = ($player_info)?$player_info[0]['_id']:null;
+        }
+
+
+        if(isset($data['site_id'])&&$data['site_id']!=null){
+            $this->mongo_db->where('site_id', $data['site_id']);
+            
+        }
+
+        if(isset($data['client_id'])&&$data['client_id']!=null){
+            $this->mongo_db->where('client_id', $data['client_id']);
+            
+        }
+
+        if(isset($player_id) && $player_id!=null){
+            $this->mongo_db->where('pb_player_id', $player_id);
+            echo $data['client_id'];
+        }
+
+        if(isset($data['action_id'])&&$data['action_id']!=null){
+            $this->mongo_db->where('action_id', $data['action_id']);
+        }        
+
+        $results = $this->mongo_db->get('playbasis_action_log');
+
+        return $results;
+
+    }
 
 }
 ?>
