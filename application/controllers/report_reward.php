@@ -251,8 +251,37 @@ class Report_reward extends MY_Controller{
         }
     }
 
-    public function getRewardsToDownload(){
-        $this->load->helper('php-excel');
+
+    private function xlsBOF()
+    {
+        echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
+    }
+    private function xlsEOF()
+    {
+        echo pack("ss", 0x0A, 0x00);
+    }
+    private function xlsWriteNumber($Row, $Col, $Value)
+    {
+        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);echo pack("d", $Value);
+    }
+    private function xlsWriteLabel($Row, $Col, $Value )
+    {
+        $L = strlen($Value);echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
+        echo $Value;
+    }
+
+    function download_send_headers($filename) {
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");
+        header("Content-Disposition: attachment;filename={$filename}");
+        header("Content-Transfer-Encoding: binary");
+    }
+
+    public function actionDownload() {
 
         $parameter_url = "?t=".rand();
         $this->load->model('Report_reward_model');
@@ -302,6 +331,7 @@ class Report_reward extends MY_Controller{
         $report_total = 0;
 
         $results = array();
+
         if($client_id){
             $report_total = $this->Report_reward_model->getTotalReportReward($data);
 
@@ -342,27 +372,37 @@ class Report_reward extends MY_Controller{
                 'value'             => $result['value']
             );
         }
-
-
-
         $results = $this->data['reports'];
+       
+        $this->download_send_headers("ActionReport_" . date("YmdHis") . ".xls");
+        $this->xlsBOF();
+        $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
+        $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
+        $this->xlsWriteLabel(0,2,$this->lang->line('column_email'));
+        $this->xlsWriteLabel(0,3,$this->lang->line('column_reward_name'));
+        $this->xlsWriteLabel(0,4,$this->lang->line('column_reward_value'));
+        $this->xlsWriteLabel(0,5,$this->lang->line('column_date_added'));
+        $xlsRow = 1;
+        
+        foreach($results as $row)
+        {
 
-        // echo "<pre>";
-        // var_dump($results);        
-        // echo "</pre>";
-
-        foreach ($results as $row){            
-            if($row['badge_name']!=null){
-                $data_array[] = array( $row['cl_player_id'], $row['username'], $row['email'], $row['badge_name'], $row['value'], $row['date_added']);    
+            if($row['badge_name'] != null){
+                $badge_name = $row['badge_name'];
             }else{
-                $data_array[] = array( $row['cl_player_id'], $row['username'], $row['email'], $row['reward_name']['name'], $row['value'], $row['date_added']);    
+                $reward_name = $row['reward_name']['name'];
             }
+
+            $this->xlsWriteNumber($xlsRow,0,$row['cl_player_id']);
+            $this->xlsWriteLabel($xlsRow,1,$row['username']);
+            $this->xlsWriteLabel($xlsRow,2,$row['email']);
+            $this->xlsWriteLabel($xlsRow,3,isset($badge_name)?$badge_name:$reward_name);
+            $this->xlsWriteLabel($xlsRow,4,$row['value']);
+            $this->xlsWriteLabel($xlsRow,5,$row['date_added']);
+            $xlsRow++;
         }
 
-        $xls = new Excel_XML;
-        $xls->addArray ($data_array);
-        $xls->generateXML ( "report".date("Y-m-d"));
-
+        $this->xlsEOF();
     }
 
 

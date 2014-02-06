@@ -226,20 +226,6 @@ class Report extends MY_Controller
         $L = strlen($Value);echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
         echo $Value;
     }
-    private function array2csv(array &$array)
-    {
-        if (count($array) == 0) {
-            return null;
-        }
-        ob_start();
-        $df = fopen("php://output", 'w');
-        fputcsv($df, array_keys(reset($array)));
-        foreach ($array as $row) {
-            fputcsv($df, $row);
-        }
-        fclose($df);
-        return ob_get_clean();
-    }
 
     function download_send_headers($filename) {
         header("Pragma: public");
@@ -340,63 +326,6 @@ class Report extends MY_Controller
         } else {
             return false;
         }
-    }
-
-    public function getActionsToDownload(){
-
-        $this->load->helper('php-excel');
-        
-        if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
-        } else {
-            $filter_date_start = '';
-        }
-
-        if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-        } else {
-            $filter_date_end = '';
-        }
-
-        if ($this->input->get('username')) {
-            $filter_username = $this->input->get('username');
-
-        } else {
-            $filter_username = '';
-        }
-
-        if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-        } else {
-            $filter_action_id = 0;
-        }
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
-        $data = array(
-                'client_id' =>$client_id,
-                'site_id' => $site_id,
-                'username' => $filter_username,
-                'date_expire' => $filter_date_end,
-                'date_start' => $filter_date_start,
-                'action_id' => $filter_action_id,
-            );
-
-        $this->load->model('Action_model');
-        $this->load->model('Player_model');
-
-        $results = $this->Action_model->getActionsForDownload($data);
-
-        foreach ($results as $row){
-            $player_info = $this->Player_model->getPlayerById($row['pb_player_id']);
-            $data_array[] = array( $player_info['cl_player_id'], $player_info['username'], $player_info['email'],$row['action_name'], $row['url'], date("Y-m-d", $row['date_added']->sec), );
-        }
-
-        $xls = new Excel_XML;
-        $xls->addArray ($data_array);
-        $xls->generateXML ( "report".date("Y-m-d") );
-
     }
 
 }
