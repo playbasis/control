@@ -2,8 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Action_model extends MY_Model
 {
-    public function getAction($action_id) {
-        $this->set_site_mongodb(0);
+    public function getAction($action_id, $site_id) {
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('_id',  new MongoID($action_id));
         $results = $this->mongo_db->get("playbasis_action");
@@ -12,7 +12,7 @@ class Action_model extends MY_Model
     }
 
     public function getActions($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -56,8 +56,8 @@ class Action_model extends MY_Model
         return $results;
     }
 
-    public function getTotalActions(){
-        $this->set_site_mongodb(0);
+    public function getTotalActions($site_id){
+        $this->set_site_mongodb($site_id);
 
         $results = $this->mongo_db->count("playbasis_action");
 
@@ -66,7 +66,7 @@ class Action_model extends MY_Model
 
     public function getTotalActionReport($data) {
 
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
@@ -101,7 +101,7 @@ class Action_model extends MY_Model
     }
 
     public function getActionSiteInfo($action_id, $site_id) {
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('action_id',  new MongoID($action_id));
         $this->mongo_db->where('site_id',  new MongoID($site_id));
@@ -111,7 +111,7 @@ class Action_model extends MY_Model
     }
 
      public function getActionsClient($data) {
-         $this->set_site_mongodb(0);
+         $this->set_site_mongodb($data['site_id']);
 
          $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status','date_added','date_modified'));
 
@@ -206,7 +206,7 @@ class Action_model extends MY_Model
     }*/
 
     public function getActionsSite($data) {
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->select(array('action_id','name','description','icon','color','sort_order','status','date_added','date_modified'));
 
@@ -258,7 +258,7 @@ class Action_model extends MY_Model
     }
 
     public function getTotalActionsSite($data) {
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
@@ -277,7 +277,7 @@ class Action_model extends MY_Model
 
     public function getActionReport($data) {
 
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
@@ -390,7 +390,7 @@ class Action_model extends MY_Model
     }
 
     public function addActionToClient($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
@@ -442,8 +442,8 @@ class Action_model extends MY_Model
 
     }
 
-    public function deleteActionClient($action_id){
-        $this->set_site_mongodb(0);
+    public function deleteActionClient($action_id, $site_id){
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('_id', new MongoId($action_id));
         $this->mongo_db->delete('playbasis_action_to_client');
@@ -490,7 +490,8 @@ class Action_model extends MY_Model
     }
 
     public function editActionToClient($action_id, $data){
-        $this->set_site_mongodb(0);
+        $site_id = isset($data['site_id']) ? $data['site_id'] : 0;
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('action_id', new MongoID($action_id));
 
@@ -529,7 +530,7 @@ class Action_model extends MY_Model
 
     public function checkActionExists($data){
 
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
         
         $this->mongo_db->where('name', utf8_strtolower($data['name']));
         $result = $this->mongo_db->get('playbasis_action');
@@ -539,7 +540,7 @@ class Action_model extends MY_Model
 
     public function checkActionClientExists($data){
 
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('name', utf8_strtolower($data['name']));
         $result = $this->mongo_db->get('playbasis_action_to_client');
@@ -548,6 +549,8 @@ class Action_model extends MY_Model
     }
 
     public function increaseOrderByOne($action_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoId($action_id));
         $theAction = $this->mongo_db->get('playbasis_action');
 
@@ -562,7 +565,8 @@ class Action_model extends MY_Model
     }
 
     
-    public function increaseOrderByOneClient($action_id, $client_id){
+    public function increaseOrderByOneClient($action_id, $client_id, $site_id){
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('action_id', new MongoId($action_id));
         $this->mongo_db->where('client_id', new MongoId($client_id));
@@ -580,6 +584,7 @@ class Action_model extends MY_Model
     }
 
     public function decreaseOrderByOne($action_id){
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoId($action_id));
         $theAction = $this->mongo_db->get('playbasis_action');
@@ -595,7 +600,8 @@ class Action_model extends MY_Model
         }
     }
 
-    public function decreaseOrderByOneClient($action_id, $client_id){
+    public function decreaseOrderByOneClient($action_id, $client_id, $site_id){
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('action_id', new MongoId($action_id));
         $this->mongo_db->where('client_id', new MongoId($client_id));
@@ -614,8 +620,10 @@ class Action_model extends MY_Model
     }
 
     public function checkActionIsPublic($action_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('action_id', $action_id);
-        return $this->mongo_db->get('playbasis_action_to_client');
+        return $this->mongo_db->get('playbasis_action_to_client_beta'); //we will create script for get data to each database to this collection
     }
 
 

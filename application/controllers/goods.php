@@ -766,7 +766,8 @@ class Goods extends MY_Controller
     public function increase_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $this->Goods_model->increaseOrderByOneClient($goods_id);
+            $site_id = $this->User_model->getSiteId();
+            $this->Goods_model->increaseOrderByOneClient($goods_id,$site_id);
         }else{
             $this->Goods_model->increaseOrderByOne($goods_id);
         }
@@ -779,7 +780,8 @@ class Goods extends MY_Controller
     public function decrease_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $this->Goods_model->decreaseOrderByOneClient($goods_id);
+            $site_id = $this->User_model->getSiteId();
+            $this->Goods_model->decreaseOrderByOneClient($goods_id, $site_id);
         }else{
             $this->Goods_model->decreaseOrderByOne($goods_id);
         }

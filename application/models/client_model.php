@@ -235,8 +235,8 @@ class Client_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getAction($action_id) {
-        $this->set_site_mongodb(0);
+    public function getAction($action_id, $site_id) {
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('_id',  new MongoID($action_id));
         $results = $this->mongo_db->get("playbasis_action");
@@ -326,7 +326,7 @@ class Client_model extends MY_Model
     }
 
     public function copyActionToClient($data_filter){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data_filter['site_id']);
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
@@ -346,7 +346,7 @@ class Client_model extends MY_Model
                 $allClients = $this->mongo_db->get('playbasis_action_to_client');
 
                 if(!$allClients){
-                    $action_data = $this->getAction($action_id);
+                    $action_data = $this->getAction($action_id, $data_filter['site_id']);
 
                     $insert_data = array(
                         'action_id' => new MongoID($action_id) ,

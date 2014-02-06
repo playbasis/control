@@ -146,7 +146,7 @@ class Plan_model extends MY_Model
     }
 
     public function getActions($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $sort_data = array(
             '_id',

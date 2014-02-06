@@ -416,6 +416,8 @@ class Goods_model extends MY_Model
     }
 
     public function increaseOrderByOne($goods_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoID($goods_id));
 
         $goods = $this->mongo_db->get('playbasis_goods');
@@ -430,6 +432,8 @@ class Goods_model extends MY_Model
     }
 
     public function decreaseOrderByOne($goods_id){
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('_id', new MongoID($goods_id));
         $goods = $this->mongo_db->get('playbasis_goods');
 
@@ -445,7 +449,9 @@ class Goods_model extends MY_Model
         
     }
 
-    public function increaseOrderByOneClient($goods_id){
+    public function increaseOrderByOneClient($goods_id, $site_id){
+        $this->set_site_mongodb($site_id);
+
         $this->mongo_db->where('_id', new MongoID($goods_id));
 
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
@@ -459,7 +465,9 @@ class Goods_model extends MY_Model
 
     }
 
-    public function decreaseOrderByOneClient($goods_id){
+    public function decreaseOrderByOneClient($goods_id, $site_id){
+        $this->set_site_mongodb($site_id);
+
         $this->mongo_db->where('_id', new MongoID($goods_id));
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
 
