@@ -194,7 +194,7 @@ class Statistic extends CI_Controller
                 if ($player_badge) {
                     foreach ($player_badge as $badge) {
 
-                        $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
+                        $badge_info = $this->Badge_model->getBadgeToClient($badge['badge_id'],$site_id);
 
                         if ($badge_info && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
                             $thumb = $this->Image_model->resize($badge_info['image'], 40, 40);
@@ -213,12 +213,7 @@ class Statistic extends CI_Controller
                     }
                 }
 
-                $point = 0;
-                foreach($result['value'] as $r){
-                    if(is_array($r) && isset($r['value'])){
-                        $point += $r['value'];
-                    }
-                }
+                $point = $this->Player_model->getPlayerPoint($data_player);
 
                 $players[] = array(
 //                    'pb_player_id' => $result['_id']['pb_player_id'],
