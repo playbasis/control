@@ -266,5 +266,4 @@ class Format {
 	}
 
 }
-
 /* End of file format.php */

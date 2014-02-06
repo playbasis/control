@@ -813,5 +813,3 @@ function utf8_from_unicode($data) {
 
     return $result;
 }
-
-?>
