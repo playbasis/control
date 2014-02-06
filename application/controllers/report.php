@@ -414,7 +414,7 @@ class Report extends MY_Controller
 
         $xls = new Excel_XML;
         $xls->addArray ($data_array);
-        $xls->generateXML ( "output_name" );
+        $xls->generateXML ( "report".date("Y-m-d") );
 
     }
 
