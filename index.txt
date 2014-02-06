@@ -68,6 +68,11 @@ reward_player_client
    "client_id": NumberInt(1),
    "site_id": NumberInt(1)
 }
+badge_player
+{
+   "pb_player_id": NumberInt(1),
+   "badge_id": NumberInt(1)
+}
 
 
 
@@ -94,4 +99,13 @@ client_site_badge
    "site_id": NumberInt(1),
    "badge_id": NumberInt(1),
    "deleted": NumberInt(1)
+}
+
+
+
+playbasis_player
+
+client{
+   "client_id": NumberInt(1),
+   "site_id": NumberInt(1)
 }
