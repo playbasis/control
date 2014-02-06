@@ -181,25 +181,12 @@ class Statistic extends CI_Controller
         $players = array();
 
         if ($results) {
+            $site_id = $this->User_model->getSiteId();
             foreach ($results as $result) {
 //                $actions = array();
 
-//                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']['pb_player_id']);
-                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']);
-//                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
+                $player_action = $this->Player_model->getActionsByPlayerId($result['_id'], $site_id);
 
-                /*if ($player_action) {
-                    foreach ($player_action as $action) {
-                        $actions[] = array(
-                            'action_id' => $action['action_id'],
-                            'name' => $action['name'],
-                            'value' => $action['total'],
-                            'icon' => $action['icon']
-                        );
-                    }
-                }*/
-
-//                $data_player = array('pb_player_id' => $result['_id']['pb_player_id']);
                 $data_player = array('pb_player_id' => $result['_id']);
                 $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
 

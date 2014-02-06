@@ -728,7 +728,8 @@ class Badge extends MY_Controller
     public function increase_order($badge_id){
 
         if($this->User_model->getClientId()){
-            $this->Badge_model->increaseOrderByOneClient($badge_id);   
+            $site_id = $this->User_model->getSiteId();
+            $this->Badge_model->increaseOrderByOneClient($badge_id,$site_id);
         }else{
             $this->Badge_model->increaseOrderByOne($badge_id);    
         }
@@ -741,7 +742,8 @@ class Badge extends MY_Controller
     public function decrease_order($badge_id){
 
         if($this->User_model->getClientId()){
-            $this->Badge_model->decreaseOrderByOneClient($badge_id);
+            $site_id = $this->User_model->getSiteId();
+            $this->Badge_model->decreaseOrderByOneClient($badge_id, $site_id);
         }else{
             $this->Badge_model->decreaseOrderByOne($badge_id);    
         }

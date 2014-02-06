@@ -372,7 +372,9 @@ class Plan extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        $data = array("filter_status" => true);
+        $data = array(
+            "site_id" => $this->User_model->getSiteId(),
+            "filter_status" => true);
 
         $this->data['plan_features'] = array();
         $features = $this->Plan_model->getFeatures($data);
