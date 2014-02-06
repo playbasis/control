@@ -694,8 +694,17 @@ class Goods extends MY_Controller
     public function getBadgeForGoods(){
         if($this->input->get('client_id')){
             $this->load->model('Badge_model');
+            $this->load->model('Domain_model');
 
-            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId(array("client_id" => $this->input->get('client_id') ));
+            $data_client = array("client_id" => $this->input->get('client_id') );
+
+            $site = $this->Domain_model->getDomainsByClientId($data_client);
+
+            $site = $site ? $site[0] : null;
+
+            $data_client["site_id"] = $site["_id"];
+
+            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId($data_client);
 
             $this->load->vars($this->data);
             $this->render_page('goods_badge_list_ajax');
@@ -766,7 +775,8 @@ class Goods extends MY_Controller
     public function increase_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $this->Goods_model->increaseOrderByOneClient($goods_id);
+            $site_id = $this->User_model->getSiteId();
+            $this->Goods_model->increaseOrderByOneClient($goods_id,$site_id);
         }else{
             $this->Goods_model->increaseOrderByOne($goods_id);
         }
@@ -779,7 +789,8 @@ class Goods extends MY_Controller
     public function decrease_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $this->Goods_model->decreaseOrderByOneClient($goods_id);
+            $site_id = $this->User_model->getSiteId();
+            $this->Goods_model->decreaseOrderByOneClient($goods_id, $site_id);
         }else{
             $this->Goods_model->decreaseOrderByOne($goods_id);
         }

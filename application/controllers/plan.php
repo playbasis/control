@@ -164,8 +164,9 @@ class Plan extends MY_Controller
 
                 foreach ($all_clients_in_plan as $client){
                     $the_client_id = $client['client_id'];
+                    $the_site_id = $client['site_id'];
 
-                    $temp = $this->Client_model->getClient($the_client_id);
+                    $temp = $this->Client_model->getClient($the_client_id, $the_site_id);
                     if (!$temp['deleted']){
                         $c[] = $temp;
                     }
@@ -372,7 +373,9 @@ class Plan extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        $data = array("filter_status" => true);
+        $data = array(
+            "site_id" => $this->User_model->getSiteId(),
+            "filter_status" => true);
 
         $this->data['plan_features'] = array();
         $features = $this->Plan_model->getFeatures($data);
@@ -487,7 +490,7 @@ class Plan extends MY_Controller
         $listOfClients = array();
         $this->load->model('Client_model');
         foreach ($allClientsInThisPlan as $client){
-            $get_client = $this->Client_model->getClient($client['client_id']);
+            $get_client = $this->Client_model->getClient($client['client_id'], $client['site_id']);
             if($get_client != null){
                 if(!$get_client['deleted']){
                     $listOfClients[] = $get_client;                
