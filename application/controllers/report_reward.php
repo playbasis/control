@@ -186,14 +186,14 @@ class Report_reward extends MY_Controller{
 
             $all_badges_reward = array();
             foreach($badges_reward as $br){
-                if($br['reward_id']!=null && isset($br['reward_id'])){
+                if(isset($br['reward_id']) && $br['reward_id']!=null){
                     $reward = $this->Report_reward_model->getRewardName($br['reward_id']);
                     if(!in_array($reward, $all_badges_reward)){
                         $all_badges_reward[] = $this->Report_reward_model->getRewardName($br['reward_id']);
                     }
                 }
 
-                if($br['badge_id']!=null && isset($br['badge_id'])){
+                if(isset($br['badge_id']) && $br['badge_id']!=null){
                     $this->load->model('Badge_model');
                     $badge_info = $this->Badge_model->getBadge($br['badge_id']);
                     if(!in_array($badge_info, $all_badges_reward)){
