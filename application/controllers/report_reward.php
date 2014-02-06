@@ -186,14 +186,14 @@ class Report_reward extends MY_Controller{
 
             $all_badges_reward = array();
             foreach($badges_reward as $br){
-                if($br['reward_id']!=null){
+                if($br['reward_id']!=null && isset($br['reward_id'])){
                     $reward = $this->Report_reward_model->getRewardName($br['reward_id']);
                     if(!in_array($reward, $all_badges_reward)){
                         $all_badges_reward[] = $this->Report_reward_model->getRewardName($br['reward_id']);
                     }
                 }
 
-                if($br['badge_id']!=null){
+                if($br['badge_id']!=null && isset($br['badge_id'])){
                     $this->load->model('Badge_model');
                     $badge_info = $this->Badge_model->getBadge($br['badge_id']);
                     if(!in_array($badge_info, $all_badges_reward)){
@@ -243,16 +243,126 @@ class Report_reward extends MY_Controller{
 
     }
 
-
-    
-
-
     private function validateAccess(){
         if ($this->User_model->hasPermission('access', 'report')) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public function getRewardsToDownload(){
+        $this->load->helper('php-excel');
+
+        $parameter_url = "?t=".rand();
+        $this->load->model('Report_reward_model');
+        $this->load->model('Image_model');
+        $this->load->model('Player_model');
+
+        if ($this->input->get('date_start')) {
+            $filter_date_start = $this->input->get('date_start');
+            $parameter_url .= "&date_start=".$filter_date_start;
+        } else {
+            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+        }
+
+        if ($this->input->get('date_expire')) {
+            $filter_date_end = $this->input->get('date_expire');
+            $parameter_url .= "&date_expire=".$filter_date_end;
+        } else {
+            $filter_date_end = date("Y-m-d"); ;
+        }
+
+        if ($this->input->get('username')) {
+            $filter_username = $this->input->get('username');
+            $parameter_url .= "&username=".$filter_username;
+        } else {
+            $filter_username = '';
+        }
+
+        if ($this->input->get('action_id')) {
+            $filter_action_id = $this->input->get('action_id');
+            $parameter_url .= "&action_id=".$filter_action_id;
+        } else {
+            $filter_action_id = '';
+        }
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $data = array(
+            'client_id'              => $client_id,
+            'site_id'                => $site_id,
+            'date_start'             => $filter_date_start,
+            'date_expire'            => $filter_date_end,
+            'username'               => $filter_username,
+            'action_id'              => $filter_action_id,
+        );
+
+        $report_total = 0;
+
+        $results = array();
+        if($client_id){
+            $report_total = $this->Report_reward_model->getTotalReportReward($data);
+
+            $results = $this->Report_reward_model->getReportReward($data);
+        }
+
+        $this->data['reports'] = array();
+
+        foreach ($results as $result) {
+
+            $budget_name = null;
+            $reward_name = null;
+
+            $player = $this->Player_model->getPlayerById($result['pb_player_id']);
+
+            if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
+                $thumb = $player['image'];
+            } else {
+                $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
+            }
+
+            if($result['reward_id'] != null){
+                $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
+            }else{
+                $this->load->model('Badge_model');
+                $badge_info = $this->Badge_model->getBadge($result['badge_id']);
+                $badge_name = $badge_info['name'];
+            }
+
+            $this->data['reports'][] = array(
+                'cl_player_id'      => $player['cl_player_id'],
+                'username'          => $player['username'],
+                'image'             => $thumb,
+                'email'             => $player['email'],
+                'date_added'        => datetimeMongotoReadable($result['date_added']),
+                'reward_name'       => isset($reward_name)?$reward_name:null,
+                'badge_name'        => isset($badge_name)?$badge_name:null,
+                'value'             => $result['value']
+            );
+        }
+
+
+
+        $results = $this->data['reports'];
+
+        // echo "<pre>";
+        // var_dump($results);        
+        // echo "</pre>";
+
+        foreach ($results as $row){            
+            if($row['badge_name']!=null){
+                $data_array[] = array( $row['cl_player_id'], $row['username'], $row['email'], $row['badge_name'], $row['value'], $row['date_added']);    
+            }else{
+                $data_array[] = array( $row['cl_player_id'], $row['username'], $row['email'], $row['reward_name']['name'], $row['value'], $row['date_added']);    
+            }
+        }
+
+        $xls = new Excel_XML;
+        $xls->addArray ($data_array);
+        $xls->generateXML ( "output_name" );
+
     }
 
 
