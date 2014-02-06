@@ -144,7 +144,7 @@ class Report extends MY_Controller
 
         foreach ($results as $result) {
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id']);
+            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
             if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
@@ -306,7 +306,7 @@ class Report extends MY_Controller
 
         foreach($results as $row)
         {
-            $player = $this->Player_model->getPlayerById($row['pb_player_id']);
+            $player = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
             $this->xlsWriteNumber($xlsRow,0,$player['cl_player_id']);
             $this->xlsWriteLabel($xlsRow,1,$player['username']);
             $this->xlsWriteLabel($xlsRow,2,$player['email']);
@@ -389,7 +389,7 @@ class Report extends MY_Controller
         $results = $this->Action_model->getActionsForDownload($data);
 
         foreach ($results as $row){
-            $player_info = $this->Player_model->getPlayerById($row['pb_player_id']);
+            $player_info = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
             $data_array[] = array( $player_info['cl_player_id'], $player_info['username'], $player_info['email'],$row['action_name'], $row['url'], date("Y-m-d", $row['date_added']->sec), );
         }
 

@@ -187,7 +187,7 @@ class Statistic extends CI_Controller
 
                 $player_action = $this->Player_model->getActionsByPlayerId($result['_id'], $site_id);
 
-                $data_player = array('pb_player_id' => $result['_id']);
+                $data_player = array('pb_player_id' => $result['_id'], 'site_id' => $site_id);
                 $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
 
                 $badges = array();

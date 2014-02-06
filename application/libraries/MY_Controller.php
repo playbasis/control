@@ -170,7 +170,7 @@ class  MY_Controller  extends  CI_Controller  {
                 //     );
                 // }
             }else{
-                if($this->data['client_id']){
+                /*if($this->data['client_id']){
                     $this->data['check_domain_exists'] = false;
                 }else{
                     $features = $this->Feature_model->getFeatures();    
@@ -182,7 +182,7 @@ class  MY_Controller  extends  CI_Controller  {
                             'link' =>$value['link']
                         );
                     }
-                }
+                }*/
 
                 // super admin
                 

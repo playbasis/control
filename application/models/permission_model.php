@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Permission_model extends MY_Model
 {
     public function getPermissionBySiteId($site_id) {
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('site_id', new MongoID($site_id));
 
@@ -15,7 +15,7 @@ class Permission_model extends MY_Model
     }
 
     public function addPlanToPermission($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->delete('playbasis_permission');

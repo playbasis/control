@@ -222,32 +222,32 @@ class Badge_model extends MY_Model
         return $total;
     }
 
-    public function getCommonBadges(){
-        $this->set_site_mongodb(0);
-
-        $results = $this->mongo_db->get("playbasis_badge");
-
-        $badges = array();
-
-        if(count($results)>0){
-            foreach ($results as &$rown) {
-                array_push($badges, array("id"=>$rown['_id']."","name"=>$rown['name'],"img_path"=>$rown['image'],"description"=>$rown['description']));
-            }
-        }//end if
-
-
-        $output = array(
-            "badges_set_id"=>0,
-            "badges_customer_id"=>0,
-            "badges_set"=>array(
-                "set_label"=>"Basic Badge",
-                "set_id"=>"0",
-                "items"=>$badges
-            )
-        );
-
-        return $output;
-    }
+//    public function getCommonBadges(){
+//        $this->set_site_mongodb(0);
+//
+//        $results = $this->mongo_db->get("playbasis_badge");
+//
+//        $badges = array();
+//
+//        if(count($results)>0){
+//            foreach ($results as &$rown) {
+//                array_push($badges, array("id"=>$rown['_id']."","name"=>$rown['name'],"img_path"=>$rown['image'],"description"=>$rown['description']));
+//            }
+//        }//end if
+//
+//
+//        $output = array(
+//            "badges_set_id"=>0,
+//            "badges_customer_id"=>0,
+//            "badges_set"=>array(
+//                "set_label"=>"Basic Badge",
+//                "set_id"=>"0",
+//                "items"=>$badges
+//            )
+//        );
+//
+//        return $output;
+//    }
 
     public function addBadge($data) {
         $this->set_site_mongodb(0);
