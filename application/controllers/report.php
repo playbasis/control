@@ -92,14 +92,14 @@ class Report extends MY_Controller
             $filter_date_start = $this->input->get('date_start');
             $parameter_url .= "&date_start=".$filter_date_start;
         } else {
-            $filter_date_start = date("Y-m-d", strtotime("-30 days")); ;
+            $filter_date_start = date("Y-m-d", strtotime("-30 days"));
         }
 
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
             $parameter_url .= "&date_expire=".$filter_date_end;
         } else {
-            $filter_date_end = date("Y-m-d"); ;
+            $filter_date_end = date("Y-m-d");
         }
 
         if ($this->input->get('username')) {
