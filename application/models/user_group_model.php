@@ -10,13 +10,14 @@ class User_group_model extends MY_model{
 	}
 
 	public function getTotalNumUsers(){
-		$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		return $this->mongo_db->count('user_group');
 	}
 
 	public function getUserGroupInfo($user_group_id){
-		$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
 		$this->mongo_db->where('_id', new MongoID($user_group_id));
 		$results = $this->mongo_db->get('user_group');
 
@@ -24,12 +25,13 @@ class User_group_model extends MY_model{
 	}
 
 	public function getAllFeatures(){
-		$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
 		return $this->mongo_db->get('playbasis_feature');
 	}
 
 	public function insertUserGroup(){
-		$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		$usergroup_name = $this->input->post('usergroup_name');
 		$permissions_access_modify = $this->input->post("permission");
@@ -44,13 +46,14 @@ class User_group_model extends MY_model{
 	}
 
 	public function deleteUserGroup($usergroup_id){
-		$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
 		$this->mongo_db->where('_id', new MongoID($usergroup_id));
 		$this->mongo_db->delete('user_group');
 	}
 
 	public function editUserGroup($user_group_id, $data){
-		$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		$this->mongo_db->where('_id', new MongoID($user_group_id));
 		$this->mongo_db->set('name', $data['usergroup_name']);
@@ -65,6 +68,8 @@ class User_group_model extends MY_model{
 	}
 
 	public function fetchAllUserGroups($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
             $this->mongo_db->where('name', $regex);
@@ -93,6 +98,8 @@ class User_group_model extends MY_model{
     }
 
     public function checkUsersInUserGroup($user_group_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
     	$this->mongo_db->where('user_group_id', new MongoID($user_group_id));
     	return $this->mongo_db->get('user');
     }

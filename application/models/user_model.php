@@ -39,11 +39,13 @@ class User_model extends MY_Model
     }
 
     public function getTotalNumUsers(){
+        $this->set_site_mongodb($this->site_id);
 
         return $this->mongo_db->count('user');
     }
 
     public function getUserInfo($user_id){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
         $results =  $this->mongo_db->get('user');  
@@ -52,6 +54,7 @@ class User_model extends MY_Model
     }
 
     public function editUser($user_id, $data){
+        $this->set_site_mongodb($this->site_id);
 
         $find_salt = $this->getUserInfo($user_id);
         $salt = $find_salt['salt'];
@@ -111,6 +114,7 @@ class User_model extends MY_Model
     }
 
     public function insertUser(){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('username', $this->input->post('email'));
 
@@ -207,6 +211,7 @@ class User_model extends MY_Model
     }
 
     public function addUserToClient($data){
+        $this->set_site_mongodb($this->site_id);
 
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
@@ -217,6 +222,7 @@ class User_model extends MY_Model
     }
 
     public function fetchAllUsers($data){
+        $this->set_site_mongodb($this->site_id);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -246,6 +252,7 @@ class User_model extends MY_Model
     }
 
     public function getTotalUserByClientId($data){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
 
@@ -272,6 +279,7 @@ class User_model extends MY_Model
     }
 
     public function getUserByClientId($data){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
 
@@ -298,11 +306,13 @@ class User_model extends MY_Model
     }
 
     public function getUserGroups(){
+        $this->set_site_mongodb($this->site_id);
 
         return $this->mongo_db->get("user_group");
     }
 
     public function getUserGroupNameForUser($user_id){
+        $this->set_site_mongodb($this->site_id);
 
         $usergroups = $this->mongo_db->get('user_group');
         $user = $this->getUserInfo($user_id);
@@ -319,6 +329,7 @@ class User_model extends MY_Model
     }
 
     public function deleteUser($user_id){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->delete("user");
@@ -412,6 +423,7 @@ class User_model extends MY_Model
                 if($this->getAdminGroupID()||$this->client_id && $this->site_id){
                     $this->set_site_mongodb($this->site_id);
 
+                    $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
                     $this->session->set_userdata('user_id',$this->user_id );
                     $this->session->set_userdata('username',$this->username );
                     $this->session->set_userdata('user_group_id',$this->user_group_id );
@@ -441,6 +453,7 @@ class User_model extends MY_Model
         $this->session->unset_userdata('permission');
         $this->session->unset_userdata('ip');
         $this->session->unset_userdata('admin_group_id');
+        $this->session->unset_userdata('multi_login');
 
         $this->user_id = '';
         $this->username = '';
@@ -489,6 +502,8 @@ class User_model extends MY_Model
     }
 
     public function getAdminGroupID(){
+        $this->set_site_mongodb($this->site_id);
+
         if($this->session->userdata('admin_group_id'))
             return $this->session->userdata('admin_group_id');
 
@@ -507,6 +522,7 @@ class User_model extends MY_Model
     }
 
     public function updateSiteId($site_id){
+        $this->set_site_mongodb($this->site_id);
 
         if($this->checkSiteId($site_id) > 0){
             $this->site_id = $site_id;
@@ -517,6 +533,7 @@ class User_model extends MY_Model
     }
 
     private function checkSiteId($site_id){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($site_id));
         $this->mongo_db->where('client_id', new MongoID($this->client_id));
@@ -524,6 +541,7 @@ class User_model extends MY_Model
     }
 
     public function checkRandomKey($random_key){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('random_key', $random_key);
         $user = $this->mongo_db->get('user');
@@ -542,7 +560,7 @@ class User_model extends MY_Model
     }
 
     public function findEmail($data){
-
+        $this->set_site_mongodb($this->site_id);
 
         $email = $data['email'];
 
@@ -558,6 +576,7 @@ class User_model extends MY_Model
     }
 
     public function insertRandomPasswordKey($random_key, $user_id){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->set('password_key',$random_key);
@@ -567,6 +586,7 @@ class User_model extends MY_Model
     }
 
     public function checkRandomPasswordKey($random_key){
+        $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('password_key', $random_key);
         $user = $this->mongo_db->get('user');
@@ -582,6 +602,7 @@ class User_model extends MY_Model
     }
 
     public function insertNewPassword($user_id, $new_password){
+        $this->set_site_mongodb($this->site_id);
 
         $find_salt = $this->getUserInfo($user_id);
         $salt = $find_salt['salt'];
@@ -594,18 +615,25 @@ class User_model extends MY_Model
     }
 
     public function disableUser($user_id){
+        $this->set_site_mongodb($this->site_id);
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $this->mongo_db->set('status', false);
         $this->mongo_db->update('user');
     }
 
     public function getMultiLogin($user_id){
+        $this->set_site_mongodb($this->site_id);
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $key = $this->mongo_db->get('user');
-        return $key[0]['multi_login'];
+
+        return $key ? $key[0]['multi_login'] : null;
     }
 
     public function setMultiLoginKey($user_id){
+        $this->set_site_mongodb($this->site_id);
+
         $this->mongo_db->where('_id', new MongoID($user_id));
         $hashed = do_hash(get_random_password().$user_id);
         $this->mongo_db->set('multi_login', $hashed);

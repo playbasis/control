@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Rule_model extends MY_Model
 {
     public function getActionGigsawList($siteId,$clientId){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('action_id','name','description','sort_order','icon','status','init_dataset'));
         $this->mongo_db->where('site_id',  new MongoID($siteId));
@@ -41,6 +42,7 @@ class Rule_model extends MY_Model
     }
 
     public function getConditionGigsawList($siteId,$clientId){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('jigsaw_id','name','description','sort_order','icon','status','init_dataset'));
         $this->mongo_db->where('site_id', new MongoID($siteId));
@@ -74,6 +76,7 @@ class Rule_model extends MY_Model
     }
 
     public function getRewardGigsawList($siteId,$clientId){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id'));
         $reward_res= $this->mongo_db->get("playbasis_reward");
@@ -147,7 +150,7 @@ class Rule_model extends MY_Model
     }
 
     function saveRule($input){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
         //set time
         $input['date_added'] = $input['date_modified'] = date('Y-m-d H:i:s');
 
@@ -199,6 +202,8 @@ class Rule_model extends MY_Model
     }
 
     public function deleteRule($ruleId,$siteId,$clientId){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
         $this->mongo_db->where('_id', new MongoID($ruleId));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
@@ -212,6 +217,8 @@ class Rule_model extends MY_Model
     }
 
     function changeRuleState($ruleId,$state,$siteId,$clientId){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
         $this->mongo_db->where('_id', new MongoID($ruleId));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
@@ -227,6 +234,7 @@ class Rule_model extends MY_Model
     }
 
     public function getRuleById($siteId,$clientId,$ruleId){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
 
@@ -256,7 +264,7 @@ class Rule_model extends MY_Model
     }
 
     public function getRulesByCombinationId($siteId,$clientId){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id','client_id','site_id','action_id','name','description','tags','active_status','date_added','date_modified'));
         $this->mongo_db->where('site_id', new MongoID($siteId));

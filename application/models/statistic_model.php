@@ -11,6 +11,8 @@ class Statistic_model extends MY_Model
 
     public function getNewRegister($data)
     {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
         $this->mongo_db->select(array('date_added','pb_player_id'));
         $this->mongo_db->where('date_added', array('$gt' => new MongoDate($data['date_start']), '$lte' => new MongoDate($data['date_expire'])));
         $this->mongo_db->where('client_id', $data['client_id']);
@@ -31,6 +33,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getPlayerRewardPointStat($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id','reward_id'));
         $this->mongo_db->where('name', array('$nin' =>  array('exp', 'badge')));
@@ -64,6 +67,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getPlayerRewardBadgeStat($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id','reward_id'));
         $this->mongo_db->where('name', 'badge');
@@ -97,6 +101,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getPlayerRewardLevelStat($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id','reward_id'));
         $this->mongo_db->where('name', 'exp');
@@ -130,6 +135,8 @@ class Statistic_model extends MY_Model
     }
 
     public function getLogClient($data, $action, $start, $end){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
         $this->mongo_db->select(array('_id','action_id','name','color','icon'));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
@@ -151,6 +158,8 @@ class Statistic_model extends MY_Model
     }
 
     public function getCountLogClient($data, $action, $start, $end){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
         $this->mongo_db->select(array('_id','action_id','name','color','icon'));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
@@ -172,6 +181,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getDailyActionmeaturement($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id','action_id','name','color','icon'));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -204,6 +214,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getWeeklyActionmeaturement($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id','action_id','name','color','icon'));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -236,6 +247,7 @@ class Statistic_model extends MY_Model
     }
 
     public function getMonthlyActionmeaturement($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if($data['client_id']){
             $this->mongo_db->select(array('_id','action_id','name','color','icon'));
@@ -276,6 +288,7 @@ class Statistic_model extends MY_Model
     }
 
     public function LeaderBoard($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $reward_filter = "point";
         if (isset($data['reward_filter'])) {
