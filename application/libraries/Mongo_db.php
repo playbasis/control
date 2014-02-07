@@ -1103,7 +1103,7 @@ class Mongo_db
 			$options = array_merge(array($this->_query_safety => TRUE, 'multiple' => FALSE), $options);
 			$result = $this->_dbhandle->{$collection}->update($this->wheres, $this->updates, $options);
 			$this->_clear($collection, 'update');
-			
+
 			if ($result['updatedExisting'] > 0)
 			{
 				return $result['updatedExisting'];

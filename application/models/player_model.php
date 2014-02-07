@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Player_model extends MY_Model
 {
     public function getPlayerById($player_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $player_data = null;
 
@@ -35,6 +36,7 @@ class Player_model extends MY_Model
     }
 
     public function getPlayers($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['client_id']) && isset($data['site_id'])) {
             $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -85,6 +87,7 @@ class Player_model extends MY_Model
     }
 
     public function getPlayerPoint($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $reward_filter = "point";
         if (isset($data['reward_filter'])) {
@@ -108,6 +111,7 @@ class Player_model extends MY_Model
     }
 
     private function getPlayerAction($site_id, $client_id, $player_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
@@ -127,6 +131,7 @@ class Player_model extends MY_Model
     }
 
     public function getTotalPlayers($site_id, $client_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
@@ -136,6 +141,7 @@ class Player_model extends MY_Model
     }
 
     public function getRewardListAPI($client_id, $site_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
@@ -149,6 +155,7 @@ class Player_model extends MY_Model
     }
 
     public function getActionListAPI($client_id, $site_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->where('site_id', new MongoID($site_id));
@@ -163,7 +170,7 @@ class Player_model extends MY_Model
     }
 
     /*public function getDonutMaxLevel($data = array()){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -242,7 +249,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutLevel($data) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $donut_data = array();
 
@@ -300,7 +307,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutGender($data) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -375,7 +382,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutAction($data = array()){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -450,7 +457,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutReward($data = array()){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -585,7 +592,7 @@ class Player_model extends MY_Model
     }*/
 
     public function getDonutMaxLevel($data = array()){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -664,7 +671,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutLevel($data) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $donut_data = array();
 
@@ -722,7 +729,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutGender($data) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -797,7 +804,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutAction($data = array()){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -872,7 +879,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutReward($data = array()){
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -947,6 +954,7 @@ class Player_model extends MY_Model
     }
 
     public function getDonutTotalPlayer($data = array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
         //level_value gender_value reward_id reward_value action id action_value
         //choose parameter level gender reward action
 
@@ -1006,7 +1014,7 @@ class Player_model extends MY_Model
     }
 
     /*public function getIsotopePlayer($data) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -1103,7 +1111,7 @@ class Player_model extends MY_Model
     }*/
 
     public function getIsotopePlayer($data) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -1198,7 +1206,7 @@ class Player_model extends MY_Model
     }
 
     public function getIsotopeTotalPlayer($data = array()) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $res = $this->filterMongoPlayer($data);
 
@@ -1240,7 +1248,7 @@ class Player_model extends MY_Model
     }
 
     public function getActionsByPlayerId($pb_player_id) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 //        $this->benchmark->mark('action_start');
 
 
@@ -1268,7 +1276,7 @@ class Player_model extends MY_Model
     }
 
     public function getEventLog($pb_player_id, $type) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 //        $this->benchmark->mark('event_start');
 
 
@@ -1294,7 +1302,7 @@ class Player_model extends MY_Model
     }
 
     public function getBadgeByPlayerId($data) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('pb_player_id', new MongoID($data['pb_player_id']));
         $this->mongo_db->where_ne('badge_id', null);

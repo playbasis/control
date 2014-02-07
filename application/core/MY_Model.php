@@ -6,6 +6,11 @@ class MY_Model extends CI_Model
 	//protected $dbGroups = null;
 	protected $site = 0;
 
+    //array of database groups to load for each site_id
+    protected static $dblist = array(
+        0 => 'core',
+        1 => 'ex_true'
+    );
     //mongodb setup
     private static $mongoBDsNames = array(
         0 => 'core',

@@ -8,7 +8,7 @@ class Report_reward_model extends MY_Model{
 
 	public function getTotalReportReward($data){
 
-		$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
@@ -46,6 +46,7 @@ class Report_reward_model extends MY_Model{
 	}
 
 	public function getReportReward($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
@@ -96,7 +97,8 @@ class Report_reward_model extends MY_Model{
     }
 
     public function getRewardName($reward_id){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
     	$this->mongo_db->where('_id', new MongoID($reward_id));
     	$var = $this->mongo_db->get('playbasis_reward');
     	return isset($var[0])?$var[0]:null;
@@ -104,7 +106,7 @@ class Report_reward_model extends MY_Model{
 
     public function getRewardsBadgesSite($data){
 
-    	$this->set_site_mongodb(0);
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
     	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));

@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Reward_model extends MY_Model
 {
     public function getBadgeRewardBySiteId($site_id) {
-
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('site_id',  new MongoID($site_id));
         $this->mongo_db->where('group',  'NONPOINT');
@@ -14,6 +14,7 @@ class Reward_model extends MY_Model
     }
 
     public function getReward($reward_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($reward_id));
         $this->mongo_db->order_by(array('sort_order' => 1));
@@ -23,6 +24,7 @@ class Reward_model extends MY_Model
     }
 
     public function getRewards($data = array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $reward_data = "";
 
@@ -79,6 +81,7 @@ class Reward_model extends MY_Model
     }
 
     public function getRewardLimitByRewardId($plan_id, $reward_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('reward_to_plan.reward_id', new MongoID($reward_id));
         $this->mongo_db->where('_id', new MongoID($plan_id));
@@ -88,6 +91,8 @@ class Reward_model extends MY_Model
     }
 
     public function getRewardByClientId($client_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $reward_data =  $this->mongo_db->get("playbasis_reward_to_client");
 
@@ -95,6 +100,7 @@ class Reward_model extends MY_Model
     }
 
     public function getAnotherRewardBySiteId($site_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('site_id',  new MongoID($site_id));
         $this->mongo_db->where('group',  'POINT');
@@ -105,6 +111,7 @@ class Reward_model extends MY_Model
     }
 
     public function getAnotherRewardByClientId($client_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id',  new MongoID($client_id));
         $this->mongo_db->where('group',  'POINT');
