@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Goods_model extends MY_Model
 {
     public function getGoods($goods_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $results = $this->mongo_db->get("playbasis_goods");
@@ -12,7 +11,6 @@ class Goods_model extends MY_Model
     }
 
     public function getGoodsToClient($goods_id){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $results = $this->mongo_db->get("playbasis_goods_to_client");
@@ -21,7 +19,6 @@ class Goods_model extends MY_Model
     }
 
     public function getGoodsOfClientPrivate($goods_id){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
         $results = $this->mongo_db->get("playbasis_goods_to_client");
@@ -31,7 +28,6 @@ class Goods_model extends MY_Model
 
     public function getGoodsList($data = array()) {
 
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -80,7 +76,6 @@ class Goods_model extends MY_Model
     }
 
     public function getTotalGoods($data){
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -98,7 +93,6 @@ class Goods_model extends MY_Model
 
     public function getGoodsBySiteId($data = array()) {
 
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -150,7 +144,6 @@ class Goods_model extends MY_Model
 
     public function getTotalGoodsBySiteId($data) {
 
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -168,7 +161,6 @@ class Goods_model extends MY_Model
     }
 
     public function getCommonGoods(){
-        $this->set_site_mongodb(0);
 
         $results = $this->mongo_db->get("playbasis_goods");
 
@@ -195,7 +187,6 @@ class Goods_model extends MY_Model
     }
 
     public function addGoods($data) {
-        $this->set_site_mongodb(0);
 
         $data_insert =  array(
             'quantity' => (int)$data['quantity']|0 ,
@@ -264,7 +255,6 @@ class Goods_model extends MY_Model
     }
 
     public function editGoods($goods_id, $data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $this->mongo_db->set('quantity', (int)$data['quantity']);
@@ -305,7 +295,6 @@ class Goods_model extends MY_Model
     }
 
     public function editGoodsToClient($goods_id, $data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $this->mongo_db->set('client_id', new MongoID($data['client_id']));
@@ -348,8 +337,7 @@ class Goods_model extends MY_Model
     }
 
     public function editGoodsToClientFromAdmin($goods_id, $data) {
-        $this->set_site_mongodb(0);
-        
+
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
         $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('status', (bool)$data['status']);
@@ -390,7 +378,6 @@ class Goods_model extends MY_Model
     }
 
     public function deleteGoods($goods_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($goods_id));
         $this->mongo_db->set('deleted', true);
@@ -398,7 +385,6 @@ class Goods_model extends MY_Model
     }
 
     public function deleteGoodsClient($goods_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $this->mongo_db->set('deleted', true);
@@ -407,7 +393,6 @@ class Goods_model extends MY_Model
     }
 
     public function deleteGoodsClientFromAdmin($goods_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
         $this->mongo_db->set('deleted', true);

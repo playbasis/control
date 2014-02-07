@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Client_model extends MY_Model
 {
     public function getClient($client_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($client_id));
         $results = $this->mongo_db->get("playbasis_client");
@@ -12,7 +11,6 @@ class Client_model extends MY_Model
     }
 
     public function getTotalClients($data){
-        $this->set_site_mongodb(0);
         $this->mongo_db->where('deleted', false);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
@@ -29,7 +27,6 @@ class Client_model extends MY_Model
     }
 
     public function getClients($data){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('deleted', false);
 
@@ -80,7 +77,6 @@ class Client_model extends MY_Model
     }
 
     public function addClient($data) {
-        $this->set_site_mongodb(0);
 
         $insert_data = array(
             'company' => isset($data['company'])?$data['company']: '',
@@ -103,7 +99,6 @@ class Client_model extends MY_Model
     }
 
     public function editClient($client_id, $data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($client_id));
         $this->mongo_db->set('first_name', $data['first_name']);
@@ -178,7 +173,6 @@ class Client_model extends MY_Model
 
 
     public function deleteClient($client_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($client_id));
         $this->mongo_db->set('status', (bool)false);
@@ -190,7 +184,6 @@ class Client_model extends MY_Model
 
     /****start Dupicate with another model but in codeigniter cannot load another model within model ****/
     public function addPlanToPermission($data){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->delete('playbasis_permission');
@@ -207,7 +200,6 @@ class Client_model extends MY_Model
     }
 
     public function getPlan($plan_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($plan_id));
         $results = $this->mongo_db->get("playbasis_plan");
@@ -216,7 +208,6 @@ class Client_model extends MY_Model
     }
 
     public function getReward($reward_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($reward_id));
         $this->mongo_db->order_by(array('sort_order' => 1));
@@ -226,7 +217,6 @@ class Client_model extends MY_Model
     }
 
     public function getFeature($feature_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($feature_id));
         $this->mongo_db->order_by(array('sort_order' => 1));
@@ -236,7 +226,6 @@ class Client_model extends MY_Model
     }
 
     public function getAction($action_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($action_id));
         $results = $this->mongo_db->get("playbasis_action");
@@ -246,7 +235,6 @@ class Client_model extends MY_Model
     /****end Dupicate with another model but in codeigniter cannot load another model within model ****/
 
     public function getJigsaw($jigsaw_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($jigsaw_id));
         $results = $this->mongo_db->get("playbasis_jigsaw");
@@ -255,7 +243,6 @@ class Client_model extends MY_Model
     }
 
     public function copyRewardToClient($data_filter){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
@@ -292,7 +279,6 @@ class Client_model extends MY_Model
     }
 
     public function copyFeaturedToClient($data_filter){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
@@ -326,7 +312,6 @@ class Client_model extends MY_Model
     }
 
     public function copyActionToClient($data_filter){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
@@ -370,7 +355,6 @@ class Client_model extends MY_Model
     }
 
     public function copyJigsawToClient($data_filter){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
@@ -404,7 +388,6 @@ class Client_model extends MY_Model
     }
 
     public function insertClient(){
-        $this->set_site_mongodb(0);
 
         $data = $this->input->post();
 
@@ -427,8 +410,7 @@ class Client_model extends MY_Model
     }
 
     public function editClientPlan($client_id, $data){
-        $this->set_site_mongodb(0);
-        
+
         if (isset($data['domain_value'])) {
             $data_filter = array(
                 'client_id' => $client_id,

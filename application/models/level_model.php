@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Level_model extends MY_Model
 {
     public function getTotalLevels($data) {
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
@@ -15,7 +14,6 @@ class Level_model extends MY_Model
     }
 
     public function getLevel($level_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($level_id));
         $results = $this->mongo_db->get("playbasis_exp_table");
@@ -24,7 +22,6 @@ class Level_model extends MY_Model
     }
 
     public function getLevelSite($level_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($level_id));
         $results = $this->mongo_db->get("playbasis_client_exp_table");
@@ -33,7 +30,6 @@ class Level_model extends MY_Model
     }
 
     public function getLevels($data) {
-        $this->set_site_mongodb(0);
 
         $level_data = array();
 
@@ -94,7 +90,6 @@ class Level_model extends MY_Model
     }
 
     public function getTotalLevelsSite($data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
@@ -109,8 +104,7 @@ class Level_model extends MY_Model
     }
 
     public function getLevelsSite($data) {
-        $this->set_site_mongodb(0);
-        
+
         $level_data = array();
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
@@ -173,7 +167,6 @@ class Level_model extends MY_Model
     }
 
     public function addLevel($data) {
-        $this->set_site_mongodb(0);
 
         $data_insert = array(
             'level_title' => $data['level_title']|'' ,
@@ -192,7 +185,6 @@ class Level_model extends MY_Model
     }
 
     public function addLevelSite($data) {
-        $this->set_site_mongodb(0);
 
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
@@ -213,7 +205,6 @@ class Level_model extends MY_Model
     }
 
     public function editLevel($level_id, $data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($level_id));
         if(isset($data['level_title'])){
@@ -242,7 +233,6 @@ class Level_model extends MY_Model
     }
 
     public function editLevelSite($level_id, $data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($level_id));
         if(isset($data['level_title'])){
@@ -271,14 +261,12 @@ class Level_model extends MY_Model
     }
 
     public function deleteLevel($level_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($level_id));
         $this->mongo_db->delete('playbasis_exp_table');
     }
 
     public function deleteLevelSite($level_id){
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($level_id));
         $this->mongo_db->delete('playbasis_client_exp_table');

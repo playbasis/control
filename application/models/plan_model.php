@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Plan_model extends MY_Model
 {
     public function getPlan($plan_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($plan_id));
         $results = $this->mongo_db->get("playbasis_plan");
@@ -12,7 +11,6 @@ class Plan_model extends MY_Model
     }
 
     public function getPlans($data = array()) {
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -61,7 +59,6 @@ class Plan_model extends MY_Model
     }
 
     public function getTotalPlans($data){
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -78,7 +75,6 @@ class Plan_model extends MY_Model
     }
 
     public function getClientByPlan($plan_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('plan_id',  new MongoID($plan_id));
         $results = $this->mongo_db->get("playbasis_permission");
@@ -87,7 +83,6 @@ class Plan_model extends MY_Model
     }
 
     public function getClientByPlanOnlyClient($plan_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->select(array('client_id'));
         $this->mongo_db->select(array(),array('_id'));
@@ -102,7 +97,6 @@ class Plan_model extends MY_Model
     }
 
     public function getFeatures($data){
-        $this->set_site_mongodb(0);
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
@@ -146,7 +140,6 @@ class Plan_model extends MY_Model
     }
 
     public function getActions($data){
-        $this->set_site_mongodb(0);
 
         $sort_data = array(
             '_id',
@@ -186,7 +179,6 @@ class Plan_model extends MY_Model
     }
 
     public function getJigsaws($data){
-        $this->set_site_mongodb(0);
 
         $sort_data = array(
             '_id',
@@ -226,7 +218,6 @@ class Plan_model extends MY_Model
     }
 
     public function getRewards($data){
-        $this->set_site_mongodb(0);
 
         $sort_data = array(
             '_id',
@@ -266,7 +257,6 @@ class Plan_model extends MY_Model
     }
 
     public function addPlan($data) {
-        $this->set_site_mongodb(0);
 
         if(isset($data['sort_order'])){
             $sort_order = (int)$data['sort_order'];
@@ -319,7 +309,6 @@ class Plan_model extends MY_Model
     }
 
     public function editPlan($plan_id, $data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($plan_id));
         $this->mongo_db->set('name', $data['name']);
@@ -373,7 +362,6 @@ class Plan_model extends MY_Model
     }
 
     public function deletePlan($plan_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($plan_id));
         $this->mongo_db->delete('playbasis_plan');
@@ -381,8 +369,7 @@ class Plan_model extends MY_Model
     }
 
     public function getPlanID($name){
-        $this->set_site_mongodb(0);
-        
+
         $this->mongo_db->where('name', $name);
         $results =  $this->mongo_db->get('playbasis_plan');
         return $results ? $results[0]['_id'] : null;
