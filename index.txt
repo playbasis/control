@@ -73,8 +73,15 @@ badge_player
    "pb_player_id": NumberInt(1),
    "badge_id": NumberInt(1)
 }
-
-
+pb_player
+{
+   "pb_player_id": NumberInt(1)
+}
+reward_player
+{
+   "pb_player_id": NumberInt(1),
+   "reward_id": NumberInt(1)
+}
 
 playbasis_summary_of_player_beta
 

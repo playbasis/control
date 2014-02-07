@@ -226,12 +226,7 @@ class Statistic extends CI_Controller
                     }
                 }
 
-                $point = 0;
-                foreach($result['value'] as $r){
-                    if(is_array($r) && isset($r['value'])){
-                        $point += $r['value'];
-                    }
-                }
+                $point = $this->Player_model->getPlayerPoint($data_player);
 
                 $players[] = array(
 //                    'pb_player_id' => $result['_id']['pb_player_id'],
