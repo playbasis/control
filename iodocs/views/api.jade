@@ -1,175 +1,36 @@
-div.topbar_area
-  img(src='/images/logo-playbasis.png')|topbar
-
-
-div.readable_area
-
-  div.detail_enclosure
-
-    span#detail.switch  
-      |Checkout Playbasis - live API &rarr;
-    h1=apiInfo.name 
+div.navbar
+ div.nav-container
   
-      br
-      h2.topic_header Overview
-      p.p_wrap 
-        | The following is the API reference for interacting with our web service that is the heart of our gamification engine. The web service is responsible for processing users’ actions (comment, like, share, etc.) which can be triggered from websites, mobile applications and internet enabled devices. Once actions are fed into the system, game rules associated with the actions will execute and respond with game events (badge unlocked, level up, exp gained, etc.) to be displayed to end users. Game rules are defined through the game editor inside the 
-        a(href='https://www.pbapp.net/admin') admin panel
-        | . 
-      br
-      br
-      h2.topic_header Basic Usages
-      h3.sub_header Calling the API
-      p.p_wrap
-        | The URL for all endpoints starts with:
-        code
-          https://api.pbapp.net
-        br
-        | You can see all avilable methods and try calling them directly on this page.
-      br
-      h3.sub_header Authentication
-      p.p_wrap
-        | You can call any GET mothods with just your API key, but to call POST methods you must first acquire an access token by calling the /Auth method with a valid API key and secret. The /Auth method will respond with an access token, which will be valid for 3 days. After it is expired, you’ll have to call the /Auth method again to generate a new access token. You can view/manage your api-key and api-secret via the 
-        a(href='https://www.pbapp.net/admin') admin panel
-      br
-      p.p_wrap
-        | For security reasons, please make sure that your access token is kept secured on your server and not easily exposed to clients. If a hacker got a hold of your access token, he or she will be able to manually call our api and perform fake actions to receives rewards until the token expire.
-      br
-      h3.sub_header Registering Users
-      p.p_wrap
-        | Once you’ve acquired the access token, you’ll be able to register your users into our system with a call to the /Player/:id/register method in the Player API. The user id that you provide in the register method is the link from users in your database to the same users in our system; so, it is best that it is the same id that you use to identify your own users. You only need to register each of your users once. If you have a large number of existing users, you can contact us to help you import them.
-      br
-      h3.sub_header Doing Actions
-      p.p_wrap
-        | Actions are basically things that your users do on your website or service. An action can trigger a number of game rules that starts with the same action. Users will be rewarded according to the logic defined in the game rules. Assuming you’ve already setup your game rules via the 
-        a(href='https://www.pbapp.net/admin') admin panel
-        | , you can now start letting your users perform actions to triggers game rules and receive rewards. If you have not already setup your game rules or have questions about how to configure the game rules, please contact us or refer to the user manual of the admin panel.
-      br
-      p.p_wrap
-        | For our system to know that your user has just performed an action, so that we can process the related game rules, you need to call the /Engine/rule method in the Engine API. You’ll need to pass the id of the user that trigger the action and the name of the action as arguments. Make sure that the name of the action passed in as argument matched with the action names that you setup in the game rules. For examples, if a game rule starts with an action called “like”, but you passed in an action call “love” or “pic_like” or “likes”, the game rule will not trigger.
-      br
-      p.p_wrap
-        | Another possible gotcha that one should be aware of is the user id that you passed in as argument to the /Engine/rule method should be the user that actually receives the reward. For example, if you want to give points when a user acquire a new follower. You have a user who click the follow button and a user that gained a new follower, make sure you passed in the id of the user that will receive the point, which is the user that gained a new follower, not the user that clicked the follow button.
-      br
-      h3.sub_header Receiving Rewards
-      p.p_wrap
-        | When calling the /Engine/rule method, rewards may be awarded to the player related to the action as a result of the processed game rules. If any rewards are given, all information about the rewards will be included in the response of the /Engine/rule method.
-      br
-      h3.sub_header Login and Logout
-      p.p_wrap
-        | When a user login or logout, you should also tell our system by calling the /Player/:id/login or /Player/:id/logout method in the Player API. This step is not strictly required, but highly recommended as we have some features that rely on knowing when users are logging in or out, for example real-time notifications, logging, and tracking last login time.
-      br
-      h3.sub_header Querying Information
-      p.p_wrap
-        | Playbasis API has several ways for retrieving information about your users. The most common methods are in the Player API and Badge API. Please refer to the API documentation for more information.
-      br
-      br
-      h2.topic_header Receiving Real-Time Notification
-      p.p_wrap
-        | Whenever some notable event happens within your site, Playbasis server will broadcast the event to all connected clients in real-time. Clients can use 
-        a(href='http://socket.io') socket.io
-        |  to connect and subscribe to the activity-feed channel that belongs to your site and begins receiving updates in real-time. The name of your channel is the domain name that is registered with your Playbasis account, minus the leading "http://" or "www".
-      br
-      p.p_wrap
-        | The following snippet (in jade/javascript) shows how to connect, subscribe and receive real-time activity-feeds for your site:
-        pre
-          code 
-            script(src='/socket.io/socket.io.js')
-              script
-                var socket = io.connect('https://node.pbapp.net');
-                socket.on('connect', function(data){
-                  console.log('client connected');
-                  socket.emit('subscribe', {channel:'yourdomain.com'});
-                });
-                socket.on('message', function(data){
-                  console.log('msg:' + data);
-                });
-      h2.topic_header Asynchronous Requests
-      h3.sub_header Calling POST Methods Asynchronously
-      p.p_wrap
-        | You can call all of our POST methods asynchronously via our async request endpoint at: 
-        code
-          https://api.pbapp.net/async/call
-        br
-        | When you call this method, set the Content-Type header to "application/json" and provide JSON string with the following data the request body:
-        pre
-          code
-            "endpoint" : The endpoint that you want to call asynchronously.
-            "data"     : Object containing data that normally goes into the POST body in the standard synchronous call.
-            "channel"  : Optional. If you wish to see the response from this request, set this to the domain name of your site.
-                         See section "Receiving Responses from Asynchronous Calls" for more details.
-      p.p_wrap
-        | Here is an example of the JSON body of an asynchronous call to the Login method
-        pre
-          code
-            {
-              "endpoint" : "Player/1/login",
-              "data" : {
-                "token" : "69b3784233aa83090f8a90c080448072c85e1fcc"
-              },
-              "channel" : "yourdomain.com"
-            }
-      h3.sub_header Receiving Responses from Asynchronous Calls
-      p.p_wrap
-        | In some cases, it may be useful to see responses from your asynchronous requests (e.g. debugging). This can be done by connecting to our async response server via 
-        a(href='http://socket.io') socket.io
-        |, the same way you conenct to the activity-feed server (but with a different server URL). Once you're connected to the server, you need to subscribe to a channel that belongs to your domain. The name of your channel is the domain name that is registered with your Playbasis account, minus the leading "http://" or "www". Please also note that for responses to show up in your channel, you must put your channel name in the "channel" field of the JSON body for your POST request to the async/call endpoint. If you're unsure whether your channel name is correct, you can verify your channel name by making a GET request to:
-        pre
-          code
-            https://api.pbapp.net/async/channel/verify/yourdomain.com
-      p.p_wrap
-        | The following code shows an example of how to connect to the async response server, subscribe to your response channel, and display the response:
-        pre
-          code 
-            script(src='/socket.io/socket.io.js')
-              script
-                var socket = io.connect('https://async.pbapp.net');
-                socket.on('connect', function(data){
-                  console.log('client connected');
-                  socket.emit('subscribe', {channel:'yourdomain.com'});
-                });
-                socket.on('message', function(data){
-                  console.log(data);
-                });
-      h2.topic_header Social Integration
-      h3.sub_header Facebook
-      p.p_wrap
-        | Playbasis API is integrated with Facebook’s Realtime Update API which allows our server to receive events when changes are made to a Facebook Page. This gives you the ability to trigger game rules when users perform actions on your Facebook Page. Setting up your Facebook Page with Playbasis is simple; you only need a Facebook App that has Realtime Update setup to our API endpoint, then add the app to your Facebook Page. That's all.
-        br
-        | For more detailed instructions, follow Facebook documentation on
-        a(href='https://developers.facebook.com/docs/reference/api/realtime/') how to enable realtime update for your app
-        |  and use the following API endpoint in the callback field:
-        pre
-          code
-            https://api-fb.pbapp.net/Engine/rule/facebook
-      p.p_wrap
-        | Then follow instructions on how to 
-        a(href='https://developers.facebook.com/docs/reference/api/page/#realtime') setup your app to receive realtime update on a Facebook Page.
-        br
-        | If you are interested in gamifying your Facebook Page, please contact our technical staff for additional information.
-      br
-      h3.sub_header Twitter
-      p.p_wrap
-        | Playbasis API has the ability to trigger game rules when user tweet a specific word, such as a hashtag or @reply. If you are interested in leveraging the power of twitter, please contact our technical staff for additional information.
-      br
-      h3.sub_header Janrain (Social Sign-in and Social Sharing widget)
-      p.p_wrap
-        | Playbasis API is integrated with Janrain to give you a simple way to add Social Sign-in and Social Sharing to your website through attractive widgets; but that’s not all. We also provide a way to gamify the widgets by allowing game rules to be triggered when users interact with them. Please contact our technical staff for additional information.
-      br
-      br
-      h2.topic_header SDKs
-      p.p_wrap
-        | We provide several SDKs for faster and easier integrations with your framework. Each SDK wraps over our web API and gives you a clean and simple interface that lets you take advantage of our service with minimum effort. All of our SDKs are open-source, so you're encouraged to modify, customize or even improve any of our SDKs to fit your specific needs.
-        a(href='https://github.com/playbasis/sdk') You can access all of our SDKs on github.
-      br
-      br
-      br
+  ul.nav.navbar-nav.navbar-right
+   li
+    a(href='http://dev.playbasis.com/') Home
+   li
+    a(href='http://dev.playbasis.com/gettingstarted.php') Getting Started
+   li
+    a(href='http://dev.playbasis.com/demo.php') Demo
+   li
+    a(href='http://dev.playbasis.com/docs.php') Documentation
+   li
+    a(href='http://doc.playbasis.com/pbapp') API Explorer
+  a(class="navbar-brand logo",href="http://dev.playbasis.com/") Playbasis
 
-  div.apidoc_enclosure
-        div
-          span#api.switch  
-            |&larr; Back to API-Overview 
-          h1.h-after-switch API Documentation
+ul.sidebar-nav
+ li
+  a(href="http://dev.playbasis.com/gettingstarted.php") Getting Started
+ li
+  a(href="http://dev.playbasis.com/demo.php") Demo
+ li
+  a(href="http://dev.playbasis.com/download.php") Download SDK
+ li
+  a(href="http://dev.playbasis.com/docs.php") Documentation
+ li.current
+  a(href="http://doc.playbasis.com/pbapp") API Explorer
+
+div.readable_area_wrapper
+ div.readable_area
+
+  div
+          h1.h-after-switch API Explorer
         div.clear
         div
           - if (session.authed && apiInfo.oauth && apiInfo.oauth.type =='three-legged')
