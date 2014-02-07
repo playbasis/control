@@ -10,4 +10,3 @@ function db_clean($string,$size=255){
 function dohash($password,$salt){
     return sha1($salt . sha1($salt . sha1($password)));
 }
-?>

@@ -6,12 +6,10 @@ class Report extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-
         $this->load->model('User_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
-
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("report", $lang['folder']);
@@ -146,7 +144,7 @@ class Report extends MY_Controller
 
         foreach ($results as $result) {
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id']);
+            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
             if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
@@ -211,31 +209,23 @@ class Report extends MY_Controller
         $this->load->vars($this->data);
         $this->render_page('template');
     }
-
     private function xlsBOF()
     {
         echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
-        return;
     }
     private function xlsEOF()
     {
         echo pack("ss", 0x0A, 0x00);
-        return;
     }
     private function xlsWriteNumber($Row, $Col, $Value)
     {
-        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);
-        echo pack("d", $Value);
-        return;
+        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);echo pack("d", $Value);
     }
     private function xlsWriteLabel($Row, $Col, $Value )
     {
-        $L = strlen($Value);
-        echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
+        $L = strlen($Value);echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
         echo $Value;
-        return;
     }
-
     private function array2csv(array &$array)
     {
         if (count($array) == 0) {
@@ -261,9 +251,7 @@ class Report extends MY_Controller
         header("Content-Disposition: attachment;filename={$filename}");
         header("Content-Transfer-Encoding: binary");
     }
-
     public function actionDownload() {
-
         $this->load->model('Action_model');
         $this->load->model('Player_model');
 
@@ -302,13 +290,8 @@ class Report extends MY_Controller
             'username'               => $filter_username,
             'action_id'              => $filter_action_id
         );
-
-        $filename = md5(date('YmdH').$filter_date_start.$site_id.$filter_date_end.$filter_username.$filter_action_id).".xls";
-
         $this->download_send_headers("ActionReport_" . date("YmdHis") . ".xls");
-
         $this->xlsBOF();
-
         $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
         $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
         $this->xlsWriteLabel(0,2,$this->lang->line('column_email'));
@@ -323,8 +306,7 @@ class Report extends MY_Controller
 
         foreach($results as $row)
         {
-            $player = $this->Player_model->getPlayerById($row['pb_player_id']);
-
+            $player = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
             $this->xlsWriteNumber($xlsRow,0,$player['cl_player_id']);
             $this->xlsWriteLabel($xlsRow,1,$player['username']);
             $this->xlsWriteLabel($xlsRow,2,$player['email']);
@@ -336,7 +318,6 @@ class Report extends MY_Controller
             $xlsRow++;
         }
         $this->xlsEOF();
-
     }
 
     private function datetimeMongotoReadable($dateTimeMongo)
@@ -408,13 +389,13 @@ class Report extends MY_Controller
         $results = $this->Action_model->getActionsForDownload($data);
 
         foreach ($results as $row){
-            $player_info = $this->Player_model->getPlayerById($row['pb_player_id']);
+            $player_info = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
             $data_array[] = array( $player_info['cl_player_id'], $player_info['username'], $player_info['email'],$row['action_name'], $row['url'], date("Y-m-d", $row['date_added']->sec), );
         }
 
         $xls = new Excel_XML;
         $xls->addArray ($data_array);
-        $xls->generateXML ( "report".date("Y-m-d") );
+        $xls->generateXML ( "output_name" );
 
     }
 
