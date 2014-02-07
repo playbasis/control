@@ -436,10 +436,10 @@ class Player extends REST_Controller
 			$playerInfo['username'] = $username;
 		$exp = $this->input->post('exp');
 		if(is_numeric($exp))
-			$playerInfo['exp'] = $exp;
+			$playerInfo['exp'] = intval($exp);
 		$level = $this->input->post('level');
 		if(is_numeric($level))
-			$playerInfo['level'] = $level;
+			$playerInfo['level'] = intval($level);
 		$firstName = $this->input->post('first_name');
 		if($firstName)
 			$playerInfo['first_name'] = $firstName;
@@ -463,7 +463,7 @@ class Player extends REST_Controller
 			$playerInfo['password'] = $password;
 		$gender = $this->input->post('gender');
 		if($gender)
-			$playerInfo['gender'] = $gender;
+			$playerInfo['gender'] = intval($gender);
 		$birthdate = $this->input->post('birth_date');
 		if($birthdate)
 		{
