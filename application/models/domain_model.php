@@ -5,7 +5,6 @@ class Domain_model extends MY_Model
 
     public function getDomain($site_id) {
 
-        $this->set_site_mongodb($site_id);
         $this->mongo_db->where('_id', new MongoID($site_id));
         $results = $this->mongo_db->get("playbasis_client_site");
 
@@ -13,8 +12,6 @@ class Domain_model extends MY_Model
     }
 
     public function getTotalDomainsByClientId($data) {
-
-        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -34,8 +31,6 @@ class Domain_model extends MY_Model
     }
 
     public function getDomainsByClientId($data) {
-
-        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
@@ -87,7 +82,6 @@ class Domain_model extends MY_Model
     }
 
     public function getTotalDomains($data) {
-        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('deleted', false);
 
@@ -107,7 +101,6 @@ class Domain_model extends MY_Model
 
     public function getDomains($data) {
 
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('deleted', false);
 
@@ -158,22 +151,20 @@ class Domain_model extends MY_Model
     }
 
     public function resetToken ($site_id) {
-        $this->set_site_mongodb($site_id);
 
         $secret = $this->genAccessSecret($site_id);
 
         $token = $this->checkAccessToken("",$secret, $site_id);
 
         if ($token == '0' || $token == 0) {
-            $this->set_site_mongodb(0);
-            $this->mongo_db->where('_id', new MongoID($site_id));
+                $this->mongo_db->where('_id', new MongoID($site_id));
             $this->mongo_db->set('api_secret', $secret);
             $this->mongo_db->update('playbasis_client_site');
         }
     }
 
-    public function checkAccessToken($keys="", $secret, $site_id) {
-        $this->set_site_mongodb($site_id);
+
+    public function checkAccessToken($keys="", $secret) {
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('api_secret', $secret);
@@ -200,7 +191,6 @@ class Domain_model extends MY_Model
     }
 
     public function addDomain($data) {
-        $this->set_site_mongodb(0);
 
 
         $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
@@ -250,15 +240,13 @@ class Domain_model extends MY_Model
     }
 
     public function deleteDomain($site_id){
-        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('_id', new MongoID($site_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update('playbasis_client_site');
     }
 
-    public function deleteDomainByClientId($client_id, $site_id){
-        $this->set_site_mongodb($site_id);
+    public function deleteDomainByClientId($client_id){
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->set('deleted', true);
@@ -266,7 +254,6 @@ class Domain_model extends MY_Model
     }
 
     public function checkDomainExists($data){
-        $this->set_site_mongodb($data['site_id']);
 
         $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
         $domain = preg_replace("/https:\/\//", "", $domain);

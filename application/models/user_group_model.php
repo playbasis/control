@@ -65,7 +65,6 @@ class User_group_model extends MY_model{
 	}
 
 	public function fetchAllUserGroups($data){
-        $this->set_site_mongodb(0);
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
             $this->mongo_db->where('name', $regex);

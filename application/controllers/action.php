@@ -188,8 +188,7 @@ class Action extends MY_Controller
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
                 foreach ($this->input->post('selected') as $action_id) {
-                    $site_id = $this->User_model->getSiteId();
-                    $this->Action_model->deleteActionClient($action_id, $site_id);
+                    $this->Action_model->deleteActionClient($action_id);
                 }
             }else{
                 foreach ($this->input->post('selected') as $action_id) {
@@ -233,6 +232,7 @@ class Action extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
         }else{
+            // $this->data['actions'] = $this->Action_model->getActions($filter);
             $allActions = $this->Action_model->getActions($filter);
 
             foreach ($allActions as &$action){
@@ -242,7 +242,7 @@ class Action extends MY_Controller
 
             $this->data['actions'] = $allActions;
 
-            $config['total_rows'] = $this->Action_model->getTotalActions(0);
+            $config['total_rows'] = $this->Action_model->getTotalActions();
         }
 
         $choice = $config["total_rows"] / $config["per_page"];
@@ -295,6 +295,7 @@ class Action extends MY_Controller
             $this->data['actions'] = $this->Action_model->getActionsSite($filter);
             $config['total_rows'] = $this->Action_model->getTotalActionsSite($filter);
         }else{
+            // $this->data['actions'] = $this->Action_model->getActions($filter);
             $allActions = $this->Action_model->getActions($filter);
 
             foreach ($allActions as &$action){
@@ -303,7 +304,7 @@ class Action extends MY_Controller
             }
 
             $this->data['actions'] = $allActions;
-            $config['total_rows'] = $this->Action_model->getTotalActions(0);
+            $config['total_rows'] = $this->Action_model->getTotalActions();
         }
 
         $this->pagination->initialize($config);
@@ -350,14 +351,14 @@ class Action extends MY_Controller
         if($site_id){
             $this->data['action'] = $this->Action_model->getActionSiteInfo($action_id, $site_id);
         }else{
-            $this->data['action'] = $this->Action_model->getAction($action_id, 0);
+            $this->data['action'] = $this->Action_model->getAction($action_id);
         }
 
         $this->load->model('Client_model');
 
         $this->data['icons'] = $this->Action_model->getAllIcons();
         $this->data['colors'] = array('blue', 'orange','red', 'green', 'yellow','pink');
-        $this->data['clients'] = $this->Client_model->getClients(array('site_id' => $site_id));
+        $this->data['clients'] = $this->Client_model->getClients(array());
 
         $this->data['main'] = 'action_form';
 
@@ -426,8 +427,7 @@ class Action extends MY_Controller
 
         if($this->User_model->getClientId()){
             $client_id = $this->User_model->getClientId();
-            $site_id = $this->User_model->getSiteId();
-            $this->Action_model->increaseOrderByOneClient($action_id, $client_id, $site_id);
+            $this->Action_model->increaseOrderByOneClient($action_id, $client_id);
         }else{
             $this->Action_model->increaseOrderByOne($action_id);    
         }
@@ -446,8 +446,7 @@ class Action extends MY_Controller
 
         if($this->User_model->getClientId()){
             $client_id = $this->User_model->getClientId();
-            $site_id = $this->User_model->getSiteId();
-            $this->Action_model->decreaseOrderByOneClient($action_id, $client_id, $site_id);
+            $this->Action_model->decreaseOrderByOneClient($action_id, $client_id);
         }else{
             $this->Action_model->decreaseOrderByOne($action_id);    
         }

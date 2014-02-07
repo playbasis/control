@@ -31,6 +31,7 @@ $lang['filter_date_start']						= 'Date Start';
 $lang['filter_date_end']						= 'Date End';
 $lang['filter_username']						= 'Username';
 $lang['filter_action_id']						= 'Action';
+$lang['filter_reward_id']						= 'Reward';
 
 //Error messages
 $lang['error_permission']       	= 'Warning: You do not have permission to modify rules!';

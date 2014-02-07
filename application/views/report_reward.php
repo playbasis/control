@@ -19,7 +19,7 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_action_id'); ?>
+                        <?php echo $this->lang->line('filter_reward_id'); ?>
                     <select name="filter_action_id">
                         <option value="0"><?php echo "All"; ?></option>
                         <?php foreach ($badge_rewards as $br){?>

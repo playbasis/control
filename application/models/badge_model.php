@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Badge_model extends MY_Model
 {
     public function getBadge($badge_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $results = $this->mongo_db->get("playbasis_badge");
@@ -11,8 +10,7 @@ class Badge_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getBadgeToClient($badge_id, $site_id){
-        $this->set_site_mongodb($site_id);
+    public function getBadgeToClient($badge_id){
 
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $results = $this->mongo_db->get("playbasis_badge_to_client");
@@ -22,7 +20,6 @@ class Badge_model extends MY_Model
 
     public function getBadges($data = array()) {
 
-        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -71,7 +68,6 @@ class Badge_model extends MY_Model
     }
 
     public function getTotalBadges($data){
-        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -89,7 +85,6 @@ class Badge_model extends MY_Model
 
     public function getBadgeBySiteId($data = array()) {
 
-        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -141,7 +136,6 @@ class Badge_model extends MY_Model
 
     public function getBadgeByClientId($data = array()) {
 
-        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -193,7 +187,6 @@ class Badge_model extends MY_Model
 
     public function getTotalBadgeBySiteId($data) {
 
-        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -212,7 +205,6 @@ class Badge_model extends MY_Model
 
     public function getTotalBadgeBySiteIdWithoutSponsor($data){
 
-        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
@@ -222,35 +214,58 @@ class Badge_model extends MY_Model
         return $total;
     }
 
-//    public function getCommonBadges(){
-//        $this->set_site_mongodb(0);
-//
-//        $results = $this->mongo_db->get("playbasis_badge");
-//
-//        $badges = array();
-//
-//        if(count($results)>0){
-//            foreach ($results as &$rown) {
-//                array_push($badges, array("id"=>$rown['_id']."","name"=>$rown['name'],"img_path"=>$rown['image'],"description"=>$rown['description']));
-//            }
-//        }//end if
-//
-//
-//        $output = array(
-//            "badges_set_id"=>0,
-//            "badges_customer_id"=>0,
-//            "badges_set"=>array(
-//                "set_label"=>"Basic Badge",
-//                "set_id"=>"0",
-//                "items"=>$badges
-//            )
-//        );
-//
-//        return $output;
-//    }
+    public function getCommonBadges(){
+
+        $results = $this->mongo_db->get("playbasis_badge");
+
+        $badges = array();
+
+        if(count($results)>0){
+            foreach ($results as &$rown) {
+                array_push($badges, array("id"=>$rown['_id']."","name"=>$rown['name'],"img_path"=>$rown['image'],"description"=>$rown['description']));
+            }
+        }//end if
+
+
+        $output = array(
+            "badges_set_id"=>0,
+            "badges_customer_id"=>0,
+            "badges_set"=>array(
+                "set_label"=>"Basic Badge",
+                "set_id"=>"0",
+                "items"=>$badges
+            )
+        );
+
+        return $output;
+    }
+
+    // public function addBadge($data) {
+    //     $this->set_site_mongodb(0);
+
+    //     $b = $this->mongo_db->insert('playbasis_badge', array(
+    //         'stackable' => (int)$data['stackable']|0 ,
+    //         'substract' => (int)$data['substract']|0,
+    //         'quantity' => (int)$data['quantity']|0 ,
+    //         'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+    //         'status' => (bool)$data['status'],
+    //         'sort_order' => (int)$data['sort_order']|1,
+    //         'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+    //         'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+    //         'name' => $data['name']|'' ,
+    //         'description' => $data['description']|'',
+    //         'hint' => $data['hint']|'' ,
+    //         'language_id' => (int)1,
+    //     ));
+
+    //     $this->mongo_db->insert('playbasis_badge_to_client', array(
+    //         'client_id' => new MongoID($data['client_id']),
+    //         'site_id' => new MongoID($data['site_id']),
+    //         'badge_id' => new MongoID($b)
+    //     ));
+    // }
 
     public function addBadge($data) {
-        $this->set_site_mongodb(0);
 
         $b = $this->mongo_db->insert('playbasis_badge', array(
             'stackable' => (int)$data['stackable']|0 ,
@@ -272,7 +287,6 @@ class Badge_model extends MY_Model
     }
 
     public function addBadgeToClient($data){
-        $this->set_site_mongodb($data['site_id']);
         $this->mongo_db->insert('playbasis_badge_to_client', array(
             'client_id' => new MongoID($data['client_id']),
             'site_id' => new MongoID($data['site_id']),
@@ -295,7 +309,6 @@ class Badge_model extends MY_Model
     }
 
     public function editBadge($badge_id, $data) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $this->mongo_db->set('stackable', (int)$data['stackable']);
@@ -324,7 +337,6 @@ class Badge_model extends MY_Model
     }
 
     public function editBadgeToClient($badge_id, $data) {
-        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $this->mongo_db->set('client_id', new MongoID($data['client_id']));
@@ -355,9 +367,7 @@ class Badge_model extends MY_Model
     }
 
     public function editBadgeToClientFromAdmin($badge_id, $data) {
-        #todo cannot check all database
-        $this->set_site_mongodb(0);
-        
+
         $this->mongo_db->where('badge_id',  new MongoID($badge_id));
         $this->mongo_db->set('stackable', (int)$data['stackable']);
         $this->mongo_db->set('substract', (int)$data['substract']);
@@ -385,7 +395,6 @@ class Badge_model extends MY_Model
     }
 
     public function deleteBadge($badge_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $this->mongo_db->set('deleted', true);
@@ -395,8 +404,7 @@ class Badge_model extends MY_Model
         // $this->mongo_db->delete('playbasis_badge_to_client');
     }
 
-    public function deleteBadgeClient($badge_id, $site_id) {
-        $this->set_site_mongodb($site_id);
+    public function deleteBadgeClient($badge_id) {
 
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $this->mongo_db->set('deleted', true);
@@ -405,8 +413,6 @@ class Badge_model extends MY_Model
     }
 
     public function increaseOrderByOne($badge_id){
-        $this->set_site_mongodb(0);
-
         $this->mongo_db->where('_id', new MongoID($badge_id));
 
         $badge = $this->mongo_db->get('playbasis_badge');
@@ -421,8 +427,6 @@ class Badge_model extends MY_Model
     }
 
     public function decreaseOrderByOne($badge_id){
-        $this->set_site_mongodb(0);
-
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $badge = $this->mongo_db->get('playbasis_badge');
 
@@ -438,9 +442,7 @@ class Badge_model extends MY_Model
         
     }
 
-    public function increaseOrderByOneClient($badge_id, $site_id){
-        $this->set_site_mongodb($site_id);
-
+    public function increaseOrderByOneClient($badge_id){
         $this->mongo_db->where('_id', new MongoID($badge_id));
 
         $badge = $this->mongo_db->get('playbasis_badge_to_client');
@@ -454,9 +456,7 @@ class Badge_model extends MY_Model
 
     }
 
-    public function decreaseOrderByOneClient($badge_id, $site_id){
-        $this->set_site_mongodb($site_id);
-
+    public function decreaseOrderByOneClient($badge_id){
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $badge = $this->mongo_db->get('playbasis_badge_to_client');
 
@@ -473,25 +473,17 @@ class Badge_model extends MY_Model
     }
 
     public function checkBadgeIsPublic($badge_id){
-        #todo cannot check all database
-        $this->set_site_mongodb(0);
-
         $this->mongo_db->where('badge_id', $badge_id);
         return $this->mongo_db->get('playbasis_badge_to_client');
     }
 
-    public function checkBadgeIsSponsor($badge_id, $site_id){
-        $this->set_site_mongodb($site_id);
-
+    public function checkBadgeIsSponsor($badge_id){
         $this->mongo_db->where('_id', new MongoID($badge_id));
         $badge = $this->mongo_db->get('playbasis_badge_to_client');
         return isset($badge[0]['sponsor'])?$badge[0]['sponsor']:null;
     }
 
     public function deleteClientBadgeFromAdmin($badge_id){
-        #todo cannot check all database
-        $this->set_site_mongodb(0);
-
         $this->mongo_db->where('badge_id', new MongoID($badge_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update_all('playbasis_badge_to_client');

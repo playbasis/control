@@ -374,7 +374,7 @@ class Report_reward extends MY_Controller{
         }
         $results = $this->data['reports'];
        
-        $this->download_send_headers("ActionReport_" . date("YmdHis") . ".xls");
+        $this->download_send_headers("RewardReport_" . date("YmdHis") . ".xls");
         $this->xlsBOF();
         $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
         $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
@@ -392,7 +392,6 @@ class Report_reward extends MY_Controller{
             }else{
                 $reward_name = $row['reward_name']['name'];
             }
-
             $this->xlsWriteNumber($xlsRow,0,$row['cl_player_id']);
             $this->xlsWriteLabel($xlsRow,1,$row['username']);
             $this->xlsWriteLabel($xlsRow,2,$row['email']);

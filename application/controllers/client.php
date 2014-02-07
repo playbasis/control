@@ -298,8 +298,7 @@ class Client extends MY_Controller
         $this->load->model('Plan_model');
 
         if (isset($client_id) && ($client_id != 0)) {
-            $site_id =  $this->User_model->getSiteId();
-            $client_info = $this->Client_model->getClient($client_id, $site_id);
+            $client_info = $this->Client_model->getClient($client_id);
             $this->data['list_client_id'] = $client_id;
         }else {
             $this->data['list_client_id'] = null;

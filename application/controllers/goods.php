@@ -214,7 +214,7 @@ class Goods extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 if($this->User_model->getClientId()){
 
-                    if(!$this->Goods_model->checkGoodsIsSponsor($goods_id,$this->User_model->getSiteId())){
+                    if(!$this->Goods_model->checkGoodsIsSponsor($goods_id)){
                         $goods_data['client_id'] = $this->User_model->getClientId();
                         $goods_data['site_id'] = $this->User_model->getSiteId();
                         $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
@@ -223,7 +223,7 @@ class Goods extends MY_Controller
                     }
                 }else{
                     $this->Goods_model->editGoods($goods_id, $goods_data);
-                    #todo cannot check database
+
                     $this->Goods_model->editGoodsToClientFromAdmin($goods_id, $goods_data);
                 }
 
@@ -254,15 +254,13 @@ class Goods extends MY_Controller
                 if($this->checkOwnerGoods($goods_id)){
 
                     if($this->User_model->getClientId()){
-                        if(!$this->Goods_model->checkGoodsIsSponsor($goods_id,$this->User_model->getSiteId())){
-                            $site_id = $this->User_model->getSiteId();
-                            $this->Goods_model->deleteGoodsClient($goods_id, $site_id);
+                        if(!$this->Goods_model->checkGoodsIsSponsor($goods_id)){
+                            $this->Goods_model->deleteGoodsClient($goods_id);
                         }else{
                             redirect('/goods', 'refresh');
                         }
                     }else{
                         $this->Goods_model->deleteGoods($goods_id);
-                        #todo cannot check all database
                         $this->Goods_model->deleteGoodsClientFromAdmin($goods_id);
                     }
 
@@ -298,7 +296,6 @@ class Goods extends MY_Controller
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
-            $data['site_id'] = $site_id;
 
             $results = $this->Goods_model->getGoodsList($data);
 
@@ -423,7 +420,6 @@ class Goods extends MY_Controller
             $data['limit'] = $per_page;
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
-            $data['site_id'] = $site_id;
 
             $results = $this->Goods_model->getGoodsList($data);
 
@@ -535,8 +531,7 @@ class Goods extends MY_Controller
 
         if (isset($goods_id) && ($goods_id != 0)) {
             if($this->User_model->getClientId()){
-                $site_id = $this->User_model->getSiteId();
-                $goods_info = $this->Goods_model->getGoodsToClient($goods_id, $site_id);
+                $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
             }else{
                 $goods_info = $this->Goods_model->getGoods($goods_id);
             }
@@ -661,12 +656,10 @@ class Goods extends MY_Controller
         }
 
         $this->load->model('Client_model');
+        $this->data['to_clients'] = $this->Client_model->getClients(array());
+        $this->data['client_id'] = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $this->data['site_id'] = $site_id;
-
-        $this->data['to_clients'] = $this->Client_model->getClients(array('site_id' => $site_id));
-        $this->data['client_id'] = $this->User_model->getClientId();
-
 
         $setting_group_id = $this->User_model->getAdminGroupID();
 
@@ -675,7 +668,7 @@ class Goods extends MY_Controller
             $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $site_id ));
         }
         if (!empty($goods_info)) {
-            $goods_private = $this->Goods_model->getGoodsOfClientPrivate($goods_id, $site_id);
+            $goods_private = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
             if(!$this->checkGoodsIsPublic($goods_private['goods_id'])){
                 $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $goods_private['site_id'] ));
             }
@@ -686,7 +679,7 @@ class Goods extends MY_Controller
             $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($site_id);
         }
         if (!empty($goods_info)) {
-            $goods_private = $this->Goods_model->getGoodsOfClientPrivate($goods_id, $site_id);
+            $goods_private = $this->Goods_model->getGoodsOfClientPrivate($goods_id);
             if(!$this->checkGoodsIsPublic($goods_private['goods_id'])){
                 $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($goods_private['site_id']);
             }
@@ -701,17 +694,7 @@ class Goods extends MY_Controller
     public function getBadgeForGoods(){
         if($this->input->get('client_id')){
             $this->load->model('Badge_model');
-            $this->load->model('Domain_model');
-
-            $data_client = array("client_id" => $this->input->get('client_id'), 'site_id'=>$this->User_model->getSiteId());
-
-            $site = $this->Domain_model->getDomainsByClientId($data_client);
-
-            $site = $site ? $site[0] : null;
-
-            $data_client["site_id"] = $site["_id"];
-
-            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId($data_client);
+            $this->data['badge_list'] = $this->Badge_model->getBadgeByClientId(array("client_id" => $this->input->get('client_id') ));
 
             $this->load->vars($this->data);
             $this->render_page('goods_badge_list_ajax');
@@ -782,8 +765,7 @@ class Goods extends MY_Controller
     public function increase_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $site_id = $this->User_model->getSiteId();
-            $this->Goods_model->increaseOrderByOneClient($goods_id,$site_id);
+            $this->Goods_model->increaseOrderByOneClient($goods_id);
         }else{
             $this->Goods_model->increaseOrderByOne($goods_id);
         }
@@ -796,8 +778,7 @@ class Goods extends MY_Controller
     public function decrease_order($goods_id){
 
         if($this->User_model->getClientId()){
-            $site_id = $this->User_model->getSiteId();
-            $this->Goods_model->decreaseOrderByOneClient($goods_id, $site_id);
+            $this->Goods_model->decreaseOrderByOneClient($goods_id);
         }else{
             $this->Goods_model->decreaseOrderByOne($goods_id);
         }

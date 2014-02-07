@@ -46,7 +46,6 @@ class Report_reward_model extends MY_Model{
 	}
 
 	public function getReportReward($data) {
-        $this->set_site_mongodb(0);
 
         if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
