@@ -107,9 +107,7 @@ class Level extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
                 $this->Level_model->editLevel($level_id, $this->input->post());
                 if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $data_update = $this->input->post();
-                    $data_update['site_id'] = $this->User_model->getSiteId();
-                    $this->Level_model->editLevelSite($level_id, $data_update);
+                    $this->Level_model->editLevelSite($level_id, $this->input->post());
                 }else{
                     $this->Level_model->editLevel($level_id, $this->input->post());
                 }
@@ -138,9 +136,8 @@ class Level extends MY_Controller
         if ($this->input->post('selected') && $this->error['warning'] == null) {
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                $site_id = $this->User_model->getSiteId();
                 foreach ($this->input->post('selected') as $level_id) {
-                    $this->Level_model->deleteLevelSite($level_id, $site_id);
+                    $this->Level_model->deleteLevelSite($level_id);
                 }
             }else{
                 foreach ($this->input->post('selected') as $level_id) {
@@ -290,8 +287,7 @@ class Level extends MY_Controller
 
         if (isset($level_id) && ($level_id != 0)) {
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $site_id = $this->User_model->getSiteId();
-                    $level_info = $this->Level_model->getLevelSite($level_id, $site_id);
+                    $level_info = $this->Level_model->getLevelSite($level_id);
                 }else{
                     $level_info = $this->Level_model->getLevel($level_id);
                 }

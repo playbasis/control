@@ -60,7 +60,7 @@ class Dashboard extends MY_Controller
             if ($leaderboards) {
                 foreach ($leaderboards as $leaderboard) {
 
-                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id'], $data['site_id']);
+                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
 
                     $this->data['leaderboards'][] = array(
                         'player_id' => $leaderboard['pb_player_id'],
@@ -165,7 +165,7 @@ class Dashboard extends MY_Controller
             if ($leaderboards) {
                 foreach ($leaderboards as $leaderboard) {
 
-                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id'], $data['site_id']);
+                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
 
                     $this->data['leaderboards'][] = array(
                         'player_id' => $leaderboard['pb_player_id'],

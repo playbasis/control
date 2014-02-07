@@ -3,7 +3,6 @@
 class Feature_model extends MY_Model
 {
     public function getFeature($feature_id) {
-        $this->set_site_mongodb(0);
 
         $this->mongo_db->where('_id', new MongoID($feature_id));
         $this->mongo_db->order_by(array('sort_order' => 1));
@@ -13,8 +12,6 @@ class Feature_model extends MY_Model
     }
 
     public function getFeatures() {
-        $this->set_site_mongodb(0);
-
         $this->mongo_db->where('status', true);
         $this->mongo_db->order_by(array('sort_order' => 1));
         $results = $this->mongo_db->get("playbasis_feature");
@@ -24,7 +21,6 @@ class Feature_model extends MY_Model
 
     public function getFeatureByClientId($client_id) {
 
-        $this->set_site_mongodb(0);
         $this->mongo_db->where('status', true);
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->order_by(array('sort_order' => 1));
@@ -45,7 +41,6 @@ class Feature_model extends MY_Model
 
     public function getFeatureBySiteId($client_id, $site_id) {
 
-        $this->set_site_mongodb($site_id);
         $this->mongo_db->where('status', true);
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where('client_id', new MongoID($client_id));

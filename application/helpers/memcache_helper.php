@@ -54,4 +54,3 @@ function db_count_all_results($mdl, $table)
 	}
 	return $result;
 }
-?>
