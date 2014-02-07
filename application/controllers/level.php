@@ -71,13 +71,24 @@ class Level extends MY_Controller
                     $data = $this->input->post();
                     $data['client_id'] = $this->User_model->getClientId();
                     $data['site_id'] = $this->User_model->getSiteId();
-                    $this->Level_model->addLevelSite($data);
+
+                    $checkLevelExists = $this->Level_model->checkLevelExists($data);
+
+                    if(!$checkLevelExists){
+                        $insertLevel = $this->Level_model->addLevelSite($data);
+
+                        if($insertLevel){
+                            $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                            redirect('/level', 'refresh');
+                        }else{
+                            $this->data['message'] = $this->lang->line('error_exp_level');          
+                        }    
+                    }else{
+                        $this->data['message'] = $this->lang->line('error_exp_level_exists');
+                    }
                 }else{
                     $this->Level_model->addLevel($this->input->post());
                 }
-
-                $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                redirect('/level', 'refresh');
             }
         }
 

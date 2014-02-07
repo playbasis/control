@@ -186,22 +186,94 @@ class Level_model extends MY_Model
 
     public function addLevelSite($data) {
 
-        $data_insert = array(
-            'client_id' => new MongoID($data['client_id']),
-            'site_id' => new MongoID($data['site_id']),
-            'level_title' => $data['level_title']|'' ,
-            'level' => (int)$data['level']|0,
-            'exp' => (int)$data['exp']|0 ,
-            'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
-            // 'tags' => $data['tags']|'' ,
-            'tags' => (isset($data['tags']))?$data['tags']:0,
-            'status' => (bool)$data['status'],
-            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
-        );
+        if(isset($data['level'])){
+            $toInsertLevel = $data['level'];
 
-        $exp_id = $this->mongo_db->insert('playbasis_client_exp_table', $data_insert);
-        return $exp_id;
+            $exists = $this->checkLevelExists($data);
+
+            if(!$exists){
+                $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+                $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+                $this->mongo_db->where_lt('level', floatval($toInsertLevel));
+                $this->mongo_db->order_by(array('level' => 'DESC'));
+                $lowerLevels = $this->mongo_db->get('playbasis_client_exp_table');
+                $nextLowerLevel = isset($lowerLevels[0])?$lowerLevels[0]:null;
+
+                $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+                $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+                $this->mongo_db->where_gt('level', floatval($toInsertLevel));
+                $this->mongo_db->order_by(array('level' => 'ASC'));
+                $higerLevels = $this->mongo_db->get('playbasis_client_exp_table');
+                $nextHigherLevel = isset($higerLevels[0])?$higerLevels[0]:null;
+
+                if(!$nextLowerLevel && $nextHigherLevel){
+                    if($data['exp']<$nextHigherLevel['exp']){
+                        $data_insert = array(
+                            'client_id' => new MongoID($data['client_id']),
+                            'site_id' => new MongoID($data['site_id']),
+                            'level_title' => $data['level_title']|'' ,
+                            'level' => (int)$data['level'],
+                            'exp' => (int)$data['exp']|0 ,
+                            'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+                            // 'tags' => $data['tags']|'' ,
+                            'tags' => (isset($data['tags']))?$data['tags']:0,
+                            'status' => (bool)$data['status'],
+                            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                        );
+                        $exp_id = $this->mongo_db->insert('playbasis_client_exp_table', $data_insert);
+                        return $exp_id;
+                    }else{
+                        return false;
+                    }
+                }
+
+                if($nextLowerLevel && !$nextHigherLevel){
+                    if($data['exp']>$nextLowerLevel['exp']){
+                        $data_insert = array(
+                            'client_id' => new MongoID($data['client_id']),
+                            'site_id' => new MongoID($data['site_id']),
+                            'level_title' => $data['level_title']|'' ,
+                            'level' => (int)$data['level'],
+                            'exp' => (int)$data['exp']|0 ,
+                            'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+                            // 'tags' => $data['tags']|'' ,
+                            'tags' => (isset($data['tags']))?$data['tags']:0,
+                            'status' => (bool)$data['status'],
+                            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                        );
+                        $exp_id = $this->mongo_db->insert('playbasis_client_exp_table', $data_insert);
+                        return $exp_id;
+                    }else{
+                        return false;
+                    }
+                }
+
+                if($data['exp']>$nextLowerLevel['exp'] && $data['exp']<$nextHigherLevel['exp']){
+                    $data_insert = array(
+                        'client_id' => new MongoID($data['client_id']),
+                        'site_id' => new MongoID($data['site_id']),
+                        'level_title' => $data['level_title']|'' ,
+                        'level' => (int)$data['level'],
+                        'exp' => (int)$data['exp']|0 ,
+                        'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+                        // 'tags' => $data['tags']|'' ,
+                        'tags' => (isset($data['tags']))?$data['tags']:0,
+                        'status' => (bool)$data['status'],
+                        'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                    );
+                    $exp_id = $this->mongo_db->insert('playbasis_client_exp_table', $data_insert);
+                    return $exp_id;
+                }else{
+                    return false;
+                }
+
+            }else{
+                return false;
+            }
+        }
     }
 
     public function editLevel($level_id, $data) {
@@ -284,6 +356,22 @@ class Level_model extends MY_Model
             $dateTimeMongo = "0000-00-00 00:00:00";
         }
         return $dateTimeMongo;
+    }
+
+    public function checkLevelExists($data){
+        $toInsertLevel = $data['level'];
+        $this->mongo_db->where('client_id', $data['client_id']);
+        $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('level', (int)$toInsertLevel);
+        $check = $this->mongo_db->get('playbasis_client_exp_table');
+
+        if($check){
+            echo "TRUE";
+            return true;
+        }else{
+            echo "FALSE";
+            return false;
+        }
     }
 }
 ?>
