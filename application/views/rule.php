@@ -567,7 +567,7 @@
 <!-- ############################################# -->
 
 <!-- Navigation -->
-<nav class="fixMenu radius-small">
+<!-- <nav class="fixMenu radius-small">
     <ul>
         <li>
             <a href="#top" id="fixMenugoToTop" class="radius-small">GoToTop</a>
@@ -585,4 +585,4 @@
             <a href="#down" id="fixMenugoToDown" class="radius-small">GoToDown</a>
         </li>
     </ul>
-</nav>
+</nav> -->
