@@ -75,7 +75,7 @@
                             <tr>
                                 <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_start" value="<?php if (strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start)));} else { echo "-"; } ?>" size="50" />
+                                    <input type="text" class="date" name="date_start" value="<?php if (strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
                                 </td>
                             </tr>
                             <tr>
