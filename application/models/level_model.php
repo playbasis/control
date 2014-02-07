@@ -366,10 +366,8 @@ class Level_model extends MY_Model
         $check = $this->mongo_db->get('playbasis_client_exp_table');
 
         if($check){
-            echo "TRUE";
             return true;
         }else{
-            echo "FALSE";
             return false;
         }
     }
