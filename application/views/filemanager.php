@@ -666,7 +666,7 @@ $(document).ready(function() {
             }
 
             if (json.error) {
-//				alert(json.error);
+				alert(json.error);
             }
 
             $('.loading').remove();
