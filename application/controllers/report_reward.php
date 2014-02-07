@@ -147,7 +147,7 @@ class Report_reward extends MY_Controller{
             $budget_name = null;
             $reward_name = null;
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id']);
+            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
             if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
@@ -345,7 +345,7 @@ class Report_reward extends MY_Controller{
             $budget_name = null;
             $reward_name = null;
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id']);
+            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
             if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];

@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Image_model extends MY_Model
 {
     public function resize($filename, $width, $height) {
-        $this->set_site_mongodb(0);
         
         $filename = urldecode($filename );
 

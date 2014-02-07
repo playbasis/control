@@ -144,7 +144,7 @@ class Report extends MY_Controller
 
         foreach ($results as $result) {
 
-            $player = $this->Player_model->getPlayerById($result['pb_player_id']);
+            $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
             if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
@@ -292,7 +292,7 @@ class Report extends MY_Controller
 
         foreach($results as $row)
         {
-            $player = $this->Player_model->getPlayerById($row['pb_player_id']);
+            $player = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
             $this->xlsWriteNumber($xlsRow,0,$player['cl_player_id']);
             $this->xlsWriteLabel($xlsRow,1,$player['username']);
             $this->xlsWriteLabel($xlsRow,2,$player['email']);
@@ -327,6 +327,63 @@ class Report extends MY_Controller
             return false;
         }
     }
+    public function getActionsToDownload(){
+
+        $this->load->helper('php-excel');
+        
+        if ($this->input->get('date_start')) {
+            $filter_date_start = $this->input->get('date_start');
+        } else {
+            $filter_date_start = '';
+        }
+
+        if ($this->input->get('date_expire')) {
+            $filter_date_end = $this->input->get('date_expire');
+        } else {
+            $filter_date_end = '';
+        }
+
+        if ($this->input->get('username')) {
+            $filter_username = $this->input->get('username');
+
+        } else {
+            $filter_username = '';
+        }
+
+        if ($this->input->get('action_id')) {
+            $filter_action_id = $this->input->get('action_id');
+        } else {
+            $filter_action_id = 0;
+        }
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $data = array(
+                'client_id' =>$client_id,
+                'site_id' => $site_id,
+                'username' => $filter_username,
+                'date_expire' => $filter_date_end,
+                'date_start' => $filter_date_start,
+                'action_id' => $filter_action_id,
+            );
+
+        $this->load->model('Action_model');
+        $this->load->model('Player_model');
+
+        $results = $this->Action_model->getActionsForDownload($data);
+
+        foreach ($results as $row){
+            $player_info = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
+            $data_array[] = array( $player_info['cl_player_id'], $player_info['username'], $player_info['email'],$row['action_name'], $row['url'], date("Y-m-d", $row['date_added']->sec), );
+        }
+
+        $xls = new Excel_XML;
+        $xls->addArray ($data_array);
+        $xls->generateXML ( "output_name" );
+
+    }
+
 
 }
 ?>

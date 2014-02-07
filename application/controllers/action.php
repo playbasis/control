@@ -357,7 +357,7 @@ class Action extends MY_Controller
 
         $this->data['icons'] = $this->Action_model->getAllIcons();
         $this->data['colors'] = array('blue', 'orange','red', 'green', 'yellow','pink');
-        $this->data['clients'] = $this->Client_model->getClients(array());
+        $this->data['clients'] = $this->Client_model->getClients(array('site_id' => $site_id));
 
         $this->data['main'] = 'action_form';
 

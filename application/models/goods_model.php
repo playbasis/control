@@ -11,8 +11,8 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getGoodsToClient($goods_id){
-        $this->set_site_mongodb(0);
+    public function getGoodsToClient($goods_id, $site_id){
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $results = $this->mongo_db->get("playbasis_goods_to_client");
@@ -20,8 +20,8 @@ class Goods_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getGoodsOfClientPrivate($goods_id){
-        $this->set_site_mongodb(0);
+    public function getGoodsOfClientPrivate($goods_id, $site_id){
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
         $results = $this->mongo_db->get("playbasis_goods_to_client");
@@ -31,7 +31,7 @@ class Goods_model extends MY_Model
 
     public function getGoodsList($data = array()) {
 
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -80,7 +80,7 @@ class Goods_model extends MY_Model
     }
 
     public function getTotalGoods($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -98,7 +98,7 @@ class Goods_model extends MY_Model
 
     public function getGoodsBySiteId($data = array()) {
 
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -150,7 +150,7 @@ class Goods_model extends MY_Model
 
     public function getTotalGoodsBySiteId($data) {
 
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -167,32 +167,32 @@ class Goods_model extends MY_Model
         return $total;
     }
 
-    public function getCommonGoods(){
-        $this->set_site_mongodb(0);
-
-        $results = $this->mongo_db->get("playbasis_goods");
-
-        $goods_list = array();
-
-        if(count($results)>0){
-            foreach ($results as &$rown) {
-                array_push($goods_list, array("id"=>$rown['_id']."","name"=>$rown['name'],"img_path"=>$rown['image'],"description"=>$rown['description']));
-            }
-        }//end if
-
-
-        $output = array(
-            "goods_list_set_id"=>0,
-            "goods_list_customer_id"=>0,
-            "goods_list_set"=>array(
-                "set_label"=>"Basic Goods",
-                "set_id"=>"0",
-                "items"=>$goods_list
-            )
-        );
-
-        return $output;
-    }
+//    public function getCommonGoods(){
+//        $this->set_site_mongodb(0);
+//
+//        $results = $this->mongo_db->get("playbasis_goods");
+//
+//        $goods_list = array();
+//
+//        if(count($results)>0){
+//            foreach ($results as &$rown) {
+//                array_push($goods_list, array("id"=>$rown['_id']."","name"=>$rown['name'],"img_path"=>$rown['image'],"description"=>$rown['description']));
+//            }
+//        }//end if
+//
+//
+//        $output = array(
+//            "goods_list_set_id"=>0,
+//            "goods_list_customer_id"=>0,
+//            "goods_list_set"=>array(
+//                "set_label"=>"Basic Goods",
+//                "set_id"=>"0",
+//                "items"=>$goods_list
+//            )
+//        );
+//
+//        return $output;
+//    }
 
     public function addGoods($data) {
         $this->set_site_mongodb(0);
@@ -229,6 +229,8 @@ class Goods_model extends MY_Model
     }
 
     public function addGoodsToClient($data){
+
+        $this->set_site_mongodb($data['site_id']);
 
         $data_insert = array(
             'client_id' => new MongoID($data['client_id']),
@@ -305,7 +307,7 @@ class Goods_model extends MY_Model
     }
 
     public function editGoodsToClient($goods_id, $data) {
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $this->mongo_db->set('client_id', new MongoID($data['client_id']));
@@ -397,8 +399,8 @@ class Goods_model extends MY_Model
         $this->mongo_db->update('playbasis_goods');
     }
 
-    public function deleteGoodsClient($goods_id) {
-        $this->set_site_mongodb(0);
+    public function deleteGoodsClient($goods_id, $site_id) {
+        $this->set_site_mongodb($site_id);
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $this->mongo_db->set('deleted', true);
@@ -407,6 +409,7 @@ class Goods_model extends MY_Model
     }
 
     public function deleteGoodsClientFromAdmin($goods_id) {
+        #todo cannot check all database
         $this->set_site_mongodb(0);
 
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
@@ -483,13 +486,18 @@ class Goods_model extends MY_Model
         
     }
 
-    public function checkGoodsIsSponsor($goods_id){
+    public function checkGoodsIsSponsor($goods_id, $site_id){
+        $this->set_site_mongodb($site_id);
+
         $this->mongo_db->where('_id', new MongoID($goods_id));
         $badge = $this->mongo_db->get('playbasis_goods_to_client');
         return isset($badge[0]['sponsor'])?$badge[0]['sponsor']:null;
     }
 
     public function checkGoodsIsPublic($goods_id){
+        #todo cannot check all database
+        $this->set_site_mongodb(0);
+
         $this->mongo_db->where('goods_id', $goods_id);
         return $this->mongo_db->get('playbasis_goods_to_client');
     }

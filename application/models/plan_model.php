@@ -102,7 +102,7 @@ class Plan_model extends MY_Model
     }
 
     public function getFeatures($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
@@ -186,7 +186,7 @@ class Plan_model extends MY_Model
     }
 
     public function getJigsaws($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $sort_data = array(
             '_id',
@@ -226,7 +226,7 @@ class Plan_model extends MY_Model
     }
 
     public function getRewards($data){
-        $this->set_site_mongodb(0);
+        $this->set_site_mongodb($data['site_id']);
 
         $sort_data = array(
             '_id',
