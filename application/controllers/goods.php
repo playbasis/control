@@ -640,7 +640,7 @@ class Goods extends MY_Controller
         } elseif (!empty($goods_info)) {
             $this->data['date_expire'] = $goods_info['date_expire'];
         } else {
-            $this->data['date_expire'] = "";
+            $this->data['date_expire'] = "-";
         }
 
         if (isset($goods_id)) {

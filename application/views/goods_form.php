@@ -81,7 +81,7 @@
                             <tr>
                                 <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_expire" value="<?php if (strtotime(datetimeMongotoReadable($date_expire))) { ?><?php echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_expire))); ?><?php } else { ?>-<?php } ?>" size="50" />
+                                    <input type="text" class="date" name="date_expire" value="<?php if (strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
                                 </td>
                             </tr>
                         </table>
