@@ -632,7 +632,7 @@ class Goods extends MY_Controller
         } elseif (!empty($goods_info)) {
             $this->data['date_start'] = $goods_info['date_start'];
         } else {
-            $this->data['date_start'] = "";
+            $this->data['date_start'] = "-";
         }
 
         if ($this->input->post('date_expire')) {
@@ -640,7 +640,7 @@ class Goods extends MY_Controller
         } elseif (!empty($goods_info)) {
             $this->data['date_expire'] = $goods_info['date_expire'];
         } else {
-            $this->data['date_expire'] = "";
+            $this->data['date_expire'] = "-";
         }
 
         if (isset($goods_id)) {
