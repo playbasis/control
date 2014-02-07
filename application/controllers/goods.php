@@ -696,7 +696,7 @@ class Goods extends MY_Controller
             $this->load->model('Badge_model');
             $this->load->model('Domain_model');
 
-            $data_client = array("client_id" => $this->input->get('client_id') );
+            $data_client = array("client_id" => $this->input->get('client_id'), 'site_id'=>$this->User_model->getSiteId());
 
             $site = $this->Domain_model->getDomainsByClientId($data_client);
 

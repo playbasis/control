@@ -132,7 +132,7 @@ class  MY_Controller  extends  CI_Controller  {
                 $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
                 $this->data['domain_name'] = $this->data['domain'];
 
-                $temp = array('client_id'=>$this->data['client_id']);
+                $temp = array('client_id'=>$this->data['client_id'], 'site_id'=>$this->data['site_id']);
                 
                 // $this->data['domain_all'] = $this->Domain_model->getDomainsByClientId($temp);
                 $allDomains = $this->Domain_model->getDomainsByClientId($temp);

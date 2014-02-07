@@ -141,8 +141,8 @@ class Client extends MY_Controller
                 if($this->checkOwnerClient($client_id)){
                     $this->Client_model->deleteClient($client_id);
                     $this->Client_model->deleteClientPersmission($client_id);
-
-                    $this->Domain_model->deleteDomainByClientId($client_id);
+                    $site_id = $this->User_model->getSiteId();
+                    $this->Domain_model->deleteDomainByClientId($client_id, $site_id);
 
                     $data = array('client_id'=>$client_id);
                     $results = $this->User_model->getUserByClientId($data);
@@ -220,7 +220,7 @@ class Client extends MY_Controller
         if ($results_client) {
             foreach ($results_client as $result) {
 
-                $data_client = array("client_id" => $result['_id']);
+                $data_client = array("client_id" => $result['_id'], 'site_id'=>$site_id);
                 $domain_total = $this->Domain_model->getTotalDomainsByClientId($data_client);
 
                 if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
@@ -416,7 +416,9 @@ class Client extends MY_Controller
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $clients = $this->Domain_model->getDomainsByClientId($this->User_model->getClientId());
+            $theData = array('client_id'=> $this->User_model->getClientId(), 'site_id'=>$this->User_model->getSiteId());
+
+            $clients = $this->Domain_model->getDomainsByClientId($theData);
 
             $has = false;
 
@@ -487,6 +489,7 @@ class Client extends MY_Controller
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
+            'site_id' =>$this->User_model->getSiteId()
             // 'start' => $offset,
             // 'limit' => $per_page
         );

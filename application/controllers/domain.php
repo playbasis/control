@@ -252,6 +252,7 @@ class Domain extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
 
                 $data['domain_name']= $this->input->post('domain_name');
+                $data['site_id'] = $this->User_model->getSiteId();
                 $check_domain_exists = $this->Domain_model->checkDomainExists($data);
 
                 if(!$check_domain_exists){
@@ -349,7 +350,9 @@ class Domain extends MY_Controller
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $sites = $this->Domain_model->getDomainsByClientId($this->User_model->getClientId());
+            $theData = array('client_id' => $this->User_model->getClientId(), 'site_id' =>$site_id);
+
+            $sites = $this->Domain_model->getDomainsByClientId($theData);
 
             $has = false;
 
