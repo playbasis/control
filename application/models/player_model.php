@@ -1120,26 +1120,34 @@ class Player_model extends MY_Model
             $this->mongo_db->where('first_name', $regex);
         }
 
+        $fil = false;
         if(isset($res['action_id_value'])){
             $this->mongo_db->where($res['action_id_value']);
+            $fil = true;
         }
         if(isset($res['action_value'])){
             $this->mongo_db->where($res['action_value']);
+            $fil = true;
         }
         if(isset($res['reward_id_value'])){
             $this->mongo_db->where($res['reward_id_value']);
+            $fil = true;
         }
         if(isset($res['reward_value'])){
             $this->mongo_db->where($res['reward_value']);
+            $fil = true;
         }
         if(isset($res['level_value'])){
             $this->mongo_db->where($res['level_value']);
+            $fil = true;
         }
         if(isset($res['exp_value'])){
             $this->mongo_db->where($res['exp_value']);
+            $fil = true;
         }
         if(isset($res['gender_value'])){
             $this->mongo_db->where($res['gender_value']);
+            $fil = true;
         }
         /*if(!isset($data['show_level_0'])){
             $show_level = array('level' => array('$ne' => 0));
@@ -1179,6 +1187,7 @@ class Player_model extends MY_Model
             }else{
                 $this->mongo_db->order_by(array($data['sort'] => $order));
             }
+            $fil = true;
         }else{
             $this->mongo_db->order_by(array('level' => $order));
         }
@@ -1196,7 +1205,12 @@ class Player_model extends MY_Model
             $this->mongo_db->offset((int)$data['start']);
         }
 
-        $results =  $this->mongo_db->get('playbasis_summary_of_player_beta');
+        if($fil){
+            $results =  $this->mongo_db->get('playbasis_summary_of_player_beta');
+        }else{
+            $results =  $this->mongo_db->get('playbasis_player');
+        }
+
 
         $output['result'] = $results;
         $output['total'] = $this->getIsotopeTotalPlayer($data);;
@@ -1215,26 +1229,34 @@ class Player_model extends MY_Model
             $this->mongo_db->where('first_name', $regex);
         }
 
+        $fil = false;
         if(isset($res['action_id_value'])){
             $this->mongo_db->where($res['action_id_value']);
+            $fil = true;
         }
         if(isset($res['action_value'])){
             $this->mongo_db->where($res['action_value']);
+            $fil = true;
         }
         if(isset($res['reward_id_value'])){
             $this->mongo_db->where($res['reward_id_value']);
+            $fil = true;
         }
         if(isset($res['reward_value'])){
             $this->mongo_db->where($res['reward_value']);
+            $fil = true;
         }
         if(isset($res['level_value'])){
             $this->mongo_db->where($res['level_value']);
+            $fil = true;
         }
         if(isset($res['exp_value'])){
             $this->mongo_db->where($res['exp_value']);
+            $fil = true;
         }
         if(isset($res['gender_value'])){
             $this->mongo_db->where($res['gender_value']);
+            $fil = true;
         }
         /*if(!isset($data['show_level_0'])){
             $show_level = array('level' => array('$ne' => 0));
@@ -1244,7 +1266,13 @@ class Player_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
-        return $this->mongo_db->count('playbasis_summary_of_player_beta');
+        if($fil){
+            $results =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+        }else{
+            $results =  $this->mongo_db->count('playbasis_player');
+        }
+
+        return $results;
     }
 
     public function getActionsByPlayerId($pb_player_id) {
