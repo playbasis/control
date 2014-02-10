@@ -20,6 +20,7 @@ class Redeem extends REST_Controller
 
     public function goods_post($option = 0)
     {
+        echo "555";
         $this->benchmark->mark('goods_redeem_start');
 
         //process regular data
