@@ -224,11 +224,12 @@ class Player extends MY_Controller
         $high = $max_last['level'] - $range;
         $mid = $high - $range;
 
-        if(!isset($data['show_level_0'])){
+        $start_text = '1';
+        /*if(!isset($data['show_level_0'])){
             $start_text = '1';
         }else{
             $start_text = '0';
-        }
+        }*/
 
         if($mid == (int)$start_text){
             $json[] = $this->levelRange($data, 'low', $start_text, ($mid-1), $total_players);
