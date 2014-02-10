@@ -221,26 +221,32 @@ class Player extends MY_Controller
     private function splitThree($data, $total_players, $max_last){
         $range = ceil($max_last['level']/3);
 
-        $high = $max_last['level'] - $range;
-        $mid = $high - $range;
-
         $start_text = '1';
+
+        $mid = $start_text + $range;
+        $high = $mid + $range;
+
+//        $high = $max_last['level'] - $range;
+//        $mid = $high - $range;
+
+
+
         /*if(!isset($data['show_level_0'])){
             $start_text = '1';
         }else{
             $start_text = '0';
         }*/
 
-        if($mid == (int)$start_text){
-            $json[] = $this->levelRange($data, 'low', $start_text, ($mid-1), $total_players);
+        if((int)$high >= (int)$max_last['level']){
+            $json[] = $this->levelRange($data, 'low', $start_text, $mid, $total_players);
 
-            $json[] = $this->levelRange($data, 'high', $high, $max_last['level'], $total_players);
+            $json[] = $this->levelRange($data, 'high', ($mid-1), $max_last['level'], $total_players);
         }else{
-            $json[] = $this->levelRange($data, 'low', $start_text, ($mid-1), $total_players);
+            $json[] = $this->levelRange($data, 'low', $start_text, $mid, $total_players);
 
-            $json[] = $this->levelRange($data, 'medium', $mid, ($high-1), $total_players);
+            $json[] = $this->levelRange($data, 'medium', ($mid-1), $high, $total_players);
 
-            $json[] = $this->levelRange($data, 'high', $high, $max_last['level'], $total_players);
+            $json[] = $this->levelRange($data, 'high', ($high-1), $max_last['level'], $total_players);
         }
 
         return $json;
