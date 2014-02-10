@@ -118,7 +118,6 @@ class Level extends MY_Controller
             if($this->form_validation->run() && $this->data['message'] == null){
 
                 $checkLevelExistsEdit = $this->Level_model->checkLevelExistsEdit($this->input->post(), $level_id);
-                echo $checkLevelExistsEdit;
 
                 if(!$checkLevelExistsEdit){
                     if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
