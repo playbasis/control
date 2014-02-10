@@ -210,7 +210,9 @@ class Mongo_db
 		{
 			$this->_ci = NULL;
 		}
-		
+
+        MongoCursor::$timeout = -1;
+
 		$this->load();
 	}
 		
