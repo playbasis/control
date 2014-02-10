@@ -238,15 +238,15 @@ class Player extends MY_Controller
         }*/
 
         if((int)$high >= (int)$max_last['level']){
-            $json[] = $this->levelRange($data, 'low', $start_text, $mid, $total_players);
+            $json[] = $this->levelRange($data, 'low', $start_text, ($mid-1), $total_players);
 
-            $json[] = $this->levelRange($data, 'high', ($mid-1), $max_last['level'], $total_players);
+            $json[] = $this->levelRange($data, 'high', $mid, $max_last['level'], $total_players);
         }else{
-            $json[] = $this->levelRange($data, 'low', $start_text, $mid, $total_players);
+            $json[] = $this->levelRange($data, 'low', $start_text, ($mid-1), $total_players);
 
-            $json[] = $this->levelRange($data, 'medium', ($mid-1), $high, $total_players);
+            $json[] = $this->levelRange($data, 'medium', $mid, ($high-1), $total_players);
 
-            $json[] = $this->levelRange($data, 'high', ($high-1), $max_last['level'], $total_players);
+            $json[] = $this->levelRange($data, 'high', $high, $max_last['level'], $total_players);
         }
 
         return $json;
