@@ -11,19 +11,20 @@ var CHANNEL_PREFIX = 'as_';
 var express = require('express')
 	, routes = require('./routes')
 	, user = require('./routes/user')
+    , http = require('http')
 	, https = require('https')
 	, path = require('path')
 	, io = require('socket.io')
 	, redis = require('redis')
-	, mysql = require('mysql')
+	//, mysql = require('mysql')
 	, fs = require('fs');
 
 var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	/*key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
 	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
-	rejectUnauthorized: false
+	rejectUnauthorized: false*/
 };
 
 //special parser for the activity feed
@@ -63,19 +64,54 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-var server = https.createServer(options, app);
+//var server = https.createServer(options, app);
+var server = http.createServer(app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
 });
 
-var sqlcon = mysql.createConnection({
+/*var sqlcon = mysql.createConnection({
   host     : 'db.pbapp.net',
   user     : 'playbasis_admin',
   password : 'databaseplaybasisproduction',
   database : 'core'
 });
-sqlcon.connect();
+sqlcon.connect();*/
+
+//connect to mongodb
+var dbReady = false;
+var mongoose = require('mongoose');
+
+var ClientSite;
+//db = mongoose.createConnection('dbv2.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
+db = mongoose.createConnection('localhost', 'core', 27017);
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback(){
+
+
+    var schemaKey = mongoose.Schema({
+        api_key: String,
+        api_secret: String,
+        client_id: mongoose.Schema.Types.ObjectId,
+        date_added: Date,
+        date_expire: Date,
+        date_modified: Date,
+        date_start: Date,
+        deleted: Boolean,
+        domain_name: String,
+        image: String,
+        last_send_limit_users: Date,
+        limit_users: Number,
+        site_name: String,
+        status: Boolean
+    });
+    ClientSite = db.model('playbasis_client_site', schemaKey, 'playbasis_client_site');
+
+    dbReady = true;
+    console.log('db connected!');
+});
+console.log('connecting to db...');
 
 var redisSubClients = Object(); //an object holding redis clients that subscribed to a channel
 var redisPubClient = redis.createClient(); //redis client for publishing feeds
@@ -112,7 +148,7 @@ function verifyChannel(channel, callback)
 		callback('channel cannot begins with [www]', channel);
 		return;
 	}
-	var sql = 'SELECT domain_name FROM playbasis_client_site WHERE domain_name = ' + sqlcon.escape(channel) + ' OR domain_name = ' + sqlcon.escape('www.' + channel);
+	/*var sql = 'SELECT domain_name FROM playbasis_client_site WHERE domain_name = ' + sqlcon.escape(channel) + ' OR domain_name = ' + sqlcon.escape('www.' + channel);
 	sqlcon.query(sql, function(err, rows){
 		if(err){
 			console.log(err);
@@ -127,7 +163,24 @@ function verifyChannel(channel, callback)
 		}
 		console.log('domain valid: ' + rows[0].domain_name);
 		callback(null, channel)
-	});
+	});*/
+
+
+    ClientSite.findOne({$or : [{domain_name: channel}, {domain_name: 'www.' + channel}]}, function (err, data) {
+        if(err){
+            console.log(err);
+            callback(err);
+            return;
+        }
+        console.log(data);
+        if(data.domain_name){
+            console.log('domain valid: ' + data.domain_name);
+            callback(null, channel);
+        }else{
+            callback('channel does not exist', channel);
+            return;
+        }
+    });
 }
 
 io.sockets.on('connection', function(socket){
