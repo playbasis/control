@@ -55,4 +55,5 @@ $collection11a->ensureIndex(array("site_id" => 1, "badge_id" => 1, "deleted" => 
 $collection11a->ensureIndex(array("client_id" => 1, "site_id" => 1, "badge_id" => 1, "deleted" => 1));
 
 $collection14->ensureIndex(array("client_id" => 1, "site_id" => 1));
+$collection14->ensureIndex(array("level" => 1));
 ?>

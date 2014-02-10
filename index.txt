@@ -91,6 +91,9 @@ client	{
    "client_id": NumberInt(1),
    "site_id": NumberInt(1)
 }
+level	{
+   "level": NumberInt(1)
+}
 
 
 
@@ -117,4 +120,7 @@ playbasis_player
 client{
    "client_id": NumberInt(1),
    "site_id": NumberInt(1)
+}
+level	{
+   "level": NumberInt(1)
 }

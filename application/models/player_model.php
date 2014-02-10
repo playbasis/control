@@ -601,41 +601,56 @@ class Player_model extends MY_Model
             'site_id' => new MongoID($data['site_id'])
         );
 
+        $fil = false;
         if(isset($res['action_id_value'])){
             $match = array_merge($match, $res['action_id_value']);
+            $fil = true;
         }
         if(isset($res['action_value'])){
             $match = array_merge($match, $res['action_value']);
+            $fil = true;
         }
 
         if(isset($res['reward_id_value'])){
             $match = array_merge($match, $res['reward_id_value']);
+            $fil = true;
         }
         if(isset($res['reward_value'])){
             $match = array_merge($match, $res['reward_value']);
+            $fil = true;
         }
 
         if(isset($res['level_value'])){
             $match = array_merge($match, $res['level_value']);
+            $fil = true;
         }
         if(isset($res['exp_value'])){
             $match = array_merge($match, $res['exp_value']);
+            $fil = true;
         }
         if(isset($res['gender_value'])){
             $match = array_merge($match, $res['gender_value']);
+            $fil = true;
         }
-        if(!isset($data['show_level_0'])){
+        /*if(!isset($data['show_level_0'])){
             $show_level = array('level' => array('$ne' => 0));
             $match = array_merge($match, $show_level);
-        }
+        }*/
 
         $this->mongo_db->where($match);
 
-        $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+        if($fil){
+            $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+            $database = "playbasis_summary_of_player_beta";
+        }else{
+            $total =  $this->mongo_db->count('playbasis_player');
+            $database = "playbasis_player";
+        }
+
 
         $donut_data = $this->mongo_db->command(
             array(
-                'aggregate' => "playbasis_summary_of_player_beta",
+                'aggregate' => $database,
                 'pipeline' => array(
                     array('$match' => $match,
                     ),
@@ -682,28 +697,36 @@ class Player_model extends MY_Model
             'site_id' => new MongoID($data['site_id'])
         );
 
+        $fil = false;
         if(isset($res['action_id_value'])){
             $match = array_merge($match, $res['action_id_value']);
+            $fil = true;
         }
         if(isset($res['action_value'])){
             $match = array_merge($match, $res['action_value']);
+            $fil = true;
         }
 
         if(isset($res['reward_id_value'])){
             $match = array_merge($match, $res['reward_id_value']);
+            $fil = true;
         }
         if(isset($res['reward_value'])){
             $match = array_merge($match, $res['reward_value']);
+            $fil = true;
         }
 
         if(isset($res['level_value'])){
             $match = array_merge($match, $res['level_value']);
+            $fil = true;
         }
         if(isset($res['exp_value'])){
             $match = array_merge($match, $res['exp_value']);
+            $fil = true;
         }
         if(isset($res['gender_value'])){
             $match = array_merge($match, $res['gender_value']);
+            $fil = true;
         }
         if(!isset($data['show_level_0'])){
             $show_level = array('level' => array('$ne' => 0));
@@ -712,7 +735,11 @@ class Player_model extends MY_Model
 
         $this->mongo_db->where($match);
 
-        $result =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+        if($fil){
+            $result =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+        }else{
+            $result =  $this->mongo_db->count('playbasis_player');
+        }
 
         if(isset($data['filter_sort']) && isset($data['filter_sort'][0]) && isset($data['filter_sort'][0]['level'])){
             $level = $data['filter_sort'][0]['level'];
@@ -738,28 +765,36 @@ class Player_model extends MY_Model
             'site_id' => new MongoID($data['site_id'])
         );
 
+        $fil = false;
         if(isset($res['action_id_value'])){
             $match = array_merge($match, $res['action_id_value']);
+            $fil = true;
         }
         if(isset($res['action_value'])){
             $match = array_merge($match, $res['action_value']);
+            $fil = true;
         }
 
         if(isset($res['reward_id_value'])){
             $match = array_merge($match, $res['reward_id_value']);
+            $fil = true;
         }
         if(isset($res['reward_value'])){
             $match = array_merge($match, $res['reward_value']);
+            $fil = true;
         }
 
         if(isset($res['level_value'])){
             $match = array_merge($match, $res['level_value']);
+            $fil = true;
         }
         if(isset($res['exp_value'])){
             $match = array_merge($match, $res['exp_value']);
+            $fil = true;
         }
         if(isset($res['gender_value'])){
             $match = array_merge($match, $res['gender_value']);
+            $fil = true;
         }
         if(!isset($data['show_level_0'])){
             $show_level = array('level' => array('$ne' => 0));
@@ -768,11 +803,17 @@ class Player_model extends MY_Model
 
         $this->mongo_db->where($match);
 
-        $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+        if($fil){
+            $total =  $this->mongo_db->count('playbasis_summary_of_player_beta');
+            $database = "playbasis_summary_of_player_beta";
+        }else{
+            $total =  $this->mongo_db->count('playbasis_player');
+            $database = "playbasis_player";
+        }
 
         $donut_data = $this->mongo_db->command(
             array(
-                'aggregate' => "playbasis_summary_of_player_beta",
+                'aggregate' => $database,
                 'pipeline' => array(
                     array('$match' => $match,
                     ),

@@ -203,11 +203,11 @@ class Player extends MY_Controller
             $json = $this->splitThree($data, $total_players, $max_last);
 
         }else{
-            $json[] = $this->levelRange($data, 'level', 0, 0, $total_players);
-
             $json[] = $this->levelRange($data, 'level', 1, 1, $total_players);
 
             $json[] = $this->levelRange($data, 'level', 2, 2, $total_players);
+
+            $json[] = $this->levelRange($data, 'level', 3, 3, $total_players);
         }
 
         $return_data = array(
@@ -256,12 +256,15 @@ class Player extends MY_Controller
 
         $player = $this->Player_model->getDonutLevel($data);
 
-        $a = end($player);
+        $sum = 0;
+        foreach($player as $p){
+            $sum = $sum+(int)$p['value'];
+        }
 
         $json = array(
             'label' => $text.':'.$text_level,
-            'data' => ($total_players > 0)? round(($a['value'] * 100) / $total_players) : 0,
-            'value' => $a['value'],
+            'data' => ($total_players > 0)? round(($sum * 100) / $total_players) : 0,
+            'value' => $sum,
         );
 
         return $json;
@@ -367,10 +370,6 @@ class Player extends MY_Controller
         $data['filter_sort'] = array_merge($data['filter_sort'], array(array('name' => 'action_value', 'value' => $text_range)));
 
         $output = $this->Player_model->getDonutAction($data);
-
-        $player = $output['result'];
-
-        $a = end($player);
 
         $json = array(
             'label' => $text.':'.$text_range,
