@@ -116,15 +116,27 @@ class Level extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
-                $this->Level_model->editLevel($level_id, $this->input->post());
-                if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
-                    $this->Level_model->editLevelSite($level_id, $this->input->post());
+
+                $checkLevelExistsEdit = $this->Level_model->checkLevelExistsEdit($this->input->post(), $level_id);
+
+                if(!$checkLevelExistsEdit){
+                    if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                        $insertEditClient = $this->Level_model->editLevelSite($level_id, $this->input->post());
+
+                        if($insertEditClient){
+                            $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                            redirect('/level', 'refresh');
+                        }else{
+                            $this->data['message'] = $this->lang->line('error_exp_level');
+                        }
+                    }else{
+                        $this->Level_model->editLevel($level_id, $this->input->post());
+                    }
                 }else{
-                    $this->Level_model->editLevel($level_id, $this->input->post());
+                    $this->data['message'] = $this->lang->line('error_exp_level_exists');
                 }
 
-                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                redirect('/level', 'refresh');
+                
             }
         }
 

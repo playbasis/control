@@ -312,30 +312,129 @@ class Level_model extends MY_Model
     public function editLevelSite($level_id, $data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('_id',  new MongoID($level_id));
-        if(isset($data['level_title'])){
-            $this->mongo_db->set('level_title', $data['level_title']);
+        $toInsertLevel = $data['level'];
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where_lt('level', floatval($toInsertLevel));
+        $this->mongo_db->order_by(array('level' => 'DESC'));
+        $lowerLevels = $this->mongo_db->get('playbasis_client_exp_table');
+        $nextLowerLevel = isset($lowerLevels[0])?$lowerLevels[0]:null;
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where_gt('level', floatval($toInsertLevel));
+        $this->mongo_db->order_by(array('level' => 'ASC'));
+        $higerLevels = $this->mongo_db->get('playbasis_client_exp_table');
+        $nextHigherLevel = isset($higerLevels[0])?$higerLevels[0]:null;
+
+        if(!$nextLowerLevel && $nextHigherLevel){
+            if($data['exp']<$nextHigherLevel['exp']){
+
+                //Can make group of code into a function
+
+                $this->mongo_db->where('_id',  new MongoID($level_id));
+                if(isset($data['level_title'])){
+                    $this->mongo_db->set('level_title', $data['level_title']);
+                }
+                if(isset($data['level'])){
+                    $this->mongo_db->set('level', (int)$data['level']);
+                }
+                if(isset($data['exp'])){
+                    $this->mongo_db->set('exp', (int)$data['exp']);
+                }
+                if(isset($data['image'])){
+                    $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+                }
+                if(isset($data['tags'])){
+                    $this->mongo_db->set('tags', $data['tags']);
+                }
+                if(isset($data['status'])){
+                    $this->mongo_db->set('status', (bool)$data['status']);
+                }
+                if(isset($data['sort_order'])){
+                    $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+                }
+                $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+                return $this->mongo_db->update('playbasis_client_exp_table');
+                // return true;
+            }else{
+                return false;
+            }
         }
-        if(isset($data['level'])){
-            $this->mongo_db->set('level', (int)$data['level']);
+
+        if($nextLowerLevel && !$nextHigherLevel){
+            if($data['exp']>$nextLowerLevel['exp']){
+
+                //Can make group of code into a function
+
+                $this->mongo_db->where('_id',  new MongoID($level_id));
+                if(isset($data['level_title'])){
+                    $this->mongo_db->set('level_title', $data['level_title']);
+                }
+                if(isset($data['level'])){
+                    $this->mongo_db->set('level', (int)$data['level']);
+                }
+                if(isset($data['exp'])){
+                    $this->mongo_db->set('exp', (int)$data['exp']);
+                }
+                if(isset($data['image'])){
+                    $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+                }
+                if(isset($data['tags'])){
+                    $this->mongo_db->set('tags', $data['tags']);
+                }
+                if(isset($data['status'])){
+                    $this->mongo_db->set('status', (bool)$data['status']);
+                }
+                if(isset($data['sort_order'])){
+                    $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+                }
+                $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+                return $this->mongo_db->update('playbasis_client_exp_table');
+                // return true;
+
+            }else{
+                return false;
+            }
         }
-        if(isset($data['exp'])){
-            $this->mongo_db->set('exp', (int)$data['exp']);
+
+        if($data['exp']>$nextLowerLevel['exp'] && $data['exp']<$nextHigherLevel['exp']){
+
+                //Can make group of code into a function
+
+                $this->mongo_db->where('_id',  new MongoID($level_id));
+                if(isset($data['level_title'])){
+                    $this->mongo_db->set('level_title', $data['level_title']);
+                }
+                if(isset($data['level'])){
+                    $this->mongo_db->set('level', (int)$data['level']);
+                }
+                if(isset($data['exp'])){
+                    $this->mongo_db->set('exp', (int)$data['exp']);
+                }
+                if(isset($data['image'])){
+                    $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+                }
+                if(isset($data['tags'])){
+                    $this->mongo_db->set('tags', $data['tags']);
+                }
+                if(isset($data['status'])){
+                    $this->mongo_db->set('status', (bool)$data['status']);
+                }
+                if(isset($data['sort_order'])){
+                    $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+                }
+                $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+                return $this->mongo_db->update('playbasis_client_exp_table');
+                // return true;
+        }else{
+            return false;
         }
-        if(isset($data['image'])){
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
-        }
-        if(isset($data['tags'])){
-            $this->mongo_db->set('tags', $data['tags']);
-        }
-        if(isset($data['status'])){
-            $this->mongo_db->set('status', (bool)$data['status']);
-        }
-        if(isset($data['sort_order'])){
-            $this->mongo_db->set('sort_order', (int)$data['sort_order']);
-        }
-        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-        $this->mongo_db->update('playbasis_client_exp_table');
+
+
+
+        
     }
 
     public function deleteLevel($level_id) {
@@ -368,8 +467,8 @@ class Level_model extends MY_Model
 
     public function checkLevelExists($data){
         $toInsertLevel = $data['level'];
-        $this->mongo_db->where('client_id', $data['client_id']);
-        $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         $this->mongo_db->where('level', (int)$toInsertLevel);
         $check = $this->mongo_db->get('playbasis_client_exp_table');
 
@@ -378,6 +477,29 @@ class Level_model extends MY_Model
         }else{
             return false;
         }
+    }
+
+    public function checkLevelExistsEdit($data, $level_id){
+        $toInsertLevel = $data['level'];
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('_id', new MongoID($level_id));
+        $currentLevel = $this->mongo_db->get('playbasis_client_exp_table');
+
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('level', (int)$toInsertLevel);
+        $check = $this->mongo_db->get('playbasis_client_exp_table');
+
+        if($toInsertLevel == $currentLevel[0]['level']){    
+            return false;
+        }elseif ($check){
+            return true;    
+        }else{
+            return false;
+        }
+        
     }
 }
 ?>
