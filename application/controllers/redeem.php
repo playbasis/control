@@ -18,7 +18,7 @@ class Redeem extends REST_Controller
         $this->load->model('tool/respond', 'resp');
     }
 
-    public function goods_post($option = '')
+    public function goods_post($option = 0)
     {
         $this->benchmark->mark('goods_redeem_start');
 
