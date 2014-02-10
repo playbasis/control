@@ -42,7 +42,7 @@ $collection17->ensureIndex(array("action_id" => 1, "pb_plyer_id" => 1, "client_i
 $collection17->ensureIndex(array("action_id" => 1, "date_added" => 1, "client_id" => 1, "site_id" => 1));
 
 $collection12->ensureIndex(array("client_id" => 1, "site_id" => 1));
-$collection12->ensureIndex(array("client_id" => 1, "action_id" => 1)), array("unique" => 1);
+$collection12->ensureIndex(array("client_id" => 1, "action_id" => 1), array("unique" => 1));
 
 $collection19->ensureIndex(array("client_id" => 1, "site_id" => 1));
 
