@@ -268,6 +268,7 @@ class Player_model extends MY_Model
 	}
 	public function claimBadge($pb_player_id, $badge_id, $site_id)
 	{
+        
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where(array(
