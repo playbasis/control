@@ -63,6 +63,10 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
+        $this->form_validation->set_rules('substract', "", '');
+        $this->form_validation->set_rules('claim', "", '');
+        $this->form_validation->set_rules('redeem', "", '');
+
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -149,6 +153,9 @@ class Badge extends MY_Controller
         $this->form_validation->set_rules('quantity', $this->lang->line('entry_quantity'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
         $this->form_validation->set_rules('description', $this->lang->line('form_description'), 'trim|xss_clean|max_length[1000]');
         $this->form_validation->set_rules('stackable', "", '');
+        $this->form_validation->set_rules('substract', "", '');
+        $this->form_validation->set_rules('claim', "", '');
+        $this->form_validation->set_rules('redeem', "", '');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerBadge($badge_id)) {
 
@@ -586,6 +593,22 @@ class Badge extends MY_Controller
             $this->data['substract'] = $badge_info['substract'];
         } else {
             $this->data['substract'] = 1;
+        }
+
+        if ($this->input->post('claim')) {
+            $this->data['claim'] = $this->input->post('claim');
+        } elseif (!empty($badge_info)) {
+            $this->data['claim'] = $badge_info['claim'];
+        } else {
+            $this->data['claim'] = 1;
+        }
+
+        if ($this->input->post('redeem')) {
+            $this->data['redeem'] = $this->input->post('redeem');
+        } elseif (!empty($badge_info)) {
+            $this->data['redeem'] = $badge_info['redeem'];
+        } else {
+            $this->data['redeem'] = 1;
         }
 
         if ($this->input->post('quantity')) {

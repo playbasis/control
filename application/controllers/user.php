@@ -739,7 +739,6 @@ class User extends MY_Controller
         }
 
         if($this->session->userdata('user')){
-            $user = $this->session->userdata('user');
 
             $this->data['meta_description'] = $this->lang->line('meta_description');
             $this->data['main'] = 'register';
@@ -754,7 +753,8 @@ class User extends MY_Controller
 
                 if($this->form_validation->run()){
                     $new_password = $this->input->post('password');
-                    $user_id = $this->session->userdata('user')[0]['_id'];
+//                    $user_id = $this->session->userdata('user')[0]['_id'];
+                    $user_id = $this->session->userdata('user');
 
                     $this->User_model->insertNewPassword($user_id, $new_password);
                     $this->session->unset_userdata('user');

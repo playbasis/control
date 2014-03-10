@@ -36,24 +36,85 @@ $collection21 = $db -> playbasis_token;
 $collection22 = $db -> playbasis_game_jigsaw_to_client;
 $collection23 = $db -> playbasis_client_exp_table;
 
-$collection17->ensureIndex(array("pb_plyer_id" => 1));
-$collection17->ensureIndex(array("pb_plyer_id" => 1, "client_id" => 1, "site_id" => 1));
-$collection17->ensureIndex(array("action_id" => 1, "pb_plyer_id" => 1, "client_id" => 1, "site_id" => 1));
-$collection17->ensureIndex(array("action_id" => 1, "date_added" => 1, "client_id" => 1, "site_id" => 1));
+try{
+    $collection17->ensureIndex(array("pb_plyer_id" => 1));
+}catch (MongoCursorException $e){
 
-$collection12->ensureIndex(array("client_id" => 1, "site_id" => 1));
-$collection12->ensureIndex(array("client_id" => 1, "action_id" => 1), array("unique" => 1));
+}
+try{
+    $collection17->ensureIndex(array("pb_plyer_id" => 1, "client_id" => 1, "site_id" => 1));
+}catch (MongoCursorException $e){
 
-$collection19->ensureIndex(array("client_id" => 1, "site_id" => 1));
+}
+try{
+    $collection17->ensureIndex(array("action_id" => 1, "pb_plyer_id" => 1, "client_id" => 1, "site_id" => 1));
+}catch (MongoCursorException $e){
 
-$collection15->ensureIndex(array("client_id" => 1, "site_id" => 1, "reward_id" => 1, "pb_player_id" => 1));
-$collection15->ensureIndex(array("pb_player_id" => 1, "badge_id" => 1));
-$collection15->ensureIndex(array("pb_player_id" => 1));
-$collection15->ensureIndex(array("pb_player_id" => 1, "reward_id" => 1));
+}
+try{
+    $collection17->ensureIndex(array("action_id" => 1, "date_added" => 1, "client_id" => 1, "site_id" => 1));
+}catch (MongoCursorException $e){
 
-$collection11a->ensureIndex(array("site_id" => 1, "badge_id" => 1, "deleted" => 1));
-$collection11a->ensureIndex(array("client_id" => 1, "site_id" => 1, "badge_id" => 1, "deleted" => 1));
+}
 
-$collection14->ensureIndex(array("client_id" => 1, "site_id" => 1));
-$collection14->ensureIndex(array("level" => 1));
+try{
+    $collection12->ensureIndex(array("client_id" => 1, "site_id" => 1));
+}catch (MongoCursorException $e){
+
+}
+try{
+    $collection12->ensureIndex(array("client_id" => 1, "action_id" => 1), array("unique" => 1));
+}catch (MongoCursorException $e){
+
+}
+
+try{
+    $collection19->ensureIndex(array("client_id" => 1, "site_id" => 1));
+}catch (MongoCursorException $e){
+
+}
+
+try{
+    $collection15->ensureIndex(array("client_id" => 1, "site_id" => 1, "reward_id" => 1, "pb_player_id" => 1));
+}catch (MongoCursorException $e){
+
+}
+try{
+    $collection15->ensureIndex(array("pb_player_id" => 1, "badge_id" => 1));
+}catch (MongoCursorException $e){
+
+}
+try{
+    $collection15->ensureIndex(array("pb_player_id" => 1));
+}catch (MongoCursorException $e){
+
+}
+try{
+    $collection15->ensureIndex(array("pb_player_id" => 1, "reward_id" => 1));
+}catch (MongoCursorException $e){
+
+}
+
+try{
+    $collection11a->ensureIndex(array("site_id" => 1, "badge_id" => 1, "deleted" => 1));
+}catch (MongoCursorException $e){
+
+}
+try{
+    $collection11a->ensureIndex(array("client_id" => 1, "site_id" => 1, "badge_id" => 1, "deleted" => 1));
+}catch (MongoCursorException $e){
+
+}
+
+try{
+    $collection14->ensureIndex(array("client_id" => 1, "site_id" => 1));
+}catch (MongoCursorException $e){
+
+}
+try{
+    $collection14->ensureIndex(array("level" => 1));
+}catch (MongoCursorException $e){
+
+}
+
 ?>

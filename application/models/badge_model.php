@@ -285,7 +285,9 @@ class Badge_model extends MY_Model
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
             'deleted'=>false,
-            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
+            'sponsor'=>isset($data['sponsor'])?(bool)$data['sponsor']:false,
+            'claim'=>isset($data['claim'])?(bool)$data['claim']:false,
+            'redeem'=>isset($data['redeem'])?(bool)$data['redeem']:false,
         ));
         return $b;
     }
@@ -310,7 +312,9 @@ class Badge_model extends MY_Model
             'hint' => $data['hint']|'' ,
             'language_id' => (int)1,
             'deleted'=>false,
-            'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false
+            'sponsor'=>isset($data['sponsor'])?(bool)$data['sponsor']:false,
+            'claim'=>isset($data['claim'])?(bool)$data['claim']:false,
+            'redeem'=>isset($data['redeem'])?(bool)$data['redeem']:false,
         ));
     }
 
@@ -328,11 +332,10 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
-        if(isset($data['sponsor'])){
-            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
-        }else{
-            $this->mongo_db->set('sponsor', false);
-        }
+        $this->mongo_db->set('sponsor', isset($data['sponsor'])?(bool)$data['sponsor']:false);
+        $this->mongo_db->set('claim', isset($data['claim'])?(bool)$data['claim']:false);
+        $this->mongo_db->set('redeem', isset($data['redeem'])?(bool)$data['redeem']:false);
+
         $this->mongo_db->update('playbasis_badge');
 
         if (isset($data['image'])) {
@@ -359,11 +362,10 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
-        if(isset($data['sponsor'])){
-            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
-        }else{
-            $this->mongo_db->set('sponsor', false);
-        }
+        $this->mongo_db->set('sponsor', isset($data['sponsor'])?(bool)$data['sponsor']:false);
+        $this->mongo_db->set('claim', isset($data['claim'])?(bool)$data['claim']:false);
+        $this->mongo_db->set('redeem', isset($data['redeem'])?(bool)$data['redeem']:false);
+
         $this->mongo_db->update('playbasis_badge_to_client');
 
         if (isset($data['image'])) {
@@ -388,11 +390,10 @@ class Badge_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('hint', $data['hint']);
         $this->mongo_db->set('language_id', (int)1);
-        if(isset($data['sponsor'])){
-            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);    
-        }else{
-            $this->mongo_db->set('sponsor', false);
-        }
+        $this->mongo_db->set('sponsor', isset($data['sponsor'])?(bool)$data['sponsor']:false);
+        $this->mongo_db->set('claim', isset($data['claim'])?(bool)$data['claim']:false);
+        $this->mongo_db->set('redeem', isset($data['redeem'])?(bool)$data['redeem']:false);
+
         $this->mongo_db->update_all('playbasis_badge_to_client');
 
         if (isset($data['image'])) {
