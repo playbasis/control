@@ -397,7 +397,7 @@ class Player_model extends MY_Model
                     'client_id'		=> $client_id,
                     'site_id'		=> $site_id,
                     'badge_id'		=> $badge_id,
-                    'type'	        => 'claim',
+                    'type'	        => 'redeem',
                     'date_added'	=> $mongoDate,
                     'date_modified' => $mongoDate
                 );
