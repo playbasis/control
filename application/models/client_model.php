@@ -209,7 +209,9 @@ class Client_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
 			'substract',
-			'quantity'
+			'quantity',
+            'claim',
+            'redeem'
 		));
 		$this->mongo_db->where(array(
             'client_id' => $client_id,
@@ -250,23 +252,35 @@ class Client_model extends MY_Model
 				'badge_id' => $badgeId
 			));
 			$this->mongo_db->set('date_modified', $mongoDate);
-			$this->mongo_db->inc('value', intval($quantity));
+            if($badgeInfo['claim'])
+            {
+                $this->mongo_db->inc('claimed', intval($quantity));
+            }else{
+                $this->mongo_db->inc('value', intval($quantity));
+            }
 			$this->mongo_db->update('playbasis_reward_to_player');
 		}
 		else
 		{
-			$this->mongo_db->insert('playbasis_reward_to_player', array(
-				'pb_player_id' => $pbPlayerId,
-				'cl_player_id' => $clPlayerId,
-				'client_id' => $client_id,
-				'site_id' => $site_id,
-				'badge_id' => $badgeId,
-				'value' => intval($quantity),
-				'cliamed' => 0,
-				'redeemed' => 0,
-				'date_added' => $mongoDate,
-				'date_modified' => $mongoDate
-			));
+            $data = array(
+                'pb_player_id' => $pbPlayerId,
+                'cl_player_id' => $clPlayerId,
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'badge_id' => $badgeId,
+                'redeemed' => 0,
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate
+            );
+            if($badgeInfo['claim'])
+            {
+                $data['value'] = intval($quantity);
+                $data['claimed'] = 0;
+            }else{
+                $data['value'] = 0;
+                $data['claimed'] = intval($quantity);
+            }
+			$this->mongo_db->insert('playbasis_reward_to_player', $data);
 		}
 	}
 	public function updateExpAndLevel($exp, $pb_player_id, $cl_player_id, $clientData)
@@ -367,7 +381,9 @@ class Client_model extends MY_Model
 			'name',
 			'description',
 			'image',
-			'hint'
+			'hint',
+            'claim',
+            'redeem'
 		));
         $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(

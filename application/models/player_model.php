@@ -266,30 +266,147 @@ class Player_model extends MY_Model
         }
 		return $playerBadges;
 	}
-	public function claimBadge($pb_player_id, $badge_id, $site_id)
+	public function claimBadge($pb_player_id, $badge_id, $site_id, $client_id)
 	{
-        
-		$mongoDate = new MongoDate(time());
-		$this->set_site_mongodb($site_id);
-		$this->mongo_db->where(array(
-			'pb_player_id'=>$pb_player_id,
-			'badge_id'=>$badge_id
-		));
-		$this->mongo_db->set('date_modified', $mongoDate);
-		$this->mongo_db->inc('claimed', 1);
-		return $this->mongo_db->update('playbasis_reward_to_player');
+
+//		$mongoDate = new MongoDate(time());
+//		$this->set_site_mongodb($site_id);
+//		$this->mongo_db->where(array(
+//			'pb_player_id'=>$pb_player_id,
+//			'badge_id'=>$badge_id
+//		));
+//		$this->mongo_db->set('date_modified', $mongoDate);
+//		$this->mongo_db->inc('claimed', 1);
+//		return $this->mongo_db->update('playbasis_reward_to_player');
+
+        $mongoDate = new MongoDate(time());
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array(
+            'substract',
+            'quantity',
+            'claim',
+            'redeem'
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'badge_id' => $badge_id,
+            'deleted' => false
+        ));
+        $result = $this->mongo_db->get('playbasis_badge_to_client');
+        if(!$result)
+            return;
+        $badgeInfo = $result[0];
+
+        if(isset($badgeInfo['claim']) && $badgeInfo['claim']){
+            $this->mongo_db->where(array(
+                'pb_player_id'=>$pb_player_id,
+                'badge_id'=>$badge_id
+            ));
+            $result = $this->mongo_db->get('playbasis_reward_to_player');
+
+            if(!$result)
+                return;
+
+            $badge = $result[0];
+            if(isset($badge['claimed']) && (int)($badge['claimed']) > 0){
+                $this->mongo_db->where(array(
+                    'pb_player_id'=>$pb_player_id,
+                    'badge_id'=>$badge_id
+                ));
+                $this->mongo_db->set('date_modified', $mongoDate);
+                $this->mongo_db->dec('claimed', 1);
+                $this->mongo_db->inc('value', 1);
+                if($badgeInfo['redeem']){
+                    $this->mongo_db->inc('redeemed', 1);
+                }
+                $reward = $this->mongo_db->update('playbasis_reward_to_player');
+
+                $track = array(
+                    'pb_player_id'	=> $pb_player_id,
+                    'client_id'		=> $client_id,
+                    'site_id'		=> $site_id,
+                    'badge_id'		=> $badge_id,
+                    'type'	        => 'claim',
+                    'date_added'	=> $mongoDate,
+                    'date_modified' => $mongoDate
+                );
+                //log event - goods
+                $this->tracker_model->trackBadge($track);
+
+                return $reward;
+            }
+        }
 	}
-	public function redeemBadge($pb_player_id, $badge_id, $site_id)
+	public function redeemBadge($pb_player_id, $badge_id, $site_id, $client_id)
 	{
-		$mongoDate = new MongoDate(time());
-		$this->set_site_mongodb($site_id);
-		$this->mongo_db->where(array(
-			'pb_player_id'=>$pb_player_id,
-			'badge_id'=>$badge_id
-		));
-		$this->mongo_db->set('date_modified', $mongoDate);
-		$this->mongo_db->inc('redeemed', 1);
-		return $this->mongo_db->update('playbasis_reward_to_player');
+//		$mongoDate = new MongoDate(time());
+//		$this->set_site_mongodb($site_id);
+//		$this->mongo_db->where(array(
+//			'pb_player_id'=>$pb_player_id,
+//			'badge_id'=>$badge_id
+//		));
+//		$this->mongo_db->set('date_modified', $mongoDate);
+//		$this->mongo_db->inc('redeemed', 1);
+//		return $this->mongo_db->update('playbasis_reward_to_player');
+
+        $mongoDate = new MongoDate(time());
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array(
+            'substract',
+            'quantity',
+            'claim',
+            'redeem'
+        ));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'badge_id' => $badge_id,
+            'deleted' => false
+        ));
+        $result = $this->mongo_db->get('playbasis_badge_to_client');
+        if(!$result)
+            return;
+        $badgeInfo = $result[0];
+
+        if(isset($badgeInfo['redeem']) && $badgeInfo['redeem']){
+            $this->mongo_db->where(array(
+                'pb_player_id'=>$pb_player_id,
+                'badge_id'=>$badge_id
+            ));
+            $result = $this->mongo_db->get('playbasis_reward_to_player');
+
+            if(!$result)
+                return;
+
+            $badge = $result[0];
+            if(isset($badge['redeemed']) && (int)($badge['redeemed']) > 0){
+                $this->mongo_db->where(array(
+                    'pb_player_id'=>$pb_player_id,
+                    'badge_id'=>$badge_id
+                ));
+                $this->mongo_db->set('date_modified', $mongoDate);
+                $this->mongo_db->dec('redeemed', 1);
+                $this->mongo_db->dec('value', 1);
+                $reward =  $this->mongo_db->update('playbasis_reward_to_player');
+
+                $track = array(
+                    'pb_player_id'	=> $pb_player_id,
+                    'client_id'		=> $client_id,
+                    'site_id'		=> $site_id,
+                    'badge_id'		=> $badge_id,
+                    'type'	        => 'claim',
+                    'date_added'	=> $mongoDate,
+                    'date_modified' => $mongoDate
+                );
+                //log event - goods
+                $this->tracker_model->trackBadge($track);
+
+                return $reward;
+            }
+        }
 	}
 	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{

@@ -771,13 +771,14 @@ class Player extends REST_Controller
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		$site_id = $validToken['site_id'];
+        $client_id = $validToken['client_id'];
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->claimBadge($pb_player_id, new MongoId($badge_id), $site_id);
+		$result = $this->player_model->claimBadge($pb_player_id, new MongoId($badge_id), $site_id, $client_id);
 		$this->response($this->resp->setRespond($result), 200);
 	}
 	public function redeemBadge_post($player_id='', $badge_id='')
@@ -796,13 +797,14 @@ class Player extends REST_Controller
 		if(!$validToken)
 			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		$site_id = $validToken['site_id'];
+        $client_id = $validToken['client_id'];
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->redeemBadge($pb_player_id, new MongoId($badge_id), $site_id);
+		$result = $this->player_model->redeemBadge($pb_player_id, new MongoId($badge_id), $site_id, $client_id);
 		$this->response($this->resp->setRespond($result), 200);
 	}
     public function rank_get($ranked_by, $limit = 20)

@@ -222,7 +222,7 @@ class Engine extends REST_Controller
 	private function processRule($input, $validToken, $fbData, $twData)
 	{
 		if(!isset($input['player_id']) || !$input['player_id'])
-			$input['player_id'] = $this->player_model->getClientPlayerId($input['pb_player_id'], $site_id);
+			$input['player_id'] = $this->player_model->getClientPlayerId($input['pb_player_id'], $validToken['site_id']);
 		$input['action_log_id'] = $this->tracker_model->trackAction($input); //track action
 		$client_id = $validToken['client_id'];
 		$site_id = $validToken['site_id'];

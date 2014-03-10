@@ -13,7 +13,7 @@ class Badge_model extends MY_Model
 	{
 		//get badge ids
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor'));
+		$this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
 		$this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
@@ -33,7 +33,7 @@ class Badge_model extends MY_Model
 	{
 		//get badge id
 		$this->set_site_mongodb($data['site_id']);
-        $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor'));
+        $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],

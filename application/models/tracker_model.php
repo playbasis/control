@@ -60,5 +60,19 @@ class Tracker_model extends MY_Model
             'date_modified' => $mongoDate
         ));
     }
+    public function trackBadge($input)
+    {
+        $this->set_site_mongodb($input['site_id']);
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_badges_log', array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'badge_id'		=> $input['badge_id'],
+            'type'	        => $input['type'],
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ));
+    }
 }
 ?>
