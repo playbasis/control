@@ -17,8 +17,8 @@ playbasis_feature
     "icon": "fa-icon-magic",
     "link": "action",
     "status": true,
-    "date_added": new Date(),
-    "date_modified": new Date()
+    "date_added": ISODate('2014-03-13T00:00:00.000Z'),
+    "date_modified": ISODate('2014-03-13T00:00:00.000Z')
 
     "name": "Goods",
     "description": "",

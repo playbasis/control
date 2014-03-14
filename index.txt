@@ -1,61 +1,77 @@
 playbasis_action_log
 
 pb_plyer_id 	{
-   "pb_plyer_id": NumberInt(1)
+   "pb_plyer_id": 1
 }
+db.playbasis_action_log.ensureIndex({ "pb_plyer_id" : 1 },{ "name" : "pb_plyer_id" });
+
 client_player
 {
-   "pb_player_id": NumberInt(1),
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+   "pb_player_id": 1,
+   "client_id": 1,
+   "site_id": 1
 }
+db.playbasis_action_log.ensureIndex({ "pb_player_id" : 1, "client_id" : 1, "site_id" : 1 },{ "name" : "client_player" });
+
 action_client_player
 {
-   "action_id": NumberInt(1),
-   "pb_player_id": NumberInt(1),
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+   "action_id": 1,
+   "pb_player_id": 1,
+   "client_id": 1,
+   "site_id": 1
 }
+db.playbasis_action_log.ensureIndex({ "action_id" : 1, "pb_player_id" : 1, "client_id" : 1, "site_id" : 1 },{ "name" : "action_client_player" });
+
 client_action_log
 {
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1),
-   "action_id": NumberInt(1),
-   "date_added": NumberInt(1)
+   "client_id": 1,
+   "site_id": 1,
+   "action_id": 1,
+   "date_added": 1
 }
+db.playbasis_action_log.ensureIndex({ "client_id" : 1, "site_id" : 1, "action_id" : 1, "date_added" : 1 },{ "name" : "client_action_log" });
 
 
 
 playbasis_action_to_client
 
-client	{
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+client
+{
+   "client_id": 1,
+   "site_id": 1
 }
-unique_action {
-   "action_id": NumberInt(1),
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+db.playbasis_action_to_client.ensureIndex({ "client_id" : 1, "site_id" : 1 },{ "name" : "client" });
+
+unique_action
+{
+   "action_id": 1,
+   "client_id": 1,
+   "site_id": 1
 }
+db.playbasis_action_to_client.ensureIndex({ "action_id" : 1, "client_id" : 1, "site_id" : 1 },{ "name" : "unique_action", "unique" : true });
+
 
 
 jigsaw_log
 
 player_rule_jigsaw
 {
-   "pb_player_id": NumberInt(1),
-   "rule_id": NumberInt(1),
-   "jigsaw_id": NumberInt(1)
+   "pb_player_id": 1,
+   "rule_id": 1,
+   "jigsaw_id": 1
 }
+db.jigsaw_log.ensureIndex({ "pb_player_id" : 1, "rule_id" : 1, "jigsaw_id" : 1 },{ "name" : "player_rule_jigsaw" });
 
 
 
 playbasis_rule
 
-client	{
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+client
+{
+   "client_id": 1,
+   "site_id": 1
 }
+db.playbasis_rule.ensureIndex({ "client_id" : 1, "site_id" : 1 },{ "name" : "client" });
 
 
 
@@ -63,37 +79,47 @@ playbasis_reward_to_player
 
 reward_player_client
 {
-   "reward_id": NumberInt(1),
-   "pb_player_id": NumberInt(1),
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+   "reward_id": 1,
+   "pb_player_id": 1,
+   "client_id": 1,
+   "site_id": 1
 }
+db.playbasis_reward_to_player.ensureIndex({ "reward_id" : 1, "pb_player_id" : 1, "client_id" : 1, "site_id" : 1 },{ "name" : "reward_player_client" });
+
 badge_player
 {
-   "pb_player_id": NumberInt(1),
-   "badge_id": NumberInt(1)
+   "pb_player_id": 1,
+   "badge_id": 1
 }
+db.playbasis_reward_to_player.ensureIndex({ "pb_player_id" : 1, "badge_id" : 1 },{ "name" : "badge_player" });
+
 pb_player
 {
-   "pb_player_id": NumberInt(1)
+   "pb_player_id": 1
 }
+db.playbasis_reward_to_player.ensureIndex({ "pb_player_id" : 1 },{ "name" : "pb_player" });
+
 reward_player
 {
-   "pb_player_id": NumberInt(1),
-   "reward_id": NumberInt(1)
+   "pb_player_id": 1,
+   "reward_id": 1
 }
+db.playbasis_reward_to_player.ensureIndex({ "pb_player_id" : 1, "reward_id" : 1 },{ "name" : "reward_player" });
 
 
 
 playbasis_summary_of_player_beta
 
 client	{
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+   "client_id": 1,
+   "site_id": 1
 }
+db.playbasis_summary_of_player_beta.ensureIndex( { client_id: 1, site_id: 1 } )
+
 level	{
-   "level": NumberInt(1)
+   "level": 1
 }
+db.playbasis_summary_of_player_beta.ensureIndex( { level: 1 } )
 
 
 
@@ -101,26 +127,31 @@ playbasis_badge_to_client
 
 site_badge
 {
-   "site_id": NumberInt(1),
-   "badge_id": NumberInt(1),
-   "deleted": NumberInt(1)
+   "site_id": 1,
+   "badge_id": 1,
+   "deleted": 1
 }
+db.playbasis_badge_to_client.ensureIndex({ "site_id" : 1, "badge_id" : 1, "deleted" : 1 },{ "name" : "site_badge" });
+
 client_site_badge
 {
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1),
-   "badge_id": NumberInt(1),
-   "deleted": NumberInt(1)
+   "client_id": 1,
+   "site_id": 1,
+   "badge_id": 1,
+   "deleted": 1
 }
-
+db.playbasis_badge_to_client.ensureIndex({ "client_id" : 1, "site_id" : 1, "badge_id" : 1, "deleted" : 1 },{ "name" : "client_site_badge" });
 
 
 playbasis_player
 
 client{
-   "client_id": NumberInt(1),
-   "site_id": NumberInt(1)
+   "client_id": 1,
+   "site_id": 1
 }
+db.playbasis_player.ensureIndex({ "client_id" : 1, "site_id" : 1 },{ "name" : "client" });
+
 level	{
-   "level": NumberInt(1)
+   "level": 1
 }
+db.playbasis_player.ensureIndex({ "level" : 1 },{ "name" : "level" });
