@@ -183,7 +183,7 @@ class Domain_model extends MY_Model
     private function genAccessKey($site_id) {
         $salt = "R0b3rt pl@yb@s1s";
 
-        $key = sprintf("%u",crc32(sha1($site_id).$salt));
+        $key = sprintf("%u",crc32(sha1($site_id.time()).$salt));
 
         return $key;
     }
