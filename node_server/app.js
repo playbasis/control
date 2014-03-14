@@ -172,6 +172,7 @@ function verifyChannel(channel, callback)
             callback(err);
             return;
         }
+        console.log(channel);
         console.log(data);
         if(data.domain_name){
             console.log('domain valid: ' + data.domain_name);
