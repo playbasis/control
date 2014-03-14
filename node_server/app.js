@@ -90,6 +90,8 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 
 
+    db = db.useDb('core');
+
     var schemaKey = mongoose.Schema({
         api_key: String,
         api_secret: String,
