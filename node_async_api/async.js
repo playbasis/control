@@ -56,13 +56,47 @@ var REDIS_SERVER_ADDRESS = '127.0.0.1';//'46.137.248.96';
 var BASE_URL = 'https://api.pbapp.net/';
 var CHANNEL_PREFIX = 'res_';
 
-var sqlcon = mysql.createConnection({
+/*var sqlcon = mysql.createConnection({
   host     : 'db.pbapp.net',
   user     : 'playbasis_admin',
   password : 'databaseplaybasisproduction',
   database : 'core'
 });
-sqlcon.connect();
+sqlcon.connect();*/
+
+//connect to mongodb
+var dbReady = false;
+var mongoose = require('mongoose');
+
+var ClientSite;
+db = mongoose.createConnection('dbv2.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
+//db = mongoose.createConnection('localhost', 'core', 27017);
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback(){
+
+
+    var schemaKey = mongoose.Schema({
+        api_key: String,
+        api_secret: String,
+        client_id: mongoose.Schema.Types.ObjectId,
+        date_added: Date,
+        date_expire: Date,
+        date_modified: Date,
+        date_start: Date,
+        deleted: Boolean,
+        domain_name: String,
+        image: String,
+        last_send_limit_users: Date,
+        limit_users: Number,
+        site_name: String,
+        status: Boolean
+    });
+    ClientSite = db.model('playbasis_client_site', schemaKey, 'playbasis_client_site');
+
+    dbReady = true;
+    console.log('db connected!');
+});
+console.log('connecting to db...');
 
 var redisSubClients = Object(); //an object holding redis clients that subscribed to a channel
 var redisPubClient = redis.createClient(); //redis client for publishing feeds
@@ -96,7 +130,7 @@ function verifyChannel(channel, callback)
 		callback('channel cannot begins with [www]', channel);
 		return;
 	}
-	var sql = 'SELECT domain_name FROM playbasis_client_site WHERE domain_name = ' + sqlcon.escape(channel) + ' OR domain_name = ' + sqlcon.escape('www.' + channel);
+	/*var sql = 'SELECT domain_name FROM playbasis_client_site WHERE domain_name = ' + sqlcon.escape(channel) + ' OR domain_name = ' + sqlcon.escape('www.' + channel);
 	sqlcon.query(sql, function(err, rows){
 		if(err){
 			console.log(err);
@@ -111,7 +145,23 @@ function verifyChannel(channel, callback)
 		}
 		console.log('domain valid: ' + rows[0].domain_name);
 		callback(null, channel)
-	});
+	});*/
+
+    ClientSite.findOne({$or : [{domain_name: channel}, {domain_name: 'www.' + channel}]}, function (err, data) {
+        if(err){
+            console.log(err);
+            callback(err);
+            return;
+        }
+        console.log(data);
+        if(data.domain_name){
+            console.log('domain valid: ' + data.domain_name);
+            callback(null, channel);
+        }else{
+            callback('channel does not exist', channel);
+            return;
+        }
+    });
 }
 
 io.sockets.on('connection', function(socket){

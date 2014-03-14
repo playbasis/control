@@ -328,9 +328,7 @@ class Player_model extends MY_Model
                     'client_id'		=> $client_id,
                     'site_id'		=> $site_id,
                     'badge_id'		=> $badge_id,
-                    'type'	        => 'claim',
-                    'date_added'	=> $mongoDate,
-                    'date_modified' => $mongoDate
+                    'type'	        => 'claim'
                 );
                 //log event - goods
                 $this->tracker_model->trackBadge($track);
@@ -397,9 +395,7 @@ class Player_model extends MY_Model
                     'client_id'		=> $client_id,
                     'site_id'		=> $site_id,
                     'badge_id'		=> $badge_id,
-                    'type'	        => 'redeem',
-                    'date_added'	=> $mongoDate,
-                    'date_modified' => $mongoDate
+                    'type'	        => 'redeem'
                 );
                 //log event - goods
                 $this->tracker_model->trackBadge($track);

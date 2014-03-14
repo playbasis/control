@@ -84,8 +84,8 @@ var dbReady = false;
 var mongoose = require('mongoose');
 
 var ClientSite;
-//db = mongoose.createConnection('dbv2.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
-db = mongoose.createConnection('localhost', 'core', 27017);
+db = mongoose.createConnection('dbv2.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
+//db = mongoose.createConnection('localhost', 'core', 27017);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
 
