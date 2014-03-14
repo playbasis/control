@@ -749,6 +749,7 @@ app.get('/:api([^\.]+)', function(req, res) {
 
 if (!module.parent) {
     var port = process.env.PORT || config.port;
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
     var l = app.listen(port);
     l.on('listening', function(err) {
         console.log("Express server listening on port %d", app.address().port);
