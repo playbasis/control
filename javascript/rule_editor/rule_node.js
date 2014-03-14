@@ -3,10 +3,15 @@ var DEBUG = false;
 Node = function(json){
     var idgen = '';
     if(json.jigsaw_index !== undefined){
-        idgen = json.jigsaw_index;
+        if(json.jigsaw_index['$id']){
+            idgen = json.jigsaw_index['$id'];
+        }else{
+            idgen = json.jigsaw_index;
+        }
     }else{
         idgen = mongoIDjs();
     }
+    console.log(idgen);
     this.uid = idgen;
     this.jigsawId = json.id;
     this.specificId = json.specific_id;
@@ -62,7 +67,7 @@ Node.prototype.getHTML = function(){
 
     if(DEBUG)console.log('styling to >> '+boxStyle);
     this.mRuleHTML = '';
-
+//    console.log(this.uid);
     //node enclosure
     this.mRuleHTML += '<li class="pbd_ul_child cate_'+this.category+'" id="'+this.uid+'">';
     //node stying defined

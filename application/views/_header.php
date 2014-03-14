@@ -105,7 +105,7 @@
             });
 
             // Fix click link # cross opencart unautherize
-            //$('a[href="#"],a[href^="#"]').live('click',function(event){event.preventDefault();console.log('prevent redirected');});
+            $('a[href="#"],a[href^="#"]').live('click',function(event){event.preventDefault();console.log('prevent redirected');});
 
             // Add class .active to current link
             $('ul.main-menu li a').each(function(){
