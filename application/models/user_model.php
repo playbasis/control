@@ -434,11 +434,11 @@ class User_model extends MY_Model
                     $this->session->set_userdata('ip',$ip );
 
                 }else {
-                    $this->session->unset_userdata('user_id');
+                    $this->logout();
                 }
 
             } else {
-                $this->session->unset_userdata('user_id');
+                $this->logout();
             }
         }
     }
@@ -518,6 +518,8 @@ class User_model extends MY_Model
         }
 
         $this->session->set_userdata('admin_group_id',$this->admin_group_id );
+        $this->session->set_userdata('site_id', null);
+        $this->site_id = null;
         return $this->admin_group_id;
     }
 
