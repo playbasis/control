@@ -57,7 +57,7 @@
                 <?php if ($reports) { ?>
                     <?php foreach ($reports as $report) { ?>
                     <tr>
-                        <td class="left"><img width="40" height="40" src="<?php echo $report['image']; ?>" onerror="<?php echo base_url();?>image/default-image.png" /></td>
+                        <td class="left"><img width="40" height="40" src="<?php echo $report['image']; ?>" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" /></td>
                         <td class="left"><?php echo $report['cl_player_id']; ?></td>
                         <td class="left"><?php echo $report['username']; ?></td>
                         <td class="left"><?php echo $report['email']; ?></td>

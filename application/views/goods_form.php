@@ -91,7 +91,7 @@
                     <table class="form">
                         <tr>
                             <td><?php echo $this->lang->line('entry_image'); ?>:</td>
-                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="<?php echo base_url();?>image/default-image.png" />
+                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
                                 <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
@@ -141,7 +141,7 @@
                                                 <?php
                                                 foreach($badge_list as $badge){
                                                     ?>
-                                                    <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="<?php echo base_url();?>image/default-image.png" />
+                                                    <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />
                                                     <input type="text" name="reward_badge[<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="<?php if(set_value('reward_badge['.$badge['badge_id'].']')){
                                                         echo set_value('reward_badge['.$badge['badge_id'].']');
                                                     }else{
@@ -242,7 +242,7 @@ function image_upload(field, thumb) {
                     url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
                     dataType: 'text',
                     success: function(data) {
-                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="<?php echo base_url();?>image/default-image.png" />');
+                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
                     }
                 });
             }

@@ -62,7 +62,7 @@
                                     <?php } ?>
                                 <?php } ?>
                                 </td>
-                                <td class="left"><div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" onerror="<?php echo base_url();?>image/default-image.png" /></div></td>
+                                <td class="left"><div class="image"><img src="<?php echo $goods['image']; ?>" alt="" id="thumb" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" /></div></td>
                                 <td class="left"><?php echo $goods['name']; ?></td>
                                 <?php if(!$client_id){?>
                                     <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>

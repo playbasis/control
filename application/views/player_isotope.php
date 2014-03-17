@@ -64,7 +64,7 @@
             <!-- Start isot-player-portrait -->
             <div class="isot-player-portrait">
 
-                <img src="<?php echo $player['image']; ?>" alt="avatar" onerror="<?php echo base_url();?>image/default-image.png" />
+                <img src="<?php echo $player['image']; ?>" alt="avatar" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />
 
             </div>
             <!-- End isot-player-portrait -->
@@ -105,7 +105,7 @@
                         foreach($player['badges'] as $badge) { ?>
                         <li class="isot-player-recent-badge">
                             <?php if(!empty($badge['image'])) { ?>
-                            <img width="40" src="<?php echo $badge['image']; ?>" alt="badge" onerror="<?php echo base_url();?>image/default-image.png" />
+                            <img width="40" src="<?php echo $badge['image']; ?>" alt="badge" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />
                             <?php } ?>
                         </li>
                         <?php }
