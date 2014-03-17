@@ -158,9 +158,9 @@
 
                     <div class="isot-player-portrait">
                         <?php if (!empty($player['social_id'])) { ?>
-                        <img class="avatar" alt="<?php echo $player['nickname']; ?>" src="https://graph.facebook.com/<?php echo $player['social_id']; ?>/picture">
+                        <img class="avatar" alt="<?php echo $player['nickname']; ?>" src="https://graph.facebook.com/<?php echo $player['social_id']; ?>/picture" onerror="<?php echo base_url();?>image/default-image.png" />
                         <?php } else { ?>
-                        <img class="avatar" alt="<?php echo $player['nickname']; ?>" src="<?php echo $player['image']; ?>">
+                        <img class="avatar" alt="<?php echo $player['nickname']; ?>" src="<?php echo $player['image']; ?>" onerror="<?php echo base_url();?>image/default-image.png" />
                         <?php } ?>
                     </div>
 
@@ -266,7 +266,7 @@
                     </div>
 
                     <div class="isot-player-portrait">
-                        <img src="<?php echo $leaderboard['image']; ?>" alt="Avatar">
+                        <img src="<?php echo $leaderboard['image']; ?>" alt="Avatar" onerror="<?php echo base_url();?>image/default-image.png" />
                     </div>
 
                     <div class="isot-player-common-actions isot-player-activity-list">

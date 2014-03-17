@@ -125,6 +125,13 @@ reward_player
 }
 db.playbasis_reward_to_player.ensureIndex({ "pb_player_id" : 1, "reward_id" : 1 },{ "name" : "reward_player" });
 
+client_site
+{
+    "client_id": 1,
+    "site_id": 1
+}
+db.playbasis_reward_to_player.ensureIndex({ "client_id" : 1, "site_id" : 1 },{ "name" : "client_site" });
+
 
 
 playbasis_summary_of_player_beta
@@ -174,3 +181,66 @@ level	{
    "level": 1
 }
 db.playbasis_player.ensureIndex({ "level" : 1 },{ "name" : "level" });
+
+client_site_cl{
+   "client_id": 1,
+   "site_id": 1,
+   "cl_player_id": 1
+}
+db.playbasis_player.ensureIndex({ "client_id" : 1, "site_id" : 1, "cl_player_id" : 1 },{ "name" : "client_site_cl" });
+
+
+
+playbasis_event_log
+
+pb_event_date{
+    "pb_player_id": 1,
+    "event_type": 1,
+    "date_added": -1
+}
+db.playbasis_event_log.ensureIndex({ "pb_player_id" : 1, "event_type" : 1, "date_added" : -1 },{ "name" : "pb_event_date" });
+
+
+
+playbasis_reward_to_client
+
+client_site_reward{
+    "client_id": 1,
+    "site_id": 1,
+    "reward_id": 1
+}
+db.playbasis_event_log.ensureIndex({ "client_id" : 1, "site_id" : 1, "reward_id" : 1 },{ "name" : "client_site_reward" });
+
+
+
+playbasis_client_exp_table
+
+client_site_level_status{
+    "client_id": 1,
+    "site_id": 1,
+    "level": 1
+    "status": 1
+}
+db.playbasis_client_exp_table.ensureIndex({ "client_id" : 1, "site_id" : 1, "level" : 1, "status" : 1 },{ "name" : "client_site_level_status" });
+
+
+
+playbasis_exp_table
+
+level_status{
+    "level": 1
+    "status": 1
+}
+db.playbasis_exp_table.ensureIndex({ "level" : 1, "status" : 1 },{ "name" : "level_status" });
+
+
+
+playbasis_client_site
+
+auth{
+    "api_key": 1,
+    "api_secret": 1,
+    "status": 1
+}
+db.playbasis_client_site.ensureIndex({ "api_key" : 1, "api_secret" : 1, "status" : 1 },{ "name" : "auth" });
+

@@ -62,7 +62,7 @@
                                     <?php }?>
                                 <?php }?>
                                 </td>
-                                <td class="left"><div class="image"><img src="<?php echo $badge['image']; ?>" alt="" id="thumb" /></div></td>
+                                <td class="left"><div class="image"><img src="<?php echo $badge['image']; ?>" alt="" id="thumb" onerror="<?php echo base_url();?>image/default-image.png" /></div></td>
                                 <td class="left"><?php echo $badge['name']; ?></td>
                                 <?php if(!$client_id){?>
                                     <td class="left"><?php echo ($badge['is_public'])?"Public":"Private"; ?></td>
