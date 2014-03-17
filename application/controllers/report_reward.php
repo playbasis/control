@@ -73,7 +73,7 @@ class Report_reward extends MY_Controller{
     public function getRewardsList($offset, $url){
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-        $per_page = 100;
+        $per_page = 10;
         $parameter_url = "?t=".rand();
 
         $this->load->library('pagination');
@@ -405,6 +405,26 @@ class Report_reward extends MY_Controller{
     }
 
 
+    public function test(){
+        $this->load->model('Report_reward_model');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $data = array(
+            'client_id'              => $client_id,
+            'site_id'                => $site_id,
+            'date_start'             => '2014-02-15',
+            'date_expire'            => '2014-03-17',
+            'action_id'              => 0,
+            'start'                  => 0,
+            'limit'                  => 100
+        );
+
+        $results = $this->Report_reward_model->getReportReward($data);
+
+        var_dump($results);
+    }
 
 }
 
