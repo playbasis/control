@@ -175,7 +175,7 @@ class Report_reward extends MY_Controller{
             );
         }
 
-        $this->data['actions'] = array();
+        $this->data['badge_rewards'] = array();
 
         if($client_id){
             $data_filter['client_id'] = $client_id;
@@ -402,28 +402,6 @@ class Report_reward extends MY_Controller{
         }
 
         $this->xlsEOF();
-    }
-
-
-    public function test(){
-        $this->load->model('Report_reward_model');
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
-        $data = array(
-            'client_id'              => $client_id,
-            'site_id'                => $site_id,
-            'date_start'             => '2014-02-15',
-            'date_expire'            => '2014-03-17',
-            'action_id'              => 0,
-            'start'                  => 0,
-            'limit'                  => 100
-        );
-
-        $results = $this->Report_reward_model->getReportReward($data);
-
-        var_dump($results);
     }
 
 }

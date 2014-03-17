@@ -111,7 +111,7 @@ class Report_reward_model extends MY_Model{
     	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
-        return $this->mongo_db->get('playbasis_reward_to_player');
+        return $this->mongo_db->get('playbasis_reward_to_client');
 
     }
 
