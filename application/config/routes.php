@@ -75,6 +75,7 @@ $route['Player/ranks/'.ANY_NUMBER] = 'player/ranks/$1';
 $route['Player/ranks'] = 'player/ranks/20';
 
 $route['Player/level/'.ANY_NUMBER] = 'player/level/$1';
+$route['Player/level'] = 'player/level/0';
 $route['Player/levels'] = 'player/levels';
 
 $route['Player/'.ANY_STRING.'/points'] = 'player/points/$1';

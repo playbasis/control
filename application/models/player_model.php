@@ -217,6 +217,9 @@ class Player_model extends MY_Model
 		$this->mongo_db->where($fields);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		$result = ($result) ? $result[0] : array();
+        if($result){
+            $result['action_id'] = $result['action_id']."";
+        }
 		$result['count'] = $count;
 		return $result;
 	}
