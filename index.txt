@@ -86,6 +86,25 @@ reward_player_client
 }
 db.playbasis_reward_to_player.ensureIndex({ "reward_id" : 1, "pb_player_id" : 1, "client_id" : 1, "site_id" : 1 },{ "name" : "reward_player_client" });
 
+badge_player_client
+{
+   "badge_id": 1,
+   "pb_player_id": 1,
+   "client_id": 1,
+   "site_id": 1
+}
+db.playbasis_reward_to_player.ensureIndex({ "badge_id" : 1, "pb_player_id" : 1, "client_id" : 1, "site_id" : 1 },{ "name" : "badge_player_client" });
+
+reward_badge_player_client
+{
+   "reward_id": 1,
+   "badge_id": 1,
+   "pb_player_id": 1,
+   "client_id": 1,
+   "site_id": 1
+}
+db.playbasis_reward_to_player.ensureIndex({ "reward_id": 1, "badge_id" : 1, "pb_player_id" : 1, "client_id" : 1, "site_id" : 1 },{ "name" : "reward_badge_player_client" });
+
 badge_player
 {
    "pb_player_id": 1,

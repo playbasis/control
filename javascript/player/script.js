@@ -40,7 +40,7 @@
             bar.setCriteria('level:'+position);
 
             //re-render chart
-            donutAPI.get(bar.getAllCriteria())
+            //donutAPI.get(bar.getAllCriteria());
             //turnoff starter flag
             starter = false;
           return ;  
@@ -564,7 +564,7 @@
     $('.resetFilter').trigger('click');
 
     //Re-render
-    donutAPI.get(bar.getAllCriteria())
+    //donutAPI.get(bar.getAllCriteria());
 
     
     $('.context-menu-close').on('click',function(){
