@@ -353,6 +353,7 @@ class User_model extends MY_Model
             $this->mongo_db->where('status', true);
             $this->mongo_db->limit(1);
             $Q = $this->mongo_db->get('user');
+
             if (count($Q) > 0) {
 
                 $row = $Q[0];
@@ -410,7 +411,7 @@ class User_model extends MY_Model
 //                    $permissions = unserialize($row3['permission']);
                     $permissions = $row3['permission'];
                 }else{
-                    $this->session->unset_userdata('user_id');
+                    $this->logout();
                     return;
                 }
 
@@ -419,8 +420,9 @@ class User_model extends MY_Model
                         $this->permission[$key] = $value;
                     }
                 }
-
-                if($this->getAdminGroupID()||$this->client_id && $this->site_id){
+                var_dump($this->client_id);
+                var_dump($this->site_id);
+                if($this->getAdminGroupID()||($this->client_id && $this->site_id)){
                     $this->set_site_mongodb($this->site_id);
 
                     $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
