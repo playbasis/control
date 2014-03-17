@@ -596,6 +596,7 @@ class Player extends REST_Controller
 		$points['points'] = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
 		foreach($points['points'] as &$point)
 		{
+            $point['reward_id'] = $point['reward_id']."";
 			$point['reward_name'] = $this->point_model->getRewardNameById(array_merge($input, array(
 				'reward_id' => $point['reward_id']
 			)));
@@ -634,6 +635,7 @@ class Player extends REST_Controller
 		if(!$reward_id)
 			$this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
 		$point['point'] = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $site_id);
+        $point['point'][0]['reward_id'] = $reward_id."";
 		$point['point'][0]['reward_name'] = $reward;
 		ksort($point);
 		$this->response($this->resp->setRespond($point), 200);

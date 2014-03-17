@@ -619,6 +619,7 @@ class Player_model extends MY_Model
 		foreach($event_log as &$event){
 			$actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
+            $event['date_added'] = datetimeMongotoReadable($event['date_added']);
 			if($actionAndStringFilter){
 				$event['action_name'] = $actionAndStringFilter['action_name'];
 				$event['string_filter'] = $actionAndStringFilter['url'];	
