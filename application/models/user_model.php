@@ -518,8 +518,7 @@ class User_model extends MY_Model
         }
 
         $this->session->set_userdata('admin_group_id',$this->admin_group_id );
-        $this->session->set_userdata('site_id', null);
-        $this->site_id = null;
+
         return $this->admin_group_id;
     }
 
