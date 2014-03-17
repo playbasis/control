@@ -172,7 +172,8 @@ class Player_model extends MY_Model
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		$result['time'] = date('Y-m-d H:i:s', $result['date_added']->sec);
+        $result['action_id'] = $result['action_id']."";
+		$result['time'] = datetimeMongotoReadable($result['date_added']);
 		unset($result['date_added']);
 		return $result;
 	}
@@ -194,7 +195,8 @@ class Player_model extends MY_Model
 		if(!$result)
 			return $result;
 		$result = $result[0];
-		$result['time'] = date('Y-m-d H:i:s', $result['date_added']->sec);
+        $result['action_id'] = $result['action_id']."";
+        $result['time'] = datetimeMongotoReadable($result['date_added']);
 		unset($result['date_added']);
 		return $result;
 	}
@@ -626,6 +628,8 @@ class Player_model extends MY_Model
 				$event['string_filter'] = $actionAndStringFilter['url'];	
 			}
 			unset($event['action_log_id']);
+
+            $event['reward_id'] = $event['reward_id']."";
 		}
 
 
