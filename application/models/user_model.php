@@ -420,8 +420,7 @@ class User_model extends MY_Model
                         $this->permission[$key] = $value;
                     }
                 }
-                var_dump($this->client_id);
-                var_dump($this->site_id);
+
                 if($this->getAdminGroupID()||($this->client_id && $this->site_id)){
                     $this->set_site_mongodb($this->site_id);
 
