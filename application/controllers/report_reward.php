@@ -244,7 +244,7 @@ class Report_reward extends MY_Controller{
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'report')) {
+        if ($this->User_model->hasPermission('access', 'report/action')) {
             return true;
         } else {
             return false;
