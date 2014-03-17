@@ -84,11 +84,10 @@ var dbReady = false;
 var mongoose = require('mongoose');
 
 var ClientSite;
-db = mongoose.createConnection('dbv2.pbapp.net', 'admin', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis' });
+db = mongoose.createConnection('dbv2.pbapp.net', 'core', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis', auth: { authSource: "admin" } });
 //db = mongoose.createConnection('localhost', 'core', 27017);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback(){
-
 
     var schemaKey = mongoose.Schema({
         api_key: String,
@@ -172,8 +171,9 @@ function verifyChannel(channel, callback)
             callback(err);
             return;
         }
+        console.log(channel);
         console.log(data);
-        if(data.domain_name){
+        if(data && data.domain_name){
             console.log('domain valid: ' + data.domain_name);
             callback(null, channel);
         }else{
