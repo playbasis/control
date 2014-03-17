@@ -596,10 +596,10 @@ class Player extends REST_Controller
 		$points['points'] = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
 		foreach($points['points'] as &$point)
 		{
-            $point['reward_id'] = $point['reward_id']."";
 			$point['reward_name'] = $this->point_model->getRewardNameById(array_merge($input, array(
 				'reward_id' => $point['reward_id']
 			)));
+            $point['reward_id'] = $point['reward_id']."";
 			ksort($point);
 		}
 		$this->response($this->resp->setRespond($points), 200);
