@@ -266,7 +266,7 @@
                     </div>
 
                     <div class="isot-player-portrait">
-                        <img src="<?php echo $leaderboard['image']; ?>" alt="Avatar" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />
+                        <img src="<?php echo $leaderboard['image']; ?>" alt="Avatar" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                     </div>
 
                     <div class="isot-player-common-actions isot-player-activity-list">
