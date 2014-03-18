@@ -266,9 +266,9 @@ class Player_model extends MY_Model
                 $badge['name'] = $result['name'];
                 $badge['description'] = $result['description'];
                 $badge['amount'] = $badge['value'];
-                $badge['hint'] = $badge['hint'];
-                $badge['claim'] = $badge['claim'];
-                $badge['redeem'] = $badge['redeem'];
+                $badge['hint'] = $result['hint'];
+                $badge['claim'] = $result['claim'];
+                $badge['redeem'] = $result['redeem'];
                 unset($badge['value']);
                 array_push($playerBadges, $badge);
             }
