@@ -248,6 +248,9 @@ class Player_model extends MY_Model
                     'image',
                     'name',
                     'description',
+                    'hint',
+                    'claim',
+                    'redeem',
                 ));
                 $this->mongo_db->select(array(),array('_id'));
                 $this->mongo_db->where(array(
