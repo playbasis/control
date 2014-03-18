@@ -229,8 +229,6 @@ class Player_model extends MY_Model
 		$this->mongo_db->select(array(
 			'badge_id',
 			'value',
-			'claimed',
-			'redeemed'
 		));
         $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
@@ -268,6 +266,9 @@ class Player_model extends MY_Model
                 $badge['name'] = $result['name'];
                 $badge['description'] = $result['description'];
                 $badge['amount'] = $badge['value'];
+                $badge['hint'] = $badge['hint'];
+                $badge['claim'] = $badge['claim'];
+                $badge['redeem'] = $badge['redeem'];
                 unset($badge['value']);
                 array_push($playerBadges, $badge);
             }
