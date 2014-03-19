@@ -600,7 +600,7 @@ class Badge extends MY_Controller
         } elseif (!empty($badge_info) && isset($badge_info['claim'])) {
             $this->data['claim'] = $badge_info['claim'];
         } else {
-            $this->data['claim'] = 1;
+            $this->data['claim'] = 0;
         }
 
         if ($this->input->post('redeem')) {
@@ -608,7 +608,7 @@ class Badge extends MY_Controller
         } elseif (!empty($badge_info) && isset($badge_info['redeem'])) {
             $this->data['redeem'] = $badge_info['redeem'];
         } else {
-            $this->data['redeem'] = 1;
+            $this->data['redeem'] = 0;
         }
 
         if ($this->input->post('quantity')) {

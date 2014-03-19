@@ -2,6 +2,13 @@
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', 300000);
 
+$checkpid = '/home/ubuntu/spid.txt';
+
+if(file_exists($checkpid)){
+    die("Already running!");
+}
+file_put_contents($checkpid, getmypid());
+
 /***** CONNECTION TO MONGODB *****/
 $username = "user" ;
 $password = "pass" ;
@@ -164,5 +171,7 @@ foreach($players as $p){
 				
 	
 }
+
+unlink ($checkpid);
 
 ?>
