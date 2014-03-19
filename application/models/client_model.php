@@ -224,7 +224,7 @@ class Client_model extends MY_Model
 			return;
 		$badgeInfo = $result[0];
 		$mongoDate = new MongoDate(time());
-		if($badgeInfo['substract'])
+		if(isset($badgeInfo['substract']) && $badgeInfo['substract'])
 		{
 			$remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
 			if($remainingQuantity < 0)
@@ -272,13 +272,13 @@ class Client_model extends MY_Model
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
             );
-            if($badgeInfo['claim'])
+            if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
             {
-                $data['value'] = intval($quantity);
-                $data['claimed'] = 0;
-            }else{
                 $data['value'] = 0;
                 $data['claimed'] = intval($quantity);
+            }else{
+                $data['value'] = intval($quantity);
+                $data['claimed'] = 0;
             }
 			$this->mongo_db->insert('playbasis_reward_to_player', $data);
 		}
