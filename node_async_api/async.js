@@ -17,7 +17,6 @@ var express = require('express')
 var app = express();
 
 // all environments
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 app.set('port', process.env.PORT || 3002);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -190,6 +189,7 @@ io.sockets.on('connection', function(socket){
 
 function postRequest(reqURL, data, channel)
 {
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	request.post({ url: reqURL, form: data }, function(error, response, body){
 		console.log('result:');
 		console.log(JSON.parse(body));
