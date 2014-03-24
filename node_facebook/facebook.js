@@ -173,6 +173,7 @@ function getFacebookLikeData(page_id, sender_id, parent_id){
 }
 
 app.post('/facebook', function(req, res){
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
     for(x in req.body.entry){
         var entry = req.body.entry[x]
         for(y in entry.changes){
