@@ -50,9 +50,49 @@ class Redeem extends REST_Controller
         $goods = $this->goods_model->getGoods(array_merge($validToken, array(
             'goods_id' => new MongoId($goods_id)
         )));
-        if(!$goods)
-            $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
 
+        // if(!$goods)
+        //     $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+
+        //-->NEW
+        if(!$goods){
+            $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+        }else{
+            $per_user = $goods['per_user'];
+
+            $get_player_goods = $this->player_model->getGoods(new MongoId($pb_player_id), $validToken['site_id']);
+
+            $overLimit = false;
+
+            if($goods['per_user'] != null){
+                foreach ($get_player_goods as $a_good){
+                    if($a_good['goods_id'] == $goods['goods_id']){
+                        if ($a_good['amount']>=$per_user){
+                            $overLimit = true;
+                            break;
+                        }    
+                    }
+                }    
+            }
+            
+            if ($overLimit){
+                $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
+            }else{
+                $amount = 1;
+                if($this->input->post('amount'))
+                    $amount = (int)$this->input->post('amount');
+
+                $pb_player_id = new MongoId($pb_player_id);
+                $redeemResult = $this->processRedeem($pb_player_id, $goods, $amount, $validToken);
+
+                $this->benchmark->mark('goods_redeem_end');
+                $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
+                $this->response($this->resp->setRespond($redeemResult), 200);              
+            }
+        }
+        //-->END NEW
+
+        /*
         $amount = 1;
         if($this->input->post('amount'))
             $amount = (int)$this->input->post('amount');
@@ -63,6 +103,7 @@ class Redeem extends REST_Controller
         $this->benchmark->mark('goods_redeem_end');
         $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
         $this->response($this->resp->setRespond($redeemResult), 200);
+        */
     }
 
     private function processRedeem($pb_player_id, $goods, $amount, $validToken)

@@ -70,6 +70,10 @@ class Error extends CI_Model
             $errorData['message'] = "Goods not available";
             $errorData['error_code'] = '0501';
             break;
+        case 'OVER_LIMIT_REDEEM':
+        	$errorData['message'] = "User has exceeded redeem limit";
+            $errorData['error_code'] = '0601';
+            break;
 		default:
 			$errorData['message'] = "Unknow";
 			$errorData['error_code'] = '9999';
