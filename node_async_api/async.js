@@ -189,6 +189,7 @@ io.sockets.on('connection', function(socket){
 
 function postRequest(reqURL, data, channel)
 {
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	request.post({ url: reqURL, form: data }, function(error, response, body){
 		console.log('result:');
 		console.log(JSON.parse(body));

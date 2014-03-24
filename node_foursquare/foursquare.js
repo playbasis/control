@@ -119,6 +119,7 @@ app.get('/login/callback', function (req, res)
 
 app.post('/feed/callback', function (req, res)
 {
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	console.log('---------- checkin ----------');
 	console.log(req.body);
 	var entry = new FsqFeed({
