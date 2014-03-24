@@ -17,6 +17,7 @@ var express = require('express')
 var app = express();
 
 // all environments
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 app.set('port', process.env.PORT || 3002);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
