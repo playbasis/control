@@ -45,6 +45,7 @@ $lang['entry_rewards']           		= 'Reward';
 $lang['entry_sponsor']           		= 'Sponsor';
 $lang['entry_start_date']				= 'Start Date';
 $lang['entry_expire_date']				= 'Expire Date';
+$lang['entry_per_user']                    = 'Per User';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';

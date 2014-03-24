@@ -595,6 +595,14 @@ class Goods extends MY_Controller
             $this->data['quantity'] = 1;
         }
 
+        if ($this->input->post('per_user')) {
+            $this->data['per_user'] = $this->input->post('per_user');
+        } elseif (!empty($goods_info)) {
+            $this->data['per_user'] = $goods_info['per_user'];
+        } else {
+            $this->data['per_user'] = null;
+        }
+
         if ($this->input->post('reward_point')) {
             $this->data['reward_point'] = $this->input->post('reward_point');
         } elseif (!empty($goods_info)) {
