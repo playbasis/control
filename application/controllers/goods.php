@@ -592,7 +592,7 @@ class Goods extends MY_Controller
         } elseif (!empty($goods_info)) {
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
-            $this->data['quantity'] = 1;
+            $this->data['quantity'] = null;
         }
 
         if ($this->input->post('per_user')) {
