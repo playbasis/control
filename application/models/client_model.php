@@ -252,7 +252,7 @@ class Client_model extends MY_Model
 				'badge_id' => $badgeId
 			));
 			$this->mongo_db->set('date_modified', $mongoDate);
-            if($badgeInfo['claim'])
+            if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
             {
                 $this->mongo_db->inc('claimed', intval($quantity));
             }else{
