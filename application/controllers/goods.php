@@ -313,6 +313,7 @@ class Goods extends MY_Controller
                     'goods_id' => $result['_id'],
                     'name' => $result['name'],
                     'quantity' => $result['quantity'],
+                    'per_user' => $result['per_user'],
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
@@ -343,6 +344,7 @@ class Goods extends MY_Controller
                         'goods_id' => $goods['_id'],
                         'name' => $goods['name'],
                         'quantity' => $goods['quantity'],
+                        'per_user' => $goods['per_user'],
                         'status' => $goods['status'],
                         'image' => $image,
                         'sort_order'  => $goods['sort_order'],
@@ -437,6 +439,7 @@ class Goods extends MY_Controller
                     'goods_id' => $result['_id'],
                     'name' => $result['name'],
                     'quantity' => $result['quantity'],
+                    'per_user' => $result['per_user'],
                     'status' => $result['status'],
                     'image' => $image,
                     'sort_order'  => $result['sort_order'],
@@ -468,6 +471,7 @@ class Goods extends MY_Controller
                         'goods_id' => $goods['_id'],
                         'name' => $goods['name'],
                         'quantity' => $goods['quantity'],
+                        'per_user' => $goods['per_user'],
                         'status' => $goods['status'],
                         'image' => $image,
                         'sort_order'  => $goods['sort_order'],
@@ -592,7 +596,15 @@ class Goods extends MY_Controller
         } elseif (!empty($goods_info)) {
             $this->data['quantity'] = $goods_info['quantity'];
         } else {
-            $this->data['quantity'] = 1;
+            $this->data['quantity'] = null;
+        }
+
+        if ($this->input->post('per_user')) {
+            $this->data['per_user'] = $this->input->post('per_user');
+        } elseif (!empty($goods_info)) {
+            $this->data['per_user'] = $goods_info['per_user'];
+        } else {
+            $this->data['per_user'] = null;
         }
 
         if ($this->input->post('reward_point')) {

@@ -23,6 +23,7 @@ $lang['column_image']					= 'Image';
 $lang['column_name']            		= 'Name';
 $lang['column_sort_order']      		= 'Sort Order';
 $lang['column_quantity']          		= 'Quantity';
+$lang['column_peruser']          		= 'Per User';
 $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
@@ -45,6 +46,7 @@ $lang['entry_rewards']           		= 'Reward';
 $lang['entry_sponsor']           		= 'Sponsor';
 $lang['entry_start_date']				= 'Start Date';
 $lang['entry_expire_date']				= 'Expire Date';
+$lang['entry_per_user']                    = 'Per User';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';
