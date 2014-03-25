@@ -135,7 +135,7 @@ foreach($players as $p){
 	}
 	
 	$p['value'] = $action + $reward;
-	
+
 	$item = array(
 				'_id' => new MongoId($p['_id']),
 				'client_id' => new MongoId($p['client_id']),
@@ -158,12 +158,12 @@ foreach($players as $p){
 				'exp' => new MongoInt32($p['exp']),
 				'level' => new MongoInt32($p['level']),
 				'email' => $p['email'],
-				'birth_date' => new MongoDate(strtotime($p['birth_date'])),
+				'birth_date' => $p['birth_date'],
 				'gender' => new MongoInt32($p['gender']),
 				'nickname' => $p['nickname'],
 				'status' => (bool)($p['status']),
-				'date_added' => new MongoDate(strtotime($p['date_added'])),
-				'date_modified' => new MongoDate(strtotime($p['date_modified'])),
+				'date_added' => $p['date_added'],
+				'date_modified' => $p['date_modified'],
 				'value' => $p['value']
 				);
 	$option = array("upsert" => true);			
