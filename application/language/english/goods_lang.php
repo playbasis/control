@@ -23,6 +23,7 @@ $lang['column_image']					= 'Image';
 $lang['column_name']            		= 'Name';
 $lang['column_sort_order']      		= 'Sort Order';
 $lang['column_quantity']          		= 'Quantity';
+$lang['column_peruser']          		= 'Per User';
 $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';

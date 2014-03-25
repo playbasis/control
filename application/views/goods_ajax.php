@@ -43,7 +43,8 @@ echo form_open('goods/delete',$attributes);
                     <?php if(!$client_id){?>
                         <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>
                     <?php }?>
-                    <td class="right"><?php echo $goods['quantity']; ?></td>
+                    <td class="right"><?php echo (isset($goods['per_user']) && !is_null($goods['per_user']))?$goods['per_user']:'Unlimited'; ?></td>
+                    <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity']))?$goods['quantity']:'Unlimited'; ?></td>
                     <td class="left"><?php echo ($goods['status'])? "Enabled" : "Disabled"; ?></td>
                     <td class="right"><?php echo $goods['sort_order']; ?></td>
                     <td class="right">
