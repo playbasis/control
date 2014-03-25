@@ -107,7 +107,7 @@ class Redeem extends REST_Controller
     }
 
     private function processRedeem($pb_player_id, $goods, $amount, $validToken)
-    {
+    {   
         $redeemResult = array(
             'events' => array()
         );
@@ -118,14 +118,14 @@ class Redeem extends REST_Controller
             );
             array_push($redeemResult['events'], $event);
         }
-        if(!$this->checkGoodsAmount($goods, $amount)){
+        if(!$this->checkGoodsAmount($goods, $amount)){            
             $event = array(
                 'event_type' => 'GOODS_NOT_ENOUGH',
                 'message' => 'goods not enough for redeem'
             );
             array_push($redeemResult['events'], $event);
         }
-
+        
         if(isset($goods['redeem']['point']["point_value"]) && ($goods['redeem']['point']["point_value"] > 0)){
             $input = array_merge($validToken, array(
                 'reward_name' => "point"
@@ -160,7 +160,7 @@ class Redeem extends REST_Controller
                     if(isset($badge_player_check[$badgeid]) && (int)$badge_player_check[$badgeid] >= (int)$badgevalue){
                         $badge_can_redeem++;
                     }else{
-                        array_push($badge_incomplete, array($badgeid => (isset($badge_player_check[$badgeid])) ? ((int)$badgevalue - (int)$badge_player_check[$badgeid]) : (int)$badgevalue));
+                        array_push($badge_incomplete, array($badgeid."" => (isset($badge_player_check[$badgeid])) ? ((int)$badgevalue - (int)$badge_player_check[$badgeid]) : (int)$badgevalue));
                     }
                 }
             }
@@ -189,7 +189,7 @@ class Redeem extends REST_Controller
                 if($player_custom && (int)$player_custom[0]['value'] >= (int)$customvalue){
                     $custom_can_redeem++;
                 }else{
-                    array_push($custom_incomplete, array($badgeid => ($player_custom) ? ((int)$customvalue - (int)$player_custom[0]['value']) : (int)$customvalue));
+                    array_push($custom_incomplete, array($customid."" => ($player_custom) ? ((int)$customvalue - (int)$player_custom[0]['value']) : (int)$customvalue));
                 }
             }
 
@@ -200,7 +200,7 @@ class Redeem extends REST_Controller
                     'incomplete' => $custom_incomplete
                 );
                 array_push($redeemResult['events'], $event);
-            }
+            }            
         }
 
         if(!(isset($redeemResult['events']) && count($redeemResult['events']) > 0)){
@@ -263,11 +263,24 @@ class Redeem extends REST_Controller
 
     private function checkGoodsAmount($goods, $amount)
     {
+        /*
         if(isset($goods['quantity']) && $goods['quantity']){
             if((int)$goods['quantity'] >= (int)$amount)
                 return true;
         }
         return false;
+        */
+
+        // NEW -->
+        if(isset($goods['quantity']) && !is_null($goods['quantity'])){
+            if((int)$goods['quantity'] >= (int)$amount)
+                return true;
+        }elseif(is_null($goods['quantity'])){
+            return true;
+        }else{
+            return false;    
+        }
+        // END NEW -->
     }
 
     private function getRedeemGoods($pb_player_id, $goods, $amount, $validToken){
