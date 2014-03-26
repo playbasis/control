@@ -40,6 +40,7 @@ var TRACKING = '#pbapp,#playbasis';
 var engineUrl = 'https://api.pbapp.net/Engine/rule/twitter';
 
 twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	stream.on('data', function(data){
 
 		console.log('---------- tweet tweet ----------');

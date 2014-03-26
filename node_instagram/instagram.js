@@ -223,6 +223,7 @@ function processRecentFeeds(tag)
 
 app.post('/feed', function(req, res)
 {
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	console.log('---------- ig post ----------');
 	//console.log(req.body);
 

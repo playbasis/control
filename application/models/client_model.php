@@ -252,7 +252,7 @@ class Client_model extends MY_Model
 				'badge_id' => $badgeId
 			));
 			$this->mongo_db->set('date_modified', $mongoDate);
-            if($badgeInfo['claim'])
+            if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
             {
                 $this->mongo_db->inc('claimed', intval($quantity));
             }else{
@@ -421,12 +421,29 @@ class Client_model extends MY_Model
         $goodsInfo = $result[0];
         $mongoDate = new MongoDate(time());
 
-        $remainingQuantity = $goodsInfo['quantity'] - $quantity;
+        if (!is_null($goodsInfo['quantity'])){
+        	$remainingQuantity = $goodsInfo['quantity'] - $quantity;
+        }else{
+        	$remainingQuantity = null;
+        }
+
+        /*
         if($remainingQuantity < 0)
         {
             $remainingQuantity = 0;
             $quantity = $goodsInfo['quantity'];
         }
+        */
+
+        // NEW -->
+        if(is_null($remainingQuantity)){
+        	$remainingQuantity = null;
+        	// $quantity = $goodsInfo['quantity'];
+        }elseif($remainingQuantity < 0){
+            $remainingQuantity = 0;
+            $quantity = $goodsInfo['quantity'];
+        }
+        // END NEW -->
         $this->mongo_db->set('quantity', $remainingQuantity);
         $this->mongo_db->set('date_modified', $mongoDate);
         $this->mongo_db->where('client_id', $client_id);
