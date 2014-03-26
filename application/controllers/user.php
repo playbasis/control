@@ -547,14 +547,14 @@ class User extends MY_Controller
         
         //ReCaptcha stuff
         $this->load->helper('recaptchalib');  
-        $publicKey = '6Lfpq_ASAAAAAFNDTuWS039atxnL37F7Yervniaw';
+        $publicKey = CAPTCHA_PUBLIC_KEY;
         $this->data['recaptcha'] = recaptcha_get_html($publicKey);
 
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             //ReCaptcha stuff
-            $privateKey = '6Lfpq_ASAAAAAFzAre-3Jlr4z_fzeTCG7wZDgMC8';
+            $privateKey = CAPTCHA_PRIVATE_KEY;
 
             $resp = recaptcha_check_answer ($privateKey,
                                 $_SERVER["REMOTE_ADDR"],
