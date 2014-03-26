@@ -6,7 +6,8 @@
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
-  , http = require('https')
+  , http = require('http')
+  , https = require('https')
   , path = require('path')
   , io = require('socket.io')
   ,	request = require('request')
@@ -36,14 +37,14 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 
 var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-	requestCert: true,
-	rejectUnauthorized: false
+    key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+    cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+    ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+    requestCert: true,
+    rejectUnauthorized: false
 };
 
-var server = http.createServer(options, app);
+var server = https.createServer(options, app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
@@ -189,7 +190,7 @@ io.sockets.on('connection', function(socket){
 
 function postRequest(reqURL, data, channel)
 {
-    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+    //process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	request.post({ url: reqURL, form: data }, function(error, response, body){
 		console.log('result:');
 		console.log(JSON.parse(body));
