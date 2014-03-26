@@ -556,10 +556,12 @@ class User extends MY_Controller
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
-            $resp = recaptcha_check_answer ($privateKey,
-                                $_SERVER["REMOTE_ADDR"],
-                                $_POST["recaptcha_challenge_field"],
-                                $_POST["recaptcha_response_field"]);
+            if(!$this->input->post('internal')){
+                $resp = recaptcha_check_answer ($privateKey,
+                                    $_SERVER["REMOTE_ADDR"],
+                                    $_POST["recaptcha_challenge_field"],
+                                    $_POST["recaptcha_response_field"]);    
+            }
 
             if($this->form_validation->run()){
                 // $user_id = $this->User_model->insertUser();
@@ -568,7 +570,7 @@ class User extends MY_Controller
                 // if($user_id){
                 if(!$domain){    
                     // if(!$domain){
-                    if (!$resp->is_valid) {
+                    if (isset($resp) && !$resp->is_valid) {
                     // What happens when the CAPTCHA was entered incorrectly
                         $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
                         $this->data['temp_fields'] = $this->input->post();
