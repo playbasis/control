@@ -527,7 +527,7 @@ class User extends MY_Controller
 
         $this->load->model('Image_model');
         $this->load->model('Permission_model');
-
+        
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
@@ -545,10 +545,22 @@ class User extends MY_Controller
         $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
         $this->form_validation->set_rules('site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
         
-
+        //ReCaptcha stuff
+        $this->load->helper('recaptchalib');  
+        $publicKey = '6Lfpq_ASAAAAAFNDTuWS039atxnL37F7Yervniaw';
+        $this->data['recaptcha'] = recaptcha_get_html($publicKey);
 
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            //ReCaptcha stuff
+            $privateKey = '6Lfpq_ASAAAAAFzAre-3Jlr4z_fzeTCG7wZDgMC8';
+
+            $resp = recaptcha_check_answer ($privateKey,
+                                $_SERVER["REMOTE_ADDR"],
+                                $_POST["recaptcha_challenge_field"],
+                                $_POST["recaptcha_response_field"]);
+
             if($this->form_validation->run()){
                 // $user_id = $this->User_model->insertUser();
                 $domain = $this->Domain_model->checkDomainExists($this->input->post());
@@ -556,48 +568,53 @@ class User extends MY_Controller
                 // if($user_id){
                 if(!$domain){    
                     // if(!$domain){
-                    if($user_id = $this->User_model->insertUser()){
-                        $user_info = $this->User_model->getUserInfo($user_id);
-
-                        $client_id = $this->Client_model->insertClient();
-
-                        $data = array(
-                            'client_id' => $client_id,
-                            'user_id' => $user_info['_id']
-                        );
-                        $this->User_model->addUserToClient($data);
-                        $data = $this->input->post();
-                        $data['client_id'] = $client_id;
-                        $data['limit_users'] = 1000;
-                        $data['date_start'] = date("Y-m-d H:i:s");
-                        $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
-
-                        $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
-
-                        $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
-
-                        $another_data['domain_value'] = array(
-                                'site_id' =>$site_id,
-                                'plan_id' => $plan_id,
-                                'status' =>true
-                            );
-
-                        $this->Client_model->editClientPlan($client_id, $another_data);
-
-                        $data = array();
-                            $data['client_id'] = $client_id;
-                            $data['plan_id'] = $plan_id;
-                            $data['site_id'] = $site_id;
-                            $this->Permission_model->addPlanToPermission($data);
-
-                        // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
-                        // echo "<script>window.location.href = '".site_url()."';</script>";    
-                        $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
-                        redirect('login', 'refresh');        
+                    if (!$resp->is_valid) {
+                    // What happens when the CAPTCHA was entered incorrectly
+                        $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
+                        $this->data['temp_fields'] = $this->input->post();
                     }else{
-                        $this->data['fail_email_exists'] = $this->lang->line('text_fail');   
+                        if($user_id = $this->User_model->insertUser()){
+                            $user_info = $this->User_model->getUserInfo($user_id);
+
+                            $client_id = $this->Client_model->insertClient();
+
+                            $data = array(
+                                'client_id' => $client_id,
+                                'user_id' => $user_info['_id']
+                            );
+                            $this->User_model->addUserToClient($data);
+                            $data = $this->input->post();
+                            $data['client_id'] = $client_id;
+                            $data['limit_users'] = 1000;
+                            $data['date_start'] = date("Y-m-d H:i:s");
+                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
+
+                            $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
+
+                            $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+
+                            $another_data['domain_value'] = array(
+                                    'site_id' =>$site_id,
+                                    'plan_id' => $plan_id,
+                                    'status' =>true
+                                );
+
+                            $this->Client_model->editClientPlan($client_id, $another_data);
+
+                            $data = array();
+                                $data['client_id'] = $client_id;
+                                $data['plan_id'] = $plan_id;
+                                $data['site_id'] = $site_id;
+                                $this->Permission_model->addPlanToPermission($data);
+
+                            // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
+                            // echo "<script>window.location.href = '".site_url()."';</script>";    
+                            $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
+                            redirect('login', 'refresh');        
+                        }else{
+                            $this->data['fail_email_exists'] = $this->lang->line('text_fail');   
+                        }
                     }
-                    
                 }else{
                     $data = array('email' => $this->input->post('email'));
                     if($this->User_model->findEmail($data)){
