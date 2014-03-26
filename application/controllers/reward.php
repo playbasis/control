@@ -68,6 +68,7 @@ class Reward extends REST_Controller
 		$site_id = $validToken['site_id'];
 		/* main */
 		//db.playbasis_reward_to_player.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5")},{reward_id: 1, badge_id: 1, value: 1, date_added: 1})
+		//
 		$log = array(
 			'2014-03-21' => array('exp' => 100),
 			'2014-03-22' => array('exp' => 120),
