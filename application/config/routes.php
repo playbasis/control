@@ -117,6 +117,17 @@ $route['Engine/facebook']	= 'engine/rule/facebook';
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
 
+// api-carlos
+$route['Action'] = 'action/index';
+$route['Action/log'] = 'action/log';
+$route['Reward'] = 'reward/index';
+$route['Reward/badge'] = 'badge/index'; // reuse
+$route['Reward/'.ANY_STRING.'/log'] = 'reward/$1Log';
+$route['Player/total'] = 'player/total';
+$route['Player/new'] = 'player/new';
+$route['Player/dau'] = 'player/dau';
+$route['Player/mau'] = 'player/mau';
+
 //misc
 $route['test']	= 'playbasis/test';
 $route['fb'] = 'playbasis/fb';

@@ -896,6 +896,86 @@ class Player extends REST_Controller
         $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $site_id);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
+	public function total_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		//db.playbasis_player.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5"), status: true},{date_added: 1})
+		//where date_added <= XXX
+		$count = array(
+			'2014-03-21' => 100000,
+			'2014-03-22' => 123400,
+		);
+		$this->response($this->resp->setRespond($count), 200);
+	}
+	public function new_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		//db.playbasis_player.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5"), status: true},{date_added: 1})
+		$count = array(
+			'2014-03-21' => 1000,
+			'2014-03-22' => 1234,
+		);
+		$this->response($this->resp->setRespond($count), 200);
+	}
+	public function dau_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		//db.playbasis_action_log.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5")},{date_added: 1,pb_player_id: 1})
+		$count = array(
+			'2014-03-21' => 100,
+			'2014-03-22' => 123,
+		);
+		$this->response($this->resp->setRespond($count), 200);
+	}
+	public function mau_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$count = array(
+			'2014-01' => 1500,
+			'2014-02' => 2000,
+		);
+		$this->response($this->resp->setRespond($count), 200);
+	}
 	public function test_get()
 	{
 		echo '<pre>';
