@@ -65,5 +65,11 @@ class MY_Model extends CI_Model
     //        $this->dbGroups[$key] = $value;
     //    }
     //}
+	/* Assume $str to be in 'YYYY-mm-dd' format */
+	public function new_mongo_date($str) {
+		return new MongoDate(strtotime($str.' 00:00:00'));
+	}
+	public function get_number_of_days($year_month) {
+		return date('t', strtotime($year_month.'-01 00:00:00'));
+	}
 }
-

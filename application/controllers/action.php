@@ -24,10 +24,13 @@ class Action extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		$site_id = $validToken['site_id'];
 		/* main */
-		//db.playbasis_action_to_client.find({status: true, client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5")},{'name': 1})
-		$action = array('like', 'visit', 'comment', 'share');
+		$action = array();
+		foreach ($this->action_model->listActions($validToken) as $key => $value) {
+			array_push($action, $value['name']);
+		}
 		$this->response($this->resp->setRespond($action), 200);
 	}
+
 	public function log_get()
 	{
 		/* GET */
@@ -41,12 +44,18 @@ class Action extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		$site_id = $validToken['site_id'];
 		/* main */
-		//db.playbasis_action_log.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5")},{action_name: 1, date_added: 1})
-		//process with Map-Reduce
-		$log = array(
-			'2014-03-21' => array('like' => 100, 'share' => 17),
-			'2014-03-22' => array('like' => 123, 'share' => 40),
-		);
+		$log = array();
+		foreach ($this->action_model->listActions($validToken) as $key => $v) {
+			$action_name = $v['name'];
+			foreach ($this->action_model->actionLog($validToken, $action_name, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+				$key = $value['_id'];
+				if (array_key_exists($key, $log)) {
+					$log[$key][$action_name] = $value['value'];
+				} else {
+					$log[$key] = array($action_name => $value['value']);
+				}
+			}
+		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function test_get()

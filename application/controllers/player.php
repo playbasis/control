@@ -909,13 +909,14 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		$site_id = $validToken['site_id'];
 		/* main */
-		//db.playbasis_player.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5"), status: true},{date_added: 1})
-		//where date_added <= XXX
-		$count = array(
-			'2014-03-21' => 100000,
-			'2014-03-22' => 123400,
-		);
-		$this->response($this->resp->setRespond($count), 200);
+		$log = array();
+		$sum = 0;
+		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			$sum += $value['value'];
+			array_push($log, array($key => $sum));
+		}
+		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function new_get()
 	{
@@ -930,12 +931,12 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		$site_id = $validToken['site_id'];
 		/* main */
-		//db.playbasis_player.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5"), status: true},{date_added: 1})
-		$count = array(
-			'2014-03-21' => 1000,
-			'2014-03-22' => 1234,
-		);
-		$this->response($this->resp->setRespond($count), 200);
+		$log = array();
+		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			array_push($log, array($key => $value['value']));
+		}
+		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function dau_get()
 	{
@@ -950,12 +951,12 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		$site_id = $validToken['site_id'];
 		/* main */
-		//db.playbasis_action_log.find({client_id: ObjectId("52ea1eab8d8c89401c0000d9"), site_id: ObjectId("52ea1eac8d8c89401c0000e5")},{date_added: 1,pb_player_id: 1})
-		$count = array(
-			'2014-03-21' => 100,
-			'2014-03-22' => 123,
-		);
-		$this->response($this->resp->setRespond($count), 200);
+		$log = array();
+		foreach ($this->player_model->daily_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+		}
+		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function mau_get()
 	{
@@ -970,11 +971,12 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		$site_id = $validToken['site_id'];
 		/* main */
-		$count = array(
-			'2014-01' => 1500,
-			'2014-02' => 2000,
-		);
-		$this->response($this->resp->setRespond($count), 200);
+		$log = array();
+		foreach ($this->player_model->monthy_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+		}
+		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function test_get()
 	{
