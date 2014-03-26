@@ -35,6 +35,7 @@ $lang['text_fail_domain_exists']				= 'The domain name provided was already regi
 $lang['text_email_sent']						= 'We have sent you an email, please click the link provided to activate your account.';
 $lang['text_edit_account']						= 'Edit Account';
 $lang['text_no_changes']						= 'No changes has been made!';
+$lang['text_incorrect_captcha']					= 'The captcha was entered incorrectly';
 
 // Column Table
 $lang['column_username']            			= 'Email';
@@ -56,6 +57,7 @@ $lang['form_site']								="Site Name";
 $lang['form_logo_image']						="Company Logo Image";
 $lang['form_limit_users']						="Limit Users";
 $lang['form_company_name']						="Company Name";
+$lang['form_captcha']							="Captcha";
 
 
 // Button

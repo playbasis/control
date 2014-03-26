@@ -1,5 +1,3 @@
-
-
 <div id="content" >
 	<div class = "box" style = "position: relative; max-width: 750px; margin:0 auto;">
 		
@@ -17,6 +15,11 @@
             <?php if(isset($fail_domain_exists)){ ?>
                 <div class="content messages half-width">
                 <div class="warning"><?php echo $fail_domain_exists; ?></div>
+                </div>
+            <?php }?>
+            <?php if(isset($incorrect_captcha)){?>
+            	<div class="content messages half-width">
+                <div class="warning"><?php echo $incorrect_captcha; ?></div>
                 </div>
             <?php }?>
 			<?php if(validation_errors() || isset($message)) {?>
@@ -72,9 +75,14 @@
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_site');?>:</td>
 							<td><input type = "text" name="site_name" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['site_name'];}?>" class="tooltips" data-placement="right" title="Your Site name (example: Playbasis Official Website)"></td>
 						</tr>
+						<tr>
+							<td><span class="required">*</span> <?php echo $this->lang->line('form_captcha');?>:</td>
+							<td>
+								<?php echo $recaptcha;?>	
+							</td>
+						</tr>
 					</table>
 				</div>
-					
 					<p style="float:left"><a href="<?php echo base_url();?>" id="cancel">Cancel</a>
 
 				
