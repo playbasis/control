@@ -36,6 +36,9 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+define('CAPTCHA_PUBLIC_KEY', '6LdUrfASAAAAAEwAUuvXaBIljbwZvql8vBBpvMsK');
+define('CAPTCHA_PRIVATE_KEY', '6LdUrfASAAAAAB58hPCZFxliCszjk24AxUn2IBMV');
+
 
 define('S3_IMAGE', 'http://images.pbapp.net/');
 define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');

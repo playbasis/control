@@ -78,7 +78,47 @@
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_captcha');?>:</td>
 							<td>
-								<?php echo $recaptcha;?>	
+								<?php //echo $recaptcha;?>	
+
+								<script type="text/javascript">
+									var RecaptchaOptions = {
+										theme : 'custom',
+										custom_theme_widget: 'recaptcha_widget'
+									};
+								</script>
+								<div id="recaptcha_widget" style="display:none">
+
+								<div id="recaptcha_image"></div>
+								<div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
+
+								<span class="recaptcha_only_if_image"></span>
+								<span class="recaptcha_only_if_audio"></span>
+								<br/>
+								<div class="input-append">
+									<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
+									<button class="btn" type="button" onclick="javascript:Recaptcha.reload()"><span class="icon-refresh"></span></button>
+<!-- 									<button class="btn" type="button" onclick="javascript:Recaptcha.switch_type('audio')"><span class="icon-volume-up"></span></button>
+									<button class="btn" type="button" onclick="javascript:Recaptcha.switch_type('image')"><span class="icon-font"></span></button> -->
+								</div>
+								
+
+								<!-- <div><a href="javascript:Recaptcha.reload()">Get another CAPTCHA</a></div> -->
+								<!-- <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')">Get an audio CAPTCHA</a></div> -->
+								<!-- <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')">Get an image CAPTCHA</a></div> -->
+
+								</div>
+
+								<script type="text/javascript"
+								src="http://www.google.com/recaptcha/api/challenge?k=6LdUrfASAAAAAEwAUuvXaBIljbwZvql8vBBpvMsK">
+								</script>
+								<noscript>
+								<iframe src="http://www.google.com/recaptcha/api/noscript?k=6LdUrfASAAAAAEwAUuvXaBIljbwZvql8vBBpvMsK"
+								height="300" width="500" frameborder="0"></iframe><br>
+								<textarea name="recaptcha_challenge_field" rows="3" cols="40">
+								</textarea>
+								<input type="hidden" name="recaptcha_response_field"
+								value="manual_challenge">
+								</noscript>
 							</td>
 						</tr>
 					</table>
