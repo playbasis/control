@@ -557,8 +557,6 @@ class User extends MY_Controller
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
             if(!$this->input->post('internal')){
-                // var_dump($_POST["recaptcha_challenge_field"]);
-                // if(isset($_POST["recaptcha_challenge_field"]) && isset($_POST["recaptcha_response_field"])){
 
                 $recaptcha_challenge_field = isset($_POST["recaptcha_challenge_field"])?$_POST["recaptcha_challenge_field"]:null;
                 $recaptcha_response_field = isset($_POST["recaptcha_response_field"])?$_POST["recaptcha_response_field"]:null;
@@ -567,9 +565,9 @@ class User extends MY_Controller
                                                     $_SERVER["REMOTE_ADDR"],
                                                     $recaptcha_challenge_field,
                                                     $recaptcha_response_field);    
-                // }
-
-                
+            }else{
+                $_POST['password'] = 'playbasis';
+                $_POST['password_confirm'] = 'playbasis';
             }
             if($this->form_validation->run()){
                 // $user_id = $this->User_model->insertUser();
@@ -583,9 +581,6 @@ class User extends MY_Controller
                         $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
                         $this->data['temp_fields'] = $this->input->post();
                     }else{
-                        if($this->input->post('internal')){
-                            $_POST['password'] = 'playbasis';
-                        }
                         if($user_id = $this->User_model->insertUser()){
                             $user_info = $this->User_model->getUserInfo($user_id);
 
