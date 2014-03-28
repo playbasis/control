@@ -226,7 +226,8 @@ class Redeem extends REST_Controller
 
             $validToken = array_merge($validToken, array(
                 'pb_player_id' => $pb_player_id,
-                'goods_id' => $goodsData['goods_id'],
+                // 'goods_id' => $goodsData['goods_id'],
+                'goods_id' => new MongoId($goodsData['goods_id']),
                 'goods_name' => $goodsData['name'],
                 'amount' => $amount,
                 'redeem' => $goodsData['redeem'],
