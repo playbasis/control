@@ -717,6 +717,27 @@ class Player_model extends MY_Model
 		return $result ? $result : array();
 	}
 
+	/* unused */
+	public function monthy_active_user($data, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2), this.pb_player_id); }");
+		$reduce = new MongoCode("function(key, values) { var res = {}, count = 0; values.forEach(function(entry) { if (!(entry in res)) { res[entry] = true; count++; }}); return count; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from.'-01');
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to.'-'.MY_Model::get_number_of_days($to));
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_player_mau_log',
+		));
+		$result = $this->mongo_db->get('mapreduce_player_mau_log');
+		return $result ? $result : array();
+	}
+
+	/* unused */
 	public function daily_active_user($data, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
 		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.pb_player_id); }");
@@ -736,22 +757,76 @@ class Player_model extends MY_Model
 		return $result ? $result : array();
 	}
 
-	public function monthy_active_user($data, $from=null, $to=null) {
+	public function daily_active_user_per_day($data, $from=null, $to=null) {
+		return $this->active_user_per_day($data, 1, $from, $to);
+	}
+
+	public function monthy_active_user_per_day($data, $from=null, $to=null) {
+		return $this->active_user_per_day($data, 30, $from, $to);
+	}
+
+	public function monthy_active_user_per_week($data, $from=null, $to=null) {
+		return $this->active_user_per_week($data, 30, $from, $to);
+	}
+
+	public function monthy_active_user_per_month($data, $from=null, $to=null) {
+		return $this->active_user_per_month($data, 30, $from, $to);
+	}
+
+	private function active_user_per_day($data, $ndays, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2), this.pb_player_id); }");
+		$map = new MongoCode("function() { var tmp = new Date(this.date_added); for (var i = 0; i < ".$ndays."; i++) { tmp.setTime(this.date_added.getTime()+i*86400000); emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+tmp.getDate()).slice(-2), this.pb_player_id); } }");
 		$reduce = new MongoCode("function(key, values) { var res = {}, count = 0; values.forEach(function(entry) { if (!(entry in res)) { res[entry] = true; count++; }}); return count; }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
-		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from.'-01');
-		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to.'-'.$this->get_number_of_days($to));
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to);
 		$this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_player_mau_log',
+			'out' => 'mapreduce_active_user_per_day_'.$ndays.'_log',
 		));
-		$result = $this->mongo_db->get('mapreduce_player_mau_log');
+		$result = $this->mongo_db->get('mapreduce_active_user_per_day_'.$ndays.'_log');
+		return $result ? $result : array();
+	}
+
+	private function active_user_per_week($data, $ndays, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$map = new MongoCode("function() { var tmp = new Date(this.date_added); for (var i = 0; i < ".$ndays."; i++) { tmp.setTime(this.date_added.getTime()+i*86400000); emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+'w'+(Math.ceil(tmp.getDate()/7.75)), this.pb_player_id); } }");
+		$reduce = new MongoCode("function(key, values) { var res = {}, count = 0; values.forEach(function(entry) { if (!(entry in res)) { res[entry] = true; count++; }}); return count; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to);
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_active_user_per_week_'.$ndays.'_log',
+		));
+		$result = $this->mongo_db->get('mapreduce_active_user_per_week_'.$ndays.'_log');
+		return $result ? $result : array();
+	}
+
+	private function active_user_per_month($data, $ndays, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$map = new MongoCode("function() { var tmp = new Date(this.date_added); for (var i = 0; i < ".$ndays."; i++) { tmp.setTime(this.date_added.getTime()+i*86400000); emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2), this.pb_player_id); } }");
+		$reduce = new MongoCode("function(key, values) { var res = {}, count = 0; values.forEach(function(entry) { if (!(entry in res)) { res[entry] = true; count++; }}); return count; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to);
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_active_user_per_month_'.$ndays.'_log',
+		));
+		$result = $this->mongo_db->get('mapreduce_active_user_per_month_'.$ndays.'_log');
 		return $result ? $result : array();
 	}
 }

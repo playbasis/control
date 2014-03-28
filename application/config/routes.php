@@ -127,6 +127,10 @@ $route['Player/total'] = 'player/total';
 $route['Player/new'] = 'player/new';
 $route['Player/dau'] = 'player/dau';
 $route['Player/mau'] = 'player/mau';
+$route['Player/dau_per_day'] = 'player/dauDay';
+$route['Player/mau_per_day'] = 'player/mauDay';
+$route['Player/mau_per_week'] = 'player/mauWeek';
+$route['Player/mau_per_month'] = 'player/mauMonth';
 
 //misc
 $route['test']	= 'playbasis/test';

@@ -938,6 +938,7 @@ class Player extends REST_Controller
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
+	/* unused */
 	public function dau_get()
 	{
 		/* GET */
@@ -958,6 +959,27 @@ class Player extends REST_Controller
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
+	public function dauDay_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		foreach ($this->player_model->daily_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	/* unused */
 	public function mau_get()
 	{
 		/* GET */
@@ -975,6 +997,80 @@ class Player extends REST_Controller
 		foreach ($this->player_model->monthy_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function mauDay_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		foreach ($this->player_model->monthy_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if (time() >= strtotime($key.' 00:00:00')) { // suppress future calculated results
+				array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+			}
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function mauWeek_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		foreach ($this->player_model->monthy_active_user_per_week($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			$str = explode('-', $key, 3);
+			$year_month = $str[0].'-'.$str[1];
+			$ndays = MY_Model::get_number_of_days($year_month);
+			$h = array();
+			foreach (array(1,2,3,4) as $i => $j) {
+				$d = ceil($i*$ndays/4.0)+1;
+				$h['w'.$j] = ($d < 10 ? '0'.$d : ''.$d);
+			}
+			if (time() >= strtotime($year_month.'-'.$h[$str[2]].' 00:00:00')) { // suppress future calculated results
+				array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+			}
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function mauMonth_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		foreach ($this->player_model->monthy_active_user_per_month($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if (time() >= strtotime($key.'-01 00:00:00')) { // suppress future calculated results
+				array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+			}
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
