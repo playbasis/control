@@ -188,14 +188,15 @@ class User_model extends MY_Model
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
             $subject = "Playbasis";
-            $htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
+            //$htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
+            $htmlMessage = $this->parser->parse('wait_activate.html', $validate_email, true);
 
             //email client to upgrade account
             $this->email->initialize($config);
             $this->email->clear();
             $this->email->from('info@playbasis.com', 'Playbasis');
             $this->email->to($email);
-            $this->email->bcc('test@playbasis.com');
+            $this->email->bcc('wee@playbasis.com');
             $this->email->subject($subject);
             $this->email->message($htmlMessage);
             $this->email->send();
@@ -567,6 +568,7 @@ class User_model extends MY_Model
         $email = $data['email'];
 
         $this->mongo_db->where('email', $email);
+        $this->mongo_db->where('status', true);
         $user = $this->mongo_db->get('user');
 
         if($user){
