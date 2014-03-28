@@ -575,21 +575,25 @@ class User extends MY_Controller
                         $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
                         $this->data['temp_fields'] = $this->input->post();
                     }else{
+                        if($this->input->post('internal')){
+                            $_POST['password'] = 'playbasis';
+                        }
                         if($user_id = $this->User_model->insertUser()){
                             $user_info = $this->User_model->getUserInfo($user_id);
 
                             $client_id = $this->Client_model->insertClient();
 
-                            $data = array(
-                                'client_id' => $client_id,
-                                'user_id' => $user_info['_id']
-                            );
-                            $this->User_model->addUserToClient($data);
                             $data = $this->input->post();
                             $data['client_id'] = $client_id;
+                            $data['user_id'] =  $user_info['_id'];
                             $data['limit_users'] = 1000;
                             $data['date_start'] = date("Y-m-d H:i:s");
                             $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
+
+                            if($this->input->post('internal')){
+                                $data['site_name'] = $data['domain_name'];
+                            }
+                            $this->User_model->addUserToClient($data);
 
                             $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
 
