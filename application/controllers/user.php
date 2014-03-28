@@ -556,18 +556,18 @@ class User extends MY_Controller
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
-            if(!$this->input->post('internal')){
-
+            if($this->input->post('format') == 'json'){
+                $_POST['password'] = 'playbasis';
+                $_POST['password_confirm'] = 'playbasis';
+                $_POST['site_name'] = $_POST['domain_name'];
+            }else{
                 $recaptcha_challenge_field = isset($_POST["recaptcha_challenge_field"])?$_POST["recaptcha_challenge_field"]:null;
                 $recaptcha_response_field = isset($_POST["recaptcha_response_field"])?$_POST["recaptcha_response_field"]:null;
 
-                    $resp = recaptcha_check_answer ($privateKey,
-                                                    $_SERVER["REMOTE_ADDR"],
-                                                    $recaptcha_challenge_field,
-                                                    $recaptcha_response_field);    
-            }else{
-                $_POST['password'] = 'playbasis';
-                $_POST['password_confirm'] = 'playbasis';
+                $resp = recaptcha_check_answer ($privateKey,
+                    $_SERVER["REMOTE_ADDR"],
+                    $recaptcha_challenge_field,
+                    $recaptcha_response_field);
             }
             if($this->form_validation->run()){
                 // $user_id = $this->User_model->insertUser();
@@ -593,9 +593,6 @@ class User extends MY_Controller
                             $data['date_start'] = date("Y-m-d H:i:s");
                             $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
 
-                            if($this->input->post('internal')){
-                                $data['site_name'] = $data['domain_name'];
-                            }
                             $this->User_model->addUserToClient($data);
 
                             $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
@@ -616,20 +613,40 @@ class User extends MY_Controller
                                 $data['site_id'] = $site_id;
                                 $this->Permission_model->addPlanToPermission($data);
 
+                            if($this->input->post('format') == 'json'){
+                                echo json_encode(array("response"=>"success"));
+                                exit();
+                            }
                             // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
                             // echo "<script>window.location.href = '".site_url()."';</script>";    
                             $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
                             redirect('login', 'refresh');        
                         }else{
-                            $this->data['fail_email_exists'] = $this->lang->line('text_fail');   
+                            $this->data['fail_email_exists'] = $this->lang->line('text_fail');
+
+                            if($this->input->post('format') == 'json'){
+                                echo json_encode($this->data['fail_email_exists']);
+                                exit();
+                            }
                         }
                     }
                 }else{
+
                     $data = array('email' => $this->input->post('email'));
                     if($this->User_model->findEmail($data)){
                         $this->data['fail_email_exists'] = $this->lang->line('text_fail');
                     }
                     $this->data['fail_domain_exists'] = $this->lang->line('text_fail_domain_exists');
+
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode($this->data['fail_domain_exists']);
+                        exit();
+                    }
+                }
+            }else{
+                if($this->input->post('format') == 'json'){
+                    echo json_encode(validation_errors());
+                    exit();
                 }
             }
             $this->data['temp_fields'] = $this->input->post();
