@@ -5,9 +5,9 @@
         </div>
         <div class="content">
         <div id="tabs" class="htabs">
-            <a href="<?php echo site_url('report/action');?>" style="display:inline;" class="selected" >Actions</a>
+            <a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a>
             <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
-            <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
+            <a href="<?php echo site_url('report/goods');?>" class="selected" style="display:inline;">Goods</a>
         </div>
             <div class="report-filter">
                 <span>
@@ -23,16 +23,16 @@
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_action_id'); ?>
+                        <?php echo $this->lang->line('filter_reward_id'); ?>
                     <select name="filter_action_id">
                         <option value="0"><?php echo "All"; ?></option>
-                        <?php foreach ($actions as $action) { ?>
-                        <?php if ($action['action_id'] == $filter_action_id) { ?>
-                            <option value="<?php echo $action['action_id']; ?>" selected="selected"><?php echo $action['name']; ?></option>
-                            <?php } else { ?>
-                            <option value="<?php echo $action['action_id']; ?>"><?php echo $action['name']; ?></option>
-                            <?php } ?>
-                        <?php } ?>
+                        <?php foreach ($goods_available as $good){?>
+                            <?php if ($good['_id'] == $filter_goods_id) { ?>
+                            <option selected="selected" value="<?php echo $good['_id']?>"><?php echo $good['name'];?></option>
+                            <?php }else{?>
+                            <option value="<?php echo $good['_id']?>"><?php echo $good['name'];?></option>
+                            <?php }?>
+                        <?php }?>
                     </select>
                 </span>
                 <span>
@@ -52,8 +52,8 @@
                     <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
                     <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
                     <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
-                    <td class="right"><?php echo $this->lang->line('column_action_name'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_url'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_goods_name'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_goods_amount'); ?></td>
                     <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
                 </tr>
                 </thead>
@@ -67,8 +67,15 @@
                         <td class="left"><?php echo $report['email']; ?></td>
                         <!-- <td class="left"><?php //echo $report['level']; ?></td>
                         <td class="left"><?php //echo $report['exp']; ?></td> -->
-                        <td class="right"><?php echo $report['action_name']; ?></td>
-                        <td class="right"><?php echo $report['url']; ?></td>
+                        <td class="right">
+                            <?php 
+                            if(isset($report['goods_name'])&&$report['goods_name']!=null){
+                                // echo $report['goods_name'];
+                                echo $report['goods_name']['name'];
+                            }                            
+                            ?>
+                        </td>
+                        <td class="right"><?php echo $report['value']; ?></td>
                         <td class="right"><?php echo $report['date_added']; ?></td>
                     </tr>
                         <?php } ?>
@@ -90,7 +97,8 @@
 <script type="text/javascript"><!--
 function filter() {
     var d = new Date().getTime();
-    url = baseUrlPath+'report/action?t='+d;
+    // url = baseUrlPath+'report_reward/reward_badge?t='+d;
+    url = baseUrlPath+'report_goods/goods_filter?t='+d;
 
     var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -113,7 +121,7 @@ function filter() {
     var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
 
     if (filter_action_id != 0) {
-        url += '&action_id=' + encodeURIComponent(filter_action_id);
+        url += '&goods_id=' + encodeURIComponent(filter_action_id);
     }
 
     location = url;
@@ -121,7 +129,7 @@ function filter() {
 
 function downloadFile() {
     var d = new Date().getTime();
-    url = baseUrlPath+'report/actionDownload?t='+d;
+    url = baseUrlPath+'report_goods/actionDownload?t='+d;
 
     var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -144,7 +152,7 @@ function downloadFile() {
     var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
 
     if (filter_action_id != 0) {
-        url += '&action_id=' + encodeURIComponent(filter_action_id);
+        url += '&goods_id=' + encodeURIComponent(filter_action_id);
     }
 
     location = url;
