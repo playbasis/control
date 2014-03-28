@@ -557,12 +557,20 @@ class User extends MY_Controller
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
             if(!$this->input->post('internal')){
-                $resp = recaptcha_check_answer ($privateKey,
-                                    $_SERVER["REMOTE_ADDR"],
-                                    $_POST["recaptcha_challenge_field"],
-                                    $_POST["recaptcha_response_field"]);    
-            }
+                // var_dump($_POST["recaptcha_challenge_field"]);
+                // if(isset($_POST["recaptcha_challenge_field"]) && isset($_POST["recaptcha_response_field"])){
 
+                $recaptcha_challenge_field = isset($_POST["recaptcha_challenge_field"])?$_POST["recaptcha_challenge_field"]:null;
+                $recaptcha_response_field = isset($_POST["recaptcha_response_field"])?$_POST["recaptcha_response_field"]:null;
+
+                    $resp = recaptcha_check_answer ($privateKey,
+                                                    $_SERVER["REMOTE_ADDR"],
+                                                    $recaptcha_challenge_field,
+                                                    $recaptcha_response_field);    
+                // }
+
+                
+            }
             if($this->form_validation->run()){
                 // $user_id = $this->User_model->insertUser();
                 $domain = $this->Domain_model->checkDomainExists($this->input->post());
