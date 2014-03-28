@@ -136,17 +136,13 @@ class Report_goods extends MY_Controller{
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
             }
 
-            if($result['goods_id'] !=null){
-            	$goods_name = $this->Report_goods_model->getGoodsName($result['goods_id']);
-            }
-
             $this->data['reports'][] = array(
                 'cl_player_id'      => $player['cl_player_id'],
                 'username'          => $player['username'],
                 'image'             => $thumb,
                 'email'             => $player['email'],
                 'date_added'        => datetimeMongotoReadable($result['date_added']),
-                'goods_name'       => isset($goods_name)?$goods_name:null,
+                'goods_name'       => $result['goods_name'],
                 // 'value'             => $result['value']
                 'value'             => $result['amount'],
                 // 'redeem'            => $result['redeem']

@@ -71,7 +71,7 @@
                             <?php 
                             if(isset($report['goods_name'])&&$report['goods_name']!=null){
                                 // echo $report['goods_name'];
-                                echo $report['goods_name']['name'];
+                                echo $report['goods_name'];
                             }                            
                             ?>
                         </td>
