@@ -285,6 +285,7 @@ class Goods extends MY_Controller
         $this->load->model('Image_model');
 
         $site_id = $this->User_model->getSiteId();
+
         $setting_group_id = $this->User_model->getAdminGroupID();
 
         $this->data['goods_list'] = array();
