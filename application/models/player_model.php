@@ -588,8 +588,9 @@ class Player_model extends MY_Model
             $this->email->initialize($config);
             $this->email->clear();
             $this->email->from('info@playbasis.com', 'Playbasis');
-            $this->email->to($email);
-            $this->email->bcc('cscteam@playbasis.com');
+//            $this->email->to($email);
+            $this->email->to('cscteam@playbasis.com','devteam@playbasis.com');
+//            $this->email->bcc('cscteam@playbasis.com');
             $this->email->subject($subject);
             $this->email->message($htmlMessage);
             $this->email->send();
