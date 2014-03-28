@@ -527,6 +527,7 @@ class Player_model extends MY_Model
 	{
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
+            'domain_name',
 			'limit_users',
 			'last_send_limit_users'
 		));
@@ -538,6 +539,7 @@ class Player_model extends MY_Model
         assert($result);
 		$result = $result[0];
 		$limit = $result['limit_users'];
+        $domain_name_client = $result['domain_name'];
 		if(!$limit)
 			return; //client has no user limit
 		$last_send = $result['last_send_limit_users']?$result['last_send_limit_users']->sec:null;
@@ -567,17 +569,18 @@ class Player_model extends MY_Model
             $email_list=array();
 			foreach ($result as $r)
                 array_push($email_list,$r['email']);
-            $email_string = implode(",", $email_list);
+
             $this->load->library('email');
             $this->load->library('parser');
 			$data = array(
 				'user_left' => ($limit-$usersCount),
 				'user_count' => $usersCount,
-				'user_limit' => $limit
+				'user_limit' => $limit,
+                'domain_name_client' => $domain_name_client,
 			);
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
-            $email = $email_string;
+            $email = $email_list;
             $subject = "Playbasis user limit alert";
             $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
