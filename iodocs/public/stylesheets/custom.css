@@ -122,6 +122,16 @@ body{
 .btn-primary:hover,.btn-primary:active,.btn-primary:focus{
     background:#d4551e
 }
+.navbar-nav li a.btn {
+    color: #FFFFFF;
+    margin: 10px 0;
+    padding: 5px 10px;
+}
+.navbar-nav li a {
+    color: #000000;
+    font-size: 15px;
+    padding: 15px 10px;
+}
 
 .readable_area_wrapper{
     padding-left: 230px;
