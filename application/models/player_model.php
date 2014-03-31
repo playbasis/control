@@ -570,7 +570,7 @@ class Player_model extends MY_Model
 			foreach ($result as $r)
                 array_push($email_list,$r['email']);
 
-            $this->load->library('email');
+            //$this->load->library('email');
             $this->load->library('parser');
 			$data = array(
 				'user_left' => ($limit-$usersCount),
@@ -585,7 +585,7 @@ class Player_model extends MY_Model
             $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
 			//email client to upgrade account
-            $this->email->initialize($config);
+            /*$this->email->initialize($config);
             $this->email->clear();
             $this->email->from('info@playbasis.com', 'Playbasis');
 //            $this->email->to($email);
@@ -593,7 +593,13 @@ class Player_model extends MY_Model
 //            $this->email->bcc('cscteam@playbasis.com');
             $this->email->subject($subject);
             $this->email->message($htmlMessage);
-            $this->email->send();
+            $this->email->send();*/
+
+            $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+            $this->amazon_ses->to('cscteam@playbasis.com','devteam@playbasis.com');
+            $this->amazon_ses->subject($subject);
+            $this->amazon_ses->message($htmlMessage);
+            $this->amazon_ses->send();
 
             $this->updateLastAlertLimitUser($client_id, $site_id);
 		}
