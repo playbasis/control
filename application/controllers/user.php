@@ -738,14 +738,22 @@ class User extends MY_Controller
                     $subject = "Playbasis";
                     $htmlMessage = $this->parser->parse('reset_password.html', $data, true);
 
-                    $this->email->initialize($config);
+                    /*$this->email->initialize($config);
                     $this->email->clear();
                     $this->email->from('info@playbasis.com', 'Playbasis');
                     $this->email->to($email);
                     // $this->email->bcc('test@playbasis.com');
                     $this->email->subject($subject);
                     $this->email->message($htmlMessage);
-                    $this->email->send();
+                    $this->email->send();*/
+
+                    $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+                    $this->amazon_ses->to($email);
+                    $this->amazon_ses->bcc('info@playbasis.com');
+                    $this->amazon_ses->subject($subject);
+                    $this->amazon_ses->message($htmlMessage);
+                    $this->amazon_ses->send();
+
                     echo "<script>alert('A link has been sent to your email, please click on it and change your password.');</script>";
                     echo "<script>window.location.href = '".site_url()."';</script>";   
                 }else{

@@ -192,14 +192,21 @@ class User_model extends MY_Model
             $htmlMessage = $this->parser->parse('wait_activate.html', $validate_email, true);
 
             //email client to upgrade account
-            $this->email->initialize($config);
+            /*$this->email->initialize($config);
             $this->email->clear();
             $this->email->from('info@playbasis.com', 'Playbasis');
             $this->email->to($email);
-            $this->email->bcc('wee@playbasis.com');
+            $this->email->bcc('info@playbasis.com');
             $this->email->subject($subject);
             $this->email->message($htmlMessage);
-            $this->email->send();
+            $this->email->send();*/
+
+            $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+            $this->amazon_ses->to($email);
+            $this->amazon_ses->bcc('info@playbasis.com');
+            $this->amazon_ses->subject($subject);
+            $this->amazon_ses->message($htmlMessage);
+            $this->amazon_ses->send();
 
             //END EMAIL STUFF
 
