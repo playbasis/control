@@ -914,7 +914,7 @@ class Player extends REST_Controller
 		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			$sum += $value['value'];
-			array_push($log, array($key => $sum));
+			array_push($log, array($key => array('count' => $sum)));
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
@@ -934,7 +934,7 @@ class Player extends REST_Controller
 		$log = array();
 		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			array_push($log, array($key => $value['value']));
+			array_push($log, array($key => array('count' => $value['value'])));
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
@@ -955,7 +955,7 @@ class Player extends REST_Controller
 		$log = array();
 		foreach ($this->player_model->daily_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
@@ -975,7 +975,7 @@ class Player extends REST_Controller
 		$log = array();
 		foreach ($this->player_model->daily_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
@@ -996,7 +996,7 @@ class Player extends REST_Controller
 		$log = array();
 		foreach ($this->player_model->monthy_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
@@ -1017,7 +1017,7 @@ class Player extends REST_Controller
 		foreach ($this->player_model->monthy_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (time() >= strtotime($key.' 00:00:00')) { // suppress future calculated results
-				array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 			}
 		}
 		$this->response($this->resp->setRespond($log), 200);
@@ -1047,7 +1047,7 @@ class Player extends REST_Controller
 				$h['w'.$j] = ($d < 10 ? '0'.$d : ''.$d);
 			}
 			if (time() >= strtotime($year_month.'-'.$h[$str[2]].' 00:00:00')) { // suppress future calculated results
-				array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 			}
 		}
 		$this->response($this->resp->setRespond($log), 200);
@@ -1069,7 +1069,7 @@ class Player extends REST_Controller
 		foreach ($this->player_model->monthy_active_user_per_month($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (time() >= strtotime($key.'-01 00:00:00')) { // suppress future calculated results
-				array_push($log, array($key => ($value['value'] instanceof MongoId ? 1 : $value['value'])));
+				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 			}
 		}
 		$this->response($this->resp->setRespond($log), 200);
