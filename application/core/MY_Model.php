@@ -72,4 +72,21 @@ class MY_Model extends CI_Model
 	public static function get_number_of_days($year_month) {
 		return date('t', strtotime($year_month.'-01 00:00:00'));
 	}
+	public static function week_to_date($key) {
+		$str = explode('-', $key, 3);
+		$year_month = $str[0].'-'.$str[1];
+		$ndays = MY_Model::get_number_of_days($year_month);
+		$h = array();
+		foreach (array(1,2,3,4) as $i => $j) {
+			$d = ceil($i*$ndays/4.0)+1;
+			$h['w'.$j] = ($d < 10 ? '0'.$d : ''.$d);
+		}
+		return $year_month.'-'.$h[$str[2]];
+	}
+	public static function date_to_week($str) {
+		$key = explode('-', $str, 3);
+		$year_month = $key[0].'-'.$key[1];
+		$ndays = MY_Model::get_number_of_days($year_month);
+		return $year_month.'-w'.ceil(intval($key[2])/($ndays/4.0));
+	}
 }
