@@ -45,10 +45,19 @@ class Action extends REST_Controller
 		$site_id = $validToken['site_id'];
 		/* main */
 		$log = array();
+		$prev = null;
 		foreach ($this->action_model->listActions($validToken) as $key => $v) {
 			$action_name = $v['name'];
 			foreach ($this->action_model->actionLog($validToken, $action_name, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 				$key = $value['_id'];
+				if ($prev) {
+					$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
+					while (strtotime($d) < strtotime($key)) {
+						$log[$d] = array('' => 1); // force output to be "{}" instead of "[]"
+						$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
+					}
+				}
+				$prev = $key;
 				if (array_key_exists($key, $log)) {
 					$log[$key][$action_name] = $value['value'];
 				} else {
@@ -56,7 +65,11 @@ class Action extends REST_Controller
 				}
 			}
 		}
-		$this->response($this->resp->setRespond($log), 200);
+		$log2 = array();
+		if (!empty($log)) foreach ($log as $key => $value) {
+			array_push($log2, array($key => $value));
+		}
+		$this->response($this->resp->setRespond($log2), 200);
 	}
 	public function test_get()
 	{
