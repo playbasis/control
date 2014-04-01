@@ -112,7 +112,7 @@ class Reward extends REST_Controller
 				if ($prev) {
 					$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
 					while (strtotime($d) < strtotime($key)) {
-						$log[$d] = array('' => 0); // force output to be "{}" instead of "[]"
+						$log[$d] = array('' => true); // force output to be "{}" instead of "[]"
 						$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
 					}
 				}
@@ -122,6 +122,7 @@ class Reward extends REST_Controller
 				} else {
 					$log[$key] = array($badge_id => $value['value']);
 				}
+				if (array_key_exists('', $log[$key])) unset($log[$key]['']);
 			}
 		}
 		$log2 = array();
