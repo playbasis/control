@@ -72,6 +72,10 @@ class MY_Model extends CI_Model
 	public static function get_number_of_days($year_month) {
 		return date('t', strtotime($year_month.'-01 00:00:00'));
 	}
+	public static function get_year_month($key) {
+		$str = explode('-', $key, 3);
+		return $str[0].'-'.$str[1];
+	}
 	public static function week_to_date($key) {
 		$str = explode('-', $key, 3);
 		$year_month = $str[0].'-'.$str[1];

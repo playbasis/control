@@ -1034,10 +1034,10 @@ class Player extends REST_Controller
 		foreach ($this->player_model->monthy_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
-				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
+				$d = date('Y-m-d', strtotime('+1 month', strtotime($prev)));
 				while (strtotime($d) < strtotime($key)) {
 					array_push($log, array($d => array('count' => 0)));
-					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
+					$d = date('Y-m-d', strtotime('+1 month', strtotime($d)));
 				}
 			}
 			$prev = $key;
@@ -1062,7 +1062,7 @@ class Player extends REST_Controller
 		$prev = null;
 		foreach ($this->player_model->monthy_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			if (time() >= strtotime($key.' 00:00:00')) { // suppress future calculated results
+			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
 				if ($prev) {
 					$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
 					while (strtotime($d) < strtotime($key)) {
@@ -1072,7 +1072,7 @@ class Player extends REST_Controller
 				}
 				$prev = $key;
 				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
-			}
+			} else break;
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
@@ -1093,7 +1093,7 @@ class Player extends REST_Controller
 		$prev = null;
 		foreach ($this->player_model->monthy_active_user_per_week($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			if (time() >= strtotime(MY_Model::week_to_date($key).' 00:00:00')) { // suppress future calculated results
+			if (strtotime(MY_Model::week_to_date($key).' 00:00:00') <= time()) { // suppress future calculated results
 				if ($prev) {
 					$d = MY_Model::date_to_week(date('Y-m-d', strtotime('+1 week', strtotime(MY_Model::week_to_date($prev)))));
 					while (strtotime(MY_Model::week_to_date($d)) < strtotime(MY_Model::week_to_date($key))) {
@@ -1103,7 +1103,7 @@ class Player extends REST_Controller
 				}
 				$prev = $key;
 				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
-			}
+			} else break;
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}
@@ -1124,7 +1124,7 @@ class Player extends REST_Controller
 		$prev = null;
 		foreach ($this->player_model->monthy_active_user_per_month($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			if (time() >= strtotime($key.'-01 00:00:00')) { // suppress future calculated results
+			if (strtotime($key.'-01 00:00:00') <= time()) { // suppress future calculated results
 				if ($prev) {
 					$d = date('Y-m', strtotime('+1 month', strtotime($prev.'-01 00:00:00')));
 					while (strtotime($d.'-01 00:00:00') < strtotime($key.'-01 00:00:00')) {
@@ -1134,7 +1134,7 @@ class Player extends REST_Controller
 				}
 				$prev = $key;
 				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
-			}
+			} else break;
 		}
 		$this->response($this->resp->setRespond($log), 200);
 	}

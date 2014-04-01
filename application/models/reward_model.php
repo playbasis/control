@@ -20,7 +20,8 @@ class Reward_model extends MY_Model
 			'status' => true
 		));
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		return $result;
 	}
 	public function findByName($data, $reward_name)
 	{
@@ -52,7 +53,10 @@ class Reward_model extends MY_Model
 			'out' => 'mapreduce_reward_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_reward_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
 	}
 	public function badgeLog($data, $badge_id, $from=null, $to=null)
 	{
@@ -74,7 +78,10 @@ class Reward_model extends MY_Model
 			'out' => 'mapreduce_badge_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_badge_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 'SKIP'));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 'SKIP'));
+		return $result;
 	}
 	public function levelupLog($data, $from=null, $to=null)
 	{
@@ -93,7 +100,10 @@ class Reward_model extends MY_Model
 			'out' => 'mapreduce_levelup_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_levelup_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
 	}
 }
 ?>

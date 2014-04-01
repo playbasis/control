@@ -110,21 +110,24 @@ class Reward extends REST_Controller
 			foreach ($this->reward_model->badgeLog($validToken, $badge_id, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 				$key = $value['_id'];
 				if ($prev) {
-					$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
-					while (strtotime($d) < strtotime($key)) {
-						$log[$d] = array('' => true); // force output to be "{}" instead of "[]"
+					$d = $prev;
+					while (strtotime($d) <= strtotime($key)) {
+						if (!array_key_exists($d, $log)) $log[$d] = array('' => true); // force output to be "{}" instead of "[]"
 						$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
 					}
 				}
 				$prev = $key;
-				if (array_key_exists($key, $log)) {
-					$log[$key][$badge_id] = $value['value'];
-				} else {
-					$log[$key] = array($badge_id => $value['value']);
+				if ($value['value'] != 'SKIP') {
+					if (array_key_exists($key, $log)) {
+						$log[$key][$badge_id] = $value['value'];
+					} else {
+						$log[$key] = array($badge_id => $value['value']);
+					}
+					if (array_key_exists('', $log[$key])) unset($log[$key]['']);
 				}
-				if (array_key_exists('', $log[$key])) unset($log[$key]['']);
 			}
 		}
+		ksort($log);
 		$log2 = array();
 		if (!empty($log)) foreach ($log as $key => $value) {
 			array_push($log2, array($key => $value));

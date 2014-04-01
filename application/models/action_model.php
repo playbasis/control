@@ -20,7 +20,8 @@ class Action_model extends MY_Model
 			'status' => true
 		));
 		$result = $this->mongo_db->get('playbasis_action_to_client');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		return $result;
 	}
 	public function findAction($data)
 	{
@@ -51,7 +52,10 @@ class Action_model extends MY_Model
 			'out' => 'mapreduce_action_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_action_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 'SKIP'));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 'SKIP'));
+		return $result;
 	}
 }
 ?>

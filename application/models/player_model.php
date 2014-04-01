@@ -714,10 +714,14 @@ class Player_model extends MY_Model
 			'out' => 'mapreduce_new_player_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_new_player_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
 	}
 
 	/* unused */
+	/* NOTE: 'from' and 'to' parameters are expected to be in a format of 'yyyy-mm' */
 	public function monthy_active_user($data, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
 		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2), this.pb_player_id); }");
@@ -734,7 +738,10 @@ class Player_model extends MY_Model
 			'out' => 'mapreduce_player_mau_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_player_mau_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
 	}
 
 	/* unused */
@@ -754,7 +761,10 @@ class Player_model extends MY_Model
 			'out' => 'mapreduce_player_dau_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_player_dau_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
 	}
 
 	public function daily_active_user_per_day($data, $from=null, $to=null) {
@@ -789,7 +799,10 @@ class Player_model extends MY_Model
 			'out' => 'mapreduce_active_user_per_day_'.$ndays.'_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_active_user_per_day_'.$ndays.'_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
 	}
 
 	private function active_user_per_week($data, $ndays, $from=null, $to=null) {
@@ -808,7 +821,12 @@ class Player_model extends MY_Model
 			'out' => 'mapreduce_active_user_per_week_'.$ndays.'_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_active_user_per_week_'.$ndays.'_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		$from2 = $from ? MY_Model::date_to_week($from) : null;
+		$to2 = $to ? MY_Model::date_to_week($to) : null;
+		if ($from2 && (!isset($result[0]['_id']) || $result[0]['_id'] != $from2)) array_unshift($result, array('_id' => $from2, 'value' => 0));
+		if ($to2 && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to2)) array_push($result, array('_id' => $to2, 'value' => 0));
+		return $result;
 	}
 
 	private function active_user_per_month($data, $ndays, $from=null, $to=null) {
@@ -827,7 +845,12 @@ class Player_model extends MY_Model
 			'out' => 'mapreduce_active_user_per_month_'.$ndays.'_log',
 		));
 		$result = $this->mongo_db->get('mapreduce_active_user_per_month_'.$ndays.'_log');
-		return $result ? $result : array();
+		if (!$result) $result = array();
+		$from2 = $from ? MY_Model::get_year_month($from) : null;
+		$to2 = $to ? MY_Model::get_year_month($to) : null;
+		if ($from2 && (!isset($result[0]['_id']) || $result[0]['_id'] != $from2)) array_unshift($result, array('_id' => $from2, 'value' => 0));
+		if ($to2 && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to2)) array_push($result, array('_id' => $to2, 'value' => 0));
+		return $result;
 	}
 }
 ?>
