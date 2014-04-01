@@ -66,8 +66,8 @@ class MY_Model extends CI_Model
     //    }
     //}
 	/* Assume $str to be in 'YYYY-mm-dd' format */
-	public function new_mongo_date($str) {
-		return new MongoDate(strtotime($str.' 00:00:00'));
+	public function new_mongo_date($str, $t='00:00:00') {
+		return new MongoDate(strtotime($str.' '.$t));
 	}
 	public static function get_number_of_days($year_month) {
 		return date('t', strtotime($year_month.'-01 00:00:00'));

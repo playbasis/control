@@ -44,7 +44,7 @@ class Reward_model extends MY_Model
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'reward_id' => $reward_id);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
-		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_reward_to_player',
 			'map' => $map,
@@ -69,7 +69,7 @@ class Reward_model extends MY_Model
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'badge_id' => $badge_id);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
-		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_reward_to_player',
 			'map' => $map,
@@ -91,7 +91,7 @@ class Reward_model extends MY_Model
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'event_type' => 'LEVEL');
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
-		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_event_log',
 			'map' => $map,
