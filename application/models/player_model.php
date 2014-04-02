@@ -750,9 +750,9 @@ class Player_model extends MY_Model
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
-			if (array_key_exists('pb_player_id', $value['value'])) {
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
 				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (array_key_exists('pb_player_id', $pb_player_id)) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
 						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
 							array_push($values, $each);
 						} else {
@@ -794,9 +794,9 @@ class Player_model extends MY_Model
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
-			if (array_key_exists('pb_player_id', $value['value'])) {
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
 				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (array_key_exists('pb_player_id', $pb_player_id)) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
 						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
 							array_push($values, $each);
 						} else {
@@ -865,9 +865,9 @@ class Player_model extends MY_Model
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
-			if (array_key_exists('pb_player_id', $value['value'])) {
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
 				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (array_key_exists('pb_player_id', $pb_player_id)) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
 						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
 							array_push($values, $each);
 						} else {
@@ -930,9 +930,9 @@ class Player_model extends MY_Model
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
-			if (array_key_exists('pb_player_id', $value['value'])) {
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
 				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (array_key_exists('pb_player_id', $pb_player_id)) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
 						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
 							array_push($values, $each);
 						} else {
@@ -987,9 +987,9 @@ class Player_model extends MY_Model
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
-			if (array_key_exists('pb_player_id', $value['value'])) {
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
 				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (array_key_exists('pb_player_id', $pb_player_id)) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
 						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
 							array_push($values, $each);
 						} else {
