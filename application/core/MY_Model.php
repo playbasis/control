@@ -96,6 +96,7 @@ class MY_Model extends CI_Model
 	public static function date_to_startdate_of_week($key) {
 		$str = explode('-', $key, 3);
 		$week = ceil(floatval($str[2])/7);
-		return $str[0].'-'.$str[1].'-'.(($week-1)*7+1);
+		$d = ($week-1)*7+1;
+		return $str[0].'-'.$str[1].'-'.sprintf("%02s", $d);
 	}
 }
