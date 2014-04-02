@@ -38,7 +38,7 @@ class Action_model extends MY_Model
 	public function actionLog($data, $action_name, $from=null, $to=null)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'action_name' => $action_name);
 		if ($from || $to) $query['date_added'] = array();

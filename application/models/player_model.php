@@ -708,7 +708,7 @@ class Player_model extends MY_Model
 
 	public function new_registration($data, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'status' => true);
 		if ($from || $to) $query['date_added'] = array();
@@ -732,7 +732,7 @@ class Player_model extends MY_Model
 	/* NOTE: 'from' and 'to' parameters are expected to be in a format of 'yyyy-mm' */
 	public function monthy_active_user($data, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2), this.pb_player_id); }");
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2), this.pb_player_id); }");
 		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
@@ -776,7 +776,7 @@ class Player_model extends MY_Model
 	/* unused */
 	public function daily_active_user($data, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.pb_player_id); }");
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.pb_player_id); }");
 		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
@@ -839,7 +839,8 @@ class Player_model extends MY_Model
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
 		$map = new MongoCode("function() {
-			var tmp = new Date(this.date_added);
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
+			var tmp = new Date();
 			$var_to
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);
@@ -893,13 +894,14 @@ class Player_model extends MY_Model
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
 		$map = new MongoCode("function() {
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
 			var get_number_of_days = function(year, month) {
 				var monthStart = new Date(year, month, 1);
 				var monthEnd = new Date(year, month+1, 1);
 				return (monthEnd-monthStart)/(1000*60*60*24);
 			};
 			var days,days_per_week,week,d;
-			var tmp = new Date(this.date_added);
+			var tmp = new Date();
 			$var_to
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);
@@ -959,7 +961,8 @@ class Player_model extends MY_Model
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
 		$map = new MongoCode("function() {
-			var tmp = new Date(this.date_added);
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
+			var tmp = new Date();
 			$var_to
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);

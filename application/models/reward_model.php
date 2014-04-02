@@ -39,7 +39,7 @@ class Reward_model extends MY_Model
 	{
 		$reward_id = $this->findByName($data, $reward_name);
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'reward_id' => $reward_id);
 		if ($from || $to) $query['date_added'] = array();
@@ -64,7 +64,7 @@ class Reward_model extends MY_Model
 			$badge_id = new MongoId($badge_id);
 		}
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.value); }");
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.value); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'badge_id' => $badge_id);
 		if ($from || $to) $query['date_added'] = array();
@@ -86,7 +86,7 @@ class Reward_model extends MY_Model
 	public function levelupLog($data, $from=null, $to=null)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'event_type' => 'LEVEL');
 		if ($from || $to) $query['date_added'] = array();
