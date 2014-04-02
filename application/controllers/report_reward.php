@@ -155,7 +155,7 @@ class Report_reward extends MY_Controller{
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
             }
 
-            if($result['reward_id'] != null){
+            if(isset($result['reward_id']) && $result['reward_id'] != null){
                 $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
             }else{
                 $this->load->model('Badge_model');

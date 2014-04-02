@@ -38,7 +38,8 @@
                                         <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" />
                                         <?php } ?></td>
                                     <td class="left"><?php echo "<i style='color:grey' class='".$action['icon']." icon-4x'></i>"; ?></td>
-                                    <td class="right"><?php echo ucfirst($action['name']); ?></td>
+                                    <!-- <td class="right"><?php //echo ucfirst($action['name']); ?></td> -->
+                                    <td class="right"><?php echo $action['name']; ?></td>
                                     <?php if(!$client_id){?>
                                         <td class="right"><?php echo ($action['is_public'])? "Public": "Private"; ?></td>
                                     <?php }?> 
