@@ -835,7 +835,18 @@ class Player_model extends MY_Model
 
 	private function active_user_per_day($data, $ndays, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { var tmp = new Date(this.date_added); for (var i = 0; i < ".$ndays."; i++) { tmp.setTime(this.date_added.getTime()+i*86400000); emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+tmp.getDate()).slice(-2), this.pb_player_id); } }");
+		$str = $to ? explode('-', $to, 3) : "";
+		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		$map = new MongoCode("function() {
+			var tmp = new Date(this.date_added);
+			$var_to
+			for (var i = 0; i < ".$ndays."; i++) {
+				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_to
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+tmp.getDate()).slice(-2), this.pb_player_id);
+			}
+		}");
 		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
@@ -878,7 +889,28 @@ class Player_model extends MY_Model
 
 	private function active_user_per_week($data, $ndays, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { var tmp = new Date(this.date_added); for (var i = 0; i < ".$ndays."; i++) { tmp.setTime(this.date_added.getTime()+i*86400000); emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+'w'+(Math.ceil(tmp.getDate()/7.75)), this.pb_player_id); } }");
+		$str = $to ? explode('-', $to, 3) : "";
+		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		$map = new MongoCode("function() {
+			var get_number_of_days = function(year, month) {
+				var monthStart = new Date(year, month, 1);
+				var monthEnd = new Date(year, month+1, 1);
+				return (monthEnd-monthStart)/(1000*60*60*24);
+			};
+			var days,days_per_week,week,d;
+			var tmp = new Date(this.date_added);
+			$var_to
+			for (var i = 0; i < ".$ndays."; i++) {
+				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_to
+				days = get_number_of_days(tmp.getFullYear(), tmp.getMonth());
+				week = Math.ceil(tmp.getDate()/7.0);
+				if (week > 4) week = 4;
+				d = (week-1)*7+1;
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+d).slice(-2), this.pb_player_id);
+			}
+		}");
 		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
@@ -914,8 +946,8 @@ class Player_model extends MY_Model
 			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
 		}
 		usort($result, 'cmp1');
-		$from2 = $from ? MY_Model::date_to_week($from) : null;
-		$to2 = $to ? MY_Model::date_to_week($to) : null;
+		$from2 = $from ? MY_Model::date_to_startdate_of_week($from) : null;
+		$to2 = $to ? MY_Model::date_to_startdate_of_week($to) : null;
 		if ($from2 && (!isset($result[0]['_id']) || $result[0]['_id'] != $from2)) array_unshift($result, array('_id' => $from2, 'value' => 0));
 		if ($to2 && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to2)) array_push($result, array('_id' => $to2, 'value' => 0));
 		return $result;
@@ -923,7 +955,18 @@ class Player_model extends MY_Model
 
 	private function active_user_per_month($data, $ndays, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
-		$map = new MongoCode("function() { var tmp = new Date(this.date_added); for (var i = 0; i < ".$ndays."; i++) { tmp.setTime(this.date_added.getTime()+i*86400000); emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2), this.pb_player_id); } }");
+		$str = $to ? explode('-', $to, 3) : "";
+		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		$map = new MongoCode("function() {
+			var tmp = new Date(this.date_added);
+			$var_to
+			for (var i = 0; i < ".$ndays."; i++) {
+				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_to
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2), this.pb_player_id);
+			}
+		}");
 		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();

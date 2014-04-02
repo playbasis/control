@@ -1093,12 +1093,18 @@ class Player extends REST_Controller
 		$prev = null;
 		foreach ($this->player_model->monthy_active_user_per_week($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
-			if (strtotime(MY_Model::week_to_date($key).' 00:00:00') <= time()) { // suppress future calculated results
+			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
 				if ($prev) {
-					$d = MY_Model::date_to_week(date('Y-m-d', strtotime('+1 week', strtotime(MY_Model::week_to_date($prev)))));
-					while (strtotime(MY_Model::week_to_date($d)) < strtotime(MY_Model::week_to_date($key))) {
+					$str = explode('-', $prev, 3);
+					$year_month = $str[0].'-'.$str[1];
+					$next_month = date('m', strtotime('+1 month', strtotime($prev)));
+					$d = $str[2] == '01' ? $year_month.'-08' : ($str[2] == '08' ? $year_month.'-15' : ($str[2] == '15' ? $year_month.'-22' : $str[0].'-'.$next_month.'-01'));
+					while (strtotime($d) < strtotime($key)) {
 						array_push($log, array($d => array('count' => 0)));
-						$d = MY_Model::date_to_week(date('Y-m-d', strtotime('+1 week', strtotime(MY_Model::week_to_date($d)))));
+						$str = explode('-', $d, 3);
+						$year_month = $str[0].'-'.$str[1];
+						$next_month = date('m', strtotime('+1 month', strtotime($prev)));
+						$d = $str[2] == '01' ? $year_month.'-08' : ($str[2] == '08' ? $year_month.'-15' : ($str[2] == '15' ? $year_month.'-22' : $str[0].'-'.$next_month.'-01'));
 					}
 				}
 				$prev = $key;

@@ -93,4 +93,9 @@ class MY_Model extends CI_Model
 		$ndays = MY_Model::get_number_of_days($year_month);
 		return $year_month.'-w'.ceil(intval($key[2])/($ndays/4.0));
 	}
+	public static function date_to_startdate_of_week($key) {
+		$str = explode('-', $key, 3);
+		$week = ceil(floatval($str[2])/7);
+		return $str[0].'-'.$str[1].'-'.(($week-1)*7+1);
+	}
 }
