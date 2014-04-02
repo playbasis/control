@@ -532,6 +532,7 @@ class Action_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('name', utf8_strtolower($data['name']));
+        $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
         $result = $this->mongo_db->get('playbasis_action_to_client');
 
         return $result ? $result[0] : null;
