@@ -1034,10 +1034,10 @@ class Player extends REST_Controller
 		foreach ($this->player_model->monthy_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
-				$d = date('Y-m-d', strtotime('+1 month', strtotime($prev)));
-				while (strtotime($d) < strtotime($key)) {
+				$d = date('Y-m', strtotime('+1 month', strtotime($prev.'-01 00:00:00')));
+				while (strtotime($d.'-01 00:00:00') < strtotime($key.'-01 00:00:00')) {
 					array_push($log, array($d => array('count' => 0)));
-					$d = date('Y-m-d', strtotime('+1 month', strtotime($d)));
+					$d = date('Y-m', strtotime('+1 month', strtotime($d.'-01 00:00:00')));
 				}
 			}
 			$prev = $key;
