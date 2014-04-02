@@ -875,7 +875,7 @@ class Player_model extends MY_Model
 					} else {
 						array_push($values, $pb_player_id);
 					}
-				} else {echo 2;$values = $value['value']['pb_player_id'];}
+				} else $values = $value['value']['pb_player_id'];
 			} else {
 				array_push($values, $value['value']);
 			}
@@ -939,7 +939,7 @@ class Player_model extends MY_Model
 					} else {
 						array_push($values, $pb_player_id);
 					}
-				} else {echo 2;$values = $value['value']['pb_player_id'];}
+				} else $values = $value['value']['pb_player_id'];
 			} else {
 				array_push($values, $value['value']);
 			}
@@ -995,7 +995,7 @@ class Player_model extends MY_Model
 					} else {
 						array_push($values, $pb_player_id);
 					}
-				} else {echo 2;$values = $value['value']['pb_player_id'];}
+				} else $values = $value['value']['pb_player_id'];
 			} else {
 				array_push($values, $value['value']);
 			}
