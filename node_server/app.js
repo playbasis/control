@@ -20,11 +20,11 @@ var express = require('express')
 	, fs = require('fs');
 
 var options = {
-	/*key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
 	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
 	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
 	requestCert: true,
-	rejectUnauthorized: false*/
+	rejectUnauthorized: false
 };
 
 //special parser for the activity feed
@@ -64,8 +64,8 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-//var server = https.createServer(options, app);
-var server = http.createServer(app);
+var server = https.createServer(options, app);
+//var server = http.createServer(app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
@@ -212,7 +212,6 @@ var auth = express.basicAuth(function(user, pass){
 
 //publish event through post request
 app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
-    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	if(req.body)
 		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);
