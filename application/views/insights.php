@@ -1,93 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-    <!-- start: Meta -->
-    <meta charset="utf-8">
-    <title>Playbasis Dashboard</title>
-    <meta name="description" content="Playbasis Dashboard">
-    <meta name="author" content="Łukasz Holeczek">
-    <!-- end: Meta -->
-
-    <!-- start: Mobile Specific -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- end: Mobile Specific -->
-
-    <!-- start: CSS -->
-    <link id="bootstrap-style" href="<?php echo base_url();?>assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?php echo base_url();?>assets/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link id="base-style" href="<?php echo base_url();?>assets/css/style.css" rel="stylesheet">
-    <link id="base-style-responsive" href="<?php echo base_url();?>assets/css/style-responsive.css" rel="stylesheet">
-    <link href="<?php echo base_url();?>assets/css/playbasis-dashboard.css" rel="stylesheet">
-
-    <!--[if lt IE 7 ]>
-    <link id="ie-style" href="<?php echo base_url();?>assets/css/style-ie.css" rel="stylesheet">
-    <![endif]-->
-    <!--[if IE 8 ]>
-    <link id="ie-style" href="<?php echo base_url();?>assets/css/style-ie.css" rel="stylesheet">
-    <![endif]-->
-    <!--[if IE 9 ]>
-    <![endif]-->
-
-    <!-- end: CSS -->
-
-    <!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- start: Favicon -->
-    <link rel="shortcut icon" href="<?php echo base_url();?>assets/img/favicon.ico">
-    <!-- end: Favicon -->
-
-</head>
-
-<body>
-
-<!--<div id="overlay">-->
-<!--    <ul>-->
-<!--        <li class="li1"></li>-->
-<!--        <li class="li2"></li>-->
-<!--        <li class="li3"></li>-->
-<!--        <li class="li4"></li>-->
-<!--        <li class="li5"></li>-->
-<!--        <li class="li6"></li>-->
-<!--    </ul>-->
-<!--</div>-->
-
-<!-- start: Header -->
-<div class="navbar">
-    <div class="navbar-inner">
-        <div class="container-fluid">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <a class="brand" href="<?php echo base_url() ?>"><span class="hidden-phone">Playbasis</span></a>
-
-            <!-- start: Header Menu -->
-            <div class="nav-no-collapse header-nav">
-            </div>
-            <!-- end: Header Menu -->
-        </div>
-    </div>
-</div>
-<!-- start: Header -->
-
-<div class="container-fluid">
-    <div class="row-fluid">
-
-        <!-- start: Main Menu -->
-        <div class="span2 main-menu-span">
-            <div class="nav-collapse sidebar-nav">
-                <ul class="nav nav-tabs nav-stacked main-menu">
-                    <li><a href="/index"><i class="icon-home icon-white"></i><span class="hidden-tablet"> Dashboard</span></a></li>
-                </ul>
-            </div><!--/.well -->
-        </div><!--/span-->
-        <!-- end: Main Menu -->
-
         <noscript>
             <div class="alert alert-block span10">
                 <h4 class="alert-heading">Warning!</h4>
@@ -330,9 +240,6 @@
 
 <!-- start: JavaScript-->
 
-<script src="<?php echo base_url();?>assets/js/jquery-1.9.1.min.js"></script>
-<script src="<?php echo base_url();?>assets/js/jquery-migrate-1.0.0.min.js"></script>
-<script src="<?php echo base_url();?>assets/js/jquery-ui-1.10.0.custom.min.js"></script>
 <script src="<?php echo base_url();?>assets/js/jquery.ui.touch-punch.js"></script>
 <script src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
 <script src="<?php echo base_url();?>assets/js/jquery.cookie.js"></script>
@@ -362,6 +269,3 @@
 <script src="<?php echo base_url();?>assets/js/playbasis-dashboard.js"></script>
 
 <!-- end: JavaScript-->
-
-</body>
-</html>

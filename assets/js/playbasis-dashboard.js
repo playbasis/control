@@ -1076,40 +1076,40 @@ $(function(){
 
     Playbasis.API = {
         getActionTypes:function(callback){
-            this._Call(baseUrlPath + '/insight/getAction',null,callback);
+            this._Call(baseUrlPath + 'insights/getAction',null,callback);
         },
         getActionLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getActionLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getActionLog',params,callback);
         },
         getActionCompareLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getActionCompareLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getActionCompareLog',params,callback);
         },
         getRewardBadges:function(callback){
-            this._Call(baseUrlPath + '/insight/getRewardBadge',null,callback);
+            this._Call(baseUrlPath + 'insights/getRewardBadge',null,callback);
         },
         getRewardBadgeLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getRewardBadgeLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getRewardBadgeLog',params,callback);
         },
         getRewardPointLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getRewardPointLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getRewardPointLog',params,callback);
         },
         getRewardExpLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getRewardExpLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getRewardExpLog',params,callback);
         },
         getRewardLevelLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getRewardLevelLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getRewardLevelLog',params,callback);
         },
         getRewardCompareLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getRewardCompareLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getRewardCompareLog',params,callback);
         },
         getUserRegLog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getUserRegLog',params,callback);
+            this._Call(baseUrlPath + 'insights/getUserRegLog',params,callback);
         },
         getUserDAULog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getUserDAULog',params,callback);
+            this._Call(baseUrlPath + 'insights/getUserDAULog',params,callback);
         },
         getUserMAULog:function(params,callback){
-            this._Call(baseUrlPath + '/insight/getUserMAULog',params,callback);
+            this._Call(baseUrlPath + 'insights/getUserMAULog',params,callback);
         },
         getRewardLog:function(rewardType,params,callback){
 

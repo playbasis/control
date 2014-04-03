@@ -161,9 +161,9 @@ class Statistic_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->select(array('_id','action_id','name','color','icon'));
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('action_id', new MongoID($action['_id']));
+        $this->mongo_db->where('client_id', $data['client_id']);
+        $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('action_id', $action['action_id']);
         if($start){
             $start = strtotime( $start, strtotime($data['date']) );
         }else{

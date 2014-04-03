@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
-class Insight extends MY_Controller {
+class Insights extends MY_Controller {
 
     private $_api;
 
@@ -25,7 +25,17 @@ class Insight extends MY_Controller {
 	}
 
     public function index(){
-        $this->load->view('insight');
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->data['main'] = 'insights';
+        $this->render_page('template');
     }
 
     // API Calls
@@ -371,5 +381,13 @@ class Insight extends MY_Controller {
             $data->response[] = (object)array($formattedDataDate => $formattedDataData);
         }
         return $data;
+    }
+
+    private function validateAccess(){
+        if ($this->User_model->hasPermission('access', 'insights')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
