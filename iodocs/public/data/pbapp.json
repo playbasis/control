@@ -954,6 +954,41 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "Service API",
+            "methods": [
+                {
+                    "MethodName": "Point History",
+                    "Synopsis": "Returns activity points all players",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/point_history",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "point_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the point-based reward to query"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        }
+                    ]
+                }
+            ]
         }
 	]
 }

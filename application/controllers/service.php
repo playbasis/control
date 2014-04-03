@@ -7,7 +7,7 @@ class Service extends REST_Controller
 	{
 		parent::__construct();
 	}
-	public function index_get($param1)
+	/*public function index_get($param1)
 	{
 		$data = array(
 			'status' => true,
@@ -57,7 +57,7 @@ class Service extends REST_Controller
 		);
 		$data['post_data'] = $this->input->post();
 		$this->response($data, 200);
-	}
+	}*/
 /*
 	public function testCounter_get()
 	{
@@ -176,4 +176,49 @@ class Service extends REST_Controller
 		}
 	}
 */
+
+    public function point_history_get()
+    {
+        $required = $this->input->checkParam(array(
+            'api_key'
+        ));
+        if($required){
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+        $required = array();
+
+        if($required){
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+
+        if(!$validToken){
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+        }
+        $site_id = $validToken['site_id'];
+
+
+        $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
+        $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
+        if($limit > 500){
+            $limit = 500;
+        }
+        $reward_name = $this->input->get('point_name');
+
+        $reward = array(
+            'site_id'=>$site_id,
+            'client_id'=>$validToken['client_id'],
+            'reward_name'=>$reward_name
+        );
+
+        if($reward){
+            $reward_id = $this->point_model->findPoint($reward);
+        }else{
+            $reward_id = null;
+        }
+
+        $respondThis['points'] = $this->player_model->getPointHistory($site_id, $reward_id, $offset, $limit);
+
+        $this->response($this->resp->setRespond($respondThis), 200);
+    }
 }

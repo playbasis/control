@@ -117,6 +117,9 @@ $route['Engine/facebook']	= 'engine/rule/facebook';
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
 
+//service API
+$route['Service/point_history'] = 'service/point_history';
+
 //misc
 $route['test']	= 'playbasis/test';
 $route['fb'] = 'playbasis/fb';

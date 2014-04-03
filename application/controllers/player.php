@@ -672,6 +672,9 @@ class Player extends REST_Controller
 
 		$offset = ($this->input->get('offset'))?$this->input->get('offset'):0;			
 		$limit = ($this->input->get('limit'))?$this->input->get('limit'):20;
+        if($limit > 500){
+            $limit = 500;
+        }
 		$reward_name = $this->input->get('point_name');
 
 		$reward = array(
