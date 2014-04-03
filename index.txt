@@ -147,7 +147,10 @@ level	{
 }
 db.playbasis_summary_of_player_beta.ensureIndex( { level: 1 } )
 
-
+reward {
+    "value.reward_52ea1ea78d8c89401c0000b4.reward_value":1
+}
+db.playbasis_summary_of_player_beta.ensureIndex( { value.reward_52ea1ea78d8c89401c0000b4.reward_value: 1 } )
 
 playbasis_badge_to_client
 
