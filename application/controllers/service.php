@@ -6,6 +6,13 @@ class Service extends REST_Controller
 	public function __construct()
 	{
 		parent::__construct();
+        $this->load->model('auth_model');
+        $this->load->model('player_model');
+        $this->load->model('point_model');
+        $this->load->model('tool/error', 'error');
+        $this->load->model('tool/utility', 'utility');
+        $this->load->model('tool/respond', 'resp');
+        $this->load->model('tool/node_stream', 'node');
 	}
 	/*public function index_get($param1)
 	{
