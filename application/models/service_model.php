@@ -10,7 +10,7 @@ class Service_model extends MY_Model
         $this->load->helper('memcache');
         $this->load->library('mongo_db');
     }
-    public function getPointHistory($site_id, $reward_id, $offset, $limit){
+    public function getRecentPoint($site_id, $reward_id, $offset, $limit){
 
         if($reward_id){
             $this->mongo_db->where('reward_id', $reward_id);
@@ -21,12 +21,29 @@ class Service_model extends MY_Model
         $this->mongo_db->where_gt('value', 0);
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-        $this->mongo_db->select(array('reward_id', 'reward_name', 'value', 'message', 'date_added','action_log_id'));
+        $this->mongo_db->select(array('reward_id', 'reward_name', 'value', 'message', 'date_added','action_log_id', 'pb_player_id'));
         $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->order_by(array('date_added' => -1));
         $event_log = $this->mongo_db->get('playbasis_event_log');
 
-
         foreach($event_log as &$event){
+
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('_id', $event['pb_player_id']);
+            $this->mongo_db->select(array(
+                'cl_player_id',
+                'username',
+                'first_name',
+                'last_name',
+                'gender',
+                'image',
+                'exp',
+                'level'));
+            $this->mongo_db->select(array(), array('_id'));
+            $player = $this->mongo_db->get('playbasis_player');
+
+            $event['player'] = isset($player) ? $player[0] : null;
+
             $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
@@ -35,12 +52,21 @@ class Service_model extends MY_Model
                 $event['string_filter'] = $actionAndStringFilter['url'];
             }
             unset($event['action_log_id']);
+            unset($event['pb_player_id']);
 
             $event['reward_id'] = $event['reward_id']."";
         }
 
 
         return $event_log;
+    }
+
+    private function getActionNameAndStringFilter($action_log_id){
+        $this->mongo_db->select(array('action_name', 'url'));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where('_id', new MongoID($action_log_id));
+        $returnThis = $this->mongo_db->get('playbasis_action_log');
+        return ($returnThis)?$returnThis[0]:array();
     }
 }
 ?>

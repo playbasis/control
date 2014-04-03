@@ -959,10 +959,10 @@
             "name": "Service API",
             "methods": [
                 {
-                    "MethodName": "Point History",
-                    "Synopsis": "Returns activity points all players",
+                    "MethodName": "Recent Point",
+                    "Synopsis": "Returns recent activity points of all players",
                     "HTTPMethod": "GET",
-                    "URI": "/Service/point_history",
+                    "URI": "/Service/recent_point",
                     "RequiresOAuth": "N",
                     "parameters": [
                         {

@@ -118,7 +118,7 @@ $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
 
 //service API
-$route['Service/point_history'] = 'service/point_history';
+$route['Service/recent_point'] = 'service/recent_point';
 
 //misc
 $route['test']	= 'playbasis/test';

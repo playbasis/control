@@ -7,7 +7,7 @@ class Service extends REST_Controller
 	{
 		parent::__construct();
         $this->load->model('auth_model');
-        $this->load->model('player_model');
+        $this->load->model('service_model');
         $this->load->model('point_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
@@ -184,7 +184,7 @@ class Service extends REST_Controller
 	}
 */
 
-    public function point_history_get()
+    public function recent_point_get()
     {
         $required = $this->input->checkParam(array(
             'api_key'
@@ -224,7 +224,7 @@ class Service extends REST_Controller
             $reward_id = null;
         }
 
-        $respondThis['points'] = $this->player_model->getPointHistory($site_id, $reward_id, $offset, $limit);
+        $respondThis['points'] = $this->service_model->getRecentPoint($site_id, $reward_id, $offset, $limit);
 
         $this->response($this->resp->setRespond($respondThis), 200);
     }
