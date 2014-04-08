@@ -72,7 +72,7 @@
 
 
     <!-- Insights -->
-    <link href="<?php echo base_url();?>assets/css/playbasis-dashboard.css" rel="stylesheet">
+    <link href="<?php echo base_url();?>stylesheet/insights/playbasis-dashboard.css" rel="stylesheet">
 
 
     <script type="text/javascript">
