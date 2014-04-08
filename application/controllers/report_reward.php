@@ -95,8 +95,22 @@ class Report_reward extends MY_Controller{
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
             $parameter_url .= "&date_expire=".$filter_date_end;
+
+            //--> This will enable to search on the day until the time 23:59:59
+            $date = $this->input->get('date_expire');
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate+("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            //--> end
         } else {
-            $filter_date_end = date("Y-m-d"); ;
+            $filter_date_end = date("Y-m-d");
+
+            //--> This will enable to search on the current day until the time 23:59:59
+            $date = date("Y-m-d");
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate+("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            //--> end
         }
 
         if ($this->input->get('username')) {
@@ -233,7 +247,10 @@ class Report_reward extends MY_Controller{
         $this->data['pagination_links'] = $this->pagination->create_links();
 
         $this->data['filter_date_start'] = $filter_date_start;
-        $this->data['filter_date_end'] = $filter_date_end;
+        // --> This will show only the date, not including the time
+        $filter_date_end_exploded = explode(" ",$filter_date_end);
+        $this->data['filter_date_end'] = $filter_date_end_exploded[0];
+        // --> end
         $this->data['filter_username'] = $filter_username;
         $this->data['filter_action_id'] = $filter_action_id;
 

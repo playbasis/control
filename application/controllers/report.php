@@ -106,6 +106,13 @@ class Report extends MY_Controller
 
         } else {
             $filter_date_end = date("Y-m-d");
+
+            //--> This will enable to search on the current day until the time 23:59:59
+            $date = date("Y-m-d");
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate+("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            //--> end
         }
 
         if ($this->input->get('username')) {
