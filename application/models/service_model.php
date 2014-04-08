@@ -67,14 +67,16 @@ class Service_model extends MY_Model
                 ));
                 $result = $this->mongo_db->get('playbasis_badge_to_client');
                 if($result){
-                    $event['badge_id'] = $result[0]['badge_id']."";
-                    $event['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
-                    $event['name'] = $result[0]['name'];
-                    $event['description'] = $result[0]['description'];
-                    $event['hint'] = $result[0]['hint'];
+                    $event['badge']['badge_id'] = $result[0]['badge_id']."";
+                    $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
+                    $event['badge']['name'] = $result[0]['name'];
+                    $event['badge']['description'] = $result[0]['description'];
+                    $event['badge']['hint'] = $result[0]['hint'];
                 }
 
             }
+
+            unset($event['item_id']);
         }
 
 
