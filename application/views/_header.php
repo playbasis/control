@@ -71,6 +71,10 @@
     <script type="text/javascript" src="<?php echo base_url();?>javascript/bootstrap/daterangepicker.js"></script>
 
 
+    <!-- Insights -->
+    <link href="<?php echo base_url();?>stylesheet/insights/playbasis-dashboard.css" rel="stylesheet">
+
+
     <script type="text/javascript">
         //-----------------------------------------
         // Confirm Actions (delete, uninstall)

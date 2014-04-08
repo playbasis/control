@@ -540,7 +540,7 @@ function isotopeRun(elem) {
     masonry: {
       columnWidth: 110
     },
-    sortBy: 'point',
+    //sortBy: 'point',
     getSortData: {
       point: function ($elem) {
         var number = ($elem.find('.isot-player-points span').length > 0) ? $elem.find('.isot-player-points span').text().replace(/points/g, '') : $elem.attr('data-number');

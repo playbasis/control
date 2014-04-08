@@ -652,5 +652,16 @@ class User_model extends MY_Model
         return $hashed;
     }
 
+	public function get_api_key_secret($client_id, $site_id) {
+		$this->set_site_mongodb($this->session->userdata('site_id'));
+
+		$this->mongo_db->where('client_id', new MongoID($client_id));
+		$this->mongo_db->where('_id', new MongoID($site_id));
+		$this->mongo_db->limit(1);
+
+		$result = $this->mongo_db->get("playbasis_client_site");
+
+		return $result ? $result[0] : null;
+	}
 }
 ?>

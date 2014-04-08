@@ -29,6 +29,15 @@ playbasis_feature
     "date_added": new Date(),
     "date_modified": new Date()
 
+    "name": "Insights",
+    "description": "",
+    "sort_order": NumberInt(1),
+    "icon": "fa-icon-bar-chart",
+    "link": "insights",
+    "status": true,
+    "date_added": new Date(),
+    "date_modified": new Date()
+
 
 update
 

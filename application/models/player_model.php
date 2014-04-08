@@ -1154,6 +1154,12 @@ class Player_model extends MY_Model
     public function getIsotopePlayer($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if(isset($data['sort']) && $data['sort'] == 'point'){
+            $this->mongo_db->where('name', 'point');
+            $results = $this->mongo_db->get("playbasis_reward");
+            $point_id  = ($results) ? $results[0] : null;
+        }
+
         $res = $this->filterMongoPlayer($data);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
@@ -1195,8 +1201,10 @@ class Player_model extends MY_Model
             $this->mongo_db->where($show_level);
         }*/
 
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+//        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('client_id', $data['client_id']);
+//        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', $data['site_id']);
 
         if (isset($data['order'])) {
             if (strtolower($data['order']) == 'desc') {
@@ -1218,13 +1226,9 @@ class Player_model extends MY_Model
 
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
             if($data['sort'] == 'point'){
-
-                $this->mongo_db->where('name', 'point');
-                $results = $this->mongo_db->get("playbasis_reward");
-
-                $point_id  = ($results) ? $results[0] : null;
-
-                $this->mongo_db->order_by(array('value.reward_'.$point_id.'.reward_value' => $order));
+                if($point_id && isset($point_id['_id'])){
+                    $this->mongo_db->order_by(array('value.reward_'.$point_id['_id'].'.reward_value' => $order));
+                }
             }else{
                 $this->mongo_db->order_by(array($data['sort'] => $order));
             }
@@ -1252,9 +1256,8 @@ class Player_model extends MY_Model
             $results =  $this->mongo_db->get('playbasis_player');
         }
 
-
         $output['result'] = $results;
-        $output['total'] = $this->getIsotopeTotalPlayer($data);;
+        $output['total'] = $this->getIsotopeTotalPlayer($data);
 
         return $output;
 
@@ -1304,8 +1307,10 @@ class Player_model extends MY_Model
             $this->mongo_db->where($show_level);
         }*/
 
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+//        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('client_id', $data['client_id']);
+//        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', $data['site_id']);
 
         if($fil){
             $results =  $this->mongo_db->count('playbasis_summary_of_player_beta');
