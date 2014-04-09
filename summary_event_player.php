@@ -158,15 +158,15 @@ foreach($players as $p){
 				'exp' => new MongoInt32($p['exp']),
 				'level' => new MongoInt32($p['level']),
 				'email' => $p['email'],
-				'birth_date' => $p['birth_date'],
+				'birth_date' => isset($p['birth_date']->sec)?new MongoDate(strtotime(date("Y-m-d", $p['birth_date']->sec))):new MongoDate(strtotime(date("Y-m-d", strtotime($p['birth_date'])))),
 				'gender' => new MongoInt32($p['gender']),
 				'nickname' => $p['nickname'],
 				'status' => (bool)($p['status']),
-				'date_added' => $p['date_added'],
-				'date_modified' => $p['date_modified'],
+				'date_added' => isset($p['date_added']->sec)?new MongoDate(strtotime(date("Y-m-d", $p['date_added']->sec))):new MongoDate(strtotime(date("Y-m-d", strtotime($p['date_added'])))),
+				'date_modified' => isset($p['date_modified']->sec)?new MongoDate(strtotime(date("Y-m-d", $p['date_modified']->sec))):new MongoDate(strtotime(date("Y-m-d", strtotime($p['date_modified'])))),
 				'value' => $p['value']
 				);
-	$option = array("upsert" => true);			
+	$option = array("upsert" => true);
 	$collection_summary->update($item,$set,$option);
 				
 	
