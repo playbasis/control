@@ -353,7 +353,7 @@ class Report_goods extends MY_Controller{
         }
         $results = $this->data['reports'];
        
-        $this->download_send_headers("RewardReport_" . date("YmdHis") . ".xls");
+        $this->download_send_headers("GoodsReport_" . date("YmdHis") . ".xls");
         $this->xlsBOF();
         $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
         $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
