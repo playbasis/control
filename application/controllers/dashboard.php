@@ -112,6 +112,9 @@ class Dashboard extends MY_Controller
             }
         }
 
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
+        $this->data['api_key'] = $result['api_key'];
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'dashboard';
         $this->data['title'] = $this->lang->line('title');
@@ -216,6 +219,9 @@ class Dashboard extends MY_Controller
                 );
             }
         }
+
+        $result = $this->User_model->get_api_key_secret($this->User_model->getClientId(), $this->User_model->getSiteId());
+        $this->data['api_key'] = $result['api_key'];
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'dashboard';

@@ -47,7 +47,10 @@
         var d = new Date();
         var tz = d.getTimezoneOffset()*60;
 
-        notification += '<img class="noti-stream-item-portrait" alt="avatar" src=" ' + data.actor.image.url + '" width="45" height="45" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" /><div class="noti-stream-item-name"><h4> ' + data.actor.displayName + ' </h4><span class="noti-action-act"> ' + data.object.message + ' </span><div class="noti-stream-item-time-stamp" title="'+(Date.parse(data.published).getTime()-(tz*1000))+'"> just now </div></div>';
+        notification += '<img class="noti-stream-item-portrait" alt="avatar" src=" ' + data.actor.image.url +
+            '" width="45" height="45" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" /><div class="noti-stream-item-name"><h4> ' + data.actor.displayName +
+            ' </h4><span class="noti-action-act"> ' + data.object.message +
+            ' </span><div class="noti-stream-item-time-stamp" title="'+(Date.parse(data.published).getTime())+'"> just now </div></div>';
 
         if (data.object.badge) {
             notification += '<img class="noti-stream-item-badge" width="35" height="35" alt="badge" src="' + data.object.badge.image.url + '">';

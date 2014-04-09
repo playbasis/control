@@ -352,6 +352,124 @@
                     //console.log(start);
                 });
 
+
+
+        $.ajax({url:"https://api.pbapp.net/Service/recent_point?api_key=<?php echo $api_key; ?>",
+                dataType: "json",
+                success:function(data){
+
+                    /*var points = data.response.points;
+                    var html = '';
+
+                    for(var i = 0; i < points.length ; i++){
+
+                        var date_ago = $.timeago(points[i].date_added);
+
+                        html += '<div class="pb-widget-row">';
+                        html += '<span class="pb-col-avatar"><img src="'+points[i].player.image+'" class="img-circle pb-user-avatar"></span>';
+                        html +=	'<span class="pb-col-message"><a href="javascript:void(0)">'+points[i].player.username+'</a> '+points[i].action_name;
+
+
+                        var msgArr = points[i].message.split(" ");
+                        var msgCurrency = msgArr[msgArr.length-1];
+                        var currencyArr = ['point','coin','exp'];
+                        if(currencyArr.indexOf(msgCurrency) >= 0){
+
+                            var amount = parseInt(points[i].value);
+                            if(amount < 0){
+                                html +=	 ' and spent '+(amount*-1)+' '+msgCurrency;
+                            }else{
+                                html +=	 ' and '+points[i].message+'s';
+                            }
+
+                        }else{
+                            html +=	 ' and '+points[i].message;
+                        }
+
+                        html += '</span>';
+                        html +=	'<span class="pb-col-timeago">'+date_ago+'</span>';
+                        html +='</div>';
+                    }
+
+                    var feedContent = friendfeedDom.find('.pb-widget-content');
+                    $(html).prependTo(feedContent).hide().slideDown();*/
+
+                    var points = data.response.points;
+
+                    var notifications = '';
+
+                    for(var i = 0; i < points.length ; i++){
+
+                        var date_ago = jQuery.timeago(parseInt(Date.parse(points[i].date_added).getTime()));
+                        var displayName = (points[i].player.first_name && points[i].player.last_name)? points[i].player.first_name +" "+ points[i].player.last_name :points[i].player.username
+
+                        notifications += '<section class="noti-stream-item" style="">';
+
+                        notifications += '<img class="noti-stream-item-portrait" alt="avatar" src=" ' + points[i].player.image +
+                            '" width="45" height="45" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" /><div class="noti-stream-item-name"><h4> ' + displayName +
+                            ' </h4><span class="noti-action-act"> ' + points[i].message +
+                            ' </span><div class="noti-stream-item-time-stamp" title="'+(Date.parse(points[i].date_added).getTime())+'"> '+date_ago+' </div></div>';
+
+                        if (points[i].badge) {
+                            notifications += '<img class="noti-stream-item-badge" width="35" height="35" alt="badge" src="' + points[i].badge.image + '">';
+                        } else {
+
+                            switch (points[i].action_name) {
+                                case 'visit':
+                                    icons = 'fa-icon-map-marker';
+                                    break;
+                                case 'read':
+                                    icons = 'fa-icon-bookmark-empty';
+                                    break;
+                                case 'like':
+                                    icons = 'fa-icon-thumbs-up';
+                                    break;
+                                case 'share':
+                                    icons = 'fa-icon-share';
+                                    break;
+                                case 'want':
+                                    icons = 'fa-icon-star';
+                                    break;
+                                case 'love':
+                                    icons = 'fa-icon-heart';
+                                    break;
+                                case 'review':
+                                    icons = 'fa-icon-flag';
+                                    break;
+                                case 'spotreview':
+                                    icons = 'fa-icon-globe';
+                                    break;
+                                case 'comment':
+                                    icons = 'fa-icon-comment';
+                                    break;
+                                case 'following':
+                                    icons = 'fa-icon-plus-sign';
+                                    break;
+                                case 'follower':
+                                    icons = 'fa-icon-group';
+                                    break;
+                                case 'pernah':
+                                    icons = 'fa-icon-cogs';
+                                    break;
+                                case 'timeonsite':
+                                    icons = 'fa-icon-cogs';
+                                    break;
+                                case 'login':
+                                    icons = 'fa-icon-signin';
+                                    break;
+                                case 'logout':
+                                    icons = 'fa-icon-signout';
+                                    break;
+
+                            }
+
+                            notifications += '<div class="noti-stream-item-badge ' + icons + '"></div></section>';
+
+                            $('#noti-stream').prepend(notifications);
+                    }
+                }
+            }
+        })
     })
 
 </script>
