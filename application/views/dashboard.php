@@ -414,6 +414,8 @@
                             notifications += '<img class="noti-stream-item-badge" width="35" height="35" alt="badge" src="' + points[i].badge.image + '">';
                         } else {
 
+                            icons = 'fa-icon-bolt';
+                            
                             switch (points[i].action_name) {
                                 case 'visit':
                                     icons = 'fa-icon-map-marker';
