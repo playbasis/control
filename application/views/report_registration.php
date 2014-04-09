@@ -7,8 +7,8 @@
         <div id="tabs" class="htabs">
             <a href="<?php echo site_url('report/action');?>" style="display:inline;">Actions</a>
             <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
-            <a href="<?php echo site_url('report/goods');?>" class="selected" style="display:inline;">Goods</a>
-            <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
+            <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
+            <a href="<?php echo site_url('report/registration');?>" class="selected" style="display:inline;">Registration</a>
         </div>
             <div class="report-filter">
                 <span>
@@ -23,19 +23,7 @@
                         <?php echo $this->lang->line('filter_username'); ?>
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
-                <span>
-                        <?php echo $this->lang->line('filter_reward_id'); ?>
-                    <select name="filter_action_id">
-                        <option value="0"><?php echo "All"; ?></option>
-                        <?php foreach ($goods_available as $good){?>
-                            <?php if ($good['_id'] == $filter_goods_id) { ?>
-                            <option selected="selected" value="<?php echo $good['_id']?>"><?php echo $good['name'];?></option>
-                            <?php }else{?>
-                            <option value="<?php echo $good['_id']?>"><?php echo $good['name'];?></option>
-                            <?php }?>
-                        <?php }?>
-                    </select>
-                </span>
+                
                 <span>
                     <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                 </span>
@@ -53,9 +41,7 @@
                     <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
                     <!-- <td class="left"><?php //echo $this->lang->line('column_level'); ?></td>
                     <td class="left"><?php //echo $this->lang->line('column_exp'); ?></td> -->
-                    <td class="right"><?php echo $this->lang->line('column_goods_name'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_goods_amount'); ?></td>
-                    <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
+                    <td class="right"><?php echo $this->lang->line('column_date_registered'); ?></td>
                 </tr>
                 </thead>
                 <tbody>
@@ -68,15 +54,6 @@
                         <td class="left"><?php echo $report['email']; ?></td>
                         <!-- <td class="left"><?php //echo $report['level']; ?></td>
                         <td class="left"><?php //echo $report['exp']; ?></td> -->
-                        <td class="right">
-                            <?php 
-                            if(isset($report['goods_name'])&&$report['goods_name']!=null){
-                                // echo $report['goods_name'];
-                                echo $report['goods_name'];
-                            }                            
-                            ?>
-                        </td>
-                        <td class="right"><?php echo $report['value']; ?></td>
                         <td class="right"><?php echo $report['date_added']; ?></td>
                     </tr>
                         <?php } ?>
@@ -99,7 +76,7 @@
 function filter() {
     var d = new Date().getTime();
     // url = baseUrlPath+'report_reward/reward_badge?t='+d;
-    url = baseUrlPath+'report_goods/goods_filter?t='+d;
+    url = baseUrlPath+'report_registration/registration_filter?t='+d;
 
     var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -121,16 +98,16 @@ function filter() {
 
     var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
 
-    if (filter_action_id != 0) {
-        url += '&goods_id=' + encodeURIComponent(filter_action_id);
-    }
+    // if (filter_action_id != 0) {
+    //     url += '&goods_id=' + encodeURIComponent(filter_action_id);
+    // }
 
     location = url;
 }
 
 function downloadFile() {
     var d = new Date().getTime();
-    url = baseUrlPath+'report_goods/actionDownload?t='+d;
+    url = baseUrlPath+'report_registration/actionDownload?t='+d;
 
     var filter_date_start = $('input[name=\'filter_date_start\']').attr('value');
 
@@ -148,12 +125,6 @@ function downloadFile() {
 
     if (filter_username) {
         url += '&username=' + encodeURIComponent(filter_username);
-    }
-
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
-
-    if (filter_action_id != 0) {
-        url += '&goods_id=' + encodeURIComponent(filter_action_id);
     }
 
     location = url;

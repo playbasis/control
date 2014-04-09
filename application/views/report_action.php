@@ -8,6 +8,7 @@
             <a href="<?php echo site_url('report/action');?>" style="display:inline;" class="selected" >Actions</a>
             <a href="<?php echo site_url('report/rewards_badges');?>" style="display:inline;">Rewards</a>
             <a href="<?php echo site_url('report/goods');?>" style="display:inline;">Goods</a>
+            <a href="<?php echo site_url('report/registration');?>" style="display:inline;">Registration</a>
         </div>
             <div class="report-filter">
                 <span>

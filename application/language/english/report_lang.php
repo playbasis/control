@@ -26,6 +26,7 @@ $lang['column_reward_value']					= 'Value';
 $lang['column_goods_amount']					= 'Amount';
 $lang['column_goods_redeemwith']					= 'Redeem with';
 $lang['column_goods_name']					= 'Goods';
+$lang['column_date_registered']					= 'Date Registered';
 
 // Button
 $lang['button_filter']							= 'Filter';
@@ -35,6 +36,7 @@ $lang['filter_date_end']						= 'Date End';
 $lang['filter_username']						= 'Username';
 $lang['filter_action_id']						= 'Action';
 $lang['filter_reward_id']						= 'Reward';
+$lang['filter_site_id']							= 'Site';
 
 //Error messages
 $lang['error_permission']       	= 'Warning: You do not have permission to modify rules!';

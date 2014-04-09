@@ -49,6 +49,7 @@ $route['forgot_password'] = '/user/forgot_password';
 $route['reset_password'] = '/user/reset_password';
 $route['report/rewards_badges'] = 'report_reward';
 $route['report/goods'] = 'report_goods';
+$route['report/registration'] = 'report_registration';
 
 $route['404_override'] = 'error/error_404';
 
