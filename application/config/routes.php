@@ -132,6 +132,9 @@ $route['Player/mau_per_day'] = 'player/mauDay';
 $route['Player/mau_per_week'] = 'player/mauWeek';
 $route['Player/mau_per_month'] = 'player/mauMonth';
 
+//service API
+$route['Service/recent_point'] = 'service/recent_point';
+
 //misc
 $route['test']	= 'playbasis/test';
 $route['fb'] = 'playbasis/fb';
