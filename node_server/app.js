@@ -67,6 +67,7 @@ app.get('/users', user.list);
 var server = https.createServer(options, app);
 //var server = http.createServer(app);
 io = io.listen(server);
+io.disable('heartbeats');
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
 });
