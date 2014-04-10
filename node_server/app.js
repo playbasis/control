@@ -67,7 +67,6 @@ app.get('/users', user.list);
 var server = https.createServer(options, app);
 //var server = http.createServer(app);
 io = io.listen(server);
-io.disable('heartbeats');
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
 });
@@ -173,7 +172,7 @@ function verifyChannel(channel, callback)
             return;
         }
         console.log(channel);
-        console.log(data);
+        //console.log(data);
         if(data && data.domain_name){
             console.log('domain valid: ' + data.domain_name);
             callback(null, channel);
@@ -189,6 +188,7 @@ io.sockets.on('connection', function(socket){
 		if(!data || !data.channel)
 			return;
 		verifyChannel(data.channel, function(err, channel){
+            process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 			if(err){
 				console.log(err);
 				return;
