@@ -29,6 +29,7 @@ var options = {
 
 //special parser for the activity feed
 function feedParser(req, res, next){
+    console.log('feedParser!');
 	if(req.originalUrl.substr(0, METHOD_PUBLISH_FEED.length).toLowerCase() != METHOD_PUBLISH_FEED)
 		return next();
 	var data = '';
