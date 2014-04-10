@@ -188,7 +188,6 @@ io.sockets.on('connection', function(socket){
 		if(!data || !data.channel)
 			return;
 		verifyChannel(data.channel, function(err, channel){
-            process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 			if(err){
 				console.log(err);
 				return;
@@ -213,6 +212,7 @@ var auth = express.basicAuth(function(user, pass){
 
 //publish event through post request
 app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	if(req.body)
 		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);
