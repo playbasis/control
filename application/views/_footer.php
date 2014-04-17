@@ -31,7 +31,7 @@
 
     var socket = io.connect(urlHost);
     socket.on('connect', function(data){
-        // console.log('client connected');
+        console.log('client connected');
         socket.emit('subscribe', {channel: chHost});
     });
 
