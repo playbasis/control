@@ -91,7 +91,7 @@ if(preg_match('/^(?:http(?:s)?:\/\/)(images.pbapp.net\/cache\/data|images.pbapp.
 
                 $s3->setEndpoint("s3-ap-southeast-1.amazonaws.com");
                 if ($s3->putObjectFile($exit_filename, "elasticbeanstalk-ap-southeast-1-007834438823", 'cache/data/'.$exit_filename, S3::ACL_PUBLIC_READ)){
-                    //unlink($exit_filename);
+                    unlink($exit_filename);
                 }
 
                 if($redirect){
