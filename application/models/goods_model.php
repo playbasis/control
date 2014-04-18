@@ -59,5 +59,82 @@ class Goods_model extends MY_Model
         }
         return $result ? $result[0] : array();
     }
+	public function listActiveItems($data, $from, $to)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->where(array(
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'$and' => array(
+				array('$or' => array(array('date_start' => array('$lte' => $this->new_mongo_date($to))), array('date_start' => null))),
+				array('$or' => array(array('date_expire' => array('$gte' => $this->new_mongo_date($to, '23:59:59'))), array('date_expire' => null)))
+//array('$or' => array(array('date_expire' => array('$gte' => $this->new_mongo_date('2014-03-09', '23:59:59'))), array('date_expire' => null)))
+			),
+			'deleted' => false,
+			'status' => true
+		));
+		return $this->mongo_db->get('playbasis_goods_to_client');
+	}
+	public function listExpiredItems($data, $from, $to)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->where(array(
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'date_expire' => array('$gte' => $this->new_mongo_date($from), '$lte' => $this->new_mongo_date($to, '23:59:59')),
+			'deleted' => false,
+			'status' => true
+		));
+		return $this->mongo_db->get('playbasis_goods_to_client');
+	}
+	public function totalRedemption($data, $goods_id)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->select(array('pb_player_id','value'));
+		$this->mongo_db->where(array(
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'goods_id' => $goods_id
+		));
+		return $this->mongo_db->get('playbasis_goods_to_player');
+	}
+	public function redeemLogDistinctPlayer($data, $goods_id, $from=null, $to=null)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'goods_id' => $goods_id->{'$id'});
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$result = $this->mongo_db->command(array(
+			'distinct' => 'playbasis_goods_log',
+			'key' => 'pb_player_id',
+			'query' => $query
+		));
+		return $result['values'];
+	}
+	public function redeemLogCount($data, $goods_id, $from=null, $to=null)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'goods_id' => $goods_id->{'$id'});
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$result = $this->mongo_db->command(array(
+			'count' => 'playbasis_goods_log',
+			'query' => $query
+		));
+		return $result['n'];
+	}
+	public function redeemLog($data, $goods_id, $from=null, $to=null)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->select(array('pb_player_id','amount'));
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'goods_id' => $goods_id->{'$id'});
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$this->mongo_db->where($query);
+		return $this->mongo_db->get('playbasis_goods_log');
+	}
 }
 ?>

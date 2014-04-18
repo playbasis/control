@@ -12,7 +12,7 @@ class Action_model extends MY_Model
 	public function listActions($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select(array('name'));
+		$this->mongo_db->select(array('name','icon'));
 		$this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
