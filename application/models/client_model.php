@@ -495,5 +495,26 @@ class Client_model extends MY_Model
 
         return $result ? $result[0]['name'] : null;
     }
+
+	public function listClients()
+	{
+		$this->set_site_mongodb(0);
+		$this->mongo_db->where(array(
+			'status' => true,
+			'deleted' => false
+		));
+		return $this->mongo_db->get('playbasis_client');
+	}
+
+	public function listSites($client_id)
+	{
+		$this->set_site_mongodb(0);
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'status' => true,
+			'deleted' => false
+		));
+		return $this->mongo_db->get('playbasis_client_site');
+	}
 }
 ?>
