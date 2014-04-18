@@ -465,11 +465,12 @@
 
                             }
 
-                            notifications += '<div class="noti-stream-item-badge ' + icons + '"></div></section>';
-
-                            $('#noti-stream').prepend(notifications);
+                            notifications += '<div class="noti-stream-item-badge ' + icons + '"></div>';
                     }
+
+                        notifications += '</section>';
                 }
+                $('#noti-stream').prepend(notifications);
             }
         })
     })
