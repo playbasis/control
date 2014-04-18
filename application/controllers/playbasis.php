@@ -98,7 +98,7 @@ class Playbasis extends CI_Controller
 				$params['NEW_USER_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="http://localhost/control/images/icon-'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['NEW_USER_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
 				$params['NEW_USER_PERCENT'] = ($sum_max[0] != 0 || $params['NEW_USER_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['NEW_USER_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
 				$params['NEW_USER_AVERAGE'] = number_format($params['NEW_USER_TOTAL']/7.0, 2);
-				$params['NEW_USER_BEST_VALUE'] = $curr[$best]['value'];
+				$params['NEW_USER_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
 
 				// DAU
 				$curr = $this->player_model->daily_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'DAU1 = ';var_dump($curr);echo '</pre>';
@@ -111,7 +111,7 @@ class Playbasis extends CI_Controller
 				$params['DAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="http://localhost/control/images/icon-'.($sum_max[0] <= $params['DAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['DAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
 				$params['DAU_PERCENT'] = ($sum_max[0] != 0 || $params['DAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['DAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['DAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
 				$params['DAU_AVERAGE'] = number_format($params['DAU_TOTAL']/7.0, 2);
-				$params['DAU_BEST_VALUE'] = $curr[$best]['value'];
+				$params['DAU_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
 
 				// MAU
 				$curr = $this->player_model->monthy_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'MAU1 = ';var_dump($curr);echo '</pre>';
@@ -124,7 +124,7 @@ class Playbasis extends CI_Controller
 				$params['MAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="http://localhost/control/images/icon-'.($sum_max[0] <= $params['MAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['MAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
 				$params['MAU_PERCENT'] = ($sum_max[0] != 0 || $params['MAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['MAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['MAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
 				$params['MAU_AVERAGE'] = number_format($params['MAU_TOTAL']/7.0, 2);
-				$params['MAU_BEST_VALUE'] = $curr[$best]['value'];
+				$params['MAU_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
 
 				// action
 				$result = array();
