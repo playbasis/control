@@ -241,7 +241,7 @@ class Playbasis extends CI_Controller
 				usort($params['ITEMS'], 'cmp4');
 
 				// rank
-				$players = $this->player_model->getLeaderboardByLevel(10, $client_id, $site_id);
+				$players = $this->player_model->getLeaderboardByLevel(20, $client_id, $site_id);
 				//echo '<pre>';var_dump($players);echo '</pre>';
 				$params['PLAYERS'] = array();
 				if (is_array($players)) foreach ($players as $i => $player) {
