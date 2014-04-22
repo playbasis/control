@@ -173,6 +173,7 @@ class Engine extends REST_Controller
 			)));
 			if(!$pb_player_id)
 			{
+				log_message('error', '[debug-case-pbapp_auto_user] player_id = '.$this->input->post('player_id').', action = '.$this->input->post('action'));
 				//$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 				//create user with tmp data for this id
 				$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
