@@ -23,6 +23,21 @@ class Goods_model extends MY_Model
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
         if($goods){
             foreach($goods as &$g){
+
+                if(isset($g['redeem']))
+                {
+                    $redeem = array();
+                    if(isset($g['redeem']['badge'])){
+                        foreach($g['redeem']['badge'] as $k => $v){
+                            $redeem_inside = array();
+                            $redeem_inside["badge_id"] = $k;
+                            $redeem_inside["badge_value"] = $v;
+                            $redeem[] = $redeem_inside;
+                        }
+                    }
+                    $g['redeem']['badge'] = $redeem;
+                }
+
                 $g['goods_id'] = $g['goods_id']."";
                 $g['date_start'] = $g['date_start'] ? datetimeMongotoReadable($g['date_start']) : null;
                 $g['date_expire'] = $g['date_expire'] ? datetimeMongotoReadable($g['date_expire']) : null;
@@ -45,6 +60,19 @@ class Goods_model extends MY_Model
         ));
         $result = $this->mongo_db->get('playbasis_goods_to_client');
 
+        if(isset($result[0]['redeem']))
+        {
+            $redeem = array();
+            if(isset($result[0]['redeem']['badge'])){
+                foreach($result[0]['redeem']['badge'] as $k => $v){
+                    $redeem_inside = array();
+                    $redeem_inside["badge_id"] = $k;
+                    $redeem_inside["badge_value"] = $v;
+                    $redeem[] = $redeem_inside;
+                }
+            }
+            $result[0]['redeem']['badge'] = $redeem;
+        }
         if(isset($result[0]['goods_id']))
         {
             $result[0]['goods_id'] = $result[0]['goods_id']."";
