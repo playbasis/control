@@ -29,6 +29,7 @@ var options = {
 
 //special parser for the activity feed
 function feedParser(req, res, next){
+    console.log('feedParser!');
 	if(req.originalUrl.substr(0, METHOD_PUBLISH_FEED.length).toLowerCase() != METHOD_PUBLISH_FEED)
 		return next();
 	var data = '';
@@ -172,7 +173,7 @@ function verifyChannel(channel, callback)
             return;
         }
         console.log(channel);
-        console.log(data);
+        //console.log(data);
         if(data && data.domain_name){
             console.log('domain valid: ' + data.domain_name);
             callback(null, channel);
@@ -212,6 +213,7 @@ var auth = express.basicAuth(function(user, pass){
 
 //publish event through post request
 app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	if(req.body)
 		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);

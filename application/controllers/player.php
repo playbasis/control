@@ -348,7 +348,7 @@ class Player extends REST_Controller
 		if($required)
 			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		$required = $this->input->checkParam(array(
-			'image',
+//			'image',
 			'email',
 			'username'
 		));
@@ -367,7 +367,7 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
 		$playerInfo = array(
 			'email' => $this->input->post('email'),
-			'image' => $this->input->post('image'),
+			'image' => $this->input->post('image') ? $this->input->post('image') : "https://www.pbapp.net/images/default_profile.jpg",
 			'username' => $this->input->post('username'),
 			'player_id' => $player_id
 		);
