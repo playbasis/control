@@ -26,16 +26,26 @@ class Goods_model extends MY_Model
 
                 if(isset($g['redeem']))
                 {
-                    $redeem = array();
                     if(isset($g['redeem']['badge'])){
+                        $redeem = array();
                         foreach($g['redeem']['badge'] as $k => $v){
                             $redeem_inside = array();
                             $redeem_inside["badge_id"] = $k;
                             $redeem_inside["badge_value"] = $v;
                             $redeem[] = $redeem_inside;
                         }
+                        $g['redeem']['badge'] = $redeem;
                     }
-                    $g['redeem']['badge'] = $redeem;
+                    if(isset($g['redeem']['custom'])){
+                        $redeem = array();
+                        foreach($g['redeem']['custom'] as $k => $v){
+                            $redeem_inside = array();
+                            $redeem_inside["custom_id"] = $k;
+                            $redeem_inside["custom_value"] = $v;
+                            $redeem[] = $redeem_inside;
+                        }
+                        $g['redeem']['custom'] = $redeem;
+                    }
                 }
 
                 $g['goods_id'] = $g['goods_id']."";
@@ -62,16 +72,27 @@ class Goods_model extends MY_Model
 
         if(isset($result[0]['redeem']))
         {
-            $redeem = array();
+
             if(isset($result[0]['redeem']['badge'])){
+                $redeem = array();
                 foreach($result[0]['redeem']['badge'] as $k => $v){
                     $redeem_inside = array();
                     $redeem_inside["badge_id"] = $k;
                     $redeem_inside["badge_value"] = $v;
                     $redeem[] = $redeem_inside;
                 }
+                $result[0]['redeem']['badge'] = $redeem;
             }
-            $result[0]['redeem']['badge'] = $redeem;
+            if(isset($result[0]['redeem']['custom'])){
+                $redeem = array();
+                foreach($result[0]['redeem']['custom'] as $k => $v){
+                    $redeem_inside = array();
+                    $redeem_inside["custom_id"] = $k;
+                    $redeem_inside["custom_value"] = $v;
+                    $redeem[] = $redeem_inside;
+                }
+                $result[0]['redeem']['custom'] = $redeem;
+            }
         }
         if(isset($result[0]['goods_id']))
         {
