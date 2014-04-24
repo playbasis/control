@@ -71,7 +71,7 @@ class Playbasis extends CI_Controller
 		echo "<pre>from2 = $from2, from = $from, to = $to</pre>";
 		foreach ($this->client_model->listClients() as $c) {
 			$client_id = $c['_id'];
-			$client_name = $c['first_name'].' '.$c['last_name'];
+			$client_name = $c['first_name'];
 			$client_company = $c['company'];
 			$client_email = $c['email'];
 
@@ -92,7 +92,7 @@ class Playbasis extends CI_Controller
 				$params = array(
 					'STATIC_IMAGE_URL' => STATIC_IMAGE_URL,
 					'DYNAMIC_IMAGE_URL' => DYNAMIC_IMAGE_URL,
-					'CLIENT_NAME' => $client_company,
+					'CLIENT_NAME' => $client_name,
 					'SITE_NAME' => $site_name,
 					'FROM' => date('d M Y', strtotime('+1 day', strtotime($from))),
 					'TO' => date('d M Y', strtotime($to)),
@@ -275,7 +275,7 @@ class Playbasis extends CI_Controller
 				// html
 				$this->load->library('parser');
 				$message = $this->parser->parse('report.html', $params, true);
-				$dir = "report/$client_company/$site_name/";
+				$dir = "report/$client_name/$site_name/";
 				mkdir($dir, 0755, true);
 				file_put_contents("$dir/$to.html", $message);
 
