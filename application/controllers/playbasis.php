@@ -275,7 +275,9 @@ class Playbasis extends CI_Controller
 				// html
 				$this->load->library('parser');
 				$message = $this->parser->parse('report.html', $params, true);
-				file_put_contents('weekly-report_'.$client_id.'-'.$site_id.'.html', $message);
+				$dir = "report/$client_company/$site_name/";
+				mkdir($dir, 0755, true);
+				file_put_contents("$dir/$to.html", $message);
 
 				// email
 				$subject = "[Playbasis] Weekly Report for $site_name";
