@@ -273,11 +273,13 @@ class Playbasis extends CI_Controller
 				usort($params['FEEDS'], 'cmp3');
 
 				// html
-				$this->load->library('parser');
-				$message = $this->parser->parse('report.html', $params, true);
 				$dir = "report/$client_name/$site_name/";
-				mkdir($dir, 0755, true);
-				file_put_contents("$dir/$to.html", $message);
+				if (!is_dir($dir)) mkdir($dir, 0755, true);
+				$this->load->library('parser');
+				$params['STATIC_REPORT_URL'] = "http://report.pbapp.net/$client_name/$site_name/$to.html";
+				$message = $this->parser->parse('report.html', $params, true);
+				file_put_contents("$dir/$to.html", str_replace('{CANNOT_VIEW_EMAIL}', '', $message));
+				echo '<pre>';var_dump($params);echo '</pre>';
 
 				// email
 				$subject = "[Playbasis] Weekly Report for $site_name";
@@ -285,7 +287,7 @@ class Playbasis extends CI_Controller
 				//$this->amazon_ses->to($client_email);
 				$this->amazon_ses->to(array('devteam@playbasis.com','tanawat@playbasis.com','notjiam@gmail.com'));
 				$this->amazon_ses->subject($subject);
-				$this->amazon_ses->message($message);
+				$this->amazon_ses->message(str_replace('{CANNOT_VIEW_EMAIL}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['STATIC_REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $message));
 				$resp = $this->amazon_ses->send();
 				echo '<pre>';var_dump($resp);echo '</pre>';
 			}
