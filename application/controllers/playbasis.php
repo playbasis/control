@@ -92,6 +92,16 @@ class Playbasis extends CI_Controller
 		$params['FILE'] = "$to.html";
 		$params['REPORT_URL'] = "http://report.pbapp.net/".$params['DIR']."/".$params['FILE'];
 
+		// total users
+		$curr = $this->player_model->new_registration($data, null, $to); //echo '<pre>';echo 'total regis1 = '; var_dump($curr);echo '</pre>';
+		$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
+		$params['TOTAL_USER'] = $sum_max[0];
+		$prev = $this->player_model->new_registration($data, null, $from); //echo '<pre>';echo 'total regis2 = '; var_dump($prev);echo '</pre>';
+		$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
+		$params['TOTAL_USER_PREV'] = $sum_max[0];
+		$params['TOTAL_USER_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['TOTAL_USER'] ? 'up' : 'down').'.gif">' : ($params['TOTAL_USER'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$params['TOTAL_USER_PERCENT'] = ($sum_max[0] != 0 || $params['TOTAL_USER'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['TOTAL_USER'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['TOTAL_USER'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
+
 		// new users
 		$curr = $this->player_model->new_registration($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'new regis1 = '; var_dump($curr);echo '</pre>';
 		$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
@@ -100,6 +110,7 @@ class Playbasis extends CI_Controller
 		$params['NEW_USER_TOTAL'] = $sum_max[0];
 		$prev = $this->player_model->new_registration($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'new regis2 = '; var_dump($prev);echo '</pre>';
 		$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
+		$params['NEW_USER_TOTAL_PREV'] = $sum_max[0];
 		$params['NEW_USER_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['NEW_USER_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
 		$params['NEW_USER_PERCENT'] = ($sum_max[0] != 0 || $params['NEW_USER_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['NEW_USER_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
 		$params['NEW_USER_AVERAGE'] = number_format($params['NEW_USER_TOTAL']/7.0, 2);
@@ -113,6 +124,7 @@ class Playbasis extends CI_Controller
 		$params['DAU_TOTAL'] = $sum_max[0];
 		$prev = $this->player_model->daily_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'DAU2 = ';var_dump($prev);echo '</pre>';
 		$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
+		$params['DAU_TOTAL_PREV'] = $sum_max[0];
 		$params['DAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['DAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['DAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
 		$params['DAU_PERCENT'] = ($sum_max[0] != 0 || $params['DAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['DAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['DAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
 		$params['DAU_AVERAGE'] = number_format($params['DAU_TOTAL']/7.0, 2);
@@ -126,6 +138,7 @@ class Playbasis extends CI_Controller
 		$params['MAU_TOTAL'] = $sum_max[0];
 		$prev = $this->player_model->monthy_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'MAU2 = ';var_dump($prev);echo '</pre>';
 		$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
+		$params['MAU_TOTAL_PREV'] = $sum_max[0];
 		$params['MAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['MAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['MAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
 		$params['MAU_PERCENT'] = ($sum_max[0] != 0 || $params['MAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['MAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['MAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
 		$params['MAU_AVERAGE'] = number_format($params['MAU_TOTAL']/7.0, 2);
@@ -151,13 +164,14 @@ class Playbasis extends CI_Controller
 		$params['ACTIONS'] = array();
 		if (is_array($result)) foreach ($result as $i => $action) {
 			$params['ACTIONS'][] = array(
-				'ACTION_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
-				'ACTION_IMAGE' => str_replace('-alt', '', $action[0]['icon']),
-				'ACTION_NAME' => $action[0]['name'],
-				'ACTION_TOTAL' => $action[1],
-				'ACTION_UPDOWN' => ($action[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($action[2] <= $action[1] ? 'up' : 'down').'.gif">' : ($action[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
-				'ACTION_PERCENT' => ($action[2] != 0 || $action[1] != 0 ? '<strong style="font-size:12px;color:'.($action[2] <= $action[1] ? '#95cc00' : 'red').'">'.number_format(($action[2] != 0 ? ($action[1] - $action[2])/(1.0*$action[2]) : 1)*100, 2).'%</strong>' : ''),
-				'ACTION_AVERAGE' => number_format($action[1]/7.0, 2),
+				'BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'IMAGE' => str_replace('-alt', '', $action[0]['icon']),
+				'NAME' => $action[0]['name'],
+				'TOTAL' => $action[1],
+				'TOTAL_PREV' => $action[2],
+				'UPDOWN' => ($action[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($action[2] <= $action[1] ? 'up' : 'down').'.gif">' : ($action[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+				'PERCENT' => ($action[2] != 0 || $action[1] != 0 ? '<strong style="font-size:12px;color:'.($action[2] <= $action[1] ? '#95cc00' : 'red').'">'.number_format(($action[2] != 0 ? ($action[1] - $action[2])/(1.0*$action[2]) : 1)*100, 2).'%</strong>' : ''),
+				'AVERAGE' => number_format($action[1]/7.0, 2),
 			);
 			//if ($i == 4) break;
 		}
@@ -183,13 +197,14 @@ class Playbasis extends CI_Controller
 		$params['BADGES'] = array();
 		if (is_array($result)) foreach ($result as $i => $badge) {
 			$params['BADGES'][] = array(
-				'BADGE_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
-				'BADGE_IMAGE_SRC' => $badge[0]['image'],
-				'BADGE_NAME' => $badge[0]['name'],
-				'BADGE_TOTAL' => $badge[1],
-				'BADGE_UPDOWN' => ($badge[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($badge[2] <= $badge[1] ? 'up' : 'down').'.gif">' : ($badge[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
-				'BADGE_PERCENT' => ($badge[2] != 0 || $badge[1] != 0 ? '<strong style="font-size:12px;color:'.($badge[2] <= $badge[1] ? '#95cc00' : 'red').'">'.number_format(($badge[2] != 0 ? ($badge[1] - $badge[2])/(1.0*$badge[2]) : 1)*100, 2).'%</strong>' : ''),
-				'BADGE_AVERAGE' => number_format($badge[1]/7.0, 2),
+				'BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'IMAGE_SRC' => $badge[0]['image'],
+				'NAME' => $badge[0]['name'],
+				'TOTAL' => $badge[1],
+				'TOTAL_PREV' => $badge[2],
+				'UPDOWN' => ($badge[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($badge[2] <= $badge[1] ? 'up' : 'down').'.gif">' : ($badge[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+				'PERCENT' => ($badge[2] != 0 || $badge[1] != 0 ? '<strong style="font-size:12px;color:'.($badge[2] <= $badge[1] ? '#95cc00' : 'red').'">'.number_format(($badge[2] != 0 ? ($badge[1] - $badge[2])/(1.0*$badge[2]) : 1)*100, 2).'%</strong>' : ''),
+				'AVERAGE' => number_format($badge[1]/7.0, 2),
 			);
 			//if ($i == 4) break;
 		}
@@ -218,18 +233,19 @@ class Playbasis extends CI_Controller
 			$prev = $this->goods_model->redeemLogCount($data, $goods_id, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo $prev;echo '</pre>';
 
 			$params['ITEMS'][] = array(
-				'ITEM_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
-				'ITEM_IMAGE_SRC' => url_exist($goods_image) ? DYNAMIC_IMAGE_URL.'/images/'.$goods_image : STATIC_IMAGE_URL.'/images/no_image.jpg',
-				'ITEM_NAME' => $goods_name,
-				'ITEM_START_DATE' => ($goods_start_date ? date('d M Y', $goods_start_date->sec) : "Not Set"),
-				'ITEM_EXPIRATION_DATE' => ($goods_expiration_date ? date('d M Y', $goods_expiration_date->sec) : "Not Set"),
-				'ITEM_TOTAL' => $curr,
-				'ITEM_UPDOWN' => ($prev != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($prev <= $curr ? 'up' : 'down').'.gif">' : ($curr != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
-				'ITEM_PERCENT' => ($prev != 0 || $curr != 0 ? '<strong style="font-size:12px;color:'.($prev <= $curr ? '#95cc00' : 'red').'">'.number_format(($prev != 0 ? ($curr - $prev)/(1.0*$prev) : 1)*100, 2).'%</strong>' : ''),
-				'ITEM_PEOPLE_CAN_REDEEM' => $goods_players_can_redeem,
-				'ITEM_QTY_REDEEMED' => $goods_qty_redeemed,
-				'ITEM_QTY_TOTAL' => ($goods_qty != null || $goods_qty === 0 ? $goods_qty : 'Inf.'),
-				'ITEM_QTY_REMAIN' => $goods_qty_remain,
+				'BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'IMAGE_SRC' => url_exist($goods_image) ? DYNAMIC_IMAGE_URL.'/images/'.$goods_image : STATIC_IMAGE_URL.'/images/no_image.jpg',
+				'NAME' => $goods_name,
+				'START_DATE' => ($goods_start_date ? date('d M Y', $goods_start_date->sec) : "Not Set"),
+				'EXPIRATION_DATE' => ($goods_expiration_date ? date('d M Y', $goods_expiration_date->sec) : "Not Set"),
+				'TOTAL' => $curr,
+				'TOTAL_PREV' => $prev,
+				'UPDOWN' => ($prev != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($prev <= $curr ? 'up' : 'down').'.gif">' : ($curr != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+				'PERCENT' => ($prev != 0 || $curr != 0 ? '<strong style="font-size:12px;color:'.($prev <= $curr ? '#95cc00' : 'red').'">'.number_format(($prev != 0 ? ($curr - $prev)/(1.0*$prev) : 1)*100, 2).'%</strong>' : ''),
+				'PEOPLE_CAN_REDEEM' => $goods_players_can_redeem,
+				'QTY_REDEEMED' => $goods_qty_redeemed,
+				'QTY_TOTAL' => ($goods_qty != null || $goods_qty === 0 ? $goods_qty : 'Inf.'),
+				'QTY_REMAIN' => $goods_qty_remain,
 			);
 		}
 		usort($params['ITEMS'], 'cmp4');
@@ -268,6 +284,97 @@ class Playbasis extends CI_Controller
 
 		return $params;
 	}
+	private function get_sum_curr_prev($arr) {
+		$curr = 0;
+		$prev = 0;
+		if (is_array($arr)) foreach ($arr as $each) {
+			$curr += $each['TOTAL'];
+			$prev += $each['TOTAL_PREV'];
+		}
+		return array($curr, $prev);
+	}
+	private function initData($from, $to) {
+		$params = array(
+			'STATIC_IMAGE_URL' => STATIC_IMAGE_URL,
+			'DYNAMIC_IMAGE_URL' => DYNAMIC_IMAGE_URL,
+			'FROM' => date('d M Y', strtotime('+1 day', strtotime($from))),
+			'TO' => date('d M Y', strtotime($to)),
+			'GLOBAL_TOTAL_USER' => 0,
+			'GLOBAL_TOTAL_USER_PREV' => 0,
+			'GLOBAL_NEW_USER_TOTAL' => 0,
+			'GLOBAL_NEW_USER_TOTAL_PREV' => 0,
+			'GLOBAL_DAU_TOTAL' => 0,
+			'GLOBAL_DAU_TOTAL_PREV' => 0,
+			'GLOBAL_MAU_TOTAL' => 0,
+			'GLOBAL_MAU_TOTAL_PREV' => 0,
+			'CLIENTS' => array(),
+		);
+		$params['DIR'] = 'master';
+		$params['FILE'] = "$to.html";
+		$params['REPORT_URL'] = "http://report.pbapp.net/".$params['DIR']."/".$params['FILE'];
+		return $params;
+	}
+	private function incrementData(&$master, $params) {
+		$master['GLOBAL_TOTAL_USER'] += $params['TOTAL_USER'];
+		$master['GLOBAL_TOTAL_USER_PREV'] += $params['TOTAL_USER_PREV'];
+		$master['GLOBAL_NEW_USER_TOTAL'] += $params['NEW_USER_TOTAL'];
+		$master['GLOBAL_NEW_USER_TOTAL_PREV'] += $params['NEW_USER_TOTAL_PREV'];
+		$master['GLOBAL_DAU_TOTAL'] += $params['DAU_TOTAL'];
+		$master['GLOBAL_DAU_TOTAL_PREV'] += $params['DAU_TOTAL_PREV'];
+		$master['GLOBAL_MAU_TOTAL'] += $params['MAU_TOTAL'];
+		$master['GLOBAL_MAU_TOTAL_PREV'] += $params['MAU_TOTAL_PREV'];
+		$actions = $this->get_sum_curr_prev($params['ACTIONS']);
+		$badges = $this->get_sum_curr_prev($params['BADGES']);
+		$items = $this->get_sum_curr_prev($params['ITEMS']);
+		array_push($master['CLIENTS'], array(
+			'CLIENT_ID' => $params['CLIENT_ID'],
+			'CLIENT_NAME' => $params['CLIENT_NAME'],
+			'CLIENT_EMAIL' => $params['CLIENT_EMAIL'],
+			'SITE_ID' => $params['SITE_ID'],
+			'SITE_NAME' => $params['SITE_NAME'],
+			'TOTAL_USER' => $params['TOTAL_USER'],
+			'TOTAL_USER_PREV' => $params['TOTAL_USER_PREV'],
+			'TOTAL_USER_UPDOWN' => ($params['TOTAL_USER_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($params['TOTAL_USER_PREV'] <= $params['TOTAL_USER'] ? 'up' : 'down').'-black.gif">' : ($params['TOTAL_USER'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			'TOTAL_USER_PERCENT' => ($params['TOTAL_USER_PREV'] != 0 || $params['TOTAL_USER'] != 0 ? '<strong style="font-size:12px;color:'.($params['TOTAL_USER_PREV'] <= $params['TOTAL_USER'] ? '#95cc00' : 'red').'">'.number_format(($params['TOTAL_USER_PREV'] != 0 ? ($params['TOTAL_USER'] - $params['TOTAL_USER_PREV'])/(1.0*$params['TOTAL_USER_PREV']) : 1)*100, 2).'%</strong>' : ''),
+			'NEW_USER_TOTAL' => $params['NEW_USER_TOTAL'],
+			'NEW_USER_TOTAL_PREV' => $params['NEW_USER_TOTAL_PREV'],
+			'NEW_USER_TOTAL_UPDOWN' => ($params['NEW_USER_TOTAL_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($params['NEW_USER_TOTAL_PREV'] <= $params['NEW_USER_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['NEW_USER_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			'NEW_USER_TOTAL_PERCENT' => ($params['NEW_USER_TOTAL_PREV'] != 0 || $params['NEW_USER_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($params['NEW_USER_TOTAL_PREV'] <= $params['NEW_USER_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($params['NEW_USER_TOTAL_PREV'] != 0 ? ($params['NEW_USER_TOTAL'] - $params['NEW_USER_TOTAL_PREV'])/(1.0*$params['NEW_USER_TOTAL_PREV']) : 1)*100, 2).'%</strong>' : ''),
+			'DAU_TOTAL' => $params['DAU_TOTAL'],
+			'DAU_TOTAL_PREV' => $params['DAU_TOTAL_PREV'],
+			'DAU_TOTAL_UPDOWN' => ($params['DAU_TOTAL_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($params['DAU_TOTAL_PREV'] <= $params['DAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['DAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			'DAU_TOTAL_PERCENT' => ($params['DAU_TOTAL_PREV'] != 0 || $params['DAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($params['DAU_TOTAL_PREV'] <= $params['DAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($params['DAU_TOTAL_PREV'] != 0 ? ($params['DAU_TOTAL'] - $params['DAU_TOTAL_PREV'])/(1.0*$params['DAU_TOTAL_PREV']) : 1)*100, 2).'%</strong>' : ''),
+			'MAU_TOTAL' => $params['MAU_TOTAL'],
+			'MAU_TOTAL_PREV' => $params['MAU_TOTAL_PREV'],
+			'MAU_TOTAL_UPDOWN' => ($params['MAU_TOTAL_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($params['MAU_TOTAL_PREV'] <= $params['MAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['MAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			'MAU_TOTAL_PERCENT' => ($params['MAU_TOTAL_PREV'] != 0 || $params['MAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($params['MAU_TOTAL_PREV'] <= $params['MAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($params['MAU_TOTAL_PREV'] != 0 ? ($params['MAU_TOTAL'] - $params['MAU_TOTAL_PREV'])/(1.0*$params['MAU_TOTAL_PREV']) : 1)*100, 2).'%</strong>' : ''),
+			'ACTIONS_TOTAL' => $actions[0],
+			'ACTIONS_TOTAL_PREV' => $actions[1],
+			'ACTIONS_TOTAL_UPDOWN' => ($actions[1] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($actions[1] <= $actions[0] ? 'up' : 'down').'.gif">' : ($actions[0] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			'ACTIONS_TOTAL_PERCENT' => ($actions[1] != 0 || $actions[0] != 0 ? '<strong style="font-size:12px;color:'.($actions[1] <= $actions[0] ? '#95cc00' : 'red').'">'.number_format(($actions[1] != 0 ? ($actions[0] - $actions[1])/(1.0*$actions[1]) : 1)*100, 2).'%</strong>' : ''),
+			'BADGES_TOTAL' => $badges[0],
+			'BADGES_TOTAL_PREV' => $badges[1],
+			'BADGES_TOTAL_UPDOWN' => ($badges[1] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($badges[1] <= $badges[0] ? 'up' : 'down').'.gif">' : ($badges[0] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			'BADGES_TOTAL_PERCENT' => ($badges[1] != 0 || $badges[0] != 0 ? '<strong style="font-size:12px;color:'.($badges[1] <= $badges[0] ? '#95cc00' : 'red').'">'.number_format(($badges[1] != 0 ? ($badges[0] - $badges[1])/(1.0*$badges[1]) : 1)*100, 2).'%</strong>' : ''),
+			'ITEMS_TOTAL' => $items[0],
+			'ITEMS_TOTAL_PREV' => $items[1],
+			'ITEMS_TOTAL_UPDOWN' => ($items[1] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($items[1] <= $items[0] ? 'up' : 'down').'.gif">' : ($items[0] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			'ITEMS_TOTAL_PERCENT' => ($items[1] != 0 || $items[0] != 0 ? '<strong style="font-size:12px;color:'.($items[1] <= $items[0] ? '#95cc00' : 'red').'">'.number_format(($items[1] != 0 ? ($items[0] - $items[1])/(1.0*$items[1]) : 1)*100, 2).'%</strong>' : ''),
+		));
+	}
+	private function finalizeData(&$master) {
+		$master['GLOBAL_TOTAL_USER_UPDOWN'] = ($master['GLOBAL_TOTAL_USER_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($master['GLOBAL_TOTAL_USER_PREV'] <= $master['GLOBAL_TOTAL_USER'] ? 'up' : 'down').'.gif">' : ($master['TOTAL_USER'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$master['GLOBAL_TOTAL_USER_PERCENT'] = ($master['GLOBAL_TOTAL_USER_PREV'] != 0 || $master['GLOBAL_TOTAL_USER'] != 0 ? '<strong style="font-size:12px;color:'.($master['GLOBAL_TOTAL_USER_PREV'] <= $master['GLOBAL_TOTAL_USER'] ? '#95cc00' : 'red').'">'.number_format(($master['GLOBAL_TOTAL_USER_PREV'] != 0 ? ($master['GLOBAL_TOTAL_USER'] - $master['GLOBAL_TOTAL_USER_PREV'])/(1.0*$master['GLOBAL_TOTAL_USER_PREV']) : 1)*100, 2).'%</strong>' : '');
+		$master['GLOBAL_NEW_USER_TOTAL_AVERAGE'] = number_format($master['GLOBAL_NEW_USER_TOTAL']/7.0, 2);
+		$master['GLOBAL_NEW_USER_TOTAL_UPDOWN'] = ($master['GLOBAL_NEW_USER_TOTAL_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($master['GLOBAL_NEW_USER_TOTAL_PREV'] <= $master['GLOBAL_NEW_USER_TOTAL'] ? 'up' : 'down').'.gif">' : ($master['GLOBAL_NEW_USER_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$master['GLOBAL_NEW_USER_TOTAL_PERCENT'] = ($master['GLOBAL_NEW_USER_TOTAL_PREV'] != 0 || $master['GLOBAL_NEW_USER_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($master['GLOBAL_NEW_USER_TOTAL_PREV'] <= $master['GLOBAL_NEW_USER_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($master['GLOBAL_NEW_USER_TOTAL_PREV'] != 0 ? ($master['GLOBAL_NEW_USER_TOTAL'] - $master['GLOBAL_NEW_USER_TOTAL_PREV'])/(1.0*$master['GLOBAL_NEW_USER_TOTAL_PREV']) : 1)*100, 2).'%</strong>' : '');
+		$master['GLOBAL_DAU_TOTAL_AVERAGE'] = number_format($master['GLOBAL_DAU_TOTAL']/7.0, 2);
+		$master['GLOBAL_DAU_TOTAL_UPDOWN'] = ($master['GLOBAL_DAU_TOTAL_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($master['GLOBAL_DAU_TOTAL_PREV'] <= $master['GLOBAL_DAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($master['GLOBAL_DAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$master['GLOBAL_DAU_TOTAL_PERCENT'] = ($master['GLOBAL_DAU_TOTAL_PREV'] != 0 || $master['GLOBAL_DAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($master['GLOBAL_DAU_TOTAL_PREV'] <= $master['GLOBAL_DAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($master['DAU_TOTAL_PREV'] != 0 ? ($master['GLOBAL_DAU_TOTAL'] - $master['GLOBAL_DAU_TOTAL_PREV'])/(1.0*$master['GLOBAL_DAU_TOTAL_PREV']) : 1)*100, 2).'%</strong>' : '');
+		$master['GLOBAL_MAU_TOTAL_AVERAGE'] = number_format($master['GLOBAL_MAU_TOTAL']/7.0, 2);
+		$master['GLOBAL_MAU_TOTAL_UPDOWN'] = ($master['GLOBAL_MAU_TOTAL_PREV'] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($master['GLOBAL_MAU_TOTAL_PREV'] <= $master['GLOBAL_MAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($master['GLOBAL_MAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$master['GLOBAL_MAU_TOTAL_PERCENT'] = ($master['GLOBAL_MAU_TOTAL_PREV'] != 0 || $master['GLOBAL_MAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($master['GLOBAL_MAU_TOTAL_PREV'] <= $master['GLOBAL_MAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($master['MAU_TOTAL_PREV'] != 0 ? ($master['GLOBAL_MAU_TOTAL'] - $master['GLOBAL_MAU_TOTAL_PREV'])/(1.0*$master['GLOBAL_MAU_TOTAL_PREV']) : 1)*100, 2).'%</strong>' : '');
+	}
 	public function report($ref = null)
 	{
 		/* init */
@@ -282,7 +389,7 @@ class Playbasis extends CI_Controller
 		echo "<pre>from2 = $from2, from = $from, to = $to</pre>";
 
 		/* query and process data */
-		$master = array();
+		$master = $this->initData($from, $to);
 		foreach ($this->client_model->listClients() as $c) {
 			$client_id = $c['_id']; //echo '<pre>';var_dump($c);echo '</pre>';
 
@@ -296,18 +403,32 @@ class Playbasis extends CI_Controller
 				$params = $this->getData(array('client_id' => $client_id, 'site_id' => $site_id), $c, $s, $to, $from, $from2); echo '<pre>';var_dump($params);echo '</pre>';
 				$html = $this->parser->parse('report.html', $params, true); //echo '<pre>';var_dump($html);echo '</pre>';
 				$this->saveFile('report/'.$params['DIR'], $params['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
+				$this->incrementData($master, $params);
 
 				if (in_array($client_id, array(new MongoId('52ea1efe8d8c896421000064')))) continue;
-
+continue;
 				/* email */
 				$email_from = 'info@playbasis.com';
 				//$email_to = $params['CLIENT_EMAIL'];
 				$email_to = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
+$email_to = array('pechpras@playbasis.com');
 				$subject = "[Playbasis] Weekly Report for ".$params['SITE_NAME'];
 				$message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
 				$resp = $this->email($email_from, $email_to, $subject, $message); echo '<pre>';var_dump($resp);echo '</pre>';
 			}
 		}
+		$this->finalizeData($master);
+		$html = $this->parser->parse('report_master.html', $master, true); //echo '<pre>';var_dump($html);echo '</pre>';
+		$this->saveFile('report/'.$master['DIR'], $master['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
+		echo '<pre>';var_dump($master);echo '</pre>';
+return;
+		/* email */
+		$email_from = 'info@playbasis.com';
+		$email_to = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
+		$email_to = array('pechpras@playbasis.com');
+		$subject = "[Playbasis] Weekly Master Report";
+		$message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$master['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
+		$resp = $this->email($email_from, $email_to, $subject, $message); echo '<pre>';var_dump($resp);echo '</pre>';
 	}
 	/*
     public function memtest()

@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=320, target-densitydpi=device-dpi">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=320, target-densitydpi=device-dpi">
 		<title></title>
 		<style type="text/css">
 		</style>
@@ -229,9 +230,9 @@
                                                 <td>
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         {ACTIONS}
-                                                        <tr {ACTION_BG_COLOR}>
-                                                        <td width="70" height="75" align="center"><img src="{STATIC_IMAGE_URL}/images/{ACTION_IMAGE}.gif" width="40"></td>
-                                                        <td width="130">{ACTION_NAME}</td>
+                                                        <tr {BG_COLOR}>
+                                                        <td width="70" height="75" align="center"><img src="{STATIC_IMAGE_URL}/images/{IMAGE}.gif" width="40"></td>
+                                                        <td width="130">{NAME}</td>
                                                         <td width="200">
                                                             <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                 <tr style="color:#999999;font-size:11px">
@@ -242,9 +243,9 @@
                                                                     <td>
                                                                         <table cellpadding="3" cellspacing="0" border="0">
                                                                             <tr>
-                                                                                <td><strong style="color:#56b9d2;font-size:24px">{ACTION_TOTAL}</strong></td>
+                                                                                <td><strong style="color:#56b9d2;font-size:24px">{TOTAL}</strong></td>
                                                                                 <td align="center" valign="baseline">
-                                                                                    {ACTION_UPDOWN}<br>{ACTION_PERCENT}
+                                                                                    {UPDOWN}<br>{PERCENT}
                                                                                 </td>
                                                                             </tr>
                                                                         </table>
@@ -252,7 +253,7 @@
                                                                     <td>
                                                                         <table cellpadding="3" cellspacing="0" border="0">
                                                                             <tr>
-                                                                                <td><strong style="color:#999999;font-size:24px">{ACTION_AVERAGE}</strong></td>
+                                                                                <td><strong style="color:#999999;font-size:24px">{AVERAGE}</strong></td>
                                                                                 <td align="center" valign="baseline">
                                                                                 </td>
                                                                             </tr>
@@ -282,9 +283,9 @@
                                                 <td>
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         {BADGES}
-                                                        <tr {BADGE_BG_COLOR}>
-                                                        <td width="70" height="75" align="center"><img src="{BADGE_IMAGE_SRC}" width="50"></td>
-                                                        <td width="130">{BADGE_NAME}</td>
+                                                        <tr {BG_COLOR}>
+                                                        <td width="70" height="75" align="center"><img src="{IMAGE_SRC}" width="50"></td>
+                                                        <td width="130">{NAME}</td>
                                                         <td width="200">
                                                             <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                 <tr style="color:#999999;font-size:11px">
@@ -295,9 +296,9 @@
                                                                     <td>
                                                                         <table cellpadding="3" cellspacing="0" border="0">
                                                                             <tr>
-                                                                                <td><strong style="color:#339966;font-size:24px">{BADGE_TOTAL}</strong></td>
+                                                                                <td><strong style="color:#339966;font-size:24px">{TOTAL}</strong></td>
                                                                                 <td align="center" valign="baseline">
-                                                                                    {BADGE_UPDOWN}<br>{BADGE_PERCENT}
+                                                                                    {UPDOWN}<br>{PERCENT}
                                                                                 </td>
                                                                             </tr>
                                                                         </table>
@@ -305,7 +306,7 @@
                                                                     <td>
                                                                         <table cellpadding="3" cellspacing="0" border="0">
                                                                             <tr>
-                                                                                <td><strong style="color:#999999;font-size:24px">{BADGE_AVERAGE}</strong></td>
+                                                                                <td><strong style="color:#999999;font-size:24px">{AVERAGE}</strong></td>
                                                                                 <td align="center" valign="baseline">
                                                                                 </td>
                                                                             </tr>
@@ -336,19 +337,19 @@
                                                 <td>
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         {ITEMS}
-                                                        <tr {ITEM_BG_COLOR}>
+                                                        <tr {BG_COLOR}>
                                                             <td>
                                                                 <table width="100%" cellpadding="5" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td width="33%">
-                                                                            <img src="{ITEM_IMAGE_SRC}" width="100">
+                                                                            <img src="{IMAGE_SRC}" width="100">
                                                                         </td>
                                                                         <td width="66%" colspan="2">
-                                                                            <h3 style="font-size:14px;margin:0;">{ITEM_NAME}</h3>
+                                                                            <h3 style="font-size:14px;margin:0;">{NAME}</h3>
                                                                             <span style="font-size:10px;color:#999999;">Start</span>
-                                                                            <span style="background-color:#0a92d9;border-radius:4px;color:#ffffff;font-size:10px;padding:3px 5px">{ITEM_START_DATE}</span>
+                                                                            <span style="background-color:#0a92d9;border-radius:4px;color:#ffffff;font-size:10px;padding:3px 5px">{START_DATE}</span>
                                                                             <span style="font-size:10px;color:#999999;">Expire</span>
-                                                                            <span style="background-color:#0a92d9;border-radius:4px;color:#ffffff;font-size:10px;padding:3px 5px">{ITEM_EXPIRATION_DATE}</span>
+                                                                            <span style="background-color:#0a92d9;border-radius:4px;color:#ffffff;font-size:10px;padding:3px 5px">{EXPIRATION_DATE}</span>
                                                                         </td>
                                                                     </tr>
                                                                     <tr style="color:#999999;font-size:10px">
@@ -361,19 +362,19 @@
                                                                             <table cellpadding="3" cellspacing="0" border="0">
                                                                                 <tr>
                                                                                     <td>
-                                                                                        <strong style="color:#f7893c;font-size:24px">{ITEM_TOTAL}</strong>
+                                                                                        <strong style="color:#f7893c;font-size:24px">{TOTAL}</strong>
                                                                                     </td>
                                                                                     <td align="center" valign="baseline">
-                                                                                        {ITEM_UPDOWN}<br>{ITEM_PERCENT}
+                                                                                        {UPDOWN}<br>{PERCENT}
                                                                                     </td>
                                                                                 </tr>
                                                                             </table>
                                                                         </td>
                                                                         <td width="33%">
-                                                                            <strong style="color:#999999;font-size:24px">{ITEM_PEOPLE_CAN_REDEEM}</strong>
+                                                                            <strong style="color:#999999;font-size:24px">{PEOPLE_CAN_REDEEM}</strong>
                                                                         </td>
                                                                         <td width="33%">
-                                                                            <strong style="color:#999999;font-size:24px">{ITEM_QTY_REDEEMED} / {ITEM_QTY_TOTAL}</strong>
+                                                                            <strong style="color:#999999;font-size:24px">{QTY_REDEEMED} / {QTY_TOTAL}</strong>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
