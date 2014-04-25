@@ -406,12 +406,11 @@ class Playbasis extends CI_Controller
 				$this->incrementData($master, $params);
 
 				if (in_array($client_id, array(new MongoId('52ea1efe8d8c896421000064')))) continue;
-continue;
+
 				/* email */
 				$email_from = 'info@playbasis.com';
 				//$email_to = $params['CLIENT_EMAIL'];
 				$email_to = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
-$email_to = array('pechpras@playbasis.com');
 				$subject = "[Playbasis] Weekly Report for ".$params['SITE_NAME'];
 				$message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
 				$resp = $this->email($email_from, $email_to, $subject, $message); echo '<pre>';var_dump($resp);echo '</pre>';
@@ -421,7 +420,7 @@ $email_to = array('pechpras@playbasis.com');
 		$html = $this->parser->parse('report_master.html', $master, true); //echo '<pre>';var_dump($html);echo '</pre>';
 		$this->saveFile('report/'.$master['DIR'], $master['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
 		echo '<pre>';var_dump($master);echo '</pre>';
-return;
+
 		/* email */
 		$email_from = 'info@playbasis.com';
 		$email_to = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
