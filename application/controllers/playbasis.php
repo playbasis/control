@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 define('STATIC_IMAGE_URL', 'http://admin.pbapp.net');
 define('DYNAMIC_IMAGE_URL', 'http://images.pbapp.net');
+define('CANNOT_VIEW_EMAIL', 'CANNOT_VIEW_EMAIL');
 
 function get_sum_and_max($arr) {
 	$max = -1;
@@ -62,234 +63,249 @@ class Playbasis extends CI_Controller
 	{
 		$this->load->view('playbasis/login');
 	}
+	private function saveFile($dir, $file, $content, $mode=0755) {
+		if (!is_dir($dir)) {
+			mkdir($dir, $mode, true);
+		}
+		file_put_contents("$dir/$file", $content);
+	}
+	private function email($from, $to, $subject, $message) {
+		$this->amazon_ses->from($from);
+		$this->amazon_ses->to($to);
+		$this->amazon_ses->subject($subject);
+		$this->amazon_ses->message($message);
+		return $this->amazon_ses->send();
+	}
+	private function getData($data, $c, $s, $to, $from, $from2) {
+		$params = array(
+			'STATIC_IMAGE_URL' => STATIC_IMAGE_URL,
+			'DYNAMIC_IMAGE_URL' => DYNAMIC_IMAGE_URL,
+			'CLIENT_ID' => $c['_id'],
+			'CLIENT_NAME' => $c['first_name'],
+			'CLIENT_EMAIL' => $c['email'],
+			'SITE_ID' => $s['_id'],
+			'SITE_NAME' => $s['site_name'],
+			'FROM' => date('d M Y', strtotime('+1 day', strtotime($from))),
+			'TO' => date('d M Y', strtotime($to)),
+		);
+		$params['DIR'] = $params['CLIENT_NAME']."/".$params['SITE_NAME'];
+		$params['FILE'] = "$to.html";
+		$params['REPORT_URL'] = "http://report.pbapp.net/".$params['DIR']."/".$params['FILE'];
+
+		// new users
+		$curr = $this->player_model->new_registration($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'new regis1 = '; var_dump($curr);echo '</pre>';
+		$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
+		$best = $sum_max[1];
+		$params['NEW_USER_BEST_DAY'] = ($best != -1 ? date('d M Y', strtotime($curr[$best]['_id'])) : '');
+		$params['NEW_USER_TOTAL'] = $sum_max[0];
+		$prev = $this->player_model->new_registration($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'new regis2 = '; var_dump($prev);echo '</pre>';
+		$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
+		$params['NEW_USER_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['NEW_USER_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$params['NEW_USER_PERCENT'] = ($sum_max[0] != 0 || $params['NEW_USER_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['NEW_USER_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
+		$params['NEW_USER_AVERAGE'] = number_format($params['NEW_USER_TOTAL']/7.0, 2);
+		$params['NEW_USER_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
+
+		// DAU
+		$curr = $this->player_model->daily_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'DAU1 = ';var_dump($curr);echo '</pre>';
+		$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
+		$best = $sum_max[1];
+		$params['DAU_BEST_DAY'] = ($best != -1 ? date('d M Y', strtotime($curr[$best]['_id'])) : '');
+		$params['DAU_TOTAL'] = $sum_max[0];
+		$prev = $this->player_model->daily_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'DAU2 = ';var_dump($prev);echo '</pre>';
+		$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
+		$params['DAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['DAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['DAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$params['DAU_PERCENT'] = ($sum_max[0] != 0 || $params['DAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['DAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['DAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
+		$params['DAU_AVERAGE'] = number_format($params['DAU_TOTAL']/7.0, 2);
+		$params['DAU_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
+
+		// MAU
+		$curr = $this->player_model->monthy_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'MAU1 = ';var_dump($curr);echo '</pre>';
+		$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
+		$best = $sum_max[1];
+		$params['MAU_BEST_DAY'] = ($best != -1 ? date('d M Y', strtotime($curr[$best]['_id'])) : '');
+		$params['MAU_TOTAL'] = $sum_max[0];
+		$prev = $this->player_model->monthy_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'MAU2 = ';var_dump($prev);echo '</pre>';
+		$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
+		$params['MAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['MAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['MAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
+		$params['MAU_PERCENT'] = ($sum_max[0] != 0 || $params['MAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['MAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['MAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
+		$params['MAU_AVERAGE'] = number_format($params['MAU_TOTAL']/7.0, 2);
+		$params['MAU_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
+
+		// action
+		$result = array();
+		$actions = $this->action_model->listActions($data);
+		foreach ($actions as $action) {
+			$action_name = $action['name'];
+			//echo '<pre>';echo $action_name;echo '</pre>';
+
+			$curr = $this->action_model->actionLog($data, $action_name, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';var_dump($curr);echo '</pre>';
+			$sum_max1 = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max1[0].', max = '.print_r($sum_max1[1] != -1 ? $curr[$sum_max1[1]] : "",true);echo '</pre>';
+
+			$prev = $this->action_model->actionLog($data, $action_name, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';var_dump($prev);echo '</pre>';
+			$sum_max2 = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max2[0].', max = '.print_r($sum_max2[1] != -1 ? $prev[$sum_max2[1]] : "",true);echo '</pre>';
+
+			array_push($result, array($action, $sum_max1[0], $sum_max2[0]));
+		}
+		usort($result, 'cmp2');
+		//echo '<pre>';var_dump($result);echo '</pre>';
+		$params['ACTIONS'] = array();
+		if (is_array($result)) foreach ($result as $i => $action) {
+			$params['ACTIONS'][] = array(
+				'ACTION_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'ACTION_IMAGE' => str_replace('-alt', '', $action[0]['icon']),
+				'ACTION_NAME' => $action[0]['name'],
+				'ACTION_TOTAL' => $action[1],
+				'ACTION_UPDOWN' => ($action[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($action[2] <= $action[1] ? 'up' : 'down').'.gif">' : ($action[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+				'ACTION_PERCENT' => ($action[2] != 0 || $action[1] != 0 ? '<strong style="font-size:12px;color:'.($action[2] <= $action[1] ? '#95cc00' : 'red').'">'.number_format(($action[2] != 0 ? ($action[1] - $action[2])/(1.0*$action[2]) : 1)*100, 2).'%</strong>' : ''),
+				'ACTION_AVERAGE' => number_format($action[1]/7.0, 2),
+			);
+			//if ($i == 4) break;
+		}
+
+		// badge
+		$result = array();
+		$badges = $this->badge_model->getAllBadges($data);
+		foreach ($badges as $badge) {
+			$badge_id = $badge['badge_id'];
+			$badge_name = $badge['name'];
+			//echo '<pre>';echo $badge_name.' ('.$badge_id.')';echo '</pre>';
+
+			$curr = $this->reward_model->badgeLog($data, $badge_id, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';var_dump($curr);echo '</pre>';
+			$sum_max1 = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max1[0].', max = '.print_r($sum_max1[1] != -1 ? $curr[$sum_max1[1]] : "",true);echo '</pre>';
+
+			$prev = $this->reward_model->badgeLog($data, $badge_id, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';var_dump($prev);echo '</pre>';
+			$sum_max2 = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max2[0].', max = '.print_r($sum_max2[1] != -1 ? $prev[$sum_max2[1]] : "",true);echo '</pre>';
+
+			array_push($result, array($badge, $sum_max1[0], $sum_max2[0]));
+		}
+		usort($result, 'cmp2');
+		//echo '<pre>';var_dump($result);echo '</pre>';
+		$params['BADGES'] = array();
+		if (is_array($result)) foreach ($result as $i => $badge) {
+			$params['BADGES'][] = array(
+				'BADGE_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'BADGE_IMAGE_SRC' => $badge[0]['image'],
+				'BADGE_NAME' => $badge[0]['name'],
+				'BADGE_TOTAL' => $badge[1],
+				'BADGE_UPDOWN' => ($badge[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($badge[2] <= $badge[1] ? 'up' : 'down').'.gif">' : ($badge[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+				'BADGE_PERCENT' => ($badge[2] != 0 || $badge[1] != 0 ? '<strong style="font-size:12px;color:'.($badge[2] <= $badge[1] ? '#95cc00' : 'red').'">'.number_format(($badge[2] != 0 ? ($badge[1] - $badge[2])/(1.0*$badge[2]) : 1)*100, 2).'%</strong>' : ''),
+				'BADGE_AVERAGE' => number_format($badge[1]/7.0, 2),
+			);
+			//if ($i == 4) break;
+		}
+
+		// active items
+		//$items = $this->goods_model->listActiveItems($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to);
+		$items = array_merge($this->goods_model->listActiveItems($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->goods_model->listExpiredItems($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to));
+		//echo '<pre>';echo 'active items = ';var_dump($items);echo '</pre>';
+		$params['ITEMS'] = array();
+		if (is_array($items)) foreach ($items as $i => $item) {
+			$goods_id = $item['goods_id'];
+			$goods_name = $item['name'];
+			$goods_image = $item['image'];
+			$goods_start_date = $item['date_start'];
+			$goods_expiration_date = $item['date_expire'];
+			$goods_qty = $item['quantity'];
+			$goods_criteria = $item['redeem'];
+			$sum_max = get_sum_and_max($this->goods_model->totalRedemption($data, $goods_id));
+			$goods_qty_redeemed = $sum_max[0];
+			$goods_qty_remain = ($goods_qty != null || $goods_qty === 0 ? $goods_qty - $goods_qty_redeemed : null);
+			$goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($data, $goods_criteria);
+			//echo '<pre>';echo $goods_name.' ('.$goods_id.'), qty = '.$goods_qty.', redeemed = '.$goods_qty_redeemed.', remain = '.$goods_qty_remain.', #players that can redeem this item = '.$goods_players_can_redeem;echo '</pre>';
+
+			$curr = $this->goods_model->redeemLogCount($data, $goods_id, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo $curr;echo '</pre>';
+
+			$prev = $this->goods_model->redeemLogCount($data, $goods_id, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo $prev;echo '</pre>';
+
+			$params['ITEMS'][] = array(
+				'ITEM_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'ITEM_IMAGE_SRC' => url_exist($goods_image) ? DYNAMIC_IMAGE_URL.'/images/'.$goods_image : STATIC_IMAGE_URL.'/images/no_image.jpg',
+				'ITEM_NAME' => $goods_name,
+				'ITEM_START_DATE' => ($goods_start_date ? date('d M Y', $goods_start_date->sec) : "Not Set"),
+				'ITEM_EXPIRATION_DATE' => ($goods_expiration_date ? date('d M Y', $goods_expiration_date->sec) : "Not Set"),
+				'ITEM_TOTAL' => $curr,
+				'ITEM_UPDOWN' => ($prev != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($prev <= $curr ? 'up' : 'down').'.gif">' : ($curr != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+				'ITEM_PERCENT' => ($prev != 0 || $curr != 0 ? '<strong style="font-size:12px;color:'.($prev <= $curr ? '#95cc00' : 'red').'">'.number_format(($prev != 0 ? ($curr - $prev)/(1.0*$prev) : 1)*100, 2).'%</strong>' : ''),
+				'ITEM_PEOPLE_CAN_REDEEM' => $goods_players_can_redeem,
+				'ITEM_QTY_REDEEMED' => $goods_qty_redeemed,
+				'ITEM_QTY_TOTAL' => ($goods_qty != null || $goods_qty === 0 ? $goods_qty : 'Inf.'),
+				'ITEM_QTY_REMAIN' => $goods_qty_remain,
+			);
+		}
+		usort($params['ITEMS'], 'cmp4');
+
+		// rank
+		$players = $this->player_model->getLeaderboardByLevel(20, $c['_id'], $s['_id']);
+		//echo '<pre>';var_dump($players);echo '</pre>';
+		$params['PLAYERS'] = array();
+		if (is_array($players)) foreach ($players as $i => $player) {
+			$params['PLAYERS'][] = array(
+				'PLAYER_ROW' => $i+1,
+				'PLAYER_IMAGE_SRC' => url_exist($player['image']) ? $player['image'] : STATIC_IMAGE_URL.'/images/user_no_image.jpg',
+				'PLAYER_NAME' => $player['first_name'].' '.$player['last_name'],
+				'PLAYER_EXP' => $player['exp'],
+				'PLAYER_LEVEL' => $player['level'],
+			);
+		}
+
+		// Load RSS Parser
+		$this->load->library('rssparser');
+		$params['FEEDS'] = array();
+		$rssparser = $this->rssparser;
+		foreach (array('http://www.gamification.co/feed/', 'http://www.entrepreneur.com/feeds/tags/gamification/1908.rss') as $url) {
+			$feed = $rssparser->set_feed_url($url)->set_cache_life(30)->getFeed(1);
+			if (is_array($feed)) foreach ($feed as $item) {
+				$params['FEEDS'][] = array(
+					'FEED_TITLE' => $item['title'],
+					'FEED_DESCRIPTION' => substr($item['description'], 0, 256),
+					'FEED_AUTHOR' => $item['author'],
+					'FEED_DATE' => date('Y-m-d', strtotime($item['pubDate'])),
+					'FEED_LINK' => $item['link'],
+				);
+			}
+		}
+		usort($params['FEEDS'], 'cmp3');
+
+		return $params;
+	}
 	public function report($ref = null)
 	{
+		/* init */
+		$this->load->library('parser');
+		$allowed_client_ids = array(new MongoId('52ea1eab8d8c89401c0000d9'), new MongoId('52ea1ec18d8c89780700006f'), new MongoId('52ea1efe8d8c896421000064'));
+		$allowed_site_ids = array(new MongoId('52ea1eac8d8c89401c0000e5'), new MongoId('52ea1ec18d8c897807000077'), new MongoId('52ea1eff8d8c89642100006d'));
+
+		/* init, from-to */
 		$to = $ref ? $ref : date('Y-m-d', strtotime('-1 day', time())); // default reference date is yesterday
 		$from = date('Y-m-d', strtotime('-1 week', strtotime($to)));
 		$from2 = date('Y-m-d', strtotime('-1 week', strtotime($from)));
-		$data = array();
 		echo "<pre>from2 = $from2, from = $from, to = $to</pre>";
-		foreach ($this->client_model->listClients() as $c) {
-			$client_id = $c['_id'];
-			$client_name = $c['first_name'];
-			$client_company = $c['company'];
-			$client_email = $c['email'];
 
-			if (!in_array($client_id, array(new MongoId('52ea1eab8d8c89401c0000d9'), new MongoId('52ea1ec18d8c89780700006f')))) continue;
-			$data['client_id'] = $client_id;
+		/* query and process data */
+		$master = array();
+		foreach ($this->client_model->listClients() as $c) {
+			$client_id = $c['_id']; //echo '<pre>';var_dump($c);echo '</pre>';
+
+			if (!in_array($client_id, $allowed_client_ids)) continue;
 
 			foreach ($this->client_model->listSites($client_id) as $s) {
-				$site_id = $s['_id'];
-				$site_name = $s['site_name'];
+				$site_id = $s['_id']; //echo '<pre>';var_dump($s);echo '</pre>';
 
-				if (!in_array($site_id, array(new MongoId('52ea1eac8d8c89401c0000e5'), new MongoId('52ea1ec18d8c897807000077')))) continue;
-				$data['site_id'] = $site_id;
+				if (!in_array($site_id, $allowed_site_ids)) continue;
 
-				echo '<pre>';var_dump($c);echo '</pre>';
-				echo '<pre>';var_dump($s);echo '</pre>';
+				$params = $this->getData(array('client_id' => $client_id, 'site_id' => $site_id), $c, $s, $to, $from, $from2); echo '<pre>';var_dump($params);echo '</pre>';
+				$html = $this->parser->parse('report.html', $params, true); //echo '<pre>';var_dump($html);echo '</pre>';
+				$this->saveFile('report/'.$params['DIR'], $params['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
 
-				// params
-				$params = array(
-					'STATIC_IMAGE_URL' => STATIC_IMAGE_URL,
-					'DYNAMIC_IMAGE_URL' => DYNAMIC_IMAGE_URL,
-					'CLIENT_NAME' => $client_name,
-					'SITE_NAME' => $site_name,
-					'FROM' => date('d M Y', strtotime('+1 day', strtotime($from))),
-					'TO' => date('d M Y', strtotime($to)),
-				);
+				if (in_array($client_id, array(new MongoId('52ea1efe8d8c896421000064')))) continue;
 
-				// new users
-				$curr = $this->player_model->new_registration($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'new regis1 = '; var_dump($curr);echo '</pre>';
-				$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
-				$best = $sum_max[1];
-				$params['NEW_USER_BEST_DAY'] = ($best != -1 ? date('d M Y', strtotime($curr[$best]['_id'])) : '');
-				$params['NEW_USER_TOTAL'] = $sum_max[0];
-				$prev = $this->player_model->new_registration($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'new regis2 = '; var_dump($prev);echo '</pre>';
-				$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
-				$params['NEW_USER_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['NEW_USER_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
-				$params['NEW_USER_PERCENT'] = ($sum_max[0] != 0 || $params['NEW_USER_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['NEW_USER_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['NEW_USER_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
-				$params['NEW_USER_AVERAGE'] = number_format($params['NEW_USER_TOTAL']/7.0, 2);
-				$params['NEW_USER_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
-
-				// DAU
-				$curr = $this->player_model->daily_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'DAU1 = ';var_dump($curr);echo '</pre>';
-				$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
-				$best = $sum_max[1];
-				$params['DAU_BEST_DAY'] = ($best != -1 ? date('d M Y', strtotime($curr[$best]['_id'])) : '');
-				$params['DAU_TOTAL'] = $sum_max[0];
-				$prev = $this->player_model->daily_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'DAU2 = ';var_dump($prev);echo '</pre>';
-				$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
-				$params['DAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['DAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['DAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
-				$params['DAU_PERCENT'] = ($sum_max[0] != 0 || $params['DAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['DAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['DAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
-				$params['DAU_AVERAGE'] = number_format($params['DAU_TOTAL']/7.0, 2);
-				$params['DAU_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
-
-				// MAU
-				$curr = $this->player_model->monthy_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo 'MAU1 = ';var_dump($curr);echo '</pre>';
-				$sum_max = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $curr[$sum_max[1]] : "",true);echo '</pre>';
-				$best = $sum_max[1];
-				$params['MAU_BEST_DAY'] = ($best != -1 ? date('d M Y', strtotime($curr[$best]['_id'])) : '');
-				$params['MAU_TOTAL'] = $sum_max[0];
-				$prev = $this->player_model->monthy_active_user_per_day($data, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo 'MAU2 = ';var_dump($prev);echo '</pre>';
-				$sum_max = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max[0].', max = '.print_r($sum_max[1] != -1 ? $prev[$sum_max[1]] : "",true);echo '</pre>';
-				$params['MAU_UPDOWN'] = ($sum_max[0] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($sum_max[0] <= $params['MAU_TOTAL'] ? 'up' : 'down').'.gif">' : ($params['MAU_TOTAL'] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : ''));
-				$params['MAU_PERCENT'] = ($sum_max[0] != 0 || $params['MAU_TOTAL'] != 0 ? '<strong style="font-size:12px;color:'.($sum_max[0] <= $params['MAU_TOTAL'] ? '#95cc00' : 'red').'">'.number_format(($sum_max[0] != 0 ? ($params['MAU_TOTAL'] - $sum_max[0])/(1.0*$sum_max[0]) : 1)*100, 2).'%</strong>' : '');
-				$params['MAU_AVERAGE'] = number_format($params['MAU_TOTAL']/7.0, 2);
-				$params['MAU_BEST_VALUE'] = $best != -1 ? $curr[$best]['value'] : 0;
-
-				// action
-				$result = array();
-				$actions = $this->action_model->listActions($data);
-				foreach ($actions as $action) {
-					$action_name = $action['name'];
-					//echo '<pre>';echo $action_name;echo '</pre>';
-
-					$curr = $this->action_model->actionLog($data, $action_name, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';var_dump($curr);echo '</pre>';
-					$sum_max1 = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max1[0].', max = '.print_r($sum_max1[1] != -1 ? $curr[$sum_max1[1]] : "",true);echo '</pre>';
-
-					$prev = $this->action_model->actionLog($data, $action_name, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';var_dump($prev);echo '</pre>';
-					$sum_max2 = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max2[0].', max = '.print_r($sum_max2[1] != -1 ? $prev[$sum_max2[1]] : "",true);echo '</pre>';
-
-					array_push($result, array($action, $sum_max1[0], $sum_max2[0]));
-				}
-				usort($result, 'cmp2');
-				//echo '<pre>';var_dump($result);echo '</pre>';
-				$params['ACTIONS'] = array();
-				if (is_array($result)) foreach ($result as $i => $action) {
-					$params['ACTIONS'][] = array(
-						'ACTION_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
-						'ACTION_IMAGE' => str_replace('-alt', '', $action[0]['icon']),
-						'ACTION_NAME' => $action[0]['name'],
-						'ACTION_TOTAL' => $action[1],
-						'ACTION_UPDOWN' => ($action[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($action[2] <= $action[1] ? 'up' : 'down').'.gif">' : ($action[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
-						'ACTION_PERCENT' => ($action[2] != 0 || $action[1] != 0 ? '<strong style="font-size:12px;color:'.($action[2] <= $action[1] ? '#95cc00' : 'red').'">'.number_format(($action[2] != 0 ? ($action[1] - $action[2])/(1.0*$action[2]) : 1)*100, 2).'%</strong>' : ''),
-						'ACTION_AVERAGE' => number_format($action[1]/7.0, 2),
-					);
-					//if ($i == 4) break;
-				}
-
-				// badge
-				$result = array();
-				$badges = $this->badge_model->getAllBadges($data);
-				foreach ($badges as $badge) {
-					$badge_id = $badge['badge_id'];
-					$badge_name = $badge['name'];
-					//echo '<pre>';echo $badge_name.' ('.$badge_id.')';echo '</pre>';
-
-					$curr = $this->reward_model->badgeLog($data, $badge_id, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';var_dump($curr);echo '</pre>';
-					$sum_max1 = get_sum_and_max($curr); //echo '<pre>';echo 'sum = '.$sum_max1[0].', max = '.print_r($sum_max1[1] != -1 ? $curr[$sum_max1[1]] : "",true);echo '</pre>';
-
-					$prev = $this->reward_model->badgeLog($data, $badge_id, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';var_dump($prev);echo '</pre>';
-					$sum_max2 = get_sum_and_max($prev); //echo '<pre>';echo 'sum = '.$sum_max2[0].', max = '.print_r($sum_max2[1] != -1 ? $prev[$sum_max2[1]] : "",true);echo '</pre>';
-
-					array_push($result, array($badge, $sum_max1[0], $sum_max2[0]));
-				}
-				usort($result, 'cmp2');
-				//echo '<pre>';var_dump($result);echo '</pre>';
-				$params['BADGES'] = array();
-				if (is_array($result)) foreach ($result as $i => $badge) {
-					$params['BADGES'][] = array(
-						'BADGE_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
-						'BADGE_IMAGE_SRC' => $badge[0]['image'],
-						'BADGE_NAME' => $badge[0]['name'],
-						'BADGE_TOTAL' => $badge[1],
-						'BADGE_UPDOWN' => ($badge[2] != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($badge[2] <= $badge[1] ? 'up' : 'down').'.gif">' : ($badge[1] != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
-						'BADGE_PERCENT' => ($badge[2] != 0 || $badge[1] != 0 ? '<strong style="font-size:12px;color:'.($badge[2] <= $badge[1] ? '#95cc00' : 'red').'">'.number_format(($badge[2] != 0 ? ($badge[1] - $badge[2])/(1.0*$badge[2]) : 1)*100, 2).'%</strong>' : ''),
-						'BADGE_AVERAGE' => number_format($badge[1]/7.0, 2),
-					);
-					//if ($i == 4) break;
-				}
-
-				// active items
-				//$items = $this->goods_model->listActiveItems($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to);
-				$items = array_merge($this->goods_model->listActiveItems($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->goods_model->listExpiredItems($data, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to));
-				//echo '<pre>';echo 'active items = ';var_dump($items);echo '</pre>';
-				$params['ITEMS'] = array();
-				if (is_array($items)) foreach ($items as $i => $item) {
-					$goods_id = $item['goods_id'];
-					$goods_name = $item['name'];
-					$goods_image = $item['image'];
-					$goods_start_date = $item['date_start'];
-					$goods_expiration_date = $item['date_expire'];
-					$goods_qty = $item['quantity'];
-					$goods_criteria = $item['redeem'];
-					$sum_max = get_sum_and_max($this->goods_model->totalRedemption($data, $goods_id));
-					$goods_qty_redeemed = $sum_max[0];
-					$goods_qty_remain = ($goods_qty != null || $goods_qty === 0 ? $goods_qty - $goods_qty_redeemed : null);
-					$goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($data, $goods_criteria);
-					//echo '<pre>';echo $goods_name.' ('.$goods_id.'), qty = '.$goods_qty.', redeemed = '.$goods_qty_redeemed.', remain = '.$goods_qty_remain.', #players that can redeem this item = '.$goods_players_can_redeem;echo '</pre>';
-
-					$curr = $this->goods_model->redeemLogCount($data, $goods_id, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to); //echo '<pre>';echo $curr;echo '</pre>';
-
-					$prev = $this->goods_model->redeemLogCount($data, $goods_id, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from); //echo '<pre>';echo $prev;echo '</pre>';
-
-					$params['ITEMS'][] = array(
-						'ITEM_BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
-						'ITEM_IMAGE_SRC' => url_exist($goods_image) ? DYNAMIC_IMAGE_URL.'/images/'.$goods_image : STATIC_IMAGE_URL.'/images/no_image.jpg',
-						'ITEM_NAME' => $goods_name,
-						'ITEM_START_DATE' => ($goods_start_date ? date('d M Y', $goods_start_date->sec) : "Not Set"),
-						'ITEM_EXPIRATION_DATE' => ($goods_expiration_date ? date('d M Y', $goods_expiration_date->sec) : "Not Set"),
-						'ITEM_TOTAL' => $curr,
-						'ITEM_UPDOWN' => ($prev != 0 ? '<img src="'.STATIC_IMAGE_URL.'/images/icon-'.($prev <= $curr ? 'up' : 'down').'.gif">' : ($curr != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
-						'ITEM_PERCENT' => ($prev != 0 || $curr != 0 ? '<strong style="font-size:12px;color:'.($prev <= $curr ? '#95cc00' : 'red').'">'.number_format(($prev != 0 ? ($curr - $prev)/(1.0*$prev) : 1)*100, 2).'%</strong>' : ''),
-						'ITEM_PEOPLE_CAN_REDEEM' => $goods_players_can_redeem,
-						'ITEM_QTY_REDEEMED' => $goods_qty_redeemed,
-						'ITEM_QTY_TOTAL' => ($goods_qty != null || $goods_qty === 0 ? $goods_qty : 'Inf.'),
-						'ITEM_QTY_REMAIN' => $goods_qty_remain,
-					);
-				}
-				usort($params['ITEMS'], 'cmp4');
-
-				// rank
-				$players = $this->player_model->getLeaderboardByLevel(20, $client_id, $site_id);
-				//echo '<pre>';var_dump($players);echo '</pre>';
-				$params['PLAYERS'] = array();
-				if (is_array($players)) foreach ($players as $i => $player) {
-					$params['PLAYERS'][] = array(
-						'PLAYER_ROW' => $i+1,
-						'PLAYER_IMAGE_SRC' => url_exist($player['image']) ? $player['image'] : STATIC_IMAGE_URL.'/images/user_no_image.jpg',
-						'PLAYER_NAME' => $player['first_name'].' '.$player['last_name'],
-						'PLAYER_EXP' => $player['exp'],
-						'PLAYER_LEVEL' => $player['level'],
-					);
-				}
-
-				// Load RSS Parser
-				$this->load->library('rssparser');
-				$params['FEEDS'] = array();
-				$rssparser = $this->rssparser;
-				foreach (array('http://www.gamification.co/feed/', 'http://www.entrepreneur.com/feeds/tags/gamification/1908.rss') as $url) {
-					$feed = $rssparser->set_feed_url($url)->set_cache_life(30)->getFeed(1);
-					if (is_array($feed)) foreach ($feed as $item) {
-						$params['FEEDS'][] = array(
-							'FEED_TITLE' => $item['title'],
-							'FEED_DESCRIPTION' => substr($item['description'], 0, 256),
-							'FEED_AUTHOR' => $item['author'],
-							'FEED_DATE' => date('Y-m-d', strtotime($item['pubDate'])),
-							'FEED_LINK' => $item['link'],
-						);
-					}
-				}
-				usort($params['FEEDS'], 'cmp3');
-
-				// html
-				$dir = "report/$client_name/$site_name/";
-				if (!is_dir($dir)) mkdir($dir, 0755, true);
-				$this->load->library('parser');
-				$params['STATIC_REPORT_URL'] = "http://report.pbapp.net/$client_name/$site_name/$to.html";
-				$message = $this->parser->parse('report.html', $params, true);
-				file_put_contents("$dir/$to.html", str_replace('{CANNOT_VIEW_EMAIL}', '', $message));
-				echo '<pre>';var_dump($params);echo '</pre>';
-
-				// email
-				$subject = "[Playbasis] Weekly Report for $site_name";
-				$this->amazon_ses->from('info@playbasis.com');
-				//$this->amazon_ses->to($client_email);
-				$this->amazon_ses->to(array('devteam@playbasis.com','tanawat@playbasis.com','notjiam@gmail.com'));
-				$this->amazon_ses->subject($subject);
-				$this->amazon_ses->message(str_replace('{CANNOT_VIEW_EMAIL}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['STATIC_REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $message));
-				$resp = $this->amazon_ses->send();
-				echo '<pre>';var_dump($resp);echo '</pre>';
+				/* email */
+				$email_from = 'info@playbasis.com';
+				//$email_to = $params['CLIENT_EMAIL'];
+				$email_to = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
+				$subject = "[Playbasis] Weekly Report for ".$params['SITE_NAME'];
+				$message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
+				$resp = $this->email($email_from, $email_to, $subject, $message); echo '<pre>';var_dump($resp);echo '</pre>';
 			}
 		}
 	}
