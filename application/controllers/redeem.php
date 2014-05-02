@@ -187,7 +187,7 @@ class Redeem extends REST_Controller
             foreach($goods['redeem']['custom'] as $customobj){
 
                 $customid =new MongoId($customobj["custom_id"]);
-                $player_custom = $this->player_model->getPlayerPoint($pb_player_id, $customobj["custom_id"], $validToken['site_id']);
+                $player_custom = $this->player_model->getPlayerPoint($pb_player_id, $customid, $validToken['site_id']);
 
                 if($player_custom && (int)$player_custom[0]['value'] >= (int)$customobj["custom_value"]){
                     $custom_can_redeem++;
@@ -315,19 +315,19 @@ class Redeem extends REST_Controller
                     $badge_player_check[$b["badge_id"]] = $b["amount"];
                 }
 
-                foreach($goods['redeem']['badge'] as $badgeid => $badgevalue){
-                    if(isset($badge_player_check[$badgeid]) && $badge_player_check[$badgeid] >= $badgevalue){
-                        $badgeid =new MongoId($badgeid);
-                        $this->client_model->updateplayerBadge($badgeid, (-1*$badgevalue), $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id']);
+                foreach($goods['redeem']['badge'] as $badgeobj){
+                    if(isset($badge_player_check[$badgeobj["badge_id"]]) && $badge_player_check[$badgeobj["badge_id"]] >= $badgeobj["badge_value"]){
+                        $badgeid =new MongoId($badgeobj["badge_id"]);
+                        $this->client_model->updateplayerBadge($badgeid, (-1*$badgeobj["badge_value"]), $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id']);
                     }
                 }
             }
         }
 
         if(isset($goods['redeem']['custom'])){
-            foreach($goods['redeem']['custom'] as $customid => $customvalue){
+            foreach($goods['redeem']['custom'] as $customobj){
 
-                $customid =new MongoId($customid);
+                $customid =new MongoId($customobj["custom_id"]);
                 $player_custom = $this->player_model->getPlayerPoint($pb_player_id, $customid, $validToken['site_id']);
 
                 $custom_name = $this->client_model->getRewardName(array_merge($validToken, array('reward_id' => $customid)));
@@ -335,8 +335,8 @@ class Redeem extends REST_Controller
                 $customArray['reward_id'] = $customid;
                 $customArray['reward_name'] = $custom_name;
 
-                if((int)$player_custom[0]['value'] >= (int)$customvalue){
-                    $this->client_model->updateCustomReward($custom_name, (-1*$customvalue), array_merge($validToken, array('pb_player_id' => $pb_player_id, 'player_id' => $validToken['cl_player_id'])), $customArray);
+                if((int)$player_custom[0]['value'] >= (int)$customobj["custom_value"]){
+                    $this->client_model->updateCustomReward($custom_name, (-1*$customobj["custom_value"]), array_merge($validToken, array('pb_player_id' => $pb_player_id, 'player_id' => $validToken['cl_player_id'])), $customArray);
                 }
             }
         }
