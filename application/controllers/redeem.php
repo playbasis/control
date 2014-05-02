@@ -159,11 +159,11 @@ class Redeem extends REST_Controller
                     $badge_player_check[$b["badge_id"]] = $b["amount"];
                 }
 
-                foreach($goods['redeem']['badge'] as $badgeid => $badgevalue){
-                    if(isset($badge_player_check[$badgeid]) && (int)$badge_player_check[$badgeid] >= (int)$badgevalue){
+                foreach($goods['redeem']['badge'] as $badgeobj){
+                    if(isset($badge_player_check[$badgeobj["badge_id"]]) && (int)$badge_player_check[$badgeobj["badge_id"]] >= (int)$badgeobj["badge_value"]){
                         $badge_can_redeem++;
                     }else{
-                        array_push($badge_incomplete, array($badgeid."" => (isset($badge_player_check[$badgeid])) ? ((int)$badgevalue - (int)$badge_player_check[$badgeid]) : (int)$badgevalue));
+                        array_push($badge_incomplete, array($badgeobj["badge_id"]."" => (isset($badge_player_check[$badgeobj["badge_id"]])) ? ((int)$badgeobj["badge_value"] - (int)$badge_player_check[$badgeobj["badge_id"]]) : (int)$badgeobj["badge_value"]));
                     }
                 }
             }
@@ -184,15 +184,15 @@ class Redeem extends REST_Controller
             $custom_can_redeem = 0;
             $custom_incomplete = array();
 
-            foreach($goods['redeem']['custom'] as $customid => $customvalue){
+            foreach($goods['redeem']['custom'] as $customobj){
 
-                $customid =new MongoId($customid);
-                $player_custom = $this->player_model->getPlayerPoint($pb_player_id, $customid, $validToken['site_id']);
+                $customid =new MongoId($customobj["custom_id"]);
+                $player_custom = $this->player_model->getPlayerPoint($pb_player_id, $customobj["custom_id"], $validToken['site_id']);
 
-                if($player_custom && (int)$player_custom[0]['value'] >= (int)$customvalue){
+                if($player_custom && (int)$player_custom[0]['value'] >= (int)$customobj["custom_value"]){
                     $custom_can_redeem++;
                 }else{
-                    array_push($custom_incomplete, array($customid."" => ($player_custom) ? ((int)$customvalue - (int)$player_custom[0]['value']) : (int)$customvalue));
+                    array_push($custom_incomplete, array($customid."" => ($player_custom) ? ((int)$customobj["custom_value"] - (int)$player_custom[0]['value']) : (int)$customobj["custom_value"]));
                 }
             }
 

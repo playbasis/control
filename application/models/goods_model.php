@@ -39,15 +39,27 @@ class Goods_model extends MY_Model
                     if(isset($g['redeem']['custom'])){
                         $redeem = array();
                         foreach($g['redeem']['custom'] as $k => $v){
-                            $redeem_inside = array();
-                            $redeem_inside["custom_id"] = $k;
-                            $redeem_inside["custom_value"] = $v;
-                            $redeem[] = $redeem_inside;
+                            $this->mongo_db->select(array('name'));
+                            $this->mongo_db->select(array(),array('_id'));
+                            $this->mongo_db->where(array(
+                                'client_id' => $data['client_id'],
+                                'site_id' => $data['site_id'],
+                                'reward_id' => new MongoId($k),
+                            ));
+                            $custom = $this->mongo_db->get('playbasis_reward_to_client');
+                            if(isset($custom[0]['name'])){
+                                $redeem_inside = array();
+                                $redeem_inside["custom_id"] = $k;
+                                $redeem_inside["custom_name"] = $custom[0]['name'];
+                                $redeem_inside["custom_value"] = $v;
+                                $redeem[] = $redeem_inside;
+                            }
                         }
                         $g['redeem']['custom'] = $redeem;
                     }
                 }
 
+                $g['image'] = $this->config->item('IMG_PATH') . $g['image'];
                 $g['goods_id'] = $g['goods_id']."";
                 $g['date_start'] = $g['date_start'] ? datetimeMongotoReadable($g['date_start']) : null;
                 $g['date_expire'] = $g['date_expire'] ? datetimeMongotoReadable($g['date_expire']) : null;
@@ -86,10 +98,21 @@ class Goods_model extends MY_Model
             if(isset($result[0]['redeem']['custom'])){
                 $redeem = array();
                 foreach($result[0]['redeem']['custom'] as $k => $v){
-                    $redeem_inside = array();
-                    $redeem_inside["custom_id"] = $k;
-                    $redeem_inside["custom_value"] = $v;
-                    $redeem[] = $redeem_inside;
+                    $this->mongo_db->select(array('name'));
+                    $this->mongo_db->select(array(),array('_id'));
+                    $this->mongo_db->where(array(
+                        'client_id' => $data['client_id'],
+                        'site_id' => $data['site_id'],
+                        'reward_id' => new MongoId($k),
+                    ));
+                    $custom = $this->mongo_db->get('playbasis_reward_to_client');
+                    if(isset($custom[0]['name'])){
+                        $redeem_inside = array();
+                        $redeem_inside["custom_id"] = $k;
+                        $redeem_inside["custom_name"] = $custom[0]['name'];
+                        $redeem_inside["custom_value"] = $v;
+                        $redeem[] = $redeem_inside;
+                    }
                 }
                 $result[0]['redeem']['custom'] = $redeem;
             }
@@ -105,6 +128,10 @@ class Goods_model extends MY_Model
         if(isset($result[0]['date_expire']))
         {
             $result[0]['date_expire'] = datetimeMongotoReadable($result[0]['date_expire']);
+        }
+        if(isset($result[0]['image']))
+        {
+            $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
         }
         return $result ? $result[0] : array();
     }
