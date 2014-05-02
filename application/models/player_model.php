@@ -159,7 +159,7 @@ class Player_model extends MY_Model
         $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
 			'pb_player_id' => $pb_player_id,
-			'reward_id' => $reward_id
+			'reward_id' => new MongoId($reward_id)
 		));
 		$result = $this->mongo_db->get('playbasis_reward_to_player');
 
