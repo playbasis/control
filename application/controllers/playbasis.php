@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-define('STATIC_IMAGE_URL', 'http://admin.pbapp.net');
+//define('STATIC_IMAGE_URL', 'http://admin.pbapp.net');
+define('STATIC_IMAGE_URL', 'http://pbapp.net');
 define('DYNAMIC_IMAGE_URL', 'http://images.pbapp.net');
 define('CANNOT_VIEW_EMAIL', 'CANNOT_VIEW_EMAIL');
 define('NUMBER_OF_PLAYERS', 20);
