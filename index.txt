@@ -152,6 +152,8 @@ reward {
 }
 db.playbasis_summary_of_player_beta.ensureIndex( { value.reward_52ea1ea78d8c89401c0000b4.reward_value: 1 } )
 
+
+
 playbasis_badge_to_client
 
 site_badge
@@ -170,6 +172,7 @@ client_site_badge
    "deleted": 1
 }
 db.playbasis_badge_to_client.ensureIndex({ "client_id" : 1, "site_id" : 1, "badge_id" : 1, "deleted" : 1 },{ "name" : "client_site_badge" });
+
 
 
 playbasis_player
