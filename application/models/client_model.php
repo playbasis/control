@@ -516,5 +516,15 @@ class Client_model extends MY_Model
 		));
 		return $this->mongo_db->get('playbasis_client_site');
 	}
+
+	public function listAllSites()
+	{
+		$this->set_site_mongodb(0);
+		$this->mongo_db->where(array(
+			'status' => true,
+			'deleted' => false
+		));
+		return $this->mongo_db->get('playbasis_client_site');
+	}
 }
 ?>

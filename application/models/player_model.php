@@ -449,7 +449,7 @@ class Player_model extends MY_Model
 	public function getLeaderboardByLevel($limit, $client_id, $site_id) {
 		//get reward id
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('cl_player_id','first_name','last_name','image','exp','level'));
+		$this->mongo_db->select(array('cl_player_id','first_name','last_name','username','image','exp','level'));
 		$this->mongo_db->where(array(
 			'status' => true,
 			'site_id' => $site_id,
