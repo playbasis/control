@@ -35,7 +35,7 @@ class Utility extends CI_Model
 		return $ret;
 	}
 
-	public function url_exist($url, $prefix='') {
+	public function url_exists($url, $prefix='') {
 		if (substr($url, 0, 4) != 'http') $url = $prefix.$url;
 		$file_headers = @get_headers($url);
 		log_message('debug', 'url = '.print_r($url, true).', header = '.print_r($file_headers[0], true));

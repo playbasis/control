@@ -210,7 +210,7 @@ class Report extends REST_Controller
 			$goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($opts, $goods_criteria);
 			$arr[] = array_merge(
 				array(
-					'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exist($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'].'images/'.$item['image'] : $conf['static_image_url'].'images/no_image.jpg',
+					'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'].'images/'.$item['image'] : $conf['static_image_url'].'images/no_image.jpg',
 					'NAME' => $item['name'],
 					'START_DATE' => ($item['date_start'] ? date(REPORT_DATE_FORMAT, $item['date_start']->sec) : ITEM_DATE_NOT_CONFIG),
 					'EXPIRATION_DATE' => ($item['date_expire'] ? date(REPORT_DATE_FORMAT, $item['date_expire']->sec) : ITEM_DATE_NOT_CONFIG),
@@ -237,7 +237,7 @@ class Report extends REST_Controller
 			$name_str = trim($name);
 			$params['PLAYERS'][] = array(
 				'PLAYER_ROW' => $i+1,
-				'PLAYER_IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exist($player['image'], $conf['dynamic_image_url']) ? $player['image'] : $conf['static_image_url'].'images/user_no_image.jpg',
+				'PLAYER_IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($player['image'], $conf['dynamic_image_url']) ? $player['image'] : $conf['static_image_url'].'images/user_no_image.jpg',
 				'PLAYER_NAME' => (!empty($name_str) ? $name : $player['username']),
 				'PLAYER_EXP' => number_format($player['exp']),
 				'PLAYER_LEVEL' => number_format($player['level']),
