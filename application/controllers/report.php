@@ -212,7 +212,7 @@ class Report extends REST_Controller
 			$goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($opts, $goods_criteria);
 			$arr[] = array_merge(
 				array(
-					'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'].'images/'.$item['image'] : $conf['static_image_url'].'images/no_image.jpg',
+					'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'].$item['image'] : $conf['static_image_url'].'images/no_image.jpg',
 					'NAME' => $item['name'],
 					'START_DATE' => ($item['date_start'] ? date(REPORT_DATE_FORMAT, $item['date_start']->sec) : ITEM_DATE_NOT_CONFIG),
 					'EXPIRATION_DATE' => ($item['date_expire'] ? date(REPORT_DATE_FORMAT, $item['date_expire']->sec) : ITEM_DATE_NOT_CONFIG),
