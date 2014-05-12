@@ -2,6 +2,9 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST_Controller.php';
 
+define('MAX_EXECUTION_TIME', 0);
+define('MAX_MEMORY', '256M');
+
 define('SITE_ID_DEMO', '52ea1eac8d8c89401c0000e5');
 define('SITE_ID_MTD', '52ea1ec18d8c897807000077');
 define('SITE_ID_PLAYBOY', '52ea1eff8d8c89642100006d');
@@ -37,7 +40,7 @@ class Report extends REST_Controller
 	    $this->load->model('tool/utility', 'utility');
 	    $this->load->library('mongo_db');
 	    $this->load->library('parser');
-	    //$this->load->library('pdf');
+	    $this->load->library('mpdf');
 	    $this->load->library('rssparser');
     }
 
@@ -64,7 +67,8 @@ class Report extends REST_Controller
 		    'report_email_client' => $this->config->item('REPORT_EMAIL_CLIENT'),
 	    );
 
-	    set_time_limit(0);
+	    set_time_limit(MAX_EXECUTION_TIME);
+	    ini_set('memory_limit', MAX_MEMORY);
 
 	    /* set from-to dates */
 	    $to = $ref ? $ref : date('Y-m-d', strtotime('-1 day', time())); // yesterday is default
@@ -92,11 +96,22 @@ class Report extends REST_Controller
 		    $this->utility->elapsed_time('data');
 		    log_message('debug', 'site = '.print_r($site, true));
 		    $params = $this->build_data($conf, $clients[(string)$client_id], $site, $to, $from, $from2);
+		    log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('data').' sec');
+
 		    log_message('debug', 'params = '.print_r($params, true));
 		    $html = $this->parser->parse('report.html', $params, true);
 		    log_message('debug', 'html = '.print_r($html, true));
 		    $this->utility->save_file('report/'.$params['DIR'], $params['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
-		    log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('data').' sec');
+
+		    //$params2 = $this->make_image_local($params);
+		    $params2 = $params;
+		    log_message('debug', 'params2 = '.print_r($params2, true));
+		    $html2 = $this->parser->parse('report_pdf.html', $params2, true);
+		    log_message('debug', 'html2 = '.print_r($html2, true));
+		    $this->utility->save_file('report/'.$params2['DIR'], str_replace('.html', '_pdf.html', $params2['FILE']), $html2);
+		    $pdf2 = $this->utility->html2mpdf($html2, true);
+		    log_message('debug', 'pdf2 = DONE');
+		    $this->utility->save_file('report/'.$params2['DIR'], str_replace('.html', '.pdf', $params2['FILE']), $pdf2);
 
 		    $this->master_accumulate($conf, $master, $params);
 
@@ -120,10 +135,20 @@ class Report extends REST_Controller
 	    $master_clients = $master['CLIENTS'];
 	    usort($master_clients, 'compare_SITE_NAME_asc');
 	    $master['CLIENTS'] = $master_clients;
+
 	    log_message('debug', 'master = '.print_r($master, true));
 	    $html = $this->parser->parse('report_master.html', $master, true);
 	    log_message('debug', 'html = '.print_r($html, true));
 	    $this->utility->save_file('report/'.$master['DIR'], $master['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
+
+	    $master2 = $master;
+	    log_message('debug', 'master2 = '.print_r($master2, true));
+	    $html2 = $this->parser->parse('report_master_pdf.html', $master2, true);
+	    log_message('debug', 'html2 = '.print_r($html2, true));
+	    $this->utility->save_file('report/'.$master2['DIR'], str_replace('.html', '_pdf.html', $master2['FILE']), $html2);
+	    $pdf2 = $this->utility->html2mpdf($html2, true);
+	    log_message('debug', 'pdf2 = DONE');
+	    $this->utility->save_file('report/'.$master2['DIR'], str_replace('.html', '.pdf', $master2['FILE']), $pdf2);
 
 	    if ($conf['report_email']) {
 	        $this->utility->elapsed_time('email');
@@ -168,7 +193,7 @@ class Report extends REST_Controller
 		if (is_array($actions)) foreach ($actions as $action) {
 			$arr[] = array_merge(
 				array(
-					'IMAGE' => str_replace('-alt', '', $action['icon']),
+					'IMAGE_SRC' => $conf['static_image_url'].'images/'.str_replace('-alt', '', $action['icon']).'.gif',
 					'NAME' => $action['name'],
 				),
 				$this->get_stat('', $conf, $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
@@ -238,11 +263,12 @@ class Report extends REST_Controller
 			$name = $player['first_name'].' '.$player['last_name'];
 			$name_str = trim($name);
 			$params['PLAYERS'][] = array(
-				'PLAYER_ROW' => $i+1,
-				'PLAYER_IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($player['image'], $conf['dynamic_image_url']) ? $player['image'] : $conf['static_image_url'].'images/user_no_image.jpg',
-				'PLAYER_NAME' => (!empty($name_str) ? $name : $player['username']),
-				'PLAYER_EXP' => number_format($player['exp']),
-				'PLAYER_LEVEL' => number_format($player['level']),
+				'BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'ROW' => $i+1,
+				'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($player['image'], $conf['dynamic_image_url']) ? $player['image'] : $conf['static_image_url'].'images/user_no_image.jpg',
+				'NAME' => (!empty($name_str) ? $name : $player['username']),
+				'EXP' => number_format($player['exp']),
+				'LEVEL' => number_format($player['level']),
 			);
 		}
 		// FEEDS
@@ -264,6 +290,37 @@ class Report extends REST_Controller
 		usort($params['FEEDS'], 'compare_FEED_DATE_NUM_desc');
 
 		return $params;
+	}
+
+	private function make_image_local($params) {
+		$params2 = $params;
+		//$params2['STATIC_IMAGE_URL'] = 'http://localhost/api/';
+		//$params2['STATIC_IMAGE_URL'] = 'http://api.pbapp.net/';
+		foreach (array('ACTIONS', 'BADGES', 'ITEMS', 'PLAYERS') as $key) {
+			foreach ($params2[$key] as &$each) {
+				$each['IMAGE_SRC'] = $this->copy_to_local($each['IMAGE_SRC']);
+			}
+		}
+		return $params2;
+	}
+
+	private function copy_to_local($remote, $overwrite=false) {
+		$dir = 'report/images/';
+		$this->utility->save_dir($dir);
+		$name = basename($remote);
+		$idx = strpos($name, '?');
+		$name2 = $idx === false ? $name : substr($name, 0, $idx);
+		if (in_array($name2, (array('picture', 'photo.jpg')))) {
+			$name2 = $this->utility->random_string(10).'.jpg';
+		}
+		$local = $dir.$name2;
+		if (!file_exists($local) || $overwrite) {
+			log_message('debug', 'copy, from = '.$remote.', to = '.$local);
+			file_put_contents($local, file_get_contents($remote));
+			//$this->utility->file_get_contents_curl($local, $remote);
+			//file_put_contents($local, $this->utility->file_get_contents_curl($remote));
+		}
+		return '../../../'.$local;
 	}
 
 	private function get_stat($prefix, $conf, $curr, $prev) {
