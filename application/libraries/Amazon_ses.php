@@ -28,7 +28,9 @@ class Amazon_ses {
 	public $message;					// Message body
 	public $message_alt;				// Message body alternative in plain-text
 	public $charset;					// Character set
-	
+
+    public $attachments;
+
 	public $debug = FALSE;					
 	
 	/**
@@ -180,7 +182,59 @@ class Amazon_ses {
 		$this->message_alt = $message_alt;
 		return $this;
 	}
-	
+
+
+    public function attachment($attachments)
+    {
+//        $this->attachments = base64_encode(file_get_contents($attachments));
+
+        list( $dirname, $basename, $extension, $filename ) = array_values( pathinfo($attachments) );
+
+        $content_type = mime_content_type($attachments);
+
+        $src = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
+        $dest = "";
+
+        if (isset($this->recipients['to']))
+        {
+            for ($i = 0; $i < count($this->recipients['to']); $i++)
+            {
+                $dest .= $this->recipients['to'][$i];
+                if($i < (count($this->recipients['to'])+1)){
+                    $dest .= ",";
+                }
+            }
+        }
+
+        $message= "To: ".$dest."\n";
+        $message.= "From: ".$src."\n";
+        $message.= "Subject: ".$this->subject."\n";
+        $message.= "MIME-Version: 1.0\n";
+        $message.= 'Content-Type: multipart/mixed; boundary="Playbasis"';
+        $message.= "\n\n";
+        $message.= "--Playbasis\n";
+        $message.= 'Content-Type: text/plain; charset="utf-8"';
+        $message.= "\n";
+        $message.= "Content-Transfer-Encoding: 7bit\n";
+        $message.= "Content-Disposition: inline\n";
+        $message.= "\n";
+        $message.= "This is Report\n";
+        $message.= "\n\n";
+        $message.= "--Playbasis\n";
+        $message.= "Content-ID: \<playbasis".time()."\>\n";
+        $message.= 'Content-Type: '.$content_type.'; name="'.$basename.'"';
+        $message.= "\n";
+        $message.= "Content-Transfer-Encoding: base64\n";
+        $message.= 'Content-Disposition: attachment; filename="'.$basename.'"';
+        $message.= "\n";
+        $message.= base64_encode(file_get_contents($attachments));
+        $message.= "\n";
+        $message.= "--Playbasis--\n";
+
+        $this->attachments = $message;
+        return $this;
+    }
+
 	/**
 	 * Send
 	 *
@@ -363,52 +417,68 @@ class Amazon_ses {
 	 */
 	private function _format_query_string()
 	{
-		$query_string = array(
-			'Action' => 'SendEmail',
-			'Source' => ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from),
-			'Message.Subject.Data' => $this->subject,
-			'Message.Body.Text.Data' => (empty($this->message_alt) ? strip_tags($this->message) : $this->message_alt),
-			'Message.Body.Html.Data' => $this->message
-		);
-		
-		// Add all recipients to array
-		if (isset($this->recipients['to']))
-		{
-			for ($i = 0; $i < count($this->recipients['to']); $i++)
-			{
-				$query_string['Destination.ToAddresses.member.' . ($i + 1)] = $this->recipients['to'][$i]; 
-			}	
-		}
-		
-		if (isset($this->recipients['cc']))
-		{
-			for ($i = 0; $i < count($this->recipients['cc']); $i++)
-			{
-				$query_string['Destination.CcAddresses.member.' . ($i + 1)] = $this->recipients['cc'][$i]; 
-			}
-		}
-		
-		if (isset($this->recipients['bcc']))
-		{
-			for ($i = 0; $i < count($this->recipients['bcc']); $i++)
-			{
-				$query_string['Destination.BccAddresses.member.' . ($i + 1)] = $this->recipients['bcc'][$i]; 
-			}
-		}
-		
-		if (isset($this->reply_to) AND ( ! empty($this->reply_to))) 
-		{
-			$query_string['ReplyToAddresses.member'] = $this->reply_to;
-		}
-		
-		
-		// Add character encoding if set
-		if ( ! empty($this->charset))
-		{
-			$query_string['Message.Body.Html.Charset'] = $this->charset;
-			$query_string['Message.Body.Text.Charset'] = $this->charset;
-			$query_string['Message.Subject.Charset'] = $this->charset;	
-		}
+
+        if(isset($this->attachments)){
+            $query_string['Action'] = "SendRawEmail";
+            $query_string['Source'] = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
+            if (isset($this->recipients['to']))
+            {
+                for ($i = 0; $i < count($this->recipients['to']); $i++)
+                {
+                    $query_string['Destinations.member.' . ($i + 1)] = $this->recipients['to'][$i];
+                }
+            }
+            $query_string['RawMessage.Data'] = base64_encode($this->attachments);
+        }else{
+
+            $query_string = array(
+                'Action' => 'SendEmail',
+                'Source' => ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from),
+                'Message.Subject.Data' => $this->subject,
+                'Message.Body.Text.Data' => (empty($this->message_alt) ? strip_tags($this->message) : $this->message_alt),
+                'Message.Body.Html.Data' => $this->message
+            );
+
+            // Add all recipients to array
+            if (isset($this->recipients['to']))
+            {
+                for ($i = 0; $i < count($this->recipients['to']); $i++)
+                {
+                    $query_string['Destination.ToAddresses.member.' . ($i + 1)] = $this->recipients['to'][$i];
+                }
+            }
+
+            if (isset($this->recipients['cc']))
+            {
+                for ($i = 0; $i < count($this->recipients['cc']); $i++)
+                {
+                    $query_string['Destination.CcAddresses.member.' . ($i + 1)] = $this->recipients['cc'][$i];
+                }
+            }
+
+            if (isset($this->recipients['bcc']))
+            {
+                for ($i = 0; $i < count($this->recipients['bcc']); $i++)
+                {
+                    $query_string['Destination.BccAddresses.member.' . ($i + 1)] = $this->recipients['bcc'][$i];
+                }
+            }
+
+            if (isset($this->reply_to) AND ( ! empty($this->reply_to)))
+            {
+                $query_string['ReplyToAddresses.member'] = $this->reply_to;
+            }
+
+            // Add character encoding if set
+            if ( ! empty($this->charset))
+            {
+                $query_string['Message.Body.Html.Charset'] = $this->charset;
+                $query_string['Message.Body.Text.Charset'] = $this->charset;
+                $query_string['Message.Subject.Charset'] = $this->charset;
+            }
+
+        }
+
 				
 		return $query_string;
 		
@@ -468,7 +538,7 @@ class Amazon_ses {
 		
 		// Set the endpoint		
 		$this->_ci->curl->create($this->_endpoint());
-				
+				var_dump($query_string);
 		$this->_ci->curl->post($query_string);
 		$this->_set_headers();
 		
@@ -503,5 +573,80 @@ class Amazon_ses {
 		return TRUE;				
 		
 	}
-		
+}
+
+if(!function_exists('mime_content_type')) {
+
+    function mime_content_type($filename) {
+
+        $mime_types = array(
+
+            'txt' => 'text/plain',
+            'htm' => 'text/html',
+            'html' => 'text/html',
+            'php' => 'text/html',
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'json' => 'application/json',
+            'xml' => 'application/xml',
+            'swf' => 'application/x-shockwave-flash',
+            'flv' => 'video/x-flv',
+
+            // images
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif' => 'image/tiff',
+            'svg' => 'image/svg+xml',
+            'svgz' => 'image/svg+xml',
+
+            // archives
+            'zip' => 'application/zip',
+            'rar' => 'application/x-rar-compressed',
+            'exe' => 'application/x-msdownload',
+            'msi' => 'application/x-msdownload',
+            'cab' => 'application/vnd.ms-cab-compressed',
+
+            // audio/video
+            'mp3' => 'audio/mpeg',
+            'qt' => 'video/quicktime',
+            'mov' => 'video/quicktime',
+
+            // adobe
+            'pdf' => 'application/pdf',
+            'psd' => 'image/vnd.adobe.photoshop',
+            'ai' => 'application/postscript',
+            'eps' => 'application/postscript',
+            'ps' => 'application/postscript',
+
+            // ms office
+            'doc' => 'application/msword',
+            'rtf' => 'application/rtf',
+            'xls' => 'application/vnd.ms-excel',
+            'ppt' => 'application/vnd.ms-powerpoint',
+
+            // open office
+            'odt' => 'application/vnd.oasis.opendocument.text',
+            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+        );
+
+        $ext = strtolower(array_pop(explode('.',$filename)));
+        if (array_key_exists($ext, $mime_types)) {
+            return $mime_types[$ext];
+        }
+        elseif (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mimetype = finfo_file($finfo, $filename);
+            finfo_close($finfo);
+            return $mimetype;
+        }
+        else {
+            return 'application/octet-stream';
+        }
+    }
 }
