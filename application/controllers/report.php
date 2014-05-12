@@ -103,12 +103,11 @@ class Report extends REST_Controller
 		    log_message('debug', 'html = '.print_r($html, true));
 		    $this->utility->save_file('report/'.$params['DIR'], $params['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
 
-		    //$params2 = $this->make_image_local($params);
 		    $params2 = $params;
 		    log_message('debug', 'params2 = '.print_r($params2, true));
 		    $html2 = $this->parser->parse('report_pdf.html', $params2, true);
 		    log_message('debug', 'html2 = '.print_r($html2, true));
-		    $this->utility->save_file('report/'.$params2['DIR'], str_replace('.html', '_pdf.html', $params2['FILE']), $html2);
+		    $this->utility->save_file('report/'.$params2['DIR'], str_replace('.html', '.pdf.html', $params2['FILE']), $html2);
 		    $pdf2 = $this->utility->html2mpdf($html2, true);
 		    log_message('debug', 'pdf2 = DONE');
 		    $this->utility->save_file('report/'.$params2['DIR'], str_replace('.html', '.pdf', $params2['FILE']), $pdf2);
@@ -145,7 +144,7 @@ class Report extends REST_Controller
 	    log_message('debug', 'master2 = '.print_r($master2, true));
 	    $html2 = $this->parser->parse('report_master_pdf.html', $master2, true);
 	    log_message('debug', 'html2 = '.print_r($html2, true));
-	    $this->utility->save_file('report/'.$master2['DIR'], str_replace('.html', '_pdf.html', $master2['FILE']), $html2);
+	    $this->utility->save_file('report/'.$master2['DIR'], str_replace('.html', '.pdf.html', $master2['FILE']), $html2);
 	    $pdf2 = $this->utility->html2mpdf($html2, true);
 	    log_message('debug', 'pdf2 = DONE');
 	    $this->utility->save_file('report/'.$master2['DIR'], str_replace('.html', '.pdf', $master2['FILE']), $pdf2);
@@ -290,37 +289,6 @@ class Report extends REST_Controller
 		usort($params['FEEDS'], 'compare_FEED_DATE_NUM_desc');
 
 		return $params;
-	}
-
-	private function make_image_local($params) {
-		$params2 = $params;
-		//$params2['STATIC_IMAGE_URL'] = 'http://localhost/api/';
-		//$params2['STATIC_IMAGE_URL'] = 'http://api.pbapp.net/';
-		foreach (array('ACTIONS', 'BADGES', 'ITEMS', 'PLAYERS') as $key) {
-			foreach ($params2[$key] as &$each) {
-				$each['IMAGE_SRC'] = $this->copy_to_local($each['IMAGE_SRC']);
-			}
-		}
-		return $params2;
-	}
-
-	private function copy_to_local($remote, $overwrite=false) {
-		$dir = 'report/images/';
-		$this->utility->save_dir($dir);
-		$name = basename($remote);
-		$idx = strpos($name, '?');
-		$name2 = $idx === false ? $name : substr($name, 0, $idx);
-		if (in_array($name2, (array('picture', 'photo.jpg')))) {
-			$name2 = $this->utility->random_string(10).'.jpg';
-		}
-		$local = $dir.$name2;
-		if (!file_exists($local) || $overwrite) {
-			log_message('debug', 'copy, from = '.$remote.', to = '.$local);
-			file_put_contents($local, file_get_contents($remote));
-			//$this->utility->file_get_contents_curl($local, $remote);
-			//file_put_contents($local, $this->utility->file_get_contents_curl($remote));
-		}
-		return '../../../'.$local;
 	}
 
 	private function get_stat($prefix, $conf, $curr, $prev) {

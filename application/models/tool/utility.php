@@ -79,29 +79,11 @@ class Utility extends CI_Model
 		return $output ? $this->pdf->output() : null;
 	}
 
-	/* require: $this->load->library('mpdf'); */
 	public function html2mpdf($html, $output=false) {
-		//$this->mpdf->WriteHTML($html);
-		//return $output ? $this->mpdf->Output('', 'S') : null;
 		require_once(APPPATH.'/libraries/mpdf/mpdf.php');
 		$mpdf = new mPDF('s','A4','','',25,15,21,22,10,10);
 		$mpdf->WriteHTML($html);
 		return $output ? $mpdf->Output('', 'S') : null;
-	}
-
-	function file_get_contents_curl($image_file, $image_url) {
-		if(!file_exists($image_file)){
-			$fp = fopen($image_file, 'w+');
-
-			$ch = curl_init($image_url);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_FILE, $fp);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			curl_exec($ch);
-
-			curl_close($ch);
-			fclose($fp);
-		}
 	}
 }
 ?>
