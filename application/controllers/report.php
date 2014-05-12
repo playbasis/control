@@ -28,19 +28,20 @@ class Report extends REST_Controller
 	    $this->config->load('playbasis');
 	    $this->load->model('action_model');
 	    $this->load->model('badge_model');
-        $this->load->model('client_model');
+	    $this->load->model('client_model');
 	    $this->load->model('goods_model');
 	    $this->load->model('player_model');
 	    $this->load->model('reward_model');
+	    $this->load->model('tool/error', 'error');
+	    $this->load->model('tool/respond', 'resp');
 	    $this->load->model('tool/utility', 'utility');
-        $this->load->model('tool/error', 'error');
-        $this->load->model('tool/respond', 'resp');
 	    $this->load->library('mongo_db');
 	    $this->load->library('parser');
+	    $this->load->library('pdf');
 	    $this->load->library('rssparser');
     }
 
-	public function generate_get($ref = null)
+    public function generate_get($ref = null)
     {
 	    $msg = array();
 	    $this->utility->elapsed_time('report');
@@ -53,6 +54,7 @@ class Report extends REST_Controller
 		    SITE_ID_TRUE => false,
 		    SITE_ID_BURUFLY => false,
 	    );
+	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
 	    $conf = array(
 		    'static_image_url' => $this->config->item('STATIC_IMG_PATH'),
 	        'dynamic_image_url' => $this->config->item('IMG_PATH'),
@@ -105,9 +107,9 @@ class Report extends REST_Controller
 		        $email_from = 'info@playbasis.com';
 			    $email_to = array_merge(
 				    $conf['report_email_client'] ? array($params['CLIENT_EMAIL']) : array(),
-				    array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com')
+				    $to_pbteam_email
 			    );
-		        $subject = '[Playbasis] Weekly Report for '.$params['SITE_NAME'];
+		        $subject = '[Playbasis] Weekly Report for '.$params['SITE_NAME'].' ('.$params['FROM'].' - '.$params['TO'].')';
 		        $message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
 		        $resp = $this->utility->email($email_from, $email_to, $subject, $message);
 		        log_message('debug', 'email = '.print_r($resp, true));
@@ -126,8 +128,8 @@ class Report extends REST_Controller
 	    if ($conf['report_email']) {
 	        $this->utility->elapsed_time('email');
 	        $email_from = 'info@playbasis.com';
-	        $email_to = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
-	        $subject = '[Playbasis] Weekly Master Report';
+	        $email_to = $to_pbteam_email;
+	        $subject = '[Playbasis] Weekly Master Report'.' ('.$master['FROM'].' - '.$master['TO'].')';
 	        $message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$master['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
 	        $resp = $this->utility->email($email_from, $email_to, $subject, $message);
 	        log_message('debug', 'email = '.print_r($resp, true));
@@ -210,7 +212,7 @@ class Report extends REST_Controller
 			$goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($opts, $goods_criteria);
 			$arr[] = array_merge(
 				array(
-					'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'].'images/'.$item['image'] : $conf['static_image_url'].'images/no_image.jpg',
+					'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'].$item['image'] : $conf['static_image_url'].'images/no_image.jpg',
 					'NAME' => $item['name'],
 					'START_DATE' => ($item['date_start'] ? date(REPORT_DATE_FORMAT, $item['date_start']->sec) : ITEM_DATE_NOT_CONFIG),
 					'EXPIRATION_DATE' => ($item['date_expire'] ? date(REPORT_DATE_FORMAT, $item['date_expire']->sec) : ITEM_DATE_NOT_CONFIG),
@@ -354,7 +356,7 @@ function get_sum_min_max($arr) {
 				$max = $key;
 			}
 			if ($min == null || $each['value'] < $arr[$min]['value']) {
-				$max = $key;
+				$min = $key;
 			}
 			$sum += $each['value'];
 		}
