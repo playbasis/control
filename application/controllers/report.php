@@ -37,7 +37,7 @@ class Report extends REST_Controller
 	    $this->load->model('tool/utility', 'utility');
 	    $this->load->library('mongo_db');
 	    $this->load->library('parser');
-	    $this->load->library('pdf');
+	    //$this->load->library('pdf');
 	    $this->load->library('rssparser');
     }
 
