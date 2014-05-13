@@ -74,7 +74,7 @@ class Test_amazon_ses extends CI_Controller {
         $subject = "Playbasis user limit alert";
         $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
-        $this->amazon_ses->verify_address('info@playbasis.com');
+        //$this->amazon_ses->verify_address('info@playbasis.com');
 
         $this->amazon_ses->to(array('wee@playbasis.com','pechpras@playbasis.com'));
 
@@ -84,10 +84,15 @@ class Test_amazon_ses extends CI_Controller {
 
         $this->amazon_ses->message($htmlMessage);
 
-        $this->amazon_ses->attachment('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png');
+        $this->amazon_ses->message_alt('If you cannot view this email, please visit http://playbasis.com');
 
-//        $this->amazon_ses->message('<strong>Use HTML</strong>');
-//
+        //$this->amazon_ses->attachment('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png');
+        $this->amazon_ses->attachment(array(
+            'C:\UniServerZ\www\api\images\logo-playbasis.png' => 'email-logo-playbasis.png',
+            'C:\UniServerZ\www\control\images\fa-icon-arrow-circle-up.gif' => 'email-fa-icon-arrow-circle-up.gif',
+            'C:\UniServerZ\www\api\report\Demo\Playbasis\2014-05-12.pdf' => 'email-2014-05-12.pdf',
+        ));
+
         $this->amazon_ses->debug(TRUE);
 
         $res = $this->amazon_ses->send();
