@@ -34,7 +34,7 @@ class Test_amazon_ses extends CI_Controller {
 		// Set invalid to
 		$receipients = ' ';
 		$this->amazon_ses->to($receipients);
-		$this->unit->run($this->amazon_ses->recipients['to'][1], 'is_null', 'Set invalid to address (single)', '-');
+		$this->unit->run($this->amazon_ses->recipients['to'], 'is_null', 'Set invalid to address (single)', '-');
 		
 		// Set to in comma list
 		$receipients = 'wee_weerapat@hotmail.com, wee.weerapat@gmail.com';
@@ -51,13 +51,17 @@ class Test_amazon_ses extends CI_Controller {
 		// Set subject
 		$this->amazon_ses->subject('Subject');
 		$this->unit->run($this->amazon_ses->subject, 'Subject', 'Set message subject', '-');
+
+        // Set attachment
+        $this->amazon_ses->attachment('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png');
+        $this->unit->run($this->amazon_ses->attachment, base64_encode(file_get_contents('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png')), 'Test Attachment');
 		
 		// Display all results
 		echo $this->unit->report();
 		
 	}
 
-    /*function send(){
+    function send(){
 
         $this->load->library('parser');
         $data = array(
@@ -72,7 +76,7 @@ class Test_amazon_ses extends CI_Controller {
 
         $this->amazon_ses->verify_address('info@playbasis.com');
 
-        $this->amazon_ses->to('wee@playbasis.com');
+        $this->amazon_ses->to(array('wee@playbasis.com','pechpras@playbasis.com'));
 
         $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
 
@@ -80,14 +84,16 @@ class Test_amazon_ses extends CI_Controller {
 
         $this->amazon_ses->message($htmlMessage);
 
+        $this->amazon_ses->attachment('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png');
+
 //        $this->amazon_ses->message('<strong>Use HTML</strong>');
 //
-//        $this->amazon_ses->debug(TRUE);
+        $this->amazon_ses->debug(TRUE);
 
         $res = $this->amazon_ses->send();
 
         var_dump($res);
         echo "success";
-    }*/
+    }
 
 }
