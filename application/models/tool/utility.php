@@ -64,19 +64,15 @@ class Utility extends CI_Model
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
-	public function email($from, $to, $subject, $message) {
+	public function email($to, $subject, $message, $message_alt=null, $attachments=array()) {
+		$from = 'info@playbasis.com';
 		$this->amazon_ses->from($from);
 		$this->amazon_ses->to($to);
 		$this->amazon_ses->subject($subject);
 		$this->amazon_ses->message($message);
+		if (!empty($message_alt)) $this->amazon_ses->message_alt($message_alt);
+		if (!empty($attachments)) $this->amazon_ses->attachment($attachments);
 		return $this->amazon_ses->send();
-	}
-
-	/* require: $this->load->library('pdf'); */
-	public function html2pdf($html, $output=false) {
-		$this->pdf->load_html($html);
-		$this->pdf->render();
-		return $output ? $this->pdf->output() : null;
 	}
 
 	public function html2mpdf($html, $output=false) {

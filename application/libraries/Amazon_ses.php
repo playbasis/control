@@ -183,18 +183,12 @@ class Amazon_ses {
 		return $this;
 	}
 
-
     public function attachment($attachments)
     {
-//        $this->attachments = base64_encode(file_get_contents($attachments));
-
-        list( $dirname, $basename, $extension, $filename ) = array_values( pathinfo($attachments) );
-
-        $content_type = mime_content_type($attachments);
+        define('BOUNDARY', 'Playbasis');
 
         $src = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
         $dest = "";
-
         if (isset($this->recipients['to']))
         {
             for ($i = 0; $i < count($this->recipients['to']); $i++)
@@ -206,32 +200,56 @@ class Amazon_ses {
             }
         }
 
-        $message= "To: ".$dest."\n";
-        $message.= "From: ".$src."\n";
-        $message.= "Subject: ".$this->subject."\n";
-        $message.= "MIME-Version: 1.0\n";
-        $message.= 'Content-Type: multipart/mixed; boundary="Playbasis"';
-        $message.= "\n\n";
-        $message.= "--Playbasis\n";
-        $message.= 'Content-Type: text/plain; charset="utf-8"';
-        $message.= "\n";
-        $message.= "Content-Transfer-Encoding: 7bit\n";
-        $message.= "Content-Disposition: inline\n";
-        $message.= "\n";
-        $message.= "This is Report\n";
-        $message.= "\n\n";
-        $message.= "--Playbasis\n";
-        $message.= "Content-ID: \<playbasis".time()."\>\n";
-        $message.= 'Content-Type: '.$content_type.'; name="'.$basename.'"';
-        $message.= "\n";
-        $message.= "Content-Transfer-Encoding: base64\n";
-        $message.= 'Content-Disposition: attachment; filename="'.$basename.'"';
-        $message.= "\n";
-        $message.= base64_encode(file_get_contents($attachments));
-        $message.= "\n";
-        $message.= "--Playbasis--\n";
+        $raw = array(
+            'To: '.$dest,
+            'From: '.$src,
+            'Subject: '.$this->subject,
+            'MIME-Version: 1.0',
+            'Content-Type: multipart/mixed; boundary="'.BOUNDARY.'"',
+            '',
+            '--'.BOUNDARY,
+            'Content-Type: text/html; charset="utf-8"',
+            'Content-Transfer-Encoding: 7bit',
+            '',
+            $this->message,
+            '',
+            '--'.BOUNDARY,
+        );
 
-        $this->attachments = $message;
+        if (!empty($this->message_alt)) {
+            $raw = array_merge($raw, array(
+                'Content-Type: text/plain; charset="utf-8"',
+                'Content-Transfer-Encoding: 7bit',
+                '',
+                $this->message_alt,
+                '',
+                '--'.BOUNDARY,
+            ));
+	    }
+        if (is_array($attachments)) foreach ($attachments as $file_path => $file_name) {
+            $raw = array_merge($raw, array(
+                'Content-Type: '.mime_content_type($file_path).'; name="'.$file_name.'"',
+                'Content-Transfer-Encoding: base64',
+                'Content-Disposition: attachment; filename="'.$file_name.'"',
+                '',
+                chunk_split(base64_encode(file_get_contents($file_path))),
+                '',
+                '--'.BOUNDARY,
+            ));
+        } else {
+            $raw = array_merge($raw, array(
+                'Content-Type: '.mime_content_type($attachments).'; name="'.basename($attachments).'"',
+                'Content-Transfer-Encoding: base64',
+                'Content-Disposition: attachment; filename="'.basename($attachments).'"',
+                '',
+                chunk_split(base64_encode(file_get_contents($attachments))),
+                '',
+                '--'.BOUNDARY,
+            ));
+        }
+        $raw[count($raw)-1] .= '--';
+        $this->attachments = implode("\n", $raw);
+
         return $this;
     }
 
