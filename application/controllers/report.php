@@ -58,10 +58,9 @@ class Report extends REST_Controller
 		    SITE_ID_BURUFLY => false,
 	    );
 	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
-$to_pbteam_email = array('pechpras@playbasis.com');
 	    $conf = array(
 		    'static_image_url' => $this->config->item('STATIC_IMG_PATH'),
-	        'dynamic_image_url' => $this->config->item('IMG_PATH'),
+		    'dynamic_image_url' => $this->config->item('IMG_PATH'),
 		    'disable_url_exists' => $this->config->item('REPORT_SKIP_CHECK_IMG_PATH'),
 		    'report_dir' => $this->config->item('REPORT_DIR'),
 		    'report_url' => $this->config->item('REPORT_URL'),

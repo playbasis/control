@@ -185,7 +185,7 @@ class Amazon_ses {
 
     public function attachment($attachments)
     {
-        define('BOUNDARY', 'Playbasis');
+        if (!defined('BOUNDARY')) define('BOUNDARY', 'Playbasis');
 
         $src = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
         $dest = "";

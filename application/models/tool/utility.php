@@ -66,6 +66,7 @@ class Utility extends CI_Model
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($to, $subject, $message, $message_alt=null, $attachments=array()) {
 		$from = 'info@playbasis.com';
+		//$this->amazon_ses->debug(true);
 		$this->amazon_ses->from($from);
 		$this->amazon_ses->to($to);
 		$this->amazon_ses->subject($subject);
