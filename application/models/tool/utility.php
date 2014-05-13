@@ -66,7 +66,7 @@ class Utility extends CI_Model
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($to, $subject, $message, $message_alt=null, $attachments=array()) {
 		$from = 'info@playbasis.com';
-		//$this->amazon_ses->debug(true);
+		$this->amazon_ses->debug(true);
 		$this->amazon_ses->from($from);
 		$this->amazon_ses->to($to);
 		$this->amazon_ses->subject($subject);
@@ -76,6 +76,7 @@ class Utility extends CI_Model
 		return $this->amazon_ses->send();
 	}
 
+	/* http://mpdf1.com/manual/index.php?tid=125 */
 	public function html2mpdf($html, $output=false) {
 		require_once(APPPATH.'/libraries/mpdf/mpdf.php');
 		$mpdf = new mPDF('s','A4','','',25,15,21,22,10,10);
