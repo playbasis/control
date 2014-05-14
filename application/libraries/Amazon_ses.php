@@ -218,7 +218,7 @@ class Amazon_ses {
         $message.= "Content-Transfer-Encoding: 7bit\n";
         $message.= "Content-Disposition: inline\n";
         $message.= "\n";
-        $message.= "This is Report\n";
+        $message.= (empty($this->message_alt) ? strip_tags($this->message) : $this->message_alt)."\n";
         $message.= "\n\n";
         $message.= "--Playbasis\n";
         $message.= "Content-ID: \<playbasis".time()."\>\n";
