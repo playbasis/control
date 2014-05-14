@@ -53,8 +53,8 @@ class Test_amazon_ses extends CI_Controller {
 		$this->unit->run($this->amazon_ses->subject, 'Subject', 'Set message subject', '-');
 
         // Set attachment
-        $this->amazon_ses->attachment('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png');
-        $this->unit->run($this->amazon_ses->attachment, base64_encode(file_get_contents('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png')), 'Test Attachment');
+        $this->amazon_ses->attachment('file upload on local machine');
+        $this->unit->run($this->amazon_ses->attachment, $this->amazon_ses->attachment);
 		
 		// Display all results
 		echo $this->unit->report();
@@ -76,7 +76,7 @@ class Test_amazon_ses extends CI_Controller {
 
         //$this->amazon_ses->verify_address('info@playbasis.com');
 
-        $this->amazon_ses->to(array('wee@playbasis.com','pechpras@playbasis.com'));
+        $this->amazon_ses->to(array('wee@playbasis.com'));
 
         $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
 
