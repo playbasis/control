@@ -42,19 +42,46 @@ class Utility extends CI_Model
 		return strpos($file_headers[0], ' 20') || strpos($file_headers[0], ' 30');
 	}
 
-	public function save_file($dir, $file, $content, $mode=0755) {
+	public function save_dir($dir, $mode=0755) {
 		if (!is_dir($dir)) {
 			mkdir($dir, $mode, true);
 		}
+	}
+
+	public function save_file($dir, $file, $content, $mode=0755) {
+		$this->save_dir($dir, $mode);
 		file_put_contents("$dir/$file", $content);
 	}
 
-	public function email($from, $to, $subject, $message) {
+	/* http://stackoverflow.com/questions/19083175/generate-random-string-in-php-for-file-name */
+	public function random_string($length) {
+		$key = '';
+		$keys = array_merge(range(0, 9), range('a', 'z'));
+		for ($i = 0; $i < $length; $i++) {
+			$key .= $keys[array_rand($keys)];
+		}
+		return $key;
+	}
+
+	/* require: $this->load->library('amazon_ses'); */
+	public function email($to, $subject, $message, $message_alt=null, $attachments=array()) {
+		$from = 'info@playbasis.com';
+		$this->amazon_ses->debug(true);
 		$this->amazon_ses->from($from);
 		$this->amazon_ses->to($to);
 		$this->amazon_ses->subject($subject);
 		$this->amazon_ses->message($message);
+		if (!empty($message_alt)) $this->amazon_ses->message_alt($message_alt);
+		if (!empty($attachments)) $this->amazon_ses->attachment($attachments);
 		return $this->amazon_ses->send();
+	}
+
+	/* http://mpdf1.com/manual/index.php?tid=125 */
+	public function html2mpdf($html, $output=false) {
+		require_once(APPPATH.'/libraries/mpdf/mpdf.php');
+		$mpdf = new mPDF('s','A4','','',25,15,21,22,10,10);
+		$mpdf->WriteHTML($html);
+		return $output ? $mpdf->Output('', 'S') : null;
 	}
 }
 ?>

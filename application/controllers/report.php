@@ -2,6 +2,9 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST_Controller.php';
 
+define('MAX_EXECUTION_TIME', 0);
+define('MAX_MEMORY', '256M');
+
 define('SITE_ID_DEMO', '52ea1eac8d8c89401c0000e5');
 define('SITE_ID_MTD', '52ea1ec18d8c897807000077');
 define('SITE_ID_PLAYBOY', '52ea1eff8d8c89642100006d');
@@ -37,7 +40,7 @@ class Report extends REST_Controller
 	    $this->load->model('tool/utility', 'utility');
 	    $this->load->library('mongo_db');
 	    $this->load->library('parser');
-	    //$this->load->library('pdf');
+	    $this->load->library('mpdf');
 	    $this->load->library('rssparser');
     }
 
@@ -57,14 +60,17 @@ class Report extends REST_Controller
 	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
 	    $conf = array(
 		    'static_image_url' => $this->config->item('STATIC_IMG_PATH'),
-	        'dynamic_image_url' => $this->config->item('IMG_PATH'),
+		    'dynamic_image_url' => $this->config->item('IMG_PATH'),
 		    'disable_url_exists' => $this->config->item('REPORT_SKIP_CHECK_IMG_PATH'),
+		    'report_dir' => $this->config->item('REPORT_DIR'),
 		    'report_url' => $this->config->item('REPORT_URL'),
+		    'report_pdf' => $this->config->item('REPORT_PDF'),
 		    'report_email' => $this->config->item('REPORT_EMAIL'),
 		    'report_email_client' => $this->config->item('REPORT_EMAIL_CLIENT'),
 	    );
 
-	    set_time_limit(0);
+	    set_time_limit(MAX_EXECUTION_TIME);
+	    ini_set('memory_limit', MAX_MEMORY);
 
 	    /* set from-to dates */
 	    $to = $ref ? $ref : date('Y-m-d', strtotime('-1 day', time())); // yesterday is default
@@ -89,14 +95,25 @@ class Report extends REST_Controller
 
 		    if (!array_key_exists((string)$site_id, $allowed_site_ids)) continue;
 
-		    $this->utility->elapsed_time('data');
 		    log_message('debug', 'site = '.print_r($site, true));
+		    $this->utility->elapsed_time('data');
 		    $params = $this->build_data($conf, $clients[(string)$client_id], $site, $to, $from, $from2);
-		    log_message('debug', 'params = '.print_r($params, true));
-		    $html = $this->parser->parse('report.html', $params, true);
-		    log_message('debug', 'html = '.print_r($html, true));
-		    $this->utility->save_file('report/'.$params['DIR'], $params['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
 		    log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('data').' sec');
+		    log_message('debug', 'params = '.print_r($params, true));
+
+		    $html = $this->parser->parse('report.html', $params, true);
+		    $this->utility->save_file($conf['report_dir'].$params['DIR'], $params['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
+		    log_message('debug', 'html = '.print_r($html, true));
+
+		    $pdf_html = $this->parser->parse('report_pdf.html', $params, true);
+		    $this->utility->save_file($conf['report_dir'].$params['DIR'], str_replace('.html', '.pdf.html', $params['FILE']), $pdf_html);
+		    log_message('debug', 'pdf_html = '.print_r($pdf_html, true));
+
+		    if ($conf['report_pdf']) {
+		        $pdf = $this->utility->html2mpdf($pdf_html, true);
+		        $this->utility->save_file($conf['report_dir'].$params['DIR'], str_replace('.html', '.pdf', $params['FILE']), $pdf);
+		        log_message('debug', 'pdf = DONE');
+		    }
 
 		    $this->master_accumulate($conf, $master, $params);
 
@@ -104,14 +121,15 @@ class Report extends REST_Controller
 
 		    if ($conf['report_email']) {
 		        $this->utility->elapsed_time('email');
-		        $email_from = 'info@playbasis.com';
 			    $email_to = array_merge(
 				    $conf['report_email_client'] ? array($params['CLIENT_EMAIL']) : array(),
 				    $to_pbteam_email
 			    );
 		        $subject = '[Playbasis] Weekly Report for '.$params['SITE_NAME'].' ('.$params['FROM'].' - '.$params['TO'].')';
 		        $message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
-		        $resp = $this->utility->email($email_from, $email_to, $subject, $message);
+		        $file_path = $conf['report_dir'].$params['DIR'].'/'.str_replace('.html', '.pdf', $params['FILE']);
+		        $file_name = 'report-'.$params['SITE_NAME'].'-'.str_replace('.html', '.pdf', $params['FILE']);
+		        $resp = $this->utility->email($email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
 		        log_message('debug', 'email = '.print_r($resp, true));
 		        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 		    }
@@ -121,17 +139,29 @@ class Report extends REST_Controller
 	    usort($master_clients, 'compare_SITE_NAME_asc');
 	    $master['CLIENTS'] = $master_clients;
 	    log_message('debug', 'master = '.print_r($master, true));
+
 	    $html = $this->parser->parse('report_master.html', $master, true);
+	    $this->utility->save_file($conf['report_dir'].$master['DIR'], $master['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
 	    log_message('debug', 'html = '.print_r($html, true));
-	    $this->utility->save_file('report/'.$master['DIR'], $master['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
+
+	    $pdf_html = $this->parser->parse('report_master_pdf.html', $master, true);
+	    $this->utility->save_file($conf['report_dir'].$master['DIR'], str_replace('.html', '.pdf.html', $master['FILE']), $pdf_html);
+	    log_message('debug', 'pdf_html = '.print_r($pdf_html, true));
+
+	    if ($conf['report_pdf']) {
+	        $pdf = $this->utility->html2mpdf($pdf_html, true);
+	        $this->utility->save_file($conf['report_dir'].$master['DIR'], str_replace('.html', '.pdf', $master['FILE']), $pdf);
+	        log_message('debug', 'pdf = DONE');
+	    }
 
 	    if ($conf['report_email']) {
 	        $this->utility->elapsed_time('email');
-	        $email_from = 'info@playbasis.com';
 	        $email_to = $to_pbteam_email;
 	        $subject = '[Playbasis] Weekly Master Report'.' ('.$master['FROM'].' - '.$master['TO'].')';
 	        $message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$master['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
-	        $resp = $this->utility->email($email_from, $email_to, $subject, $message);
+	        $file_path = $conf['report_dir'].$master['DIR'].'/'.str_replace('.html', '.pdf', $master['FILE']);
+	        $file_name = 'report-master-'.str_replace('.html', '.pdf', $master['FILE']);
+	        $resp = $this->utility->email($email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
 	        log_message('debug', 'email = '.print_r($resp, true));
 	        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 	    }
@@ -168,7 +198,7 @@ class Report extends REST_Controller
 		if (is_array($actions)) foreach ($actions as $action) {
 			$arr[] = array_merge(
 				array(
-					'IMAGE' => str_replace('-alt', '', $action['icon']),
+					'IMAGE_SRC' => $conf['static_image_url'].'images/'.str_replace('-alt', '', $action['icon']).'.gif',
 					'NAME' => $action['name'],
 				),
 				$this->get_stat('', $conf, $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
@@ -238,11 +268,12 @@ class Report extends REST_Controller
 			$name = $player['first_name'].' '.$player['last_name'];
 			$name_str = trim($name);
 			$params['PLAYERS'][] = array(
-				'PLAYER_ROW' => $i+1,
-				'PLAYER_IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($player['image'], $conf['dynamic_image_url']) ? $player['image'] : $conf['static_image_url'].'images/user_no_image.jpg',
-				'PLAYER_NAME' => (!empty($name_str) ? $name : $player['username']),
-				'PLAYER_EXP' => number_format($player['exp']),
-				'PLAYER_LEVEL' => number_format($player['level']),
+				'BG_COLOR' => ($i % 2 == 0 ? 'bgcolor="#f5f5f5"' : ''),
+				'ROW' => $i+1,
+				'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($player['image'], $conf['dynamic_image_url']) ? $player['image'] : $conf['static_image_url'].'images/user_no_image.jpg',
+				'NAME' => (!empty($name_str) ? $name : $player['username']),
+				'EXP' => number_format($player['exp']),
+				'LEVEL' => number_format($player['level']),
 			);
 		}
 		// FEEDS

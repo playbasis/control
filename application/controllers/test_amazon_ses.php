@@ -74,7 +74,7 @@ class Test_amazon_ses extends CI_Controller {
         $subject = "Playbasis user limit alert";
         $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
-//        $this->amazon_ses->verify_address('info@playbasis.com');
+        //$this->amazon_ses->verify_address('info@playbasis.com');
 
         $this->amazon_ses->to(array('wee@playbasis.com'));
 
