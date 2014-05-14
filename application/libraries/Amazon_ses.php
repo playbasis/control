@@ -238,29 +238,22 @@ class Amazon_ses {
         if (is_array($attachments)){
             foreach ($attachments as $i => $v) {
                 if(is_numeric($i)){
-                    $raw = array_merge($raw, array(
-                        'Content-Type: '.mime_content_type($v).'; name="'.basename($v).'"',
-                        'Content-Transfer-Encoding: base64',
-                        'Content-Disposition: attachment; filename="'.basename($v).'"',
-                        '',
-                        chunk_split(base64_encode(file_get_contents($v))),
-                        '',
-                        '--'.BOUNDARY,
-                    ));
+                    $file_path = $v;
+                    $file_name = basename($v);
                 }else{
                     $file_path = $i;
                     $file_name = $v;
-
-                    $raw = array_merge($raw, array(
-                        'Content-Type: '.mime_content_type($file_path).'; name="'.$file_name.'"',
-                        'Content-Transfer-Encoding: base64',
-                        'Content-Disposition: attachment; filename="'.$file_name.'"',
-                        '',
-                        chunk_split(base64_encode(file_get_contents($file_path))),
-                        '',
-                        '--'.BOUNDARY,
-                    ));
                 }
+
+                $raw = array_merge($raw, array(
+                    'Content-Type: '.mime_content_type($file_path).'; name="'.$file_name.'"',
+                    'Content-Transfer-Encoding: base64',
+                    'Content-Disposition: attachment; filename="'.$file_name.'"',
+                    '',
+                    chunk_split(base64_encode(file_get_contents($file_path))),
+                    '',
+                    '--'.BOUNDARY,
+                ));
             }
         } else {
             $raw = array_merge($raw, array(

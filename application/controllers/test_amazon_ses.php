@@ -86,17 +86,17 @@ class Test_amazon_ses extends CI_Controller {
 
         $this->amazon_ses->message_alt('If you cannot view this email, please visit http://playbasis.com');
 
-        //$this->amazon_ses->attachment('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png');
+        $this->amazon_ses->attachment('C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png');
         /*$this->amazon_ses->attachment(array(
             'C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png',
             'C:\Program Files (x86)\Ampps\www\api\images\like-glyph.png',
             'C:\Program Files (x86)\Ampps\www\api\images\tweet-glyph.png',
         ));*/
-        $this->amazon_ses->attachment(array(
+        /*$this->amazon_ses->attachment(array(
             'C:\Program Files (x86)\Ampps\www\api\images\logo-playbasis.png' => 'email-logo-playbasis.png',
             'C:\Program Files (x86)\Ampps\www\api\images\like-glyph.png' => 'a.png',
             'C:\Program Files (x86)\Ampps\www\api\images\tweet-glyph.png' => 'b.png',
-        ));
+        ));*/
 
         $this->amazon_ses->debug(TRUE);
 
