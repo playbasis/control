@@ -12,189 +12,192 @@
  * @license         http://www.opensource.org/licenses/mit-license.html
  */
 class Amazon_ses {
-	
-	private $_ci;               		// CodeIgniter instance
- 	private $_cert_path;				// Path to SSL certificate
-	
-	private $_access_key;				// Amazon Access Key
-	private $_secret_key;				// Amazon Secret Access Key 
-	public $region = 'us-east-1';		// Amazon region your SES service is located
-	
-	public $from;						// Default from e-mail address
-	public $from_name;					// Vanity sender name
-	public $reply_to;					// Default reply-to. Same as $from if omitted
-	public $recipients = array();		// Contains all recipients (to, cc, bcc)
-	public $subject;					// Message subject
-	public $message;					// Message body
-	public $message_alt;				// Message body alternative in plain-text
-	public $charset;					// Character set
 
-    public $attachments;
+    private $_ci;               		// CodeIgniter instance
+    private $_cert_path;				// Path to SSL certificate
 
-	public $debug = FALSE;					
-	
-	/**
-	 * Constructor
-	 */
-	function __construct()
-	{
-		log_message('debug', 'Amazon SES Class Initialized');
-		$this->_ci =& get_instance();
-		
-		// Load all config items
-		$this->_ci->load->config('amazon_ses');
-		$this->_access_key = $this->_ci->config->item('amazon_ses_access_key');
-		$this->_secret_key = $this->_ci->config->item('amazon_ses_secret_key');
-		$this->_cert_path = $this->_ci->config->item('amazon_ses_cert_path');			
-		$this->from = $this->_ci->config->item('amazon_ses_from');
-		$this->from_name = $this->_ci->config->item('amazon_ses_from_name');
-		$this->charset = $this->_ci->config->item('amazon_ses_charset');
-		
-		// Check whether reply_to is not set
-		if ($this->_ci->config->item('amazon_ses_reply_to') === FALSE)
-		{
-			$this->reply_to = $this->_ci->config->item('amazon_ses_from');
-		}
-		else
-		{
-			$this->reply_to = $this->_ci->config->item('amazon_ses_reply_to');
-		}
-		
-		// Is our certificate path valid?
-		if ( ! file_exists($this->_cert_path))
-		{
-			show_error('CA root certificates not found. Please <a href="http://curl.haxx.se/ca/cacert.pem">download</a> a bundle of public root certificates and/or specify its location in config/amazon_ses.php');
-		}
-		
-		// Load Phil's cURL library as a Spark or the normal way
-		if (method_exists($this->_ci->load, 'spark'))
-		{
-			$this->_ci->load->spark('curl/1.0.0');
-		}
-		
-		$this->_ci->load->library('curl');
-		
-	}
-	
-	/**
-	 * From
-	 *
-	 * Sets the from address.
-	 * @param 	string 	email address the message is from
-	 * @param 	string 	vanity name from which the message is sent
-	 * @return 	mixed
-	 */
-	public function from($from, $name = FALSE)
-	{
-		
-		$this->_ci->load->helper('email');
-		
-		if ($name)
-		{
-			$this->from_name = $name;
-		}
-		
-		if (valid_email($from))
-		{
-			$this->from = $from;			
-			return $this;
-		}
-	
-		log_message('debug', 'From address is not valid');
-		return FALSE;
-	
-	}
-	
-	/**
-	 * To
-	 *
-	 * Sets the to address.
-	 * @param 	string 	to email address
-	 * @return 	mixed 
-	 */
-	public function to($to)
-	{
-		$this->_add_address($to, 'to');
-		return $this;
-	}
-	
-	/**
-	 * CC
-	 *
-	 * Sets the cc address.
-	 * @param 	string 	cc email address
-	 * @return 	mixed 
-	 */
-	public function cc($cc)
-	{	
-		$this->_add_address($cc, 'cc');
-		return $this;
-	}
-	
-	/**
-	 * BBC
-	 *
-	 * Sets the bcc address.
-	 * @param 	string 	bcc email address
-	 * @return 	mixed 
-	 */
-	public function bcc($bcc)
-	{
-		$this->_add_address($bcc, 'bcc');
-		return $this;
-	}
-	
-	/**
-	 * Subject
-	 *
-	 * Sets the email subject.
-	 * @param 	string	the subject
-	 * @return 	mixed
-	 */
-	public function subject($subject)
-	{
-		$this->subject = $subject;
-		return $this;
-	}
-	
-	/**
-	 * Message
-	 *
-	 * Sets the message.
-	 * @param 	string	the message to be sent
-	 * @return 	mixed
-	 */
-	public function message($message)
-	{
-		$this->message = $message;
-		return $this;
-	}
-	
-	/**
-	 * Message alt
-	 *
-	 * Sets the alternative message (plain-text) for when HTML email is not supported by email client.
-	 * @param 	string 	the alternative message to be sent
-	 * @return 	mixed
-	 */
-	public function message_alt($message_alt)
-	{
-		$this->message_alt = $message_alt;
-		return $this;
-	}
+    private $_access_key;				// Amazon Access Key
+    private $_secret_key;				// Amazon Secret Access Key
+    public $region = 'us-east-1';		// Amazon region your SES service is located
 
+    public $from;						// Default from e-mail address
+    public $from_name;					// Vanity sender name
+    public $reply_to;					// Default reply-to. Same as $from if omitted
+    public $recipients = array();		// Contains all recipients (to, cc, bcc)
+    public $subject;					// Message subject
+    public $message;					// Message body
+    public $message_alt;				// Message body alternative in plain-text
+    public $charset;					// Character set
 
+    public $attachments;                // AttachmentFile
+
+    public $debug = FALSE;
+
+    /**
+     * Constructor
+     */
+    function __construct()
+    {
+        log_message('debug', 'Amazon SES Class Initialized');
+        $this->_ci =& get_instance();
+
+        // Load all config items
+        $this->_ci->load->config('amazon_ses');
+        $this->_access_key = $this->_ci->config->item('amazon_ses_access_key');
+        $this->_secret_key = $this->_ci->config->item('amazon_ses_secret_key');
+        $this->_cert_path = $this->_ci->config->item('amazon_ses_cert_path');
+        $this->from = $this->_ci->config->item('amazon_ses_from');
+        $this->from_name = $this->_ci->config->item('amazon_ses_from_name');
+        $this->charset = $this->_ci->config->item('amazon_ses_charset');
+
+        // Check whether reply_to is not set
+        if ($this->_ci->config->item('amazon_ses_reply_to') === FALSE)
+        {
+            $this->reply_to = $this->_ci->config->item('amazon_ses_from');
+        }
+        else
+        {
+            $this->reply_to = $this->_ci->config->item('amazon_ses_reply_to');
+        }
+
+        // Is our certificate path valid?
+        if ( ! file_exists($this->_cert_path))
+        {
+            show_error('CA root certificates not found. Please <a href="http://curl.haxx.se/ca/cacert.pem">download</a> a bundle of public root certificates and/or specify its location in config/amazon_ses.php');
+        }
+
+        // Load Phil's cURL library as a Spark or the normal way
+        if (method_exists($this->_ci->load, 'spark'))
+        {
+            $this->_ci->load->spark('curl/1.0.0');
+        }
+
+        $this->_ci->load->library('curl');
+
+    }
+
+    /**
+     * From
+     *
+     * Sets the from address.
+     * @param 	string 	email address the message is from
+     * @param 	string 	vanity name from which the message is sent
+     * @return 	mixed
+     */
+    public function from($from, $name = FALSE)
+    {
+
+        $this->_ci->load->helper('email');
+
+        if ($name)
+        {
+            $this->from_name = $name;
+        }
+
+        if (valid_email($from))
+        {
+            $this->from = $from;
+            return $this;
+        }
+
+        log_message('debug', 'From address is not valid');
+        return FALSE;
+
+    }
+
+    /**
+     * To
+     *
+     * Sets the to address.
+     * @param 	string 	to email address
+     * @return 	mixed
+     */
+    public function to($to)
+    {
+        $this->_add_address($to, 'to');
+        return $this;
+    }
+
+    /**
+     * CC
+     *
+     * Sets the cc address.
+     * @param 	string 	cc email address
+     * @return 	mixed
+     */
+    public function cc($cc)
+    {
+        $this->_add_address($cc, 'cc');
+        return $this;
+    }
+
+    /**
+     * BBC
+     *
+     * Sets the bcc address.
+     * @param 	string 	bcc email address
+     * @return 	mixed
+     */
+    public function bcc($bcc)
+    {
+        $this->_add_address($bcc, 'bcc');
+        return $this;
+    }
+
+    /**
+     * Subject
+     *
+     * Sets the email subject.
+     * @param 	string	the subject
+     * @return 	mixed
+     */
+    public function subject($subject)
+    {
+        $this->subject = $subject;
+        return $this;
+    }
+
+    /**
+     * Message
+     *
+     * Sets the message.
+     * @param 	string	the message to be sent
+     * @return 	mixed
+     */
+    public function message($message)
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+    /**
+     * Message alt
+     *
+     * Sets the alternative message (plain-text) for when HTML email is not supported by email client.
+     * @param 	string 	the alternative message to be sent
+     * @return 	mixed
+     */
+    public function message_alt($message_alt)
+    {
+        $this->message_alt = $message_alt;
+        return $this;
+    }
+
+    /**
+     * Attachment
+     *
+     * Sets the attachment file.
+     * @param 	string 	the path of attachment file to be sent
+     * @param 	array 	the path of attachment file to be sent
+     *
+     * @return 	mixed
+     */
     public function attachment($attachments)
     {
-//        $this->attachments = base64_encode(file_get_contents($attachments));
-
-        list( $dirname, $basename, $extension, $filename ) = array_values( pathinfo($attachments) );
-
-        $content_type = mime_content_type($attachments);
+        if (!defined('BOUNDARY')) define('BOUNDARY', 'Playbasis');
 
         $src = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
         $dest = "";
-
         if (isset($this->recipients['to']))
         {
             for ($i = 0; $i < count($this->recipients['to']); $i++)
@@ -206,217 +209,258 @@ class Amazon_ses {
             }
         }
 
-        $message= "To: ".$dest."\n";
-        $message.= "From: ".$src."\n";
-        $message.= "Subject: ".$this->subject."\n";
-        $message.= "MIME-Version: 1.0\n";
-        $message.= 'Content-Type: multipart/mixed; boundary="Playbasis"';
-        $message.= "\n\n";
-        $message.= "--Playbasis\n";
-        $message.= 'Content-Type: text/plain; charset="utf-8"';
-        $message.= "\n";
-        $message.= "Content-Transfer-Encoding: 7bit\n";
-        $message.= "Content-Disposition: inline\n";
-        $message.= "\n";
-        $message.= (empty($this->message_alt) ? strip_tags($this->message) : $this->message_alt)."\n";
-        $message.= "\n\n";
-        $message.= "--Playbasis\n";
-        $message.= "Content-ID: \<playbasis".time()."\>\n";
-        $message.= 'Content-Type: '.$content_type.'; name="'.$basename.'"';
-        $message.= "\n";
-        $message.= "Content-Transfer-Encoding: base64\n";
-        $message.= 'Content-Disposition: attachment; filename="'.$basename.'"';
-        $message.= "\n";
-        $message.= base64_encode(file_get_contents($attachments));
-        $message.= "\n";
-        $message.= "--Playbasis--\n";
+        $raw = array(
+            'To: '.$dest,
+            'From: '.$src,
+            'Subject: '.$this->subject,
+            'MIME-Version: 1.0',
+            'Content-Type: multipart/mixed; boundary="'.BOUNDARY.'"',
+            '',
+            '--'.BOUNDARY,
+            'Content-Type: text/html; charset="utf-8"',
+            'Content-Transfer-Encoding: 7bit',
+            '',
+            $this->message,
+            '',
+            '--'.BOUNDARY,
+        );
 
-        $this->attachments = $message;
+        if (!empty($this->message_alt)) {
+            $raw = array_merge($raw, array(
+                'Content-Type: text/plain; charset="utf-8"',
+                'Content-Transfer-Encoding: 7bit',
+                '',
+                $this->message_alt,
+                '',
+                '--'.BOUNDARY,
+            ));
+        }
+        if (is_array($attachments)){
+            foreach ($attachments as $i => $v) {
+                if(is_numeric($i)){
+                    $raw = array_merge($raw, array(
+                        'Content-Type: '.mime_content_type($v).'; name="'.basename($v).'"',
+                        'Content-Transfer-Encoding: base64',
+                        'Content-Disposition: attachment; filename="'.basename($v).'"',
+                        '',
+                        chunk_split(base64_encode(file_get_contents($v))),
+                        '',
+                        '--'.BOUNDARY,
+                    ));
+                }else{
+                    $file_path = $i;
+                    $file_name = $v;
+
+                    $raw = array_merge($raw, array(
+                        'Content-Type: '.mime_content_type($file_path).'; name="'.$file_name.'"',
+                        'Content-Transfer-Encoding: base64',
+                        'Content-Disposition: attachment; filename="'.$file_name.'"',
+                        '',
+                        chunk_split(base64_encode(file_get_contents($file_path))),
+                        '',
+                        '--'.BOUNDARY,
+                    ));
+                }
+            }
+        } else {
+            $raw = array_merge($raw, array(
+                'Content-Type: '.mime_content_type($attachments).'; name="'.basename($attachments).'"',
+                'Content-Transfer-Encoding: base64',
+                'Content-Disposition: attachment; filename="'.basename($attachments).'"',
+                '',
+                chunk_split(base64_encode(file_get_contents($attachments))),
+                '',
+                '--'.BOUNDARY,
+            ));
+        }
+        $raw[count($raw)-1] .= '--';
+        $this->attachments = implode("\n", $raw);
+
         return $this;
     }
 
-	/**
-	 * Send
-	 *
-	 * Sends off the email and make the API request.
-	 * @param 	bool	whether to empty the recipients array on success
-	 * @return 	bool
-	 */
-	public function send($destroy = TRUE)
-	{
-		
-		// Create the message query string
-		$query_string = $this->_format_query_string();
-		
-		// Pass it to the Amazon API	
-		$response = $this->_api_request($query_string);		
-		
-		// Destroy recipients if set
-		if ($destroy === TRUE)
-		{
-			unset($this->recipients);
-		}
-	
-		return $response;
-	
-	}
+    /**
+     * Send
+     *
+     * Sends off the email and make the API request.
+     * @param 	bool	whether to empty the recipients array on success
+     * @return 	bool
+     */
+    public function send($destroy = TRUE)
+    {
 
-	/**
-	 * Verify address
-	 *
-	 * Verifies a from address as a valid sender
-	 * @link 	http://docs.amazonwebservices.com/ses/latest/GettingStartedGuide/index.html?VerifyEmailAddress.html
-	 * @param 	string	email address to verify as a sender
-	 * @return 	bool
+        // Create the message query string
+        $query_string = $this->_format_query_string();
+
+        // Pass it to the Amazon API
+        $response = $this->_api_request($query_string);
+
+        // Destroy recipients if set
+        if ($destroy === TRUE)
+        {
+            unset($this->recipients);
+        }
+
+        return $response;
+
+    }
+
+    /**
+     * Verify address
+     *
+     * Verifies a from address as a valid sender
+     * @link 	http://docs.amazonwebservices.com/ses/latest/GettingStartedGuide/index.html?VerifyEmailAddress.html
+     * @param 	string	email address to verify as a sender
+     * @return 	bool
      * @author 	Ben Hartard
-	 */
-	public function verify_address($address)
-	{
-		
-		// Prep our query string
-		$query_string = array(
-			'Action' => 'VerifyEmailAddress',
-			'EmailAddress' => $address
-		);
-		
-		// Hand it off to Amazon		
-		return $this->_api_request($query_string);
-		
-	}
-	
-	/**
-	 * Address is verified
-	 *
-	 * Checks whether the supplied email address is verified with Amazon.
-	 * @param	string	email address to be checked
-	 * @return 	bool
-	 */
-	public function address_is_verified($address)
-	{
-		// Prep our query string
-		$query_string = array(
-			'Action' => 'ListVerifiedEmailAddresses'
-		);
+     */
+    public function verify_address($address)
+    {
 
-		// Get our list with verified addresses
-		$response = $this->_api_request($query_string, TRUE);
+        // Prep our query string
+        $query_string = array(
+            'Action' => 'VerifyEmailAddress',
+            'EmailAddress' => $address
+        );
 
-		// Just return the text response when we're in debug mode
-		if ($this->debug === TRUE)
-		{
-			return $response;
-		}
+        // Hand it off to Amazon
+        return $this->_api_request($query_string);
 
-		/**
-		 * We don't want to introduce another dependency (a XML parser)
-	     * so we just check if the address is present in the response
-		 * instead of returning an array with all addresses.
-		 */
-		if (strpos($response, $address) === FALSE)
-		{
-			return FALSE;
-		}
-		
-		return TRUE;	
-		
-	}
-	
-	/**
-	 * Debug
-	 *
-	 * Makes send() return the actual API response instead of a bool
-	 * @param 	bool
-	 * @return 	void
-	 */
-	public function debug($bool)
-	{
-		$this->debug = (bool) $bool;
-	}
-	
-	/**
-	 * Add address
-	 *
-	 * Add a new address to arecipients list.
-	 * @param 	string 	email address
-	 * @param	string 	recipient type (e.g, to, cc, bcc)
-	 */
-	private function _add_address($address, $type)
-	{
-		
-		$this->_ci->load->helper('email');
-		
-		// Take care of arrays and comma delimitered lists	
-		if ( ! $this->_format_addresses($address, $type))	
-		{	
-			$this->_ci->load->helper('email');
-						
-			if (valid_email($address))
-			{
-				$this->recipients[$type][] = $address;
-			}
-			else
-			{
-				log_message('debug', ucfirst($type) . ' e-mail address is not valid');
-				return FALSE;	
-			}
-			
-		}
-		
-	}
-	
-	/**
-	 * Format addresses
-	 *
-	 * Formats arrays and comma delimertered lists.
-	 * @param 	mixed 	the list with addresses
-	 * @param 	string 	recipient type (e.g, to, cc, bcc)
-	 */
-	private function _format_addresses($addresses, $type)
-	{
-		// Make sure we're dealing with a proper type
-		if (in_array($type, array('to', 'cc', 'bcc'), TRUE) === FALSE)
-		{
-			log_message('debug', 'Unknow type queue.');
-			return FALSE;
-		}
-		
-		// Check if the input is an array
-		if (is_array($addresses))
-		{
-			foreach ($addresses as $address)
-			{
-				$this->{$type}($address);
-			}
-			
-			return TRUE;
-		}
-		// Check if we're dealing with a comma seperated list
-		elseif (strpos($addresses, ', ') !== FALSE)
-		{
-			
-			// Write each element
-			$addresses = explode(', ', $addresses);
-			
-			foreach ($addresses as $address)
-			{
-				$this->{$type}($address);
-			}
-			
-			return TRUE;	
-		}
-			
-		return FALSE;
-			
-	}
-	
-	/**
-	 * Format query string
-	 *
-	 * Generates the query string for email
-	 * @return	array
-	 */
-	private function _format_query_string()
-	{
+    }
+
+    /**
+     * Address is verified
+     *
+     * Checks whether the supplied email address is verified with Amazon.
+     * @param	string	email address to be checked
+     * @return 	bool
+     */
+    public function address_is_verified($address)
+    {
+        // Prep our query string
+        $query_string = array(
+            'Action' => 'ListVerifiedEmailAddresses'
+        );
+
+        // Get our list with verified addresses
+        $response = $this->_api_request($query_string, TRUE);
+
+        // Just return the text response when we're in debug mode
+        if ($this->debug === TRUE)
+        {
+            return $response;
+        }
+
+        /**
+         * We don't want to introduce another dependency (a XML parser)
+         * so we just check if the address is present in the response
+         * instead of returning an array with all addresses.
+         */
+        if (strpos($response, $address) === FALSE)
+        {
+            return FALSE;
+        }
+
+        return TRUE;
+
+    }
+
+    /**
+     * Debug
+     *
+     * Makes send() return the actual API response instead of a bool
+     * @param 	bool
+     * @return 	void
+     */
+    public function debug($bool)
+    {
+        $this->debug = (bool) $bool;
+    }
+
+    /**
+     * Add address
+     *
+     * Add a new address to arecipients list.
+     * @param 	string 	email address
+     * @param	string 	recipient type (e.g, to, cc, bcc)
+     */
+    private function _add_address($address, $type)
+    {
+
+        $this->_ci->load->helper('email');
+
+        // Take care of arrays and comma delimitered lists
+        if ( ! $this->_format_addresses($address, $type))
+        {
+            $this->_ci->load->helper('email');
+
+            if (valid_email($address))
+            {
+                $this->recipients[$type][] = $address;
+            }
+            else
+            {
+                log_message('debug', ucfirst($type) . ' e-mail address is not valid');
+                return FALSE;
+            }
+
+        }
+
+    }
+
+    /**
+     * Format addresses
+     *
+     * Formats arrays and comma delimertered lists.
+     * @param 	mixed 	the list with addresses
+     * @param 	string 	recipient type (e.g, to, cc, bcc)
+     */
+    private function _format_addresses($addresses, $type)
+    {
+        // Make sure we're dealing with a proper type
+        if (in_array($type, array('to', 'cc', 'bcc'), TRUE) === FALSE)
+        {
+            log_message('debug', 'Unknow type queue.');
+            return FALSE;
+        }
+
+        // Check if the input is an array
+        if (is_array($addresses))
+        {
+            foreach ($addresses as $address)
+            {
+                $this->{$type}($address);
+            }
+
+            return TRUE;
+        }
+        // Check if we're dealing with a comma seperated list
+        elseif (strpos($addresses, ', ') !== FALSE)
+        {
+
+            // Write each element
+            $addresses = explode(', ', $addresses);
+
+            foreach ($addresses as $address)
+            {
+                $this->{$type}($address);
+            }
+
+            return TRUE;
+        }
+
+        return FALSE;
+
+    }
+
+    /**
+     * Format query string
+     *
+     * Generates the query string for email
+     * @return	array
+     */
+    private function _format_query_string()
+    {
 
         if(isset($this->attachments)){
             $query_string['Action'] = "SendRawEmail";
@@ -479,100 +523,99 @@ class Amazon_ses {
 
         }
 
-				
-		return $query_string;
-		
-	}
-	
-	/**
-	 * Set headers
-	 *
-	 * Generates the X-Amzn headers
-	 * @return 	string	headers including signed signature
-	 */
-	private function _set_headers()
-	{
-		$date = date(DATE_RSS);
-		$signature = $this->_sign_signature($date);
-		
-		$this->_ci->curl->http_header('Content-Type', 'application/x-www-form-urlencoded');
-		$this->_ci->curl->http_header('Date', $date);
-		$this->_ci->curl->http_header('X-Amzn-Authorization', 'AWS3-HTTPS AWSAccessKeyId=' . $this->_access_key . ', Algorithm=HmacSHA256, Signature=' . $signature);
-		
-	}
-	
-	/**
-	 * Sign signature
-	 *
-	 * Calculate signature using HMAC.
-	 * @param	string	date used in the header
-	 * @return	string 	RFC 2104-compliant HMAC hash
-	 */
-	private function _sign_signature($date)
-	{
-		$hash = hash_hmac('sha256', $date, $this->_secret_key, TRUE);	
-		return base64_encode($hash);
-	}
-	
-	/**
-	 * Endpoint
-	 *
-	 * Generates the API endpoint.
-	 * @return 	string	URL to the SES endpoint for the region
-	 */
-	private function _endpoint()
-	{		
-		return 'https://email.' . $this->region . '.amazonaws.com';
-	}
-	
-	/**
-	 * API request
-	 *
-	 * Send a request to the Amazon SES API using Phil's cURL lib.
-	 * @param arra		query parameters that have to be added
-	 * @param bool		whether to return the actual response
-	 * @return mixed
-	 */
-	private function _api_request($query_string, $return = FALSE)
-	{
-		
-		// Set the endpoint		
-		$this->_ci->curl->create($this->_endpoint());
-				var_dump($query_string);
-		$this->_ci->curl->post($query_string);
-		$this->_set_headers();
-		
-		// Make sure we connect over HTTPS and verify
-		if( ! isset($_SERVER['HTTPS']))
-		{
-			$this->_ci->curl->ssl(TRUE, 2, $this->_cert_path);
-		}
-		
-		// Show headers when in debug mode		
-		if($this->debug === TRUE)
-		{
-			$this->_ci->curl->option(CURLOPT_FAILONERROR, FALSE);
-			$this->_ci->curl->option(CURLINFO_HEADER_OUT, TRUE);
-		}
-			
-		$response = $this->_ci->curl->execute();
 
-		// Return the actual response when in debug or if requested specifically
-		if($this->debug === TRUE OR $return === TRUE)
-		{
-			return $response;
-		}
-				
-		// Check if everything went okay
-		if ($response === FALSE)
-		{
-			log_message('debug', 'API request failed.');
-			return FALSE;
-		}
-		
-		return TRUE;				
-		
-	}
+        return $query_string;
+
+    }
+
+    /**
+     * Set headers
+     *
+     * Generates the X-Amzn headers
+     * @return 	string	headers including signed signature
+     */
+    private function _set_headers()
+    {
+        $date = date(DATE_RSS);
+        $signature = $this->_sign_signature($date);
+
+        $this->_ci->curl->http_header('Content-Type', 'application/x-www-form-urlencoded');
+        $this->_ci->curl->http_header('Date', $date);
+        $this->_ci->curl->http_header('X-Amzn-Authorization', 'AWS3-HTTPS AWSAccessKeyId=' . $this->_access_key . ', Algorithm=HmacSHA256, Signature=' . $signature);
+
+    }
+
+    /**
+     * Sign signature
+     *
+     * Calculate signature using HMAC.
+     * @param	string	date used in the header
+     * @return	string 	RFC 2104-compliant HMAC hash
+     */
+    private function _sign_signature($date)
+    {
+        $hash = hash_hmac('sha256', $date, $this->_secret_key, TRUE);
+        return base64_encode($hash);
+    }
+
+    /**
+     * Endpoint
+     *
+     * Generates the API endpoint.
+     * @return 	string	URL to the SES endpoint for the region
+     */
+    private function _endpoint()
+    {
+        return 'https://email.' . $this->region . '.amazonaws.com';
+    }
+
+    /**
+     * API request
+     *
+     * Send a request to the Amazon SES API using Phil's cURL lib.
+     * @param arra		query parameters that have to be added
+     * @param bool		whether to return the actual response
+     * @return mixed
+     */
+    private function _api_request($query_string, $return = FALSE)
+    {
+
+        // Set the endpoint
+        $this->_ci->curl->create($this->_endpoint());
+        $this->_ci->curl->post($query_string);
+        $this->_set_headers();
+
+        // Make sure we connect over HTTPS and verify
+        if( ! isset($_SERVER['HTTPS']))
+        {
+            $this->_ci->curl->ssl(TRUE, 2, $this->_cert_path);
+        }
+
+        // Show headers when in debug mode
+        if($this->debug === TRUE)
+        {
+            $this->_ci->curl->option(CURLOPT_FAILONERROR, FALSE);
+            $this->_ci->curl->option(CURLINFO_HEADER_OUT, TRUE);
+        }
+
+        $response = $this->_ci->curl->execute();
+
+        // Return the actual response when in debug or if requested specifically
+        if($this->debug === TRUE OR $return === TRUE)
+        {
+            return $response;
+        }
+
+        // Check if everything went okay
+        if ($response === FALSE)
+        {
+            log_message('debug', 'API request failed.');
+            return FALSE;
+        }
+
+        return TRUE;
+
+    }
 }
 
 if(!function_exists('mime_content_type')) {
