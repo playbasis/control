@@ -34,7 +34,7 @@ class Test_amazon_ses extends CI_Controller {
 		// Set invalid to
 		$receipients = ' ';
 		$this->amazon_ses->to($receipients);
-		$this->unit->run($this->amazon_ses->recipients['to'][1], 'is_null', 'Set invalid to address (single)', '-');
+		$this->unit->run($this->amazon_ses->recipients['to'], 'is_null', 'Set invalid to address (single)', '-');
 		
 		// Set to in comma list
 		$receipients = 'wee_weerapat@hotmail.com, wee.weerapat@gmail.com';
