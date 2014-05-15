@@ -33,6 +33,10 @@
         <mkdir dir="${basedir}/build/logs" />
         <mkdir dir="${basedir}/build/pdepend" />
         <mkdir dir="${basedir}/build/phpdox" />
+        <copy todir="${basedir}/application/core">
+            <fileset dir="${basedir}/application/libraries/" includes="*.php" />
+            <fileset dir="${basedir}/system/core/" includes="*.php" />
+        </copy>
     </target>
 
     <target name="lint" description="Perform syntax check of sourcecode files">
@@ -56,7 +60,12 @@
         <exec executable="phploc">
             <arg value="--log-csv" />
             <arg value="${basedir}/build/logs/phploc.csv" />
-            <arg line="${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
+            <arg line="${basedir}/application/core ${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
+        </exec>
+        <exec executable="phploc">
+            <arg value="--log-xml" />
+            <arg value="${basedir}/build/logs/phploc.xml" />
+            <arg line="${basedir}/application/core ${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
         </exec>
     </target>
 
@@ -65,14 +74,14 @@
             <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-            <arg value="${basedir}/application/models,${basedir}/application/views,${basedir}/application/controllers" />
+            <arg value="${basedir}/application/core,${basedir}/application/models,${basedir}/application/views,${basedir}/application/controllers" />
         </exec>
     </target>
 
     <target name="phpmd"
             description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="phpmd">
-            <arg value="${basedir}/application/models,${basedir}/application/views,${basedir}/application/controllers" />
+            <arg value="${basedir}/application/core,${basedir}/application/models,${basedir}/application/views,${basedir}/application/controllers" />
             <arg value="xml" />
             <arg value="${basedir}/resource/xml/phpmd.xml" />
         </exec>
@@ -81,7 +90,7 @@
     <target name="phpmd-ci"
             description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
         <exec executable="phpmd">
-            <arg value="${basedir}/application/models,${basedir}/application/views,${basedir}/application/controllers" />
+            <arg value="${basedir}/application/core,${basedir}/application/models,${basedir}/application/views,${basedir}/application/controllers" />
             <arg value="xml" />
             <arg value="${basedir}/resource/xml/phpmd.xml" />
             <arg value="--reportfile" />
@@ -92,18 +101,18 @@
     <target name="phpcs"
             description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="phpcs">
-            <arg value="--standard=${basedir}/resource/xml/phpcs.xml" />
-            <arg line="${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
+            <!--arg value="__standard=${basedir}/resource/xml/phpcs.xml" /-->
+            <arg line="${basedir}/application/core ${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
         </exec>
     </target>
 
     <target name="phpcs-ci"
             description="Find coding standard violations using PHP_CodeSniffer creating a log file for the continuous integration server">
-        <exec executable="phpcs" output="/dev/null">
-            <arg value="--report=checkstyle" />
-            <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
-            <arg value="--standard=${basedir}/resource/xml/phpcs.xml" />
-            <arg line="${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
+        <exec executable="phpcs" output="${basedir}/build/logs/checkstyle.xml">
+            <!--arg value="__report=checkstyle" /-->
+            <arg value="--report=xml" />
+            <!--arg value="__standard=${basedir}/resource/xml/phpcs.xml" /-->
+            <arg line="${basedir}/application/core ${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
         </exec>
     </target>
 
@@ -111,7 +120,7 @@
         <exec executable="phpcpd">
             <arg value="--log-pmd" />
             <arg value="${basedir}/build/logs/pmd-cpd.xml" />
-            <arg line="${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
+            <arg line="${basedir}/application/core ${basedir}/application/models ${basedir}/application/views ${basedir}/application/controllers" />
         </exec>
     </target>
 
