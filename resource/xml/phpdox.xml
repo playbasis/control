@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <phpdox xmlns="http://phpdox.net/config">
-  <project name="Playbasis" source="application" workdir="build/api/xml">
+  <project name="Controllers" source="application/controllers" workdir="build/api/xml">
+    <collector backend="parser" />
+    <generator output="build/api">
+      <build engine="html" output="html"/>
+    </generator>
+  </project>
+  <project name="Models" source="application/models" workdir="build/api/xml">
     <collector backend="parser" />
     <generator output="build/api">
       <build engine="html" output="html"/>
