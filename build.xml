@@ -72,7 +72,7 @@
     <target name="phpmd"
             description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="phpmd">
-            <arg path="${basedir}/application" />
+            <arg path="${basedir}/application/controllers,${basedir}/application/models" />
             <arg value="text" />
             <arg value="${basedir}/resource/xml/phpmd.xml" />
         </exec>
@@ -81,7 +81,7 @@
     <target name="phpmd-ci"
             description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
         <exec executable="phpmd">
-            <arg path="${basedir}/application/controllers;${basedir}/application/models" />
+            <arg path="${basedir}/application/controllers,${basedir}/application/models" />
             <arg value="xml" />
             <arg value="${basedir}/resource/xml/phpmd.xml" />
             <arg value="--reportfile" />
