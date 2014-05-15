@@ -46,8 +46,8 @@
             </fileset>
 
             <!--fileset dir="${basedir}/tests">
-             <include name="**/*.php" />
-             <modified />
+                <include name="**/*.php" />
+                <modified />
             </fileset-->
         </apply>
     </target>
@@ -56,9 +56,7 @@
         <exec executable="phploc">
             <arg value="--log-csv" />
             <arg value="${basedir}/build/logs/phploc.csv" />
-            <arg path="${basedir}/application" />
-            <arg value="--exclude" />
-            <arg path="${basedir}/application/cache,${basedir}/application/certs,${basedir}/application/config,${basedir}/application/core,${basedir}/application/errors,${basedir}/application/helpers,${basedir}/application/hooks,${basedir}/application/language,${basedir}/application/libraries,${basedir}/application/logs,${basedir}/application/third_party,${basedir}/application/view" />
+            <arg path="${basedir}/application/controllers,${basedir}/application/models" />
         </exec>
     </target>
 
@@ -67,7 +65,6 @@
             <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-            <!--arg path="${basedir}/application" /-->
             <arg path="${basedir}/application/controllers,${basedir}/application/models" />
         </exec>
     </target>
@@ -114,9 +111,7 @@
         <exec executable="phpcpd">
             <arg value="--log-pmd" />
             <arg value="${basedir}/build/logs/pmd-cpd.xml" />
-            <arg path="${basedir}/application" />
-            <arg value="--exclude" />
-            <arg path="${basedir}/application/cache,${basedir}/application/certs,${basedir}/application/config,${basedir}/application/core,${basedir}/application/errors,${basedir}/application/helpers,${basedir}/application/hooks,${basedir}/application/language,${basedir}/application/libraries,${basedir}/application/logs,${basedir}/application/third_party,${basedir}/application/view" />
+            <arg path="${basedir}/application/controllers,${basedir}/application/models" />
         </exec>
     </target>
 
