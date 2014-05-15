@@ -29,7 +29,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectFile>soapui-project.xml</projectFile>
+                    <projectFile>resource/xml/soapui-project.xml</projectFile>
                     <host>ci.pbapp.net</host>
                     <outputFolder>${project.build.directory}</outputFolder>
                     <junitReport>true</junitReport>
