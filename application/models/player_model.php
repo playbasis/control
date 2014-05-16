@@ -1131,5 +1131,23 @@ class Player_model extends MY_Model
 		));
 		return $result['n'];
 	}
+
+    public function getAllQuests($pb_player_id, $site_id, $status="")
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'site_id' => $site_id,
+        ));
+        $c_status = array("join", "unjoin");
+        if($status != '' && in_array($status, $c_status) ){
+            $this->mongo_db->where(array(
+                'status' => $status,
+            ));
+        }
+
+        return $this->mongo_db->get('playbasis_quest_to_player');
+    }
 }
 ?>

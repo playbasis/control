@@ -1,7 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST_Controller.php';
-class Engine extends REST_Controller
+require_once(APPPATH.'controllers/quest.php');
+//class Engine extends REST_Controller
+class Engine extends Quest
 {
 	public function __construct()
 	{

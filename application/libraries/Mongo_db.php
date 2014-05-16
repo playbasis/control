@@ -441,7 +441,7 @@ class Mongo_db
 		{
 			$this->wheres[$wheres] = $value;
 		}
-		
+
 		return $this;
 	}
 	
