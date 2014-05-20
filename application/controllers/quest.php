@@ -44,12 +44,25 @@ class Quest extends REST_Controller
         $quest = $this->quest_model->getQuest($data);
 
         if($quest && isset($quest["condition"])){
+            $questResult['events'] = array();
             foreach($quest["condition"] as $c){
                 if($c["condition_type"] == "DATETIME_START"){
-
+                    if($c["condition_value"]->sec > time()){
+                        $event = array(
+                            'event_type' => 'QUEST_DID_NOT_START',
+                            'message' => 'quest did not start'
+                        );
+                        array_push($questResult['events'], $event);
+                    }
                 }
                 if($c["condition_type"] == "DATETIME_END"){
-
+                    if($c["condition_value"]->sec < time()){
+                        $event = array(
+                            'event_type' => 'QUEST_ALREADY_FINISHED',
+                            'message' => 'quest already finished'
+                        );
+                        array_push($questResult['events'], $event);
+                    }
                 }
                 if($c["condition_type"] == "LEVEL_START"){
 
@@ -67,6 +80,8 @@ class Quest extends REST_Controller
 
                 }
             }
+
+            var_Dump($questResult);
         }
 
     }
