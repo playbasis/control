@@ -135,6 +135,9 @@ $route['Player/mau_per_month'] = 'player/mauMonth';
 //service API
 $route['Service/recent_point'] = 'service/recent_point';
 
+//Quest
+$route['quest/testquest'] = 'Quest/testQuest';
+
 //misc
 $route['test']	= 'playbasis/test';
 $route['fb'] = 'playbasis/fb';
