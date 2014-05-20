@@ -12,7 +12,7 @@
     <artifactId>playbasis.webservices.test</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>Playbasis web services soapUI integration tests</description>
+    <description>Playbasis web services SoapUI integration tests</description>
     <build>
         <plugins>
             <plugin>
