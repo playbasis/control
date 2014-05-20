@@ -8,6 +8,10 @@
     <div class="box">
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
+            <div class="buttons">
+                <button class="btn btn-info" onclick="location = baseUrlPath+'domain/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
+                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
+            </div>
         </div>
         <div class="content">
             <?php if($this->session->flashdata('success')){ ?>
@@ -22,7 +26,7 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <!--td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td-->
+                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_start'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_expire'); ?></td>
@@ -33,6 +37,13 @@
                     <?php if (isset($domain_list)) { ?>
                         <?php foreach ($domain_list as $domain) { ?>
                         <tr>
+                            <td style="text-align: center;">
+                                <?php if ($domain['selected']) { ?>
+                                    <input type="checkbox" name="selected[]" value="<?php echo $domain['site_id']; ?>" checked="checked" />
+                                <?php } else { ?>
+                                    <input type="checkbox" name="selected[]" value="<?php echo $domain['site_id']; ?>" />
+                                <?php } ?>
+                            </td>
                             <td class="left">
                                 <?php echo $domain['domain_name']; ?> [ <?php echo anchor('domain', $this->lang->line('text_reset_token'), array('onclick' => "confirmation('".$domain['site_id']."'); return false;")); ?> ]
                                 <!--<?php //echo $domain['domain_name']; ?> [ <?php //echo anchor('domain', $this->lang->line('text_reset_token'), array('onclick' => "resetSecret('".$domain['site_id']."');return false;")); ?> ]-->
@@ -64,7 +75,7 @@
                             <?php } ?>
                         <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="4"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        <td class="center" colspan="5"><?php echo $this->lang->line('text_no_results'); ?></td>
                     </tr>
                         <?php } ?>
                     </tbody>
