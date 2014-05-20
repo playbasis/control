@@ -79,7 +79,7 @@
     </target>
 
     <target name="phpmd"
-            description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
+            description="Perform project mess detection using PHPMD and print human readable output">
         <exec executable="phpmd">
             <arg value="${basedir}/application/core,${basedir}/application/models,${basedir}/application/views,${basedir}/application/controllers" />
             <arg value="xml" />
@@ -99,7 +99,7 @@
     </target>
 
     <target name="phpcs"
-            description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+            description="Find coding standard violations using PHP_CodeSniffer and print human readable output">
         <exec executable="phpcs">
             <arg value="--report=checkstyle" />
             <!--arg value="__standard=${basedir}/resource/xml/phpcs.xml" /-->
