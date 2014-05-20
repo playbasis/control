@@ -39,7 +39,7 @@
 		<p>This page is underconstruction. Stay tuned and keep in touch.</p>
 		<br>
 		<?php
-		$path = '../../build.txt';
+		$path = 'build.txt';
 		if (file_exists($path)) {
 			$build = file_get_contents($path);
 			echo "<p><i>build: $build</i></p>";
