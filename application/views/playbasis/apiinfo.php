@@ -45,7 +45,6 @@
 			echo "<p><i>build: $build</i></p>";
 		}
 		?>
-
 	</div>
 </body>
 </html>
