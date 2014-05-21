@@ -165,7 +165,6 @@ class Domain extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('domain');
     }
 
     public function reset() {
@@ -185,6 +184,78 @@ class Domain extends MY_Controller
     }
 
     public function insert() {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'domain/insert';
+
+        $this->form_validation->set_rules('domain_domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
+        $this->form_validation->set_rules('domain_site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if($this->form_validation->run() && $this->data['message'] == null){
+
+                $c_data = array('domain_name' => $this->input->post('domain_domain_name'));
+
+                $domain = $this->Domain_model->checkDomainExists($c_data);
+
+                if(!$domain){
+
+                    $client_id = $this->User_model->getClientId();
+                    $d_data = array();
+                    $d_data['client_id'] = $client_id;
+                    $d_data['domain_name'] = $this->input->post('domain_domain_name');
+                    $d_data['site_name'] = $this->input->post('domain_site_name');
+                    $d_data['user_id'] =  $this->User_model->getId();
+                    $d_data['limit_users'] = 1000;
+                    $d_data['date_start'] = date("Y-m-d H:i:s");
+                    $d_data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
+
+                    $site_id = $this->Domain_model->addDomain($d_data);
+
+                    if ($site_id) {
+                        $this->load->model('Plan_model');
+                        $this->load->model('Permission_model');
+                        $this->load->model('Client_model');
+
+                        $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+
+                        $another_data['domain_value'] = array(
+                            'site_id' =>$site_id,
+                            'plan_id' => $plan_id,
+                            'status' =>true
+                        );
+
+                        $this->Client_model->editClientPlan($client_id, $another_data);
+                    }
+
+                    $this->session->data['success'] = $this->lang->line('text_success');
+
+                    redirect('/domain', 'refresh');
+                }else{
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode($this->data['fail_domain_exists']);
+                        exit();
+                    }
+                }
+
+            }
+        }
+
+        $this->getForm();
+
+    }
+
+    /*public function insert() {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -224,7 +295,7 @@ class Domain extends MY_Controller
 
         $this->getForm();
 
-    }
+    }*/
 
     public function insert_ajax() {
 
@@ -296,15 +367,15 @@ class Domain extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('site_id') && $this->error['warning'] == null) {
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+            foreach ($this->input->post('selected') as $site_id) {
+                if($this->checkOwnerDomain($site_id)){
 
-            if($this->checkOwnerDomain($this->input->post('site_id'))){
-
-                $this->Domain_model->deleteDomain($this->input->post('site_id'));
+                    $this->Domain_model->deleteDomain($site_id);
+                }
             }
 
-            $this->session->data['success'] = $this->lang->line('text_success');
-
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
             redirect('/domain', 'refresh');
         }
 
@@ -333,6 +404,44 @@ class Domain extends MY_Controller
         }
 
         $this->output->set_output(json_encode($json));
+    }
+
+    private function getForm($domain_id=null) {
+
+        if (isset($domain_id) && ($domain_id != 0)) {
+            if($this->User_model->getClientId()){
+                $domain_info = $this->Domain_model->getDomain($domain_id);
+            }else{
+                $domain_info = $this->Domain_model->getDomain($domain_id);
+            }
+        }
+
+        if ($this->input->post('domain_domain_name')) {
+            $this->data['domain_domain_name'] = $this->input->post('domain_domain_name');
+        } elseif (isset($domain_id) && ($domain_id != 0)) {
+            $this->data['domain_domain_name'] = $domain_info['domain_name'];
+        } else {
+            $this->data['domain_domain_name'] = '';
+        }
+
+        if ($this->input->post('domain_site_name')) {
+            $this->data['domain_site_name'] = $this->input->post('domain_site_name');
+        } elseif (isset($domain_id) && ($domain_id != 0)) {
+            $this->data['domain_site_name'] = $domain_info['site_name'];
+        } else {
+            $this->data['domain_site_name'] = '';
+        }
+
+        if (isset($domain_id)) {
+            $this->data['domain_id'] = $domain_id;
+        } else {
+            $this->data['domain_id'] = null;
+        }
+
+        $this->data['main'] = 'domain_form';
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
     }
 
     private function validateModify() {

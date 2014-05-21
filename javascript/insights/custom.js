@@ -52,7 +52,9 @@ $(document).ready(function(){
 		
 		
 	});
-			
+
+    $('.dropdown-toggle').dropdown();
+
 	/* ---------- Acivate Functions ---------- */
 	$("#overlay").delay(1250).fadeOut(500);
 	template_functions();
