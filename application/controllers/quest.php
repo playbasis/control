@@ -56,6 +56,15 @@ class Quest extends REST_Controller
             'birth_date'
         ));
 
+        $player_badges = $this->player_model->getBadge($pb_player_id, $validToken['site_id']);
+
+        if($player_badges){
+            $badge_player_check = array();
+            foreach($player_badges as $b){
+                $badge_player_check[$b["badge_id"]] = $b["amount"];
+            }
+        }
+
         if($quest && isset($quest["condition"])){
             $questResult['events'] = array();
             foreach($quest["condition"] as $c){
@@ -96,26 +105,53 @@ class Quest extends REST_Controller
                     }
                 }
                 if($c["condition_type"] == "POINT"){
-                    $reward_id = $this->point_model->findPoint(array_merge($validToken, array('reward_name'=>'point')));
-                    $point = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $validToken['site_id']);
-                    echo "reward";
-                    var_Dump($reward_id);
-                    echo "point";
-                    var_Dump($point);
-                    if(isset($player_point[0]['value']) && isset($goods['redeem']['point']["point_value"])){
-                    if($c["condition_value"] > $point[0]["value"]){
+                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["condition_id"], $validToken['site_id']);
+
+                    if(isset($point_a[0]['value'])){
+                        $point = $point_a[0]['value'];
+                    }else{
+                        $point = 0;
+                    }
+                    if($c["condition_value"] > $point){
                         $event = array(
                             'event_type' => 'POINT_NOT_ENOUGH',
-                            'message' => 'Your point not enough'
+                            'message' => 'Your point not enough',
+                            'incomplete' => array($c["condition_id"]."" => ((int)$c["condition_value"] - (int)$point))
                         );
                         array_push($questResult['events'], $event);
                     }
                 }
                 if($c["condition_type"] == "CUSTOM_POINT"){
+                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["condition_id"], $validToken['site_id']);
 
+                    if(isset($point_a[0]['value'])){
+                        $custom_point = $point_a[0]['value'];
+                    }else{
+                        $custom_point = 0;
+                    }
+                    if($c["condition_value"] > $custom_point){
+                        $event = array(
+                            'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
+                            'message' => 'Your point not enough',
+                            'incomplete' => array($c["condition_id"]."" => ((int)$c["condition_value"] - (int)$custom_point))
+                        );
+                        array_push($questResult['events'], $event);
+                    }
                 }
                 if($c["condition_type"] == "BADGE"){
-
+                    if(isset($badge_player_check[$c["condition_id"].""])){
+                        $badge = $badge_player_check[$c["condition_id"].""];
+                    }else{
+                        $badge = 0;
+                    }
+                    if($badge < $c["condition_value"]){
+                        $event = array(
+                            'event_type' => 'BADGE_NOT_ENOUGH',
+                            'message' => 'user badge not enough',
+                            'incomplete' => array($c["condition_id"]."" => ((int)$c["condition_value"] - (int)$badge))
+                        );
+                        array_push($questResult['events'], $event);
+                    }
                 }
             }
 
