@@ -43,6 +43,19 @@ class Quest extends REST_Controller
 
         $quest = $this->quest_model->getQuest($data);
 
+        //read player information
+        $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+            'username',
+            'first_name',
+            'last_name',
+            'gender',
+            'image',
+            'exp',
+            'level',
+            'date_added',
+            'birth_date'
+        ));
+
         if($quest && isset($quest["condition"])){
             $questResult['events'] = array();
             foreach($quest["condition"] as $c){
@@ -65,13 +78,38 @@ class Quest extends REST_Controller
                     }
                 }
                 if($c["condition_type"] == "LEVEL_START"){
-
+                    if($c["condition_value"] > $player['level']){
+                        $event = array(
+                            'event_type' => 'LEVEL_IS_LOWER',
+                            'message' => 'Your level is under satisfied'
+                        );
+                        array_push($questResult['events'], $event);
+                    }
                 }
                 if($c["condition_type"] == "LEVEL_END"){
-
+                    if($c["condition_value"] < $player['level']){
+                        $event = array(
+                            'event_type' => 'LEVEL_IS_HIGHER',
+                            'message' => 'Your level is abrove satisfied'
+                        );
+                        array_push($questResult['events'], $event);
+                    }
                 }
                 if($c["condition_type"] == "POINT"){
-
+                    $reward_id = $this->point_model->findPoint(array_merge($validToken, array('reward_name'=>'point')));
+                    $point = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $validToken['site_id']);
+                    echo "reward";
+                    var_Dump($reward_id);
+                    echo "point";
+                    var_Dump($point);
+                    if(isset($player_point[0]['value']) && isset($goods['redeem']['point']["point_value"])){
+                    if($c["condition_value"] > $point[0]["value"]){
+                        $event = array(
+                            'event_type' => 'POINT_NOT_ENOUGH',
+                            'message' => 'Your point not enough'
+                        );
+                        array_push($questResult['events'], $event);
+                    }
                 }
                 if($c["condition_type"] == "CUSTOM_POINT"){
 
