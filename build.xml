@@ -130,8 +130,8 @@
             <arg value="-f" />
             <arg value="${basedir}/resource/xml/phpdox.xml" />
         </exec>
-        <delete file="${basedir}/build/phpdox/html.zip" />
-        <zip destfile="${basedir}/build/phpdox/html.zip" basedir="${basedir}/build/phpdox/html/" />
+        <!--delete file="${basedir}/build/phpdox/html.zip" />
+        <zip destfile="${basedir}/build/phpdox/html.zip" basedir="${basedir}/build/phpdox/html/" /-->
     </target>
 
     <target name="phpunit" description="Run unit tests with PHPUnit">
