@@ -640,14 +640,14 @@ class Player_model extends MY_Model
 
     public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit){
 
-
     	if($reward_id){
     		$this->mongo_db->where('reward_id', $reward_id);	
-    	}
+    	}else{
+            $this->mongo_db->where_ne('reward_id', null);
+        }
     	$this->mongo_db->where('pb_player_id', $pb_player_id);
     	$this->mongo_db->where('site_id', $site_id);
     	$this->mongo_db->where('event_type', 'REWARD');
-    	$this->mongo_db->where_ne('reward_id', null);
         $this->mongo_db->where_gt('value', 0);
     	$this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
