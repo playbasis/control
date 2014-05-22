@@ -12,7 +12,7 @@
     <artifactId>playbasis.webservices.test</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>Playbasis web services soapUI integration tests</description>
+    <description>Playbasis web services SoapUI integration tests</description>
     <build>
         <plugins>
             <plugin>
@@ -29,7 +29,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectFile>soapui-project.xml</projectFile>
+                    <projectFile>resource/xml/soapui-project.xml</projectFile>
                     <host>ci.pbapp.net</host>
                     <outputFolder>${project.build.directory}</outputFolder>
                     <junitReport>true</junitReport>
