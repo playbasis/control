@@ -1,0 +1,108 @@
+.text-center{
+	text-align: center;
+}
+/*======== [ Reward ] =========*/
+.box-icon-action{
+	position: absolute;
+	right: 20px;
+}
+.box-icon-action .dropdown-menu a{
+	margin: 0;
+}
+.box-add-item a.btn-primary{
+	margin-top: -5px;
+	margin-right: -5px;
+}
+.box-add-item .box-header h2 i{
+	opacity: 1;
+}
+.disabled>a{
+	/*pointer-events: none;
+   	cursor: default;*/
+}
+.box-add-item {
+	width: 100%;
+}
+.box-add-item .well{
+	padding: 15px;
+	padding-top: 0px;
+	margin-bottom: 10px;
+	box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
+	 -moz-box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
+	-webkit-box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
+}
+.box-add-item .well h3{
+	line-height: 20px;
+	margin: 0px -15px 10px;
+	border-bottom: 1px solid #ccc;
+	padding: 8px 15px 8px;
+	background: #ddd;
+}
+.box-add-item .well h3 a{
+	color: #999;
+	margin-top: -5px;
+	margin-right: -5px;
+	font-size: 20px;
+	float: right;
+	padding: 5px;
+}
+.box-add-item .well h3 a:hover{
+	text-decoration: none;
+	color: #f00;
+}
+.box-add-item .box-content{
+	padding: 15px;
+	padding-bottom: 5px;
+}
+.box-add-item .box-content h3{
+	margin-top: 0;
+}
+.reward-container{
+
+}
+
+.box-add-item .box-content label{
+	text-align: right;
+	padding-right: 20px;
+	line-height: 30px;
+	margin-left: 0;
+}
+.no-item{
+	text-align: center;
+}
+
+
+
+
+/*! ====== [Select item] ======= */
+.select-list .select-item{
+	margin: 10px 0;
+	border-bottom: 1px solid #ccc;
+	padding:10px 0;
+}
+
+
+.item-wrapper{
+	background: #fff;
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
+	 -moz-box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
+	-webkit-box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
+	margin-bottom: 10px;
+}
+.item-wrapper input[type=text]{
+	width: 100%;
+	margin: 0;
+}
+.item-wrapper .col-remove{
+	text-align: right;
+}
+.item-wrapper .item-remove{
+	font-size: 20px;
+	text-decoration: none;
+	color: #999;
+}
+.item-wrapper .item-remove:hover{
+	color: #f00;
+}

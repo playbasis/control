@@ -6,6 +6,10 @@ $lang['title']								= 'Quest';
 $lang['text_no_results']					= 'Text no results';
 $lang['heading_title']						= 'Quest';
 
+// Tab
+$lang['tab_general']						= 'General';
+$lang['tab_mission']						= 'Mange Mission';
+
 $lang['form_quest_name']					= 'Quest Name';
 $lang['form_quest_description']				= 'Description';
 $lang['form_quest_hint']					= 'Hint';
