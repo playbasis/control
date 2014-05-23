@@ -30,13 +30,13 @@
                 </executions>
                 <configuration>
                     <projectFile>resource/xml/soapui-project.xml</projectFile>
-                    <host>ci.pbapp.net</host>
+                    <host>${host}</host>
                     <outputFolder>${project.build.directory}</outputFolder>
                     <junitReport>true</junitReport>
                     <printReport>false</printReport>
                     <projectProperties>
-                        <projectProperty>api_key=abc</projectProperty>
-                        <projectProperty>api_secret=abcde</projectProperty>
+                        <projectProperty>api_key=${api_key}</projectProperty>
+                        <projectProperty>api_secret=${api_secret}</projectProperty>
                     </projectProperties>
                 </configuration>
             </plugin>
