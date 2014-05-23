@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <con:soapui-project xmlns:con="http://eviware.com/soapui/config" activeEnvironment="Default" name="Playbasis" soapui-version="4.6.4" abortOnError="false" runType="SEQUENTIAL" resourceRoot="">
     <con:settings />
-    <con:interface xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://ci.pbapp.net" type="rest">
+    <con:interface xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:RestService" wadlVersion="http://wadl.dev.java.net/2009/02" name="API" type="rest">
         <con:settings />
         <con:definitionCache type="TEXT" rootPart="" />
         <con:endpoints>
-            <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+            <con:endpoint>${#Project#service_endpoint}</con:endpoint>
         </con:endpoints>
         <con:resource name="auth" path="/Auth">
             <con:settings />
@@ -42,7 +42,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -90,7 +90,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -106,7 +106,7 @@
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="player=test" path="/Player/test">
+        <con:resource name="player=:cl_player_id1" path="/Player/${#Project#cl_player_id1}">
             <con:settings />
             <con:parameters />
             <con:resource name="detail" path="data/all">
@@ -127,7 +127,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -135,7 +135,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -157,16 +157,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -188,9 +186,9 @@
                         </con:parameter>
                         <con:parameter>
                             <con:name>username</con:name>
-                            <con:value>test</con:value>
+                            <con:value>${#Project#cl_player_id1}</con:value>
                             <con:style>QUERY</con:style>
-                            <con:default>test</con:default>
+                            <con:default>${#Project#cl_player_id1}</con:default>
                             <con:description xsi:nil="true" />
                         </con:parameter>
                         <con:parameter>
@@ -261,7 +259,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -269,7 +267,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="email" value="test@email.com" />
+                            <con:entry key="email" value="${#Project#cl_player_id1}@email.com" />
                             <con:entry key="image" value="https://www.pbapp.net/images/default_profile.jpg" />
                         </con:parameters>
                         <con:parameterOrder>
@@ -320,7 +318,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -328,8 +326,8 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="exp" value="123" />
-                            <con:entry key="level" value="123" />
+                            <con:entry key="exp" value="${#Project#cl_player_id1_exp}" />
+                            <con:entry key="level" value="${#Project#cl_player_id1_level}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
@@ -357,16 +355,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -391,16 +387,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -425,16 +419,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -459,7 +451,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -467,7 +459,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -493,7 +485,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -501,7 +493,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -527,7 +519,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -535,7 +527,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -558,16 +550,16 @@
                         </con:parameter>
                         <con:parameter>
                             <con:name>offset</con:name>
-                            <con:value>0</con:value>
+                            <con:value>${#Project#offset}</con:value>
                             <con:style>QUERY</con:style>
-                            <con:default>0</con:default>
+                            <con:default>${#Project#offset}</con:default>
                             <con:description xsi:nil="true" />
                         </con:parameter>
                         <con:parameter>
                             <con:name>limit</con:name>
-                            <con:value>20</con:value>
+                            <con:value>${#Project#limit}</con:value>
                             <con:style>QUERY</con:style>
-                            <con:default>20</con:default>
+                            <con:default>${#Project#limit}</con:default>
                             <con:description xsi:nil="true" />
                         </con:parameter>
                     </con:parameters>
@@ -575,7 +567,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -583,7 +575,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -593,7 +585,7 @@
                     </con:request>
                 </con:method>
             </con:resource>
-            <con:resource name="action time" path="action/like/time">
+            <con:resource name="action time" path="action/${#Project#action1}/time">
                 <con:settings />
                 <con:parameters />
                 <con:method name="GET" method="GET">
@@ -611,7 +603,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -619,7 +611,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -645,7 +637,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -653,7 +645,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -661,7 +653,7 @@
                     </con:request>
                 </con:method>
             </con:resource>
-            <con:resource name="action count" path="action/like/count">
+            <con:resource name="action count" path="action/${#Project#action1}/count">
                 <con:settings />
                 <con:parameters />
                 <con:method name="GET" method="GET">
@@ -679,7 +671,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -687,7 +679,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -698,7 +690,7 @@
             <con:resource name="badge" path="badge">
                 <con:settings />
                 <con:parameters />
-                <con:resource name="claim" path="52ea1ea78d8c89401c000046/claim">
+                <con:resource name="claim" path="${#Project#badge_id}/claim">
                     <con:settings />
                     <con:parameters />
                     <con:method name="POST" method="POST">
@@ -716,7 +708,7 @@
                             <con:settings>
                                 <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                             </con:settings>
-                            <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                            <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                             <con:request />
                             <con:credentials>
                                 <con:authType>Global HTTP Settings</con:authType>
@@ -730,7 +722,7 @@
                         </con:request>
                     </con:method>
                 </con:resource>
-                <con:resource name="redeem" path="52ea1ea78d8c89401c000046/redeem">
+                <con:resource name="redeem" path="${#Project#badge_id}/redeem">
                     <con:settings />
                     <con:parameters />
                     <con:method name="POST" method="POST">
@@ -748,16 +740,14 @@
                             <con:settings>
                                 <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                             </con:settings>
-                            <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                            <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                             <con:request />
                             <con:credentials>
                                 <con:authType>Global HTTP Settings</con:authType>
                             </con:credentials>
                             <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                             <con:jmsPropertyConfig />
-                            <con:parameters>
-                                <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                            </con:parameters>
+                            <con:parameters />
                             <con:parameterOrder>
                                 <con:entry>token</con:entry>
                             </con:parameterOrder>
@@ -779,7 +769,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -787,7 +777,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -810,7 +800,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -818,7 +808,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -840,23 +830,21 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
                     </con:credentials>
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
-                    <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                    </con:parameters>
+                    <con:parameters />
                     <con:parameterOrder>
                         <con:entry>token</con:entry>
                     </con:parameterOrder>
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="player=test_soapui" path="/Player/test_soapui">
+        <con:resource name="player=:cl_player_id2" path="/Player/${#Project#cl_player_id2}">
             <con:settings />
             <con:parameters />
             <con:resource name="detail" path="data/all">
@@ -877,7 +865,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -885,7 +873,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -907,16 +895,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -938,9 +924,9 @@
                         </con:parameter>
                         <con:parameter>
                             <con:name>username</con:name>
-                            <con:value>test_soapui</con:value>
+                            <con:value>${#Project#cl_player_id2}</con:value>
                             <con:style>QUERY</con:style>
-                            <con:default>test_soapui</con:default>
+                            <con:default>${#Project#cl_player_id2}</con:default>
                             <con:description xsi:nil="true" />
                         </con:parameter>
                         <con:parameter>
@@ -1011,7 +997,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1019,7 +1005,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="email" value="test_soapui@email.com" />
+                            <con:entry key="email" value="${#Project#cl_player_id2}@email.com" />
                             <con:entry key="image" value="https://www.pbapp.net/images/default_profile.jpg" />
                         </con:parameters>
                         <con:parameterOrder>
@@ -1070,7 +1056,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1078,8 +1064,8 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="exp" value="123" />
-                            <con:entry key="level" value="123" />
+                            <con:entry key="exp" value="${#Project#cl_player_id2_exp}" />
+                            <con:entry key="level" value="${#Project#cl_player_id2_level}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
@@ -1107,16 +1093,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -1141,16 +1125,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -1175,16 +1157,14 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -1209,7 +1189,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1217,7 +1197,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1243,7 +1223,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1251,7 +1231,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1277,7 +1257,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1285,7 +1265,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1308,16 +1288,16 @@
                         </con:parameter>
                         <con:parameter>
                             <con:name>offset</con:name>
-                            <con:value>0</con:value>
+                            <con:value>${#Project#offset}</con:value>
                             <con:style>QUERY</con:style>
-                            <con:default>0</con:default>
+                            <con:default>${#Project#offset}</con:default>
                             <con:description xsi:nil="true" />
                         </con:parameter>
                         <con:parameter>
                             <con:name>limit</con:name>
-                            <con:value>20</con:value>
+                            <con:value>${#Project#limit}</con:value>
                             <con:style>QUERY</con:style>
-                            <con:default>20</con:default>
+                            <con:default>${#Project#limit}</con:default>
                             <con:description xsi:nil="true" />
                         </con:parameter>
                     </con:parameters>
@@ -1325,7 +1305,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1333,7 +1313,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1343,7 +1323,7 @@
                     </con:request>
                 </con:method>
             </con:resource>
-            <con:resource name="action time" path="action/like/time">
+            <con:resource name="action time" path="action/${#Project#action1}/time">
                 <con:settings />
                 <con:parameters />
                 <con:method name="GET" method="GET">
@@ -1361,7 +1341,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1369,7 +1349,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1395,7 +1375,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1403,7 +1383,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1411,7 +1391,7 @@
                     </con:request>
                 </con:method>
             </con:resource>
-            <con:resource name="action count" path="action/like/count">
+            <con:resource name="action count" path="action/${#Project#action1}/count">
                 <con:settings />
                 <con:parameters />
                 <con:method name="GET" method="GET">
@@ -1429,7 +1409,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1437,7 +1417,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1448,7 +1428,7 @@
             <con:resource name="badge" path="badge">
                 <con:settings />
                 <con:parameters />
-                <con:resource name="claim" path="52ea1ea78d8c89401c000046/claim">
+                <con:resource name="claim" path="${#Project#badge_id}/claim">
                     <con:settings />
                     <con:parameters />
                     <con:method name="POST" method="POST">
@@ -1466,7 +1446,7 @@
                             <con:settings>
                                 <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                             </con:settings>
-                            <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                            <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                             <con:request />
                             <con:credentials>
                                 <con:authType>Global HTTP Settings</con:authType>
@@ -1480,7 +1460,7 @@
                         </con:request>
                     </con:method>
                 </con:resource>
-                <con:resource name="redeem" path="52ea1ea78d8c89401c000046/redeem">
+                <con:resource name="redeem" path="${#Project#badge_id}/redeem">
                     <con:settings />
                     <con:parameters />
                     <con:method name="POST" method="POST">
@@ -1498,16 +1478,14 @@
                             <con:settings>
                                 <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                             </con:settings>
-                            <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                            <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                             <con:request />
                             <con:credentials>
                                 <con:authType>Global HTTP Settings</con:authType>
                             </con:credentials>
                             <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                             <con:jmsPropertyConfig />
-                            <con:parameters>
-                                <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                            </con:parameters>
+                            <con:parameters />
                             <con:parameterOrder>
                                 <con:entry>token</con:entry>
                             </con:parameterOrder>
@@ -1529,7 +1507,7 @@
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -1537,7 +1515,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -1560,7 +1538,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1568,7 +1546,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1590,16 +1568,14 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
                     </con:credentials>
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
-                    <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                    </con:parameters>
+                    <con:parameters />
                     <con:parameterOrder>
                         <con:entry>token</con:entry>
                     </con:parameterOrder>
@@ -1631,16 +1607,14 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
                     </con:credentials>
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
-                    <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="token" value="" />
-                    </con:parameters>
+                    <con:parameters />
                     <con:parameterOrder>
                         <con:entry>token</con:entry>
                         <con:entry>list_player_id</con:entry>
@@ -1666,7 +1640,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1674,7 +1648,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1700,7 +1674,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1708,7 +1682,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1716,7 +1690,7 @@
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="player rank" path="/Player/rank/point/5">
+        <con:resource name="player rank" path="/Player/rank/point/${#Project#limit}">
             <con:settings />
             <con:parameters />
             <con:method name="GET" method="GET">
@@ -1734,7 +1708,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1742,7 +1716,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1750,7 +1724,7 @@
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="player ranks" path="/Player/ranks/5">
+        <con:resource name="player ranks" path="/Player/ranks/${#Project#limit}">
             <con:settings />
             <con:parameters />
             <con:method name="GET" method="GET">
@@ -1768,7 +1742,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1776,7 +1750,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1802,7 +1776,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1810,7 +1784,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1818,7 +1792,7 @@
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="badge=Baby Beginner" path="/Badge/52ea1ea78d8c89401c000046">
+        <con:resource name="badge=:badge_id" path="/Badge/${#Project#badge_id}">
             <con:settings />
             <con:parameters />
             <con:method name="GET" method="GET">
@@ -1836,7 +1810,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1844,7 +1818,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1870,7 +1844,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1878,7 +1852,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1886,7 +1860,7 @@
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="goods=:id" path="/Goods/:id">
+        <con:resource name="goods=:goods_id" path="/Goods/${#Project#goods_id}">
             <con:settings />
             <con:parameters />
             <con:method name="GET" method="GET">
@@ -1904,7 +1878,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1912,7 +1886,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1938,7 +1912,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -1946,7 +1920,7 @@
                     <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                     <con:jmsPropertyConfig />
                     <con:parameters>
-                        <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                        <con:entry key="api_key" value="${#Project#api_key}" />
                     </con:parameters>
                     <con:parameterOrder>
                         <con:entry>api_key</con:entry>
@@ -1969,23 +1943,23 @@
                     </con:parameter>
                     <con:parameter>
                         <con:name>action</con:name>
-                        <con:value>like</con:value>
+                        <con:value>${#Project#action1}</con:value>
                         <con:style>QUERY</con:style>
-                        <con:default>like</con:default>
+                        <con:default>${#Project#action1}</con:default>
                         <con:description xsi:nil="true" />
                     </con:parameter>
                     <con:parameter>
                         <con:name>player_id</con:name>
-                        <con:value>test_soapui</con:value>
+                        <con:value>${#Project#cl_player_id2}</con:value>
                         <con:style>QUERY</con:style>
-                        <con:default>test_soapui</con:default>
+                        <con:default>${#Project#cl_player_id2}</con:default>
                         <con:description xsi:nil="true" />
                     </con:parameter>
                     <con:parameter>
                         <con:name>url</con:name>
-                        <con:value>demo_like</con:value>
+                        <con:value>${#Project#action1_url}</con:value>
                         <con:style>QUERY</con:style>
-                        <con:default>demo_like</con:default>
+                        <con:default>${#Project#action1_url}</con:default>
                         <con:description xsi:nil="true" />
                     </con:parameter>
                 </con:parameters>
@@ -1993,7 +1967,7 @@
                     <con:settings>
                         <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                     </con:settings>
-                    <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                     <con:request />
                     <con:credentials>
                         <con:authType>Global HTTP Settings</con:authType>
@@ -2014,22 +1988,22 @@
     <con:testSuite name="Basic Functionality TestSuite">
         <con:settings />
         <con:runType>SEQUENTIAL</con:runType>
-        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - auth" searchProperties="true" id="a1b221aa-c242-456f-be0e-25fe3a6b9dfd">
+        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - auth" searchProperties="true">
             <con:settings />
             <con:testStep type="restrequest" name="POST /Auth - Input wrong 'api_secret'">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
                     <con:restRequest name="POST /Auth - Input wrong 'api_secret'" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Auth';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0001</content>
+                                <content>${#Project#error_code_invalid_key}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2054,18 +2028,18 @@
             </con:testStep>
             <con:testStep type="restrequest" name="POST /Auth - Input correctly">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
                     <con:restRequest name="POST /Auth - Input correctly" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Auth';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2095,7 +2069,7 @@
                         <con:name>token_before</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Input correctly</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token_before</con:targetType>
                         <con:targetStep>POST /Auth - Input correctly again</con:targetStep>
@@ -2104,16 +2078,16 @@
             </con:testStep>
             <con:testStep type="restrequest" name="POST /Auth - Input correctly again">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
                     <con:restRequest name="POST /Auth - Input correctly again" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Auth';
                                     //ns1:Response/ns1:response/ns1:token</path>
                                 <content>${token_before}</content>
                                 <allowWildcards>false</allowWildcards>
@@ -2127,7 +2101,6 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token_before" value="ddb0b34416ba852426f0367879543fa2539a8210" />
                             <con:entry key="api_key" value="${#Project#api_key}" />
                             <con:entry key="api_secret" value="${#Project#api_secret}" />
                         </con:parameters>
@@ -2146,7 +2119,7 @@
                         <con:name>token_before</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Input correctly again</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token_before</con:targetType>
                         <con:targetStep>POST /Auth/renew - Input correctly</con:targetStep>
@@ -2155,18 +2128,18 @@
             </con:testStep>
             <con:testStep type="restrequest" name="POST /Auth/renew - Input wrong 'api_secret'">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth/renew" methodName="POST" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth/renew" methodName="POST" xsi:type="con:RestRequestStep">
                     <con:restRequest name="POST /Auth/renew - Input wrong 'api_secret'" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Auth/renew';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Auth/renew';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0001</content>
+                                <content>${#Project#error_code_invalid_key}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2190,18 +2163,18 @@
             </con:testStep>
             <con:testStep type="restrequest" name="POST /Auth/renew - Input correctly">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth/renew" methodName="POST" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth/renew" methodName="POST" xsi:type="con:RestRequestStep">
                     <con:restRequest name="POST /Auth/renew - Input correctly" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Auth/renew';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Auth/renew';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2220,7 +2193,6 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token_before" value="ddb0b34416ba852426f0367879543fa2539a8210" />
                             <con:entry key="api_key" value="${#Project#api_key}" />
                             <con:entry key="api_secret" value="${#Project#api_secret}" />
                         </con:parameters>
@@ -2238,7 +2210,7 @@
                         <con:name>token_before</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth/renew - Input correctly</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth/renew';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth/renew';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token_before</con:targetType>
                         <con:targetStep>POST /Auth - Auth after Renew</con:targetStep>
@@ -2247,18 +2219,18 @@
             </con:testStep>
             <con:testStep type="restrequest" name="POST /Auth - Auth after Renew">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
                     <con:restRequest name="POST /Auth - Auth after Renew" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Auth';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2277,7 +2249,6 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token_before" value="61c556f2a77135f1ff519f3ec736f36def282864" />
                             <con:entry key="api_key" value="${#Project#api_key}" />
                             <con:entry key="api_secret" value="${#Project#api_secret}" />
                         </con:parameters>
@@ -2295,18 +2266,18 @@
             <con:settings />
             <con:testStep type="restrequest" name="GET /level/1 - Info about level=1">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/level/1" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/level/1" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /level/1 - Info about level=1" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/level/1';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/level/1';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2318,7 +2289,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2328,18 +2299,18 @@
             </con:testStep>
             <con:testStep type="restrequest" name="GET /levels - List info of all levels">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/levels" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/levels" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /levels - List info of all levels" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/levels';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/levels';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2351,7 +2322,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2363,20 +2334,20 @@
         </con:testCase>
         <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - rank" searchProperties="true">
             <con:settings />
-            <con:testStep type="restrequest" name="GET /rank/point/5 - Top players by point">
+            <con:testStep type="restrequest" name="GET /rank/point/:limit - Top players by point">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/rank/point/5" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/rank/point/${#Project#limit}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /rank/point/:limit - Top players by point" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/rank/point/5';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/rank/point/${#Project#limit}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2388,7 +2359,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2396,20 +2367,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /ranks/5 - Top players">
+            <con:testStep type="restrequest" name="GET /ranks/:limit - Top players">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/ranks/5" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/ranks/${#Project#limit}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /ranks/:limit - Top players" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/ranks/5';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/ranks/${#Project#limit}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2421,7 +2392,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2435,18 +2406,18 @@
             <con:settings />
             <con:testStep type="restrequest" name="GET /Badges - List info of all badges">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Badges" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Badges" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Badges - List info of all badges" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Badges';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Badges';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2458,7 +2429,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2466,20 +2437,46 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /Badge/:id - Info about badge=:id">
+            <con:testStep type="goto" name="Conditional Goto">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Badge/52ea1ea78d8c89401c000046" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:GotoStep">
+                    <con:condition>
+                        <con:name>badge_id</con:name>
+                        <con:type>XPATH</con:type>
+                        <con:expression>declare namespace ns1='${#Project#service_endpoint}/Badges';
+                            not(exists(//ns1:Response/ns1:response/ns1:badges/ns1:e[1]/ns1:badge_id))</con:expression>
+                        <con:targetStep>Goto End</con:targetStep>
+                    </con:condition>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>badge_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Badges - List info of all badges</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Badges';
+                            //ns1:Response/ns1:response/ns1:badges/ns1:e[1]/ns1:badge_id</con:sourcePath>
+                        <con:targetType>badge_id</con:targetType>
+                        <con:targetStep>#Project#</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Badge/:badge_id - Info about badge=:badge_id">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Badge/${#Project#badge_id}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Badge/:badge_id - Info about badge=:badge_id" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Badge/52ea1ea78d8c89401c000046';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Badge/${#Project#badge_id}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2491,12 +2488,18 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
                         </con:parameterOrder>
                     </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="delay" name="Goto End">
+                <con:settings />
+                <con:config>
+                    <delay>1</delay>
                 </con:config>
             </con:testStep>
             <con:properties />
@@ -2505,18 +2508,18 @@
             <con:settings />
             <con:testStep type="restrequest" name="GET /Goods - List info of all goods">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Goods" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Goods" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Goods - List info of all goods" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Goods';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Goods';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2528,7 +2531,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2536,20 +2539,46 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /Goods/:id - Info about goods=:id">
+            <con:testStep type="goto" name="Conditional Goto">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Goods/:id" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:GotoStep">
+                    <con:condition>
+                        <con:name>goods_id</con:name>
+                        <con:type>XPATH</con:type>
+                        <con:expression>declare namespace ns1='${#Project#service_endpoint}/Goods';
+                            not(exists(//ns1:Response/ns1:response/ns1:goods/ns1:e[1]/ns1:goods_id))</con:expression>
+                        <con:targetStep>Goto End</con:targetStep>
+                    </con:condition>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>goods_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Goods - List info of all goods</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Goods';
+                            //ns1:Response/ns1:response/ns1:goods/ns1:e[1]/ns1:goods_id</con:sourcePath>
+                        <con:targetType>goods_id</con:targetType>
+                        <con:targetStep>#Project#</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Goods/:goods_id - Info about goods=:goods_id">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Goods/${#Project#goods_id}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Goods/:goods_id - Info about goods=:goods_id" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Goods/:id';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Goods/${#Project#goods_id}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2561,26 +2590,32 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
                         </con:parameterOrder>
                     </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="delay" name="Goto End">
+                <con:settings />
+                <con:config>
+                    <delay>1</delay>
                 </con:config>
             </con:testStep>
             <con:properties />
         </con:testCase>
-        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - player query" searchProperties="true" id="1fe8972a-9457-465d-aacf-27e25348ef48">
+        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - player query" searchProperties="true">
             <con:settings />
             <con:testStep type="restrequest" name="POST /Auth - Get token">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Auth - Get token" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -2596,20 +2631,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test - Info about player">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1 - Info about player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1 - Info about player" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2621,7 +2656,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2636,27 +2671,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /test - Info about player</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id1 - Info about player</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /test - Info about player">
+            <con:testStep type="restrequest" name="POST /:cl_player_id1 - Info about player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id1 - Info about player" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2667,29 +2702,27 @@
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/detail/all - Detailed info">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/detail/all - Detailed info">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/data/all" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json" postQueryString="false">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/data/all" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/detail/all - Detailed info" mediaType="application/json" postQueryString="false">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/data/all';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/data/all';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2701,7 +2734,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2716,27 +2749,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /test/detail/all - Detailed info</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id1/detail/all - Detailed info</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /test/detail/all - Detailed info">
+            <con:testStep type="restrequest" name="POST /:cl_player_id1/detail/all - Detailed info">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/data/all" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/data/all" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id1/detail/all - Detailed info" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/data/all';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/data/all';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2747,29 +2780,27 @@
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/points - Info about exp/point">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/points - Info about exp/point">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/points" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/points" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/points - Info about exp/point" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/points';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/points';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2781,7 +2812,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2789,20 +2820,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/point/point - Info about point">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/point/point - Info about point">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/point/point" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/point/point" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/point/point - Info about point" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/point/point';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/point/point';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2814,7 +2845,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2822,20 +2853,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/point/exp - Info about exp">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/point/exp - Info about exp">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/point/exp" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/point/exp" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/point/exp - Info about exp" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/point/exp';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/point/exp';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2847,7 +2878,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2855,20 +2886,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/point_history - Info about point history">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/point_history - Info about point history">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/point_history" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/point_history" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/point_history - Info about point history" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/point_history';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/point_history';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2880,7 +2911,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2890,20 +2921,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/action/like/time - Info about action=like time">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/action/:action1/time - Info about action time">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/action/like/time" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/action/${#Project#action1}/time" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/action/:action1/time - Info about action time" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/action/like/time';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/action/${#Project#action1}/time';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2915,7 +2946,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2923,20 +2954,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/action/time - Info about last action">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/action/time - Info about last action">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/action/time" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/action/time" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/action/time - Info about last action" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/action/time';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/action/time';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2948,7 +2979,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2956,20 +2987,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/action/like/count - Info about action=like count">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/action/:action1/count - Info about action count">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/action/like/count" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/action/${#Project#action1}/count" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/action/:action1/count - Info about action count" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/action/like/count';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/action/${#Project#action1}/count';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -2981,7 +3012,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -2989,20 +3020,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /test/badge - Info about badge">
+            <con:testStep type="restrequest" name="GET /:cl_player_id1/badge - Info about badge">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test/badge" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id1}/badge" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id1/badge - Info about badge" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test/badge';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id1}/badge';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3014,7 +3045,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -3024,16 +3055,16 @@
             </con:testStep>
             <con:properties />
         </con:testCase>
-        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - player action" searchProperties="true" id="7bc33380-98cd-493d-ba8c-70be54a8da9b">
+        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - player action" searchProperties="true">
             <con:settings />
             <con:testStep type="restrequest" name="POST /Auth - Get token">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Auth" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Auth - Get token" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
@@ -3049,20 +3080,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /:id - Info about not existing player">
+            <con:testStep type="restrequest" name="GET /:cl_player_id2 - Info about not existing player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id2 - Info about not existing player" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0200</content>
+                                <content>${#Project#error_code_not_exist}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3074,7 +3105,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -3089,27 +3120,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /:id/register - Register player</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id2/register - Register player</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /:id/register - Register player">
+            <con:testStep type="restrequest" name="POST /:cl_player_id2/register - Register player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui/register" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}/register" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id2/register - Register player" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui/register';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/register';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3121,8 +3152,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                            <con:entry key="email" value="test_soapui@email.com" />
+                            <con:entry key="email" value="${#Project#cl_player_id2}@email.com" />
                             <con:entry key="image" value="https://www.pbapp.net/images/default_profile.jpg" />
                         </con:parameters>
                         <con:parameterOrder>
@@ -3141,20 +3171,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /:id - Info about player">
+            <con:testStep type="restrequest" name="GET /:cl_player_id2 - Info about player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id2 - Info about player" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3166,7 +3196,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -3181,27 +3211,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /:id/update - Update player</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id2/update - Update player</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /:id/update - Update player">
+            <con:testStep type="restrequest" name="POST /:cl_player_id2/update - Update player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui/update" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}/update" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id2/update - Update player" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui/update';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/update';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3213,9 +3243,8 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="exp" value="123" />
-                            <con:entry key="level" value="123" />
-                            <con:entry key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
+                            <con:entry key="exp" value="${#Project#cl_player_id2_exp}" />
+                            <con:entry key="level" value="${#Project#cl_player_id2_level}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
@@ -3225,20 +3254,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /:id - See the changes">
+            <con:testStep type="restrequest" name="GET /:cl_player_id2 - See the changes">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id2 - See the changes" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3246,9 +3275,9 @@
                         </con:assertion>
                         <con:assertion type="XPath Match" name="XPath Match (exp)">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}';
                                     //ns1:Response/ns1:response/ns1:player/ns1:exp</path>
-                                <content>123</content>
+                                <content>${#Project#cl_player_id2_exp}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3256,9 +3285,9 @@
                         </con:assertion>
                         <con:assertion type="XPath Match" name="XPath Match (level)">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}';
                                     //ns1:Response/ns1:response/ns1:player/ns1:level</path>
-                                <content>123</content>
+                                <content>${#Project#cl_player_id2_level}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3270,7 +3299,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -3285,27 +3314,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /:id/login - Login</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id2/login - Login</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /:id/login - Login">
+            <con:testStep type="restrequest" name="POST /:cl_player_id2/login - Login">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui/login" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}/login" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id2/login - Login" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui/login';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/login';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3316,9 +3345,7 @@
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -3332,27 +3359,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /:id/logout - Logout</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id2/logout - Logout</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /:id/logout - Logout">
+            <con:testStep type="restrequest" name="POST /:cl_player_id2/logout - Logout">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui/logout" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}/logout" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id2/logout - Logout" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui/logout';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/logout';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3363,9 +3390,7 @@
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -3379,27 +3404,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /Engine/rule - Do action=like</con:targetStep>
+                        <con:targetStep>POST /Engine/rule - Do action</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /Engine/rule - Do action=like">
+            <con:testStep type="restrequest" name="POST /Engine/rule - Do action">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Engine/rule" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Engine/rule" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Engine/rule - Do action" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Engine/rule';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Engine/rule';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3410,9 +3435,7 @@
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                             <con:entry>action</con:entry>
@@ -3422,20 +3445,20 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /:id - See the changes due to rewards">
+            <con:testStep type="restrequest" name="GET /:cl_player_id2 - See the changes due to rewards">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id2 - See the changes due to rewards" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3447,7 +3470,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -3462,27 +3485,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /:id/delete - Delete player</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id2/delete - Delete player</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /:id/delete - Delete player">
+            <con:testStep type="restrequest" name="POST /:cl_player_id2/delete - Delete player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui/delete" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}/delete" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id2/delete - Delete player" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui/delete';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/delete';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0000</content>
+                                <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3493,9 +3516,7 @@
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
@@ -3509,27 +3530,27 @@
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
-                        <con:sourcePath>declare namespace ns1='http://ci.pbapp.net/api/Auth';
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
                             //ns1:Response/ns1:response/ns1:token</con:sourcePath>
                         <con:targetType>token</con:targetType>
-                        <con:targetStep>POST /:id/delete - Delete again</con:targetStep>
+                        <con:targetStep>POST /:cl_player_id2/delete - Delete again</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="POST /:id/delete - Delete again">
+            <con:testStep type="restrequest" name="POST /:cl_player_id2/delete - Delete again">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui/delete" methodName="POST" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="POST - Request 1" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}/delete" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id2/delete - Delete again" mediaType="application/x-www-form-urlencoded" postQueryString="true">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui/delete';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/delete';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0200</content>
+                                <content>${#Project#error_code_not_exist}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3540,29 +3561,27 @@
                         </con:credentials>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="token" value="61c556f2a77135f1ff519f3ec736f36def282864" />
-                        </con:parameters>
+                        <con:parameters />
                         <con:parameterOrder>
                             <con:entry>token</con:entry>
                         </con:parameterOrder>
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /:id - Should not find the player">
+            <con:testStep type="restrequest" name="GET /:cl_player_id2 - Should not find the player">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="http://ci.pbapp.net" resourcePath="/Player/test_soapui" methodName="GET" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET - Request 1" mediaType="application/json">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}" methodName="GET" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /:cl_player_id2 - Should not find the player" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
                         </con:settings>
-                        <con:endpoint>http://ci.pbapp.net/api</con:endpoint>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='http://ci.pbapp.net/api/Player/test_soapui';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}';
                                     //ns1:Response/ns1:error_code</path>
-                                <content>0200</content>
+                                <content>${#Project#error_code_not_exist}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                                 <ignoreComments>false</ignoreComments>
@@ -3574,7 +3593,7 @@
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <entry xmlns="http://eviware.com/soapui/config" key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_key" value="${#Project#api_key}" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry>api_key</con:entry>
@@ -3588,6 +3607,10 @@
     </con:testSuite>
     <con:properties>
         <con:property>
+            <con:name>service_endpoint</con:name>
+            <con:value>http://admin-api.pbapp.net</con:value>
+        </con:property>
+        <con:property>
             <con:name>api_key</con:name>
             <con:value>abc</con:value>
         </con:property>
@@ -3595,6 +3618,67 @@
             <con:name>api_secret</con:name>
             <con:value>abcde</con:value>
         </con:property>
+        <con:property>
+            <con:name>error_code_success</con:name>
+            <con:value>0000</con:value>
+        </con:property>
+        <con:property>
+            <con:name>error_code_invalid_key</con:name>
+            <con:value>0001</con:value>
+        </con:property>
+        <con:property>
+            <con:name>error_code_not_exist</con:name>
+            <con:value>0200</con:value>
+        </con:property>
+        <con:property>
+            <con:name>badge_id</con:name>
+            <con:value>52ea1ea78d8c89401c000046</con:value>
+        </con:property>
+        <con:property>
+            <con:name>goods_id</con:name>
+            <con:value />
+        </con:property>
+        <con:property>
+            <con:name>offset</con:name>
+            <con:value>0</con:value>
+        </con:property>
+        <con:property>
+            <con:name>limit</con:name>
+            <con:value>5</con:value>
+        </con:property>
+        <con:property>
+            <con:name>cl_player_id1</con:name>
+            <con:value>1201407222facebook</con:value>
+        </con:property>
+        <con:property>
+            <con:name>cl_player_id1_exp</con:name>
+            <con:value>123</con:value>
+        </con:property>
+        <con:property>
+            <con:name>cl_player_id1_level</con:name>
+            <con:value>11</con:value>
+        </con:property>
+        <con:property>
+            <con:name>cl_player_id2</con:name>
+            <con:value>test_soapui</con:value>
+        </con:property>
+        <con:property>
+            <con:name>cl_player_id2_exp</con:name>
+            <con:value>234</con:value>
+        </con:property>
+        <con:property>
+            <con:name>cl_player_id2_level</con:name>
+            <con:value>22</con:value>
+        </con:property>
+        <con:property>
+            <con:name>action1</con:name>
+            <con:value>like</con:value>
+        </con:property>
+        <con:property>
+            <con:name>action1_url</con:name>
+            <con:value>demo_like</con:value>
+        </con:property>
     </con:properties>
     <con:wssContainer />
+    <con:sensitiveInformation />
 </con:soapui-project>
