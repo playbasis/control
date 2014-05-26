@@ -1,5 +1,4 @@
 <?php
-// Heading
 
 $lang = array(
 
@@ -14,7 +13,6 @@ $lang = array(
 	'form_quest_image'					=> 'Quest Image',
 	'form_quest_condition'				=> 'Condition',
 	'form_quest_status'					=> 'Status',
-	'form_quest_condition'				=> 'Condition',
 	'form_quest_rewards'				=> 'Rewards',
 	'form_quest_missions'				=> 'Missions',
 	'form_quest_missionordering'		=> 'Set Mission Order',
@@ -30,10 +28,13 @@ $lang = array(
 	'column_action'						=> 'Action',
 	'button_clear_filter'				=> 'Clear Filter',
 	'button_filter'						=> 'Filter',
+	'tab_general'						=> 'General',
+	'tab_mission'						=> 'Manage Mission',
 
 
 
 );
+
 
 
 
