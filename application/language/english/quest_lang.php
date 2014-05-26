@@ -26,10 +26,13 @@ $lang = array(
 	'column_quest_end'					=> 'End',
 	'column_quest_status'				=> 'Status',
 	'column_action'						=> 'Action',
+	'column_quest_sort_order'			=> 'Sort Order',
 	'button_clear_filter'				=> 'Clear Filter',
 	'button_filter'						=> 'Filter',
 	'tab_general'						=> 'General',
 	'tab_mission'						=> 'Manage Mission',
+	'text_confirm'						=> 'Are you sure you want to delete?',
+
 
 
 

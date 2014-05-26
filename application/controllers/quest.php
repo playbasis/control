@@ -60,6 +60,10 @@ class Quest extends MY_Controller
             'sort'=>'sort_order'
         );
 
+        if(isset($_GET['filter_name'])){
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
         $config['base_url'] = site_url('quest/page');
         $config["uri_segment"] = 3;
 
@@ -201,6 +205,128 @@ class Quest extends MY_Controller
             }
         }
         $this->output->set_output(json_encode($json));
+    }
+
+    public function increase_order($quest_id){
+
+        if($this->User_model->getClientId()){
+            $client_id = $this->User_model->getClientId();
+            $this->Quest_model->increaseOrderByOneClient($quest_id, $client_id);
+        }else{
+            $this->Quest_model->increaseOrderByOne($quest_id);    
+        }
+
+        // redirect('action', 'refresh');
+
+        $json = array('success'=>'Okay!');
+
+        $this->output->set_output(json_encode($json));
+
+    }
+
+    public function decrease_order($quest_id){
+
+        if($this->User_model->getClientId()){
+            $client_id = $this->User_model->getClientId();
+            $this->Quest_model->decreaseOrderByOneClient($quest_id, $client_id);
+        }else{
+            $this->Quest_model->decreaseOrderByOne($quest_id);    
+        }
+        // redirect('action', 'refresh');
+
+        $json = array('success'=>'Okay!');
+
+        $this->output->set_output(json_encode($json));
+    }
+
+    public function getListForAjax($offset) {
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        
+        $this->load->library('pagination');
+
+        $config['per_page'] = 10;
+
+        $filter = array(
+                'limit' => $config['per_page'],
+                'start' => $offset,
+                'client_id'=>$client_id,
+                'site_id'=>$site_id,
+                'sort'=>'sort_order'
+            );
+        if(isset($_GET['filter_name'])){
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
+        $config['base_url'] = site_url('action/page');
+        $config["uri_segment"] = 3;
+
+        if($client_id){
+            $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
+            $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
+        }else{
+            /*
+            // $this->data['actions'] = $this->Action_model->getActions($filter);
+            $allActions = $this->Action_model->getActions($filter);
+
+            foreach ($allActions as &$action){
+                $actionIsPublic = $this->checkActionIsPublic($action['_id']);
+                $action['is_public'] =  $actionIsPublic;
+            }
+
+            $this->data['actions'] = $allActions;
+            $config['total_rows'] = $this->Action_model->getTotalActions();
+            */
+        }
+
+        $this->pagination->initialize($config);
+
+        $this->render_page('quest_ajax');
+    }
+
+    public function delete() {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->error['warning'] = null;
+
+    if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+
+            if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+                foreach ($this->input->post('selected') as $quest_id) {
+                    $this->Quest_model->deleteQuestClient($quest_id);
+                }
+            }else{
+                /*
+                foreach ($this->input->post('selected') as $action_id) {
+                    $this->Action_model->delete($action_id);
+                }
+                */
+            }
+
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+            redirect('/quest', 'refresh');
+        }
+
+        $this->getList(0);
+    }
+
+     private function validateModify() {
+
+        if ($this->User_model->hasPermission('modify', 'action')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

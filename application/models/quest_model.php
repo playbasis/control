@@ -81,5 +81,86 @@ class Quest_model extends MY_Model{
 
 	}
 
+	/*
+	public function increaseOrderByOne($action_id){
+	    $this->set_site_mongodb($this->session->userdata('site_id'));
+
+	    $this->mongo_db->where('_id', new MongoId($action_id));
+	    $theAction = $this->mongo_db->get('playbasis_action');
+
+	    $currentSort = $theAction[0]['sort_order'];
+	    
+	    $newSort = $currentSort+1;
+
+	    $this->mongo_db->where('_id', new MongoID($action_id));
+	    $this->mongo_db->set('sort_order', $newSort);
+	    $this->mongo_db->update('playbasis_action');
+
+	}
+	*/
+	
+	public function increaseOrderByOneClient($quest_id, $client_id){
+	    $this->set_site_mongodb($this->session->userdata('site_id'));
+
+	    $this->mongo_db->where('_id', new MongoId($quest_id));
+	    $this->mongo_db->where('client_id', new MongoId($client_id));
+	    $theQuest = $this->mongo_db->get('playbasis_quest_to_client');
+
+	    $currentSort = $theQuest[0]['sort_order'];
+	    
+	    $newSort = $currentSort+1;
+
+	    $this->mongo_db->where('_id', new MongoID($quest_id));
+	    $this->mongo_db->where('client_id', new MongoId($client_id));
+	    $this->mongo_db->set('sort_order', $newSort);
+	    $this->mongo_db->update('playbasis_quest_to_client');
+
+	}
+
+	/*
+	public function decreaseOrderByOne($action_id){
+	    $this->set_site_mongodb($this->session->userdata('site_id'));
+
+	    $this->mongo_db->where('_id', new MongoId($action_id));
+	    $theAction = $this->mongo_db->get('playbasis_action');
+
+	    $currentSort = $theAction[0]['sort_order'];
+	    
+	    if($currentSort != 0){
+	        $newSort = $currentSort-1;    
+
+	        $this->mongo_db->where('_id', new MongoID($action_id));
+	        $this->mongo_db->set('sort_order', $newSort);
+	        $this->mongo_db->update('playbasis_action');
+	    }
+	}
+	*/
+
+	public function decreaseOrderByOneClient($quest_id, $client_id){
+	    $this->set_site_mongodb($this->session->userdata('site_id'));
+
+	    $this->mongo_db->where('_id', new MongoId($quest_id));
+	    $this->mongo_db->where('client_id', new MongoId($client_id));
+	    $theAction = $this->mongo_db->get('playbasis_quest_to_client');
+
+	    $currentSort = $theAction[0]['sort_order'];
+	    
+	    if($currentSort != 0){
+	        $newSort = $currentSort-1;    
+
+	        $this->mongo_db->where('_id', new MongoID($quest_id));
+	        $this->mongo_db->where('client_id', new MongoId($client_id));
+	        $this->mongo_db->set('sort_order', $newSort);
+	        $this->mongo_db->update('playbasis_quest_to_client');
+	    }
+	}
+
+	public function deleteQuestClient($quest_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoId($quest_id));
+        $this->mongo_db->delete('playbasis_quest_to_client');
+    }
+
 
 }
