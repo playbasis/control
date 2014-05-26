@@ -1,4 +1,3 @@
-
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
@@ -22,25 +21,12 @@
                     <tr>
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                     <td class="left" style="width:72px;"><?php echo $this->lang->line('column_image'); ?></td>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
-                    <?php if(!$client_id){?>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_owner'); ?></td>
-                    <?php }?>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_order'); ?></td>
+                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_name'); ?></td>
+                    <td class="right" style="width:100px;"><?php echo $this->lang->line('column_quest_status'); ?></td>
                     <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                 </thead>
                 <tbody>
-                
-                    
-                
-                <script type="text/javascript">
-                    $('#fooclickme').click(function (){
-                        alert('yet');
-                    }); 
-                </script>
                     <tr class="filter">
                         <td></td>
                         <td></td>
@@ -49,53 +35,48 @@
                             <td></td>
                         <?php }?>
                         <td></td>
-                        <td></td>
-                        <td></td>
                         <td class="right">
                             <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                             <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
                         </td>
                     </tr>
                     
-                        <?php if(isset($actions)){?>
-                            <?php foreach($actions as $action){?>
+                        <?php if(isset($quests)){?>
+                            <?php foreach($quests as $quest){?>
                                 <tr>
-                                    <td style="text-align: center;"><?php if (isset($action['selected'])) { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" checked="checked" />
+                                    <td style="text-align: center;"><?php if (isset($quest['selected'])) { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" checked="checked" />
                                         <?php } else { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $action['_id']; ?>" />
+                                        <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" />
                                         <?php } ?></td>
-                                    <td class="left"><?php echo "<i style='color:grey' class='".$action['icon']." icon-4x'></i>"; ?></td>
-                                    <!-- <td class="right"><?php //echo ucfirst($action['name']); ?></td> -->
-                                    <td class="right"><?php echo $action['name']; ?></td>
-                                    <?php if(!$client_id){?>
-                                        <td class="right"><?php echo ($action['is_public'])? "Public": "Private"; ?></td>
-                                    <?php }?>    
-                                    <td class="right"><?php echo datetimeMongotoReadable($action['date_added']); ?></td>
-                                    <td class="right"><?php echo ($action['status'])? "Enabled" : "Disabled"; ?></td>
-                                    <td class="right"><?php echo $action['sort_order'];?></td>
+                                    <td class="left"><?php echo $quest['image_url']; ?></td>
+                                    <td class="right"><?php echo $quest['quest_name']; ?></td>   
+                                    <!-- <td class="right"><?php //echo datetimeMongotoReadable($quest['condition']['datetime_start']); ?></td> -->
+                                    <!-- <td class="right"><?php //echo datetimeMongotoReadable($quest['condition']['datetime_end']); ?></td> -->
+                                    <td class="right"><?php echo $quest['status'];?></td>
                                     <td class="right">[ <?php if($client_id){
-                                            echo anchor('action/update/'.$action['action_id'], 'Edit');
+                                            // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
+                                            echo anchor('quest/update/'.$quest['_id'], 'Edit');
                                         }else{
-                                            echo anchor('action/update/'.$action['_id'], 'Edit');
+                                            echo anchor('action/update/'.$quest['_id'], 'Edit');
                                         }
                                         ?> ]
 
                                         <?php if($client_id){
-
-                                            echo anchor('action/increase_order/'.$action['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
+                                            // echo anchor('action/increase_order/'.$quest['action_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));
+                                            echo anchor('action/increase_order/'.$quest['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
                                         }else{
-                                            echo anchor('action/increase_order/'.$action['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
+                                            echo anchor('action/increase_order/'.$quest['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
                                         }
                                         ?>
                                         <?php if($client_id){
-                                            echo anchor('action/decrease_order/'.$action['action_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['action_id'], 'style'=>'text-decoration:none'));
+                                            // echo anchor('action/decrease_order/'.$quest['action_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['action_id'], 'style'=>'text-decoration:none'));
+                                            echo anchor('action/decrease_order/'.$quest['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
                                         }else{
-                                            echo anchor('action/decrease_order/'.$action['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$action['_id'], 'style'=>'text-decoration:none'));
+                                            echo anchor('action/decrease_order/'.$quest['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$quest['_id'], 'style'=>'text-decoration:none'));
                                         }
                                         ?>
                                         </td>   
-
                                 </tr>
                             <?php }?>
                         <?php }?>
@@ -116,10 +97,9 @@
 </div><!-- #content .span10 -->
 
 
-
 <script type="text/javascript"><!--
 function filter() {
-    url = baseUrlPath+'action';
+    url = baseUrlPath+'quest';
 
     var filter_name = $('input[name=\'filter_name\']').attr('value');
 
@@ -137,7 +117,7 @@ function filter() {
             delay: 0,
             source: function(request, response) {
                 $.ajax({
-                    url: baseUrlPath+'action/autocomplete?filter_name=' +  encodeURIComponent(request.term),
+                    url: baseUrlPath+'quest/autocomplete?filter_name=' +  encodeURIComponent(request.term),
                     dataType: 'json',
                     success: function(json) {
                         console.log(json);
@@ -219,6 +199,6 @@ $( ".push_up" ).live( "click", function() {
     <?php }?>
 
     function clear_filter(){
-        window.location.replace(baseUrlPath+'action');
+        window.location.replace(baseUrlPath+'quest');
     }
 </script>

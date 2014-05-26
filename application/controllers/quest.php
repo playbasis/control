@@ -11,9 +11,8 @@ class Quest extends MY_Controller
     {
         parent::__construct();
 
-        //Load models
-
-        //End Load models
+        $this->load->model('User_model');
+        $this->load->model('Quest_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -26,12 +25,68 @@ class Quest extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $this->getList();
+        $this->getList(0);
     }
 
-    public function getList(){
-    	
+    public function page($offset=0) {
 
+        /*
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+        */
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $this->getList($offset);
+    }
+
+    public function getList($offset){
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $this->load->library('pagination');
+
+        $config['per_page'] = 10;
+
+        $filter = array(
+            'limit' => $config['per_page'],
+            'start' => $offset,
+            'client_id'=>$client_id,
+            'site_id'=>$site_id,
+            'sort'=>'sort_order'
+        );
+
+        $config['base_url'] = site_url('quest/page');
+        $config["uri_segment"] = 3;
+
+        if($client_id){
+            $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
+            $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
+        }
+
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $this->pagination->initialize($config);
+    	
     	$this->data['main'] = 'quest';
         $this->render_page('template');
 
@@ -55,8 +110,12 @@ class Quest extends MY_Controller
     }
 
     public function getForm(){
-        $this->load->model('Image_model');
 
+        $data['client_id'] = $this->User_model->getClientId();
+        $data['site_id'] = $this->User_model->getSiteId();
+
+        $this->load->model('Image_model');
+        $this->load->model('Level_model');
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
@@ -90,10 +149,58 @@ class Quest extends MY_Controller
             $this->data['date_end'] = "-";
         }
 
+        $this->data['levels'] = $this->Level_model->getLevelsSite($data);
+
+        $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($data);
+
+        $this->data['customPoints'] = $this->Quest_model->getCustomPoints($data);
+
+        $this->data['badges'] =$this->Quest_model->getBadgesByClientSiteId($data);
+
 
         $this->data['main'] = 'quest_form';
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    public function autocomplete(){
+        $json = array();
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        if ($this->input->get('filter_name')) {
+
+            if ($this->input->get('filter_name')) {
+                $filter_name = $this->input->get('filter_name');
+            } else {
+                $filter_name = null;
+            }
+
+            $data = array(
+                'filter_name' => $filter_name
+            );
+
+            if($client_id){
+                $data['client_id'] = $client_id;
+                $data['site_id'] = $site_id;
+                $results_quest = $this->Quest_model->getQuestsByClientSiteId($data);
+            }else{
+                //For admins because there is no client id?
+            }
+
+            foreach ($results_quest as $result) {
+                $json[] = array(
+                    'name' => html_entity_decode($result['quest_name'], ENT_QUOTES, 'UTF-8'),
+                    // 'description' => html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'),
+                    // 'icon' => html_entity_decode($result['icon'], ENT_QUOTES, 'UTF-8'),
+                    // 'color' => html_entity_decode($result['color'], ENT_QUOTES, 'UTF-8'),
+                    // 'sort_order' => html_entity_decode($result['sort_order'], ENT_QUOTES, 'UTF-8'),
+                    'status' => html_entity_decode($result['status'], ENT_QUOTES, 'UTF-8'),
+                );
+            }
+        }
+        $this->output->set_output(json_encode($json));
     }
 
 }
