@@ -183,11 +183,11 @@
                     <div class="span1 text-center">
                         <input type="checkbox" name="selected[]" value="<?php $quests[$i]['_id']; ?>">
                     </div>
-                    <div class="span2 text-center">
+                    <div class="span2 image text-center">
                         <img height="50" width="50" src="<?php echo S3_IMAGE.$quests[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                         <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
                     </div>
-                    <div class="span9"><?php echo $quests[$i]['quest_name'];?></div>
+                    <div class="span9 title"><?php echo $quests[$i]['quest_name'];?></div>
                 </div>
                 </label>
             <?php } ?>
@@ -196,7 +196,7 @@
     <div class="modal-footer">
         <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" data-dismiss="modal">Select</button>
+        <button class="btn btn-primary select-quest-btn" data-dismiss="modal">Select</button>
     </div>
 </div>
 
@@ -210,11 +210,11 @@
         <div class="select-list">
             <?php for($i=0 ; $i < count($customPoints) ; $i++){ ?>
                 <label>
-                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-quest = "<?php echo $customPoints[$i]['_id']; ?>">
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-custompoint = "<?php echo $customPoints[$i]['_id']; ?>">
                     <div class="span1 text-center">
                         <input type="checkbox" name="selected[]" value="<?php $customPoints[$i]['_id']; ?>">
                     </div>
-                    <div class="span11"><?php echo $customPoints[$i]['name'];?></div>
+                    <div class="span11 title"><?php echo $customPoints[$i]['name'];?></div>
                 </div>
                 </label>
             <?php } ?>
@@ -223,7 +223,7 @@
     <div class="modal-footer">
         <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" data-dismiss="modal">Select</button>
+        <button class="btn btn-primary select-custompoint-btn" data-dismiss="modal">Select</button>
     </div>
 </div>
 
@@ -281,6 +281,7 @@
                 });
             }
 
+            /*
             if(containerObj.has('.quest-wrapper').length){
                 addQuestObj.addClass('disabled');
                 addQuestObj.unbind();
@@ -290,6 +291,7 @@
                     addQuest(type);
                 });
             }
+            */
 
 
             if(containerObj.has('.points-wrapper').length){
@@ -312,6 +314,7 @@
                 });
             }
 
+            /*
             if(containerObj.has('.custompoints-wrapper').length){
                 addCustomPointObj.addClass('disabled');
                 addCustomPointObj.unbind();
@@ -321,7 +324,7 @@
                     addCustompoints(type);
                 });
             }
-
+            */
 
             //Add Badges
 
@@ -345,15 +348,55 @@
                 selectBadgesItem(type);
             });
 
-            //TESTING
-            addQuestObj.unbind().bind('click',function(data){
-                $('#modal-select-quest').modal('show');
+
+            //Add Custom point
+            if(containerObj.has('.custompoints-wrapper').length){
+                addCustomPointObj.removeClass('disabled');
+                addCustomPointObj.unbind().bind('click',function(data){
+                    setModalCustompointItem(type);
+                });
+                containerObj.find('.custompoints-wrapper .add-custompoint-btn').bind('click',function(data){
+                    setModalCustompointsItem(type);
+                });
+            }else{
+                addCustomPointObj.removeClass('disabled');
+                addCustomPointObj.unbind().bind('click',function(data){
+                    addCustompoints(type);
+                    setModalCustompointsItem(type);
+                });
+            }
+
+            $('.select-custompoint-btn').unbind().bind('click',function(data){
+                selectCustompointsItem(type);
             });
 
 
-            addCustomPointObj.unbind().bind('click',function(data){
-                $('#modal-select-custompoint').modal('show');
+            //Add Quests point
+            
+            if(containerObj.has('.quests-wrapper').length){
+                addQuestObj.removeClass('disabled');
+                addQuestObj.unbind().bind('click',function(data){
+                    setModalQuestsItem(type);
+                });
+                containerObj.find('.quests-wrapper .add-quest-btn').bind('click',function(data){
+                    setModalQuestsItem(type);
+                });
+            }else{
+                addQuestObj.removeClass('disabled');
+                addQuestObj.unbind().bind('click',function(data){
+                    addQuest(type);
+                    setModalQuestsItem(type);
+                });
+            }
+
+            $('.select-quest-btn').unbind().bind('click',function(data){
+                selectQuestsItem(type);
             });
+
+            
+
+
+            
 
             //END TESTING
 
@@ -386,7 +429,6 @@ function addDatetime(type){
     var datetimeHead = '<h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
     var datetimestart = '<label class="span4">Date Start:</label> <input type="text" name ="'+type+'[\'datetimestart\']"  class="date" placeholder = "datetime start">';
     var datetimeend = '<label class="span4">Date End:</label> <input type="text" name = "'+type+'[\'datetimeend\']"  class="date" placeholder = "datetime end" >';
-    condition['datetime_start']
     var datetimeHtml = '<div class="datetime-wrapper '+type+'-type well">'+datetimeHead+datetimestart+'<br>'+datetimeend+'</div>';
     
     render[type](datetimeHtml);
@@ -406,8 +448,8 @@ function addLevel(type){
 }
 
 function addQuest(type){
-    var questHead = '<h3>Quest <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var questHtml = '<div class="quest-wrapper '+type+'-type well">'+questHead+'<select><?php foreach($quests as $quest){echo "<option>".$quest["quest_name"]."</option>";}?></select>'+'</div>';
+    var questHead = '<h3>Quest <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quest-btn">+ Add Quest</a></h3>';
+    var questHtml = '<div class="quests-wrapper '+type+'-type well">'+questHead+'<div class="item-container"></div></div>';
 
     render[type](questHtml);
 
@@ -427,21 +469,16 @@ function addExp(type){
 
 function addCustompoints(type){
 
-    var customPointsHead = '<h3>Custom Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var customPoints = "";
-    <?php foreach($customPoints as $customPoint){ ?>
-        var customPointsEach = "<label class='span4'><?php echo $customPoint['name']; ?></label>";
-        var custompointvalue = '<input type="text" name="'+type+'[\'custompoint\'][\'<?php echo $customPoint["name"]; ?>\']" placeholder="Custom Point" class="span6">';
-        customPoints += '<div>'+customPointsEach+custompointvalue+'</div>';
-    <?php } ?>
-    var customPointsHtml = '<div class="custompoints-wrapper '+type+'-type well">'+customPointsHead+customPoints+'</div>';
+    var customPointsHead = '<h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>';
+    
+    var customPointsHtml = '<div class="custompoints-wrapper '+type+'-type well">'+customPointsHead+'<div class="item-container"></div></div>';
     
     render[type](customPointsHtml);
 }
 
 function addBadges(type){
     
-    var badgesHead = '<h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+Add Badges</a></h3>';
+    var badgesHead = '<h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>';
     var badgesHtml = '<div class="badges-wrapper '+type+'-type well">'+badgesHead+'<div class="item-container"></div></div>';
 
     render[type](badgesHtml);
@@ -458,13 +495,8 @@ render['reward'] = function(html){
 }
 
 
-function addBadgesItem(type,badge_id){
-    var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+badge_id+'"><div class="span2 text-center"><img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">Make THE Difference Beginner</div><div class="span1"><small>value</small><input type="text" name ="badgesItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
 
-    $('.'+type+'-wrapper .badges-wrapper .item-container').append(badgesItemHtml);
-    init_additem_event('reward');
-}
-
+// setModalBadgesItem
 function setModalBadgesItem(type){
     var wrapperObj = $('.'+type+'-wrapper');
     
@@ -488,7 +520,7 @@ function selectBadgesItem(type){
                 var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+$(this).data('id-badge')+'"><div class="span2 text-center"><img src="'+$(this).find('.image img').attr('src')+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">'+$(this).find('.title').html()+'</div><div class="span1"><small>value</small><input type="text" name ="badgesItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
 
                     $('.'+type+'-wrapper .badges-wrapper .item-container').append(badgesItemHtml);
-                    init_additem_event('reward');
+                    init_additem_event(type);
             }
         }else{
             if(wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').length >= 1) {
@@ -496,12 +528,86 @@ function selectBadgesItem(type){
             }
         }
     })
-
-    
-    
-        
-    
 }
+
+// setModalCustompointsItem
+function setModalCustompointsItem(type){
+    var wrapperObj = $('.'+type+'-wrapper');
+    $('#modal-select-custompoint input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.custompoints-item-wrapper').each(function(){
+        var idSelect = $(this).data('id-custompoint');
+        $('#modal-select-custompoint .select-item[data-id-custompoint='+idSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-custompoint').modal('show');
+}
+
+function selectCustompointsItem(type){
+    var wrapperObj = $('.'+type+'-wrapper');
+
+    $('#modal-select-custompoint .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+            
+            if(wrapperObj.find('.custompoints-item-wrapper[data-id-custompoint='+$(this).data('id-custompoint')+']').length <= 0) {
+                
+                var id = $(this).data('id-custompoint');
+                
+                var title = $(this).find('.title').html();
+
+                var itemHtml = '<div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="'+id+'"><div class="span7">'+title+'</div><div class="span3"><small>value</small><input type="text" name ="CustimpointItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+
+                    $('.'+type+'-wrapper .custompoints-wrapper .item-container').append(itemHtml);
+                    init_additem_event(type);
+            }
+        }else{
+            if(wrapperObj.find('.custompoints-item-wrapper[data-id-custompoint='+$(this).data('id-custompoint')+']').length >= 1) {
+                wrapperObj.find('.custompoints-item-wrapper[data-id-custompoint='+$(this).data('id-custompoint')+']').remove();
+            }
+        }
+    })
+}
+
+// setModalQuestsItem
+function setModalQuestsItem(type){
+    
+    var wrapperObj = $('.'+type+'-wrapper');
+    $('#modal-select-quest input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.quests-item-wrapper').each(function(){
+        var idSelect = $(this).data('id-quest');
+        $('#modal-select-quest .select-item[data-id-quest='+idSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-quest').modal('show');
+}
+
+function selectQuestsItem(type){
+    
+    var wrapperObj = $('.'+type+'-wrapper');
+
+    $('#modal-select-quest .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+            
+            if(wrapperObj.find('.quests-item-wrapper[data-id-quest='+$(this).data('id-quest')+']').length <= 0) {
+                
+alert('qwer');
+
+                var id = $(this).data('id-quest');
+                var image = $(this).find('.image img').attr('src');
+                var title = $(this).find('.title').html();
+
+                var itemHtml = '<div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="'+id+'"><div class="span2 text-center"><img src="'+image+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">'+title+'</div><div class="span1"><small>value</small><input type="text" name ="questsItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+
+                    $('.'+type+'-wrapper .quests-wrapper .item-container').append(itemHtml);
+                    init_additem_event(type);
+            }
+        }else{
+            if(wrapperObj.find('.quests-item-wrapper[data-id-quest='+$(this).data('id-quest')+']').length >= 1) {
+                wrapperObj.find('.quests-item-wrapper[data-id-quest='+$(this).data('id-quest')+']').remove();
+            }
+        }
+    })
+}
+
 
 </script>
 
