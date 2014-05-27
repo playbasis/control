@@ -107,10 +107,17 @@ class Quest extends MY_Controller
         // $this->form_validation->set_rules('name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $this->input->post();
 
+            echo "<pre>";
+                var_dump($data);
+            echo "</pre>";
+
+        }else{
+            $this->getForm();    
         }
 
-        $this->getForm();
+        
     }
 
     public function getForm(){
