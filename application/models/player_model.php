@@ -231,6 +231,29 @@ class Player_model extends MY_Model
 		$result['count'] = $count;
 		return $result;
 	}
+    public function getActionCountFromDatetime($pb_player_id, $action_id, $site_id, $starttime, $endtime)
+    {
+        $fields = array(
+            'pb_player_id' => $pb_player_id,
+            'action_id' => $action_id
+        );
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where($fields);
+        $count = $this->mongo_db->count('playbasis_action_log');
+        $this->mongo_db->select(array(
+            'action_id',
+            'action_name'
+        ));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where($fields);
+        $result = $this->mongo_db->get('playbasis_action_log');
+        $result = ($result) ? $result[0] : array();
+        if($result){
+            $result['action_id'] = $result['action_id']."";
+        }
+        $result['count'] = $count;
+        return $result;
+    }
 	public function getBadge($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);
