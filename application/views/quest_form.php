@@ -34,15 +34,15 @@
               <table class="form ">
                  <tr>
                     <td><span class="required">*</span> <?php echo $this->lang->line('form_quest_name'); ?>:</td>
-                    <td><input type="text" name="name" size="100" value="<?php echo isset($action['name']) ? $action['name'] :  set_value('name'); ?>" /></td>
+                    <td><input type="text" name="quest_name" size="100" value="<?php echo isset($quest['quest_name']) ? $quest['quest_name'] :  set_value('name'); ?>" /></td>
                 </tr>
                 <tr>
                     <td><?php echo $this->lang->line('form_quest_description'); ?>:</td>
-                    <td><textarea name ="description" rows="4"><?php echo isset($action['description']) ? $action['description'] :  set_value('description'); ?></textarea>
+                    <td><textarea name ="description" rows="4"><?php echo isset($quest['description']) ? $quest['description'] :  set_value('description'); ?></textarea>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_quest_hint'); ?>:</td>
-                        <td><input type="text" name="hint" size="100" value="<?php echo isset($action['hint']) ? $action['hint'] :  set_value('hint'); ?>" /></td>
+                        <td><input type="text" name="hint" size="100" value="<?php echo isset($quest['hint']) ? $quest['hint'] :  set_value('hint'); ?>" /></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_quest_image'); ?>:</td>
@@ -52,16 +52,12 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('form_quest_missions');?></td>
-                        <td>To do...</td>
-                    </tr>
-                    <tr>
                         <td><?php echo $this->lang->line('form_quest_missionordering'); ?>:</td>
-                        <td><input type="checkbox" name="status" <?php echo isset($action['status']) ?'checked':'unchecked'; ?> size="1" /></td>
+                        <td><input type="checkbox" name="mission_order" <?php echo isset($quest['status']) ?'checked':'unchecked'; ?> size="1" /></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_quest_status'); ?>:</td>
-                        <td><input type="checkbox" name="status" <?php echo isset($action['status']) ?'checked':'unchecked'; ?> size="1" /></td>
+                        <td><input type="checkbox" name="status" <?php echo isset($quest['status']) ?'checked':'unchecked'; ?> size="1" /></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_quest_start'); ?>:</td>
@@ -545,4 +541,32 @@ response($.map(json, function(item) {
             return false;
         }
     });
+</script>
+
+<script type="text/javascript">
+    function image_upload(field, thumb) {
+        $('#dialog').remove();
+
+        $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 200px; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
+
+        $('#dialog').dialog({
+            title: '<?php echo $this->lang->line('text_image_manager'); ?>',
+            close: function (event, ui) {
+                if ($('#' + field).attr('value')) {
+                    $.ajax({
+                        url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
+                        dataType: 'text',
+                        success: function(data) {
+                            $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
+                        }
+                    });
+                }
+            },
+            bgiframe: false,
+            width: 200,
+            height: 100,
+            resizable: false,
+            modal: false
+        });
+    };
 </script>

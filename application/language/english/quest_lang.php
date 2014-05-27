@@ -32,6 +32,7 @@ $lang = array(
 	'tab_general'						=> 'General',
 	'tab_mission'						=> 'Manage Mission',
 	'text_confirm'						=> 'Are you sure you want to delete?',
+	'text_image_manager'     			=> 'Image Manager',
 
 
 
