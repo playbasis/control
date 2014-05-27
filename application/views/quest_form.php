@@ -137,17 +137,18 @@
 
 
  
-<!-- Modal -->
+<!-- Modal Badge -->
 <div id="modal-select-badge" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Seclect Badge</h3>
+        <h3 id="myModalLabel">Select Badge</h3>
     </div>
     <div class="modal-body">
         <div class="select-list">
             <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
                 <label>
-                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-badge="<?php echo $badges[$i]['badge_id']; ?>">
+
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-badge="<?php echo $badges[$i]['badge_id'] ?>">
                     <div class="span1 text-center">
                         <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
                     </div>
@@ -165,6 +166,64 @@
         <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         <button class="btn btn-primary select-badge-btn" data-dismiss="modal">Select</button>
+    </div>
+</div>
+
+<!-- Modal Quest -->
+<div id="modal-select-quest" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select Quest</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php for($i=0 ; $i < count($quests) ; $i++){ ?>
+                <label>
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-quest = "<?php echo $quests[$i]['_id']; ?>">
+                    <div class="span1 text-center">
+                        <input type="checkbox" name="selected[]" value="<?php $quests[$i]['_id']; ?>">
+                    </div>
+                    <div class="span2 text-center">
+                        <img height="50" width="50" src="<?php echo S3_IMAGE.$quests[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                        <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
+                    </div>
+                    <div class="span9"><?php echo $quests[$i]['quest_name'];?></div>
+                </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" data-dismiss="modal">Select</button>
+    </div>
+</div>
+
+<!-- Modal Custom Points -->
+<div id="modal-select-custompoint" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select Custom Point</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php for($i=0 ; $i < count($customPoints) ; $i++){ ?>
+                <label>
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-quest = "<?php echo $customPoints[$i]['_id']; ?>">
+                    <div class="span1 text-center">
+                        <input type="checkbox" name="selected[]" value="<?php $customPoints[$i]['_id']; ?>">
+                    </div>
+                    <div class="span11"><?php echo $customPoints[$i]['name'];?></div>
+                </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" data-dismiss="modal">Select</button>
     </div>
 </div>
 
@@ -286,7 +345,17 @@
                 selectBadgesItem(type);
             });
 
-            //Remove Item
+            //TESTING
+            addQuestObj.unbind().bind('click',function(data){
+                $('#modal-select-quest').modal('show');
+            });
+
+
+            addCustomPointObj.unbind().bind('click',function(data){
+                $('#modal-select-custompoint').modal('show');
+            });
+
+            //END TESTING
 
             containerObj.find('.remove').unbind('click').bind('click',function(data){
                 var r = confirm("Are you sure to remove!");
@@ -317,7 +386,7 @@ function addDatetime(type){
     var datetimeHead = '<h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
     var datetimestart = '<label class="span4">Date Start:</label> <input type="text" name ="'+type+'[\'datetimestart\']"  class="date" placeholder = "datetime start">';
     var datetimeend = '<label class="span4">Date End:</label> <input type="text" name = "'+type+'[\'datetimeend\']"  class="date" placeholder = "datetime end" >';
-
+    condition['datetime_start']
     var datetimeHtml = '<div class="datetime-wrapper '+type+'-type well">'+datetimeHead+datetimestart+'<br>'+datetimeend+'</div>';
     
     render[type](datetimeHtml);
@@ -326,7 +395,6 @@ function addDatetime(type){
 }
 
 function addLevel(type){
-    <?php $dummyLevel = array('level 1', 'level 2', 'level 3', 'level 4', 'level 5'); ?>
 
     var levelHead = '<h3>Level <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
     var levelstart = "<label class='span4'>Level Start:</label> <select name='levelstart'><?php foreach($levels as $level){echo '<option>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>";
@@ -338,7 +406,6 @@ function addLevel(type){
 }
 
 function addQuest(type){
-    <?php $dummyQuests = array('quest1', 'quest2', 'quest3', 'quest4', 'quest5'); ?>
     var questHead = '<h3>Quest <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
     var questHtml = '<div class="quest-wrapper '+type+'-type well">'+questHead+'<select><?php foreach($quests as $quest){echo "<option>".$quest["quest_name"]."</option>";}?></select>'+'</div>';
 
@@ -359,7 +426,6 @@ function addExp(type){
 }
 
 function addCustompoints(type){
-    <?php $dummyCustomPoints = array('custom1', 'custom2', 'custom3'); ?>
 
     var customPointsHead = '<h3>Custom Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
     var customPoints = "";
@@ -400,9 +466,15 @@ function addBadgesItem(type,badge_id){
 }
 
 function setModalBadgesItem(type){
+    var wrapperObj = $('.'+type+'-wrapper');
+    
+    $('#modal-select-badge input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.badges-item-wrapper').each(function(){
+        var idBadgesSelect = $(this).data('id-badge');
+        $('#modal-select-badge .select-item[data-id-badge='+idBadgesSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
     $('#modal-select-badge').modal('show');
-    
-    
 }
 
 function selectBadgesItem(type){
@@ -410,16 +482,17 @@ function selectBadgesItem(type){
 
     $('#modal-select-badge .select-item').each(function(){
         if($(this).find('input[type=checkbox]').is(':checked')){
-            wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').remove();
             
-            if(wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').length) {
-                
-            }else{
+            if(wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').length <= 0) {
                 console.log($(this).data('id-badge'));
                 var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+$(this).data('id-badge')+'"><div class="span2 text-center"><img src="'+$(this).find('.image img').attr('src')+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">'+$(this).find('.title').html()+'</div><div class="span1"><small>value</small><input type="text" name ="badgesItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
 
                     $('.'+type+'-wrapper .badges-wrapper .item-container').append(badgesItemHtml);
                     init_additem_event('reward');
+            }
+        }else{
+            if(wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').length >= 1) {
+                wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').remove();
             }
         }
     })
