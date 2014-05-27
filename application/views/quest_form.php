@@ -217,13 +217,11 @@
                 wrapperObj.find('.box-content').show();
             });
 
-
             containerObj.find('.no-item').remove();
 
             if(containerObj.children().length <= 0){
                 containerObj.append('<h3 class="no-item">No Item</h3>')
             }
-
 
             if(containerObj.has('.datetime-wrapper').length){
                 addDatetimeObj.addClass('disabled');
@@ -286,11 +284,15 @@
                 });
             }
 
+
+            //Add Badges
+
             if(containerObj.has('.badges-wrapper').length){
-                //addBadgeObj.addClass('disabled');
-                //addBadgeObj.unbind();
                 addBadgeObj.removeClass('disabled');
                 addBadgeObj.unbind().bind('click',function(data){
+                    $('#modal-select-badge').modal('show');
+                });
+                containerObj.find('.badges-wrapper').bind('click',function(data){
                     $('#modal-select-badge').modal('show');
                 });
             }else{
@@ -300,6 +302,12 @@
                     $('#modal-select-badge').modal('show');
                 });
             }
+
+
+            
+
+
+            //Remove Item
 
             containerObj.find('.remove').unbind('click').bind('click',function(data){
                 var r = confirm("Are you sure to remove!");
@@ -387,7 +395,7 @@ function addCustompoints(type){
 
 function addBadges(type){
     
-    var badgesHead = '<h3>Badges <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
+    var badgesHead = '<h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+Add Badges</a></h3>';
     var badgesHtml = '<div class="badges-wrapper '+type+'-type well">'+badgesHead+'<div class="item-container"></div></div>';
 
     render[type](badgesHtml);

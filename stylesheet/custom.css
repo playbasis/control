@@ -39,6 +39,12 @@
 	background: #ddd;
 }
 .box-add-item .well h3 a{
+	float: right;
+	margin-top: -5px;
+	margin-right: 5px;
+	font-size: 12px;
+}
+.box-add-item .well h3 a.remove{
 	color: #999;
 	margin-top: -5px;
 	margin-right: -5px;
@@ -46,7 +52,7 @@
 	float: right;
 	padding: 5px;
 }
-.box-add-item .well h3 a:hover{
+.box-add-item .well h3 a.remove:hover{
 	text-decoration: none;
 	color: #f00;
 }
