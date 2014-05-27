@@ -4,7 +4,7 @@
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
-                <button class="btn btn-info" onclick="location = baseUrlPath+'action'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'quest'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div><!-- .buttons -->
         </div><!-- .heading -->
         <div class="content">
@@ -145,16 +145,17 @@
     </div>
     <div class="modal-body">
         <div class="select-list">
-            <?php for($i=0 ; $i < 10 ; $i++){ ?>
+            <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
                 <label>
                 <div class="select-item clearfix" data-id="<?php echo $i; ?>">
                     <div class="span1 text-center">
-                        <input type="checkbox" name="selected[]" value="532141b28d8c89582d00009c">
+                        <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
                     </div>
                     <div class="span2 text-center">
-                        <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">
+                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                        <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
                     </div>
-                    <div class="span9">Make THE Difference Beginner</div>
+                    <div class="span9"><?php echo $badges[$i]['name'];?></div>
                 </div>
                 </label>
             <?php } ?>
@@ -179,16 +180,11 @@
         -->
     </div>
     <div class="modal-footer">
-        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Seclection</button>
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" onclick="addBadgesItem('reward')" data-dismiss="modal">Seclect</button>
+        <button class="btn btn-primary" onclick="addBadgesItem('reward')" data-dismiss="modal">Select</button>
     </div>
 </div>
-
-
-
-
-
 
     <script type="text/javascript">
         $('#tabs a').tabs();
@@ -340,9 +336,10 @@ function addDatetime(type){
 
 function addLevel(type){
     <?php $dummyLevel = array('level 1', 'level 2', 'level 3', 'level 4', 'level 5'); ?>
+
     var levelHead = '<h3>Level <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var levelstart = "<label class='span4'>Level Start:</label> <select name='levelstart'><?php foreach($dummyLevel as $level){echo '<option>'.$level.'</option>';}?></select>";
-    var levelend = "<label class='span4'>Level End:</label> <select name='levelend'><?php foreach($dummyLevel as $level){echo '<option>'.$level.'</option>';}?></select>";
+    var levelstart = "<label class='span4'>Level Start:</label> <select name='levelstart'><?php foreach($levels as $level){echo '<option>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>";
+    var levelend = "<label class='span4'>Level End:</label> <select name='levelend'><?php foreach($levels as $level){echo '<option>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>";
 
     var levelHtml = '<div class="level-wrapper '+type+'-type well">'+levelHead+levelstart+'<br>'+levelend+'</div>';
 
@@ -352,7 +349,7 @@ function addLevel(type){
 function addQuest(type){
     <?php $dummyQuests = array('quest1', 'quest2', 'quest3', 'quest4', 'quest5'); ?>
     var questHead = '<h3>Quest <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var questHtml = '<div class="quest-wrapper '+type+'-type well">'+questHead+'<select><?php foreach($dummyQuests as $quest){echo "<option>".$quest."</option>";}?></select>'+'</div>';
+    var questHtml = '<div class="quest-wrapper '+type+'-type well">'+questHead+'<select><?php foreach($quests as $quest){echo "<option>".$quest["quest_name"]."</option>";}?></select>'+'</div>';
 
     render[type](questHtml);
 
@@ -375,9 +372,9 @@ function addCustompoints(type){
 
     var customPointsHead = '<h3>Custom Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
     var customPoints = "";
-    <?php foreach($dummyCustomPoints as $key => $value){ ?>
-        var customPointsEach = '<label class="span4"><?php echo $value; ?></label>';
-        var custompointvalue = '<input type="text" name="'+type+'[\'custompoint\'][\'<?php echo $value; ?>\']" placeholder="Custom Point" class="span6">';
+    <?php foreach($customPoints as $customPoint){ ?>
+        var customPointsEach = "<label class='span4'><?php echo $customPoint['name']; ?></label>";
+        var custompointvalue = '<input type="text" name="'+type+'[\'custompoint\'][\'<?php echo $customPoint["name"]; ?>\']" placeholder="Custom Point" class="span6">';
         customPoints += '<div>'+customPointsEach+custompointvalue+'</div>';
     <?php } ?>
     var customPointsHtml = '<div class="custompoints-wrapper '+type+'-type well">'+customPointsHead+customPoints+'</div>';
