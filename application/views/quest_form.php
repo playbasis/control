@@ -147,44 +147,27 @@
         <div class="select-list">
             <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
                 <label>
-                <div class="select-item clearfix" data-id="<?php echo $i; ?>">
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-badge="<?php echo $badges[$i]['badge_id']; ?>">
                     <div class="span1 text-center">
                         <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
                     </div>
-                    <div class="span2 text-center">
+                    <div class="span2 image text-center">
                         <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                         <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
                     </div>
-                    <div class="span9"><?php echo $badges[$i]['name'];?></div>
+                    <div class="span9 title"><?php echo $badges[$i]['name'];?></div>
                 </div>
                 </label>
             <?php } ?>
         </div>
-    <!--
-        <table class="list">
-            
-            <tbody>
-                <?php for($i=0 ; $i < 10 ; $i++){ ?>
-                <tr>
-                    <td style="text-align: center;">
-                        <input type="checkbox" name="selected[]" value="532141b28d8c89582d00009c">
-                    </td>
-                    <td class="center">
-                        <div><img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"></div>
-                    </td>
-                    <td class="left">Make THE Difference Beginner</td>
-                </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-        -->
     </div>
     <div class="modal-footer">
         <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" onclick="addBadgesItem('reward')" data-dismiss="modal">Select</button>
+        <button class="btn btn-primary select-badge-btn" data-dismiss="modal">Select</button>
     </div>
 </div>
+
 
     <script type="text/javascript">
         $('#tabs a').tabs();
@@ -286,22 +269,22 @@
             if(containerObj.has('.badges-wrapper').length){
                 addBadgeObj.removeClass('disabled');
                 addBadgeObj.unbind().bind('click',function(data){
-                    $('#modal-select-badge').modal('show');
+                    setModalBadgesItem(type);
                 });
-                containerObj.find('.badges-wrapper').bind('click',function(data){
-                    $('#modal-select-badge').modal('show');
+                containerObj.find('.badges-wrapper .add-badge-btn').bind('click',function(data){
+                    setModalBadgesItem(type);
                 });
             }else{
                 addBadgeObj.removeClass('disabled');
                 addBadgeObj.unbind().bind('click',function(data){
                     addBadges(type);
-                    $('#modal-select-badge').modal('show');
+                    setModalBadgesItem(type);
                 });
             }
 
-
-            
-
+            $('.select-badge-btn').unbind().bind('click',function(data){
+                selectBadgesItem(type);
+            });
 
             //Remove Item
 
@@ -409,11 +392,42 @@ render['reward'] = function(html){
 }
 
 
-function addBadgesItem(type){
-    var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper"><div class="span2 text-center"><img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">Make THE Difference Beginner</div><div class="span1"><small>value</small><input type="text" name ="badgesItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+function addBadgesItem(type,badge_id){
+    var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+badge_id+'"><div class="span2 text-center"><img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">Make THE Difference Beginner</div><div class="span1"><small>value</small><input type="text" name ="badgesItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
 
     $('.'+type+'-wrapper .badges-wrapper .item-container').append(badgesItemHtml);
     init_additem_event('reward');
+}
+
+function setModalBadgesItem(type){
+    $('#modal-select-badge').modal('show');
+    
+    
+}
+
+function selectBadgesItem(type){
+    var wrapperObj = $('.'+type+'-wrapper');
+
+    $('#modal-select-badge .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+            wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').remove();
+            
+            if(wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').length) {
+                
+            }else{
+                console.log($(this).data('id-badge'));
+                var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+$(this).data('id-badge')+'"><div class="span2 text-center"><img src="'+$(this).find('.image img').attr('src')+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">'+$(this).find('.title').html()+'</div><div class="span1"><small>value</small><input type="text" name ="badgesItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+
+                    $('.'+type+'-wrapper .badges-wrapper .item-container').append(badgesItemHtml);
+                    init_additem_event('reward');
+            }
+        }
+    })
+
+    
+    
+        
+    
 }
 
 </script>
