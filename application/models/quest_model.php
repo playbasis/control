@@ -162,5 +162,31 @@ class Quest_model extends MY_Model{
         $this->mongo_db->delete('playbasis_quest_to_client');
     }
 
+    public function addQuestToClient($data){
+    	return $this->mongo_db->insert('playbasis_quest_to_client', $data);
+    }
+
+    public function getExpId($data){
+
+    	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+	    $this->mongo_db->where('name', 'exp');
+    	
+    	$results = $this->mongo_db->get("playbasis_reward_to_client");
+
+
+    	return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
+    }
+
+    public function getPointId($data){
+    	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+    	$this->mongo_db->where('name', 'point');
+
+    	$results = $this->mongo_db->get("playbasis_reward_to_client");
+
+    	return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
+    }
+
 
 }

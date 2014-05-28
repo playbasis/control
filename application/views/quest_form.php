@@ -1,4 +1,5 @@
 <div id="content" class="span10">
+
     <div class="box">
         <div class="heading">
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
@@ -58,14 +59,6 @@
                     <tr>
                         <td><?php echo $this->lang->line('form_quest_status'); ?>:</td>
                         <td><input type="checkbox" name="status" <?php echo isset($quest['status']) ?'checked':'unchecked'; ?> size="1" /></td>
-                    </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('form_quest_start'); ?>:</td>
-                        <td><input type="text" class="date" name="date_start" value="<?php if (strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" /></td>
-                    </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('form_quest_end'); ?>:</td>
-                        <td><input type="text" class="date" name="date_end" value="<?php if (strtotime(datetimeMongotoReadable($date_end))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_end)));} else { echo $date_end; } ?>" size="50" /></td>
                     </tr>
                 </table>
             </div>
@@ -247,6 +240,7 @@
             addBadgeObj = menuObj.find('.add-badge'),
             containerObj = $('.'+type+'-container');
 
+
             menuBtn.unbind().bind('click',function(data){
                 wrapperObj.find('.box-content').show();
             });
@@ -277,18 +271,6 @@
                 });
             }
 
-            /*
-            if(containerObj.has('.quest-wrapper').length){
-                addQuestObj.addClass('disabled');
-                addQuestObj.unbind();
-            }else{
-                addQuestObj.removeClass('disabled');
-                addQuestObj.unbind().bind('click',function(data){
-                    addQuest(type);
-                });
-            }
-            */
-
 
             if(containerObj.has('.points-wrapper').length){
                 addPointObj.addClass('disabled');
@@ -310,17 +292,6 @@
                 });
             }
 
-            /*
-            if(containerObj.has('.custompoints-wrapper').length){
-                addCustomPointObj.addClass('disabled');
-                addCustomPointObj.unbind();
-            }else{
-                addCustomPointObj.removeClass('disabled');
-                addCustomPointObj.unbind().bind('click',function(data){
-                    addCustompoints(type);
-                });
-            }
-            */
 
             //Add Badges
 
@@ -389,10 +360,6 @@
                 selectQuestsItem(type);
             });
 
-            
-
-
-            
 
             //END TESTING
 
@@ -414,8 +381,13 @@
             
         }
 
-init_additem_event('reward');
-init_additem_event('condition');
+$('.reward-wrapper').each(function(){
+    init_additem_event('reward');
+});
+$('.condition-wrapper').each(function(){
+    init_additem_event('condition');
+});
+
 
 var conditionCount = 1,
     rewardCount = 1;
@@ -423,8 +395,14 @@ var conditionCount = 1,
 
 function addDatetime(type){
     var datetimeHead = '<h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var datetimestart = '<label class="span4">Date Start:</label> <input type="text" name ="'+type+'[\'datetimestart\']"  class="date" placeholder = "datetime start">';
-    var datetimeend = '<label class="span4">Date End:</label> <input type="text" name = "'+type+'[\'datetimeend\']"  class="date" placeholder = "datetime end" >';
+
+    var datetimestart = '<label class="span4">Date Start:</label> <input type="text" name ="'+type+'[datetimestart][condition_value]"  class="date" placeholder = "datetime start">\
+                        <input type="hidden" name = "'+type+'[datetimestart][condition_type]" value="DATETIME_START">\
+                        <input type = "hidden" name = "'+type+'[datetimestart][condition_id]" value="">';
+
+    var datetimeend = '<label class="span4">Date End:</label> <input type="text" name = "'+type+'[datetimeend][condition_value]"  class="date" placeholder = "datetime end" >\
+                    <input type="hidden" name = "'+type+'[datetimeend][condition_type]" value="DATETIME_END">\
+                    <input type = "hidden" name = "'+type+'[datetimeend][condition_id]" value="">';
     var datetimeHtml = '<div class="datetime-wrapper '+type+'-type well">'+datetimeHead+datetimestart+'<br>'+datetimeend+'</div>';
     
     render[type](datetimeHtml);
@@ -435,8 +413,14 @@ function addDatetime(type){
 function addLevel(type){
 
     var levelHead = '<h3>Level <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var levelstart = "<label class='span4'>Level Start:</label> <select name='levelstart'><?php foreach($levels as $level){echo '<option>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>";
-    var levelend = "<label class='span4'>Level End:</label> <select name='levelend'><?php foreach($levels as $level){echo '<option>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>";
+
+    var levelstart = "<label class='span4'>Level Start:</label>\<select name='"+type+"[levelstart][condition_value]'>\<?php foreach($levels as $level){echo '<option value = '.$level['level'].'>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>\
+                    <input type='hidden' name = '"+type+"[levelstart][condition_type]' value = 'LEVEL_START'/>\
+                    <input type='hidden' name = '"+type+"[levelstart][condition_id]' value = ''/>";
+
+    var levelend = "<label class='span4'>Level End:</label> <select name='"+type+"[levelend][condition_value]'><?php foreach($levels as $level){echo '<option value = '.$level['level'].'>'.$level['level'].' '.$level['level_title'].'</option>';}?></select>\
+                    <input type='hidden' name = '"+type+"[levelend][condition_type]' value = 'LEVEL_END'/>\
+                    <input type='hidden' name = '"+type+"[levelend][condition_id]' value = ''/>";
 
     var levelHtml = '<div class="level-wrapper '+type+'-type well">'+levelHead+levelstart+'<br>'+levelend+'</div>';
 
@@ -453,13 +437,24 @@ function addQuest(type){
 
 function addPoints(type){
     var pointsHead = '<h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var pointsHtml = ' <div class="points-wrapper '+type+'-type well">'+pointsHead+'<label class="span4">Points:</label><input type="text" name = "points" placeholder = "Points">'+'</div>';
+
+    var pointsHtml = ' <div class="points-wrapper '+type+'-type well">'+pointsHead+'<label class="span4">Points:</label>\
+                    <input type="text" name = "'+type+'[levelend]['+type+'_value]" placeholder = "Points"></div>\
+                    <input type="hidden" name = "'+type+'[levelend]['+type+'_type]" value = "POINT"/>\
+                    <input type="hidden" name = "'+type+'[levelend]['+type+'_id]" value = "<?php echo $point_id; ?>"/>';
+
     render[type](pointsHtml);
 }
 
 function addExp(type){
     var expHead = '<h3>Exp <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
-    var expHtml = ' <div class="exp-wrapper '+type+'-type well">'+expHead+'<label class="span4">Exp:</label><input type="text" name = "exp" placeholder = "Exp">'+'</div>';
+
+    var expHtml = ' <div class="exp-wrapper '+type+'-type well">'+expHead+'<label class="span4">Exp:</label>\
+                    <input type="text" name = "'+type+'[exp]['+type+'_value]" placeholder = "Exp">\
+                    <input type="hidden" name = "'+type+'[exp]['+type+'_type]" value = "EXP"/>\
+                    <input type="hidden" name = "'+type+'[exp]['+type+'_id]" value = "<?php echo $exp_id; ?>"/>\
+                    </div>';
+
     render[type](expHtml);
 }
 
@@ -513,7 +508,18 @@ function selectBadgesItem(type){
             
             if(wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').length <= 0) {
                 console.log($(this).data('id-badge'));
-                var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+$(this).data('id-badge')+'"><div class="span2 text-center"><img src="'+$(this).find('.image img').attr('src')+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">'+$(this).find('.title').html()+'</div><div class="span1"><small>value</small><input type="text" name ="badgesItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+                var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+$(this).data('id-badge')+'">\
+                                    <div class="span2 text-center"><img src="'+$(this).find('.image img').attr('src')+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');">\
+                                    </div>\
+                                    <div class="span7">'+$(this).find('.title').html()+'</div>\
+                                    <div class="span1">\
+                                    <small>value</small>\
+                                    <input type="text" name ="'+type+'['+$(this).data('id-badge')+'][condition_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+type+'['+$(this).data('id-badge')+']['+type+'_id]" value = "'+$(this).data('id-badge')+'"/>\
+                                    <input type="hidden" name="'+type+'['+$(this).data('id-badge')+']['+type+'_type]" value = "BADGE"/>\
+                                    </div>\
+                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
+                                    </div></div>';
 
                     $('.'+type+'-wrapper .badges-wrapper .item-container').append(badgesItemHtml);
                     init_additem_event(type);
@@ -550,7 +556,12 @@ function selectCustompointsItem(type){
                 
                 var title = $(this).find('.title').html();
 
-                var itemHtml = '<div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="'+id+'"><div class="span7">'+title+'</div><div class="span3"><small>value</small><input type="text" name ="CustimpointItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+                var itemHtml = '<div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="'+id+'">\
+                                <div class="span7">'+title+'</div><div class="span3"><small>value</small>\
+                                <input type="text" name ="'+type+'[custompoints]['+type+'_value]" placeholder="Value" value="1"></div>\
+                                <input type="hidden" name = "'+type+'[custompoints]['+type+'_type]" value = "CUSTOM_POINT"/>\
+                                <input type="hidden" name = "'+type+'[custompoints]['+type+'_id]" value = "'+id+'"/>\
+                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
 
                     $('.'+type+'-wrapper .custompoints-wrapper .item-container').append(itemHtml);
                     init_additem_event(type);
@@ -584,14 +595,18 @@ function selectQuestsItem(type){
         if($(this).find('input[type=checkbox]').is(':checked')){
             
             if(wrapperObj.find('.quests-item-wrapper[data-id-quest='+$(this).data('id-quest')+']').length <= 0) {
-                
-alert('qwer');
 
                 var id = $(this).data('id-quest');
                 var image = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
 
-                var itemHtml = '<div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="'+id+'"><div class="span2 text-center"><img src="'+image+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');"></div><div class="span7">'+title+'</div><div class="span1"><small>value</small><input type="text" name ="questsItem" placeholder="Value" value="1"></div><div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+                var itemHtml = '<div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="'+id+'">\
+                                <div class="span2 text-center"><img src="'+image+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');">\
+                                </div><div class="span7">'+title+'</div>\
+                                <div class="span1"><input type="hidden" name ="'+type+'['+id+']['+type+'_id]" value="'+id+'"></div>\
+                                <input type="hidden" name = "'+type+'['+id+']['+type+'_type]" value = "QUEST"/>\
+                                <input type="hidden" name = "'+type+'['+id+']['+type+'_value]" value = ""/>\
+                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
 
                     $('.'+type+'-wrapper .quests-wrapper .item-container').append(itemHtml);
                     init_additem_event(type);

@@ -109,10 +109,46 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
-            echo "<pre>";
-                var_dump($data);
-            echo "</pre>";
+            
 
+            foreach($data as $key => $value){
+                if($key == 'condition' || $key == 'reward'){
+                    $i = 0;
+                    foreach($value as $k => $v){
+                            foreach($v as $ke => &$item){
+                                if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
+                                    $item = new MongoId($item);
+                                }
+                            }
+                        unset($data[$key][$k]);
+                        $data[$key][$i] = $v;
+                        $i++;
+                    }
+                }
+                /*
+                if($key == 'reward'){
+                    $i = 0;
+                    foreach($value as $k => $v){
+                            foreach($v as $ke => &$item){
+                                if($ke == 'reward_id' && !empty($item)){
+                                    $item = new MongoId($item);
+                                }
+                            }
+                        unset($data[$key][$k]);
+                        $data[$key][$i] = $v;
+                        $i++;
+                    }
+                }
+                */
+            }
+
+            
+
+            $data['client_id'] = $this->User_model->getClientId();
+            $data['site_id'] = $this->User_model->getSiteId();
+
+            return $this->Quest_model->addQuestToClient($data);
+            
         }else{
             $this->getForm();    
         }
@@ -166,7 +202,11 @@ class Quest extends MY_Controller
 
         $this->data['customPoints'] = $this->Quest_model->getCustomPoints($data);
 
-        $this->data['badges'] =$this->Quest_model->getBadgesByClientSiteId($data);
+        $this->data['badges'] = $this->Quest_model->getBadgesByClientSiteId($data);
+
+        $this->data['exp_id'] = $this->Quest_model->getExpId($data);
+
+        $this->data['point_id'] = $this->Quest_model->getPointId($data);
 
 
         $this->data['main'] = 'quest_form';
