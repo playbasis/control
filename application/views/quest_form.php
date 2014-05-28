@@ -54,11 +54,11 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_quest_missionordering'); ?>:</td>
-                        <td><input type="checkbox" name="mission_order" <?php echo isset($quest['status']) ?'checked':'unchecked'; ?> size="1" /></td>
+                        <td><input type="checkbox" name="mission_order" checked size="1" /></td>
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('form_quest_status'); ?>:</td>
-                        <td><input type="checkbox" name="status" <?php echo isset($quest['status']) ?'checked':'unchecked'; ?> size="1" /></td>
+                        <td><input type="checkbox" name="status" checked size="1" /></td>
                     </tr>
                 </table>
             </div>
