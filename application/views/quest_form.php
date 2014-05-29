@@ -26,98 +26,160 @@
               <?php if (isset($message) && $message){?>
               <div class="warning"><?php //echo $message;?></div>
               <?php }?>
-          </div>
-          <?php }?>
-          <?php $attributes = array('id' => 'form');?>
-          <?php echo form_open($form, $attributes);?>
-          <div id="tab-general">
-            <div class="span6">
-              <table class="form ">
-                 <tr>
-                    <td><span class="required">*</span> <?php echo $this->lang->line('form_quest_name'); ?>:</td>
-                    <td><input type="text" name="quest_name" size="100" value="<?php echo isset($quest['quest_name']) ? $quest['quest_name'] :  set_value('name'); ?>" /></td>
-                </tr>
-                <tr>
-                    <td><?php echo $this->lang->line('form_quest_description'); ?>:</td>
-                    <td><textarea name ="description" rows="4"><?php echo isset($quest['description']) ? $quest['description'] :  set_value('description'); ?></textarea>
-                    </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('form_quest_hint'); ?>:</td>
-                        <td><input type="text" name="hint" size="100" value="<?php echo isset($quest['hint']) ? $quest['hint'] :  set_value('hint'); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('form_quest_image'); ?>:</td>
-                        <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                            <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
-                            <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('form_quest_missionordering'); ?>:</td>
-                        <td><input type="checkbox" name="mission_order" checked size="1" /></td>
-                    </tr>
-                    <tr>
-                        <td><?php echo $this->lang->line('form_quest_status'); ?>:</td>
-                        <td><input type="checkbox" name="status" checked size="1" /></td>
-                    </tr>
-                </table>
             </div>
-
-                    <div class="box box-add-item condition-wrapper span6">
-                        <div class="box-header overflow-visible">
-                            <h2><i class="icon-cog"></i><span class="break"></span>Condition</h2>
-                            <div class="box-icon box-icon-action">
-                                <a href="javascript:void(0)" class="btn btn-primary right add-condition-btn dropdown-toggle" data-toggle="dropdown"> + Add Condition</a>
-                                <ul class="dropdown-menu add-condition-menu" role="menu" aria-labelledby="dropdownMenu">
-                                    <li class="add-datetime"><a tabindex="-1" href="javascript:void(0)" >DATE TIME</a></li>
-                                    <li class="add-level"><a tabindex="-1" href="javascript:void(0)" >LEVEL</a></li>
-                                    <li class="add-quest"><a tabindex="-1" href="javascript:void(0)" >QUEST</a></li>
-                                    <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
-                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
-                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
-                                </ul>
-                                <span class="break"></span>
-                                <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
-                            </div>
-                        </div>
-                        <div class="box-content">
-                            <div class = 'condition-container'>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="box box-add-item reward-wrapper span6">
-                        <div class="box-header overflow-visible">
-                            <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>
-                            <div class="box-icon box-icon-action">
-                                <a href="javascript:void(0)" class="btn btn-primary right add-reward-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>
-                                <ul class="dropdown-menu add-reward-menu" role="menu" aria-labelledby="dropdownMenu">
-                                  <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
-                                  <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
-                                  <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
-                                  <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
-                                </ul>
-                                <span class="break"></span>
-                                <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
-                            </div>
-                        </div>
-                        <div class="box-content">
-                            <div class = 'reward-container'>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="tab-mission">
-                    <table>
+            <?php }?>
+            <?php $attributes = array('id' => 'form');?>
+            <?php echo form_open($form, $attributes);?>
+            <div id="tab-general">
+                <div class="span6">
+                    <table class="form ">
                         <tr>
-                            <td><?php echo $this->lang->line('form_quest_condition'); ?>:</td>
-                            <td>
-                                
+                            <td><span class="required">*</span> <?php echo $this->lang->line('form_quest_name'); ?>:</td>
+                            <td><input type="text" name="quest_name" size="100" value="<?php echo isset($quest['quest_name']) ? $quest['quest_name'] :  set_value('name'); ?>" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_quest_description'); ?>:</td>
+                            <td><textarea name ="description" rows="4"><?php echo isset($quest['description']) ? $quest['description'] :  set_value('description'); ?></textarea>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_quest_hint'); ?>:</td>
+                            <td><input type="text" name="hint" size="100" value="<?php echo isset($quest['hint']) ? $quest['hint'] :  set_value('hint'); ?>" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_quest_image'); ?>:</td>
+                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
+                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div>
                             </td>
                         </tr>
-                </table>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_quest_missionordering'); ?>:</td>
+                            <td><input type="checkbox" name="mission_order" checked size="1" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_quest_status'); ?>:</td>
+                            <td><input type="checkbox" name="status" checked size="1" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_quest_sort_order'); ?>:</td>
+                            <td><input type="number" name="sort_order" value="0"/>    </td>
+                        </tr>
+                    </table>
                 </div>
+
+                <div class="box box-add-item condition-wrapper span6">
+                    <div class="box-header overflow-visible">
+                        <h2><i class="icon-cog"></i><span class="break"></span>Condition</h2>
+                        <div class="box-icon box-icon-action">
+                            <a href="javascript:void(0)" class="btn btn-primary right add-condition-btn dropdown-toggle" data-toggle="dropdown"> + Add Condition</a>
+                            <ul class="dropdown-menu add-condition-menu" role="menu" aria-labelledby="dropdownMenu">
+                                <li class="add-datetime"><a tabindex="-1" href="javascript:void(0)" >DATE TIME</a></li>
+                                <li class="add-level"><a tabindex="-1" href="javascript:void(0)" >LEVEL</a></li>
+                                <li class="add-quest"><a tabindex="-1" href="javascript:void(0)" >QUEST</a></li>
+                                <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
+                                <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                            </ul>
+                            <span class="break"></span>
+                            <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <div class = 'condition-container'>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box box-add-item reward-wrapper span6">
+                    <div class="box-header overflow-visible">
+                        <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>
+                        <div class="box-icon box-icon-action">
+                            <a href="javascript:void(0)" class="btn btn-primary right add-reward-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>
+                            <ul class="dropdown-menu add-reward-menu" role="menu" aria-labelledby="dropdownMenu">
+                              <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
+                              <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
+                              <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                            </ul>
+                            <span class="break"></span>
+                            <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <div class = 'reward-container'>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="tab-mission">
+                <div class="span6">
+                    <table class="form ">
+                        <tr>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('form_mission_name'); ?>:</td>
+                            <td><input type="text" name="missions[randomletters][mission_name]" size="100" value="<?php echo isset($mission['mission_name']) ? $mission['mission_name'] :  set_value('name'); ?>" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_mission_description'); ?>:</td>
+                            <td><textarea name ="missions[randomletters][description]" rows="4"><?php echo isset($mission['description']) ? $mission['description'] :  set_value('description'); ?></textarea>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_mission_hint'); ?>:</td>
+                            <td><input type="text" name="missions[randomletters][hint]" size="100" value="<?php echo isset($mission['hint']) ? $mission['hint'] :  set_value('hint'); ?>" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('form_mission_image'); ?>:</td>
+                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                <input type="hidden" name="missions[randomletters][image]" value="<?php echo $image; ?>" id="image" />
+                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="box box-add-item condition-wrapper span6">
+                    <div class="box-header overflow-visible">
+                        <h2><i class="icon-cog"></i><span class="break"></span>Completion</h2>
+                        <div class="box-icon box-icon-action">
+                            <a href="javascript:void(0)" class="btn btn-primary right add-condition-btn dropdown-toggle" data-toggle="dropdown"> + Add Completion</a>
+                            <ul class="dropdown-menu add-condition-menu" role="menu" aria-labelledby="dropdownMenu">
+                                <li class="add-action"><a tabindex="-1" href="javascript:void(0)" >ACTION</a></li>
+                                <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
+                                <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)" >CUSTOM POINT</a></li>
+                                <li class="add-badge"><a tabindex="-1" href="javascript:void(0)" >BADGE</a></li>
+                            </ul>
+                            <span class="break"></span>
+                            <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <div class = 'condition-container'>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box box-add-item reward-wrapper span6">
+                    <div class="box-header overflow-visible">
+                        <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>
+                        <div class="box-icon box-icon-action">
+                            <a href="javascript:void(0)" class="btn btn-primary right add-reward-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>
+                            <ul class="dropdown-menu add-reward-menu" role="menu" aria-labelledby="dropdownMenu">
+                              <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
+                              <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
+                              <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                              <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                            </ul>
+                            <span class="break"></span>
+                            <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <div class = 'reward-container'>
+                        </div>
+                    </div>
+                </div>
+                <a href="javascript:void(0)" class="btn btn-primary right add-condition-btn dropdown-toggle" data-toggle="dropdown"> + Add More Mission</a>
+            </div>
                 
                 <?php echo form_close();?>
             </div><!-- .content -->
@@ -387,6 +449,12 @@ $('.reward-wrapper').each(function(){
 $('.condition-wrapper').each(function(){
     init_additem_event('condition');
 });
+//JOE
+$('.completion-wrapper').each(function(){
+    init_additem_event('completion');
+});
+//ENDJOE
+
 
 
 var conditionCount = 1,
