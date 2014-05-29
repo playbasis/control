@@ -113,6 +113,8 @@
 
             </div>
             <div id="tab-mission">
+            
+            <!--
                 <div class="span6">
                     <table class="form ">
                         <tr>
@@ -179,7 +181,7 @@
                     </div>
                 </div>
                 <a href="javascript:void(0)" class="btn btn-primary right add-condition-btn dropdown-toggle" data-toggle="dropdown"> + Add More Mission</a>
-            </div>
+            </div>-->
                 
                 <?php echo form_close();?>
             </div><!-- .content -->
@@ -449,11 +451,6 @@ $('.reward-wrapper').each(function(){
 $('.condition-wrapper').each(function(){
     init_additem_event('condition');
 });
-//JOE
-$('.completion-wrapper').each(function(){
-    init_additem_event('completion');
-});
-//ENDJOE
 
 
 
@@ -507,9 +504,9 @@ function addPoints(type){
     var pointsHead = '<h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
 
     var pointsHtml = ' <div class="points-wrapper '+type+'-type well">'+pointsHead+'<label class="span4">Points:</label>\
-                    <input type="text" name = "'+type+'[levelend]['+type+'_value]" placeholder = "Points"></div>\
-                    <input type="hidden" name = "'+type+'[levelend]['+type+'_type]" value = "POINT"/>\
-                    <input type="hidden" name = "'+type+'[levelend]['+type+'_id]" value = "<?php echo $point_id; ?>"/>';
+                    <input type="text" name = "'+type+'[point]['+type+'_value]" placeholder = "Points"></div>\
+                    <input type="hidden" name = "'+type+'[point]['+type+'_type]" value = "POINT"/>\
+                    <input type="hidden" name = "'+type+'[point]['+type+'_id]" value = "<?php echo $point_id; ?>"/>';
 
     render[type](pointsHtml);
 }
