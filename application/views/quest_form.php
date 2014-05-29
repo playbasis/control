@@ -112,28 +112,27 @@
                 </div>
 
             </div>
-            <div id="tab-mission">
-            
-            <!--
+
+            <!--<div id="tab-mission">
                 <div class="span6">
                     <table class="form ">
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('form_mission_name'); ?>:</td>
-                            <td><input type="text" name="missions[randomletters][mission_name]" size="100" value="<?php echo isset($mission['mission_name']) ? $mission['mission_name'] :  set_value('name'); ?>" /></td>
+                            <td><span class="required">*</span> <?php //echo $this->lang->line('form_mission_name'); ?>:</td>
+                            <td><input type="text" name="missions[randomletters][mission_name]" size="100" value="<?php //echo isset($mission['mission_name']) ? $mission['mission_name'] :  set_value('name'); ?>" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('form_mission_description'); ?>:</td>
-                            <td><textarea name ="missions[randomletters][description]" rows="4"><?php echo isset($mission['description']) ? $mission['description'] :  set_value('description'); ?></textarea>
+                            <td><?php //echo $this->lang->line('form_mission_description'); ?>:</td>
+                            <td><textarea name ="missions[randomletters][description]" rows="4"><?php //echo isset($mission['description']) ? $mission['description'] :  set_value('description'); ?></textarea>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('form_mission_hint'); ?>:</td>
-                            <td><input type="text" name="missions[randomletters][hint]" size="100" value="<?php echo isset($mission['hint']) ? $mission['hint'] :  set_value('hint'); ?>" /></td>
+                            <td><?php //echo $this->lang->line('form_mission_hint'); ?>:</td>
+                            <td><input type="text" name="missions[randomletters][hint]" size="100" value="<?php //echo isset($mission['hint']) ? $mission['hint'] :  set_value('hint'); ?>" /></td>
                         </tr>
                         <tr>
-                            <td><?php echo $this->lang->line('form_mission_image'); ?>:</td>
-                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                <input type="hidden" name="missions[randomletters][image]" value="<?php echo $image; ?>" id="image" />
-                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div>
+                            <td><?php //echo $this->lang->line('form_mission_image'); ?>:</td>
+                            <td valign="top"><div class="image"><img src="<?php //echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php //echo base_url();?>image/default-image.png');" />
+                                <input type="hidden" name="missions[randomletters][image]" value="<?php //echo $image; ?>" id="image" />
+                                <br /><a onclick="image_upload('image', 'thumb');"><?php //echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php //echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php //echo $this->lang->line('text_clear'); ?></a></div>
                             </td>
                         </tr>
                     </table>
