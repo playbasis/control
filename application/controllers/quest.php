@@ -109,50 +109,48 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
-            
+            // $this->form_validation->set_rules('quest_name', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
+            // $this->form_validation->set_rules('description', $this->lang->line('form_action_name'), 'trim|required|xss_clean|max_length[100]');
 
-            foreach($data as $key => $value){
-                if($key == 'condition' || $key == 'reward'){
-                    $i = 0;
-                    foreach($value as $k => $v){
-                            foreach($v as $ke => &$item){
+
+            // if($this->form_validation->run()){
+
+                foreach($data as $key => $value){
+                    if($key == 'condition' || $key == 'reward' || $key == 'missions'){
+                        $i = 0;
+                        foreach($value as $k => $v){
+                            foreach($v as $ke => $item){
                                 if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
                                     $item = new MongoId($item);
                                 }
                             }
-                        unset($data[$key][$k]);
-                        $data[$key][$i] = $v;
-                        $i++;
-                    }
-                }
-                /*
-                if($key == 'reward'){
-                    $i = 0;
-                    foreach($value as $k => $v){
-                            foreach($v as $ke => &$item){
-                                if($ke == 'reward_id' && !empty($item)){
-                                    $item = new MongoId($item);
-                                }
+                            unset($data[$key][$k]);
+                            $data[$key][$i] = $v;
+                            if($key == 'missions'){
+                                $data[$key][$i]['mission_number'] = $i + 1;
                             }
-                        unset($data[$key][$k]);
-                        $data[$key][$i] = $v;
-                        $i++;
+                            $i++;
+                        }
                     }
                 }
-                */
-            }
 
-            $data['status'] = (isset($data['status']))?true:false;
-            $data['mission_order'] = (isset($data['mission_order']))?true:false;
+                $data['status'] = (isset($data['status']))?true:false;
+                $data['mission_order'] = (isset($data['mission_order']))?true:false;
 
-            $data['client_id'] = $this->User_model->getClientId();
-            $data['site_id'] = $this->User_model->getSiteId();
+                $data['client_id'] = $this->User_model->getClientId();
+                $data['site_id'] = $this->User_model->getSiteId();
 
-            return $this->Quest_model->addQuestToClient($data);
+                echo "<pre>";
+                    var_dump($data);
+                echo "</pre>";
+
+            // }
             
-        }else{
-            $this->getForm();    
+            // return $this->Quest_model->addQuestToClient($data);
+            
         }
+        
+        $this->getForm();    
 
         
     }
