@@ -33,6 +33,12 @@ $lang = array(
 	'tab_mission'						=> 'Manage Mission',
 	'text_confirm'						=> 'Are you sure you want to delete?',
 	'text_image_manager'     			=> 'Image Manager',
+	'form_quest_sort_order'				=> 'Sort Order',
+	'form_mission_name'					=> 'Mission Name',
+	'form_mission_description'			=> 'Description',
+	'form_mission_hint'					=> 'Hint',
+	'form_mission_image'				=> 'Mission Image',
+
 
 
 
