@@ -245,7 +245,9 @@
             
             countMissionId++;
 
-            var itemMissionHtml = '<div class="mission-item-wrapper" data-mission-id="'+countMissionId+'">\
+            var itemMissionId = countMissionId;
+
+            var itemMissionHtml = '<div class="mission-item-wrapper" data-mission-id="'+itemMissionId+'">\
                         <div class="box-header box-mission-header overflow-visible">\
                             <h2><img src="<?php echo $thumb; ?>" width="50"> Mission Name</h2>\
                             <div class="box-icon">\
@@ -259,24 +261,24 @@
                                 <table class="form">\
                                     <tr>\
                                         <td><span class="required">*</span> <?php echo $this->lang->line("form_mission_name"); ?>:</td>\
-                                        <td><input type="text" name="missions['+countMissionId+'][mission_name]" size="100" value="<?php echo isset($mission["mission_name"]) ? $mission["mission_name"] :  set_value("name"); ?>" /></td>\
+                                        <td><input type="text" name="missions['+itemMissionId+'][mission_name]" size="100" value="<?php echo isset($mission["mission_name"]) ? $mission["mission_name"] :  set_value("name"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><span class="required">*</span> <?php echo $this->lang->line("form_mission_number"); ?>:</td>\
-                                        <td><input type="text" name="missions['+countMissionId+'][mission_number]" size="100" value="<?php echo isset($mission["mission_number"]) ? $mission["mission_number"] :  set_value("number"); ?>" /></td>\
+                                        <td><input type="text" name="missions['+itemMissionId+'][mission_number]" size="100" value="<?php echo isset($mission["mission_number"]) ? $mission["mission_number"] :  set_value("number"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_description"); ?>:</td>\
-                                        <td><textarea name ="missions['+countMissionId+'][description]" rows="4"><?php echo isset($mission["description"]) ? $mission["description"] :  set_value("description"); ?></textarea>\
+                                        <td><textarea name ="missions['+itemMissionId+'][description]" rows="4"><?php echo isset($mission["description"]) ? $mission["description"] :  set_value("description"); ?></textarea>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_hint"); ?>:</td>\
-                                        <td><input type="text" name="missions['+countMissionId+'][hint]" size="100" value="<?php echo isset($mission["hint"]) ? $mission["hint"] :  set_value("hint"); ?>" /></td>\
+                                        <td><input type="text" name="missions['+itemMissionId+'][hint]" size="100" value="<?php echo isset($mission["hint"]) ? $mission["hint"] :  set_value("hint"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_image"); ?>:</td>\
                                         <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb_mission" onerror="$(this).attr("src","<?php echo base_url();?>image/default-image.png");" />\
-                                            <input type="hidden" name="missions['+countMissionId+'][image]" value="<?php echo $image; ?>" id="image" />\
+                                            <input type="hidden" name="missions['+itemMissionId+'][image]" value="<?php echo $image; ?>" id="image" />\
                                             <br /><a onclick="image_upload("image", "thumb_mission");"><?php echo $this->lang->line("text_browse"); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$("#thumb_mission").attr("src", "<?php echo $this->lang->line("no_image"); ?>"); $("#image").attr("value", "");"><?php echo $this->lang->line("text_clear"); ?></a></div>\
                                         </td>\
                                     </tr>\
@@ -327,20 +329,20 @@
                     </div>';
             $('.mission-item-wrapper>.box-content').slideUp();
             $('.mission-wrapper').append(itemMissionHtml);
-            init_mission_event();
-
+            
             init_additem_event({
                 type:'completion',
                 parent:'mission',
-                id:countMissionId
+                id:itemMissionId
             });
 
             init_additem_event({
                 type:'reward',
                 parent:'mission',
-                id:countMissionId
+                id:itemMissionId
             });
 
+            init_mission_event();
             //$('.mission-item-wrapper[data-mission-id='+countMissionId+'] .box-content').show();
         });
 
@@ -371,6 +373,7 @@
             var type = target.type;
             var parent = target.parent;
             var id = target.id || null;
+            
 
             if(parent == 'mission'){
                 var wrapperObj = $('.mission-item-wrapper[data-mission-id='+id+'] .'+type+'-wrapper');
@@ -381,8 +384,8 @@
             }
 
 
-            var menuBtn = $('.add-'+type+'-btn'),
-            menuObj = $('.add-'+type+'-menu'),
+            var menuBtn = wrapperObj.find('.add-'+type+'-btn'),
+            menuObj = wrapperObj.find('.add-'+type+'-menu'),
 
             addDatetimeObj = menuObj.find('.add-datetime'),
             addLevelObj = menuObj.find('.add-level'),
@@ -690,6 +693,7 @@ function addBadges(target){
 }
 
 function render(target){
+
     if(target.parent == 'mission'){
         $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+target.type+'-container').append(target.html);
     }else{
