@@ -199,10 +199,11 @@ class Quest extends MY_Controller
 
         $this->data['badges'] = $this->Quest_model->getBadgesByClientSiteId($data);
 
+        $this->data['actions'] = $this->Quest_model->getActionsByClientSiteId($data);
+
         $this->data['exp_id'] = $this->Quest_model->getExpId($data);
 
         $this->data['point_id'] = $this->Quest_model->getPointId($data);
-
 
         $this->data['main'] = 'quest_form';
         $this->load->vars($this->data);

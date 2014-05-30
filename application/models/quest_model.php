@@ -199,5 +199,13 @@ class Quest_model extends MY_Model{
     	return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
     }
 
+    public function getActionsByClientSiteId($data){
+    	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+		$this->mongo_db->where('status',true);
+
+		return $this->mongo_db->get('playbasis_action_to_client');
+    }
+
 
 }
