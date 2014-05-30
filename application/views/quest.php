@@ -59,9 +59,9 @@
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
                                     <td class="right">[ <?php if($client_id){
                                             // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
-                                            echo anchor('quest/update/'.$quest['_id'], 'Edit');
+                                            echo anchor('quest/edit/'.$quest['_id'], 'Edit');
                                         }else{
-                                            echo anchor('action/update/'.$quest['_id'], 'Edit');
+                                            echo anchor('action/edit/'.$quest['_id'], 'Edit');
                                         }
                                         ?> ]
 

@@ -362,6 +362,27 @@ class Quest extends MY_Controller
         $this->getList(0);
     }
 
+    public function edit($quest_id){
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        if(!empty($client_id) && !empty($site_id)){
+
+            $data['client_id'] = $client_id;
+            $data['site_id'] = $site_id;
+            $data['quest_id'] = $quest_id;
+
+            $quest = $this->Quest_model->getQuestByClientSiteId($data);
+
+            echo "<pre>";
+            var_dump($quest);
+            echo "</pre>";
+
+        }
+        
+    }
+
      private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'action')) {

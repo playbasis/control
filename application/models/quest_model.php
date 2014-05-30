@@ -56,6 +56,17 @@ class Quest_model extends MY_Model{
 		return $this->mongo_db->get('playbasis_quest_to_client');
 	}
 
+	public function getQuestByClientSiteId($data){
+		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+
+		$this->mongo_db->where('_id',  new MongoID($data['quest_id']));		
+
+		$quest = $this->mongo_db->get('playbasis_quest_to_client');
+
+		return (isset($quest) || !empty($quest[0]))?$quest[0]:null;
+	}
+
 	public function getTotalQuestsClientSite($data){
 
 		return 3;
