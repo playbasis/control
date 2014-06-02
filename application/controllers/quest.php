@@ -135,7 +135,7 @@ class Quest extends MY_Controller
                         unset($data[$key][$kk]);
                         $data[$key][$im] = $val;
                         foreach($val as $k => $v){
-                            if($k == 'completion'){
+                            if($k == 'completion' || $k == 'reward'){
                                 $i = 0;
                                 foreach($v as $koo => $voo){                                    
                                     foreach($voo as $kkk => &$vvv){
