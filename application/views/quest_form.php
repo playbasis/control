@@ -1,5 +1,4 @@
 <div id="content" class="span10">
-
     <div class="box">
         <div class="heading">
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
@@ -218,6 +217,40 @@
     </div>
 </div>
 
+<!-- Modal Actions -->
+<div id="modal-select-action" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select action</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php for($i=0 ; $i < count($actions) ; $i++){ ?>
+                <label>
+
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-action="<?php echo $actions[$i]['action_id'] ?>">
+                    <div class="span1 text-center">
+                        <input type="checkbox" name="selected[]" value="<?php $actions[$i]['_id']; ?>">
+                    </div>
+                    <div class="span2">
+                        <i style='color:grey' class='<?php echo $actions[$i]['icon']; ?> icon-4x'></i>
+
+                        <!-- <img height="50" width="50" src="<?php //echo S3_IMAGE.$actions[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /> -->
+                        <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
+                    </div>
+                    <div class="span9 title"><?php echo $actions[$i]['name'];?></div>
+                </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary select-action-btn" data-dismiss="modal">Select</button>
+    </div>
+</div>
+
 
     <script type="text/javascript">
         $('#tabs a').tabs();
@@ -261,24 +294,24 @@
                                 <table class="form">\
                                     <tr>\
                                         <td><span class="required">*</span> <?php echo $this->lang->line("form_mission_name"); ?>:</td>\
-                                        <td><input type="text" name="missions['+itemMissionId+'][mission_name]" size="100" value="<?php echo isset($mission["mission_name"]) ? $mission["mission_name"] :  set_value("name"); ?>" /></td>\
+                                        <td><input type="text" name="mission['+itemMissionId+'][mission_name]" size="100" value="<?php echo isset($mission["mission_name"]) ? $mission["mission_name"] :  set_value("name"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><span class="required">*</span> <?php echo $this->lang->line("form_mission_number"); ?>:</td>\
-                                        <td><input type="text" name="missions['+itemMissionId+'][mission_number]" size="100" value="<?php echo isset($mission["mission_number"]) ? $mission["mission_number"] :  set_value("number"); ?>" /></td>\
+                                        <td><input type="text" name="mission['+itemMissionId+'][mission_number]" size="100" value="<?php echo isset($mission["mission_number"]) ? $mission["mission_number"] :  set_value("number"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_description"); ?>:</td>\
-                                        <td><textarea name ="missions['+itemMissionId+'][description]" rows="4"><?php echo isset($mission["description"]) ? $mission["description"] :  set_value("description"); ?></textarea>\
+                                        <td><textarea name ="mission['+itemMissionId+'][description]" rows="4"><?php echo isset($mission["description"]) ? $mission["description"] :  set_value("description"); ?></textarea>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_hint"); ?>:</td>\
-                                        <td><input type="text" name="missions['+itemMissionId+'][hint]" size="100" value="<?php echo isset($mission["hint"]) ? $mission["hint"] :  set_value("hint"); ?>" /></td>\
+                                        <td><input type="text" name="mission['+itemMissionId+'][hint]" size="100" value="<?php echo isset($mission["hint"]) ? $mission["hint"] :  set_value("hint"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_image"); ?>:</td>\
                                         <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb_mission" onerror="$(this).attr("src","<?php echo base_url();?>image/default-image.png");" />\
-                                            <input type="hidden" name="missions['+itemMissionId+'][image]" value="<?php echo $image; ?>" id="image" />\
+                                            <input type="hidden" name="mission['+itemMissionId+'][image]" value="<?php echo $image; ?>" id="image" />\
                                             <br /><a onclick="image_upload("image", "thumb_mission");"><?php echo $this->lang->line("text_browse"); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$("#thumb_mission").attr("src", "<?php echo $this->lang->line("no_image"); ?>"); $("#image").attr("value", "");"><?php echo $this->lang->line("text_clear"); ?></a></div>\
                                         </td>\
                                     </tr>\
@@ -470,6 +503,29 @@
             $('.select-badge-btn').unbind().bind('click',function(data){
                 selectBadgesItem(target);
             });
+
+            //Add Actions
+
+            if(containerObj.has('.actions-wrapper').length){
+                addActionObj.removeClass('disabled');
+                addActionObj.unbind().bind('click',function(data){
+                    setModalActionsItem(target);
+                });
+                containerObj.find('.actions-wrapper .add-action-btn').bind('click',function(data){
+                    setModalActionsItem(target);
+                });
+            }else{
+                addActionObj.removeClass('disabled');
+                addActionObj.unbind().bind('click',function(data){
+                    addActions(target);
+                    setModalActionsItem(target);
+                });
+            }
+
+            $('.select-action-btn').unbind().bind('click',function(data){
+                selectActionsItem(target);
+            });
+
 
 
             //Add Custom point
@@ -692,6 +748,19 @@ function addBadges(target){
     render(target);
 }
 
+function addActions(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+
+    var actionsHead = '<h3>Actions  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-action-btn">+ Add Actions</a></h3>';
+    var actionsHtml = '<div class="actions-wrapper '+type+'-type well">'+actionsHead+'<div class="item-container"></div></div>';
+
+    target.html = actionsHtml;
+
+    render(target);
+}
+
 function render(target){
 
     if(target.parent == 'mission'){
@@ -904,6 +973,84 @@ function selectQuestsItem(target){
         }else{
             if(wrapperObj.find('.quests-item-wrapper[data-id-quest='+$(this).data('id-quest')+']').length >= 1) {
                 wrapperObj.find('.quests-item-wrapper[data-id-quest='+$(this).data('id-quest')+']').remove();
+            }
+        }
+    })
+}
+
+// setModalActionsItem
+function setModalActionsItem(target){
+    var type = target.type;
+    if(target.parent == 'mission'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.'+type+'-wrapper');
+    }
+    
+    $('#modal-select-action input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.actions-item-wrapper').each(function(){
+        var idActionsSelect = $(this).data('id-action');
+        $('#modal-select-action .select-item[data-id-action='+idActionsSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-action').modal('show');
+}
+
+function selectActionsItem(target){
+    var type = target.type;
+    var taget_id = target.id || null;
+    var parent = target.parent || 'quest';
+    var wrapperObj = $('.'+type+'-wrapper');
+
+    if(target.parent == 'mission'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.'+type+'-wrapper');
+    }
+    
+    $('#modal-select-action .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+            
+            if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length <= 0) {
+
+                var id = $(this).data('id-action');
+                var img = $(this).find('.image img').attr('src');
+                var title = $(this).find('.title').html();
+                var icon = $(this).find('i').attr('class');
+
+                if(parent == 'mission'){
+
+                    inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_filter]"/>';
+
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "ACTION"/>';
+                }else{
+                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+type+'['+id+']['+type+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+type+'['+id+']['+type+'_type]" value = "ACTION"/>';
+                }
+
+                var actionsItemHtml = '<div class="clearfix item-wrapper actions-item-wrapper" data-id-action="'+id+'">\
+                                    <div class="span2 text-center"><i class="'+icon+'"></i>\
+                                    </div>\
+                                    <div class="span5">'+title+'</div>\
+                                    <div class="span2">'+inputFilterHtml+'</div>\
+                                    <div class="span1">\
+                                    <small>value</small>\
+                                    '+inputHtml+'</div>\
+                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
+                                    </div></div>';
+
+                   
+                    wrapperObj.find('.actions-wrapper .item-container').append(actionsItemHtml);
+
+
+                    init_additem_event(target);
+            }
+        }else{
+            if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length >= 1) {
+                wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').remove();
             }
         }
     })
