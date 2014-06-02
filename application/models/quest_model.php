@@ -12,7 +12,6 @@ class Quest_model extends MY_Model
         //get quest
         $this->set_site_mongodb($data['site_id']);
 
-        $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -22,6 +21,18 @@ class Quest_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
         return $result ? $result[0] : array();
+    }
+    public function updateQuestStatus($data, $status){
+        $this->set_site_mongodb($data['site_id']);
+
+        $this->mongo_db->where(array(
+            'site_id' => $data['site_id'],
+            'pb_player_id' => $data['pb_player_id'],
+            'quest_id' => $data['quest_id']
+        ));
+        $this->mongo_db->set(array('status' => $status));
+        $this->mongo_db->set(array('date_modifield' => new MongoDate(time())));
+        $this->mongo_db->update('playbasis_quest_to_player');
     }
     public function updateMissionStatus($data, $status){
         $this->set_site_mongodb($data['site_id']);

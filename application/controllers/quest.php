@@ -19,7 +19,7 @@ class Quest extends REST_Controller
         $this->load->model('quest_model');
     }
 
-    public function QuestProcess($action_id, $pb_player_id, $validToken){
+    public function QuestProcess($pb_player_id, $validToken){
 
         $this->load->helper('vsort');
 
@@ -29,7 +29,12 @@ class Quest extends REST_Controller
 
         $quests = $this->player_model->getAllQuests($pb_player_id, $site_id, "join");
 
+        $questEvent = array();
+
         foreach($quests as $q){
+
+            $missionEvent = array();
+
             $data = array(
                 "client_id" => $validToken['client_id'],
                 "site_id" => $validToken['site_id'],
@@ -38,12 +43,18 @@ class Quest extends REST_Controller
 
             $quest = $this->quest_model->getQuest($data);
 
-            if(!(count($this->checkConditionQuest($quest, $pb_player_id, $validToken)) > 0)){
+            $event_of_quest = $this->checkConditionQuest($quest, $pb_player_id, $validToken);
+
+            $mission_count = count($quest["missions"]);
+            $player_finish_count = 0;
+
+            if(!(count($event_of_quest) > 0)){
 
                 $player_missions = array();
                 foreach($q["missions"] as $pm){
                     $player_missions[$pm["mission_id"].""] = $pm["status"];
                 }
+
                 if((bool)$quest["mission_order"]){
                     $missions = vsort($quest["missions"], "mission_number");
                     $first_mission = key($missions);
@@ -51,38 +62,97 @@ class Quest extends REST_Controller
                     //for check first mission of player that will be automatic join
                     $mission_status_check_unjoin = array("join", "finish");
                     if(!in_array($player_missions[$missions[$first_mission]["mission_id"].""], $mission_status_check_unjoin)){
+                        $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $missions[$first_mission]["mission_id"], $validToken, "join");
                         $player_missions[$missions[$first_mission]["mission_id"].""] = "join";
                     }
 
                     $next_mission = false;
+
                     foreach($missions as $m){
                         //if player pass mission so next mission status will change to join
                         if($next_mission){
-                            $this->updateMissionStatusOfPlayer($pb_player_id,$m["mission_id"],$validToken,"join");
+                            $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "join");
                             $player_missions[$m["mission_id"].""] = "join";
                             $next_mission = false;
                         }
 
                         if($player_missions[$m["mission_id"].""] == "join"){
-                            echo "join";
-                            if(!(count($this->checkCompletionMission($quest, $m, $pb_player_id, $validToken)) > 0)){
-                                echo "update";
-                                $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"finish");
+                            //echo "join";
+                            $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                            if(!(count($event_of_mission) > 0)){
+
+                                $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "finish");
+
+                                $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken);
+                                //for check total mission finish
+                                $player_finish_count++;
                                 $next_mission = true;
                             }
                         }else if($player_missions[$m["mission_id"].""] == "finish"){
-                            echo "finish";
+                            //echo "finish";
+                            //for check total mission finish
+                            $player_finish_count++;
+                            $next_mission = true;
                             continue;
                         }else{
-                            echo "unjoin";
+                            //echo "unjoin";
                             break;
                         }
+
+                        $event = array(
+                            'mission_id' => $m["mission_id"],
+                            'mission_status' => (count($event_of_mission)>0 ? false : true),
+                            'mission_detail' => $event_of_mission
+                        );
+                        array_push($missionEvent, $event);
                     }
                 }else{
-                    echo "has one";
+
+                    foreach($quest["missions"] as $m){
+
+                        if($player_missions[$m["mission_id"].""] != "finish"){
+
+                            $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+
+                            if(!(count($event_of_mission) > 0)){
+                                $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"finish");
+
+                                $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken);
+                                //for check total mission finish
+                                $player_finish_count++;
+                            }else{
+                                $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"join");
+                            }
+                        }else{
+                            //for check total mission finish
+                            $player_finish_count++;
+                        }
+
+                        $event = array(
+                            'mission_id' => $m["mission_id"],
+                            'mission_status' => (count($event_of_mission)>0 ? false : true),
+                            'mission_detail' => $event_of_mission
+                        );
+                        array_push($missionEvent, $event);
+                    }
                 }
             }
+
+            if($mission_count == $player_finish_count){
+                echo "finish all mission";
+                $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken);
+            }
+
+            $event = array(
+                'quest_id' => $q["quest_id"],
+                'quest_status' => (count($event_of_quest)>0 ? false : true),
+                'quest_detail' => $event_of_quest,
+                'missions' => $missionEvent
+            );
+            array_push($questEvent, $event);
         }
+
+        return $questEvent;
 
     }
 
@@ -209,19 +279,6 @@ class Quest extends REST_Controller
 
     private function checkCompletionMission($quest, $mission, $pb_player_id, $validToken){
 
-        //read player information
-        $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
-            'username',
-            'first_name',
-            'last_name',
-            'gender',
-            'image',
-            'exp',
-            'level',
-            'date_added',
-            'birth_date'
-        ));
-
         $player_badges = $this->player_model->getBadge($pb_player_id, $validToken['site_id']);
 
         if($player_badges){
@@ -233,22 +290,20 @@ class Quest extends REST_Controller
 
         $missionEvent = array();
 
+        $player_mission = $this->player_model->getMission($pb_player_id, $quest["_id"], $mission["mission_id"], $validToken['site_id']);
+
         if($mission && isset($mission["completion"])){
 
             foreach($mission["completion"] as $c){
                 if($c["completion_type"] == "ACTION"){
-                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
+                    $datetime_check = (isset($player_mission["missions"][0]["date_modifield"]))?datetimeMongotoReadable($player_mission["missions"][0]["date_modifield"]):date("Y-m-d H:i:s");
+                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
 
-                    if(isset($point_a[0]['value'])){
-                        $point = $point_a[0]['value'];
-                    }else{
-                        $point = 0;
-                    }
-                    if($c["completion_value"] > $point){
+                    if((int)$c["completion_value"] > (int)$action["count"]){
                         $event = array(
-                            'event_type' => 'POINT_NOT_ENOUGH',
-                            'message' => 'Your point not enough',
-                            'incomplete' => array($c["completion_id"]."" => ((int)$c["completion_value"] - (int)$point))
+                            'event_type' => 'ACTION_NOT_ENOUGH',
+                            'message' => 'Your action not enough',
+                            'incomplete' => array($c["completion_id"]."" => ((int)$c["completion_value"] - (int)$action["count"]))
                         );
                         array_push($missionEvent, $event);
                     }
@@ -308,7 +363,11 @@ class Quest extends REST_Controller
         return $missionEvent;
     }
 
-    private function updateRewardPlayer(){
+    private function updateMissionRewardPlayer($player_id, $quest_id, $mission_id, $validToken){
+
+    }
+
+    private function updateQuestRewardPlayer($player_id, $quest_id, $validToken){
 
     }
 
@@ -347,16 +406,8 @@ class Quest extends REST_Controller
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
             'cl_player_id' => $cl_player_id
         )));
-        //get action id by action name
-        $actionName = $this->input->post('action');
-        $action_id = $this->client_model->getActionId(array(
-            'client_id' => $validToken['client_id'],
-            'site_id' => $validToken['site_id'],
-            'action_name' => $actionName
-        ));
-        if(!$action_id)
-            $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-        $this->QuestProcess($action_id, $pb_player_id, $validToken);
+
+        $this->QuestProcess($pb_player_id, $validToken);
     }
 }
 ?>
