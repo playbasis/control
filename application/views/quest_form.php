@@ -294,24 +294,24 @@
                                 <table class="form">\
                                     <tr>\
                                         <td><span class="required">*</span> <?php echo $this->lang->line("form_mission_name"); ?>:</td>\
-                                        <td><input type="text" name="mission['+itemMissionId+'][mission_name]" size="100" value="<?php echo isset($mission["mission_name"]) ? $mission["mission_name"] :  set_value("name"); ?>" /></td>\
+                                        <td><input type="text" name="missions['+itemMissionId+'][mission_name]" size="100" value="<?php echo isset($mission["mission_name"]) ? $mission["mission_name"] :  set_value("name"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><span class="required">*</span> <?php echo $this->lang->line("form_mission_number"); ?>:</td>\
-                                        <td><input type="text" name="mission['+itemMissionId+'][mission_number]" size="100" value="<?php echo isset($mission["mission_number"]) ? $mission["mission_number"] :  set_value("number"); ?>" /></td>\
+                                        <td><input type="text" name="missions['+itemMissionId+'][mission_number]" size="100" value="<?php echo isset($mission["mission_number"]) ? $mission["mission_number"] :  set_value("number"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_description"); ?>:</td>\
-                                        <td><textarea name ="mission['+itemMissionId+'][description]" rows="4"><?php echo isset($mission["description"]) ? $mission["description"] :  set_value("description"); ?></textarea>\
+                                        <td><textarea name ="missions['+itemMissionId+'][description]" rows="4"><?php echo isset($mission["description"]) ? $mission["description"] :  set_value("description"); ?></textarea>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_hint"); ?>:</td>\
-                                        <td><input type="text" name="mission['+itemMissionId+'][hint]" size="100" value="<?php echo isset($mission["hint"]) ? $mission["hint"] :  set_value("hint"); ?>" /></td>\
+                                        <td><input type="text" name="missions['+itemMissionId+'][hint]" size="100" value="<?php echo isset($mission["hint"]) ? $mission["hint"] :  set_value("hint"); ?>" /></td>\
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_image"); ?>:</td>\
                                         <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb_mission" onerror="$(this).attr("src","<?php echo base_url();?>image/default-image.png");" />\
-                                            <input type="hidden" name="mission['+itemMissionId+'][image]" value="<?php echo $image; ?>" id="image" />\
+                                            <input type="hidden" name="missions['+itemMissionId+'][image]" value="<?php echo $image; ?>" id="image" />\
                                             <br /><a onclick="image_upload("image", "thumb_mission");"><?php echo $this->lang->line("text_browse"); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$("#thumb_mission").attr("src", "<?php echo $this->lang->line("no_image"); ?>"); $("#image").attr("value", "");"><?php echo $this->lang->line("text_clear"); ?></a></div>\
                                         </td>\
                                     </tr>\
@@ -365,13 +365,13 @@
             
             init_additem_event({
                 type:'completion',
-                parent:'mission',
+                parent:'missions',
                 id:itemMissionId
             });
 
             init_additem_event({
                 type:'reward',
-                parent:'mission',
+                parent:'missions',
                 id:itemMissionId
             });
 
@@ -408,7 +408,7 @@
             var id = target.id || null;
             
 
-            if(parent == 'mission'){
+            if(parent == 'missions'){
                 var wrapperObj = $('.mission-item-wrapper[data-mission-id='+id+'] .'+type+'-wrapper');
                 var containerObj = $('.mission-item-wrapper[data-mission-id='+id+'] .'+type+'-container');
             }else{
@@ -679,7 +679,7 @@ function addPoints(target){
     var parent = target.parent || 'quest';
     var inputHtml = '';
 
-    if(parent == 'mission'){
+    if(parent == 'missions'){
         inputHtml = '<input type="text" name = "'+parent+'['+id+']['+type+'][point]['+type+'_value]" placeholder = "Points">\
                     <input type="hidden" name = "'+parent+'['+id+']['+type+'][point]['+type+'_type]" value = "POINT"/>\
                     <input type="hidden" name = "'+parent+'['+id+']['+type+'][point]['+type+'_id]" value = "<?php echo $point_id; ?>"/>';
@@ -703,7 +703,7 @@ function addExp(target){
     var parent = target.parent || 'quest';
     var inputHtml = '';
 
-    if(parent == 'mission'){
+    if(parent == 'missions'){
         inputHtml = '<input type="text" name = "'+parent+'['+id+']['+type+'][exp]['+type+'_value]" placeholder = "Exp">\
                     <input type="hidden" name = "'+parent+'['+id+']['+type+'][exp]['+type+'_type]" value = "EXP"/>\
                     <input type="hidden" name = "'+parent+'['+id+']['+type+'][exp]['+type+'_id]" value = "<?php echo $exp_id; ?>"/>';
@@ -763,7 +763,7 @@ function addActions(target){
 
 function render(target){
 
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+target.type+'-container').append(target.html);
     }else{
         $('.'+target.type+'-container').append(target.html);
@@ -777,7 +777,7 @@ function render(target){
 // setModalBadgesItem
 function setModalBadgesItem(target){
     var type = target.type;
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -798,7 +798,7 @@ function selectBadgesItem(target){
     var parent = target.parent || 'quest';
     var wrapperObj = $('.'+type+'-wrapper');
 
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -813,7 +813,7 @@ function selectBadgesItem(target){
                 var img = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
 
-                if(parent == 'mission'){
+                if(parent == 'missions'){
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value = "'+id+'"/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "BADGE"/>'
@@ -850,7 +850,7 @@ function selectBadgesItem(target){
 // setModalCustompointsItem
 function setModalCustompointsItem(target){
     var type = target.type;
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -871,7 +871,7 @@ function selectCustompointsItem(target){
     var parent = target.parent || 'quest';
     var wrapperObj = $('.'+type+'-wrapper');
 
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -885,7 +885,7 @@ function selectCustompointsItem(target){
                 var id = $(this).data('id-custompoint');
                 var title = $(this).find('.title').html();
 
-                if(parent == 'mission'){
+                if(parent == 'missions'){
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+'][custompoints]['+type+'_value]" placeholder="Value" value="1"></div>\
                                 <input type="hidden" name = "'+parent+'['+taget_id+']['+type+'][custompoints]['+type+'_type]" value = "CUSTOM_POINT"/>\
                                 <input type="hidden" name = "'+parent+'['+taget_id+']['+type+'][custompoints]['+type+'_id]" value = "'+id+'"/>'
@@ -914,7 +914,7 @@ function selectCustompointsItem(target){
 // setModalQuestsItem
 function setModalQuestsItem(target){
     var type = target.type;
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -935,7 +935,7 @@ function selectQuestsItem(target){
     var parent = target.parent || 'quest';
     var wrapperObj = $('.'+type+'-wrapper');
 
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -950,7 +950,7 @@ function selectQuestsItem(target){
                 var image = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
 
-                if(target.parent == 'mission'){
+                if(target.parent == 'missions'){
                     var inputHtml = '<div class="span1"><input type="hidden" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value="'+id+'"></div>\
                                      <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "QUEST"/>\
                                      <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" value = ""/>'
@@ -981,7 +981,7 @@ function selectQuestsItem(target){
 // setModalActionsItem
 function setModalActionsItem(target){
     var type = target.type;
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -1002,7 +1002,7 @@ function selectActionsItem(target){
     var parent = target.parent || 'quest';
     var wrapperObj = $('.'+type+'-wrapper');
 
-    if(target.parent == 'mission'){
+    if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
         var wrapperObj = $('.'+type+'-wrapper');
@@ -1018,7 +1018,7 @@ function selectActionsItem(target){
                 var title = $(this).find('.title').html();
                 var icon = $(this).find('i').attr('class');
 
-                if(parent == 'mission'){
+                if(parent == 'missions'){
 
                     inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_filter]"/>';
 

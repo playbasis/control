@@ -38,6 +38,7 @@ $lang = array(
 	'form_mission_description'			=> 'Description',
 	'form_mission_hint'					=> 'Hint',
 	'form_mission_image'				=> 'Mission Image',
+	'form_mission_number'				=> 'Mission Number'
 
 );
 
