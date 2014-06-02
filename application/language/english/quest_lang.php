@@ -39,10 +39,6 @@ $lang = array(
 	'form_mission_hint'					=> 'Hint',
 	'form_mission_image'				=> 'Mission Image',
 
-
-
-
-
 );
 
 
