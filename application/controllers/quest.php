@@ -107,15 +107,15 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
-            echo "<pre>";
-                var_dump($data);
-            echo "</pre>";
+            // echo "<pre>";
+            //     var_dump($data);
+            // echo "</pre>";
 
             foreach($data as $key => $value){
                 if($key == 'condition' || $key == 'reward' || $key == 'missions'){
                     $i = 0;
                     foreach($value as $k => $v){
-                        foreach($v as $ke => $item){
+                        foreach($v as $ke => &$item){
                             if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
                                 $item = new MongoId($item);
                             }
@@ -128,6 +128,31 @@ class Quest extends MY_Controller
                         $i++;
                     }
                 }
+                if($key == 'missions'){
+                    $im = 0;
+                    foreach($value as $kk => $val){         
+
+                        unset($data[$key][$kk]);
+                        $data[$key][$im] = $val;
+                        foreach($val as $k => $v){
+                            if($k == 'completion'){
+                                $i = 0;
+                                foreach($v as $koo => $voo){                                    
+                                    foreach($voo as $kkk => &$vvv){
+                                        if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
+                                            $vvv = new MongoId($vvv);
+                                        }
+                                    }
+                                    unset($data[$key][$im][$k][$koo]);
+                                    $data[$key][$im][$k][$i] = $voo;
+                                    $i++;
+                                }    
+                            }
+                        }
+                        $im++;
+                        
+                    }
+                }
             }
 
             $data['status'] = (isset($data['status']))?true:false;
@@ -136,11 +161,11 @@ class Quest extends MY_Controller
             $data['client_id'] = $this->User_model->getClientId();
             $data['site_id'] = $this->User_model->getSiteId();
 
-            echo "<pre>";
-                var_dump($data);
-            echo "</pre>";
+            // echo "<pre>";
+            //     var_dump($data);
+            // echo "</pre>";
             
-            // return $this->Quest_model->addQuestToClient($data);
+            return $this->Quest_model->addQuestToClient($data);
             
         }else{
             $this->getForm();        
