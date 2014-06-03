@@ -87,8 +87,10 @@
                             <div class = 'condition-container'>
                             <?php if(isset($editQuest['condition'])){?>
                                 <?php 
+                                $countQuest = 0;
+                                $countCustomPoints = 0;
+                                $countBadges = 0;
                                 foreach($editQuest['condition'] as $condition){
-                                    
                                     if($condition['condition_type'] == 'DATETIME_START'){
                                         $editDateStart['condition_type'] = $condition['condition_type'];
                                         $editDateStart['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
@@ -100,24 +102,161 @@
                                         $editDateEnd['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                                         $editDateEnd['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                                     }    
-                                    
+
+                                    if($condition['condition_type'] == 'LEVEL_START'){
+                                        $editLevelStart['condition_type'] = $condition['condition_type'];
+                                        $editLevelStart['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editLevelStart['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                    }
+                                    if($condition['condition_type'] == 'LEVEL_END'){
+                                        $editLevelEnd['condition_type'] = $condition['condition_type'];
+                                        $editLevelEnd['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editLevelEnd['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                    }
+                                    if($condition['condition_type'] == 'QUEST'){
+                                        $editQuestCondition[$countQuest]['condition_type'] = $condition['condition_type']; 
+                                        $editQuestCondition[$countQuest]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editQuestCondition[$countQuest]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                        $countQuest++;
+                                    }
+                                    if($condition['condition_type'] == 'POINT'){
+                                        $editPoints['condition_type'] = $condition['condition_type']; 
+                                        $editPoints['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editPoints['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                    }
+                                    if($condition['condition_type'] == 'CUSTOM_POINT'){
+                                        $editCustomPoints[$countCustomPoints]['condition_type'] = $condition['condition_type']; 
+                                        $editCustomPoints[$countCustomPoints]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editCustomPoints[$countCustomPoints]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                        $countCustomPoints++;
+                                    }
+                                    if($condition['condition_type'] == 'BADGE'){
+                                        $editBadge[$countBadges]['condition_type'] = $condition['condition_type']; 
+                                        $editBadge[$countBadges]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editBadge[$countBadges]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                        $countBadges++;
+                                    }
                                 } 
                                 ?>
-
-                                <?php if(isset($editDateStart)){ ?>
+                                <?php if(isset($editDateStart) && isset($editDateEnd)){ ?>
                                     <div class="datetime-wrapper condition-type well">
                                         <h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>
                                         <label class="span4">Date Start:</label> 
-                                        <input type="text" name="condition[datetimestart][condition_value]" class="date hasDatepicker" placeholder="datetime start" id="dp1401709709268" value="<?php echo $editDateStart['condition_value'] ?>">  
+                                        <input type="text" name="condition[datetimestart][condition_value]" class="date" placeholder="datetime start" id="dp1401709709268" value="<?php echo $editDateStart['condition_value'] ?>">  
                                         <input type="hidden" name="condition[datetimestart][condition_type]" value="DATETIME_START">                        
                                         <input type="hidden" name="condition[datetimestart][condition_id]" value=""><br>
                                         <label class="span4">Date End:</label> 
-                                        <input type="text" name="condition[datetimeend][condition_value]" class="date hasDatepicker" placeholder="datetime end" id="dp1401709709269" value="<?php echo $editDateEnd['condition_value'] ?>">                    
+                                        <input type="text" name="condition[datetimeend][condition_value]" class="date" placeholder="datetime end" id="dp1401709709269" value="<?php echo $editDateEnd['condition_value'] ?>">                    
                                         <input type="hidden" name="condition[datetimeend][condition_type]" value="DATETIME_END">                    
                                         <input type="hidden" name="condition[datetimeend][condition_id]" value="">
                                     </div>
                                 <?php } ?>
-                            <?php } ?>
+
+                                <?php if(isset($editLevelStart) && isset($editLevelEnd)){ ?>
+                                    <div class="level-wrapper condition-type well">
+                                        <h3>Level <a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                        <label class="span4">Level Start:</label>
+                                        <select name="condition[levelstart][condition_value]">
+                                            <?php 
+                                            foreach($levels as $level){
+                                                if($editLevelStart['condition_value'] == $level['level']){
+                                                    echo "<option selected value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
+                                                }
+                                                echo "<option value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
+                                            }
+                                            ?>
+                                        </select>                    
+                                        <input type="hidden" name="condition[levelstart][condition_type]" value="LEVEL_START">                    
+                                        <input type="hidden" name="condition[levelstart][condition_id]" value="">
+                                        <br>
+                                        <label class="span4">Level End:</label> 
+                                        <select name="condition[levelend][condition_value]">
+                                            <?php 
+                                            foreach($levels as $level){
+                                                if($editLevelEnd['condition_value'] == $level['level']){
+                                                    echo "<option selected value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
+                                                }
+                                                echo "<option value = ".$level["level"].">".$level["level"]." ".$level["level_title"]."</option>";
+                                            }
+                                            ?>
+                                        </select>                    
+                                        <input type="hidden" name="condition[levelend][condition_type]" value="LEVEL_END">                    
+                                        <input type="hidden" name="condition[levelend][condition_id]" value="">
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editQuestCondition)){ ?>
+                                    <div class="quests-wrapper condition-type well">
+                                        <h3>Quest <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quest-btn">+ Add Quest</a></h3>
+                                        <?php foreach($editQuestCondition as $quest){ ?>    
+                                            <div class="item-container">
+                                                <div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="<?php echo $quest['condition_id']; ?>">                                
+                                                    <div class="span2 text-center">
+                                                        <img src="http://images.pbapp.net/no_image.jpg" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                
+                                                    </div>
+                                                    <div class="span7"><?php foreach($quests as $q){if($q['_id']==$quest['condition_id']){echo $q['quest_name'];}} ?></div>                                
+                                                    <div class="span1">
+                                                        <input type="hidden" name="condition[<?php echo $quest['condition_id'];?>][condition_id]" value="<?php echo $quest['condition_id']; ?>">
+                                                    </div>                                
+                                                    <input type="hidden" name="condition[<?php echo $quest['condition_id']; ?>][condition_type]" value="QUEST">                                
+                                                    <input type="hidden" name="condition[<?php echo $quest['condition_id']; ?>][condition_value]" value="">                                
+                                                    <div class="span2 col-remove">
+                                                    <a class="item-remove">
+                                                        <i class="icon-remove-sign"></i>
+                                                    </a>
+                                                    </div>
+                                                </div>                                        
+                                            </div>
+                                        <?php } ?>    
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editPoints)){ ?>
+                                    <div class="points-wrapper condition-type well">
+                                        <h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                        <label class="span4">Points:</label>
+                                        <input type="text" name="condition[point][condition_value]" placeholder="Points" value = "<?php echo $editPoints['condition_value'] ?>">                    
+                                        <input type="hidden" name="condition[point][condition_type]" value="POINT">                    
+                                        <input type="hidden" name="condition[point][condition_id]" value="<?php echo $editPoints['condition_id']; ?>">
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editCustomPoints)){ ?>
+                                    <div class="custompoints-wrapper condition-type well">
+                                        <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                        <?php foreach($editCustomPoints as $point){ ?>
+                                            <div class="item-container">
+                                                <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['condition_id'] ?>">                                
+                                                    <div class="span7"><?php foreach($customPoints as $p){if($p['_id']==$point['condition_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
+                                                    <input type="text" name="condition[custompoints][condition_value]" placeholder="Value" value="<?php echo $point['condition_value']; ?>">
+                                                    <input type="hidden" name="condition[custompoints][condition_type]" value="CUSTOM_POINT">                                
+                                                    <input type="hidden" name="condition[custompoints][condition_id]" value="<?php echo $point['condition_id'] ?>">
+                                                    </div>                                
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editBadge)){ ?>
+                                    <div class="badges-wrapper condition-type well">
+                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                        <div class="item-container">
+                                            <?php foreach($editBadge as $badge){ ?>    
+                                                <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['condition_id'] ?>">                                    
+                                                <div class="span2 text-center">
+                                                    <img src="http://images.pbapp.net/data/dc2efb2d903008f9d7e0d5e8024981d2.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                </div>                                    
+                                                <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['condition_id']){echo $b['name'];}} ?></div>                                    
+                                                <div class="span1">                                    
+                                                    <small>value</small>                                    
+                                                    <input type="text" name="condition[<?php echo $badge['condition_id'] ?>][condition_value]" placeholder="Value" value="<?php echo $badge['condition_value'] ?>">                                    
+                                                    <input type="hidden" name="condition[<?php echo $badge['condition_id'] ?>][condition_id]" value="<?php echo $badge['condition_id'] ?>">                                    
+                                                    <input type="hidden" name="condition[<?php echo $badge['condition_id'] ?>][condition_type]" value="BADGE"></div>                                    
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            <?php } ?><!-- end check if(isset($editQuest['condition'])) -->
                             </div>
                         </div>
                     </div>
@@ -137,7 +276,97 @@
                             </div>
                         </div>
                         <div class="box-content">
-                            <div class='reward-container'></div>
+                            <div class='reward-container'>
+                                <?php if(isset($editQuest['reward'])){ ?>
+
+                                    <?php
+                                    $countCustomPoints = 0;
+                                    $countBadges = 0;
+                                    foreach($editQuest['reward'] as $reward){
+                                        if($reward['reward_type'] == 'POINT'){
+                                            $editPoints['reward_type'] = $reward['reward_type']; 
+                                            $editPoints['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                                            $editPoints['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                                        }
+                                        if($reward['reward_type'] == 'EXP'){
+                                            $editExp['reward_type'] = $reward['reward_type']; 
+                                            $editExp['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                                            $editExp['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                                        }
+                                        if($reward['reward_type'] == 'CUSTOM_POINT'){
+                                            $editCustomPoints[$countCustomPoints]['reward_type'] = $reward['reward_type']; 
+                                            $editCustomPoints[$countCustomPoints]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                                            $editCustomPoints[$countCustomPoints]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                                            $countCustomPoints++;
+                                        }
+                                        if($reward['reward_type'] == 'BADGE'){
+                                            $editBadge[$countBadges]['reward_type'] = $reward['reward_type']; 
+                                            $editBadge[$countBadges]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                                            $editBadge[$countBadges]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                                            $countBadges++;
+                                        }
+                                    }
+                                    ?>
+
+                                    <?php if(isset($editPoints)){ ?>
+                                        <div class="points-wrapper reward-type well">
+                                            <h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                            <label class="span4">Points:</label>
+                                            <input type="text" name="reward[point][reward_value]" placeholder="Points" value = "<?php echo $editPoints['reward_value'] ?>">                    
+                                            <input type="hidden" name="reward[point][reward_type]" value="POINT">                    
+                                            <input type="hidden" name="reward[point][reward_id]" value="<?php echo $editPoints['reward_id']; ?>">
+                                        </div>
+                                    <?php } ?>
+
+                                    <?php if(isset($editExp)){ ?>
+                                        <div class="exp-wrapper reward-type well">
+                                            <h3>Exp <a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                            <label class="span4">Exp:</label>
+                                            <input type="text" name="reward[exp][reward_value]" placeholder="Exp" value = "<?php echo $editExp['reward_value']; ?>">                    
+                                            <input type="hidden" name="reward[exp][reward_type]" value="EXP">                    
+                                            <input type="hidden" name="reward[exp][reward_id]" value="<?php echo $editExp['reward_id'] ?>">
+                                        </div>
+                                    <?php } ?>
+                                    <?php if(isset($editCustomPoints)){ ?>
+                                        <div class="custompoints-wrapper reward-type well">
+                                            <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                            <?php foreach($editCustomPoints as $point){ ?>
+                                                <div class="item-container">
+                                                    <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['reward_id'] ?>">                                
+                                                        <div class="span7"><?php foreach($customPoints as $p){if($p['_id']==$point['reward_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
+                                                        <input type="text" name="reward[custompoints][reward_value]" placeholder="Value" value="<?php echo $point['reward_value']; ?>">
+                                                        <input type="hidden" name="reward[custompoints][reward_type]" value="CUSTOM_POINT">                                
+                                                        <input type="hidden" name="reward[custompoints][reward_id]" value="<?php echo $point['reward_id'] ?>">
+                                                        </div>                                
+                                                        <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php if(isset($editBadge)){ ?>
+                                        <div class="badges-wrapper reward-type well">
+                                            <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                            <div class="item-container">
+                                                <?php foreach($editBadge as $badge){ ?>    
+                                                    <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['reward_id'] ?>">                                    
+                                                    <div class="span2 text-center">
+                                                        <img src="http://images.pbapp.net/data/dc2efb2d903008f9d7e0d5e8024981d2.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                    </div>                                    
+                                                    <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['reward_id']){echo $b['name'];}} ?></div>                                    
+                                                    <div class="span1">                                    
+                                                        <small>value</small>                                    
+                                                        <input type="text" name="reward[<?php echo $badge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $badge['reward_value'] ?>">                                    
+                                                        <input type="hidden" name="reward[<?php echo $badge['reward_id'] ?>][reward_id]" value="<?php echo $badge['reward_id'] ?>">                                    
+                                                        <input type="hidden" name="reward[<?php echo $badge['reward_id'] ?>][reward_type]" value="BADGE"></div>                                    
+                                                        <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                    </div>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                <?php } ?> <!-- end of isset($editQuest['rewards']) -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -436,7 +665,7 @@
 
         function init_additem_event(target){
             $('.date').datepicker({dateFormat: 'yy-mm-dd'});
-            
+
             var type = target.type;
             var parent = target.parent;
             var id = target.id || null;
