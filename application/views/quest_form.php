@@ -34,15 +34,15 @@
                     <table class="form ">
                         <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('form_quest_name'); ?>:</td>
-                            <td><input type="text" name="quest_name" size="100" value="<?php echo isset($quest['quest_name']) ? $quest['quest_name'] :  set_value('name'); ?>" /></td>
+                            <td><input type="text" name="quest_name" size="100" value="<?php echo isset($editQuest['quest_name']) ? $editQuest['quest_name'] :  set_value('name'); ?>" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_description'); ?>:</td>
-                            <td><textarea name ="description" rows="4"><?php echo isset($quest['description']) ? $quest['description'] :  set_value('description'); ?></textarea>
+                            <td><textarea name ="description" rows="4"><?php echo isset($editQuest['description']) ? $editQuest['description'] :  set_value('description'); ?></textarea>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_hint'); ?>:</td>
-                            <td><input type="text" name="hint" size="100" value="<?php echo isset($quest['hint']) ? $quest['hint'] :  set_value('hint'); ?>" /></td>
+                            <td><input type="text" name="hint" size="100" value="<?php echo isset($editQuest['hint']) ? $editQuest['hint'] :  set_value('hint'); ?>" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_image'); ?>:</td>
@@ -53,15 +53,15 @@
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_missionordering'); ?>:</td>
-                            <td><input type="checkbox" name="mission_order" checked size="1" /></td>
+                            <td><input type="checkbox" name="mission_order" <?php echo isset($editQuest['mission_order'])?'checked':'unchecked'; ?> size="1" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_status'); ?>:</td>
-                            <td><input type="checkbox" name="status" checked size="1" /></td>
+                            <td><input type="checkbox" name="status" <?php echo isset($editQuest['mission_order'])?'checked':'unchecked'; ?> size="1" /></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_sort_order'); ?>:</td>
-                            <td><input type="number" name="sort_order" value="0"/>    </td>
+                            <td><input type="number" name="sort_order" value="<?php echo isset($editQuest['sort_order'])?$editQuest['sort_order']:''; ?>"/>    </td>
                         </tr>
                     </table>
                 </div>
@@ -85,6 +85,39 @@
                         </div>
                         <div class="box-content">
                             <div class = 'condition-container'>
+                            <?php if(isset($editQuest['condition'])){?>
+                                <?php 
+                                foreach($editQuest['condition'] as $condition){
+                                    
+                                    if($condition['condition_type'] == 'DATETIME_START'){
+                                        $editDateStart['condition_type'] = $condition['condition_type'];
+                                        $editDateStart['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editDateStart['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                    }
+
+                                    if($condition['condition_type'] == 'DATETIME_END'){
+                                        $editDateEnd['condition_type'] = $condition['condition_type'];
+                                        $editDateEnd['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                                        $editDateEnd['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                                    }    
+                                    
+                                } 
+                                ?>
+
+                                <?php if(isset($editDateStart)){ ?>
+                                    <div class="datetime-wrapper condition-type well">
+                                        <h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                        <label class="span4">Date Start:</label> 
+                                        <input type="text" name="condition[datetimestart][condition_value]" class="date hasDatepicker" placeholder="datetime start" id="dp1401709709268" value="<?php echo $editDateStart['condition_value'] ?>">  
+                                        <input type="hidden" name="condition[datetimestart][condition_type]" value="DATETIME_START">                        
+                                        <input type="hidden" name="condition[datetimestart][condition_id]" value=""><br>
+                                        <label class="span4">Date End:</label> 
+                                        <input type="text" name="condition[datetimeend][condition_value]" class="date hasDatepicker" placeholder="datetime end" id="dp1401709709269" value="<?php echo $editDateEnd['condition_value'] ?>">                    
+                                        <input type="hidden" name="condition[datetimeend][condition_type]" value="DATETIME_END">                    
+                                        <input type="hidden" name="condition[datetimeend][condition_id]" value="">
+                                    </div>
+                                <?php } ?>
+                            <?php } ?>
                             </div>
                         </div>
                     </div>
@@ -402,7 +435,8 @@
         init_mission_event();
 
         function init_additem_event(target){
-
+            $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+            
             var type = target.type;
             var parent = target.parent;
             var id = target.id || null;
