@@ -176,7 +176,7 @@ class Quest extends MY_Controller
         
     }
 
-    public function getForm(){
+    public function getForm($quest_id = null){
 
         $data['client_id'] = $this->User_model->getClientId();
         $data['site_id'] = $this->User_model->getSiteId();
@@ -229,6 +229,11 @@ class Quest extends MY_Controller
         $this->data['exp_id'] = $this->Quest_model->getExpId($data);
 
         $this->data['point_id'] = $this->Quest_model->getPointId($data);
+
+        if($quest_id != null){
+            $data['quest_id'] = $quest_id;
+            $this->data['editQuest'] = $this->Quest_model->getQuestByClientSiteId($data);
+        }
 
         $this->data['main'] = 'quest_form';
         $this->load->vars($this->data);
@@ -390,20 +395,20 @@ class Quest extends MY_Controller
 
     public function edit($quest_id){
 
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'quest/insert';
+
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
         if(!empty($client_id) && !empty($site_id)){
 
-            $data['client_id'] = $client_id;
-            $data['site_id'] = $site_id;
-            $data['quest_id'] = $quest_id;
+            $this->getForm($quest_id);
 
-            $quest = $this->Quest_model->getQuestByClientSiteId($data);
-
-            echo "<pre>";
-            var_dump($quest);
-            echo "</pre>";
+        }else{
 
         }
         
