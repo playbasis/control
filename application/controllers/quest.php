@@ -826,7 +826,70 @@ class Quest extends REST_Controller
         $this->response($this->resp->setRespond($resp), 200);
     }
 
-    private function convert_mongo_object(& $item,$key) {
+    public function questOfPlayer_get($quest_id = 0)
+    {
+        $required = $this->input->checkParam(array('api_key','player_id'));
+        if ($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if (!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+
+        $player_id = $this->input->get('player_id');
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $data = array(
+            'client_id' => $validToken['client_id'],
+            'site_id' => $validToken['site_id'],
+            'pb_player_id' => $pb_player_id
+        );
+
+        if ($quest_id) {
+            // get specific quest
+            try {
+                $quest_id = new MongoId($quest_id);
+            } catch(MongoException $ex) {
+                $quest_id = null;
+            }
+
+            $data['quest_id'] = $quest_id;
+            $quest_player = $this->quest_model->getPlayerQuest($data);
+
+            if($quest_player){
+                $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
+
+                foreach($quest_player["missions"] as &$m){
+                    $m["player_remaining"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                }
+
+                $quest = array_merge($quest, $quest_player);
+
+                array_walk_recursive($quest, array($this, "convert_mongo_object"));
+                $resp['quest'] = $quest;
+                $resp['quest']['quest_id'] = $quest['_id'];
+                unset($resp['quest']['_id']);
+            }else{
+                $resp['quest'] = array();
+            }
+        } else {
+            // get all questss related to clients
+            $quest = $this->quest_model->getPlayerQuests($data);
+            array_walk_recursive($quest, array($this, "convert_mongo_object"));
+            foreach ($quest as $key => $value) {
+                $quest[$key]['quest_id'] = $quest[$key]['_id'];
+                unset($quest[$key]['_id']);
+            }
+            $resp['quests'] = $quest;
+        }
+        $this->response($this->resp->setRespond($resp), 200);
+    }
+
+    private function convert_mongo_object(&$item, $key) {
         if (is_object($item)) {
             if (get_class($item) === 'MongoId') {
                 $item = $item->{'$id'};

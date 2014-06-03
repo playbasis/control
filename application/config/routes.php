@@ -98,6 +98,9 @@ $route['Player/'.ANY_STRING.'/badge/'.ANY_STRING.'/redeem'] = 'player/redeemBadg
 
 $route['Player/'.ANY_STRING.'/goods'] = 'player/goods/$1';
 
+$route['Player/quest'] = 'quest/questOfPlayer';
+$route['Player/quest/'.ANY_STRING] = 'quest/questOfPlayer/$1';
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';

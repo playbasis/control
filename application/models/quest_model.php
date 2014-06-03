@@ -69,12 +69,25 @@ class Quest_model extends MY_Model
 
     public function getPlayerQuest($data) {
         $this->set_site_mongodb($data["site_id"]);
-        $result = $this->mongo_db->where(array(
+
+        $this->mongo_db->where(array(
             "pb_player_id" => $data["pb_player_id"],
             "quest_id" => $data["quest_id"]
-        ))->get('playbasis_quest_to_player');
+        ));
+        $result = $this->mongo_db->get('playbasis_quest_to_player');
 
         return $result ? $result[0] : array();
+    }
+
+    public function getPlayerQuests($data) {
+        $this->set_site_mongodb($data["site_id"]);
+
+        $this->mongo_db->where(array(
+            "pb_player_id" => $data["pb_player_id"]
+        ));
+        $result = $this->mongo_db->get('playbasis_quest_to_player');
+
+        return $result;
     }
 
     public function updateQuestStatus($data, $status){
