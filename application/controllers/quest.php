@@ -305,7 +305,10 @@ class Quest extends REST_Controller
                         $event = array(
                             'event_type' => 'ACTION_NOT_ENOUGH',
                             'message' => 'Your action not enough',
-                            'incomplete' => array($c["completion_id"]."" => ((int)$c["completion_value"] - (int)$action["count"]))
+                            'incomplete' => array(
+                                'action_id' => $c["completion_id"]."",
+                                'action_value' => ((int)$c["completion_value"] - (int)$action["count"])
+                            )
                         );
                         array_push($missionEvent, $event);
                     }
@@ -322,7 +325,10 @@ class Quest extends REST_Controller
                         $event = array(
                             'event_type' => 'POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
-                            'incomplete' => array($c["completion_id"]."" => ((int)$c["completion_value"] - (int)$point))
+                            'incomplete' => array(
+                                'reward_id' => $c["completion_id"]."",
+                                'reward_value' => ((int)$c["completion_value"] - (int)$point)
+                            )
                         );
                         array_push($missionEvent, $event);
                     }
@@ -339,7 +345,10 @@ class Quest extends REST_Controller
                         $event = array(
                             'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
-                            'incomplete' => array($c["completion_id"]."" => ((int)$c["completion_value"] - (int)$custom_point))
+                            'incomplete' => array(
+                                'reward_id' => $c["completion_id"]."",
+                                'reward_value' => ((int)$c["completion_value"] - (int)$custom_point)
+                            )
                         );
                         array_push($missionEvent, $event);
                     }
@@ -354,7 +363,10 @@ class Quest extends REST_Controller
                         $event = array(
                             'event_type' => 'BADGE_NOT_ENOUGH',
                             'message' => 'user badge not enough',
-                            'incomplete' => array($c["completion_id"]."" => ((int)$c["completion_value"] - (int)$badge))
+                            'incomplete' => array(
+                                'badge_id' => $c["completion_id"]."",
+                                'badge_value' => ((int)$c["completion_value"] - (int)$badge)
+                            )
                         );
                         array_push($missionEvent, $event);
                     }
@@ -622,10 +634,14 @@ class Quest extends REST_Controller
 
             $data['quest_id'] = $quest_id;
             $quest = $this->quest_model->getQuest($data);
-            array_walk_recursive($quest, array($this, "convert_mongo_object"));
-            $resp['quest'] = $quest;
-            $resp['quest']['quest_id'] = $quest['_id'];
-            unset($resp['quest']['_id']);
+            if($quest){
+                array_walk_recursive($quest, array($this, "convert_mongo_object"));
+                $resp['quest'] = $quest;
+                $resp['quest']['quest_id'] = $quest['_id'];
+                unset($resp['quest']['_id']);
+            }else{
+                $resp['quest'] = array();
+            }
         } else {
             // get all questss related to clients
             $quest = $this->quest_model->getQuests($data);
@@ -766,6 +782,48 @@ class Quest extends REST_Controller
             }
         }
         $this->response($this->resp->setRespond(array()), 200);
+    }
+
+    public function mission_get($quest_id = '', $mission_id = ''){
+        $required = $this->input->checkParam(array('api_key'));
+        if ($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if (!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+
+        $data = array(
+            'client_id' => $validToken['client_id'],
+            'site_id' => $validToken['site_id']
+        );
+
+        if ($quest_id && $mission_id) {
+            // get specific quest
+            try {
+                $quest_id = new MongoId($quest_id);
+            } catch(MongoException $ex) {
+                $quest_id = null;
+            }
+
+            try {
+                $mission_id = new MongoId($mission_id);
+            } catch(MongoException $ex) {
+                $mission_id = null;
+            }
+
+            $data['quest_id'] = $quest_id;
+            $data['mission_id'] = $mission_id;
+            $quest = $this->quest_model->getMission($data);
+            if($quest){
+                array_walk_recursive($quest, array($this, "convert_mongo_object"));
+                $resp = $quest['missions'][0];
+                $resp['quest_id'] = $quest['_id'];
+                unset($resp['quest']['_id']);
+            }else{
+                $resp = array();
+            }
+        }
+        $this->response($this->resp->setRespond($resp), 200);
     }
 
     private function convert_mongo_object(& $item,$key) {

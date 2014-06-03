@@ -144,6 +144,7 @@ $route['Quest/'.ANY_STRING.'/join'] = 'quest/join/$1';
 $route['Quest/'.ANY_STRING.'/cancel'] = 'quest/cancel/$1';
 $route['Quest/available'] = 'quest/available';
 $route['Quest/'.ANY_STRING.'/available'] = 'quest/$1/available';
+$route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 
 //misc
 $route['test']	= 'playbasis/test';
