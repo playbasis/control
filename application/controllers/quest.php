@@ -32,6 +32,11 @@ class Quest extends REST_Controller
 
         $questEvent = array();
 
+        $questResult = array(
+            'events_missions' => array(),
+            'events_quests' => array()
+        );
+
         foreach($quests as $q){
 
             $missionEvent = array();
@@ -84,7 +89,7 @@ class Quest extends REST_Controller
 
                                 $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "finish");
 
-                                $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken);
+                                $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, $questResult);
                                 //for check total mission finish
                                 $player_finish_count++;
                                 $next_mission = true;
@@ -122,7 +127,7 @@ class Quest extends REST_Controller
                             if(!(count($event_of_mission) > 0)){
                                 $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"finish");
 
-                                $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken);
+                                $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, $questResult);
                                 //for check total mission finish
                                 $player_finish_count++;
                             }
@@ -155,7 +160,7 @@ class Quest extends REST_Controller
             array_push($questEvent, $event);
         }
 
-        return $questEvent;
+        return $questResult;
 
     }
 
@@ -366,7 +371,7 @@ class Quest extends REST_Controller
         return $missionEvent;
     }
 
-    private function updateMissionRewardPlayer($player_id, $quest_id, $mission_id, $validToken){
+    private function updateMissionRewardPlayer($player_id, $quest_id, $mission_id, $validToken, &$questResult){
 
         $data = array(
             "client_id" => $validToken['client_id'],
@@ -379,53 +384,25 @@ class Quest extends REST_Controller
 
         $cl_player_id = $this->player_model->getClientPlayerId($player_id, $validToken['site_id']);
 
-        $questResult = array(
-            'events' => array()
+        $sub_events = array(
+            "events" => array(),
+            "mission_id" => $mission_id."",
+            "mission_number" => $mission["missions"][0]["mission_number"],
+            "mission_name" => $mission["missions"][0]["mission_name"],
+            "description" => $mission["missions"][0]["description"],
+            "hint" => $mission["missions"][0]["hint"],
+            "image" => $mission["missions"][0]["image"],
+            "quest_id" => $quest_id.""
         );
 
-        foreach($mission["missions"][0]["rewards"] as $r){
-            if($r["reward_type"] == "CUSTOM_POINT"){
-                $reward_config = array(
-                    "client_id" => $validToken['client_id'],
-                    "site_id" => $validToken['site_id']
-                );
-                $reward_name = $this->reward_model->getRewardName($reward_config, $r["reward_id"]);
+        $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
 
-                $update_reward_config = array(
-                    "client_id" => $validToken['client_id'],
-                    "site_id" => $validToken['site_id'],
-                    "pb_player_id" => $player_id,
-                    "player_id" => $cl_player_id
-                );
-                $return_data = array();
-                $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $update_reward_config, $return_data);
-                $event = array(
-                    'event_type' => 'REWARD_RECEIVED',
-                    'reward_type' => $return_data['reward_name'],
-                    'value' => $return_data['quantity']
-                );
+        array_push($questResult['events_missions'], $sub_events);
 
-                array_push($questResult['events'], $event);
-                $eventMessage = $this->utility->getEventMessage('point', $return_data['quantity'], $return_data['reward_name']);
-                //log event - reward, custom point
-                /*$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
-                    'reward_id' => $jigsawConfig['reward_id'],
-                    'reward_name' => $jigsawConfig['reward_name'],
-                    'amount' => $jigsawConfig['quantity']
-                )));*/
-                //publish to node stream
-                $this->node->publish(array_merge($update_reward_config, array(
-                    'action_name' => 'mission_reward',
-                    'message' => $eventMessage,
-                    'amount' => $return_data['quantity'],
-                    'point' => $return_data['reward_name']
-                )), $validToken['domain_name'], $validToken['site_id']);
-            }
-        }
-        var_dump($questResult);
+        return $questResult;
     }
 
-    private function updateQuestRewardPlayer($player_id, $quest_id, $validToken){
+    private function updateQuestRewardPlayer($player_id, $quest_id, $validToken, &$questResult){
         $data = array(
             "client_id" => $validToken['client_id'],
             "site_id" => $validToken['site_id'],
@@ -433,6 +410,123 @@ class Quest extends REST_Controller
         );
 
         $quest = $this->quest_model->getQuest($data);
+
+        $cl_player_id = $this->player_model->getClientPlayerId($player_id, $validToken['site_id']);
+
+        $sub_events = array(
+            "events" => array(),
+            "quest_id" => $quest_id."",
+            "quest_name" => $quest["quest_name"],
+            "description" => $quest["description"],
+            "hint" => $quest["hint"],
+            "image" => $quest["image"],
+        );
+
+        $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+
+        array_push($questResult['events_quests'], $sub_events);
+
+        return $questResult;
+    }
+
+    private function updateReward($array_reward, $sub_events, $player_id, $cl_player_id, $validToken){
+
+        $update_config = array(
+            "client_id" => $validToken['client_id'],
+            "site_id" => $validToken['site_id'],
+            "pb_player_id" => $player_id,
+            "player_id" => $cl_player_id
+        );
+
+        foreach($array_reward as $r){
+
+            if($r["reward_type"] == "BADGE"){
+
+                $this->client_model->updateplayerBadge($r["reward_id"], $r["reward_value"], $player_id, $cl_player_id, $validToken['client_id'], $validToken['site_id']);
+                $badgeData = $this->client_model->getBadgeById($r["reward_id"], $validToken['site_id']);
+
+                if(!$badgeData)
+                    break;
+                $event = array(
+                    'event_type' => 'REWARD_RECEIVED',
+                    'reward_type' => 'badge',
+                    'reward_data' => $badgeData,
+                    'value' => $r["reward_value"]
+                );
+                array_push($sub_events['events'], $event);
+                $eventMessage = $this->utility->getEventMessage('badge', '', '', $event['reward_data']['name']);
+                //log event - reward, badge
+
+                //publish to node stream
+                $this->node->publish(array_merge($update_config, array(
+                    'action_name' => 'mission_reward',
+                    'message' => $eventMessage,
+                    'badge' => $event['reward_data']
+                )), $validToken['domain_name'], $validToken['site_id']);
+            }else{
+                // for POINT ,CUSTOM_POINT and EXP
+
+                if($r["reward_type"] == "EXP"){
+                    //check if player level up
+                    $lv = $this->client_model->updateExpAndLevel($r["reward_value"], $player_id, $cl_player_id, array(
+                        'client_id' => $validToken['client_id'],
+                        'site_id' => $validToken['site_id']
+                    ));
+                    if($lv > 0)
+                    {
+                        $update_level_config = array(
+                            "client_id" => $validToken['client_id'],
+                            "site_id" => $validToken['site_id'],
+                            "pb_player_id" => $player_id,
+                            "player_id" => $cl_player_id
+                        );
+
+                        $eventMessage = $this->levelup($lv, $sub_events, $update_level_config);
+                        //publish to node stream
+                        $this->node->publish(array_merge($update_level_config, array(
+                            'action_name' => 'mission_reward',
+                            'message' => $eventMessage,
+                            'level' => $lv
+                        )), $validToken['domain_name'], $validToken['site_id']);
+                    }
+
+                    $reward_type_message = 'point';
+                    $reward_type_name = 'exp';
+                }else{
+                    $reward_config = array(
+                        "client_id" => $validToken['client_id'],
+                        "site_id" => $validToken['site_id']
+                    );
+                    $reward_name = $this->reward_model->getRewardName($reward_config, $r["reward_id"]);
+
+                    $return_data = array();
+                    $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $update_config, $return_data);
+
+                    $reward_type_message = 'point';
+                    $reward_type_name = $return_data['reward_name'];
+                }
+
+                $event = array(
+                    'event_type' => 'REWARD_RECEIVED',
+                    'reward_type' => $reward_type_name,
+                    'value' => $r["reward_value"]
+                );
+                array_push($sub_events['events'], $event);
+                $eventMessage = $this->utility->getEventMessage($reward_type_message, $r["reward_value"], $reward_type_name);
+                //log event - reward, non-custom point
+
+                //publish to node stream
+                $this->node->publish(array_merge($update_config, array(
+                    'action_name' => 'mission_reward',
+                    'message' => $eventMessage,
+                    'amount' => $r["reward_value"],
+                    'point' => $reward_type_name
+                )), $validToken['domain_name'], $validToken['site_id']);
+            }
+
+        }
+
+        return $sub_events;
     }
 
     private function trackQuest(){
@@ -447,6 +541,19 @@ class Quest extends REST_Controller
             'mission_id' => $mission_id
         );
         //$this->quest_model->updateMissionStatus($data, $status);
+    }
+
+    private function levelup($lv, &$sub_events, $input)
+    {
+        $event = array(
+            'event_type' => 'LEVEL_UP',
+            'value' => $lv
+        );
+        array_push($sub_events['events'], $event);
+        $eventMessage = $this->utility->getEventMessage('level', '', '', '', $lv);
+        //log event - level
+
+        return $eventMessage;
     }
 
     public function testQuest_post(){
