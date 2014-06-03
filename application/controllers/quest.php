@@ -233,7 +233,100 @@ class Quest extends MY_Controller
 
         if($quest_id != null){
             $data['quest_id'] = $quest_id;
-            $this->data['editQuest'] = $this->Quest_model->getQuestByClientSiteId($data);
+            $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
+
+            $this->data['editQuest']['quest_name'] = isset($editQuest['quest_name'])?$editQuest['quest_name']:null;
+            $this->data['editQuest']['description'] = isset($editQuest['description'])?$editQuest['description']:null;
+            $this->data['editQuest']['hint'] = isset($editQuest['hint'])?$editQuest['hint']:null;
+            $this->data['editQuest']['mission_order'] = isset($editQuest['mission_order'])?$editQuest['mission_order']:false;
+            $this->data['editQuest']['sort_order'] = isset($editQuest['sort_order'])?$editQuest['sort_order']:false;
+            $this->data['editQuest']['status'] = isset($editQuest['status'])?$editQuest['status']:false;
+
+            $countQuest = 0;
+            $countCustomPoints = 0;
+            $countBadges = 0;
+            if(isset($editQuest['condition'])){
+                foreach($editQuest['condition'] as $condition){
+                    if($condition['condition_type'] == 'DATETIME_START'){
+                        $this->data['editDateStartCon']['condition_type'] = $condition['condition_type'];
+                        $this->data['editDateStartCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editDateStartCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                    }
+
+                    if($condition['condition_type'] == 'DATETIME_END'){
+                        $this->data['editDateEndCon']['condition_type'] = $condition['condition_type'];
+                        $this->data['editDateEndCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editDateEndCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                    }    
+
+                    if($condition['condition_type'] == 'LEVEL_START'){
+                        $this->data['editLevelStartCon']['condition_type'] = $condition['condition_type'];
+                        $this->data['editLevelStartCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editLevelStartCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                    }
+                    if($condition['condition_type'] == 'LEVEL_END'){
+                        $this->data['editLevelEndCon']['condition_type'] = $condition['condition_type'];
+                        $this->data['editLevelEndCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editLevelEndCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                    }
+                    if($condition['condition_type'] == 'QUEST'){
+                        $this->data['editQuestConditionCon'][$countQuest]['condition_type'] = $condition['condition_type']; 
+                        $this->data['editQuestConditionCon'][$countQuest]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editQuestConditionCon'][$countQuest]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                        $countQuest++;
+                    }
+                    if($condition['condition_type'] == 'POINT'){
+                        $this->data['editPointsCon']['condition_type'] = $condition['condition_type']; 
+                        $this->data['editPointsCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editPointsCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                    }
+                    if($condition['condition_type'] == 'CUSTOM_POINT'){
+                        $this->data['editCustomPointsCon'][$countCustomPoints]['condition_type'] = $condition['condition_type']; 
+                        $this->data['editCustomPointsCon'][$countCustomPoints]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editCustomPointsCon'][$countCustomPoints]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                        $countCustomPoints++;
+                    }
+                    if($condition['condition_type'] == 'BADGE'){
+                        $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type']; 
+                        $this->data['editBadgeCon'][$countBadges]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editBadgeCon'][$countBadges]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                        $countBadges++;
+                    }
+                }    
+            }
+
+            if(isset($editQuest['reward'])){
+                $countCustomPoints = 0;
+                $countBadges = 0;
+                foreach($editQuest['reward'] as $reward){
+                    if($reward['reward_type'] == 'POINT'){
+                        $this->data['editPointsRew']['reward_type'] = $reward['reward_type']; 
+                        $this->data['editPointsRew']['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                        $this->data['editPointsRew']['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                    }
+                    if($reward['reward_type'] == 'EXP'){
+                        $this->data['editExpRew']['reward_type'] = $reward['reward_type']; 
+                        $this->data['editExpRew']['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                        $this->data['editExpRew']['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                    }
+                    if($reward['reward_type'] == 'CUSTOM_POINT'){
+                        $this->data['editCustomPointsRew'][$countCustomPoints]['reward_type'] = $reward['reward_type']; 
+                        $this->data['editCustomPointsRew'][$countCustomPoints]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                        $this->data['editCustomPointsRew'][$countCustomPoints]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                        $countCustomPoints++;
+                    }
+                    if($reward['reward_type'] == 'BADGE'){
+                        $this->data['editBadgeRew'][$countBadges]['reward_type'] = $reward['reward_type']; 
+                        $this->data['editBadgeRew'][$countBadges]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                        $this->data['editBadgeRew'][$countBadges]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                        $countBadges++;
+                    }
+                }
+            }
+
+            if(isset($editQuest['missions'])){
+                echo "HELLO FOO";
+            }
         }
 
         $this->data['main'] = 'quest_form';
