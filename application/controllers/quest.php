@@ -572,7 +572,7 @@ class Quest extends REST_Controller
         return $eventMessage;
     }
 
-    public function testQuest_post(){
+    /*public function testQuest_post(){
         //process regular data
         $required = $this->input->checkParam(array(
             'token'
@@ -597,7 +597,7 @@ class Quest extends REST_Controller
         $apiResult = $this->QuestProcess($pb_player_id, $validToken);
 
         $this->response($this->resp->setRespond($apiResult), 200);
-    }
+    }*/
 
     public function index_get($quest_id = 0) {
         $required = $this->input->checkParam(array('api_key'));
