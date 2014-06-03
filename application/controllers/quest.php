@@ -134,6 +134,7 @@ class Quest extends MY_Controller
 
                         unset($data[$key][$kk]);
                         $data[$key][$im] = $val;
+                        $data[$key][$im]['mission_id'] = new MongoId();
                         foreach($val as $k => $v){
                             if($k == 'completion' || $k == 'reward'){
                                 $i = 0;
@@ -325,7 +326,12 @@ class Quest extends MY_Controller
             }
 
             if(isset($editQuest['missions'])){
-                echo "HELLO FOO";
+                $missionCount = 0;
+                foreach($editQuest['missions'] as $mission){
+                    $this->data['editMission'][$missionCount]['mission_name'] = $mission['mission_name'];
+                    $this->data['editMission'][$missionCount]['description'] = $mission['description'];
+                    $missionCount++;
+                }
             }
         }
 
