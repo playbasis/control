@@ -914,6 +914,95 @@
             ]
         },
         {
+            "name": "Quest API",
+            "methods": [
+                {
+                    "MethodName": "Quest List Info",
+                    "Synopsis": "Returns information about all quest for the current site.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest",
+                    "RequiresOAuth": "N",
+                    "parameters": []
+                },
+                {
+                    "MethodName": "Quest Info",
+                    "Synopsis": "Returns information about the quest with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id to query"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Join Quest",
+                    "Synopsis": "Player join quest.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quest/:id/join",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id as player need to join"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Cancel Quest",
+                    "Synopsis": "Player cancel quest.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quest/:id/cancel",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id as player need to join"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "Redeem API",
             "methods": [
                 {
