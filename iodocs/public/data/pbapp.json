@@ -941,6 +941,29 @@
                     ]
                 },
                 {
+                    "MethodName": "Mission Info",
+                    "Synopsis": "Returns information about the mission with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/:id/mission/:mission_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id to query"
+                        },
+                        {
+                            "Name": "mission_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "mission id to query"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Join Quest",
                     "Synopsis": "Player join quest.",
                     "HTTPMethod": "POST",
