@@ -350,27 +350,29 @@ class Redeem extends REST_Controller
 
     public function test_get()
     {
-        $this->benchmark->mark('goods_redeem_start');
-        $validToken = $this->auth_model->findToken($this->input->get('token'));
+        var_Dump($this->input->get('token'));
+//        $this->benchmark->mark('goods_redeem_start');
+        $validToken = $this->auth_model->test($this->input->get('token'));
 
-        $goods_id = $this->input->get('goods_id');
-        $goods = $this->goods_model->getGoods(array_merge($validToken, array(
-            'goods_id' => new MongoId($goods_id)
-        )));
-
-        $amount = 1;
-
-        $cl_player_id = "1";
-        $validToken = array_merge($validToken, array(
-            'cl_player_id' => $cl_player_id
-        ));
-        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
-
-        $redeemResult = $this->processRedeem($pb_player_id, $goods, $amount, $validToken);
-
-        $this->benchmark->mark('goods_redeem_end');
-        $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
-        $this->response($this->resp->setRespond($redeemResult), 200);
+        var_Dump($validToken);
+//        $goods_id = $this->input->get('goods_id');
+//        $goods = $this->goods_model->getGoods(array_merge($validToken, array(
+//            'goods_id' => new MongoId($goods_id)
+//        )));
+//
+//        $amount = 1;
+//
+//        $cl_player_id = "1";
+//        $validToken = array_merge($validToken, array(
+//            'cl_player_id' => $cl_player_id
+//        ));
+//        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+//
+//        $redeemResult = $this->processRedeem($pb_player_id, $goods, $amount, $validToken);
+//
+//        $this->benchmark->mark('goods_redeem_end');
+//        $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
+//        $this->response($this->resp->setRespond($redeemResult), 200);
     }
 }
 ?>

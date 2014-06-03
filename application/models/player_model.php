@@ -231,6 +231,47 @@ class Player_model extends MY_Model
 		$result['count'] = $count;
 		return $result;
 	}
+    public function getActionCountFromDatetime($pb_player_id, $action_id, $action_filter, $site_id, $starttime="", $endtime="")
+    {
+        $fields = array(
+            'pb_player_id' => $pb_player_id,
+            'action_id' => $action_id
+        );
+        if(!empty($action_filter)){
+            $fields['url'] = $action_filter;
+        }
+        $datecondition = array();
+        if($starttime != ''){
+            $datecondition = array_merge($datecondition, array('$gt' => new MongoDate(strtotime($starttime))));
+        }
+        if($endtime != ''){
+            $datecondition = array_merge($datecondition, array('$lte' => new MongoDate(strtotime($endtime))));
+        }
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $count = $this->mongo_db->count('playbasis_action_log');
+        $this->mongo_db->select(array(
+            'action_id',
+            'action_name'
+        ));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $result = $this->mongo_db->get('playbasis_action_log');
+        $result = ($result) ? $result[0] : array();
+        if($result){
+            $result['action_id'] = $result['action_id']."";
+        }
+        $result['count'] = $count;
+
+        return $result;
+    }
 	public function getBadge($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);
@@ -1131,5 +1172,39 @@ class Player_model extends MY_Model
 		));
 		return $result['n'];
 	}
+
+    public function getAllQuests($pb_player_id, $site_id, $status="")
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'site_id' => $site_id,
+        ));
+        $c_status = array("join", "unjoin", "finish");
+        if($status != '' && in_array($status, $c_status) ){
+            $this->mongo_db->where(array(
+                'status' => $status,
+            ));
+        }
+
+        return $this->mongo_db->get('playbasis_quest_to_player');
+    }
+
+    public function getMission($pb_player_id, $quest_id, $mission_id, $site_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array('missions.$'));
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'site_id' => $site_id,
+            'quest_id' => $quest_id,
+            'missions.mission_id' => $mission_id
+        ));
+
+        $result = $this->mongo_db->get('playbasis_quest_to_player');
+        return $result ? $result[0] : array();
+    }
 }
 ?>

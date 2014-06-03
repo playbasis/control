@@ -23,6 +23,18 @@ class Reward_model extends MY_Model
 		if (!$result) $result = array();
 		return $result;
 	}
+    public function getRewardName($data, $reward_id)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('name'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'reward_id' => $reward_id
+        ));
+        $result = $this->mongo_db->get('playbasis_reward_to_client');
+        return $result ? $result[0]['name'] : array();
+    }
 	public function findByName($data, $reward_name)
 	{
 		$this->set_site_mongodb($data['site_id']);
