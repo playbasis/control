@@ -165,7 +165,8 @@ class Quest extends MY_Controller
             //     var_dump($data);
             // echo "</pre>";
             
-            return $this->Quest_model->addQuestToClient($data);
+            $this->Quest_model->addQuestToClient($data);
+            redirect('/quest', 'refresh');
             
         }else{
             $this->getForm();        
