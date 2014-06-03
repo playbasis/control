@@ -57,7 +57,6 @@
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_status'); ?>:</td>
-                            <?php var_dump($editQuest['status']) ?>
                             <td><input type="checkbox" name="status" <?php echo (isset($editQuest['status']) && $editQuest['status'])?'checked':'unchecked'; ?> size="1" /></td>
                         </tr>
                         <tr>
@@ -294,8 +293,98 @@
                     <a href="javascript:void(0)" class="btn btn-primary add-mission-btn btn-lg">+ New Mission</a>
                 </div>
                 <div class="mission-wrapper">
-                    
-                </div>
+                    <?php if(isset($editMission) && !empty($editMission)){ ?>
+                        <?php foreach($editMission as $mission){ ?>
+                        <div class="mission-item-wrapper" data-mission-id="<?php echo $mission['mission_id'] ?>">                        
+                            <div class="box-header box-mission-header overflow-visible">                            
+                                <h2><img src="http://images.pbapp.net/cache/no_image-100x100.jpg" width="50"><?php echo $mission['mission_name'] ?></h2>                            
+                                <div class="box-icon">                                
+                                    <a href="javascript:void(0)" class="btn btn-danger right remove-mission-btn dropdown-toggle" data-toggle="dropdown">Delete </a>                                
+                                    <span class="break"></span>                                
+                                    <a href="javaScript:void()"><i class="icon-chevron-up"></i></a>                            
+                                </div>                        
+                            </div>                        
+                            <div class="box-content clearfix">                            
+                                <div class="span6">                                
+                                    <table class="form">                                    
+                                        <tbody>
+                                            <tr>                                        
+                                                <td><span class="required">*</span> Mission Name:</td>                                        
+                                                <td><input type="text" name="missions[1][mission_name]" size="100" value="<?php echo $mission['mission_name'] ?>"></td>                                    
+                                            </tr>                                    
+                                            <tr>                                        
+                                                <td><span class="required">*</span> Mission Number:</td>                                        
+                                                <td><input type="text" name="missions[1][mission_number]" size="100" value="<?php echo $mission['description'] ?>"></td>                                    
+                                            </tr>                                    
+                                            <tr>                                        
+                                                <td>Description:</td>                                        
+                                                <td><textarea name="missions[1][description]" rows="4"><?php echo $mission['description'] ?></textarea></td>
+                                            </tr>                                    
+                                            <tr>                                        
+                                                <td>Hint:</td>                                        
+                                                <td><input type="text" name="missions[1][hint]" size="100" value="<?php echo $mission['hint'] ?>"></td>                                    
+                                            </tr>                                    
+                                            <tr>                                        
+                                                <td>Mission Image:</td>                                        
+                                                <td valign="top">
+                                                    <div class="image">
+                                                        <img src="http://images.pbapp.net/cache/no_image-100x100.jpg" alt="" id="thumb_mission" onerror="$(this).attr(" src","http:="" localhost="" playbasis="" control="" image="" default-image.png");"="">                                            
+                                                        <input type="hidden" name="missions[1][image]" value="no_image.jpg" id="image">                                            
+                                                        <br>
+                                                        <a onclick="image_upload(" image",="" "thumb_mission");"="">Browse</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$(" #thumb_mission").attr("src",="" "");="" $("#image").attr("value",="" "");"="">Clear</a>
+                                                    </div>                                        
+                                                </td>                                    
+                                            </tr>                                
+                                        </tbody>
+                                    </table>                            
+                                </div>                            
+                                <div class="span6">                                
+                                    <div class="box box-add-item completion-wrapper">                                    
+                                        <div class="box-header overflow-visible">                                        
+                                            <h2><i class="icon-trophy"></i><span class="break"></span>Completion</h2>                                        
+                                            <div class="box-icon box-icon-action">                                            
+                                                <a href="javascript:void(0)" class="btn btn-primary right add-completion-btn dropdown-toggle" data-toggle="dropdown"> + Add Completion</a>                                            
+                                                <ul class="dropdown-menu add-completion-menu" role="menu" aria-labelledby="dropdownMenu">                                                
+                                                    <li class="add-action"><a tabindex="-1" href="javascript:void(0)">ACTION</a></li>                                                
+                                                    <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                                
+                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>                                                
+                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>                                            
+                                                </ul>                                            
+                                                <span class="break"></span>                                            
+                                                <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>                                        
+                                            </div>                                    
+                                        </div>                                    
+                                        <div class="box-content">                                        
+                                            <div class="completion-container">                                        
+                                                <h3 class="no-item">No Item</h3>
+                                            </div>                                    
+                                        </div>                                
+                                    </div>                                
+                                    <div class="box box-add-item reward-wrapper">                                    
+                                        <div class="box-header overflow-visible">                                        
+                                            <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>                                        
+                                            <div class="box-icon box-icon-action">                                            
+                                                <a href="javascript:void(0)" class="btn btn-primary right add-reward-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>                                            
+                                                <ul class="dropdown-menu add-reward-menu" role="menu" aria-labelledby="dropdownMenu">                                              
+                                                    <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                              
+                                                    <li class="add-exp"><a tabindex="-1" href="javascript:void(0)">EXP</a></li>                                              
+                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>                                              
+                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>                                            
+                                                </ul>                                            
+                                                <span class="break"></span>                                            
+                                                <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>                                        
+                                            </div>                                    
+                                        </div>                                    
+                                        <div class="box-content">                                        
+                                            <div class="reward-container"><h3 class="no-item">No Item</h3></div>                                    
+                                        </div>                                
+                                    </div>                            
+                                </div>                        
+                            </div>                    
+                        </div>
+                        <?php } ?> <!-- end foreach loop -->
+                    <?php } ?> <!-- end check if missions exists -->
+                </div><!-- .mission-wrapper -->
             </div>
                 <?php echo form_close();?>
             </div><!-- .content -->
