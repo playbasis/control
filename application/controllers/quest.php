@@ -434,12 +434,33 @@ class Quest extends REST_Controller
             }
 
             $data['quest_id'] = $quest_id;
-            $resp = $this->quest_model->getQuest($data);
+            $quest = $this->quest_model->getQuest($data);
+            array_walk_recursive($quest, array($this, "convert_mongo_object"));
+            $resp['quest'] = $quest;
+            $resp['quest']['quest_id'] = $quest['_id'];
+            unset($resp['quest']['_id']);
         } else {
             // get all questss related to clients
-            $resp = $this->quest_model->getQuests($data);
+            $quest = $this->quest_model->getQuests($data);
+            array_walk_recursive($quest, array($this, "convert_mongo_object"));
+            foreach ($quest as $key => $value) {
+                $quest[$key]['quest_id'] = $quest[$key]['_id'];
+                unset($quest[$key]['_id']);
+            }
+            $resp['quests'] = $quest;
         }
         $this->response($this->resp->setRespond($resp), 200);
     }
+
+    private function convert_mongo_object(& $item,$key) {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else if (get_class($item) === 'MongoDate') {
+                $item =  datetimeMongotoReadable($item);
+            }
+        }
+    }
+
 }
 ?>
