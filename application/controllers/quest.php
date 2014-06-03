@@ -450,9 +450,9 @@ class Quest extends REST_Controller
         $this->response($this->resp->setRespond($resp), 200);
     }
 
-    public function index_put($quest_id = 0) {
+    public function join_post($quest_id = 0) {
         // check put parameter
-        $required = $this->input->checkParamPut(array("token", "player_id"), $this->_put_args);
+        $required = $this->input->checkParam(array("token", "player_id"));
         if ($required)
             $this->response($this->error->setError("PARAMETER_MISSING", $required), 200);
 
@@ -462,13 +462,13 @@ class Quest extends REST_Controller
 			)), 200);
 
         // validate token
-        $validToken = $this->auth_model->findToken($this->_put_args["token"]);
+        $validToken = $this->auth_model->findToken($this->input->post("token"));
         if (!$validToken)
             $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
 
         // check user exists
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
-			"cl_player_id" => $this->_put_args["player_id"]
+			"cl_player_id" => $this->input->post("player_id")
 		)));
 		if (!$pb_player_id)
             $this->response($this->error->setError("USER_NOT_EXIST"), 200);
@@ -520,10 +520,10 @@ class Quest extends REST_Controller
 
     }
 
-    public function index_delete($quest_id = 0)
+    public function cancel_post($quest_id = 0)
     {
         // check delete parameter
-        $required = $this->input->checkParamPut(array("token", "player_id"), $this->_delete_args);
+        $required = $this->input->checkParam(array("token", "player_id"));
         if ($required)
             $this->response($this->error->setError("PARAMETER_MISSING", $required), 200);
 
@@ -533,13 +533,13 @@ class Quest extends REST_Controller
 			)), 200);
 
         // validate token
-        $validToken = $this->auth_model->findToken($this->_delete_args["token"]);
+        $validToken = $this->auth_model->findToken($this->input->post("token"));
         if (!$validToken)
             $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
 
         // check user exists
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
-			"cl_player_id" => $this->_delete_args["player_id"]
+			"cl_player_id" => $this->input->post("player_id")
 		)));
 		if (!$pb_player_id)
             $this->response($this->error->setError("USER_NOT_EXIST"), 200);
