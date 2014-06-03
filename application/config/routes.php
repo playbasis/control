@@ -137,6 +137,9 @@ $route['Service/recent_point'] = 'service/recent_point';
 
 //Quest
 $route['quest/testquest'] = 'Quest/testQuest';
+$route['quest/'.ANY_STRING] = 'Quest/index/$1';
+$route['quest'] = 'Quest/index';
+$route['quests'] = 'Quest/index';
 
 //misc
 $route['test']	= 'playbasis/test';

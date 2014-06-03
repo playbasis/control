@@ -22,6 +22,22 @@ class Quest_model extends MY_Model
 
         return $result ? $result[0] : array();
     }
+
+    public function getQuests($data)
+    {
+        // get all quests related to client
+        $this->set_site_mongodb($data['site_id']);
+
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'status' => true
+        ));
+        $result = $this->mongo_db->get('playbasis_quest_to_client');
+
+        return $result;
+    }
+
     public function updateQuestStatus($data, $status){
         $this->set_site_mongodb($data['site_id']);
 

@@ -409,5 +409,37 @@ class Quest extends REST_Controller
 
         $this->QuestProcess($pb_player_id, $validToken);
     }
+
+    public function index_get($quest_id = 0) {
+        $required = $this->input->checkParam(array(
+            'api_key'
+        ));
+        if ($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if (!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+
+        $data = array(
+            'client_id' => $validToken['client_id'],
+            'site_id' => $validToken['site_id']
+        );
+
+        if ($quest_id) {
+            // get specific quest
+            try {
+                $quest_id = new MongoId($quest_id);
+            } catch(MongoException $ex) {
+                $quest_id = null;
+            }
+
+            $data['quest_id'] = $quest_id;
+            $resp = $this->quest_model->getQuest($data);
+        } else {
+            // get all questss related to clients
+            $resp = $this->quest_model->getQuests($data);
+        }
+        $this->response($this->resp->setRespond($resp), 200);
+    }
 }
 ?>
