@@ -310,19 +310,19 @@
                                         <tbody>
                                             <tr>                                        
                                                 <td><span class="required">*</span> Mission Name:</td>                                        
-                                                <td><input type="text" name="missions[1][mission_name]" size="100" value="<?php echo $mission['mission_name'] ?>"></td>                                    
+                                                <td><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][mission_name]" size="100" value="<?php echo $mission['mission_name'] ?>"></td>                                    
                                             </tr>                                    
                                             <tr>                                        
                                                 <td><span class="required">*</span> Mission Number:</td>                                        
-                                                <td><input type="text" name="missions[1][mission_number]" size="100" value="<?php echo $mission['description'] ?>"></td>                                    
+                                                <td><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][mission_number]" size="100" value="<?php echo $mission['description'] ?>"></td>                                    
                                             </tr>                                    
                                             <tr>                                        
                                                 <td>Description:</td>                                        
-                                                <td><textarea name="missions[1][description]" rows="4"><?php echo $mission['description'] ?></textarea></td>
+                                                <td><textarea name="missions[<?php echo $mission['mission_id'] ?>][description]" rows="4"><?php echo $mission['description'] ?></textarea></td>
                                             </tr>                                    
                                             <tr>                                        
                                                 <td>Hint:</td>                                        
-                                                <td><input type="text" name="missions[1][hint]" size="100" value="<?php echo $mission['hint'] ?>"></td>                                    
+                                                <td><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][hint]" size="100" value="<?php echo $mission['hint'] ?>"></td>                                    
                                             </tr>                                    
                                             <tr>                                        
                                                 <td>Mission Image:</td>                                        
@@ -356,6 +356,51 @@
                                         </div>                                    
                                         <div class="box-content">                                        
                                             <div class="completion-container">                                        
+                                                <!-- <pre>
+                                                    <?php //var_dump($editMission); ?>    
+                                                </pre> -->
+                                                <?php if(isset($mission['editAction'])){ ?>
+                                                    
+                                                    <div class="actions-wrapper completion-type well">
+                                                        <h3>Actions  <a class="remove"><i class="icon-remove-sign"></i></a> 
+                                                            <a class="btn add-action-btn">+ Add Actions</a>
+                                                        </h3>
+                                                        <div class="item-container">
+                                                        <?php foreach($mission['editAction'] as $action){ ?>
+                                                            
+                                                                <div class="clearfix item-wrapper actions-item-wrapper" data-id-action="<?php echo $action['completion_id']; ?>">                                    
+                                                                    <div class="span2 text-center">
+                                                                        <i class="<?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['icon'];}} ?> icon-4x"></i>                                    
+                                                                    </div>                                    
+                                                                    <div class="span5">visit</div>                                    
+                                                                    <div class="span2">
+                                                                        <small>filter</small>
+                                                                    <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_filter]" value = "<?php echo $action['completion_filter'] ?>">
+                                                                    </div>                                    
+                                                                    <div class="span1">                                    
+                                                                        <small>value</small>                                    
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_value]" placeholder="Value" value="<?php echo $action['completion_value']; ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_id]" value="<?php echo $action['completion_id']; ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_type]" value="ACTION">
+                                                                    </div>                                    
+                                                                    <div class="span2 col-remove">
+                                                                        <a class="item-remove"><i class="icon-remove-sign"></i></a>                                    
+                                                                    </div>
+                                                                </div>
+                                                            
+                                                        <?php } ?><!-- end of foreach -->
+                                                        </div>
+                                                    </div>
+                                                <?php } ?><!-- end of editAction isset -->
+                                                <?php if(isset($mission['editPoint'])){ ?>
+                                                    <div class="points-wrapper completion-type well">                                                    
+                                                            <h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>
+                                                            <label class="span4">Points:</label>
+                                                            <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_value]" placeholder="Points" value = "<?php echo $mission['editPoint']['completion_value'] ?>">                    
+                                                            <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_type]" value="POINT">                    
+                                                            <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_id]" value="<?php echo $mission['editPoint']['completion_id'] ?>">
+                                                    </div>
+                                                <?php } ?>
                                                 <h3 class="no-item">No Item</h3>
                                             </div>                                    
                                         </div>                                
@@ -1279,10 +1324,13 @@ function setModalActionsItem(target){
 }
 
 function selectActionsItem(target){
+
     var type = target.type;
     var taget_id = target.id || null;
     var parent = target.parent || 'quest';
     var wrapperObj = $('.'+type+'-wrapper');
+
+
 
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
@@ -1290,18 +1338,22 @@ function selectActionsItem(target){
         var wrapperObj = $('.'+type+'-wrapper');
     }
     
+
     $('#modal-select-action .select-item').each(function(){
         if($(this).find('input[type=checkbox]').is(':checked')){
             
+
             if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length <= 0) {
 
                 var id = $(this).data('id-action');
                 var img = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
                 var icon = $(this).find('i').attr('class');
+                
+
 
                 if(parent == 'missions'){
-
+                    
                     inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_filter]"/>';
 
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
@@ -1325,12 +1377,13 @@ function selectActionsItem(target){
                                     </div></div>';
 
                    
-                    wrapperObj.find('.actions-wrapper .item-container').append(actionsItemHtml);
+                wrapperObj.find('.actions-wrapper .item-container').append(actionsItemHtml);
 
 
-                    init_additem_event(target);
+                init_additem_event(target);
             }
         }else{
+
             if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length >= 1) {
                 wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').remove();
             }

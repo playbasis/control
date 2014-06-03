@@ -326,6 +326,7 @@ class Quest extends MY_Controller
             }
 
             if(isset($editQuest['missions'])){
+
                 $missionCount = 0;
                 foreach($editQuest['missions'] as $mission){
                     $this->data['editMission'][$missionCount]['mission_id'] = $mission['mission_id'];
@@ -334,7 +335,39 @@ class Quest extends MY_Controller
                     $this->data['editMission'][$missionCount]['description'] = $mission['description'];
                     $this->data['editMission'][$missionCount]['hint'] = $mission['hint'];
                     $this->data['editMission'][$missionCount]['image'] = $mission['image'];
-                    
+
+                    $countActions = 0;
+                    $countCustomPoints = 0;
+                    $countBadge = 0;
+                    foreach($mission['completion'] as $mm){
+                        if($mm['completion_type'] == 'ACTION'){
+                            $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_type'] = $mm['completion_type'];
+                            $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_value'] = $mm['completion_value'];
+                            $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_id'] = $mm['completion_id'];
+                            $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = $mm['completion_filter'];
+                            $countActions++;
+                        }
+
+                        if($mm['completion_type'] == 'POINT'){
+                            $this->data['editMission'][$missionCount]['editPoint']['completion_type'] = $mm['completion_type'];
+                            $this->data['editMission'][$missionCount]['editPoint']['completion_value'] = $mm['completion_value'];
+                            $this->data['editMission'][$missionCount]['editPoint']['completion_id'] = $mm['completion_id'];
+                        }
+
+                        if($mm['completion_type'] == 'CUSTOM_POINT'){
+                            $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_type'] = $mm['completion_type'];
+                            $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_value'] = $mm['completion_value'];
+                            $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_id'] = $mm['completion_id'];
+                            $countCustomPoints++;
+                        }
+
+                        if($mm['completion_type'] == 'BADGE'){
+                            $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_type'] = $mm['completion_type'];
+                            $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_value'] = $mm['completion_value'];
+                            $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_id'] = $mm['completion_id'];
+                            $countBadge++;
+                        }
+                    }
                     $missionCount++;
                 }
             }
