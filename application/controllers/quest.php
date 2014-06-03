@@ -17,6 +17,7 @@ class Quest extends REST_Controller
         $this->load->model('tool/node_stream', 'node');
         $this->load->model('social_model');
         $this->load->model('quest_model');
+        $this->load->model('reward_model');
     }
 
     public function QuestProcess($pb_player_id, $validToken){
@@ -70,7 +71,7 @@ class Quest extends REST_Controller
 
                     foreach($missions as $m){
                         //if player pass mission so next mission status will change to join
-                        if($next_mission){
+                        if($next_mission && $player_missions[$m["mission_id"].""] == "unjoin"){
                             $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "join");
                             $player_missions[$m["mission_id"].""] = "join";
                             $next_mission = false;
@@ -102,7 +103,7 @@ class Quest extends REST_Controller
                         $event = array(
                             'mission_id' => $m["mission_id"],
                             'mission_status' => (count($event_of_mission)>0 ? false : true),
-                            'mission_detail' => $event_of_mission
+                            'mission_events' => $event_of_mission
                         );
                         array_push($missionEvent, $event);
                     }
@@ -112,6 +113,10 @@ class Quest extends REST_Controller
 
                         if($player_missions[$m["mission_id"].""] != "finish"){
 
+                            if($player_missions[$m["mission_id"].""] == "unjoin"){
+                                $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"join");
+                            }
+
                             $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
 
                             if(!(count($event_of_mission) > 0)){
@@ -120,8 +125,6 @@ class Quest extends REST_Controller
                                 $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken);
                                 //for check total mission finish
                                 $player_finish_count++;
-                            }else{
-                                $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"join");
                             }
                         }else{
                             //for check total mission finish
@@ -131,7 +134,7 @@ class Quest extends REST_Controller
                         $event = array(
                             'mission_id' => $m["mission_id"],
                             'mission_status' => (count($event_of_mission)>0 ? false : true),
-                            'mission_detail' => $event_of_mission
+                            'mission_events' => $event_of_mission
                         );
                         array_push($missionEvent, $event);
                     }
@@ -146,7 +149,7 @@ class Quest extends REST_Controller
             $event = array(
                 'quest_id' => $q["quest_id"],
                 'quest_status' => (count($event_of_quest)>0 ? false : true),
-                'quest_detail' => $event_of_quest,
+                'quest_events' => $event_of_quest,
                 'missions' => $missionEvent
             );
             array_push($questEvent, $event);
@@ -365,10 +368,51 @@ class Quest extends REST_Controller
 
     private function updateMissionRewardPlayer($player_id, $quest_id, $mission_id, $validToken){
 
+        $data = array(
+            "client_id" => $validToken['client_id'],
+            "site_id" => $validToken['site_id'],
+            "quest_id" => $quest_id,
+            "mission_id" => $mission_id
+        );
+
+        $mission = $this->quest_model->getMission($data);
+
+        foreach($mission["missions"][0]["rewards"] as $r){
+            if($r["reward_type"] == "CUSTOM_POINT"){
+                $reward_name = $this->reward_model->getRewardName($data, $r["reward_id"]);
+
+                $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $input, $jigsawConfig);
+                $event = array(
+                    'event_type' => 'REWARD_RECEIVED',
+                    'reward_type' => $jigsawConfig['reward_name'],
+                    'value' => $jigsawConfig['quantity']
+                );
+                array_push($apiResult['events'], $event);
+                $eventMessage = $this->utility->getEventMessage('point', $jigsawConfig['quantity'], $jigsawConfig['reward_name']);
+                //log event - reward, custom point
+                $this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
+                    'reward_id' => $jigsawConfig['reward_id'],
+                    'reward_name' => $jigsawConfig['reward_name'],
+                    'amount' => $jigsawConfig['quantity']
+                )));
+                //publish to node stream
+                $this->node->publish(array_merge($input, array(
+                    'message' => $eventMessage,
+                    'amount' => $jigsawConfig['quantity'],
+                    'point' => $jigsawConfig['reward_name']
+                )), $domain_name, $site_id);
+            }
+        }
     }
 
     private function updateQuestRewardPlayer($player_id, $quest_id, $validToken){
+        $data = array(
+            "client_id" => $validToken['client_id'],
+            "site_id" => $validToken['site_id'],
+            "quest_id" => $quest_id
+        );
 
+        $quest = $this->quest_model->getQuest($data);
     }
 
     private function trackQuest(){
@@ -382,7 +426,7 @@ class Quest extends REST_Controller
             'quest_id' => $quest_id,
             'mission_id' => $mission_id
         );
-        $this->quest_model->updateMissionStatus($data, $status);
+        //$this->quest_model->updateMissionStatus($data, $status);
     }
 
     public function testQuest_post(){
@@ -407,7 +451,9 @@ class Quest extends REST_Controller
             'cl_player_id' => $cl_player_id
         )));
 
-        $this->QuestProcess($pb_player_id, $validToken);
+        $apiResult = $this->QuestProcess($pb_player_id, $validToken);
+
+        $this->response($this->resp->setRespond($apiResult), 200);
     }
 }
 ?>
