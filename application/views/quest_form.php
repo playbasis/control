@@ -29,7 +29,7 @@
             <?php }?>
             <?php $attributes = array('id' => 'form');?>
             <?php echo form_open($form, $attributes);?>
-            <div id="tab-general">
+            <div id="tab-general" class="data-quest-wrapper">
                 <div class="span6">
                     <table class="form ">
                         <tr>
@@ -716,16 +716,17 @@
             $('.date').datepicker({dateFormat: 'yy-mm-dd'});
 
             var type = target.type;
-            var parent = target.parent;
+            var parent = target.parent || 'quests';
             var id = target.id || null;
             
+
 
             if(parent == 'missions'){
                 var wrapperObj = $('.mission-item-wrapper[data-mission-id='+id+'] .'+type+'-wrapper');
                 var containerObj = $('.mission-item-wrapper[data-mission-id='+id+'] .'+type+'-container');
             }else{
-                var wrapperObj = $('.'+type+'-wrapper');
-                var containerObj = $('.'+type+'-container');
+                var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+                var containerObj = $('.data-quest-wrapper .'+type+'-container');
             }
 
 
@@ -748,8 +749,9 @@
 
             containerObj.find('.no-item').remove();
 
+
             if(containerObj.children().length <= 0){
-                containerObj.append('<h3 class="no-item">No Item</h3>')
+                containerObj.append('<h3 class="no-item">No Item</h3>');
             }
 
             if(containerObj.has('.datetime-wrapper').length){
@@ -793,7 +795,6 @@
                 });
             }
 
-
             //Add Badges
 
             if(containerObj.has('.badges-wrapper').length){
@@ -813,7 +814,7 @@
             }
 
             $('.select-badge-btn').unbind().bind('click',function(data){
-                selectBadgesItem(target);
+                selectBadgesItem();
             });
 
             //Add Actions
@@ -835,7 +836,7 @@
             }
 
             $('.select-action-btn').unbind().bind('click',function(data){
-                selectActionsItem(target);
+                selectActionsItem();
             });
 
 
@@ -858,7 +859,7 @@
             }
 
             $('.select-custompoint-btn').unbind().bind('click',function(data){
-                selectCustompointsItem(target);
+                selectCustompointsItem();
             });
 
 
@@ -881,7 +882,7 @@
             }
 
             $('.select-quest-btn').unbind().bind('click',function(data){
-                selectQuestsItem(target);
+                selectQuestsItem();
             });
 
 
@@ -1093,7 +1094,7 @@ function render(target){
     if(target.parent == 'missions'){
         $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+target.type+'-container').append(target.html);
     }else{
-        $('.'+target.type+'-container').append(target.html);
+        $('.data-quest-wrapper .'+target.type+'-container').append(target.html);
     }
 
     init_additem_event(target);
@@ -1103,11 +1104,13 @@ function render(target){
 
 // setModalBadgesItem
 function setModalBadgesItem(target){
+    setModalTarget($('#modal-select-badge'),target);
     var type = target.type;
+
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
     
     $('#modal-select-badge input[type=checkbox]').prop('checked', false);
@@ -1119,16 +1122,23 @@ function setModalBadgesItem(target){
     $('#modal-select-badge').modal('show');
 }
 
-function selectBadgesItem(target){
+function selectBadgesItem(){
+    var modalObj = $('#modal-select-badge');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
     var type = target.type;
     var taget_id = target.id || null;
     var parent = target.parent || 'quest';
-    var wrapperObj = $('.'+type+'-wrapper');
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
 
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
     
     $('#modal-select-badge .select-item').each(function(){
@@ -1176,11 +1186,14 @@ function selectBadgesItem(target){
 
 // setModalCustompointsItem
 function setModalCustompointsItem(target){
+    
+    setModalTarget($('#modal-select-custompoint'),target);
+
     var type = target.type;
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
     
     $('#modal-select-custompoint input[type=checkbox]').prop('checked', false);
@@ -1192,16 +1205,23 @@ function setModalCustompointsItem(target){
     $('#modal-select-custompoint').modal('show');
 }
 
-function selectCustompointsItem(target){
+function selectCustompointsItem(){
+    var modalObj = $('#modal-select-custompoint');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
     var type = target.type;
     var taget_id = target.id || null;
     var parent = target.parent || 'quest';
-    var wrapperObj = $('.'+type+'-wrapper');
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
 
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
 
     $('#modal-select-custompoint .select-item').each(function(){
@@ -1240,11 +1260,13 @@ function selectCustompointsItem(target){
 
 // setModalQuestsItem
 function setModalQuestsItem(target){
+    setModalTarget($('#modal-select-quest'),target);
+
     var type = target.type;
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
     
     $('#modal-select-quest input[type=checkbox]').prop('checked', false);
@@ -1256,16 +1278,23 @@ function setModalQuestsItem(target){
     $('#modal-select-quest').modal('show');
 }
 
-function selectQuestsItem(target){
+function selectQuestsItem(){
+    var modalObj = $('#modal-select-quest');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
     var type = target.type;
     var taget_id = target.id || null;
     var parent = target.parent || 'quest';
-    var wrapperObj = $('.'+type+'-wrapper');
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
 
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
 
     $('#modal-select-quest .select-item').each(function(){
@@ -1307,13 +1336,16 @@ function selectQuestsItem(target){
 
 // setModalActionsItem
 function setModalActionsItem(target){
+
+    setModalTarget($('#modal-select-action'),target);
+
     var type = target.type;
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
-    
+
     $('#modal-select-action input[type=checkbox]').prop('checked', false);
     wrapperObj.find('.actions-item-wrapper').each(function(){
         var idActionsSelect = $(this).data('id-action');
@@ -1323,19 +1355,26 @@ function setModalActionsItem(target){
     $('#modal-select-action').modal('show');
 }
 
-function selectActionsItem(target){
+function selectActionsItem(){
+
+    var modalObj = $('#modal-select-action');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
 
     var type = target.type;
     var taget_id = target.id || null;
     var parent = target.parent || 'quest';
-    var wrapperObj = $('.'+type+'-wrapper');
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
 
 
 
     if(target.parent == 'missions'){
         var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
     }else{
-        var wrapperObj = $('.'+type+'-wrapper');
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
     }
     
 
@@ -1389,6 +1428,16 @@ function selectActionsItem(target){
             }
         }
     })
+}
+
+function setModalTarget(modalObj,target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quests';
+
+    modalObj.attr('data-type',type);
+    modalObj.attr('data-mission-id',id);
+    modalObj.attr('data-parent',parent);
 }
 </script>
 
