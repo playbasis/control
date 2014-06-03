@@ -22,6 +22,19 @@ class Quest_model extends MY_Model
 
         return $result ? $result[0] : array();
     }
+    public function getQuests($data)
+    {
+        // get all quests related to client
+        $this->set_site_mongodb($data['site_id']);
+
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'status' => true
+        ));
+        $result = $this->mongo_db->get('playbasis_quest_to_client');
+        return $result;
+    }
     public function getMission($data)
     {
         //get mission
@@ -36,9 +49,34 @@ class Quest_model extends MY_Model
             'status' => true
         ));
         $result = $this->mongo_db->get('playbasis_quest_to_client');
+        return $result ? $result[0] : array();
+    }
+
+    public function joinQuest($data)
+    {
+        $this->set_site_mongodb($data["site_id"]);
+        $this->mongo_db->insert("playbasis_quest_to_player", array(
+            "client_id" => $data["client_id"],
+            "site_id" => $data["site_id"],
+            "date_added" => new MongoDate(time()),
+            "date_modified" => new MongoDate(time()),
+            "missions" => $data["missions"],
+            "pb_player_id" => $data["pb_player_id"],
+            "quest_id" => $data["quest_id"],
+            "status" => "join"
+        ));
+    }
+
+    public function getPlayerQuest($data) {
+        $this->set_site_mongodb($data["site_id"]);
+        $result = $this->mongo_db->where(array(
+            "pb_player_id" => $data["pb_player_id"],
+            "quest_id" => $data["quest_id"]
+        ))->get('playbasis_quest_to_player');
 
         return $result ? $result[0] : array();
     }
+
     public function updateQuestStatus($data, $status){
         $this->set_site_mongodb($data['site_id']);
 

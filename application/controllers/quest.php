@@ -598,5 +598,185 @@ class Quest extends REST_Controller
 
         $this->response($this->resp->setRespond($apiResult), 200);
     }
+
+    public function index_get($quest_id = 0) {
+        $required = $this->input->checkParam(array('api_key'));
+        if ($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+        if (!$validToken)
+            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+
+        $data = array(
+            'client_id' => $validToken['client_id'],
+            'site_id' => $validToken['site_id']
+        );
+
+        if ($quest_id) {
+            // get specific quest
+            try {
+                $quest_id = new MongoId($quest_id);
+            } catch(MongoException $ex) {
+                $quest_id = null;
+            }
+
+            $data['quest_id'] = $quest_id;
+            $quest = $this->quest_model->getQuest($data);
+            array_walk_recursive($quest, array($this, "convert_mongo_object"));
+            $resp['quest'] = $quest;
+            $resp['quest']['quest_id'] = $quest['_id'];
+            unset($resp['quest']['_id']);
+        } else {
+            // get all questss related to clients
+            $quest = $this->quest_model->getQuests($data);
+            array_walk_recursive($quest, array($this, "convert_mongo_object"));
+            foreach ($quest as $key => $value) {
+                $quest[$key]['quest_id'] = $quest[$key]['_id'];
+                unset($quest[$key]['_id']);
+            }
+            $resp['quests'] = $quest;
+        }
+        $this->response($this->resp->setRespond($resp), 200);
+    }
+
+    public function join_post($quest_id = 0) {
+        // check put parameter
+        $required = $this->input->checkParam(array("token", "player_id"));
+        if ($required)
+            $this->response($this->error->setError("PARAMETER_MISSING", $required), 200);
+
+        // check quest_id input
+		if (!$quest_id)
+            $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id"
+			)), 200);
+
+        // validate token
+        $validToken = $this->auth_model->findToken($this->input->post("token"));
+        if (!$validToken)
+            $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
+
+        // check user exists
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+			"cl_player_id" => $this->input->post("player_id")
+		)));
+		if (!$pb_player_id)
+            $this->response($this->error->setError("USER_NOT_EXIST"), 200);
+
+        try {
+            $quest_id = new MongoId($quest_id);
+        } catch(MongoException $ex) {
+            $quest_id = null;
+        }
+
+        $data = array(
+            "client_id" => $validToken["client_id"],
+            "site_id" => $validToken["site_id"],
+            "pb_player_id" => $pb_player_id,
+            "quest_id" => $quest_id
+        );
+
+        // get quest detail
+        $quest = $this->quest_model->getQuest($data);
+
+        // check quest_to_client
+        $player_quest = $this->quest_model->getPlayerQuest($data);
+
+        // not join yet, let check condition
+        if (!$player_quest) {
+            $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $validToken);
+            print_r($condition_quest);
+            // condition passed
+            if (!$condition_quest)
+                $this->quest_model->joinQuest(array_merge($data, $quest));
+            else
+                // condition failed
+                $this->response($this->error->setError("QUEST_CONDITION"), 200);
+        } else {
+            // already join, let check quest_to_client status
+            if ($player_quest["status"] == "join")
+                // joined
+                $this->response($this->error->setError("QUEST_JOINED"), 200);
+            else if ($player_quest["status"] == "finish")
+                // finished
+                $this->response($this->error->setError("QUEST_FINISHED"), 200);
+            else if ($player_quest["status"] == "unjoin") {
+                // unjoin, let him join again
+                $this->quest_model->updateQuestStatus($data, "join");
+            }
+        }
+        $this->response($this->resp->setRespond(
+            isset($condition_quest) ? $condition_quest : array()), 200);
+
+    }
+
+    public function cancel_post($quest_id = 0)
+    {
+        // check delete parameter
+        $required = $this->input->checkParam(array("token", "player_id"));
+        if ($required)
+            $this->response($this->error->setError("PARAMETER_MISSING", $required), 200);
+
+        // check quest_id input
+		if (!$quest_id)
+            $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id"
+			)), 200);
+
+        // validate token
+        $validToken = $this->auth_model->findToken($this->input->post("token"));
+        if (!$validToken)
+            $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
+
+        // check user exists
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+			"cl_player_id" => $this->input->post("player_id")
+		)));
+		if (!$pb_player_id)
+            $this->response($this->error->setError("USER_NOT_EXIST"), 200);
+
+        try {
+            $quest_id = new MongoId($quest_id);
+        } catch(MongoException $ex) {
+            $quest_id = null;
+        }
+
+        $data = array(
+            "client_id" => $validToken["client_id"],
+            "site_id" => $validToken["site_id"],
+            "pb_player_id" => $pb_player_id,
+            "quest_id" => $quest_id
+        );
+
+        // check quest_to_client
+        $player_quest = $this->quest_model->getPlayerQuest($data);
+
+        // not join yet, cannot join
+        if (!$player_quest) {
+                $this->response($this->error->setError("QUEST_CANCEL_FAILED"), 200);
+        } else {
+            // already join, let check quest_to_client status
+            if ($player_quest["status"] == "join")
+                // joined, let unjoin
+                $this->quest_model->updateQuestStatus($data, "unjoin");
+            else if ($player_quest["status"] == "finish")
+                // finished
+                $this->response($this->error->setError("QUEST_FINISHED"), 200);
+            else if ($player_quest["status"] == "unjoin") {
+                // unjoin
+                $this->response($this->error->setError("QUEST_CANCEL_FAILED"), 200);
+            }
+        }
+        $this->response($this->resp->setRespond(array()), 200);
+    }
+
+    private function convert_mongo_object(& $item,$key) {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else if (get_class($item) === 'MongoDate') {
+                $item =  datetimeMongotoReadable($item);
+            }
+        }
+    }
+
 }
 ?>
