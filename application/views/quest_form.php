@@ -46,9 +46,9 @@
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('form_quest_image'); ?>:</td>
-                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
-                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div>
+                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="quest_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                <input type="hidden" name="image" value="<?php echo $image; ?>" id="quest_image" />
+                                <br /><a onclick="image_upload('quest_image', 'quest_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#quest_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quest_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div>
                             </td>
                         </tr>
                         <tr>
@@ -328,10 +328,10 @@
                                                 <td>Mission Image:</td>                                        
                                                 <td valign="top">
                                                     <div class="image">
-                                                        <img src="http://images.pbapp.net/cache/no_image-100x100.jpg" alt="" id="thumb_mission" onerror="$(this).attr(" src","http:="" localhost="" playbasis="" control="" image="" default-image.png");"="">                                            
-                                                        <input type="hidden" name="missions[1][image]" value="no_image.jpg" id="image">                                            
+                                                        <img src="http://images.pbapp.net/cache/no_image-100x100.jpg" alt="" id="thumb_mission_<?php echo $mission['mission_id'] ?>" onerror="$(this).attr(" src","http:="" localhost="" playbasis="" control="" image="" default-image.png");"="">                                            
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][image]" value="no_image.jpg" id="image_mission_<?php echo $mission['mission_id'] ?>">                                            
                                                         <br>
-                                                        <a onclick="image_upload(" image",="" "thumb_mission");"="">Browse</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$(" #thumb_mission").attr("src",="" "");="" $("#image").attr("value",="" "");"="">Clear</a>
+                                                        <a onclick="image_upload('image_mission_<?php echo $mission['mission_id'] ?>', 'thumb_mission_<?php echo $mission['mission_id'] ?>');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb_mission_<?php echo $mission['mission_id'] ?>').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image_mission_<?php echo $mission['mission_id'] ?>').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
                                                     </div>                                        
                                                 </td>                                    
                                             </tr>                                
@@ -576,9 +576,9 @@
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_image"); ?>:</td>\
-                                        <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb_mission" onerror="$(this).attr("src","<?php echo base_url();?>image/default-image.png");" />\
-                                            <input type="hidden" name="missions['+itemMissionId+'][image]" value="" id="image" />\
-                                            <br /><a onclick="image_upload("image", "thumb_mission");"><?php echo $this->lang->line("text_browse"); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$("#thumb_mission").attr("src", "<?php echo $this->lang->line("no_image"); ?>"); $("#image").attr("value", "");"><?php echo $this->lang->line("text_clear"); ?></a></div>\
+                                        <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb_mission_'+itemMissionId+'" onerror="$(this).attr("src","<?php echo base_url();?>image/default-image.png");" />\
+                                            <input type="hidden" name="missions['+itemMissionId+'][image]" value="" id="image_mission_'+itemMissionId+'" />\
+                                            <br /><a onclick="image_upload(\'image_mission_'+itemMissionId+'\', \'thumb_mission_'+itemMissionId+'\');"><?php echo $this->lang->line("text_browse"); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$(\'#thumb_mission_'+itemMissionId+'\').attr(\'src\', \'<?php echo $this->lang->line("no_image"); ?>\'); $(\'#image_mission_'+itemMissionId+'\').attr(\'value\', \'\');"><?php echo $this->lang->line("text_clear"); ?></a></div>\
                                         </td>\
                                     </tr>\
                                 </table>\
@@ -869,6 +869,21 @@
 init_additem_event({type:'reward'});
 init_additem_event({type:'condition'});
 
+$('.mission-item-wrapper').each(function(){
+    var itemMissionId = $(this).data('mission-id');
+    init_additem_event({
+        type:'completion',
+        parent:'missions',
+        id:itemMissionId
+    });
+
+    init_additem_event({
+        type:'reward',
+        parent:'missions',
+        id:itemMissionId
+    });
+})
+countMissionId = $('.mission-item-wrapper').length;
 
 
 var conditionCount = 1,
