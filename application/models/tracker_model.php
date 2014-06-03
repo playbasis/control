@@ -74,5 +74,23 @@ class Tracker_model extends MY_Model
             'date_modified' => $mongoDate
         ));
     }
+    public function trackQuest($input)
+    {
+        $this->set_site_mongodb($input['site_id']);
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_quest_reward_log', array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'quest_id'		=> $input['quest_id'],
+            'mission_id'	=> $input['mission_id'],
+            'reward_type'	=> $input['reward_type'],
+            'reward_id'	    => $input['reward_id'],
+            'reward_name'	=> $input['reward_name'],
+            'reward_value'	=> $input['reward_value'],
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ));
+    }
 }
 ?>

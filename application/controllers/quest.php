@@ -147,8 +147,8 @@ class Quest extends REST_Controller
             }
 
             if($mission_count == $player_finish_count){
-                echo "finish all mission";
-                $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken);
+                //echo "finish all mission";
+                $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken, $questResult);
             }
 
             $event = array(
@@ -201,8 +201,7 @@ class Quest extends REST_Controller
                         );
                         array_push($questEvent, $event);
                     }
-                }
-                if($c["condition_type"] == "DATETIME_END"){
+                }else if($c["condition_type"] == "DATETIME_END"){
                     if($c["condition_value"]->sec < time()){
                         $event = array(
                             'event_type' => 'QUEST_ALREADY_FINISHED',
@@ -210,8 +209,7 @@ class Quest extends REST_Controller
                         );
                         array_push($questEvent, $event);
                     }
-                }
-                if($c["condition_type"] == "LEVEL_START"){
+                }else if($c["condition_type"] == "LEVEL_START"){
                     if($c["condition_value"] > $player['level']){
                         $event = array(
                             'event_type' => 'LEVEL_IS_LOWER',
@@ -219,8 +217,7 @@ class Quest extends REST_Controller
                         );
                         array_push($questEvent, $event);
                     }
-                }
-                if($c["condition_type"] == "LEVEL_END"){
+                }else if($c["condition_type"] == "LEVEL_END"){
                     if($c["condition_value"] < $player['level']){
                         $event = array(
                             'event_type' => 'LEVEL_IS_HIGHER',
@@ -228,8 +225,7 @@ class Quest extends REST_Controller
                         );
                         array_push($questEvent, $event);
                     }
-                }
-                if($c["condition_type"] == "POINT"){
+                }else if($c["condition_type"] == "POINT"){
                     $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["condition_id"], $validToken['site_id']);
 
                     if(isset($point_a[0]['value'])){
@@ -245,8 +241,7 @@ class Quest extends REST_Controller
                         );
                         array_push($questEvent, $event);
                     }
-                }
-                if($c["condition_type"] == "CUSTOM_POINT"){
+                }else if($c["condition_type"] == "CUSTOM_POINT"){
                     $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["condition_id"], $validToken['site_id']);
 
                     if(isset($point_a[0]['value'])){
@@ -262,8 +257,7 @@ class Quest extends REST_Controller
                         );
                         array_push($questEvent, $event);
                     }
-                }
-                if($c["condition_type"] == "BADGE"){
+                }else if($c["condition_type"] == "BADGE"){
                     if(isset($badge_player_check[$c["condition_id"].""])){
                         $badge = $badge_player_check[$c["condition_id"].""];
                     }else{
@@ -456,6 +450,13 @@ class Quest extends REST_Controller
                 array_push($sub_events['events'], $event);
                 $eventMessage = $this->utility->getEventMessage('badge', '', '', $event['reward_data']['name']);
                 //log event - reward, badge
+                $data_reward = array(
+                    'reward_type'	=> $r["reward_type"],
+                    'reward_id'	    => $r["reward_id"],
+                    'reward_name'	=> $event['reward_data']['name'],
+                    'reward_value'	=> $r["reward_value"],
+                );
+                $this->trackQuest($player_id, $validToken, $data_reward, $sub_events["quest_id"], isset($sub_events["mission_id"])?$sub_events["mission_id"]:null);
 
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
@@ -474,16 +475,9 @@ class Quest extends REST_Controller
                     ));
                     if($lv > 0)
                     {
-                        $update_level_config = array(
-                            "client_id" => $validToken['client_id'],
-                            "site_id" => $validToken['site_id'],
-                            "pb_player_id" => $player_id,
-                            "player_id" => $cl_player_id
-                        );
-
-                        $eventMessage = $this->levelup($lv, $sub_events, $update_level_config);
+                        $eventMessage = $this->levelup($lv, $sub_events, $update_config);
                         //publish to node stream
-                        $this->node->publish(array_merge($update_level_config, array(
+                        $this->node->publish(array_merge($update_config, array(
                             'action_name' => 'mission_reward',
                             'message' => $eventMessage,
                             'level' => $lv
@@ -514,6 +508,13 @@ class Quest extends REST_Controller
                 array_push($sub_events['events'], $event);
                 $eventMessage = $this->utility->getEventMessage($reward_type_message, $r["reward_value"], $reward_type_name);
                 //log event - reward, non-custom point
+                $data_reward = array(
+                    'reward_type'	=> $r["reward_type"],
+                    'reward_id'	    => $r["reward_id"],
+                    'reward_name'	=> $reward_type_name,
+                    'reward_value'	=> $r["reward_value"],
+                );
+                $this->trackQuest($player_id, $validToken, $data_reward, $sub_events["quest_id"], isset($sub_events["mission_id"])?$sub_events["mission_id"]:null);
 
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
@@ -529,8 +530,19 @@ class Quest extends REST_Controller
         return $sub_events;
     }
 
-    private function trackQuest(){
-
+    private function trackQuest($player_id, $validToken, $data_reward, $quest_id, $mission_id=null){
+        $data = array(
+            'pb_player_id'	=> $player_id,
+            'client_id'		=> $validToken['client_id'],
+            'site_id'		=> $validToken['site_id'],
+            'quest_id'		=> new MongoId($quest_id),
+            'mission_id'	=> $mission_id? new MongoId($mission_id) :null,
+            'reward_type'	=> $data_reward['reward_type'],
+            'reward_id'	    => $data_reward['reward_id'],
+            'reward_name'	=> $data_reward['reward_name'],
+            'reward_value'	=> $data_reward['reward_value'],
+        );
+        $this->tracker_model->trackQuest($data);
     }
 
     private function updateMissionStatusOfPlayer($player_id, $quest_id, $mission_id, $validToken, $status="join"){
@@ -540,10 +552,10 @@ class Quest extends REST_Controller
             'quest_id' => $quest_id,
             'mission_id' => $mission_id
         );
-        //$this->quest_model->updateMissionStatus($data, $status);
+        $this->quest_model->updateMissionStatus($data, $status);
     }
 
-    private function levelup($lv, &$sub_events, $input)
+    private function levelup($lv, &$sub_events, $config)
     {
         $event = array(
             'event_type' => 'LEVEL_UP',
@@ -552,6 +564,10 @@ class Quest extends REST_Controller
         array_push($sub_events['events'], $event);
         $eventMessage = $this->utility->getEventMessage('level', '', '', '', $lv);
         //log event - level
+        $this->tracker_model->trackEvent('LEVEL', $eventMessage, array_merge($config, array(
+            'action_log_id' => null,
+            'amount' => $lv
+        )));
 
         return $eventMessage;
     }
