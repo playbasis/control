@@ -328,8 +328,13 @@ class Quest extends MY_Controller
             if(isset($editQuest['missions'])){
                 $missionCount = 0;
                 foreach($editQuest['missions'] as $mission){
+                    $this->data['editMission'][$missionCount]['mission_id'] = $mission['mission_id'];
                     $this->data['editMission'][$missionCount]['mission_name'] = $mission['mission_name'];
+                    $this->data['editMission'][$missionCount]['mission_number'] = $mission['mission_number'];
                     $this->data['editMission'][$missionCount]['description'] = $mission['description'];
+                    $this->data['editMission'][$missionCount]['hint'] = $mission['hint'];
+                    $this->data['editMission'][$missionCount]['image'] = $mission['image'];
+                    
                     $missionCount++;
                 }
             }
