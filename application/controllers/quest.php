@@ -377,32 +377,52 @@ class Quest extends REST_Controller
 
         $mission = $this->quest_model->getMission($data);
 
+        $cl_player_id = $this->player_model->getClientPlayerId($player_id, $validToken['site_id']);
+
+        $questResult = array(
+            'events' => array()
+        );
+
         foreach($mission["missions"][0]["rewards"] as $r){
             if($r["reward_type"] == "CUSTOM_POINT"){
-                $reward_name = $this->reward_model->getRewardName($data, $r["reward_id"]);
+                $reward_config = array(
+                    "client_id" => $validToken['client_id'],
+                    "site_id" => $validToken['site_id']
+                );
+                $reward_name = $this->reward_model->getRewardName($reward_config, $r["reward_id"]);
 
-                $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $input, $jigsawConfig);
+                $update_reward_config = array(
+                    "client_id" => $validToken['client_id'],
+                    "site_id" => $validToken['site_id'],
+                    "pb_player_id" => $player_id,
+                    "player_id" => $cl_player_id
+                );
+                $return_data = array();
+                $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $update_reward_config, $return_data);
                 $event = array(
                     'event_type' => 'REWARD_RECEIVED',
-                    'reward_type' => $jigsawConfig['reward_name'],
-                    'value' => $jigsawConfig['quantity']
+                    'reward_type' => $return_data['reward_name'],
+                    'value' => $return_data['quantity']
                 );
-                array_push($apiResult['events'], $event);
-                $eventMessage = $this->utility->getEventMessage('point', $jigsawConfig['quantity'], $jigsawConfig['reward_name']);
+
+                array_push($questResult['events'], $event);
+                $eventMessage = $this->utility->getEventMessage('point', $return_data['quantity'], $return_data['reward_name']);
                 //log event - reward, custom point
-                $this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
+                /*$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
                     'reward_id' => $jigsawConfig['reward_id'],
                     'reward_name' => $jigsawConfig['reward_name'],
                     'amount' => $jigsawConfig['quantity']
-                )));
+                )));*/
                 //publish to node stream
-                $this->node->publish(array_merge($input, array(
+                $this->node->publish(array_merge($update_reward_config, array(
+                    'action_name' => 'mission_reward',
                     'message' => $eventMessage,
-                    'amount' => $jigsawConfig['quantity'],
-                    'point' => $jigsawConfig['reward_name']
-                )), $domain_name, $site_id);
+                    'amount' => $return_data['quantity'],
+                    'point' => $return_data['reward_name']
+                )), $validToken['domain_name'], $validToken['site_id']);
             }
         }
+        var_dump($questResult);
     }
 
     private function updateQuestRewardPlayer($player_id, $quest_id, $validToken){
