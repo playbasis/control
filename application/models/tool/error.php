@@ -74,6 +74,22 @@ class Error extends CI_Model
         	$errorData['message'] = "User has exceeded redeem limit";
             $errorData['error_code'] = '0601';
             break;
+        case "QUEST_JOINED":
+            $errorData["message"] = "User has already join this quest";
+            $errorData["error_code"] = "0701";
+            break;
+        case "QUEST_FINISHED":
+            $errorData["message"] = "User has finished this quest";
+            $errorData["error_code"] = "0702";
+            break;
+        case "QUEST_CONDITION":
+            $errorData["message"] = "User has no permission to join this quest";
+            $errorData["error_code"] = "0703";
+            break;
+        case "QUEST_CANCEL_FAILED":
+            $errorData["message"] = "User has not yet join this quest";
+            $errorData["error_code"] = "0704";
+            break;
 		default:
 			$errorData['message'] = "Unknow";
 			$errorData['error_code'] = '9999';
