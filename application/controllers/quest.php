@@ -180,8 +180,16 @@ class Quest extends MY_Controller
 
     public function getForm($quest_id = null){
 
+        $this->load->model('Image_model');
+
         $data['client_id'] = $this->User_model->getClientId();
         $data['site_id'] = $this->User_model->getSiteId();
+
+        if(isset($quest_id) && !empty($quest_id)){
+            $data['quest_id'] = $quest_id;
+            $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
+        }
+
 
         $this->load->model('Image_model');
         $this->load->model('Level_model');
@@ -232,9 +240,9 @@ class Quest extends MY_Controller
 
         $this->data['point_id'] = $this->Quest_model->getPointId($data);
 
-        if($quest_id != null){
-            $data['quest_id'] = $quest_id;
-            $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
+        if($quest_id != null && isset($editQuest) && !empty($editQuest)){
+            // $data['quest_id'] = $quest_id;
+            // $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
 
             $this->data['editQuest']['quest_name'] = isset($editQuest['quest_name'])?$editQuest['quest_name']:null;
             $this->data['editQuest']['description'] = isset($editQuest['description'])?$editQuest['description']:null;
