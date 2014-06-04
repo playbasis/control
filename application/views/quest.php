@@ -51,7 +51,7 @@
                                         <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" />
                                         <?php } ?></td>
-                                    <td class="left"><?php echo $quest['image']; ?></td>
+                                    <td class="left"><img src="<?php echo $quest['image']; ?>"/></td>
                                     <td class="right"><?php echo $quest['quest_name']; ?></td>   
                                     <!-- <td class="right"><?php //echo datetimeMongotoReadable($quest['condition']['datetime_start']); ?></td> -->
                                     <!-- <td class="right"><?php //echo datetimeMongotoReadable($quest['condition']['datetime_end']); ?></td> -->

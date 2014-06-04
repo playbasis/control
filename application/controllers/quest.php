@@ -47,6 +47,15 @@ class Quest extends MY_Controller
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
+        $this->load->model('Image_model');
+
+        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
+            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
+        } elseif (!empty($editQuest) && $editQuest['image'] && (S3_IMAGE . $editQuest['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $editQuest['image'] != 'HTTP/1.0 403 Forbidden')) {
+            $this->data['thumb'] = $this->Image_model->resize($editQuest['image'], 100, 100);
+        } else {
+            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        }
 
         $this->load->library('pagination');
 
@@ -69,6 +78,11 @@ class Quest extends MY_Controller
 
         if($client_id){
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
+
+            foreach($this->data['quests'] as &$quest){
+                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
+            }
+
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
         }
 
