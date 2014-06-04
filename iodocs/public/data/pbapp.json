@@ -791,7 +791,7 @@
                 },
                 {
                     "MethodName": "Quest of Player",
-                    "Synopsis": "Quest of player.",
+                    "Synopsis": "Quest that the player has joined.",
                     "HTTPMethod": "GET",
                     "URI": "/Player/quest/:id",
                     "RequiresOAuth": "N",
@@ -814,7 +814,7 @@
                 },
                 {
                     "MethodName": "Quest list of Player",
-                    "Synopsis": "Quest list of player.",
+                    "Synopsis": "List of quests that the player has joined.",
                     "HTTPMethod": "GET",
                     "URI": "/Player/quest",
                     "RequiresOAuth": "N",
