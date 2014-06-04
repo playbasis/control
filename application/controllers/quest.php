@@ -309,8 +309,9 @@ class Quest extends REST_Controller
                             'event_type' => 'ACTION_NOT_ENOUGH',
                             'message' => 'Your action not enough',
                             'incomplete' => array(
-                                'action_id' => $c["completion_id"]."",
-                                'action_value' => ((int)$c["completion_value"] - (int)$action["count"])
+                                'incompletion_id' => $c["completion_id"]."",
+                                'incompletion_type' => "ACTION",
+                                'incompletion_value' => ((int)$c["completion_value"] - (int)$action["count"])
                             )
                         );
                         array_push($missionEvent, $event);
@@ -329,8 +330,9 @@ class Quest extends REST_Controller
                             'event_type' => 'POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
                             'incomplete' => array(
-                                'reward_id' => $c["completion_id"]."",
-                                'reward_value' => ((int)$c["completion_value"] - (int)$point)
+                                'incompletion_id' => $c["completion_id"]."",
+                                'incompletion_type' => "POINT",
+                                'incompletion_value' => ((int)$c["completion_value"] - (int)$point)
                             )
                         );
                         array_push($missionEvent, $event);
@@ -349,8 +351,9 @@ class Quest extends REST_Controller
                             'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
                             'incomplete' => array(
-                                'reward_id' => $c["completion_id"]."",
-                                'reward_value' => ((int)$c["completion_value"] - (int)$custom_point)
+                                'incompletion_id' => $c["completion_id"]."",
+                                'incompletion_type' => "CUSTOM_POINT",
+                                'incompletion_value' => ((int)$c["completion_value"] - (int)$custom_point)
                             )
                         );
                         array_push($missionEvent, $event);
@@ -367,8 +370,9 @@ class Quest extends REST_Controller
                             'event_type' => 'BADGE_NOT_ENOUGH',
                             'message' => 'user badge not enough',
                             'incomplete' => array(
-                                'badge_id' => $c["completion_id"]."",
-                                'badge_value' => ((int)$c["completion_value"] - (int)$badge)
+                                'incompletion_id' => $c["completion_id"]."",
+                                'incompletion_type' => "BADGE",
+                                'incompletion_value' => ((int)$c["completion_value"] - (int)$badge)
                             )
                         );
                         array_push($missionEvent, $event);
@@ -972,6 +976,14 @@ class Quest extends REST_Controller
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
 
                 foreach($quest_player["missions"] as &$m){
+                    $md = array(
+                        'client_id' => $validToken['client_id'],
+                        'site_id' => $validToken['site_id'],
+                        'quest_id' => $quest['_id'],
+                        'mission_id' => $m['mission_id']
+                    );
+                    $mdetail = $this->quest_model->getMission($md);
+                    $m = array_merge($m, $mdetail['missions'][0]);
                     $m["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
@@ -993,6 +1005,14 @@ class Quest extends REST_Controller
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
 
                 foreach($q["missions"] as &$m){
+                    $md = array(
+                        'client_id' => $validToken['client_id'],
+                        'site_id' => $validToken['site_id'],
+                        'quest_id' => $quest['_id'],
+                        'mission_id' => $m['mission_id']
+                    );
+                    $mdetail = $this->quest_model->getMission($md);
+                    $m = array_merge($m, $mdetail['missions'][0]);
                     $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
 
