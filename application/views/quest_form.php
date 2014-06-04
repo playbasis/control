@@ -329,7 +329,7 @@
                                                 <td valign="top">
                                                     <div class="image">
                                                         <img src="<?php echo $mission['image']; ?>" alt="" id="thumb_mission_<?php echo $mission['mission_id'] ?>" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                            
-                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][image]" value="<?php echo $mission['imagereal']; ?>" id="image_mission_<?php echo $mission['mission_id'] ?>">                                            
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][image]" value="<?php echo isset($mission['imagereal'])?$mission['imagereal']:''; ?>" id="image_mission_<?php echo $mission['mission_id'] ?>">                                            
                                                         <br>
                                                         <a onclick="image_upload('image_mission_<?php echo $mission['mission_id'] ?>', 'thumb_mission_<?php echo $mission['mission_id'] ?>');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb_mission_<?php echo $mission['mission_id'] ?>').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image_mission_<?php echo $mission['mission_id'] ?>').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
                                                     </div>                                        
@@ -363,26 +363,28 @@
                                                         </h3>
                                                         <div class="item-container">
                                                         <?php foreach($mission['editAction'] as $action){ ?>
-                                                            
-                                                                <div class="clearfix item-wrapper actions-item-wrapper" data-id-action="<?php echo $action['completion_id']; ?>">                                    
+                                                                
+                                                                <div class="clearfix item-wrapper actions-item-wrapper" data-id-action="<?php echo $action['completion_element_id']; ?>">                                    
                                                                     <div class="span2 text-center">
                                                                         <i class="<?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['icon'];}} ?> icon-4x"></i>                                    
                                                                     </div>                                    
                                                                     <div class="span5"><?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['name'];}} ?></div>                                    
                                                                     <div class="span2">
                                                                         <small>filter</small>
-                                                                    <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_filter]" value = "<?php echo $action['completion_filter'] ?>">
-                                                                    </div>                                    
+                                                                    <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_filter]" value = "<?php echo $action['completion_filter'] ?>">
+                                                                    </div>  
+                                                                                                      
                                                                     <div class="span1">                                    
                                                                         <small>value</small>                                    
-                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_value]" placeholder="Value" value="<?php echo $action['completion_value']; ?>">                                    
-                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_id]" value="<?php echo $action['completion_id']; ?>">                                    
-                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_type]" value="ACTION">
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_value]" placeholder="Value" value="<?php echo $action['completion_value']; ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_id]" value="<?php echo $action['completion_id']; ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_type]" value="ACTION">
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_element_id]" value="<?php echo $action['completion_element_id']; ?>">
                                                                     </div>                                    
                                                                     <div class="span2 col-remove">
                                                                         <a class="item-remove"><i class="icon-remove-sign"></i></a>                                    
                                                                     </div>
-                                                                    <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_title]" placeholder="Title" value="<?php echo $action['completion_title']; ?>"></div></div>
+                                                                    <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_element_id']; ?>][completion_title]" placeholder="Title" value="<?php echo $action['completion_title']; ?>"></div></div>
                                                                 </div>
                                                             
                                                         <?php } ?><!-- end of foreach -->
@@ -1537,6 +1539,7 @@ function selectActionsItem(){
 
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_value]" placeholder="Value" value="1"/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_element_id]" value = ""/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_type]" value = "ACTION"/>';
                 }else{
                     inputHtml = '<input type="text" name ="'+type+'['+index+']['+type+'_value]" placeholder="Value" value="1"/>\

@@ -110,6 +110,12 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
+            // echo "<pre>";
+            //     var_dump($data);
+            // echo "</pre>";
+
+            
+
             foreach($data as $key => $value){
                 if($key == 'condition' || $key == 'reward' || $key == 'missions'){
                     $i = 0;
@@ -152,6 +158,11 @@ class Quest extends MY_Controller
                                         if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
                                             $vvv = new MongoId($vvv);
                                         }
+                                        if($kkk == 'completion_element_id'){
+                                            if(isset($vvv) && empty($vvv)){
+                                                $vvv = new MongoId();
+                                            }
+                                        }
                                     }
                                     $qdata = array(
                                         'client_id' => $client_id,
@@ -181,9 +192,9 @@ class Quest extends MY_Controller
             $data['client_id'] = $client_id;
             $data['site_id'] = $site_id;
 
-//             echo "<pre>";
-//                 var_dump($data);
-//             echo "</pre>";
+            // echo "<pre>";
+            //     var_dump($data);
+            // echo "</pre>";
             
             $this->Quest_model->addQuestToClient($data);
             redirect('/quest', 'refresh');
@@ -410,6 +421,8 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_id'] = $mm['completion_id'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = $mm['completion_filter'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_title'] = $mm['completion_title'];
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_element_id'] = $mm['completion_element_id'];
+
                                 $countActions++;
                             }
 
@@ -691,6 +704,11 @@ class Quest extends MY_Controller
                                     foreach($voo as $kkk => &$vvv){
                                         if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
                                             $vvv = new MongoId($vvv);
+                                        }
+                                        if($kkk == 'completion_element_id'){
+                                            if(isset($vvv)){
+                                                $vvv = new MongoId($vvv);
+                                            }
                                         }
                                     }
                                     $qdata = array(
