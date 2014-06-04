@@ -744,8 +744,10 @@ class Quest extends MY_Controller
                                             $vvv = new MongoId($vvv);
                                         }
                                         if($kkk == 'completion_element_id'){
-                                            if(isset($vvv)){
+                                            if(isset($vvv) && !empty($vvv)){
                                                 $vvv = new MongoId($vvv);
+                                            }else{
+                                                $vvv = new MongoId();
                                             }
                                         }
                                     }
