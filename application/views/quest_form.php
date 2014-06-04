@@ -1483,7 +1483,7 @@ function setModalActionsItem(target){
     $('#modal-select-action input[type=checkbox]').prop('checked', false);
     wrapperObj.find('.actions-item-wrapper').each(function(){
         var idActionsSelect = $(this).data('id-action');
-        $('#modal-select-action .select-item[data-id-action='+idActionsSelect+'] input[type=checkbox]').prop('checked', true);
+        //$('#modal-select-action .select-item[data-id-action='+idActionsSelect+'] input[type=checkbox]').prop('checked', true);
     })
 
     $('#modal-select-action').modal('show');
@@ -1516,31 +1516,37 @@ function selectActionsItem(){
         if($(this).find('input[type=checkbox]').is(':checked')){
             
 
-            if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length <= 0) {
+            
 
                 var id = $(this).data('id-action');
                 var img = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
                 var icon = $(this).find('i').attr('class');
-                
+                var index = $(this).data('id-action');
 
+                /*
+                if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length > 0) {
+                    
+                }
+                */
+                var index = wrapperObj.find('.actions-item-wrapper').length;
 
                 if(parent == 'missions'){
                     
-                    inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_filter]"/>';
+                    inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_filter]"/>';
 
-                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "ACTION"/>';
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_type]" value = "ACTION"/>';
                 }else{
-                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+type+'['+id+']['+type+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+type+'['+id+']['+type+'_type]" value = "ACTION"/>';
+                    inputHtml = '<input type="text" name ="'+type+'['+index+']['+type+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+type+'['+index+']['+type+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+type+'['+index+']['+type+'_type]" value = "ACTION"/>';
                 }
 
                 var inputCompletionHtml = '';
                 if(type == 'completion'){
-                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_title]" placeholder="Title" value=""></div></div>';
                 }
                 var actionsItemHtml = '<div class="clearfix item-wrapper actions-item-wrapper" data-id-action="'+id+'">\
                                     <div class="span2 text-center"><i class="'+icon+'"></i>\
@@ -1558,12 +1564,13 @@ function selectActionsItem(){
 
 
                 init_additem_event(target);
-            }
-        }else{
             
+        }else{
+            /*
             if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length >= 1) {
                 wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').remove();
             }
+            */
         }
     })
 }
