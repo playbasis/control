@@ -237,16 +237,16 @@ class Quest extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($badge_info)) {
-            $this->data['image'] = $badge_info['image'];
+        } elseif (!empty($editQuest)) {
+            $this->data['image'] = $editQuest['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
 
         if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($badge_info) && $badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($badge_info['image'], 100, 100);
+        } elseif (!empty($editQuest) && $editQuest['image'] && (S3_IMAGE . $editQuest['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $editQuest['image'] != 'HTTP/1.0 403 Forbidden')) {
+            $this->data['thumb'] = $this->Image_model->resize($editQuest['image'], 100, 100);
         } else {
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
         }
@@ -369,6 +369,14 @@ class Quest extends MY_Controller
                         $this->data['editBadgeRew'][$countBadges]['reward_type'] = $reward['reward_type']; 
                         $this->data['editBadgeRew'][$countBadges]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
                         $this->data['editBadgeRew'][$countBadges]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                        $this->data['editBadgeRew'][$countBadges]['reward_data'] = isset($reward['reward_data'])?$reward['reward_data']:null;
+
+                        if (!empty($reward['reward_data']['image']) && $reward['reward_data']['image'] && (S3_IMAGE . $reward['reward_data']['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $reward['reward_data']['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $this->data['editBadgeRew'][$countBadges]['reward_data']['image'] = $this->Image_model->resize($reward['reward_data']['image'], 100, 100);
+                        } else {
+                            $this->data['editBadgeRew'][$countBadges]['reward_data']['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                        }
+
                         $countBadges++;
                     }
                 }
@@ -383,7 +391,13 @@ class Quest extends MY_Controller
                     $this->data['editMission'][$missionCount]['mission_number'] = $mission['mission_number'];
                     $this->data['editMission'][$missionCount]['description'] = $mission['description'];
                     $this->data['editMission'][$missionCount]['hint'] = $mission['hint'];
-                    $this->data['editMission'][$missionCount]['image'] = $mission['image'];
+
+                    if (!empty($mission['image']) && $mission['image'] && (S3_IMAGE . $mission['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $mission['image'] != 'HTTP/1.0 403 Forbidden')) {
+                        $this->data['editMission'][$missionCount]['image'] = $this->Image_model->resize($mission['image'], 100, 100);
+                        $this->data['editMission'][$missionCount]['imagereal'] = $mission['image'];
+                    }else{
+                        $this->data['editMission'][$missionCount]['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                    }
 
                     if(isset($mission['completion'])){
                         $countActions = 0;

@@ -266,7 +266,7 @@
                                             <?php foreach($editBadgeRew as $badge){ ?>    
                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['reward_id'] ?>">                                    
                                                 <div class="span2 text-center">
-                                                    <img src="http://images.pbapp.net/data/dc2efb2d903008f9d7e0d5e8024981d2.png" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
+                                                    <img src="<?php echo $badge['reward_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                 </div>                                    
                                                 <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['reward_id']){echo $b['name'];}} ?></div>                                    
                                                 <div class="span1">                                    
@@ -297,7 +297,7 @@
                         <?php foreach($editMission as $mission){ ?>
                         <div class="mission-item-wrapper" data-mission-id="<?php echo $mission['mission_id'] ?>">                        
                             <div class="box-header box-mission-header overflow-visible">                            
-                                <h2><img src="http://images.pbapp.net/cache/no_image-100x100.jpg" width="50"><?php echo $mission['mission_name'] ?></h2>                            
+                                <h2><img src="<?php echo $mission['image']; ?>" width="50"><?php echo $mission['mission_name'] ?></h2>                            
                                 <div class="box-icon">                                
                                     <a href="javascript:void(0)" class="btn btn-danger right remove-mission-btn dropdown-toggle" data-toggle="dropdown">Delete </a>                                
                                     <span class="break"></span>                                
@@ -328,8 +328,8 @@
                                                 <td>Mission Image:</td>                                        
                                                 <td valign="top">
                                                     <div class="image">
-                                                        <img src="http://images.pbapp.net/cache/no_image-100x100.jpg" alt="" id="thumb_mission_<?php echo $mission['mission_id'] ?>" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                            
-                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][image]" value="no_image.jpg" id="image_mission_<?php echo $mission['mission_id'] ?>">                                            
+                                                        <img src="<?php echo $mission['image']; ?>" alt="" id="thumb_mission_<?php echo $mission['mission_id'] ?>" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                            
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][image]" value="<?php echo $mission['imagereal']; ?>" id="image_mission_<?php echo $mission['mission_id'] ?>">                                            
                                                         <br>
                                                         <a onclick="image_upload('image_mission_<?php echo $mission['mission_id'] ?>', 'thumb_mission_<?php echo $mission['mission_id'] ?>');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb_mission_<?php echo $mission['mission_id'] ?>').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image_mission_<?php echo $mission['mission_id'] ?>').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
                                                     </div>                                        
@@ -707,7 +707,7 @@
 
             var itemMissionHtml = '<div class="mission-item-wrapper" data-mission-id="'+itemMissionId+'">\
                         <div class="box-header box-mission-header overflow-visible">\
-                            <h2><img src="<?php echo $thumb; ?>" width="50"> Mission Name</h2>\
+                            <h2><img src="<?php echo base_url();?>image/default-image.png" width="50"> Mission Name</h2>\
                             <div class="box-icon">\
                                 <a href="javascript:void(0)" class="btn btn-danger right remove-mission-btn dropdown-toggle" data-toggle="dropdown">Delete </a>\
                                 <span class="break"></span>\
@@ -735,7 +735,7 @@
                                     </tr>\
                                     <tr>\
                                         <td><?php echo $this->lang->line("form_mission_image"); ?>:</td>\
-                                        <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb_mission_'+itemMissionId+'" onerror="$(this).attr("src","<?php echo base_url();?>image/default-image.png");" />\
+                                        <td valign="top"><div class="image"><img src="<?php echo base_url();?>image/default-image.png" alt="" id="thumb_mission_'+itemMissionId+'" onerror="$(this).attr("src","<?php echo base_url();?>image/default-image.png");" />\
                                             <input type="hidden" name="missions['+itemMissionId+'][image]" value="" id="image_mission_'+itemMissionId+'" />\
                                             <br /><a onclick="image_upload(\'image_mission_'+itemMissionId+'\', \'thumb_mission_'+itemMissionId+'\');"><?php echo $this->lang->line("text_browse"); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$(\'#thumb_mission_'+itemMissionId+'\').attr(\'src\', \'<?php echo $this->lang->line("no_image"); ?>\'); $(\'#image_mission_'+itemMissionId+'\').attr(\'value\', \'\');"><?php echo $this->lang->line("text_clear"); ?></a></div>\
                                         </td>\
@@ -1560,7 +1560,7 @@ function selectActionsItem(){
                 init_additem_event(target);
             }
         }else{
-
+            
             if(wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').length >= 1) {
                 wrapperObj.find('.actions-item-wrapper[data-id-action='+$(this).data('id-action')+']').remove();
             }
