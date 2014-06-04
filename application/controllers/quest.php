@@ -794,12 +794,18 @@ class Quest extends REST_Controller
         // get quest detail
         $quest = $this->quest_model->getQuest($data);
 
+        if (!$quest) {
+            $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"),
+                200);
+        }
+
         // check quest_to_client
         $player_quest = $this->quest_model->getPlayerQuest($data);
 
         // not join yet, let check condition
         if (!$player_quest) {
-            $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $validToken);
+            $condition_quest = $this->checkConditionQuest(
+                $quest, $pb_player_id, $validToken);
             // condition passed
             if (!$condition_quest)
                 $this->quest_model->joinQuest(array_merge($data, $quest));
@@ -855,7 +861,8 @@ class Quest extends REST_Controller
             $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
 
         // check user exists
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+        $pb_player_id = $this->player_model->getPlaybasisId(
+            array_merge($validToken, array(
             "cl_player_id" => $this->input->post("player_id")
         )));
         if (!$pb_player_id)
@@ -877,7 +884,7 @@ class Quest extends REST_Controller
         // check quest_to_client
         $player_quest = $this->quest_model->getPlayerQuest($data);
 
-        // not join yet, cannot join
+        // not join yet, cannot cancel
         if (!$player_quest) {
             $this->response($this->error->setError("QUEST_CANCEL_FAILED"), 200);
         } else {
