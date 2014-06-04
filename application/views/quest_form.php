@@ -1132,7 +1132,13 @@ function addPoints(target){
 
     var pointsHead = '<h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
 
-    var pointsHtml = ' <div class="points-wrapper '+type+'-type well">'+pointsHead+'<label class="span4">Points:</label>'+inputHtml+'</div>';
+
+    var inputCompletionHtml = '';
+    if(type == 'completion'){
+            inputCompletionHtml = '<label class="span4">Title:</label><input type="text" name ="'+parent+'['+id+']['+type+'][point]['+type+'_title]" placeholder="Title" value="">';
+    }
+
+    var pointsHtml = ' <div class="points-wrapper '+type+'-type well">'+pointsHead+'<label class="span4">Points:</label>'+inputHtml+inputCompletionHtml+'</div>';
 
     target.html = pointsHtml;
     render(target);
@@ -1273,6 +1279,11 @@ function selectBadgesItem(){
                                     <input type="hidden" name="'+type+'['+id+']['+type+'_type]" value = "BADGE"/>'
                 }
 
+                var inputCompletionHtml = '';
+                if(type == 'completion'){
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                }
+
                 var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+id+'">\
                                     <div class="span2 text-center"><img src="'+img+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');">\
                                     </div>\
@@ -1281,7 +1292,7 @@ function selectBadgesItem(){
                                     <small>value</small>\
                                     '+inputHtml+'</div>\
                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
-                                    </div></div>';
+                                    </div>'+inputCompletionHtml+'</div>';
 
                    
                     wrapperObj.find('.badges-wrapper .item-container').append(badgesItemHtml);
@@ -1346,19 +1357,24 @@ function selectCustompointsItem(){
                 var title = $(this).find('.title').html();
 
                 if(parent == 'missions'){
-                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1"></div>\
+                        inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1">\
                                 <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "CUSTOM_POINT"/>\
-                                <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value = "'+id+'"/>'
+                                <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value = "'+id+'"/>';
                 }else{
                     inputHtml = '<input type="text" name ="'+type+'['+id+']['+type+'_value]" placeholder="Value" value="1"></div>\
                                 <input type="hidden" name = "'+type+'['+id+']['+type+'_type]" value = "CUSTOM_POINT"/>\
                                 <input type="hidden" name = "'+type+'['+id+']['+type+'_id]" value = "'+id+'"/>'
                 }
 
+                var inputCompletionHtml = '';
+                if(type == 'completion'){
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                }
+
                 var itemHtml = '<div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="'+id+'">\
                                 <div class="span7">'+title+'</div><div class="span3"><small>value</small>\
-                                '+inputHtml+'\
-                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+                                '+inputHtml+'</div>\
+                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>'+inputCompletionHtml+'</div>';
 
                     wrapperObj.find('.custompoints-wrapper .item-container').append(itemHtml);
                     init_additem_event(target);
@@ -1430,11 +1446,15 @@ function selectQuestsItem(){
                                 <input type="hidden" name = "'+type+'['+id+']['+type+'_value]" value = ""/>'
                 }
 
+                var inputCompletionHtml = '';
+                if(type == 'completion'){
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                }
                 var itemHtml = '<div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="'+id+'">\
                                 <div class="span2 text-center"><img src="'+image+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');">\
                                 </div><div class="span7">'+title+'</div>\
                                 '+inputHtml+'\
-                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div></div>';
+                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>'+inputCompletionHtml+'</div>';
 
                     wrapperObj.find('.quests-wrapper .item-container').append(itemHtml);
                     init_additem_event(target);
@@ -1517,6 +1537,10 @@ function selectActionsItem(){
                                     <input type="hidden" name="'+type+'['+id+']['+type+'_type]" value = "ACTION"/>';
                 }
 
+                var inputCompletionHtml = '';
+                if(type == 'completion'){
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                }
                 var actionsItemHtml = '<div class="clearfix item-wrapper actions-item-wrapper" data-id-action="'+id+'">\
                                     <div class="span2 text-center"><i class="'+icon+'"></i>\
                                     </div>\
@@ -1526,7 +1550,7 @@ function selectActionsItem(){
                                     <small>value</small>\
                                     '+inputHtml+'</div>\
                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
-                                    </div></div>';
+                                    </div>'+inputCompletionHtml+'</div>';
 
                    
                 wrapperObj.find('.actions-wrapper .item-container').append(actionsItemHtml);
