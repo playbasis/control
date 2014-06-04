@@ -314,6 +314,9 @@ class Quest extends REST_Controller
                                 'incompletion_value' => ((int)$c["completion_value"] - (int)$action["count"])
                             )
                         );
+                        if(isset($c["completion_filter"])){
+                            $event['incomplete']['incompletion_filter'] = $c["completion_filter"];
+                        }
                         array_push($missionEvent, $event);
                     }
                 }
