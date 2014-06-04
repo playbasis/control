@@ -5,7 +5,7 @@ class Quest_model extends MY_Model{
 
 
 	public function getQuestsByClientSiteId($data){
-		
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 		/*
 		$dummyQuest = array();
 
@@ -57,6 +57,13 @@ class Quest_model extends MY_Model{
 	}
 
 	public function getQuestByClientSiteId($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        if(isset($data['short_detail']) && $data['short_detail']){
+            $this->mongo_db->select(array('quest_name','description','hint','image'));
+            $this->mongo_db->select(array(),array('_id'));
+        }
+
 		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
@@ -68,12 +75,27 @@ class Quest_model extends MY_Model{
 	}
 
 	public function getTotalQuestsClientSite($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		return 3;
 
 	}
 
+    public function getCustomPoint($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('_id',  new MongoID($data['reward_id']));
+        $this->mongo_db->where_not_in('name', array('badge', 'point', 'exp'));
+
+        $results = $this->mongo_db->get("playbasis_reward_to_client");
+
+        return $results?$results[0]:array();
+    }
+
 	public function getCustomPoints($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
@@ -83,7 +105,21 @@ class Quest_model extends MY_Model{
 
 	}
 
+    public function getBadge($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('badge_id',  new MongoID($data['badge_id']));
+
+        return $this->mongo_db->get('playbasis_badge_to_client');
+
+    }
+
 	public function getBadgesByClientSiteId($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
@@ -174,10 +210,13 @@ class Quest_model extends MY_Model{
     }
 
     public function addQuestToClient($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
     	return $this->mongo_db->insert('playbasis_quest_to_client', $data);
     }
 
     public function getExpId($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
     	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
@@ -190,6 +229,8 @@ class Quest_model extends MY_Model{
     }
 
     public function getPointId($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
     	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
     	$this->mongo_db->where('name', 'point');
@@ -200,6 +241,8 @@ class Quest_model extends MY_Model{
     }
 
     public function getActionsByClientSiteId($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
     	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 		$this->mongo_db->where('status',true);
