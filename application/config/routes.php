@@ -139,14 +139,14 @@ $route['Player/mau_per_month'] = 'player/mauMonth';
 $route['Service/recent_point'] = 'service/recent_point';
 
 //Quest
-//$route['quest/testquest'] = 'Quest/testQuest';
+//$route['quest/testquest'] = 'quest/testQuest';
 $route['Quest/'.ANY_STRING] = 'quest/index/$1';
 $route['Quest'] = 'quest/index';
 $route['Quests'] = 'quest/index';
 $route['Quest/'.ANY_STRING.'/join'] = 'quest/join/$1';
 $route['Quest/'.ANY_STRING.'/cancel'] = 'quest/cancel/$1';
 $route['Quest/available'] = 'quest/available';
-$route['Quest/'.ANY_STRING.'/available'] = 'quest/$1/available';
+$route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 
 //misc
