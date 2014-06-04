@@ -314,7 +314,7 @@
                                             </tr>                                    
                                             <tr>                                        
                                                 <td><span class="required">*</span> Mission Number:</td>                                        
-                                                <td><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][mission_number]" size="100" value="<?php echo $mission['description'] ?>"></td>                                    
+                                                <td><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][mission_number]" size="100" value="<?php echo $mission['mission_number'] ?>"></td>                                    
                                             </tr>                                    
                                             <tr>                                        
                                                 <td>Description:</td>                                        
