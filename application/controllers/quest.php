@@ -867,7 +867,7 @@ class Quest extends REST_Controller
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
 
                 foreach($quest_player["missions"] as &$m){
-                    $m["player_remaining"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                    $m["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
                 $quest = array_merge($quest, $quest_player);
