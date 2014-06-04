@@ -382,6 +382,7 @@
                                                                     <div class="span2 col-remove">
                                                                         <a class="item-remove"><i class="icon-remove-sign"></i></a>                                    
                                                                     </div>
+                                                                    <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_title]" placeholder="Title" value="<?php echo $action['completion_title']; ?>"></div></div>
                                                                 </div>
                                                             
                                                         <?php } ?><!-- end of foreach -->
@@ -395,6 +396,9 @@
                                                             <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_value]" placeholder="Points" value = "<?php echo $mission['editPoint']['completion_value'] ?>">                    
                                                             <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_type]" value="POINT">                    
                                                             <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_id]" value="<?php echo $mission['editPoint']['completion_id'] ?>">
+                                                            <br>
+                                                            <label class="span4">Title:</label>
+                                                            <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_title]" placeholder="Title" value="<?php echo $mission['editPoint']['completion_title'] ?>">
                                                     </div>
                                                 <?php } ?><!-- end of editPoint isset -->
 
@@ -409,12 +413,13 @@
                                                                 <div class="span7"><?php foreach($customPoints as $c){if($c['_id'] == $cp['completion_id']){echo $c['name'];}} ?></div>
                                                                 <div class="span3">
                                                                     <small>value</small>                                
-                                                                    <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][custompoints][completion_value]" placeholder="Value" value="<?php echo $cp['completion_value']; ?>"></div>
-                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][custompoints][completion_type]" value="CUSTOM_POINT">                                
-                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][custompoints][completion_id]" value="<?php echo $cp['completion_id'] ?>">                                
+                                                                    <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $cp['completion_id']; ?>][completion_value]" placeholder="Value" value="<?php echo $cp['completion_value']; ?>"></div>
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $cp['completion_id']; ?>][completion_type]" value="CUSTOM_POINT">                                
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $cp['completion_id']; ?>][completion_id]" value="<?php echo $cp['completion_id'] ?>">                                
                                                                     <div class="span2 col-remove">
                                                                         <a class="item-remove"><i class="icon-remove-sign"></i></a>
                                                                     </div>
+                                                                    <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $cp['completion_id']; ?>][completion_title]" placeholder="Title" value="<?php echo $cp['completion_title']; ?>"></div></div>
                                                             </div>
 
                                                         <?php } ?>
@@ -440,6 +445,7 @@
                                                                         <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_type]" value="BADGE">
                                                                     </div>                                    
                                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                                    <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_title]" placeholder="Title" value="<?php echo $eBadge['completion_title'] ?>"></div></div>
                                                                 </div>
                                                             <?php } ?>
 
@@ -1135,7 +1141,7 @@ function addPoints(target){
 
     var inputCompletionHtml = '';
     if(type == 'completion'){
-            inputCompletionHtml = '<label class="span4">Title:</label><input type="text" name ="'+parent+'['+id+']['+type+'][point]['+type+'_title]" placeholder="Title" value="">';
+            inputCompletionHtml = '<br><label class="span4">Title:</label><input type="text" name ="'+parent+'['+id+']['+type+'][point]['+type+'_title]" placeholder="Title" value="">';
     }
 
     var pointsHtml = ' <div class="points-wrapper '+type+'-type well">'+pointsHead+'<label class="span4">Points:</label>'+inputHtml+inputCompletionHtml+'</div>';

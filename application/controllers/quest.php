@@ -399,6 +399,7 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_id'] = $mm['completion_id'];
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_filter'] = $mm['completion_filter'];
+                                $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_title'] = $mm['completion_title'];
                                 $countActions++;
                             }
 
@@ -406,12 +407,14 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editPoint']['completion_type'] = $mm['completion_type'];
                                 $this->data['editMission'][$missionCount]['editPoint']['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editPoint']['completion_id'] = $mm['completion_id'];
+                                $this->data['editMission'][$missionCount]['editPoint']['completion_title'] = $mm['completion_title'];
                             }
 
                             if($mm['completion_type'] == 'CUSTOM_POINT'){
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_type'] = $mm['completion_type'];
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_id'] = $mm['completion_id'];
+                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_title'] = $mm['completion_title'];
                                 $countCustomPoints++;
                             }
 
@@ -419,6 +422,7 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_type'] = $mm['completion_type'];
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_id'] = $mm['completion_id'];
+                                $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_title'] = $mm['completion_title'];
                                 $countBadge++;
                             }
                         }
