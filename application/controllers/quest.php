@@ -1001,7 +1001,7 @@ class Quest extends REST_Controller
 
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
                 $resp['quest'] = $quest;
-                $resp['quest']['quest_id'] = $quest['_id'];
+//                $resp['quest']['quest_id'] = $quest['_id'];
                 unset($resp['quest']['_id']);
             }else{
                 $resp['quest'] = array();
@@ -1028,7 +1028,7 @@ class Quest extends REST_Controller
 
                 $q = array_merge($quest, $q);
 
-                $q['quest_id'] = $q['_id'];
+//                $q['quest_id'] = $q['_id'];
                 unset($q['_id']);
             }
 
