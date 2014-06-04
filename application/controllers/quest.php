@@ -826,7 +826,7 @@ class Quest extends REST_Controller
             }
         }
         $this->response($this->resp->setRespond(
-            isset($condition_quest) ? $condition_quest : array()), 200);
+            isset($condition_quest) ? $condition_quest : array('events' => array('event_type' => 'QUEST_JOIN', 'quest_id' => $quest_id.""))), 200);
 
     }
 
@@ -900,7 +900,7 @@ class Quest extends REST_Controller
                 $this->response($this->error->setError("QUEST_CANCEL_FAILED"), 200);
             }
         }
-        $this->response($this->resp->setRespond(array()), 200);
+        $this->response($this->resp->setRespond(array('events' => array('event_type' => 'QUEST_UNJOIN', 'quest_id' => $quest_id.""))), 200);
     }
 
     public function mission_get($quest_id = '', $mission_id = ''){
