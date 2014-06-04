@@ -365,6 +365,14 @@ class Quest extends MY_Controller
                         $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type']; 
                         $this->data['editBadgeCon'][$countBadges]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editBadgeCon'][$countBadges]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                        $this->data['editBadgeCon'][$countBadges]['condition_data'] = isset($condition['condition_data'])?$condition['condition_data']:null;
+
+                        if (!empty($condition['condition_data']['image']) && $condition['condition_data']['image'] && (S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = $this->Image_model->resize($condition['condition_data']['image'], 100, 100);
+                        } else {
+                            $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                        }
+
                         $countBadges++;
                     }
                 }    
@@ -460,6 +468,13 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_id'] = $mm['completion_id'];
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_title'] = $mm['completion_title'];
+
+                                if (!empty($mm['completion_data']['image']) && $mm['completion_data']['image'] && (S3_IMAGE . $mm['completion_data']['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $mm['completion_data']['image'] != 'HTTP/1.0 403 Forbidden')) {
+                                    $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data']['image'] = $this->Image_model->resize($mm['completion_data']['image'], 100, 100);
+                                } else {
+                                    $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data']['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                                }
+
                                 $countBadge++;
                             }
                         }
@@ -492,6 +507,15 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_type'] = $rr['reward_type'];
                                 $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_value'] = $rr['reward_value'];
                                 $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_id'] = $rr['reward_id'];
+                                $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data'] = $rr['reward_data'];
+
+
+                                if (!empty($rr['reward_data']['image']) && $rr['reward_data']['image'] && (S3_IMAGE . $rr['reward_data']['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $rr['reward_data']['image'] != 'HTTP/1.0 403 Forbidden')) {
+                                    $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data']['image'] = $this->Image_model->resize($rr['reward_data']['image'], 100, 100);
+                                } else {
+                                    $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data']['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                                }
+
                                 $countBadge++;
                             }
                         }    

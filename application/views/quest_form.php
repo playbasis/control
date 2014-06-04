@@ -189,9 +189,9 @@
                                             <?php foreach($editBadgeCon as $badge){ ?>    
                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['condition_id'] ?>">                                    
                                                 <div class="span2 text-center">
-                                                    <img src="<?php foreach($badges as $b){if($b['badge_id'] == $badge['condition_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
+                                                    <img src="<?php echo $badge['condition_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                 </div>                                    
-                                                <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['condition_id']){echo $b['name'];}} ?></div>                                    
+                                                <div class="span7"><?php echo $badge['condition_data']['name'];?></div>                                    
                                                 <div class="span1">                                    
                                                     <small>value</small>                                    
                                                     <input type="text" name="condition[<?php echo $badge['condition_id'] ?>][condition_value]" placeholder="Value" value="<?php echo $badge['condition_value'] ?>">                                    
@@ -268,7 +268,7 @@
                                                 <div class="span2 text-center">
                                                     <img src="<?php echo $badge['reward_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                 </div>                                    
-                                                <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['reward_id']){echo $b['name'];}} ?></div>                                    
+                                                <div class="span7"><?php echo $badge['reward_data']['name'];?></div>                                    
                                                 <div class="span1">                                    
                                                     <small>value</small>                                    
                                                     <input type="text" name="reward[<?php echo $badge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $badge['reward_value'] ?>">                                    
@@ -437,7 +437,7 @@
                                                             <?php foreach($mission['editBadge'] as $eBadge){ ?>
                                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['completion_id'] ?>">                                    
                                                                     <div class="span2 text-center">
-                                                                        <img src="http://images.pbapp.net/<?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
+                                                                        <img src="<?php echo $eBadge['completion_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                                     </div>                                    
                                                                     <div class="span7"><?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['name'];}} ?></div>                                    
                                                                     <div class="span1">                                    
@@ -524,9 +524,9 @@
                                                         <div class="item-container">
                                                             <?php foreach($mission['editBadgeRew'] as $eBadge){ ?>
                                                             <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['reward_id'] ?>">                                    
-                                                                <div class="span2 text-center"><img src="http://images.pbapp.net/<?php foreach($badges as $bb){if($bb['badge_id'] == $eBadge['reward_id']){echo $bb['image'];}} ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
+                                                                <div class="span2 text-center"><img src="<?php echo $eBadge['reward_data']['image'] ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                                 </div>                                    
-                                                                <div class="span7"><?php foreach($badges as $bb){if($bb['badge_id'] == $eBadge['reward_id']){echo $bb['name'];}} ?></div>                                    
+                                                                <div class="span7"><?php echo $eBadge['reward_data']['name'] ?></div>                                    
                                                                 <div class="span1">                                    
                                                                 <small>value</small>                                    
                                                                 <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][reward][<?php echo $eBadge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eBadge['reward_value'] ?>">                                    
