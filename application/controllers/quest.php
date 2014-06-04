@@ -881,13 +881,25 @@ class Quest extends REST_Controller
             }
         } else {
             // get all questss related to clients
-            $quest = $this->quest_model->getPlayerQuests($data);
-            array_walk_recursive($quest, array($this, "convert_mongo_object"));
-            foreach ($quest as $key => $value) {
-                $quest[$key]['quest_id'] = $quest[$key]['_id'];
-                unset($quest[$key]['_id']);
+            $quests_player = $this->quest_model->getPlayerQuests($data);
+
+            foreach ($quests_player as &$q) {
+
+                $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
+
+                foreach($q["missions"] as &$m){
+                    $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
+                }
+
+                $q = array_merge($quest, $q);
+
+                $q['quest_id'] = $q['_id'];
+                unset($q['_id']);
             }
-            $resp['quests'] = $quest;
+
+            array_walk_recursive($quests_player, array($this, "convert_mongo_object"));
+
+            $resp['quests'] = $quests_player;
         }
         $this->response($this->resp->setRespond($resp), 200);
     }
