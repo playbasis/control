@@ -58,7 +58,7 @@ class Quest extends REST_Controller
 
                 $player_missions = array();
                 foreach($q["missions"] as $pm){
-                    $player_missions[$pm["mission_id"].""] = $pm["status"];
+                    $player_missions[$pm["mission_id"].""] = isset($pm["status"])?$pm["status"]:"unjoin";
                 }
 
                 if((bool)$quest["mission_order"]){
