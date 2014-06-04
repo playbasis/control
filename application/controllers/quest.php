@@ -281,6 +281,9 @@ class Quest extends REST_Controller
 
     private function checkCompletionMission($quest, $mission, $pb_player_id, $validToken){
 
+        if(isset($mission["status"]) && $mission["status"] == "finish")
+            return array();
+
         $player_badges = $this->player_model->getBadge($pb_player_id, $validToken['site_id']);
 
         if($player_badges){
