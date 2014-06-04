@@ -829,7 +829,7 @@ class Quest extends REST_Controller
             }
         }
         $this->response($this->resp->setRespond(
-            isset($condition_quest) ? $condition_quest : array('events' => array('event_type' => 'QUEST_JOIN', 'quest_id' => $quest_id.""))), 200);
+            (isset($condition_quest) && $condition_quest) ? $condition_quest : array('events' => array('event_type' => 'QUEST_JOIN', 'quest_id' => $quest_id.""))), 200);
 
     }
 
