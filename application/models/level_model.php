@@ -124,6 +124,7 @@ class Level_model extends MY_Model
             }
         }else{
             $order = 1;
+
         }
 
         $sort_data = array(
@@ -135,8 +136,9 @@ class Level_model extends MY_Model
 
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($data['sort'] => $order));
+
         }else{
-            $this->mongo_db->order_by(array('_id' => $order));
+            $this->mongo_db->order_by(array('level' => $order));
         }
 
         if (!empty($data['start']) || !empty($data['limit'])) {
