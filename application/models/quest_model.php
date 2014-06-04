@@ -77,7 +77,9 @@ class Quest_model extends MY_Model
             "pb_player_id" => $data["pb_player_id"],
             "quest_id" => $data["quest_id"]
         ));
-        $this->mongo_db->where_in('status', array("join","finish"));
+        if(isset($data['status'])){
+            $this->mongo_db->where_in('status', $data['status']);
+        }
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
 
@@ -90,7 +92,9 @@ class Quest_model extends MY_Model
         $this->mongo_db->where(array(
             "pb_player_id" => $data["pb_player_id"]
         ));
-        $this->mongo_db->where_in('status', array("join","finish"));
+        if(isset($data['status'])){
+            $this->mongo_db->where_in('status', $data['status']);
+        }
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
 

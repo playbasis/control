@@ -980,6 +980,7 @@ class Quest extends REST_Controller
             }
 
             $data['quest_id'] = $quest_id;
+            $data['status'] = array("join","finish");
             $quest_player = $this->quest_model->getPlayerQuest($data);
 
             if($quest_player){
@@ -1008,6 +1009,7 @@ class Quest extends REST_Controller
             }
         } else {
             // get all questss related to clients
+            $data['status'] = array("join","finish");
             $quests_player = $this->quest_model->getPlayerQuests($data);
 
             foreach ($quests_player as &$q) {
