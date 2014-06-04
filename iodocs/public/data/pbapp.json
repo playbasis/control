@@ -788,6 +788,45 @@
                             "Description": "player id as used in client's website"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Quest of Player",
+                    "Synopsis": "Quest of player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/quest/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id as player need to join"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Quest list of Player",
+                    "Synopsis": "Quest list of player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/quest",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 }
 			]
 		},
