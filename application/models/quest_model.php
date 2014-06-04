@@ -207,7 +207,14 @@ class Quest_model extends MY_Model{
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($quest_id));
-        $this->mongo_db->delete('playbasis_quest_to_client');
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
+        $this->mongo_db->update('playbasis_quest_to_client');
+
+        $this->mongo_db->where('quest_id', new MongoId($quest_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update_all('playbasis_quest_to_player');
+
     }
 
     public function addQuestToClient($data){
