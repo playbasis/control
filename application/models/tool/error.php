@@ -90,6 +90,10 @@ class Error extends CI_Model
             $errorData["message"] = "User has not yet join this quest";
             $errorData["error_code"] = "0704";
             break;
+        case "QUEST_JOIN_OR_CANCEL_NOTFOUND":
+            $errorData["message"] = "Quest not found";
+            $errorData["error_code"] = "0705";
+            break;
 		default:
 			$errorData['message'] = "Unknow";
 			$errorData['error_code'] = '9999';
