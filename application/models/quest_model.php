@@ -71,7 +71,7 @@ class Quest_model extends MY_Model{
 
 		$quest = $this->mongo_db->get('playbasis_quest_to_client');
 
-		return (isset($quest) || !empty($quest[0]))?$quest[0]:null;
+		return (isset($quest) || !empty($quest[0]))?$quest[0]:array();
 	}
 
 	public function getTotalQuestsClientSite($data){
@@ -114,7 +114,8 @@ class Quest_model extends MY_Model{
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
         $this->mongo_db->where('badge_id',  new MongoID($data['badge_id']));
 
-        return $this->mongo_db->get('playbasis_badge_to_client');
+        $result = $this->mongo_db->get('playbasis_badge_to_client');
+        return $result?$result[0]:array();
 
     }
 

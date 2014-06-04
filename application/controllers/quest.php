@@ -191,10 +191,6 @@ class Quest extends MY_Controller
         }else{
             $this->getForm();        
         }
-        
-        
-
-        
     }
 
     private function questObjectData($object_data, $key_type, $key_id, $query_data){
@@ -645,7 +641,17 @@ class Quest extends MY_Controller
                                 $item = new MongoId($item);
                             }
                         }
+                        $qdata = array(
+                            'client_id' => $client_id,
+                            'site_id' => $site_id
+                        );
                         unset($data[$key][$k]);
+                        if($key == 'condition'){
+                            $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
+                        }
+                        if($key == 'reward'){
+                            $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
+                        }
                         $data[$key][$i] = $v;
                         if($key == 'missions'){
                             $data[$key][$i]['mission_number'] = $i + 1;
@@ -669,7 +675,17 @@ class Quest extends MY_Controller
                                             $vvv = new MongoId($vvv);
                                         }
                                     }
+                                    $qdata = array(
+                                        'client_id' => $client_id,
+                                        'site_id' => $site_id
+                                    );
                                     unset($data[$key][$im][$k][$koo]);
+                                    if($k == 'completion'){
+                                        $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
+                                    }
+                                    if($k == 'reward'){
+                                        $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
+                                    }
                                     $data[$key][$im][$k][$i] = $voo;
                                     $i++;
                                 }    
