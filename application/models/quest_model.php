@@ -18,6 +18,7 @@ class Quest_model extends MY_Model
             '_id' => $data['quest_id'],
             'status' => true
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
         return $result ? $result[0] : array();
@@ -32,6 +33,7 @@ class Quest_model extends MY_Model
             'site_id' => $data['site_id'],
             'status' => true
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
         return $result;
     }
@@ -48,6 +50,7 @@ class Quest_model extends MY_Model
             'missions.mission_id' => $data['mission_id'],
             'status' => true
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
         return $result ? $result[0] : array();
     }
@@ -74,6 +77,7 @@ class Quest_model extends MY_Model
             "pb_player_id" => $data["pb_player_id"],
             "quest_id" => $data["quest_id"]
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
 
         return $result ? $result[0] : array();
@@ -85,6 +89,7 @@ class Quest_model extends MY_Model
         $this->mongo_db->where(array(
             "pb_player_id" => $data["pb_player_id"]
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
 
         return $result;
