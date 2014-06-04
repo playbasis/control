@@ -743,7 +743,7 @@ class Quest extends MY_Controller
 
                         unset($data[$key][$kk]);
                         $data[$key][$im] = $val;
-//                        $data[$key][$im]['mission_id'] = new MongoId();
+                        $data[$key][$im]['mission_id'] = new MongoId($kk);
                         foreach($val as $k => $v){
                             if($k == 'completion' || $k == 'reward'){
                                 $i = 0;
