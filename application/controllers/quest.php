@@ -986,7 +986,7 @@ class Quest extends REST_Controller
             if($quest_player){
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
 
-                foreach($quest_player["missions"] as &$m){
+                foreach($quest["missions"] as &$m){
                     $md = array(
                         'client_id' => $validToken['client_id'],
                         'site_id' => $validToken['site_id'],
@@ -1016,7 +1016,7 @@ class Quest extends REST_Controller
 
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
 
-                foreach($q["missions"] as &$m){
+                foreach($quest["missions"] as &$m){
                     $md = array(
                         'client_id' => $validToken['client_id'],
                         'site_id' => $validToken['site_id'],
@@ -1024,8 +1024,7 @@ class Quest extends REST_Controller
                         'mission_id' => $m['mission_id']
                     );
                     $mdetail = $this->quest_model->getMission($md);
-                    var_dump($mdetail);
-                    exit();
+
                     $m = array_merge($m, $mdetail['missions'][0]);
                     $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
