@@ -138,7 +138,7 @@
                                             <div class="item-container">
                                                 <div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="<?php echo $quest['condition_id']; ?>">                                
                                                     <div class="span2 text-center">
-                                                        <img src="http://images.pbapp.net/no_image.jpg" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                
+                                                        <img src="http://images.pbapp.net/no_image.jpg" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                
                                                     </div>
                                                     <div class="span7"><?php foreach($quests as $q){if($q['_id']==$quest['condition_id']){echo $q['quest_name'];}} ?></div>                                
                                                     <div class="span1">
@@ -189,7 +189,7 @@
                                             <?php foreach($editBadgeCon as $badge){ ?>    
                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['condition_id'] ?>">                                    
                                                 <div class="span2 text-center">
-                                                    <img src="http://images.pbapp.net/<?php foreach($badges as $b){if($b['badge_id'] == $badge['condition_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                    <img src="<?php foreach($badges as $b){if($b['badge_id'] == $badge['condition_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                 </div>                                    
                                                 <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['condition_id']){echo $b['name'];}} ?></div>                                    
                                                 <div class="span1">                                    
@@ -266,7 +266,7 @@
                                             <?php foreach($editBadgeRew as $badge){ ?>    
                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['reward_id'] ?>">                                    
                                                 <div class="span2 text-center">
-                                                    <img src="http://images.pbapp.net/data/dc2efb2d903008f9d7e0d5e8024981d2.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                    <img src="http://images.pbapp.net/data/dc2efb2d903008f9d7e0d5e8024981d2.png" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                 </div>                                    
                                                 <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['reward_id']){echo $b['name'];}} ?></div>                                    
                                                 <div class="span1">                                    
@@ -328,7 +328,7 @@
                                                 <td>Mission Image:</td>                                        
                                                 <td valign="top">
                                                     <div class="image">
-                                                        <img src="http://images.pbapp.net/cache/no_image-100x100.jpg" alt="" id="thumb_mission_<?php echo $mission['mission_id'] ?>" onerror="$(this).attr(" src","http:="" localhost="" playbasis="" control="" image="" default-image.png");"="">                                            
+                                                        <img src="http://images.pbapp.net/cache/no_image-100x100.jpg" alt="" id="thumb_mission_<?php echo $mission['mission_id'] ?>" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                            
                                                         <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][image]" value="no_image.jpg" id="image_mission_<?php echo $mission['mission_id'] ?>">                                            
                                                         <br>
                                                         <a onclick="image_upload('image_mission_<?php echo $mission['mission_id'] ?>', 'thumb_mission_<?php echo $mission['mission_id'] ?>');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb_mission_<?php echo $mission['mission_id'] ?>').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image_mission_<?php echo $mission['mission_id'] ?>').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
@@ -435,7 +435,7 @@
                                                             <?php foreach($mission['editBadge'] as $eBadge){ ?>
                                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['completion_id'] ?>">                                    
                                                                     <div class="span2 text-center">
-                                                                        <img src="http://images.pbapp.net/<?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                                        <img src="http://images.pbapp.net/<?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                                     </div>                                    
                                                                     <div class="span7"><?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['name'];}} ?></div>                                    
                                                                     <div class="span1">                                    
@@ -522,7 +522,7 @@
                                                         <div class="item-container">
                                                             <?php foreach($mission['editBadgeRew'] as $eBadge){ ?>
                                                             <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['reward_id'] ?>">                                    
-                                                                <div class="span2 text-center"><img src="http://images.pbapp.net/<?php foreach($badges as $bb){if($bb['badge_id'] == $eBadge['reward_id']){echo $bb['image'];}} ?>" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                                <div class="span2 text-center"><img src="http://images.pbapp.net/<?php foreach($badges as $bb){if($bb['badge_id'] == $eBadge['reward_id']){echo $bb['image'];}} ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
                                                                 </div>                                    
                                                                 <div class="span7"><?php foreach($badges as $bb){if($bb['badge_id'] == $eBadge['reward_id']){echo $bb['name'];}} ?></div>                                    
                                                                 <div class="span1">                                    
@@ -574,7 +574,6 @@
                     </div>
                     <div class="span2 image text-center">
                         <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                        <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
                     </div>
                     <div class="span9 title"><?php echo $badges[$i]['name'];?></div>
                 </div>
@@ -605,7 +604,6 @@
                     </div>
                     <div class="span2 image text-center">
                         <img height="50" width="50" src="<?php echo S3_IMAGE.$quests[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                        <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
                     </div>
                     <div class="span9 title"><?php echo $quests[$i]['quest_name'];?></div>
                 </div>
@@ -664,9 +662,6 @@
                     </div>
                     <div class="span2">
                         <i style='color:grey' class='<?php echo $actions[$i]['icon']; ?> icon-4x'></i>
-
-                        <!-- <img height="50" width="50" src="<?php //echo S3_IMAGE.$actions[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /> -->
-                        <!-- <img src="http://images.pbapp.net/cache/data/cdc156da5ee5ffd5380855a4eca923be-50x50.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');"> -->
                     </div>
                     <div class="span9 title"><?php echo $actions[$i]['name'];?></div>
                 </div>
@@ -1291,7 +1286,7 @@ function selectBadgesItem(){
                 }
 
                 var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+id+'">\
-                                    <div class="span2 text-center"><img src="'+img+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');">\
+                                    <div class="span2 text-center"><img src="'+img+'" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">\
                                     </div>\
                                     <div class="span7">'+title+'</div>\
                                     <div class="span1">\
@@ -1457,7 +1452,7 @@ function selectQuestsItem(){
                         inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
                 }
                 var itemHtml = '<div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="'+id+'">\
-                                <div class="span2 text-center"><img src="'+image+'" alt="" onerror="$(this).attr(\'src\',\'http://localhost/control/image/default-image.png\');">\
+                                <div class="span2 text-center"><img src="'+image+'" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">\
                                 </div><div class="span7">'+title+'</div>\
                                 '+inputHtml+'\
                                 <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>'+inputCompletionHtml+'</div>';

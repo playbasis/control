@@ -50,7 +50,7 @@ class Quest extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['per_page'] = 10;
+        $config['per_page'] = 2;
 
         $filter = array(
             'limit' => $config['per_page'],
@@ -701,11 +701,16 @@ class Quest extends MY_Controller
                 }
             }
 
+            $data['status'] = (isset($data['status']))?true:false;
+            $data['mission_order'] = (isset($data['mission_order']))?true:false;            
+
             if($this->Quest_model->editQuestToClient($quest_id, $data)){
                 redirect('/quest', 'refresh');
             }else{
                 echo "Did not update";
             }
+
+
         }
 
         if(!empty($client_id) && !empty($site_id)){

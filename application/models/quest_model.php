@@ -47,6 +47,7 @@ class Quest_model extends MY_Model{
 
 		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+		$this->mongo_db->where_not_in('deleted', array(true));
 
 		if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
 		    $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -75,9 +76,14 @@ class Quest_model extends MY_Model{
 	}
 
 	public function getTotalQuestsClientSite($data){
-        $this->set_site_mongodb($this->session->userdata('site_id'));
 
-		return 3;
+		$this->set_site_mongodb($this->session->userdata('site_id'));
+
+		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+		$this->mongo_db->where_not_in('deleted', array(true));
+
+		return $this->mongo_db->count('playbasis_quest_to_client');
 
 	}
 
