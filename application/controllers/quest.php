@@ -415,7 +415,7 @@ class Quest extends MY_Controller
                             }
                         }
                     }
-                    
+
                     $countBadge = 0;
                     $countCustomPoints = 0;
                     if(isset($mission['reward'])){
@@ -618,16 +618,71 @@ class Quest extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'quest/insert';
+        $this->data['form'] = 'quest/edit/'.$quest_id;
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+            $data = $this->input->post();
+
+            foreach($data as $key => $value){
+                if($key == 'condition' || $key == 'reward' || $key == 'missions'){
+                    $i = 0;
+                    foreach($value as $k => $v){
+                        foreach($v as $ke => &$item){
+                            if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
+                                $item = new MongoId($item);
+                            }
+                        }
+                        unset($data[$key][$k]);
+                        $data[$key][$i] = $v;
+                        if($key == 'missions'){
+                            $data[$key][$i]['mission_number'] = $i + 1;
+                        }
+                        $i++;
+                    }
+                }
+                if($key == 'missions'){
+                    $im = 0;
+                    foreach($value as $kk => $val){         
+
+                        unset($data[$key][$kk]);
+                        $data[$key][$im] = $val;
+                        $data[$key][$im]['mission_id'] = new MongoId();
+                        foreach($val as $k => $v){
+                            if($k == 'completion' || $k == 'reward'){
+                                $i = 0;
+                                foreach($v as $koo => $voo){                                    
+                                    foreach($voo as $kkk => &$vvv){
+                                        if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
+                                            $vvv = new MongoId($vvv);
+                                        }
+                                    }
+                                    unset($data[$key][$im][$k][$koo]);
+                                    $data[$key][$im][$k][$i] = $voo;
+                                    $i++;
+                                }    
+                            }
+                        }
+                        $im++;
+                        
+                    }
+                }
+            }
+
+            if($this->Quest_model->editQuestToClient($quest_id, $data)){
+                redirect('/quest', 'refresh');
+            }else{
+                echo "Did not update";
+            }
+        }
+
         if(!empty($client_id) && !empty($site_id)){
 
             $this->getForm($quest_id);
-
-        }else{
 
         }
         

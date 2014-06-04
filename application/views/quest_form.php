@@ -189,7 +189,7 @@
                                             <?php foreach($editBadgeCon as $badge){ ?>    
                                                 <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $badge['condition_id'] ?>">                                    
                                                 <div class="span2 text-center">
-                                                    <img src="http://images.pbapp.net/data/dc2efb2d903008f9d7e0d5e8024981d2.png" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                    <img src="http://images.pbapp.net/<?php foreach($badges as $b){if($b['badge_id'] == $badge['condition_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
                                                 </div>                                    
                                                 <div class="span7"><?php foreach($badges as $b){if($b['_id'] == $badge['condition_id']){echo $b['name'];}} ?></div>                                    
                                                 <div class="span1">                                    

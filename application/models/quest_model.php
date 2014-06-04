@@ -250,5 +250,55 @@ class Quest_model extends MY_Model{
 		return $this->mongo_db->get('playbasis_action_to_client');
     }
 
+    public function editQuestToClient($quest_id, $data){
+
+    	$this->mongo_db->where('_id', new MongoID($quest_id));
+
+    	if(isset($data['quest_name']) && !is_null($data['quest_name'])){
+    		$this->mongo_db->set('quest_name', $data['quest_name']);
+    	}
+
+    	if(isset($data['description']) && !is_null($data['description'])){
+    		$this->mongo_db->set('description', $data['description']);
+    	}
+
+    	if(isset($data['hint']) && !is_null($data['hint'])){
+    		$this->mongo_db->set('hint', $data['hint']);
+    	}
+
+    	if(isset($data['image']) && !is_null($data['image'])){
+    		$this->mongo_db->set('image', $data['image']);
+    	}
+
+    	if(isset($data['mission_order']) && !is_null($data['mission_order'])){
+    		$this->mongo_db->set('mission_order', $data['mission_order']);
+    	}
+
+    	if(isset($data['status']) && !is_null($data['status'])){
+    		$this->mongo_db->set('status', $data['status']);
+    	}
+		
+		if(isset($data['sort_order']) && !is_null($data['sort_order'])){
+    		$this->mongo_db->set('sort_order', $data['sort_order']);
+    	}
+
+    	if(isset($data['condition']) && !is_null($data['condition'])){
+    		$this->mongo_db->set('condition', $data['condition']);
+    	}
+
+    	if(isset($data['reward']) && !is_null($data['reward'])){
+    		$this->mongo_db->set('reward', $data['reward']);
+    	}
+
+		if(isset($data['missions']) && !is_null($data['missions'])){
+    		$this->mongo_db->set('missions', $data['missions']);
+    	}
+
+    	$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+
+    	return $this->mongo_db->update('playbasis_quest_to_client');
+
+    }
+
 
 }
