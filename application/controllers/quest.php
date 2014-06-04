@@ -714,7 +714,7 @@ class Quest extends MY_Controller
 
      private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'action')) {
+        if ($this->User_model->hasPermission('modify', 'quest')) {
             return true;
         } else {
             return false;
