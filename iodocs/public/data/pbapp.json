@@ -815,7 +815,7 @@
                 {
                     "MethodName": "Quest list of Player",
                     "Synopsis": "Quest list of player.",
-                    "HTTPMethod": "POST",
+                    "HTTPMethod": "GET",
                     "URI": "/Player/quest",
                     "RequiresOAuth": "N",
                     "parameters": [
