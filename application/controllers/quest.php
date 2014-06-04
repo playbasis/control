@@ -1024,6 +1024,8 @@ class Quest extends REST_Controller
                         'mission_id' => $m['mission_id']
                     );
                     $mdetail = $this->quest_model->getMission($md);
+                    var_dump($mdetail);
+                    exit();
                     $m = array_merge($m, $mdetail['missions'][0]);
                     $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }

@@ -21,11 +21,7 @@ class Quest_model extends MY_Model
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
-        $result = $result ? $result[0] : array();
-
-        array_walk_recursive($result, array($this, "change_image_path"));
-
-        return $result;
+        return $result ? $result[0] : array();
     }
     public function getQuests($data)
     {
@@ -39,9 +35,6 @@ class Quest_model extends MY_Model
         ));
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
-
-        array_walk_recursive($result, array($this, "change_image_path"));
-
         return $result;
     }
     public function getMission($data)
@@ -59,12 +52,7 @@ class Quest_model extends MY_Model
         ));
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
-
-        $result = $result ? $result[0] : array();
-
-        array_walk_recursive($result, array($this, "change_image_path"));
-
-        return $result;
+        return $result ? $result[0] : array();
     }
 
     public function joinQuest($data)
