@@ -990,7 +990,7 @@ class Quest extends REST_Controller
                     $md = array(
                         'client_id' => $validToken['client_id'],
                         'site_id' => $validToken['site_id'],
-                        'quest_id' => $quest['_id'],
+                        'quest_id' => $quest_player['quest_id'],
                         'mission_id' => $m['mission_id']
                     );
                     $mdetail = $this->quest_model->getMission($md);
@@ -1020,7 +1020,7 @@ class Quest extends REST_Controller
                     $md = array(
                         'client_id' => $validToken['client_id'],
                         'site_id' => $validToken['site_id'],
-                        'quest_id' => $quest['_id'],
+                        'quest_id' => $q['quest_id'],
                         'mission_id' => $m['mission_id']
                     );
                     $mdetail = $this->quest_model->getMission($md);
@@ -1057,6 +1057,5 @@ class Quest extends REST_Controller
             }
         }
     }
-
 }
 ?>

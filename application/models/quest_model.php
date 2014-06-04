@@ -21,7 +21,11 @@ class Quest_model extends MY_Model
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
-        return $result ? $result[0] : array();
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+
+        return $result;
     }
     public function getQuests($data)
     {
@@ -35,6 +39,9 @@ class Quest_model extends MY_Model
         ));
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+
         return $result;
     }
     public function getMission($data)
@@ -52,7 +59,12 @@ class Quest_model extends MY_Model
         ));
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
-        return $result ? $result[0] : array();
+
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+
+        return $result;
     }
 
     public function joinQuest($data)
@@ -133,6 +145,13 @@ class Quest_model extends MY_Model
             $this->mongo_db->set(array('missions.$.status' => $status));
             $this->mongo_db->set(array('missions.$.date_modifield' => new MongoDate(time())));
             $this->mongo_db->update('playbasis_quest_to_player');
+        }
+    }
+
+    private function change_image_path($item, $key)
+    {
+        if($key == "image"){
+            $item = $this->config->item('IMG_PATH').$item;
         }
     }
 }
