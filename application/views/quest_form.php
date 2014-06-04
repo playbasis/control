@@ -356,11 +356,7 @@
                                         </div>                                    
                                         <div class="box-content">                                        
                                             <div class="completion-container">                                        
-                                                <!-- <pre>
-                                                    <?php //var_dump($editMission); ?>    
-                                                </pre> -->
                                                 <?php if(isset($mission['editAction'])){ ?>
-                                                    
                                                     <div class="actions-wrapper completion-type well">
                                                         <h3>Actions  <a class="remove"><i class="icon-remove-sign"></i></a> 
                                                             <a class="btn add-action-btn">+ Add Actions</a>
@@ -372,7 +368,7 @@
                                                                     <div class="span2 text-center">
                                                                         <i class="<?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['icon'];}} ?> icon-4x"></i>                                    
                                                                     </div>                                    
-                                                                    <div class="span5">visit</div>                                    
+                                                                    <div class="span5"><?php foreach($actions as $aa){if($aa['action_id'] == $action['completion_id']){echo $aa['name'];}} ?></div>                                    
                                                                     <div class="span2">
                                                                         <small>filter</small>
                                                                     <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $action['completion_id']; ?>][completion_filter]" value = "<?php echo $action['completion_filter'] ?>">
@@ -400,7 +396,57 @@
                                                             <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_type]" value="POINT">                    
                                                             <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][point][completion_id]" value="<?php echo $mission['editPoint']['completion_id'] ?>">
                                                     </div>
-                                                <?php } ?>
+                                                <?php } ?><!-- end of editPoint isset -->
+
+                                                <?php if(isset($mission['editCustomPoint'])){ ?>
+                                                    <div class="custompoints-wrapper completion-type well">
+                                                        <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
+                                                        <div class="item-container">
+
+                                                        <?php foreach ($mission['editCustomPoint'] as $cp){ ?>
+
+                                                            <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $cp['completion_id'] ?>">                                
+                                                                <div class="span7"><?php foreach($customPoints as $c){if($c['_id'] == $cp['completion_id']){echo $c['name'];}} ?></div>
+                                                                <div class="span3">
+                                                                    <small>value</small>                                
+                                                                    <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][custompoints][completion_value]" placeholder="Value" value="<?php echo $cp['completion_value']; ?>"></div>
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][custompoints][completion_type]" value="CUSTOM_POINT">                                
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][custompoints][completion_id]" value="<?php echo $cp['completion_id'] ?>">                                
+                                                                    <div class="span2 col-remove">
+                                                                        <a class="item-remove"><i class="icon-remove-sign"></i></a>
+                                                                    </div>
+                                                            </div>
+
+                                                        <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editCustomPoint isset -->
+
+                                                <?php if(isset($mission['editBadge'])){ ?>
+                                                    <div class="badges-wrapper completion-type well">
+                                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
+                                                        <div class="item-container">
+
+                                                            <?php foreach($mission['editBadge'] as $eBadge){ ?>
+                                                                <div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="<?php echo $eBadge['completion_id'] ?>">                                    
+                                                                    <div class="span2 text-center">
+                                                                        <img src="http://images.pbapp.net/<?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['image'];}} ?>" alt="" onerror="$(this).attr('src','http://localhost/control/image/default-image.png');">                                    
+                                                                    </div>                                    
+                                                                    <div class="span7"><?php foreach($badges as $b){if($b['badge_id'] == $eBadge['completion_id']){echo $b['name'];}} ?></div>                                    
+                                                                    <div class="span1">                                    
+                                                                        <small>value</small>                                    
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_value]" placeholder="Value" value="<?php echo $eBadge['completion_value']; ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_id]" value="<?php echo $eBadge['completion_id'] ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_type]" value="BADGE">
+                                                                    </div>                                    
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                                </div>
+                                                            <?php } ?>
+
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editBadge isset -->
+
                                                 <h3 class="no-item">No Item</h3>
                                             </div>                                    
                                         </div>                                
