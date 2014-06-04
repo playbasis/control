@@ -1003,6 +1003,45 @@
                     ]
                 },
                 {
+                    "MethodName": "Quest Available For Player",
+                    "Synopsis": "Returns information about the quest is available for player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/available",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Quest list Available For Player",
+                    "Synopsis": "Returns information about list of quest is available for player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/:id/available",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id to query"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Join Quest",
                     "Synopsis": "Player join quest.",
                     "HTTPMethod": "POST",
