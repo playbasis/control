@@ -104,12 +104,11 @@ class Quest extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'quest/insert';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
-
-            // echo "<pre>";
-            //     var_dump($data);
-            // echo "</pre>";
 
             foreach($data as $key => $value){
                 if($key == 'condition' || $key == 'reward' || $key == 'missions'){
@@ -120,7 +119,17 @@ class Quest extends MY_Controller
                                 $item = new MongoId($item);
                             }
                         }
+                        $qdata = array(
+                            'client_id' => $client_id,
+                            'site_id' => $site_id
+                        );
                         unset($data[$key][$k]);
+                        if($key == 'condition'){
+                            $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
+                        }
+                        if($key == 'reward'){
+                            $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
+                        }
                         $data[$key][$i] = $v;
                         if($key == 'missions'){
                             $data[$key][$i]['mission_number'] = $i + 1;
@@ -144,7 +153,17 @@ class Quest extends MY_Controller
                                             $vvv = new MongoId($vvv);
                                         }
                                     }
+                                    $qdata = array(
+                                        'client_id' => $client_id,
+                                        'site_id' => $site_id
+                                    );
                                     unset($data[$key][$im][$k][$koo]);
+                                    if($k == 'completion'){
+                                        $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
+                                    }
+                                    if($k == 'reward'){
+                                        $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
+                                    }
                                     $data[$key][$im][$k][$i] = $voo;
                                     $i++;
                                 }    
@@ -159,12 +178,12 @@ class Quest extends MY_Controller
             $data['status'] = (isset($data['status']))?true:false;
             $data['mission_order'] = (isset($data['mission_order']))?true:false;
 
-            $data['client_id'] = $this->User_model->getClientId();
-            $data['site_id'] = $this->User_model->getSiteId();
+            $data['client_id'] = $client_id;
+            $data['site_id'] = $site_id;
 
-            // echo "<pre>";
-            //     var_dump($data);
-            // echo "</pre>";
+//             echo "<pre>";
+//                 var_dump($data);
+//             echo "</pre>";
             
             $this->Quest_model->addQuestToClient($data);
             redirect('/quest', 'refresh');
@@ -176,6 +195,32 @@ class Quest extends MY_Controller
         
 
         
+    }
+
+    private function questObjectData($object_data, $key_type, $key_id, $query_data){
+        $condition_data = array();
+        switch ($object_data[$key_type]) {
+            case "QUEST":
+                $query_data['quest_id'] = $object_data[$key_id];
+                $query_data['short_detail'] = true;
+                $quest_detail = $this->Quest_model->getQuestByClientSiteId($query_data);
+                $condition_data = $quest_detail;
+                break;
+            case "POINT":
+                $condition_data = array("name" => 'point');
+                break;
+            case "CUSTOM_POINT":
+                $query_data['reward_id'] = $object_data[$key_id];
+                $reward_detail = $this->Quest_model->getCustomPoint($query_data);
+                $condition_data = array("name" => $reward_detail['name']);
+                break;
+            case "BADGE":
+                $query_data['badge_id'] = $object_data[$key_id];
+                $badge_detail = $this->Quest_model->getBadge($query_data);
+                $condition_data = $badge_detail;
+                break;
+        }
+        return $condition_data;
     }
 
     public function getForm($quest_id = null){
