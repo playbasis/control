@@ -65,5 +65,38 @@ class MY_Model extends CI_Model
     //        $this->dbGroups[$key] = $value;
     //    }
     //}
+	/* Assume $str to be in 'YYYY-mm-dd' format */
+	public function new_mongo_date($str, $t='00:00:00') {
+		return new MongoDate(strtotime($str.' '.$t));
+	}
+	public static function get_number_of_days($year_month) {
+		return date('t', strtotime($year_month.'-01 00:00:00'));
+	}
+	public static function get_year_month($key) {
+		$str = explode('-', $key, 3);
+		return $str[0].'-'.$str[1];
+	}
+	public static function week_to_date($key) {
+		$str = explode('-', $key, 3);
+		$year_month = $str[0].'-'.$str[1];
+		$ndays = self::get_number_of_days($year_month);
+		$h = array();
+		foreach (array(1,2,3,4) as $i => $j) {
+			$d = ceil($i*$ndays/4.0)+1;
+			$h['w'.$j] = ($d < 10 ? '0'.$d : ''.$d);
+		}
+		return $year_month.'-'.$h[$str[2]];
+	}
+	public static function date_to_week($str) {
+		$key = explode('-', $str, 3);
+		$year_month = $key[0].'-'.$key[1];
+		$ndays = self::get_number_of_days($year_month);
+		return $year_month.'-w'.ceil(intval($key[2])/($ndays/4.0));
+	}
+	public static function date_to_startdate_of_week($key) {
+		$str = explode('-', $key, 3);
+		$week = ceil(floatval($str[2])/7);
+		$d = ($week-1)*7+1;
+		return $str[0].'-'.$str[1].'-'.sprintf("%02s", $d);
+	}
 }
-

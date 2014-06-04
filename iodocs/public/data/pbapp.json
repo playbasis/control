@@ -788,6 +788,45 @@
                             "Description": "player id as used in client's website"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Quest of Player",
+                    "Synopsis": "Quest of player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/quest/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id as player need to join"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Quest list of Player",
+                    "Synopsis": "Quest list of player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/quest",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 }
 			]
 		},
@@ -914,6 +953,118 @@
             ]
         },
         {
+            "name": "Quest API",
+            "methods": [
+                {
+                    "MethodName": "Quest List Info",
+                    "Synopsis": "Returns information about all quest for the current site.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest",
+                    "RequiresOAuth": "N",
+                    "parameters": []
+                },
+                {
+                    "MethodName": "Quest Info",
+                    "Synopsis": "Returns information about the quest with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id to query"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Mission Info",
+                    "Synopsis": "Returns information about the mission with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/:id/mission/:mission_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id to query"
+                        },
+                        {
+                            "Name": "mission_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "mission id to query"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Join Quest",
+                    "Synopsis": "Player join quest.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quest/:id/join",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id as player need to join"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Cancel Quest",
+                    "Synopsis": "Player cancel quest.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quest/:id/cancel",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id as player need to join"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "Redeem API",
             "methods": [
                 {
@@ -950,6 +1101,41 @@
                             "Default": "",
                             "Type": "integer",
                             "Description": "amount of the goods to give to player"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Service API",
+            "methods": [
+                {
+                    "MethodName": "Recent Point",
+                    "Synopsis": "Returns recent activity points of all players",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/recent_point",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "point_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the point-based reward to query"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
                         }
                     ]
                 }

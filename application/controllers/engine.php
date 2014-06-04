@@ -1,7 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST_Controller.php';
-class Engine extends REST_Controller
+require_once(APPPATH.'controllers/quest.php');
+//class Engine extends REST_Controller
+class Engine extends Quest
 {
 	public function __construct()
 	{
@@ -173,6 +175,7 @@ class Engine extends REST_Controller
 			)));
 			if(!$pb_player_id)
 			{
+				log_message('error', '[debug-case-pbapp_auto_user] player_id = '.$this->input->post('player_id').', action = '.$this->input->post('action'));
 				//$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 				//create user with tmp data for this id
 				$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
@@ -201,6 +204,9 @@ class Engine extends REST_Controller
 			));
 			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 		}
+        //Quest Process
+        $apiResult = array_merge($apiResult, $this->QuestProcess($pb_player_id, $validToken));
+
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
 		$this->response($this->resp->setRespond($apiResult), 200);

@@ -98,6 +98,9 @@ $route['Player/'.ANY_STRING.'/badge/'.ANY_STRING.'/redeem'] = 'player/redeemBadg
 
 $route['Player/'.ANY_STRING.'/goods'] = 'player/goods/$1';
 
+$route['Player/quest'] = 'quest/questOfPlayer';
+$route['Player/quest/'.ANY_STRING] = 'quest/questOfPlayer/$1';
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
@@ -116,6 +119,35 @@ $route['Engine/facebook']	= 'engine/rule/facebook';
 //redeem API
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
+
+// api-carlos
+$route['Action'] = 'action/index';
+$route['Action/log'] = 'action/log';
+$route['Reward'] = 'reward/index';
+$route['Reward/badge'] = 'badge/index'; // reuse
+$route['Reward/'.ANY_STRING.'/log'] = 'reward/$1Log';
+$route['Player/total'] = 'player/total';
+$route['Player/new'] = 'player/new';
+$route['Player/dau'] = 'player/dau';
+$route['Player/mau'] = 'player/mau';
+$route['Player/dau_per_day'] = 'player/dauDay';
+$route['Player/mau_per_day'] = 'player/mauDay';
+$route['Player/mau_per_week'] = 'player/mauWeek';
+$route['Player/mau_per_month'] = 'player/mauMonth';
+
+//service API
+$route['Service/recent_point'] = 'service/recent_point';
+
+//Quest
+//$route['quest/testquest'] = 'quest/testQuest';
+$route['Quest/'.ANY_STRING] = 'quest/index/$1';
+$route['Quest'] = 'quest/index';
+$route['Quests'] = 'quest/index';
+$route['Quest/'.ANY_STRING.'/join'] = 'quest/join/$1';
+$route['Quest/'.ANY_STRING.'/cancel'] = 'quest/cancel/$1';
+$route['Quest/available'] = 'quest/available';
+$route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
+$route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 
 //misc
 $route['test']	= 'playbasis/test';

@@ -348,7 +348,7 @@ class Player extends REST_Controller
 		if($required)
 			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		$required = $this->input->checkParam(array(
-			'image',
+//			'image',
 			'email',
 			'username'
 		));
@@ -367,7 +367,7 @@ class Player extends REST_Controller
 			$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
 		$playerInfo = array(
 			'email' => $this->input->post('email'),
-			'image' => $this->input->post('image'),
+			'image' => $this->input->post('image') ? $this->input->post('image') : "https://www.pbapp.net/images/default_profile.jpg",
 			'username' => $this->input->post('username'),
 			'player_id' => $player_id
 		);
@@ -672,6 +672,9 @@ class Player extends REST_Controller
 
 		$offset = ($this->input->get('offset'))?$this->input->get('offset'):0;			
 		$limit = ($this->input->get('limit'))?$this->input->get('limit'):20;
+        if($limit > 500){
+            $limit = 500;
+        }
 		$reward_name = $this->input->get('point_name');
 
 		$reward = array(
@@ -896,6 +899,254 @@ class Player extends REST_Controller
         $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $site_id);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
+	public function total_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$sum = 0;
+		$prev = null;
+		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if ($prev) {
+				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
+				while (strtotime($d) < strtotime($key)) {
+					array_push($log, array($d => array('count' => 0)));
+					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
+				}
+			}
+			$prev = $key;
+			$sum += $value['value'];
+			array_push($log, array($key => array('count' => $sum)));
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function new_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$prev = null;
+		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if ($prev) {
+				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
+				while (strtotime($d) < strtotime($key)) {
+					array_push($log, array($d => array('count' => 0)));
+					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
+				}
+			}
+			$prev = $key;
+			array_push($log, array($key => array('count' => $value['value'])));
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	/* unused */
+	public function dau_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$prev = null;
+		foreach ($this->player_model->daily_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if ($prev) {
+				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
+				while (strtotime($d) < strtotime($key)) {
+					array_push($log, array($d => array('count' => 0)));
+					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
+				}
+			}
+			$prev = $key;
+			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function dauDay_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$prev = null;
+		foreach ($this->player_model->daily_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if ($prev) {
+				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
+				while (strtotime($d) < strtotime($key)) {
+					array_push($log, array($d => array('count' => 0)));
+					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
+				}
+			}
+			$prev = $key;
+			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	/* unused */
+	public function mau_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$prev = null;
+		foreach ($this->player_model->monthy_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if ($prev) {
+				$d = date('Y-m', strtotime('+1 month', strtotime($prev.'-01 00:00:00')));
+				while (strtotime($d.'-01 00:00:00') < strtotime($key.'-01 00:00:00')) {
+					array_push($log, array($d => array('count' => 0)));
+					$d = date('Y-m', strtotime('+1 month', strtotime($d.'-01 00:00:00')));
+				}
+			}
+			$prev = $key;
+			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function mauDay_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$prev = null;
+		foreach ($this->player_model->monthy_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
+				if ($prev) {
+					$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
+					while (strtotime($d) < strtotime($key)) {
+						array_push($log, array($d => array('count' => 0)));
+						$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
+					}
+				}
+				$prev = $key;
+				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
+			} else break;
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function mauWeek_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$prev = null;
+		foreach ($this->player_model->monthy_active_user_per_week($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
+				if ($prev) {
+					$str = explode('-', $prev, 3);
+					$year_month = $str[0].'-'.$str[1];
+					$next_month = date('m', strtotime('+1 month', strtotime($prev)));
+					$d = $str[2] == '01' ? $year_month.'-08' : ($str[2] == '08' ? $year_month.'-15' : ($str[2] == '15' ? $year_month.'-22' : $str[0].'-'.$next_month.'-01'));
+					while (strtotime($d) < strtotime($key)) {
+						array_push($log, array($d => array('count' => 0)));
+						$str = explode('-', $d, 3);
+						$year_month = $str[0].'-'.$str[1];
+						$next_month = date('m', strtotime('+1 month', strtotime($prev)));
+						$d = $str[2] == '01' ? $year_month.'-08' : ($str[2] == '08' ? $year_month.'-15' : ($str[2] == '15' ? $year_month.'-22' : $str[0].'-'.$next_month.'-01'));
+					}
+				}
+				$prev = $key;
+				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
+			} else break;
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
+	public function mauMonth_get()
+	{
+		/* GET */
+		$required = $this->input->checkParam(array(
+			'api_key'
+		));
+		if($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
+		if(!$validToken)
+			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+		$site_id = $validToken['site_id'];
+		/* main */
+		$log = array();
+		$prev = null;
+		foreach ($this->player_model->monthy_active_user_per_month($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			$key = $value['_id'];
+			if (strtotime($key.'-01 00:00:00') <= time()) { // suppress future calculated results
+				if ($prev) {
+					$d = date('Y-m', strtotime('+1 month', strtotime($prev.'-01 00:00:00')));
+					while (strtotime($d.'-01 00:00:00') < strtotime($key.'-01 00:00:00')) {
+						array_push($log, array($d => array('count' => 0)));
+						$d = date('Y-m', strtotime('+1 month', strtotime($d.'-01 00:00:00')));
+					}
+				}
+				$prev = $key;
+				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
+			} else break;
+		}
+		$this->response($this->resp->setRespond($log), 200);
+	}
 	public function test_get()
 	{
 		echo '<pre>';

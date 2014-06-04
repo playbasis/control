@@ -1,5 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
+function cmp1($a, $b) {
+	if ($a['_id'] == $b['_id']) {
+		return 0;
+	}
+	return ($a['_id'] < $b['_id']) ? -1 : 1;
+}
+
 class Player_model extends MY_Model
 {
 	public function __construct()
@@ -223,6 +231,47 @@ class Player_model extends MY_Model
 		$result['count'] = $count;
 		return $result;
 	}
+    public function getActionCountFromDatetime($pb_player_id, $action_id, $action_filter, $site_id, $starttime="", $endtime="")
+    {
+        $fields = array(
+            'pb_player_id' => $pb_player_id,
+            'action_id' => $action_id
+        );
+        if(!empty($action_filter)){
+            $fields['url'] = $action_filter;
+        }
+        $datecondition = array();
+        if($starttime != ''){
+            $datecondition = array_merge($datecondition, array('$gt' => new MongoDate(strtotime($starttime))));
+        }
+        if($endtime != ''){
+            $datecondition = array_merge($datecondition, array('$lte' => new MongoDate(strtotime($endtime))));
+        }
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $count = $this->mongo_db->count('playbasis_action_log');
+        $this->mongo_db->select(array(
+            'action_id',
+            'action_name'
+        ));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where($fields);
+        if ($starttime != '' || $endtime != '' ) {
+            $this->mongo_db->where('date_added', $datecondition);
+        }
+        $result = $this->mongo_db->get('playbasis_action_log');
+        $result = ($result) ? $result[0] : array();
+        if($result){
+            $result['action_id'] = $result['action_id']."";
+        }
+        $result['count'] = $count;
+
+        return $result;
+    }
 	public function getBadge($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);
@@ -438,6 +487,19 @@ class Player_model extends MY_Model
 			'date_modified' => $mongoDate
 		));
 	}
+	public function getLeaderboardByLevel($limit, $client_id, $site_id) {
+		//get reward id
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('cl_player_id','first_name','last_name','username','image','exp','level'));
+		$this->mongo_db->where(array(
+			'status' => true,
+			'site_id' => $site_id,
+			'client_id' => $client_id
+		));
+		$this->mongo_db->order_by(array('level' => -1, 'exp' => -1));
+		$this->mongo_db->limit($limit);
+		return $this->mongo_db->get('playbasis_player');
+	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
 	{
 		//get reward id
@@ -527,6 +589,7 @@ class Player_model extends MY_Model
 	{
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
+            'domain_name',
 			'limit_users',
 			'last_send_limit_users'
 		));
@@ -538,6 +601,7 @@ class Player_model extends MY_Model
         assert($result);
 		$result = $result[0];
 		$limit = $result['limit_users'];
+        $domain_name_client = $result['domain_name'];
 		if(!$limit)
 			return; //client has no user limit
 		$last_send = $result['last_send_limit_users']?$result['last_send_limit_users']->sec:null;
@@ -567,29 +631,37 @@ class Player_model extends MY_Model
             $email_list=array();
 			foreach ($result as $r)
                 array_push($email_list,$r['email']);
-            $email_string = implode(",", $email_list);
-            $this->load->library('email');
+
+            //$this->load->library('email');
             $this->load->library('parser');
 			$data = array(
 				'user_left' => ($limit-$usersCount),
 				'user_count' => $usersCount,
-				'user_limit' => $limit
+				'user_limit' => $limit,
+                'domain_name_client' => $domain_name_client,
 			);
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
-            $email = $email_string;
+            $email = $email_list;
             $subject = "Playbasis user limit alert";
             $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
 			//email client to upgrade account
-            $this->email->initialize($config);
+            /*$this->email->initialize($config);
             $this->email->clear();
             $this->email->from('info@playbasis.com', 'Playbasis');
-            $this->email->to($email);
-            $this->email->bcc('cscteam@playbasis.com');
+//            $this->email->to($email);
+            $this->email->to('cscteam@playbasis.com','devteam@playbasis.com');
+//            $this->email->bcc('cscteam@playbasis.com');
             $this->email->subject($subject);
             $this->email->message($htmlMessage);
-            $this->email->send();
+            $this->email->send();*/
+
+            $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+            $this->amazon_ses->to('cscteam@playbasis.com','devteam@playbasis.com');
+            $this->amazon_ses->subject($subject);
+            $this->amazon_ses->message($htmlMessage);
+            $this->amazon_ses->send();
 
             $this->updateLastAlertLimitUser($client_id, $site_id);
 		}
@@ -609,13 +681,14 @@ class Player_model extends MY_Model
 
     public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit){
 
-
     	if($reward_id){
     		$this->mongo_db->where('reward_id', $reward_id);	
-    	}
+    	}else{
+            $this->mongo_db->where_ne('reward_id', null);
+        }
     	$this->mongo_db->where('pb_player_id', $pb_player_id);
     	$this->mongo_db->where('site_id', $site_id);
-    	$this->mongo_db->where_ne('reward_id', null);
+    	$this->mongo_db->where('event_type', 'REWARD');
         $this->mongo_db->where_gt('value', 0);
     	$this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
@@ -698,5 +771,440 @@ class Player_model extends MY_Model
     	return ($returnThis)?$returnThis[0]:array();
     }
 
+	public function new_registration($data, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
+		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'status' => true);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_player',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_new_player_log',
+		));
+		$result = $this->mongo_db->get('mapreduce_new_player_log');
+		if (!$result) $result = array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
+	}
+
+	/* unused */
+	/* NOTE: 'from' and 'to' parameters are expected to be in a format of 'yyyy-mm' */
+	public function monthy_active_user($data, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2), this.pb_player_id.toString()); }");
+		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from.'-01');
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to.'-'.MY_Model::get_number_of_days($to), '23:59:59');
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_player_mau_log',
+		));
+		$_result = $this->mongo_db->get('mapreduce_player_mau_log');
+		if (!$_result) $_result = array();
+		$result = array();
+		foreach ($_result as $key => $value) {
+			$values = array();
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
+				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
+						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
+							array_push($values, $each);
+						} else {
+							array_push($values, $pb_player_id['pb_player_id']);
+						}
+					} else {
+						array_push($values, $pb_player_id);
+					}
+				} else {echo 2;$values = $value['value']['pb_player_id'];}
+			} else {
+				array_push($values, $value['value']);
+			}
+			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+		}
+		usort($result, 'cmp1');
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
+	}
+
+	/* unused */
+	public function daily_active_user($data, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.pb_player_id.toString()); }");
+		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_player_dau_log',
+		));
+		$_result = $this->mongo_db->get('mapreduce_player_dau_log');
+		if (!$_result) $_result = array();
+		$result = array();
+		foreach ($_result as $key => $value) {
+			$values = array();
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
+				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
+						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
+							array_push($values, $each);
+						} else {
+							array_push($values, $pb_player_id['pb_player_id']);
+						}
+					} else {
+						array_push($values, $pb_player_id);
+					}
+				} else {echo 2;$values = $value['value']['pb_player_id'];}
+			} else {
+				array_push($values, $value['value']);
+			}
+			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+		}
+		usort($result, 'cmp1');
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
+	}
+
+	public function daily_active_user_per_day($data, $from=null, $to=null) {
+		return $this->active_user_per_day($data, 1, $from, $to);
+	}
+
+	public function monthy_active_user_per_day($data, $from=null, $to=null) {
+		return $this->active_user_per_day($data, 30, $from, $to);
+	}
+
+	public function monthy_active_user_per_week($data, $from=null, $to=null) {
+		return $this->active_user_per_week($data, 30, $from, $to);
+	}
+
+	public function monthy_active_user_per_month($data, $from=null, $to=null) {
+		return $this->active_user_per_month($data, 30, $from, $to);
+	}
+
+	private function active_user_per_day($data, $ndays, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$str = $to ? explode('-', $to, 3) : "";
+		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		$map = new MongoCode("function() {
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
+			var tmp = new Date();
+			$var_to
+			for (var i = 0; i < ".$ndays."; i++) {
+				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_to
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+tmp.getDate()).slice(-2), this.pb_player_id.toString());
+			}
+		}");
+		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_active_user_per_day_'.$ndays.'_log',
+		));
+		$_result = $this->mongo_db->get('mapreduce_active_user_per_day_'.$ndays.'_log');
+		if (!$_result) $_result = array();
+		$result = array();
+		foreach ($_result as $key => $value) {
+			$values = array();
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
+				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
+						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
+							array_push($values, $each);
+						} else {
+							array_push($values, $pb_player_id['pb_player_id']);
+						}
+					} else {
+						array_push($values, $pb_player_id);
+					}
+				} else $values = $value['value']['pb_player_id'];
+			} else {
+				array_push($values, $value['value']);
+			}
+			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+		}
+		usort($result, 'cmp1');
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
+	}
+
+	private function active_user_per_week($data, $ndays, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$str = $to ? explode('-', $to, 3) : "";
+		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		$map = new MongoCode("function() {
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
+			var get_number_of_days = function(year, month) {
+				var monthStart = new Date(year, month, 1);
+				var monthEnd = new Date(year, month+1, 1);
+				return (monthEnd-monthStart)/(1000*60*60*24);
+			};
+			var days,days_per_week,week,d;
+			var tmp = new Date();
+			$var_to
+			for (var i = 0; i < ".$ndays."; i++) {
+				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_to
+				days = get_number_of_days(tmp.getFullYear(), tmp.getMonth());
+				week = Math.ceil(tmp.getDate()/7.0);
+				if (week > 4) week = 4;
+				d = (week-1)*7+1;
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+d).slice(-2), this.pb_player_id.toString());
+			}
+		}");
+		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_active_user_per_week_'.$ndays.'_log',
+		));
+		$_result = $this->mongo_db->get('mapreduce_active_user_per_week_'.$ndays.'_log');
+		if (!$_result) $_result = array();
+		$result = array();
+		foreach ($_result as $key => $value) {
+			$values = array();
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
+				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
+						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
+							array_push($values, $each);
+						} else {
+							array_push($values, $pb_player_id['pb_player_id']);
+						}
+					} else {
+						array_push($values, $pb_player_id);
+					}
+				} else $values = $value['value']['pb_player_id'];
+			} else {
+				array_push($values, $value['value']);
+			}
+			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+		}
+		usort($result, 'cmp1');
+		$from2 = $from ? MY_Model::date_to_startdate_of_week($from) : null;
+		$to2 = $to ? MY_Model::date_to_startdate_of_week($to) : null;
+		if ($from2 && (!isset($result[0]['_id']) || $result[0]['_id'] != $from2)) array_unshift($result, array('_id' => $from2, 'value' => 0));
+		if ($to2 && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to2)) array_push($result, array('_id' => $to2, 'value' => 0));
+		return $result;
+	}
+
+	private function active_user_per_month($data, $ndays, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$str = $to ? explode('-', $to, 3) : "";
+		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		$map = new MongoCode("function() {
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
+			var tmp = new Date();
+			$var_to
+			for (var i = 0; i < ".$ndays."; i++) {
+				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_to
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2), this.pb_player_id.toString());
+			}
+		}");
+		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_action_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => 'mapreduce_active_user_per_month_'.$ndays.'_log',
+		));
+		$_result = $this->mongo_db->get('mapreduce_active_user_per_month_'.$ndays.'_log');
+		if (!$_result) $_result = array();
+		$result = array();
+		foreach ($_result as $key => $value) {
+			$values = array();
+			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
+				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
+					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
+						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
+							array_push($values, $each);
+						} else {
+							array_push($values, $pb_player_id['pb_player_id']);
+						}
+					} else {
+						array_push($values, $pb_player_id);
+					}
+				} else $values = $value['value']['pb_player_id'];
+			} else {
+				array_push($values, $value['value']);
+			}
+			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+		}
+		usort($result, 'cmp1');
+		$from2 = $from ? MY_Model::get_year_month($from) : null;
+		$to2 = $to ? MY_Model::get_year_month($to) : null;
+		if ($from2 && (!isset($result[0]['_id']) || $result[0]['_id'] != $from2)) array_unshift($result, array('_id' => $from2, 'value' => 0));
+		if ($to2 && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to2)) array_push($result, array('_id' => $to2, 'value' => 0));
+		return $result;
+	}
+	public function playerWithEnoughBadge($data, $badge_id, $n) {
+		$this->set_site_mongodb($data['site_id']);
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'badge_id' => $badge_id, 'value' => array('$gte' => $n));
+		$this->mongo_db->select(array('pb_player_id'));
+		$this->mongo_db->select(array(),array('_id'));
+		$this->mongo_db->where($query);
+		$result = array();
+		$arr = $this->mongo_db->get('playbasis_reward_to_player');
+		if (is_array($arr)) foreach ($arr as $each) {
+			array_push($result, $each['pb_player_id']);
+		}
+		return $result;
+	}
+	public function playerWithEnoughReward($data, $reward_id, $n) {
+		$this->set_site_mongodb($data['site_id']);
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'reward_id' => $reward_id, 'value' => array('$gte' => $n));
+		$this->mongo_db->select(array('pb_player_id'));
+		$this->mongo_db->select(array(),array('_id'));
+		$this->mongo_db->where($query);
+		$result = array();
+		$arr = $this->mongo_db->get('playbasis_reward_to_player');
+		if (is_array($arr)) foreach ($arr as $each) {
+			array_push($result, $each['pb_player_id']);
+		}
+		return $result;
+	}
+	public function get_reward_id_of_point($data) {
+		$this->set_site_mongodb($data['site_id']);
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'name' => 'point');
+		$this->mongo_db->select(array('reward_id'));
+		$this->mongo_db->where($query);
+		return $this->mongo_db->get('playbasis_reward_to_client');
+	}
+	public function playerWithEnoughCriteria($data, $criteria)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		$ids = array();
+		if (is_array($criteria)) foreach ($criteria as $k => $v) {
+			switch ($k) {
+				case 'exp':
+					if (is_array($v)) foreach ($v as $n) {
+						$query['exp'] = array('$gte' => $n);
+						break;
+					}
+					break;
+				case 'level':
+					if (is_array($v)) foreach ($v as $n) {
+						$query['level'] = array('$gte' => $n);
+						break;
+					}
+					break;
+				case 'point':
+					$id = $this->get_reward_id_of_point($data);
+					if (is_array($v)) foreach ($v as $n) {
+						array_push($ids, $this->playerWithEnoughReward($data, $id[0]['reward_id'], $n));
+						break;
+					}
+					break;
+				case 'badge':
+					if (is_array($v)) foreach ($v as $id => $n) {
+						array_push($ids, $this->playerWithEnoughBadge($data, $id, $n));
+						break;
+					}
+					break;
+				case 'custom':
+					if (is_array($v)) foreach ($v as $id => $n) {
+						array_push($ids, $this->playerWithEnoughReward($data, $id, $n));
+						break;
+					}
+					break;
+				default:
+					/* error, not support type */
+					break;
+			}
+		}
+		//echo 'YYY'; var_dump($ids); echo 'YYY';
+		$ids_intersect = null;
+		if (is_array($ids)) foreach ($ids as $each) {
+			if ($ids_intersect == null) {
+				$ids_intersect = $each;
+			} else {
+				$ids_intersect = array_intersect($ids_intersect, $each);
+			}
+		}
+		//echo 'AAA'; var_dump($ids_intersect); echo 'AAA';
+		if (!empty($ids)) {
+			$query['_id'] = array('$in' => $ids_intersect);
+		}
+		//echo 'BBB'; var_dump($query); echo 'BBB';
+		$result = $this->mongo_db->command(array(
+			'count' => 'playbasis_player',
+			'query' => $query
+		));
+		return $result['n'];
+	}
+
+    public function getAllQuests($pb_player_id, $site_id, $status="")
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'site_id' => $site_id,
+        ));
+        $c_status = array("join", "unjoin", "finish");
+        if($status != '' && in_array($status, $c_status) ){
+            $this->mongo_db->where(array(
+                'status' => $status,
+            ));
+        }
+
+        return $this->mongo_db->get('playbasis_quest_to_player');
+    }
+
+    public function getMission($pb_player_id, $quest_id, $mission_id, $site_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array('missions.$'));
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'site_id' => $site_id,
+            'quest_id' => $quest_id,
+            'missions.mission_id' => $mission_id
+        ));
+
+        $result = $this->mongo_db->get('playbasis_quest_to_player');
+        return $result ? $result[0] : array();
+    }
 }
 ?>

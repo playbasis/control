@@ -17,5 +17,17 @@ class MY_Input extends CI_Input{
 
 		return $required;
 	}
+
+    public function checkParamPut($keys, $args) {
+        if (!$keys) return false;
+        $required = array();
+        $args_keys = array_keys($args);
+        foreach ($keys as $key) {
+            if (!in_array($key, $args_keys)) {
+                array_push($required, $key);
+            }
+        }
+        return $required;
+    }
 }
 ?>

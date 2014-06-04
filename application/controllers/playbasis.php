@@ -1,11 +1,17 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Playbasis extends CI_Controller
 {
 	public function __construct()
 	{
 		parent::__construct();
-		//$this->load->model('social_model');
+		$this->load->model('client_model');
+		$this->load->model('player_model');
+		$this->load->model('action_model');
+		$this->load->model('badge_model');
+		$this->load->model('reward_model');
+		$this->load->model('goods_model');
 	}
 	public function test()
 	{

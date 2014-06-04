@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Playbasis API</name>
+    <description>Playbasis core API for implementing gamification platform</description>
+    <url>http://playbasis.com</url>
+
+    <groupId>com.playbasis.api</groupId>
+    <artifactId>playbasis-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
     <pluginRepositories>
         <pluginRepository>
             <id>smartbear-sweden-plugin-repository</id>
             <url>http://www.soapui.org/repository/maven2/</url>
         </pluginRepository>
     </pluginRepositories>
-    <modelVersion>4.0.0</modelVersion>
-    <name>Playbasis Web Service Test Module</name>
-    <groupId>playbasis</groupId>
-    <artifactId>playbasis.webservices.test</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    <description>Playbasis web services soapUI integration tests</description>
     <build>
         <plugins>
             <plugin>
@@ -29,14 +33,14 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectFile>soapui-project.xml</projectFile>
-                    <host>ci.pbapp.net</host>
+                    <projectFile>resource/xml/soapui-project.xml</projectFile>
                     <outputFolder>${project.build.directory}</outputFolder>
                     <junitReport>true</junitReport>
                     <printReport>false</printReport>
                     <projectProperties>
-                        <projectProperty>api_key=abc</projectProperty>
-                        <projectProperty>api_secret=abcde</projectProperty>
+                        <projectProperty>service_endpoint=${service_endpoint}</projectProperty>
+                        <projectProperty>api_key=${api_key}</projectProperty>
+                        <projectProperty>api_secret=${api_secret}</projectProperty>
                     </projectProperties>
                 </configuration>
             </plugin>
