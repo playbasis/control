@@ -350,6 +350,13 @@ class Quest extends MY_Controller
                         $this->data['editQuestConditionCon'][$countQuest]['condition_type'] = $condition['condition_type']; 
                         $this->data['editQuestConditionCon'][$countQuest]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editQuestConditionCon'][$countQuest]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+
+                        if (!empty($condition['condition_data']['image']) && $condition['condition_data']['image'] && (S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $this->data['editQuestConditionCon'][$countQuest]['condition_data']['image'] = $this->Image_model->resize($condition['condition_data']['image'], 100, 100);
+                        } else {
+                            $this->data['editQuestConditionCon'][$countQuest]['condition_data']['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                        }
+
                         $countQuest++;
                     }
                     if($condition['condition_type'] == 'POINT'){

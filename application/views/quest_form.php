@@ -138,7 +138,7 @@
                                             <div class="item-container">
                                                 <div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="<?php echo $quest['condition_id']; ?>">                                
                                                     <div class="span2 text-center">
-                                                        <img src="http://images.pbapp.net/no_image.jpg" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                
+                                                        <img src="<?php echo $quest['condition_data']['image'] ?>" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">                                
                                                     </div>
                                                     <div class="span7"><?php foreach($quests as $q){if($q['_id']==$quest['condition_id']){echo $q['quest_name'];}} ?></div>                                
                                                     <div class="span1">
