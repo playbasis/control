@@ -1000,7 +1000,7 @@ class Quest extends REST_Controller
                     $m["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
-                $quest = array_merge($quest, $quest_player);
+                $quest = array_merge_recursive($quest, $quest_player);
 
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
                 $resp['quest'] = $quest;
@@ -1032,7 +1032,7 @@ class Quest extends REST_Controller
                     $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
 
-                $q = array_merge($quest, $q);
+                $q = array_merge_recursive($quest, $q);
                 
 //                $q['quest_id'] = $q['_id'];
                 unset($q['_id']);
