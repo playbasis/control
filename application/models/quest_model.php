@@ -66,10 +66,26 @@ class Quest_model extends MY_Model
 
     public function joinQuest($data)
     {
+        $this->load->helper('vsort');
+
         $this->set_site_mongodb($data["site_id"]);
+
+        $data["missions"] = vsort($data["missions"], "mission_number");
+
+        $first = true;
         foreach($data["missions"] as &$m){
-            $m["status"] = "unjoin";
+            if($data["mission_order"]){
+                if($first){
+                    $m["status"] = "join";
+                    $first = false;
+                }else{
+                    $m["status"] = "unjoin";
+                }
+            }else{
+                $m["status"] = "join";
+            }
         }
+
         $this->mongo_db->insert("playbasis_quest_to_player", array(
             "client_id" => $data["client_id"],
             "site_id" => $data["site_id"],
