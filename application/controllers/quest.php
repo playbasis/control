@@ -303,7 +303,9 @@ class Quest extends REST_Controller
         if($mission && isset($mission["completion"])){
 
             foreach($mission["completion"] as $c){
+
                 if($c["completion_type"] == "ACTION"){
+
                     $datetime_check = (isset($player_mission["missions"][0]["date_modified"]))?datetimeMongotoReadable($player_mission["missions"][0]["date_modified"]):date("Y-m-d H:i:s");
                     $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
 
@@ -320,6 +322,7 @@ class Quest extends REST_Controller
                         if(isset($c["completion_filter"])){
                             $event['incomplete']['incompletion_filter'] = $c["completion_filter"];
                         }
+
                         array_push($missionEvent, $event);
                     }
                 }
@@ -1005,7 +1008,7 @@ class Quest extends REST_Controller
                 foreach($quest_player["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest_player, $m, $pb_player_id, $validToken);
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
                 $quest['status'] = $quest_player['status'];
@@ -1030,7 +1033,7 @@ class Quest extends REST_Controller
                 foreach($q["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
                 $quest['status'] = $q['status'];

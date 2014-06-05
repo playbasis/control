@@ -1003,8 +1003,8 @@
                     ]
                 },
                 {
-                    "MethodName": "Quest Available For Player",
-                    "Synopsis": "Returns information about the quest is available for player.",
+                    "MethodName": "Quest List Available For Player",
+                    "Synopsis": "Returns information about list of quest is available for player.",
                     "HTTPMethod": "GET",
                     "URI": "/Quest/available",
                     "RequiresOAuth": "N",
@@ -1019,8 +1019,8 @@
                     ]
                 },
                 {
-                    "MethodName": "Quest List Available For Player",
-                    "Synopsis": "Returns information about list of quest is available for player.",
+                    "MethodName": "Quest Available For Player",
+                    "Synopsis": "Returns information about the quest is available for player.",
                     "HTTPMethod": "GET",
                     "URI": "/Quest/:id/available",
                     "RequiresOAuth": "N",
