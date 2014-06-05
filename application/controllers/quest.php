@@ -49,14 +49,6 @@ class Quest extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $this->load->model('Image_model');
 
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($editQuest) && $editQuest['image'] && (S3_IMAGE . $editQuest['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $editQuest['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($editQuest['image'], 100, 100);
-        } else {
-            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
-
         $this->load->library('pagination');
 
         $config['per_page'] = 10;
@@ -632,14 +624,6 @@ class Quest extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $this->load->model('Image_model');
-
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($editQuest) && $editQuest['image'] && (S3_IMAGE . $editQuest['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $editQuest['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($editQuest['image'], 100, 100);
-        } else {
-            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
         
         $this->load->library('pagination');
 
@@ -666,19 +650,6 @@ class Quest extends MY_Controller
             }
 
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
-        }else{
-            /*
-            // $this->data['actions'] = $this->Action_model->getActions($filter);
-            $allActions = $this->Action_model->getActions($filter);
-
-            foreach ($allActions as &$action){
-                $actionIsPublic = $this->checkActionIsPublic($action['_id']);
-                $action['is_public'] =  $actionIsPublic;
-            }
-
-            $this->data['actions'] = $allActions;
-            $config['total_rows'] = $this->Action_model->getTotalActions();
-            */
         }
 
         $this->pagination->initialize($config);
