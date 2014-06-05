@@ -75,6 +75,7 @@ class Quest extends REST_Controller
                     $next_mission = false;
 
                     foreach($missions as $m){
+
                         //if player pass mission so next mission status will change to join
                         if($next_mission && $player_missions[$m["mission_id"].""] == "unjoin"){
                             $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "join");
@@ -134,6 +135,7 @@ class Quest extends REST_Controller
                         }else{
                             //for check total mission finish
                             $player_finish_count++;
+                            continue;
                         }
 
                         $event = array(
@@ -1029,8 +1031,8 @@ class Quest extends REST_Controller
                     $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
 
-                $q = array_merge($quest, $q);
-
+                $q = array_merge($q, $quest);
+                
 //                $q['quest_id'] = $q['_id'];
                 unset($q['_id']);
             }
