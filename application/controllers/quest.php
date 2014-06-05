@@ -1054,7 +1054,7 @@ class Quest extends REST_Controller
      * @param mixed $item this is reference
      * @param string $key
      */
-    private function convert_mongo_object(& $item,$key) {
+    private function convert_mongo_object(&$item, $key) {
         if (is_object($item)) {
             if (get_class($item) === 'MongoId') {
                 $item = $item->{'$id'};

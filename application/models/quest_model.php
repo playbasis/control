@@ -21,6 +21,7 @@ class Quest_model extends MY_Model
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
+        array_walk_recursive($result, array($this, "change_image_path"));
         return $result ? $result[0] : array();
     }
     public function getQuests($data)
@@ -35,6 +36,8 @@ class Quest_model extends MY_Model
         ));
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
+
+        array_walk_recursive($result, array($this, "change_image_path"));
         return $result;
     }
     public function getMission($data)
@@ -139,10 +142,15 @@ class Quest_model extends MY_Model
         }
     }
 
-    private function change_image_path($item, $key)
+    private function change_image_path(&$item, $key)
     {
         if($key == "image"){
-            $item = $this->config->item('IMG_PATH').$item;
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."/no_image.jpg";
+            }
+
         }
     }
 }
