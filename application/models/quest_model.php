@@ -347,12 +347,14 @@ class Quest_model extends MY_Model{
                     'quest_id' => new MongoId($quest_id),
                     'missions.mission_id' => new MongoId($m['mission_id']),
                 ));
-                $this->mongo_db->set(array('missions.$.mission_name' => $m['mission_name']));
-                $this->mongo_db->set(array('missions.$.mission_number' => $m['mission_number']));
-                $this->mongo_db->set(array('missions.$.description' => $m['description']));
-                $this->mongo_db->set(array('missions.$.hint' => $m['hint']));
-                $this->mongo_db->set(array('missions.$.image' => $m['image']));
-                $this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));
+                $this->mongo_db->set(array('missions.$.mission_name' => isset($m['mission_name'])?$m['mission_name']:''));
+                $this->mongo_db->set(array('missions.$.mission_number' => isset($m['mission_number'])?$m['mission_number']:''));
+                $this->mongo_db->set(array('missions.$.description' => isset($m['description'])?$m['description']:''));
+                $this->mongo_db->set(array('missions.$.hint' => isset($m['hint'])?$m['hint']:''));
+                $this->mongo_db->set(array('missions.$.image' => isset($m['image'])?$m['image']:''));
+                if(isset($m['rewards'])){
+                	$this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));	
+                }
                 $this->mongo_db->update_all('playbasis_quest_to_player');
             }
         }
