@@ -304,7 +304,7 @@ class Quest extends REST_Controller
 
             foreach($mission["completion"] as $c){
                 if($c["completion_type"] == "ACTION"){
-                    $datetime_check = (isset($player_mission["missions"][0]["date_modifield"]))?datetimeMongotoReadable($player_mission["missions"][0]["date_modifield"]):date("Y-m-d H:i:s");
+                    $datetime_check = (isset($player_mission["missions"][0]["date_modified"]))?datetimeMongotoReadable($player_mission["missions"][0]["date_modified"]):date("Y-m-d H:i:s");
                     $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
 
                     if((int)$c["completion_value"] > (int)$action["count"]){
@@ -1003,7 +1003,7 @@ class Quest extends REST_Controller
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
 
                 foreach($quest_player["missions"] as $k=>$m){
-                    $quest["missions"][$k]["date_modifield"] = $m["date_modifield"];
+                    $quest["missions"][$k]["date_modified"] = $m["date_modified"];
                     $quest["missions"][$k]["status"] = $m["status"];
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest_player, $m, $pb_player_id, $validToken);
                 }
@@ -1028,7 +1028,7 @@ class Quest extends REST_Controller
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
 
                 foreach($q["missions"] as $k=>$m){
-                    $quest["missions"][$k]["date_modifield"] = $m["date_modifield"];
+                    $quest["missions"][$k]["date_modified"] = $m["date_modified"];
                     $quest["missions"][$k]["status"] = $m["status"];
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
