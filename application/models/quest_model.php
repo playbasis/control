@@ -337,6 +337,7 @@ class Quest_model extends MY_Model{
                 $this->mongo_db->set(array('missions.$.description' => $m['description']));
                 $this->mongo_db->set(array('missions.$.hint' => $m['hint']));
                 $this->mongo_db->set(array('missions.$.image' => $m['image']));
+                $this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));
                 $this->mongo_db->update_all('playbasis_quest_to_player');
             }
         }
