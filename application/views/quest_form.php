@@ -171,7 +171,8 @@
                                         <?php foreach($editCustomPointsCon as $point){ ?>
                                             <div class="item-container">
                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['condition_id'] ?>">                                
-                                                    <div class="span7"><?php foreach($customPoints as $p){if($p['_id']==$point['condition_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
+                                                    <div class="span7"><?php foreach($customPoints as $p){if($p['reward_id']==$point['condition_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
+                                                    <!-- <div class="span7"><?php //foreach($customPoints as $p){if($p['_id']==$point['condition_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                 -->
                                                     <input type="text" name="condition[custompoints][condition_value]" placeholder="Value" value="<?php echo $point['condition_value']; ?>">
                                                     <input type="hidden" name="condition[custompoints][condition_type]" value="CUSTOM_POINT">                                
                                                     <input type="hidden" name="condition[custompoints][condition_id]" value="<?php echo $point['condition_id'] ?>">
@@ -247,8 +248,9 @@
                                         <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
                                         <?php foreach($editCustomPointsRew as $point){ ?>
                                             <div class="item-container">
-                                                <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['reward_id'] ?>">                                
-                                                    <div class="span7"><?php foreach($customPoints as $p){if($p['_id']==$point['reward_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
+                                                <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['reward_id'] ?>">
+                                                    <div class="span7"><?php foreach($customPoints as $p){if($p['reward_id']==$point['reward_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
+                                                    <!-- <div class="span7"><?php //foreach($customPoints as $p){if($p['_id']==$point['reward_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                 -->
                                                     <input type="text" name="rewards[custompoints][reward_value]" placeholder="Value" value="<?php echo $point['reward_value']; ?>">
                                                     <input type="hidden" name="rewards[custompoints][reward_type]" value="CUSTOM_POINT">
                                                     <input type="hidden" name="rewards[custompoints][reward_id]" value="<?php echo $point['reward_id'] ?>">
@@ -412,7 +414,8 @@
                                                         <?php foreach ($mission['editCustomPoint'] as $cp){ ?>
 
                                                             <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $cp['completion_id'] ?>">                                
-                                                                <div class="span7"><?php foreach($customPoints as $c){if($c['_id'] == $cp['completion_id']){echo $c['name'];}} ?></div>
+                                                                <!-- <div class="span7"><?php //foreach($customPoints as $c){if($c['_id'] == $cp['completion_id']){echo $c['name'];}} ?></div> -->
+                                                                <div class="span7"><?php foreach($customPoints as $c){if($c['reward_id'] == $cp['completion_id']){echo $c['name'];}} ?></div>
                                                                 <div class="span3">
                                                                     <small>value</small>                                
                                                                     <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $cp['completion_id']; ?>][completion_value]" placeholder="Value" value="<?php echo $cp['completion_value']; ?>"></div>
@@ -503,7 +506,8 @@
 
                                                             <?php foreach($mission['editCustomPointRew'] as $eCustomPoint){ ?>
                                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $eCustomPoint['reward_id'] ?>">                                
-                                                                    <div class="span7"><?php foreach($customPoints as $pp){if($pp['_id'] == $eCustomPoint['reward_id']){echo $pp['name'];}} ?></div>
+                                                                    <div class="span7"><?php foreach($customPoints as $pp){if($pp['reward_id'] == $eCustomPoint['reward_id']){echo $pp['name'];}} ?></div>
+                                                                    <!-- <div class="span7"><?php //foreach($customPoints as $pp){if($pp['_id'] == $eCustomPoint['reward_id']){echo $pp['name'];}} ?></div> -->
                                                                     <div class="span3"><small>value</small>                                
                                                                         <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][custompoints][reward_value]" placeholder="Value" value="<?php echo $eCustomPoint['reward_value'] ?>">
                                                                     </div>                                
@@ -630,9 +634,11 @@
         <div class="select-list">
             <?php for($i=0 ; $i < count($customPoints) ; $i++){ ?>
                 <label>
-                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-custompoint = "<?php echo $customPoints[$i]['_id']; ?>">
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-custompoint = "<?php echo $customPoints[$i]['reward_id']; ?>">
+                <!-- <div class="select-item clearfix" data-id="<?php //echo $i; ?>" data-id-custompoint = "<?php //echo $customPoints[$i]['_id']; ?>"> -->
                     <div class="span1 text-center">
-                        <input type="checkbox" name="selected[]" value="<?php $customPoints[$i]['_id']; ?>">
+                        <input type="checkbox" name="selected[]" value="<?php $customPoints[$i]['reward_id']; ?>">
+                        <!-- <input type="checkbox" name="selected[]" value="<?php //$customPoints[$i]['_id']; ?>"> -->
                     </div>
                     <div class="span11 title"><?php echo $customPoints[$i]['name'];?></div>
                 </div>
