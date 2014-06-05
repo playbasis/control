@@ -113,7 +113,7 @@ class Quest_model extends MY_Model
             'quest_id' => $data['quest_id']
         ));
         $this->mongo_db->set(array('status' => $status));
-        $this->mongo_db->set(array('date_modifield' => new MongoDate(time())));
+        $this->mongo_db->set(array('date_modified' => new MongoDate(time())));
         $this->mongo_db->update('playbasis_quest_to_player');
     }
     public function updateMissionStatus($data, $status){
@@ -134,7 +134,7 @@ class Quest_model extends MY_Model
                 'missions.mission_id' => $data['mission_id'],
             ));
             $this->mongo_db->set(array('missions.$.status' => $status));
-            $this->mongo_db->set(array('missions.$.date_modifield' => new MongoDate(time())));
+            $this->mongo_db->set(array('missions.$.date_modified' => new MongoDate(time())));
             $this->mongo_db->update('playbasis_quest_to_player');
         }
     }
