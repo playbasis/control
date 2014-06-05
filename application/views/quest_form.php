@@ -89,11 +89,11 @@
                                     <div class="datetime-wrapper condition-type well">
                                         <h3>Data time <a class="remove"><i class="icon-remove-sign"></i></a></h3>
                                         <label class="span4">Date Start:</label> 
-                                        <input type="text" name="condition[datetimestart][condition_value]" class="date" placeholder="datetime start" id="dp1401709709268" value="<?php echo $editDateStartCon['condition_value'] ?>">  
+                                        <input type="text" name="condition[datetimestart][condition_value]" class="date" placeholder="datetime start" id="dp1401709709268" value="<?php echo dateMongotoReadable($editDateStartCon['condition_value']) ?>">  
                                         <input type="hidden" name="condition[datetimestart][condition_type]" value="DATETIME_START">                        
                                         <input type="hidden" name="condition[datetimestart][condition_id]" value=""><br>
                                         <label class="span4">Date End:</label> 
-                                        <input type="text" name="condition[datetimeend][condition_value]" class="date" placeholder="datetime end" id="dp1401709709269" value="<?php echo $editDateEndCon['condition_value'] ?>">                    
+                                        <input type="text" name="condition[datetimeend][condition_value]" class="date" placeholder="datetime end" id="dp1401709709269" value="<?php echo dateMongotoReadable($editDateEndCon['condition_value']) ?>">                    
                                         <input type="hidden" name="condition[datetimeend][condition_type]" value="DATETIME_END">                    
                                         <input type="hidden" name="condition[datetimeend][condition_id]" value="">
                                     </div>
