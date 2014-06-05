@@ -315,6 +315,9 @@ class Quest_model extends MY_Model{
                 $this->mongo_db->set(array('missions.$.description' => isset($m['description'])?$m['description']:''));
                 $this->mongo_db->set(array('missions.$.hint' => isset($m['hint'])?$m['hint']:''));
                 $this->mongo_db->set(array('missions.$.image' => isset($m['image'])?$m['image']:''));
+                if(isset($m['completion'])){
+                    $this->mongo_db->set(array('missions.$.completion' => $m['completion']));
+                }
                 if(isset($m['rewards'])){
                 	$this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));	
                 }
