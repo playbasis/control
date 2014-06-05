@@ -105,7 +105,8 @@ class Quest_model extends MY_Model{
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-        $this->mongo_db->where('_id',  new MongoID($data['reward_id']));
+        // $this->mongo_db->where('_id',  new MongoID($data['reward_id']));
+        $this->mongo_db->where('reward_id',  new MongoID($data['reward_id']));
         $this->mongo_db->where_not_in('name', array('badge', 'point', 'exp'));
 
         $results = $this->mongo_db->get("playbasis_reward_to_client");
