@@ -59,7 +59,7 @@ class Quest extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['per_page'] = 2;
+        $config['per_page'] = 10;
 
         $filter = array(
             'limit' => $config['per_page'],

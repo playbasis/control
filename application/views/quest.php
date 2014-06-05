@@ -55,7 +55,7 @@
                                     <td class="right"><?php echo $quest['quest_name']; ?></td>   
                                     <!-- <td class="right"><?php //echo datetimeMongotoReadable($quest['condition']['datetime_start']); ?></td> -->
                                     <!-- <td class="right"><?php //echo datetimeMongotoReadable($quest['condition']['datetime_end']); ?></td> -->
-                                    <td class="right"><?php echo $quest['status'];?></td>
+                                    <td class="right"><?php echo ($quest['status'])?'Active':'Inactive';?></td>
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
                                     <td class="right">[ <?php if($client_id){
                                             // echo anchor('quest/update/'.$quest['action_id'], 'Edit');

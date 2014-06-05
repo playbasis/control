@@ -45,6 +45,19 @@ class Quest_model extends MY_Model{
 		return $dummyQuest;
 		*/
 
+		if (isset($data['start']) || isset($data['limit'])) {
+		    if ($data['start'] < 0) {
+		        $data['start'] = 0;
+		    }
+
+		    if ($data['limit'] < 1) {
+		        $data['limit'] = 20;
+		    }
+
+		    $this->mongo_db->limit((int)$data['limit']);
+		    $this->mongo_db->offset((int)$data['start']);
+		}
+
 		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 		$this->mongo_db->where_not_in('deleted', array(true));
