@@ -683,13 +683,24 @@ class Quest extends REST_Controller
             $data['quest_id'] = $quest_id;
             $quest = $this->quest_model->getQuest($data); // get quest detail
             if (!$this->checkConditionQuest($quest, $pb_player_id, $validToken)) {
-                array_walk_recursive($quest, array($this, "convert_mongo_object"));
-                $resp["quest"] = $quest;
-                $resp["quest"]["quest_id"] = $quest["_id"];
-                unset($resp["quest"]["_id"]);
-                $this->response($this->resp->setRespond($resp), 200);
+//                array_walk_recursive($quest, array($this, "convert_mongo_object"));
+//                $resp["quest"] = $quest;
+//                $resp["quest"]["quest_id"] = $quest["_id"];
+//                unset($resp["quest"]["_id"]);
+//                $this->response($this->resp->setRespond($resp), 200);
+                $event = array(
+                    'event_type' => "QUEST_AVAILABLE",
+                    'event_message' => "quest available",
+                    'event_status' => true,
+                );
+                $this->response($this->resp->setRespond($event), 200);
             } else {
-                $this->response($this->resp->setRespond(array()), 200);
+                $event = array(
+                    'event_type' => "QUEST_NOT_AVAILABLE",
+                    'event_message' => "quest not available",
+                    'event_status' => false,
+                );
+                $this->response($this->resp->setRespond($event), 200);
             }
         } else {
             // get all available quests related to clients
