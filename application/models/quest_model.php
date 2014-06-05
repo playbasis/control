@@ -58,6 +58,9 @@ class Quest_model extends MY_Model
     public function joinQuest($data)
     {
         $this->set_site_mongodb($data["site_id"]);
+        foreach($data["missions"] as &$m){
+            $m["status"] = "unjoin";
+        }
         $this->mongo_db->insert("playbasis_quest_to_player", array(
             "client_id" => $data["client_id"],
             "site_id" => $data["site_id"],
