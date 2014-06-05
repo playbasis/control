@@ -84,6 +84,7 @@ class Quest_model extends MY_Model
             }else{
                 $m["status"] = "join";
             }
+            $m["date_modified"] = new MongoDate(time());
         }
 
         $this->mongo_db->insert("playbasis_quest_to_player", array(
