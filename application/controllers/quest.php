@@ -413,7 +413,9 @@ class Quest extends REST_Controller
             "quest_id" => $quest_id.""
         );
 
-        $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        if(isset($mission["missions"][0]["rewards"])){
+            $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        }
 
         array_push($questResult['events_missions'], $sub_events);
 
@@ -440,7 +442,9 @@ class Quest extends REST_Controller
             "image" => $quest["image"],
         );
 
-        $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        if(isset($quest["rewards"])){
+            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        }
 
         array_push($questResult['events_quests'], $sub_events);
 
@@ -1000,7 +1004,7 @@ class Quest extends REST_Controller
                     $m["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
-                $quest = array_merge_recursive($quest, $quest_player);
+                $quest = array_merge($quest, $quest_player);
 
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
                 $resp['quest'] = $quest;
@@ -1032,7 +1036,7 @@ class Quest extends REST_Controller
                     $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
 
-                $q = array_merge_recursive($quest, $q);
+                $q = array_merge($quest, $q);
                 
 //                $q['quest_id'] = $q['_id'];
                 unset($q['_id']);
