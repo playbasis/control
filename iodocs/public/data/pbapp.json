@@ -813,7 +813,7 @@
                     ]
                 },
                 {
-                    "MethodName": "Quest list of Player",
+                    "MethodName": "Quest List of Player",
                     "Synopsis": "List of quests that the player has joined.",
                     "HTTPMethod": "GET",
                     "URI": "/Player/quest",
@@ -1019,7 +1019,7 @@
                     ]
                 },
                 {
-                    "MethodName": "Quest list Available For Player",
+                    "MethodName": "Quest List Available For Player",
                     "Synopsis": "Returns information about list of quest is available for player.",
                     "HTTPMethod": "GET",
                     "URI": "/Quest/:id/available",
