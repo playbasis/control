@@ -1003,8 +1003,8 @@ class Quest extends REST_Controller
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
 
                 foreach($quest_player["missions"] as $k=>$m){
-                    $quest["missions"][$k]["date_modified"] = $m["date_modified"];
-                    $quest["missions"][$k]["status"] = $m["status"];
+                    $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
+                    $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest_player, $m, $pb_player_id, $validToken);
                 }
 
@@ -1028,8 +1028,8 @@ class Quest extends REST_Controller
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
 
                 foreach($q["missions"] as $k=>$m){
-                    $quest["missions"][$k]["date_modified"] = $m["date_modified"];
-                    $quest["missions"][$k]["status"] = $m["status"];
+                    $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
+                    $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
                     $quest["missions"][$k]["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
 
