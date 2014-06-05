@@ -248,6 +248,14 @@ class Quest extends MY_Controller
                 $badge_detail = $this->Quest_model->getBadge($query_data);
                 $condition_data = $badge_detail;
                 break;
+            case "EXP":
+                $condition_data = array("name" => 'exp');
+                break;
+            case "ACTION":
+                $query_data['action_id'] = $object_data[$key_id];
+                $action_detail = $this->Quest_model->getAction($query_data);
+                $condition_data = $action_detail;
+                break;
         }
         return $condition_data;
     }

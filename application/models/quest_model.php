@@ -267,6 +267,20 @@ class Quest_model extends MY_Model{
     	return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
     }
 
+    public function getAction($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('action_id','name','description','icon','color'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('action_id',  new MongoID($data['action_id']));
+
+        $result = $this->mongo_db->get('playbasis_action_to_client');
+        return $result?$result[0]:array();
+
+    }
+
     public function getActionsByClientSiteId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
