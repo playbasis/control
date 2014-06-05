@@ -1002,25 +1002,19 @@ class Quest extends REST_Controller
             if($quest_player){
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
 
-                foreach($quest["missions"] as &$m){
-                    $md = array(
-                        'client_id' => $validToken['client_id'],
-                        'site_id' => $validToken['site_id'],
-                        'quest_id' => $quest_player['quest_id'],
-                        'mission_id' => $m['mission_id']
-                    );
-                    $mdetail = $this->quest_model->getMission($md);
-                    $m = array_merge($m, $mdetail['missions'][0]);
-                    $m["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                foreach($quest_player["missions"] as $k=>$m){
+                    $quest["missions"][$k]["date_modifield"] = $m["date_modifield"];
+                    $quest["missions"][$k]["status"] = $m["status"];
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest_player, $m, $pb_player_id, $validToken);
                 }
 
-//                $quest = array_merge($quest, $quest_player);
-                $quest = array_merge($quest_player, $quest);
+                $quest['status'] = $quest_player['status'];
+                $quest['quest_id'] = $quest_player['quest_id'];
+                unset($quest['_id']);
 
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
+
                 $resp['quest'] = $quest;
-//                $resp['quest']['quest_id'] = $quest['_id'];
-                unset($resp['quest']['_id']);
             }else{
                 $resp['quest'] = array();
             }
@@ -1031,28 +1025,19 @@ class Quest extends REST_Controller
 
             $quests = array();
             foreach ($quests_player as $q) {
-
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
 
-                foreach($quest["missions"] as &$m){
-                    $md = array(
-                        'client_id' => $validToken['client_id'],
-                        'site_id' => $validToken['site_id'],
-                        'quest_id' => $q['quest_id'],
-                        'mission_id' => $m['mission_id']
-                    );
-                    $mdetail = $this->quest_model->getMission($md);
-
-                    $m = array_merge($m, $mdetail['missions'][0]);
-                    $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
+                foreach($q["missions"] as $k=>$m){
+                    $quest["missions"][$k]["date_modifield"] = $m["date_modifield"];
+                    $quest["missions"][$k]["status"] = $m["status"];
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
                 }
 
-//                $q = array_merge($quest, $q);
-                $q = array_merge($q, $quest);
+                $quest['status'] = $q['status'];
+                $quest['quest_id'] = $q['quest_id'];
+                unset($quest['_id']);
 
-//                $q['quest_id'] = $q['_id'];
-                unset($q['_id']);
-                $quests[] = $q;
+                $quests[] = $quest;
             }
 
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
