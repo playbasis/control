@@ -1045,7 +1045,7 @@ class Quest extends REST_Controller
 
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
 
-            $resp['quests'] = $quests_player;
+            $resp['quests'] = $quests;
         }
         $this->response($this->resp->setRespond($resp), 200);
     }
