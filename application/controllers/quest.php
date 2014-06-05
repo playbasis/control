@@ -151,6 +151,7 @@ class Quest extends REST_Controller
             if($mission_count == $player_finish_count){
                 //echo "finish all mission";
                 $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken, $questResult);
+                $this->updateQuestStatusOfPlayer($pb_player_id, $q["quest_id"], $validToken, "finish");
             }
 
             $event = array(
@@ -581,6 +582,15 @@ class Quest extends REST_Controller
             'mission_id' => $mission_id
         );
         $this->quest_model->updateMissionStatus($data, $status);
+    }
+
+    private function updateQuestStatusOfPlayer($player_id, $quest_id, $validToken, $status="join"){
+        $data = array(
+            'site_id' => $validToken['site_id'],
+            'pb_player_id' => $player_id,
+            'quest_id' => $quest_id
+        );
+        $this->quest_model->updateQuestStatus($data, $status);
     }
 
     private function levelup($lv, &$sub_events, $config)
