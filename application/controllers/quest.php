@@ -131,7 +131,7 @@ class Quest extends MY_Controller
             
 
             foreach($data as $key => $value){
-                if($key == 'condition' || $key == 'reward' || $key == 'missions'){
+                if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
                     $i = 0;
                     foreach($value as $k => $v){
                         foreach($v as $ke => &$item){
@@ -147,7 +147,7 @@ class Quest extends MY_Controller
                         if($key == 'condition'){
                             $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
                         }
-                        if($key == 'reward'){
+                        if($key == 'rewards'){
                             $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
                         }
                         $data[$key][$i] = $v;
@@ -165,7 +165,7 @@ class Quest extends MY_Controller
                         $data[$key][$im] = $val;
                         $data[$key][$im]['mission_id'] = new MongoId();
                         foreach($val as $k => $v){
-                            if($k == 'completion' || $k == 'reward'){
+                            if($k == 'completion' || $k == 'rewards'){
                                 $i = 0;
                                 foreach($v as $koo => $voo){                                    
                                     foreach($voo as $kkk => &$vvv){
@@ -186,7 +186,7 @@ class Quest extends MY_Controller
                                     if($k == 'completion'){
                                         $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
                                     }
-                                    if($k == 'reward'){
+                                    if($k == 'rewards'){
                                         $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
                                     }
                                     $data[$key][$im][$k][$i] = $voo;
@@ -208,10 +208,10 @@ class Quest extends MY_Controller
             $data['client_id'] = $client_id;
             $data['site_id'] = $site_id;
 
-            // echo "<pre>";
-            //     var_dump($data);
-            // echo "</pre>";
-            
+//             echo "<pre>";
+//                 var_dump($data);
+//             echo "</pre>";
+
             $this->Quest_model->addQuestToClient($data);
             redirect('/quest', 'refresh');
             
@@ -387,10 +387,10 @@ class Quest extends MY_Controller
                 }    
             }
 
-            if(isset($editQuest['reward'])){
+            if(isset($editQuest['rewards'])){
                 $countCustomPoints = 0;
                 $countBadges = 0;
-                foreach($editQuest['reward'] as $reward){
+                foreach($editQuest['rewards'] as $reward){
                     if($reward['reward_type'] == 'POINT'){
                         $this->data['editPointsRew']['reward_type'] = $reward['reward_type']; 
                         $this->data['editPointsRew']['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
@@ -491,8 +491,8 @@ class Quest extends MY_Controller
 
                     $countBadge = 0;
                     $countCustomPoints = 0;
-                    if(isset($mission['reward'])){
-                        foreach($mission['reward'] as $rr){
+                    if(isset($mission['rewards'])){
+                        foreach($mission['rewards'] as $rr){
                             if($rr['reward_type'] == 'POINT'){
                                 $this->data['editMission'][$missionCount]['editPointRew']['reward_type'] = $rr['reward_type'];
                                 $this->data['editMission'][$missionCount]['editPointRew']['reward_value'] = $rr['reward_value'];
@@ -711,7 +711,7 @@ class Quest extends MY_Controller
             $data = $this->input->post();
 
             foreach($data as $key => $value){
-                if($key == 'condition' || $key == 'reward' || $key == 'missions'){
+                if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
                     $i = 0;
                     foreach($value as $k => $v){
                         foreach($v as $ke => &$item){
@@ -727,7 +727,7 @@ class Quest extends MY_Controller
                         if($key == 'condition'){
                             $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
                         }
-                        if($key == 'reward'){
+                        if($key == 'rewards'){
                             $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
                         }
                         $data[$key][$i] = $v;
@@ -743,11 +743,16 @@ class Quest extends MY_Controller
 
                         unset($data[$key][$kk]);
                         $data[$key][$im] = $val;
-                        $data[$key][$im]['mission_id'] = new MongoId($kk);
+                        try {
+                            $data[$key][$im]['mission_id'] = new MongoId($kk);
+                        } catch (MongoException $ex) {
+                            $data[$key][$im]['mission_id'] = new MongoId();
+                        }
+
                         foreach($val as $k => $v){
-                            if($k == 'completion' || $k == 'reward'){
+                            if($k == 'completion' || $k == 'rewards'){
                                 $i = 0;
-                                foreach($v as $koo => $voo){                                    
+                                foreach($v as $koo => $voo){
                                     foreach($voo as $kkk => &$vvv){
                                         if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
                                             $vvv = new MongoId($vvv);
@@ -768,7 +773,7 @@ class Quest extends MY_Controller
                                     if($k == 'completion'){
                                         $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
                                     }
-                                    if($k == 'reward'){
+                                    if($k == 'rewards'){
                                         $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
                                     }
                                     $data[$key][$im][$k][$i] = $voo;

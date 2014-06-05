@@ -300,8 +300,8 @@ class Quest_model extends MY_Model{
     		$this->mongo_db->set('condition', $data['condition']);
     	}
 
-    	if(isset($data['reward']) && !is_null($data['reward'])){
-    		$this->mongo_db->set('reward', $data['reward']);
+    	if(isset($data['rewards']) && !is_null($data['rewards'])){
+    		$this->mongo_db->set('rewards', $data['rewards']);
     	}
 
 		if(isset($data['missions']) && !is_null($data['missions'])){
@@ -310,7 +310,25 @@ class Quest_model extends MY_Model{
 
     	$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
-    	return $this->mongo_db->update('playbasis_quest_to_client');
+        $this->mongo_db->update('playbasis_quest_to_client');
+
+
+        if(isset($data['missions']) && !is_null($data['missions'])){
+            foreach($data['missions'] as $m){
+                $this->mongo_db->where(array(
+                    'quest_id' => new MongoId($quest_id),
+                    'missions.mission_id' => new MongoId($m['mission_id']),
+                ));
+                $this->mongo_db->set(array('missions.$.mission_name' => $m['mission_name']));
+                $this->mongo_db->set(array('missions.$.mission_number' => $m['mission_number']));
+                $this->mongo_db->set(array('missions.$.description' => $m['description']));
+                $this->mongo_db->set(array('missions.$.hint' => $m['hint']));
+                $this->mongo_db->set(array('missions.$.image' => $m['image']));
+                $this->mongo_db->update_all('playbasis_quest_to_player');
+            }
+        }
+
+    	return true;
 
     }
 

@@ -206,12 +206,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="box box-add-item reward-wrapper">
+                    <div class="box box-add-item rewards-wrapper">
                         <div class="box-header overflow-visible">
                             <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>
                             <div class="box-icon box-icon-action">
-                                <a href="javascript:void(0)" class="btn btn-primary right add-reward-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>
-                                <ul class="dropdown-menu add-reward-menu" role="menu" aria-labelledby="dropdownMenu">
+                                <a href="javascript:void(0)" class="btn btn-primary right add-rewards-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>
+                                <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">
                                   <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
                                   <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
                                   <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
@@ -222,36 +222,36 @@
                             </div>
                         </div>
                         <div class="box-content">
-                            <div class='reward-container'>
+                            <div class='rewards-container'>
                                 <?php if(isset($editPointsRew)){ ?>
-                                    <div class="points-wrapper reward-type well">
+                                    <div class="points-wrapper rewards-type well">
                                         <h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>
                                         <label class="span4">Points:</label>
-                                        <input type="text" name="reward[point][reward_value]" placeholder="Points" value = "<?php echo $editPointsRew['reward_value'] ?>">                    
-                                        <input type="hidden" name="reward[point][reward_type]" value="POINT">                    
-                                        <input type="hidden" name="reward[point][reward_id]" value="<?php echo $editPointsRew['reward_id']; ?>">
+                                        <input type="text" name="rewards[point][reward_value]" placeholder="Points" value = "<?php echo $editPointsRew['reward_value'] ?>">
+                                        <input type="hidden" name="rewards[point][reward_type]" value="POINT">
+                                        <input type="hidden" name="rewards[point][reward_id]" value="<?php echo $editPointsRew['reward_id']; ?>">
                                     </div>
                                 <?php } ?>
 
                                 <?php if(isset($editExpRew)){ ?>
-                                    <div class="exp-wrapper reward-type well">
+                                    <div class="exp-wrapper rewards-type well">
                                         <h3>Exp <a class="remove"><i class="icon-remove-sign"></i></a></h3>
                                         <label class="span4">Exp:</label>
-                                        <input type="text" name="reward[exp][reward_value]" placeholder="Exp" value = "<?php echo $editExpRew['reward_value']; ?>">                    
-                                        <input type="hidden" name="reward[exp][reward_type]" value="EXP">                    
-                                        <input type="hidden" name="reward[exp][reward_id]" value="<?php echo $editExpRew['reward_id'] ?>">
+                                        <input type="text" name="rewards[exp][reward_value]" placeholder="Exp" value = "<?php echo $editExpRew['reward_value']; ?>">
+                                        <input type="hidden" name="rewards[exp][reward_type]" value="EXP">
+                                        <input type="hidden" name="rewards[exp][reward_id]" value="<?php echo $editExpRew['reward_id'] ?>">
                                     </div>
                                 <?php } ?>
                                 <?php if(isset($editCustomPointsRew)){ ?>
-                                    <div class="custompoints-wrapper reward-type well">
+                                    <div class="custompoints-wrapper rewards-type well">
                                         <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
                                         <?php foreach($editCustomPointsRew as $point){ ?>
                                             <div class="item-container">
                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $point['reward_id'] ?>">                                
                                                     <div class="span7"><?php foreach($customPoints as $p){if($p['_id']==$point['reward_id']){echo $p['name'];}} ?></div><div class="span3"><small>value</small>                                
-                                                    <input type="text" name="reward[custompoints][reward_value]" placeholder="Value" value="<?php echo $point['reward_value']; ?>">
-                                                    <input type="hidden" name="reward[custompoints][reward_type]" value="CUSTOM_POINT">                                
-                                                    <input type="hidden" name="reward[custompoints][reward_id]" value="<?php echo $point['reward_id'] ?>">
+                                                    <input type="text" name="rewards[custompoints][reward_value]" placeholder="Value" value="<?php echo $point['reward_value']; ?>">
+                                                    <input type="hidden" name="rewards[custompoints][reward_type]" value="CUSTOM_POINT">
+                                                    <input type="hidden" name="rewards[custompoints][reward_id]" value="<?php echo $point['reward_id'] ?>">
                                                     </div>                                
                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                 </div>
@@ -260,7 +260,7 @@
                                     </div>
                                 <?php } ?>
                                 <?php if(isset($editBadgeRew)){ ?>
-                                    <div class="badges-wrapper reward-type well">
+                                    <div class="badges-wrapper rewards-type well">
                                         <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
                                         <div class="item-container">
                                             <?php foreach($editBadgeRew as $badge){ ?>    
@@ -271,9 +271,9 @@
                                                 <div class="span7"><?php echo $badge['reward_data']['name'];?></div>                                    
                                                 <div class="span1">                                    
                                                     <small>value</small>                                    
-                                                    <input type="text" name="reward[<?php echo $badge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $badge['reward_value'] ?>">                                    
-                                                    <input type="hidden" name="reward[<?php echo $badge['reward_id'] ?>][reward_id]" value="<?php echo $badge['reward_id'] ?>">                                    
-                                                    <input type="hidden" name="reward[<?php echo $badge['reward_id'] ?>][reward_type]" value="BADGE"></div>                                    
+                                                    <input type="text" name="rewards[<?php echo $badge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $badge['reward_value'] ?>">
+                                                    <input type="hidden" name="rewards[<?php echo $badge['reward_id'] ?>][reward_id]" value="<?php echo $badge['reward_id'] ?>">
+                                                    <input type="hidden" name="rewards[<?php echo $badge['reward_id'] ?>][reward_type]" value="BADGE"></div>
                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                 </div>
                                             <?php } ?>
@@ -459,12 +459,12 @@
                                             </div>                                    
                                         </div>                                
                                     </div>                                
-                                    <div class="box box-add-item reward-wrapper">                                    
+                                    <div class="box box-add-item rewards-wrapper">
                                         <div class="box-header overflow-visible">                                        
                                             <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>                                        
                                             <div class="box-icon box-icon-action">                                            
-                                                <a href="javascript:void(0)" class="btn btn-primary right add-reward-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>                                            
-                                                <ul class="dropdown-menu add-reward-menu" role="menu" aria-labelledby="dropdownMenu">                                              
+                                                <a href="javascript:void(0)" class="btn btn-primary right add-rewards-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>
+                                                <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                              
                                                     <li class="add-exp"><a tabindex="-1" href="javascript:void(0)">EXP</a></li>                                              
                                                     <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>                                              
@@ -475,29 +475,29 @@
                                             </div>                                    
                                         </div>                                    
                                         <div class="box-content">                                        
-                                            <div class="reward-container">
+                                            <div class="rewards-container">
 
                                                 <?php if(isset($mission['editPointRew'])){ ?>
-                                                    <div class="points-wrapper reward-type well">
+                                                    <div class="points-wrapper rewards-type well">
                                                         <h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>
-                                                        <label class="spans4">Points:</label>
-                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][reward][point][reward_value]" placeholder="Points" value = "<?php echo $mission['editPointRew']['reward_value'] ?>">                    
-                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][point][reward_type]" value="POINT">                    
-                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][point][reward_id]" value="<?php echo $mission['editPointRew']['reward_id'] ?>">
+                                                        <label class="span4">Points:</label>
+                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][point][reward_value]" placeholder="Points" value = "<?php echo $mission['editPointRew']['reward_value'] ?>">
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][point][reward_type]" value="POINT">
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][point][reward_id]" value="<?php echo $mission['editPointRew']['reward_id'] ?>">
                                                     </div>
                                                 <?php } ?> <!-- end of editPointRew isset -->
 
                                                 <?php if(isset($mission['editExpRew'])){ ?>
-                                                    <div class="exp-wrapper reward-type well">
+                                                    <div class="exp-wrapper rewards-type well">
                                                         <h3>Exp <a class="remove"><i class="icon-remove-sign"></i></a></h3>
-                                                        <label class="span4">Exp:</label><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][reward][exp][reward_value]" placeholder="Exp" value = "<?php echo $mission['editExpRew']['reward_value'] ?>">                    
-                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][exp][reward_type]" value="EXP">                    
-                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][exp][reward_id]" value="value = "<?php echo $mission['editExpRew']['reward_id'] ?>"">
+                                                        <label class="span4">Exp:</label><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][exp][reward_value]" placeholder="Exp" value = "<?php echo $mission['editExpRew']['reward_value'] ?>">
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][exp][reward_type]" value="EXP">
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][exp][reward_id]" value="<?php echo $mission['editExpRew']['reward_id'] ?>"">
                                                     </div>
                                                 <?php } ?> <!-- end of editExpRew isset -->
 
                                                 <?php if(isset($mission['editCustomPointRew'])){ ?>
-                                                    <div class="custompoints-wrapper reward-type well">
+                                                    <div class="custompoints-wrapper rewards-type well">
                                                         <h3>Custom Points  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-custompoint-btn">+ Add Custom Points</a></h3>
                                                         <div class="item-container">
 
@@ -505,10 +505,10 @@
                                                                 <div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="<?php echo $eCustomPoint['reward_id'] ?>">                                
                                                                     <div class="span7"><?php foreach($customPoints as $pp){if($pp['_id'] == $eCustomPoint['reward_id']){echo $pp['name'];}} ?></div>
                                                                     <div class="span3"><small>value</small>                                
-                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][reward][custompoints][reward_value]" placeholder="Value" value="<?php echo $eCustomPoint['reward_value'] ?>">
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][custompoints][reward_value]" placeholder="Value" value="<?php echo $eCustomPoint['reward_value'] ?>">
                                                                     </div>                                
-                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][custompoints][reward_type]" value="CUSTOM_POINT">                                
-                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][custompoints][reward_id]" value="<?php echo $eCustomPoint['reward_id'] ?>">                                
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][custompoints][reward_type]" value="CUSTOM_POINT">
+                                                                    <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][custompoints][reward_id]" value="<?php echo $eCustomPoint['reward_id'] ?>">
                                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                                 </div>
                                                             <?php } ?>
@@ -519,7 +519,7 @@
 
                                                 <?php if(isset($mission['editBadgeRew'])){ ?>
 
-                                                    <div class="badges-wrapper reward-type well">
+                                                    <div class="badges-wrapper rewards-type well">
                                                         <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
                                                         <div class="item-container">
                                                             <?php foreach($mission['editBadgeRew'] as $eBadge){ ?>
@@ -529,9 +529,9 @@
                                                                 <div class="span7"><?php echo $eBadge['reward_data']['name'] ?></div>                                    
                                                                 <div class="span1">                                    
                                                                 <small>value</small>                                    
-                                                                <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][reward][<?php echo $eBadge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eBadge['reward_value'] ?>">                                    
-                                                                <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][<?php echo $eBadge['reward_id'] ?>][reward_id]" value="<?php echo $eBadge['reward_id'] ?>">                                    
-                                                                <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][reward][<?php echo $eBadge['reward_id'] ?>][reward_type]" value="BADGE"></div>                                    
+                                                                <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eBadge['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eBadge['reward_value'] ?>">
+                                                                <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eBadge['reward_id'] ?>][reward_id]" value="<?php echo $eBadge['reward_id'] ?>">
+                                                                <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eBadge['reward_id'] ?>][reward_type]" value="BADGE"></div>
                                                                 <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>                                    
                                                                 </div>
                                                             </div>
@@ -542,7 +542,7 @@
                                                 <?php } ?> <!-- end of editCustomPointRew isset -->
 
                                                 <h3 class="no-item">No Item</h3>
-                                            </div><!-- .reward-container -->                                    
+                                            </div><!-- .rewards-container -->
                                         </div>                                
                                     </div>                            
                                 </div>                        
@@ -765,12 +765,12 @@
                                         </div>\
                                     </div>\
                                 </div>\
-                                <div class="box box-add-item reward-wrapper">\
+                                <div class="box box-add-item rewards-wrapper">\
                                     <div class="box-header overflow-visible">\
                                         <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>\
                                         <div class="box-icon box-icon-action">\
-                                            <a href="javascript:void(0)" class="btn btn-primary right add-reward-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>\
-                                            <ul class="dropdown-menu add-reward-menu" role="menu" aria-labelledby="dropdownMenu">\
+                                            <a href="javascript:void(0)" class="btn btn-primary right add-rewards-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>\
+                                            <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">\
                                               <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>\
                                               <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>\
                                               <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
@@ -781,7 +781,7 @@
                                         </div>\
                                     </div>\
                                     <div class="box-content">\
-                                        <div class="reward-container"></div>\
+                                        <div class="rewards-container"></div>\
                                     </div>\
                                 </div>\
                             </div>\
@@ -797,7 +797,7 @@
             });
 
             init_additem_event({
-                type:'reward',
+                type:'rewards',
                 parent:'missions',
                 id:itemMissionId
             });
@@ -1028,7 +1028,7 @@
 
 
 
-init_additem_event({type:'reward'});
+init_additem_event({type:'rewards'});
 init_additem_event({type:'condition'});
 
 $('.mission-item-wrapper').each(function(){
@@ -1040,7 +1040,7 @@ $('.mission-item-wrapper').each(function(){
     });
 
     init_additem_event({
-        type:'reward',
+        type:'rewards',
         parent:'missions',
         id:itemMissionId
     });
@@ -1119,18 +1119,19 @@ function addQuest(target){
 
 function addPoints(target){
     var type = target.type;
+    var typeElement = checkTypeReward(type);
     var id = target.id || null;
     var parent = target.parent || 'quest';
     var inputHtml = '';
 
     if(parent == 'missions'){
-        inputHtml = '<input type="text" name = "'+parent+'['+id+']['+type+'][point]['+type+'_value]" placeholder = "Points">\
-                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][point]['+type+'_type]" value = "POINT"/>\
-                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][point]['+type+'_id]" value = "<?php echo $point_id; ?>"/>';
+        inputHtml = '<input type="text" name = "'+parent+'['+id+']['+type+'][point]['+typeElement+'_value]" placeholder = "Points">\
+                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][point]['+typeElement+'_type]" value = "POINT"/>\
+                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][point]['+typeElement+'_id]" value = "<?php echo $point_id; ?>"/>';
     }else{
-        inputHtml = '<input type="text" name = "'+type+'[point]['+type+'_value]" placeholder = "Points">\
-                    <input type="hidden" name = "'+type+'[point]['+type+'_type]" value = "POINT"/>\
-                    <input type="hidden" name = "'+type+'[point]['+type+'_id]" value = "<?php echo $point_id; ?>"/>';
+        inputHtml = '<input type="text" name = "'+type+'[point]['+typeElement+'_value]" placeholder = "Points">\
+                    <input type="hidden" name = "'+type+'[point]['+typeElement+'_type]" value = "POINT"/>\
+                    <input type="hidden" name = "'+type+'[point]['+typeElement+'_id]" value = "<?php echo $point_id; ?>"/>';
     }
 
     var pointsHead = '<h3>Points <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
@@ -1138,7 +1139,7 @@ function addPoints(target){
 
     var inputCompletionHtml = '';
     if(type == 'completion'){
-            inputCompletionHtml = '<br><label class="span4">Title:</label><input type="text" name ="'+parent+'['+id+']['+type+'][point]['+type+'_title]" placeholder="Title" value="">';
+            inputCompletionHtml = '<br><label class="span4">Title:</label><input type="text" name ="'+parent+'['+id+']['+type+'][point]['+typeElement+'_title]" placeholder="Title" value="">';
     }
 
     var pointsHtml = ' <div class="points-wrapper '+type+'-type well">'+pointsHead+'<label class="span4">Points:</label>'+inputHtml+inputCompletionHtml+'</div>';
@@ -1149,18 +1150,20 @@ function addPoints(target){
 
 function addExp(target){
     var type = target.type;
+
+    var typeElement = checkTypeReward(type);
     var id = target.id || null;
     var parent = target.parent || 'quest';
     var inputHtml = '';
 
     if(parent == 'missions'){
-        inputHtml = '<input type="text" name = "'+parent+'['+id+']['+type+'][exp]['+type+'_value]" placeholder = "Exp">\
-                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][exp]['+type+'_type]" value = "EXP"/>\
-                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][exp]['+type+'_id]" value = "<?php echo $exp_id; ?>"/>';
+        inputHtml = '<input type="text" name = "'+parent+'['+id+']['+type+'][exp]['+typeElement+'_value]" placeholder = "Exp">\
+                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][exp]['+typeElement+'_type]" value = "EXP"/>\
+                    <input type="hidden" name = "'+parent+'['+id+']['+type+'][exp]['+typeElement+'_id]" value = "<?php echo $exp_id; ?>"/>';
     }else{
-        inputHtml = '<input type="text" name = "'+type+'[exp]['+type+'_value]" placeholder = "Exp">\
-                    <input type="hidden" name = "'+type+'[exp]['+type+'_type]" value = "EXP"/>\
-                    <input type="hidden" name = "'+type+'[exp]['+type+'_id]" value = "<?php echo $exp_id; ?>"/>';
+        inputHtml = '<input type="text" name = "'+type+'[exp]['+typeElement+'_value]" placeholder = "Exp">\
+                    <input type="hidden" name = "'+type+'[exp]['+typeElement+'_type]" value = "EXP"/>\
+                    <input type="hidden" name = "'+type+'[exp]['+typeElement+'_id]" value = "<?php echo $exp_id; ?>"/>';
     }
 
     var expHead = '<h3>Exp <a class="remove"><i class="icon-remove-sign"></i></a></h3>';
@@ -1271,20 +1274,21 @@ function selectBadgesItem(){
                 var id = $(this).data('id-badge');
                 var img = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
+                var typeElement = checkTypeReward(type);
 
                 if(parent == 'missions'){
-                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "BADGE"/>'
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_type]" value = "BADGE"/>'
                 }else{
-                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+type+'_value]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+type+'['+id+']['+type+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+type+'['+id+']['+type+'_type]" value = "BADGE"/>'
+                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+type+'['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+type+'['+id+']['+typeElement+'_type]" value = "BADGE"/>'
                 }
 
                 var inputCompletionHtml = '';
                 if(type == 'completion'){
-                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_title]" placeholder="Title" value=""></div></div>';
                 }
 
                 var badgesItemHtml = '<div class="clearfix item-wrapper badges-item-wrapper" data-id-badge="'+id+'">\
@@ -1358,20 +1362,21 @@ function selectCustompointsItem(){
                 
                 var id = $(this).data('id-custompoint');
                 var title = $(this).find('.title').html();
+                var typeElement = checkTypeReward(type);
 
                 if(parent == 'missions'){
-                        inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" placeholder="Value" value="1">\
-                                <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "CUSTOM_POINT"/>\
-                                <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value = "'+id+'"/>';
+                        inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_value]" placeholder="Value" value="1">\
+                                <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_type]" value = "CUSTOM_POINT"/>\
+                                <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_id]" value = "'+id+'"/>';
                 }else{
-                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+type+'_value]" placeholder="Value" value="1"></div>\
-                                <input type="hidden" name = "'+type+'['+id+']['+type+'_type]" value = "CUSTOM_POINT"/>\
-                                <input type="hidden" name = "'+type+'['+id+']['+type+'_id]" value = "'+id+'"/>'
+                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+typeElement+'_value]" placeholder="Value" value="1"></div>\
+                                <input type="hidden" name = "'+type+'['+id+']['+typeElement+'_type]" value = "CUSTOM_POINT"/>\
+                                <input type="hidden" name = "'+type+'['+id+']['+typeElement+'_id]" value = "'+id+'"/>'
                 }
 
                 var inputCompletionHtml = '';
                 if(type == 'completion'){
-                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_title]" placeholder="Title" value=""></div></div>';
                 }
 
                 var itemHtml = '<div class="clearfix item-wrapper custompoints-item-wrapper" data-id-custompoint="'+id+'">\
@@ -1419,6 +1424,7 @@ function selectQuestsItem(){
     }
 
     var type = target.type;
+    var typeElement = checkTypeReward(type);
     var taget_id = target.id || null;
     var parent = target.parent || 'quest';
     var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
@@ -1439,19 +1445,19 @@ function selectQuestsItem(){
                 var title = $(this).find('.title').html();
 
                 if(target.parent == 'missions'){
-                    var inputHtml = '<div class="span1"><input type="hidden" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_id]" value="'+id+'"></div>\
-                                     <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_type]" value = "QUEST"/>\
-                                     <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_value]" value = ""/>'
+                    var inputHtml = '<div class="span1"><input type="hidden" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_id]" value="'+id+'"></div>\
+                                     <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_type]" value = "QUEST"/>\
+                                     <input type="hidden" name = "'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_value]" value = ""/>'
 
                 }else{
-                    var inputHtml = '<div class="span1"><input type="hidden" name ="'+type+'['+id+']['+type+'_id]" value="'+id+'"></div>\
-                                <input type="hidden" name = "'+type+'['+id+']['+type+'_type]" value = "QUEST"/>\
-                                <input type="hidden" name = "'+type+'['+id+']['+type+'_value]" value = ""/>'
+                    var inputHtml = '<div class="span1"><input type="hidden" name ="'+type+'['+id+']['+typeElement+'_id]" value="'+id+'"></div>\
+                                <input type="hidden" name = "'+type+'['+id+']['+typeElement+'_type]" value = "QUEST"/>\
+                                <input type="hidden" name = "'+type+'['+id+']['+typeElement+'_value]" value = ""/>'
                 }
 
                 var inputCompletionHtml = '';
                 if(type == 'completion'){
-                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_title]" placeholder="Title" value=""></div></div>';
                 }
                 var itemHtml = '<div class="clearfix item-wrapper quests-item-wrapper" data-id-quest="'+id+'">\
                                 <div class="span2 text-center"><img src="'+image+'" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">\
@@ -1501,6 +1507,7 @@ function selectActionsItem(){
     }
 
     var type = target.type;
+    var typeElement = checkTypeReward(type);
     var taget_id = target.id || null;
     var parent = target.parent || 'quest';
     var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
@@ -1535,21 +1542,21 @@ function selectActionsItem(){
 
                 if(parent == 'missions'){
                     
-                    inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_filter]"/>';
+                    inputFilterHtml = '<small>filter</small><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_filter]"/>';
 
-                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_value]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_element_id]" value = ""/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_type]" value = "ACTION"/>';
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_element_id]" value = ""/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_type]" value = "ACTION"/>';
                 }else{
-                    inputHtml = '<input type="text" name ="'+type+'['+index+']['+type+'_value]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+type+'['+index+']['+type+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+type+'['+index+']['+type+'_type]" value = "ACTION"/>';
+                    inputHtml = '<input type="text" name ="'+type+'['+index+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+type+'['+index+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+type+'['+index+']['+typeElement+'_type]" value = "ACTION"/>';
                 }
 
                 var inputCompletionHtml = '';
                 if(type == 'completion'){
-                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+type+'_title]" placeholder="Title" value=""></div></div>';
+                        inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+index+']['+typeElement+'_title]" placeholder="Title" value=""></div></div>';
                 }
                 var actionsItemHtml = '<div class="clearfix item-wrapper actions-item-wrapper" data-id-action="'+id+'">\
                                     <div class="span2 text-center"><i class="'+icon+'"></i>\
@@ -1587,7 +1594,17 @@ function setModalTarget(modalObj,target){
     modalObj.attr('data-mission-id',id);
     modalObj.attr('data-parent',parent);
 }
+
+function checkTypeReward(type){
+    if(type == "rewards"){
+        return "reward";
+    }else{
+        return type;
+    }
+}
+
 </script>
+
 
 
 
