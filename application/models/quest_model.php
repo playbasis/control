@@ -114,7 +114,7 @@ class Quest_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_quest_to_player');
 
         array_walk_recursive($result, array($this, "change_image_path"));
-        
+
         return $result;
     }
 
@@ -159,7 +159,7 @@ class Quest_model extends MY_Model
             if(!empty($item)){
                 $item = $this->config->item('IMG_PATH').$item;
             }else{
-                $item = $this->config->item('IMG_PATH')."/no_image.jpg";
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
 
         }
