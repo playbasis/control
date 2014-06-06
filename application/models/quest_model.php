@@ -259,45 +259,25 @@ class Quest_model extends MY_Model{
 
     	$this->mongo_db->where('_id', new MongoID($quest_id));
 
-    	if(isset($data['quest_name']) && !is_null($data['quest_name'])){
-    		$this->mongo_db->set('quest_name', $data['quest_name']);
-    	}
+    	$this->mongo_db->set('quest_name', isset($data['quest_name'])?$data['quest_name']:'');
 
-    	if(isset($data['description']) && !is_null($data['description'])){
-    		$this->mongo_db->set('description', $data['description']);
-    	}
+    	$this->mongo_db->set('description', isset($data['description'])?$data['description']:'');
+    	
+        $this->mongo_db->set('hint', isset($data['hint'])?$data['hint']:'');
 
-    	if(isset($data['hint']) && !is_null($data['hint'])){
-    		$this->mongo_db->set('hint', $data['hint']);
-    	}
+    	$this->mongo_db->set('image', isset($data['image'])?$data['image']:'');
 
-    	if(isset($data['image']) && !is_null($data['image'])){
-    		$this->mongo_db->set('image', $data['image']);
-    	}
+        $this->mongo_db->set('mission_order', isset($data['mission_order'])?$data['mission_order']:'');
 
-    	if(isset($data['mission_order']) && !is_null($data['mission_order'])){
-    		$this->mongo_db->set('mission_order', $data['mission_order']);
-    	}
-
-    	if(isset($data['status']) && !is_null($data['status'])){
-    		$this->mongo_db->set('status', $data['status']);
-    	}
+    	$this->mongo_db->set('status', isset($data['status'])?$data['status']:'');
 		
-		if(isset($data['sort_order']) && !is_null($data['sort_order'])){
-    		$this->mongo_db->set('sort_order', $data['sort_order']);
-    	}
+    	$this->mongo_db->set('sort_order', isset($data['sort_order'])?$data['sort_order']:'');
 
-    	if(isset($data['condition']) && !is_null($data['condition'])){
-    		$this->mongo_db->set('condition', $data['condition']);
-    	}
+    	$this->mongo_db->set('condition', isset($data['condition'])?$data['condition']:array());
 
-    	if(isset($data['rewards']) && !is_null($data['rewards'])){
-    		$this->mongo_db->set('rewards', $data['rewards']);
-    	}
+    	$this->mongo_db->set('rewards', isset($data['rewards'])?$data['rewards']:array());
 
-		if(isset($data['missions']) && !is_null($data['missions'])){
-    		$this->mongo_db->set('missions', $data['missions']);
-    	}
+    	$this->mongo_db->set('missions', isset($data['missions'])?$data['missions']:array());
 
     	$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
@@ -323,6 +303,9 @@ class Quest_model extends MY_Model{
                 }
                 $this->mongo_db->update_all('playbasis_quest_to_player');
             }
+        }else{
+            $this->mongo_db->set(array('missions' => array())); 
+            $this->mongo_db->update_all('playbasis_quest_to_player');
         }
 
     	return true;
