@@ -58,7 +58,7 @@ class Quest extends REST_Controller
 
                 $player_missions = array();
                 foreach($q["missions"] as $pm){
-                    $player_missions[$pm["mission_id"].""] = $pm["status"];
+                    $player_missions[$pm["mission_id"].""] = isset($pm["status"])?$pm["status"]:"unjoin";
                 }
 
                 if((bool)$quest["mission_order"]){
@@ -75,6 +75,7 @@ class Quest extends REST_Controller
                     $next_mission = false;
 
                     foreach($missions as $m){
+
                         //if player pass mission so next mission status will change to join
                         if($next_mission && $player_missions[$m["mission_id"].""] == "unjoin"){
                             $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "join");
@@ -134,6 +135,7 @@ class Quest extends REST_Controller
                         }else{
                             //for check total mission finish
                             $player_finish_count++;
+                            continue;
                         }
 
                         $event = array(
@@ -149,6 +151,7 @@ class Quest extends REST_Controller
             if($mission_count == $player_finish_count){
                 //echo "finish all mission";
                 $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken, $questResult);
+                $this->updateQuestStatusOfPlayer($pb_player_id, $q["quest_id"], $validToken, "finish");
             }
 
             $event = array(
@@ -300,8 +303,10 @@ class Quest extends REST_Controller
         if($mission && isset($mission["completion"])){
 
             foreach($mission["completion"] as $c){
+
                 if($c["completion_type"] == "ACTION"){
-                    $datetime_check = (isset($player_mission["missions"][0]["date_modifield"]))?datetimeMongotoReadable($player_mission["missions"][0]["date_modifield"]):date("Y-m-d H:i:s");
+
+                    $datetime_check = (isset($player_mission["missions"][0]["date_modified"]))?datetimeMongotoReadable($player_mission["missions"][0]["date_modified"]):date("Y-m-d H:i:s");
                     $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
 
                     if((int)$c["completion_value"] > (int)$action["count"]){
@@ -314,6 +319,13 @@ class Quest extends REST_Controller
                                 'incompletion_value' => ((int)$c["completion_value"] - (int)$action["count"])
                             )
                         );
+                        if(isset($c["completion_element_id"])){
+                            $event['incomplete']['incompletion_element_id'] = $c["completion_element_id"]."";
+                        }
+                        if(isset($c["completion_filter"])){
+                            $event['incomplete']['incompletion_filter'] = $c["completion_filter"];
+                        }
+
                         array_push($missionEvent, $event);
                     }
                 }
@@ -408,7 +420,9 @@ class Quest extends REST_Controller
             "quest_id" => $quest_id.""
         );
 
-        $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        if(isset($mission["missions"][0]["rewards"])){
+            $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        }
 
         array_push($questResult['events_missions'], $sub_events);
 
@@ -435,7 +449,9 @@ class Quest extends REST_Controller
             "image" => $quest["image"],
         );
 
-        $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        if(isset($quest["rewards"])){
+            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+        }
 
         array_push($questResult['events_quests'], $sub_events);
 
@@ -574,6 +590,15 @@ class Quest extends REST_Controller
         $this->quest_model->updateMissionStatus($data, $status);
     }
 
+    private function updateQuestStatusOfPlayer($player_id, $quest_id, $validToken, $status="join"){
+        $data = array(
+            'site_id' => $validToken['site_id'],
+            'pb_player_id' => $player_id,
+            'quest_id' => $quest_id
+        );
+        $this->quest_model->updateQuestStatus($data, $status);
+    }
+
     private function levelup($lv, &$sub_events, $config)
     {
         $event = array(
@@ -661,13 +686,24 @@ class Quest extends REST_Controller
             $data['quest_id'] = $quest_id;
             $quest = $this->quest_model->getQuest($data); // get quest detail
             if (!$this->checkConditionQuest($quest, $pb_player_id, $validToken)) {
-                array_walk_recursive($quest, array($this, "convert_mongo_object"));
-                $resp["quest"] = $quest;
-                $resp["quest"]["quest_id"] = $quest["_id"];
-                unset($resp["quest"]["_id"]);
-                $this->response($this->resp->setRespond($resp), 200);
+//                array_walk_recursive($quest, array($this, "convert_mongo_object"));
+//                $resp["quest"] = $quest;
+//                $resp["quest"]["quest_id"] = $quest["_id"];
+//                unset($resp["quest"]["_id"]);
+//                $this->response($this->resp->setRespond($resp), 200);
+                $event = array(
+                    'event_type' => "QUEST_AVAILABLE",
+                    'event_message' => "quest available",
+                    'event_status' => true,
+                );
+                $this->response($this->resp->setRespond($event), 200);
             } else {
-                $this->response($this->resp->setRespond(array()), 200);
+                $event = array(
+                    'event_type' => "QUEST_NOT_AVAILABLE",
+                    'event_message' => "quest not available",
+                    'event_status' => false,
+                );
+                $this->response($this->resp->setRespond($event), 200);
             }
         } else {
             // get all available quests related to clients
@@ -794,12 +830,18 @@ class Quest extends REST_Controller
         // get quest detail
         $quest = $this->quest_model->getQuest($data);
 
+        if (!$quest) {
+            $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"),
+                200);
+        }
+
         // check quest_to_client
         $player_quest = $this->quest_model->getPlayerQuest($data);
 
         // not join yet, let check condition
         if (!$player_quest) {
-            $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $validToken);
+            $condition_quest = $this->checkConditionQuest(
+                $quest, $pb_player_id, $validToken);
             // condition passed
             if (!$condition_quest)
                 $this->quest_model->joinQuest(array_merge($data, $quest));
@@ -820,7 +862,7 @@ class Quest extends REST_Controller
             }
         }
         $this->response($this->resp->setRespond(
-            isset($condition_quest) ? $condition_quest : array()), 200);
+            (isset($condition_quest) && $condition_quest) ? $condition_quest : array('events' => array('event_type' => 'QUEST_JOIN', 'quest_id' => $quest_id.""))), 200);
 
     }
 
@@ -855,7 +897,8 @@ class Quest extends REST_Controller
             $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
 
         // check user exists
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+        $pb_player_id = $this->player_model->getPlaybasisId(
+            array_merge($validToken, array(
             "cl_player_id" => $this->input->post("player_id")
         )));
         if (!$pb_player_id)
@@ -877,7 +920,7 @@ class Quest extends REST_Controller
         // check quest_to_client
         $player_quest = $this->quest_model->getPlayerQuest($data);
 
-        // not join yet, cannot join
+        // not join yet, cannot cancel
         if (!$player_quest) {
             $this->response($this->error->setError("QUEST_CANCEL_FAILED"), 200);
         } else {
@@ -893,7 +936,7 @@ class Quest extends REST_Controller
                 $this->response($this->error->setError("QUEST_CANCEL_FAILED"), 200);
             }
         }
-        $this->response($this->resp->setRespond(array()), 200);
+        $this->response($this->resp->setRespond(array('events' => array('event_type' => 'QUEST_UNJOIN', 'quest_id' => $quest_id.""))), 200);
     }
 
     public function mission_get($quest_id = '', $mission_id = ''){
@@ -970,61 +1013,53 @@ class Quest extends REST_Controller
             }
 
             $data['quest_id'] = $quest_id;
+            $data['status'] = array("join","finish");
             $quest_player = $this->quest_model->getPlayerQuest($data);
 
             if($quest_player){
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $quest_player['quest_id'])));
 
-                foreach($quest_player["missions"] as &$m){
-                    $md = array(
-                        'client_id' => $validToken['client_id'],
-                        'site_id' => $validToken['site_id'],
-                        'quest_id' => $quest['_id'],
-                        'mission_id' => $m['mission_id']
-                    );
-                    $mdetail = $this->quest_model->getMission($md);
-                    $m = array_merge($m, $mdetail['missions'][0]);
-                    $m["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                foreach($quest_player["missions"] as $k=>$m){
+                    $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
+                    $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
-                $quest = array_merge($quest, $quest_player);
+                $quest['status'] = $quest_player['status'];
+                $quest['quest_id'] = $quest_player['quest_id'];
+                unset($quest['_id']);
 
                 array_walk_recursive($quest, array($this, "convert_mongo_object"));
+
                 $resp['quest'] = $quest;
-                $resp['quest']['quest_id'] = $quest['_id'];
-                unset($resp['quest']['_id']);
             }else{
                 $resp['quest'] = array();
             }
         } else {
             // get all questss related to clients
+            $data['status'] = array("join","finish");
             $quests_player = $this->quest_model->getPlayerQuests($data);
 
-            foreach ($quests_player as &$q) {
-
+            $quests = array();
+            foreach ($quests_player as $q) {
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
 
-                foreach($q["missions"] as &$m){
-                    $md = array(
-                        'client_id' => $validToken['client_id'],
-                        'site_id' => $validToken['site_id'],
-                        'quest_id' => $quest['_id'],
-                        'mission_id' => $m['mission_id']
-                    );
-                    $mdetail = $this->quest_model->getMission($md);
-                    $m = array_merge($m, $mdetail['missions'][0]);
-                    $m["pending"] = $this->checkCompletionMission($q, $m, $pb_player_id, $validToken);
+                foreach($q["missions"] as $k=>$m){
+                    $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
+                    $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                 }
 
-                $q = array_merge($quest, $q);
+                $quest['status'] = $q['status'];
+                $quest['quest_id'] = $q['quest_id'];
+                unset($quest['_id']);
 
-                $q['quest_id'] = $q['_id'];
-                unset($q['_id']);
+                $quests[] = $quest;
             }
 
-            array_walk_recursive($quests_player, array($this, "convert_mongo_object"));
+            array_walk_recursive($quests, array($this, "convert_mongo_object"));
 
-            $resp['quests'] = $quests_player;
+            $resp['quests'] = $quests;
         }
         $this->response($this->resp->setRespond($resp), 200);
     }
@@ -1036,7 +1071,7 @@ class Quest extends REST_Controller
      * @param mixed $item this is reference
      * @param string $key
      */
-    private function convert_mongo_object(& $item,$key) {
+    private function convert_mongo_object(&$item, $key) {
         if (is_object($item)) {
             if (get_class($item) === 'MongoId') {
                 $item = $item->{'$id'};
@@ -1045,6 +1080,5 @@ class Quest extends REST_Controller
             }
         }
     }
-
 }
 ?>

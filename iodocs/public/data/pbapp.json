@@ -791,7 +791,7 @@
                 },
                 {
                     "MethodName": "Quest of Player",
-                    "Synopsis": "Quest of player.",
+                    "Synopsis": "Quest that the player has joined.",
                     "HTTPMethod": "GET",
                     "URI": "/Player/quest/:id",
                     "RequiresOAuth": "N",
@@ -813,9 +813,9 @@
                     ]
                 },
                 {
-                    "MethodName": "Quest list of Player",
-                    "Synopsis": "Quest list of player.",
-                    "HTTPMethod": "POST",
+                    "MethodName": "Quest List of Player",
+                    "Synopsis": "List of quests that the player has joined.",
+                    "HTTPMethod": "GET",
                     "URI": "/Player/quest",
                     "RequiresOAuth": "N",
                     "parameters": [
@@ -999,6 +999,45 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "mission id to query"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Quest List Available For Player",
+                    "Synopsis": "Returns information about list of quest is available for player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/available",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Quest Available For Player",
+                    "Synopsis": "Returns information about the quest is available for player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quest/:id/available",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id to query"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
                         }
                     ]
                 },

@@ -254,6 +254,7 @@ class Player_model extends MY_Model
             $this->mongo_db->where('date_added', $datecondition);
         }
         $count = $this->mongo_db->count('playbasis_action_log');
+
         $this->mongo_db->select(array(
             'action_id',
             'action_name'

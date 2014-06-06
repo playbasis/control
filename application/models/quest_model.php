@@ -18,9 +18,13 @@ class Quest_model extends MY_Model
             '_id' => $data['quest_id'],
             'status' => true
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
-        return $result ? $result[0] : array();
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+        return $result;
     }
     public function getQuests($data)
     {
@@ -32,7 +36,10 @@ class Quest_model extends MY_Model
             'site_id' => $data['site_id'],
             'status' => true
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
+
+        array_walk_recursive($result, array($this, "change_image_path"));
         return $result;
     }
     public function getMission($data)
@@ -48,13 +55,38 @@ class Quest_model extends MY_Model
             'missions.mission_id' => $data['mission_id'],
             'status' => true
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
-        return $result ? $result[0] : array();
+
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+        return $result;
     }
 
     public function joinQuest($data)
     {
+        $this->load->helper('vsort');
+
         $this->set_site_mongodb($data["site_id"]);
+
+        $data["missions"] = vsort($data["missions"], "mission_number");
+
+        $first = true;
+        foreach($data["missions"] as &$m){
+            if($data["mission_order"]){
+                if($first){
+                    $m["status"] = "join";
+                    $first = false;
+                }else{
+                    $m["status"] = "unjoin";
+                }
+            }else{
+                $m["status"] = "join";
+            }
+            $m["date_modified"] = new MongoDate(time());
+        }
+
         $this->mongo_db->insert("playbasis_quest_to_player", array(
             "client_id" => $data["client_id"],
             "site_id" => $data["site_id"],
@@ -74,9 +106,16 @@ class Quest_model extends MY_Model
             "pb_player_id" => $data["pb_player_id"],
             "quest_id" => $data["quest_id"]
         ));
+        if(isset($data['status'])){
+            $this->mongo_db->where_in('status', $data['status']);
+        }
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
 
-        return $result ? $result[0] : array();
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+        return $result;
     }
 
     public function getPlayerQuests($data) {
@@ -85,7 +124,13 @@ class Quest_model extends MY_Model
         $this->mongo_db->where(array(
             "pb_player_id" => $data["pb_player_id"]
         ));
+        if(isset($data['status'])){
+            $this->mongo_db->where_in('status', $data['status']);
+        }
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
+
+        array_walk_recursive($result, array($this, "change_image_path"));
 
         return $result;
     }
@@ -99,7 +144,7 @@ class Quest_model extends MY_Model
             'quest_id' => $data['quest_id']
         ));
         $this->mongo_db->set(array('status' => $status));
-        $this->mongo_db->set(array('date_modifield' => new MongoDate(time())));
+        $this->mongo_db->set(array('date_modified' => new MongoDate(time())));
         $this->mongo_db->update('playbasis_quest_to_player');
     }
     public function updateMissionStatus($data, $status){
@@ -120,8 +165,20 @@ class Quest_model extends MY_Model
                 'missions.mission_id' => $data['mission_id'],
             ));
             $this->mongo_db->set(array('missions.$.status' => $status));
-            $this->mongo_db->set(array('missions.$.date_modifield' => new MongoDate(time())));
+            $this->mongo_db->set(array('missions.$.date_modified' => new MongoDate(time())));
             $this->mongo_db->update('playbasis_quest_to_player');
+        }
+    }
+
+    private function change_image_path(&$item, $key)
+    {
+        if($key == "image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+
         }
     }
 }
