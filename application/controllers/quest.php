@@ -169,6 +169,13 @@ class Quest extends REST_Controller
 
     private function checkConditionQuest($quest, $pb_player_id, $validToken){
 
+        if(empty($quest)){
+            $event = array(
+                'event_type' => 'QUEST_NOT_EXIT',
+                'message' => 'quest not exit'
+            );
+            return $event;
+        }
         //read player information
         $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
             'username',
@@ -284,6 +291,14 @@ class Quest extends REST_Controller
 
     private function checkCompletionMission($quest, $mission, $pb_player_id, $validToken){
 
+        if(empty($quest)){
+            $event = array(
+                'event_type' => 'QUEST_NOT_EXIT',
+                'message' => 'quest not exit'
+            );
+            return $event;
+        }
+        
         if(isset($mission["status"]) && $mission["status"] == "finish")
             return array();
 
@@ -685,6 +700,7 @@ class Quest extends REST_Controller
 
             $data['quest_id'] = $quest_id;
             $quest = $this->quest_model->getQuest($data); // get quest detail
+
             if (!$this->checkConditionQuest($quest, $pb_player_id, $validToken)) {
 //                array_walk_recursive($quest, array($this, "convert_mongo_object"));
 //                $resp["quest"] = $quest;
