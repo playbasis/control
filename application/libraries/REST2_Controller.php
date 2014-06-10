@@ -81,18 +81,18 @@ abstract class REST2_Controller extends REST_Controller
 		));
 		try {
 			/* [2] 1. Validate request (basic common validation for all controllers) */
-			switch ($this->request->method) {
-			case 'get': // every GET call requires 'api_key'
-				$required = $this->input->checkParam(array(
-					'api_key'
-				));
-				if ($required)
-					$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-				if (!$this->validToken)
-					$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-				break;
-			case 'post':
-				if ($class_name != 'Auth') { // every POST call requires 'token' except a call to /Auth/
+			if (!in_array($class_name, array('Auth', 'Engine', 'Facebook', 'Geditor', 'Instagram', 'Janrain', 'Mobile', 'Pipedrive'))) { // every POST call (with exceptions like /Auth/) requires 'token'
+				switch ($this->request->method) {
+				case 'get': // every GET call requires 'api_key'
+					$required = $this->input->checkParam(array(
+						'api_key'
+					));
+					if ($required)
+						$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+					if (!$this->validToken)
+						$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+					break;
+				case 'post':
 					$required = $this->input->checkParam(array(
 						'token'
 					));
@@ -100,8 +100,8 @@ abstract class REST2_Controller extends REST_Controller
 						$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 					if (!$this->validToken)
 						$this->response($this->error->setError('INVALID_TOKEN'), 200);
+					break;
 				}
-				break;
 			}
 			/* [2] 2. Process request */
 			call_user_func_array($method, $args);
