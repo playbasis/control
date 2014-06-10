@@ -55,7 +55,7 @@ abstract class REST2_Controller extends REST_Controller
 			'scheme' => $_SERVER['REQUEST_SCHEME'],
 			'uri' => $this->uri->uri_string(),
 			'query' => $_SERVER['QUERY_STRING'],
-			'request' => $this->request->body,
+			'request' => json_encode($_POST), // $this->request->body is not working!
 			'response' => null,
 			'format' => null,
 			'ip' => $this->input->ip_address(),
