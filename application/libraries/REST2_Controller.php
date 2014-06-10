@@ -106,15 +106,16 @@ abstract class REST2_Controller extends REST_Controller
 			/* [2] 2. Process request */
 			call_user_func_array($method, $args);
 		} catch (Exception $e) {
-			$data = $e->getMessage(); // TODO: reformat output
-			log_message('error', $data);
+			$this->load->model('tool/error', 'error');
+			$msg = $e->getMessage();
+			log_message('error', $msg);
 			/* [3] Log response (exception) */
-			$output = $this->format_data($data, $this->response->format);
+			$output = $this->error->setError('INTERNAL_ERROR', $msg);
 			$this->REST_model->logResponse($this->log_id, $this->site_id, array(
-				'response' => $output,
+				'response' => $this->format_data($output, $this->response->format),
 				'format' => $this->response->format,
 			));
-			$this->response($data);
+			$this->response($output, 200);
 		}
 	}
 

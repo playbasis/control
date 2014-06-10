@@ -38,6 +38,10 @@ class Error extends CI_Model
 				$errorData['error_code'] = '0903';
 			}
 			break;
+		case 'INTERNAL_ERROR':
+			$errorData['message'] = "There is an internal server error: ".$dataArray;
+			$errorData['error_code'] = '0800';
+			break;
 		case 'INVALID_API_KEY_OR_SECRET':
 			$errorData['message'] = "Invalid API-KEY OR API-SECRET";
 			$errorData['error_code'] = '0001';
