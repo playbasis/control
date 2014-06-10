@@ -2,17 +2,15 @@
 require_once APPPATH . '/libraries/REST_Controller.php';
 
 /**
- * CodeIgniter Rest Controller
+ * Playbasis REST2_Controller
  *
- * A fully RESTful server implementation for CodeIgniter using one library, one config file and one controller.
+ * An extension on fully RESTful server implementation for implementing logging functinoality for Playbasis project.
  *
  * @package        	CodeIgniter
  * @subpackage    	Libraries
  * @category    	Libraries
- * @author        	Phil Sturgeon
- * @license         http://philsturgeon.co.uk/code/dbad-license
- * @link			https://github.com/philsturgeon/codeigniter-restserver
- * @version 		2.6.1
+ * @author        	Thanakij Pechprasarn
+ * @version 		1.0.0
  */
 abstract class REST2_Controller extends REST_Controller
 {
@@ -47,23 +45,21 @@ abstract class REST2_Controller extends REST_Controller
 		}
 		$validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
 		$this->site_id = !empty($validToken) ? $validToken['site_id'] : null;
-		$this->id = $this->REST_model->logRequest(
-			array(
-				'client_id' => !empty($validToken) ? $validToken['client_id'] : null,
-				'site_id' => $this->site_id,
-				'api_key' => !empty($api_key) ? $api_key : null,
-				'token' => !empty($token) ? $token : null,
-				'method' => $this->request->method,
-				'scheme' => $_SERVER['REQUEST_SCHEME'],
-				'uri' => $this->uri->uri_string(),
-				'query' => $_SERVER['QUERY_STRING'],
-				'request' => $this->request->body,
-				'response' => null,
-				'format' => null,
-				'ip' => $this->input->ip_address(),
-				'agent' => $_SERVER['HTTP_USER_AGENT'],
-			)
-		);
+		$this->id = $this->REST_model->logRequest(array(
+			'client_id' => !empty($validToken) ? $validToken['client_id'] : null,
+			'site_id' => $this->site_id,
+			'api_key' => !empty($api_key) ? $api_key : null,
+			'token' => !empty($token) ? $token : null,
+			'method' => $this->request->method,
+			'scheme' => $_SERVER['REQUEST_SCHEME'],
+			'uri' => $this->uri->uri_string(),
+			'query' => $_SERVER['QUERY_STRING'],
+			'request' => $this->request->body,
+			'response' => null,
+			'format' => null,
+			'ip' => $this->input->ip_address(),
+			'agent' => $_SERVER['HTTP_USER_AGENT'],
+		));
 		/* FIXME:
 		 * We could make use of "try {} finally {}" here, so we can inject logging code in finally block
 		 * and, thus, don't have to override 'response'; however, 'finally' requires PHP 5.5.
@@ -72,18 +68,15 @@ abstract class REST2_Controller extends REST_Controller
 		try {
 			call_user_func_array($method, $args);
 		} catch (Exception $e) {
-			// TODO: handle error from application code
-			// log error
-			// reformat output
-			$output = $this->format_data($e->getMessage(), $this->response->format);
+			$data = $e->getMessage(); // TODO: reformat output
+			log_message('error', $data);
+			$output = $this->format_data($data, $this->response->format);
 			$this->REST_model->logResponse($this->id, $this->site_id, array(
 				'response' => $output,
 				'format' => $this->response->format,
 			));
-			exit($output);
+			$this->response($data);
 		}
-		print("_fire_method: end<br>\n");
-		print('</pre>');
 	}
 
 	private function format_data($data, $format)
