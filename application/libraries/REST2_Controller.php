@@ -14,8 +14,8 @@ require_once APPPATH . '/libraries/REST_Controller.php';
  */
 abstract class REST2_Controller extends REST_Controller
 {
-	private $client_id;
-	private $site_id;
+	protected $validToken;
+	protected $site_id;
 	private $log_id;
 
 	/**
@@ -27,6 +27,14 @@ abstract class REST2_Controller extends REST_Controller
 		parent::__construct();
 		$this->load->model('REST_model');
 		$this->load->model('auth_model');
+	}
+
+	/**
+	 * Developers can extend this class and add a check in here.
+	 */
+	protected function early_checks()
+	{
+
 	}
 
 	/**
@@ -46,11 +54,10 @@ abstract class REST2_Controller extends REST_Controller
 		if (empty($api_key)) {
 			$api_key = $this->input->post('api_key');
 		}
-		$validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
-		$this->client_id = !empty($validToken) ? $validToken['client_id'] : null;
-		$this->site_id = !empty($validToken) ? $validToken['site_id'] : null;
+		$this->validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
+		$this->site_id = !empty($this->validToken) ? $this->validToken['site_id'] : null;
 		$this->log_id = $this->REST_model->logRequest(array(
-			'client_id' => $this->client_id,
+			'client_id' => !empty($this->validToken) ? $this->validToken['client_id'] : null,
 			'site_id' => $this->site_id,
 			'api_key' => !empty($api_key) ? $api_key : null,
 			'token' => !empty($token) ? $token : null,
@@ -75,7 +82,7 @@ abstract class REST2_Controller extends REST_Controller
 				));
 				if ($required)
 					$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-				if (!$validToken)
+				if (!$this->validToken)
 					$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 				break;
 			case 'post':
@@ -85,7 +92,7 @@ abstract class REST2_Controller extends REST_Controller
 					));
 					if ($required)
 						$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
-					if (!$validToken)
+					if (!$this->validToken)
 						$this->response($this->error->setError('INVALID_TOKEN'), 200);
 				}
 				break;
@@ -191,4 +198,5 @@ abstract class REST2_Controller extends REST_Controller
 
 		exit($output);
 	}
+
 }
