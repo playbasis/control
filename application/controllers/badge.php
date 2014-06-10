@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Badge extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Badge extends REST2_Controller
 {
 	public function __construct()
 	{
@@ -13,14 +13,6 @@ class Badge extends REST_Controller
 	}
 	public function index_get($badgeId = 0)
 	{
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 		if($badgeId)
 		{
             try {
@@ -29,7 +21,7 @@ class Badge extends REST_Controller
                 $badgeId = null;
             }
 			//get badge by specific id
-			$badge['badge'] = $this->badge_model->getBadge(array_merge($validToken, array(
+			$badge['badge'] = $this->badge_model->getBadge(array_merge($this->validToken, array(
 				'badge_id' => new MongoId($badgeId)
 			)));
 			$this->response($this->resp->setRespond($badge), 200);
@@ -37,7 +29,7 @@ class Badge extends REST_Controller
 		else
 		{
 			//get all badge relate to  clients
-			$badgesList['badges'] = $this->badge_model->getAllBadges($validToken);
+			$badgesList['badges'] = $this->badge_model->getAllBadges($this->validToken);
 			$this->response($this->resp->setRespond($badgesList), 200);
 		}
 	}

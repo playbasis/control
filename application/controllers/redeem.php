@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Redeem extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Redeem extends REST2_Controller
 {
     public function __construct()
     {
@@ -22,24 +22,15 @@ class Redeem extends REST_Controller
     {
         $this->benchmark->mark('goods_redeem_start');
 
-        //process regular data
-        $required = $this->input->checkParam(array(
-            'token'
-        ));
-        if($required)
-            $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
         $required = $this->input->checkParam(array(
             'player_id',
             'goods_id'
         ));
         if($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->findToken($this->input->post('token'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_TOKEN'), 200);
         //get playbasis player id from client player id
         $cl_player_id = $this->input->post('player_id');
-        $validToken = array_merge($validToken, array(
+        $validToken = array_merge($this->validToken, array(
             'cl_player_id' => $cl_player_id
         ));
         $pb_player_id = $this->player_model->getPlaybasisId($validToken);

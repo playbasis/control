@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Action extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Action extends REST2_Controller
 {
 	public function __construct()
 	{
@@ -13,19 +13,8 @@ class Action extends REST_Controller
 	}
 	public function index_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$action = array();
-		foreach ($this->action_model->listActions($validToken) as $key => $value) {
+		foreach ($this->action_model->listActions($this->validToken) as $key => $value) {
 			array_push($action, $value['name']);
 		}
 		$this->response($this->resp->setRespond($action), 200);
@@ -33,22 +22,11 @@ class Action extends REST_Controller
 
 	public function log_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->action_model->listActions($validToken) as $key => $v) {
+		foreach ($this->action_model->listActions($this->validToken) as $key => $v) {
 			$action_name = $v['name'];
-			foreach ($this->action_model->actionLog($validToken, $action_name, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			foreach ($this->action_model->actionLog($this->validToken, $action_name, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 				$key = $value['_id'];
 				if ($prev) {
 					$d = $prev;

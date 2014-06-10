@@ -1,8 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-require APPPATH.'/libraries/REST_Controller.php';
+require APPPATH.'/libraries/REST2_Controller.php';
 
-class Mobile extends REST_Controller{
+class Mobile extends REST2_Controller{
 	public function __construct(){
 		parent::__construct();
 	}

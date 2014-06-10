@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
+require_once APPPATH . '/libraries/REST2_Controller.php';
 
 define('MAX_EXECUTION_TIME', 0);
 define('MAX_MEMORY', '256M');
@@ -23,7 +23,7 @@ define('ITEM_DATE_NOT_CONFIG', 'Not Set');
 define('ITEM_QTY_NOT_CONFIG', 'Inf.');
 define('REPORT_DATE_FORMAT', 'd M Y');
 
-class Report extends REST_Controller
+class Report extends REST2_Controller
 {
     public function __construct()
     {
