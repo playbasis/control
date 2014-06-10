@@ -25,8 +25,6 @@ abstract class REST2_Controller extends REST_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('REST_model');
-		$this->load->model('auth_model');
 	}
 
 	/**
@@ -34,21 +32,9 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	protected function early_checks()
 	{
-
-	}
-
-	/**
-	 * Fire Method
-	 *
-	 * Fires the designated controller method with the given arguments.
-	 *
-	 * @param array $method The controller method to fire
-	 * @param array $args The arguments to pass to the controller method
-	 */
-	protected function _fire_method($method, $args)
-	{
-		$class_name = get_class($this);
-		/* [1] Log request */
+		$this->load->model('REST_model');
+		$this->load->model('auth_model');
+		/* [1] 1. Log request */
 		$token = $this->input->post('token'); // token: POST
 		$api_key = $this->input->get('api_key'); // api_key: GET/POST
 		if (empty($api_key)) {
@@ -61,8 +47,8 @@ abstract class REST2_Controller extends REST_Controller
 			'site_id' => $this->site_id,
 			'api_key' => !empty($api_key) ? $api_key : null,
 			'token' => !empty($token) ? $token : null,
-			'class_name' => $class_name,
-			'class_method' => $method[1],
+			'class_name' => null,
+			'class_method' => null,
 			'method' => $this->request->method,
 			'scheme' => $_SERVER['REQUEST_SCHEME'],
 			'uri' => $this->uri->uri_string(),
@@ -72,6 +58,24 @@ abstract class REST2_Controller extends REST_Controller
 			'format' => null,
 			'ip' => $this->input->ip_address(),
 			'agent' => array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER['HTTP_USER_AGENT'] : null,
+		));
+	}
+
+	/**
+	 * Fire Method
+	 *
+	 * Fires the designated controller method with the given arguments.
+	 *
+	 * @param array $method The controller method to fire
+	 * @param array $args The arguments to pass to the controller method
+	 */
+	protected function _fire_method($method, $args)
+	{
+		/* [1] 2. Log class_name and method */
+		$class_name = get_class($this);
+		$this->REST_model->logResponse($this->log_id, $this->site_id, array(
+			'class_name' => $class_name,
+			'class_method' => $method[1],
 		));
 		try {
 			/* [2] 1. Validate request (basic common validation for all controllers) */
