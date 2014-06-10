@@ -25,27 +25,9 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	public function __construct()
 	{
-		print('<pre>');
-		print("REST2_Controller - begin<br>\n");
 		parent::__construct();
 		$this->load->model('REST_model');
-		// TODO: some log here
-		$log = array(
-			'uri' => $this->uri->uri_string(),
-			'method' => $this->request->method,
-			'params' => $this->_args ? serialize($this->_args) : null,
-			'api_key' => isset($this->rest->key) ? $this->rest->key : '',
-			'ip_address' => $this->input->ip_address(),
-			'time' => function_exists('now') ? now() : time(),
-		);
-		print(print_r($this->request, true)."<br>\n");
-		print(print_r($log, true)."<br>\n");
-		print(print_r($_GET, true)."<br>\n");
-		print(print_r($_POST, true)."<br>\n");
-		print(print_r($_SERVER, true)."<br>\n");
-		print(print_r($this->input, true)."<br>\n");
-		print("REST2_Controller - end<br>\n");
-		print('</pre>');
+		$this->load->model('auth_model');
 	}
 
 	/**
@@ -58,37 +40,35 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	protected function _fire_method($method, $args)
 	{
-		/* NOTE:
-			We should use try {} finally {} here, so we don't have to override 'response'.
-			However, 'finally' requires PHP 5.5, whenever we move on to PHP 5.5, please refactor here.
-		*/
-		print('<pre>');
-		print("_fire_method: begin<br>\n");
-		$data = array(
-			'method' => $this->request->method,
-			'scheme' => $_SERVER['REQUEST_SCHEME'],
-			'uri' => $this->uri->uri_string(),
-			'query' => $_SERVER['QUERY_STRING'],
-			'request' => $this->request->body,
-			'response' => null,
-			'format' => null,
-			'ip' => $this->input->ip_address(),
-			'agent' => $_SERVER['HTTP_USER_AGENT'],
-		);
-		$token = $this->input->post('token'); // token = POST only
-		$api_key = $this->input->get('api_key'); // api_key = GET or POST
+		$token = $this->input->post('token'); // token: POST
+		$api_key = $this->input->get('api_key'); // api_key: GET/POST
 		if (empty($api_key)) {
 			$api_key = $this->input->post('api_key');
 		}
 		$validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
-		$data = array_merge($data, array(
-			'client_id' => !empty($validToken) ? $validToken['client_id'] : null,
-			'site_id' => !empty($validToken) ? $validToken['site_id'] : null,
-			'api_key' => !empty($api_key) ? $api_key : null,
-			'token' => !empty($token) ? $token : null,
-		));
-		$this->id = $this->REST_model->logRequest($data);
-		$this->site_id = $data['site_id'];
+		$this->site_id = !empty($validToken) ? $validToken['site_id'] : null;
+		$this->id = $this->REST_model->logRequest(
+			array(
+				'client_id' => !empty($validToken) ? $validToken['client_id'] : null,
+				'site_id' => $this->site_id,
+				'api_key' => !empty($api_key) ? $api_key : null,
+				'token' => !empty($token) ? $token : null,
+				'method' => $this->request->method,
+				'scheme' => $_SERVER['REQUEST_SCHEME'],
+				'uri' => $this->uri->uri_string(),
+				'query' => $_SERVER['QUERY_STRING'],
+				'request' => $this->request->body,
+				'response' => null,
+				'format' => null,
+				'ip' => $this->input->ip_address(),
+				'agent' => $_SERVER['HTTP_USER_AGENT'],
+			)
+		);
+		/* FIXME:
+		 * We could make use of "try {} finally {}" here, so we can inject logging code in finally block
+		 * and, thus, don't have to override 'response'; however, 'finally' requires PHP 5.5.
+		 * Therefore, whenever we move to PHP 5.5, we should refactor it here.
+		 */
 		try {
 			call_user_func_array($method, $args);
 		} catch (Exception $e) {
@@ -100,14 +80,6 @@ abstract class REST2_Controller extends REST_Controller
 				'response' => $output,
 				'format' => $this->response->format,
 			));
-			$log = array(
-				'time' => function_exists('now') ? now() : time(),
-			);
-			print(print_r($log, true)."<br>\n");
-			print(print_r($this->response, true)."<br>\n");
-			print("_fire_method: exception<br>\n");
-			//throw new Exception($e);
-			//print_r($e);
 			exit($output);
 		}
 		print("_fire_method: end<br>\n");
@@ -149,8 +121,6 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	public function response($data = array(), $http_code = null)
 	{
-		print('<pre>');
-		print("response: begin<br>\n");
 		global $CFG;
 
 		// If data is empty and not code provide, error and bail
@@ -194,20 +164,12 @@ abstract class REST2_Controller extends REST_Controller
 			header('Content-Length: ' . strlen($output));
 		}
 
-		$log = array(
-			'output' => $output,
-			'time' => function_exists('now') ? now() : time(),
-		);
-		print(print_r($log, true)."<br>\n");
-		print(print_r($this->response, true)."<br>\n");
-		print("response: end<br>\n");
-		print('</pre>');
-		/////////////////
+		/* inject logResponse here */
 		$this->REST_model->logResponse($this->id, $this->site_id, array(
 			'response' => $output,
 			'format' => $this->response->format,
 		));
-		/////////////////
+
 		exit($output);
 	}
 }
