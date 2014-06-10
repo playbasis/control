@@ -15,6 +15,7 @@ require_once APPPATH . '/libraries/REST_Controller.php';
 abstract class REST2_Controller extends REST_Controller
 {
 	protected $validToken;
+	protected $client_id;
 	protected $site_id;
 	private $log_id;
 
@@ -41,9 +42,10 @@ abstract class REST2_Controller extends REST_Controller
 			$api_key = $this->input->post('api_key');
 		}
 		$this->validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
+		$this->client_id = !empty($this->validToken) ? $this->validToken['client_id'] : null;
 		$this->site_id = !empty($this->validToken) ? $this->validToken['site_id'] : null;
 		$this->log_id = $this->REST_model->logRequest(array(
-			'client_id' => !empty($this->validToken) ? $this->validToken['client_id'] : null,
+			'client_id' => $this->client_id,
 			'site_id' => $this->site_id,
 			'api_key' => !empty($api_key) ? $api_key : null,
 			'token' => !empty($token) ? $token : null,
