@@ -14,8 +14,9 @@ require_once APPPATH . '/libraries/REST_Controller.php';
  */
 abstract class REST2_Controller extends REST_Controller
 {
-	private $id;
+	private $client_id;
 	private $site_id;
+	private $log_id;
 
 	/**
 	 * Constructor function
@@ -38,18 +39,23 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	protected function _fire_method($method, $args)
 	{
+		$class_name = get_class($this);
+		/* [1] Log request */
 		$token = $this->input->post('token'); // token: POST
 		$api_key = $this->input->get('api_key'); // api_key: GET/POST
 		if (empty($api_key)) {
 			$api_key = $this->input->post('api_key');
 		}
 		$validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
+		$this->client_id = !empty($validToken) ? $validToken['client_id'] : null;
 		$this->site_id = !empty($validToken) ? $validToken['site_id'] : null;
-		$this->id = $this->REST_model->logRequest(array(
-			'client_id' => !empty($validToken) ? $validToken['client_id'] : null,
+		$this->log_id = $this->REST_model->logRequest(array(
+			'client_id' => $this->client_id,
 			'site_id' => $this->site_id,
 			'api_key' => !empty($api_key) ? $api_key : null,
 			'token' => !empty($token) ? $token : null,
+			'class_name' => $class_name,
+			'class_method' => $method[1],
 			'method' => $this->request->method,
 			'scheme' => $_SERVER['REQUEST_SCHEME'],
 			'uri' => $this->uri->uri_string(),
@@ -58,20 +64,40 @@ abstract class REST2_Controller extends REST_Controller
 			'response' => null,
 			'format' => null,
 			'ip' => $this->input->ip_address(),
-			'agent' => $_SERVER['HTTP_USER_AGENT'],
+			'agent' => array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER['HTTP_USER_AGENT'] : null,
 		));
-		/* FIXME:
-		 * We could make use of "try {} finally {}" here, so we can inject logging code in finally block
-		 * and, thus, don't have to override 'response'; however, 'finally' requires PHP 5.5.
-		 * Therefore, whenever we move to PHP 5.5, we should refactor it here.
-		 */
 		try {
+			/* [2] 1. Validate request (basic common validation for all controllers) */
+			switch ($this->request->method) {
+			case 'get': // every GET call requires 'api_key'
+				$required = $this->input->checkParam(array(
+					'api_key'
+				));
+				if ($required)
+					$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+				if (!$validToken)
+					$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
+				break;
+			case 'post':
+				if ($class_name != 'Auth') { // every POST call requires 'token' except a call to /Auth/
+					$required = $this->input->checkParam(array(
+						'token'
+					));
+					if ($required)
+						$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
+					if (!$validToken)
+						$this->response($this->error->setError('INVALID_TOKEN'), 200);
+				}
+				break;
+			}
+			/* [2] 2. Process request */
 			call_user_func_array($method, $args);
 		} catch (Exception $e) {
 			$data = $e->getMessage(); // TODO: reformat output
 			log_message('error', $data);
+			/* [3] Log response (exception) */
 			$output = $this->format_data($data, $this->response->format);
-			$this->REST_model->logResponse($this->id, $this->site_id, array(
+			$this->REST_model->logResponse($this->log_id, $this->site_id, array(
 				'response' => $output,
 				'format' => $this->response->format,
 			));
@@ -157,8 +183,8 @@ abstract class REST2_Controller extends REST_Controller
 			header('Content-Length: ' . strlen($output));
 		}
 
-		/* inject logResponse here */
-		$this->REST_model->logResponse($this->id, $this->site_id, array(
+		/* [3] Log response (actual output) */
+		$this->REST_model->logResponse($this->log_id, $this->site_id, array(
 			'response' => $output,
 			'format' => $this->response->format,
 		));
