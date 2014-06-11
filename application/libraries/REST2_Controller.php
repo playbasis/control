@@ -114,6 +114,7 @@ abstract class REST2_Controller extends REST_Controller
 			$this->REST_model->logResponse($this->log_id, $this->site_id, array(
 				'response' => $data,
 				'format' => $this->response->format,
+				'error' => $e->getTraceAsString(),
 			));
 			$this->response($data, 200);
 		}
