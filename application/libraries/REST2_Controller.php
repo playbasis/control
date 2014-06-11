@@ -55,7 +55,7 @@ abstract class REST2_Controller extends REST_Controller
 			'scheme' => $_SERVER['REQUEST_SCHEME'],
 			'uri' => $this->uri->uri_string(),
 			'query' => $_SERVER['QUERY_STRING'],
-			'request' => json_encode($_POST), // $this->request->body is not working!
+			'request' => $_POST, // $this->request->body is not working!
 			'response' => null,
 			'format' => null,
 			'ip' => $this->input->ip_address(),
@@ -110,12 +110,12 @@ abstract class REST2_Controller extends REST_Controller
 			$msg = $e->getMessage();
 			log_message('error', $msg);
 			/* [3] Log response (exception) */
-			$output = $this->error->setError('INTERNAL_ERROR', $msg);
+			$data = $this->error->setError('INTERNAL_ERROR', $msg);
 			$this->REST_model->logResponse($this->log_id, $this->site_id, array(
-				'response' => $this->format_data($output, $this->response->format),
+				'response' => $data,
 				'format' => $this->response->format,
 			));
-			$this->response($output, 200);
+			$this->response($data, 200);
 		}
 	}
 
@@ -199,7 +199,7 @@ abstract class REST2_Controller extends REST_Controller
 
 		/* [3] Log response (actual output) */
 		$this->REST_model->logResponse($this->log_id, $this->site_id, array(
-			'response' => $output,
+			'response' => $data,
 			'format' => $this->response->format,
 		));
 
