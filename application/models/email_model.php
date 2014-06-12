@@ -11,7 +11,12 @@ class Email_model extends MY_Model
 	public function listBlackListEmails($site_id)
 	{
 		$this->set_site_mongodb($site_id);
-		return $this->mongo_db->get('playbasis_email_blacklist');
+		$ret = $this->mongo_db->get('playbasis_email_blacklist');
+		$emails = array();
+		foreach ($ret as $each) {
+			$emails[] = $each['_id'];
+		}
+		return $emails;
 	}
 
 	public function isEmailInBlackList($site_id, $emails)
