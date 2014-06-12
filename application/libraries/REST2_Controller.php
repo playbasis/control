@@ -35,7 +35,7 @@ abstract class REST2_Controller extends REST_Controller
 	{
 		$this->load->model('REST_model');
 		$this->load->model('auth_model');
-		/* [1] 1. Log request */
+		/* 1.1 Log request */
 		$token = $this->input->post('token'); // token: POST
 		$api_key = $this->input->get('api_key'); // api_key: GET/POST
 		if (empty($api_key)) {
@@ -73,15 +73,15 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	protected function _fire_method($method, $args)
 	{
-		/* [1] 2. Log class_name and method */
+		/* 1.2 Log class_name and method */
 		$class_name = get_class($this);
 		$this->REST_model->logResponse($this->log_id, $this->site_id, array(
 			'class_name' => $class_name,
 			'class_method' => $method[1],
 		));
 		try {
-			/* [2] 1. Validate request (basic common validation for all controllers) */
-			if (!in_array($class_name, array('Auth', 'Engine', 'Facebook', 'Geditor', 'Instagram', 'Janrain', 'Mobile', 'Pipedrive'))) { // every POST call (with exceptions like /Auth/) requires 'token'
+			/* 2.1 Validate request (basic common validation for all controllers) */
+			if (!in_array($class_name, array('Auth', 'Engine', 'Facebook', 'Geditor', 'Instagram', 'Janrain', 'Mobile', 'Pipedrive'))) { // list of modules that don't require auth info
 				switch ($this->request->method) {
 				case 'get': // every GET call requires 'api_key'
 					$required = $this->input->checkParam(array(
@@ -92,7 +92,7 @@ abstract class REST2_Controller extends REST_Controller
 					if (!$this->validToken)
 						$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 					break;
-				case 'post':
+				case 'post': // every POST call requires 'token'
 					$required = $this->input->checkParam(array(
 						'token'
 					));
@@ -103,13 +103,13 @@ abstract class REST2_Controller extends REST_Controller
 					break;
 				}
 			}
-			/* [2] 2. Process request */
+			/* 2.2 Process request */
 			call_user_func_array($method, $args);
 		} catch (Exception $e) {
 			$this->load->model('tool/error', 'error');
 			$msg = $e->getMessage();
 			log_message('error', $msg);
-			/* [3] Log response (exception) */
+			/* 3.2 Log response (exception) */
 			$data = $this->error->setError('INTERNAL_ERROR', $msg);
 			$this->REST_model->logResponse($this->log_id, $this->site_id, array(
 				'response' => $data,
@@ -198,7 +198,7 @@ abstract class REST2_Controller extends REST_Controller
 			header('Content-Length: ' . strlen($output));
 		}
 
-		/* [3] Log response (actual output) */
+		/* 3.1 Log response (actual output) */
 		$this->REST_model->logResponse($this->log_id, $this->site_id, array(
 			'response' => $data,
 			'format' => $this->response->format,
