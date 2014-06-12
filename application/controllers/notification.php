@@ -41,6 +41,7 @@ class Notification extends REST2_Controller
 				break;
 			}
 		}
-		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_TYPE'), 200);
+		$this->response($this->resp->setRespond($message), 200); // FIXME: this line is for debugging only
+		//$this->response($this->error->setError('UNKNOWN_NOTIFICATION_TYPE'), 200);
 	}
 }
