@@ -4181,62 +4181,6 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
-                        <con:name>quest_id</con:name>
-                        <con:sourceType>quest_id_not_for_cl_player_id1</con:sourceType>
-                        <con:sourceStep>#Project#</con:sourceStep>
-                        <con:sourcePath />
-                        <con:targetType>quest_id</con:targetType>
-                        <con:targetStep>GET /Quest/:quest_id/available - Test unavailable :quest_id for player</con:targetStep>
-                    </con:transfers>
-                </con:config>
-            </con:testStep>
-            <con:testStep type="restrequest" name="GET /Quest/:quest_id/available - Test unavailable :quest_id for player">
-                <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/${quest_id}/available" xsi:type="con:RestRequestStep">
-                    <con:restRequest name="GET /Quest/:quest_id/available - Test unavailable :quest_id for player" mediaType="application/json">
-                        <con:settings>
-                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
-                        </con:settings>
-                        <con:encoding>UTF-8</con:encoding>
-                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
-                        <con:request />
-                        <con:assertion type="XPath Match" name="XPath Match">
-                            <con:configuration>
-                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
-//ns1:Response/ns1:error_code</path>
-                                <content>${#Project#error_code_success}</content>
-                                <allowWildcards>false</allowWildcards>
-                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                                <ignoreComments>false</ignoreComments>
-                            </con:configuration>
-                        </con:assertion>
-                        <con:assertion type="XPath Match" name="XPath Match 1">
-                            <con:configuration>
-                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
-//ns1:Response/ns1:response/ns1:event_status</path>
-                                <content>false</content>
-                                <allowWildcards>false</allowWildcards>
-                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                                <ignoreComments>false</ignoreComments>
-                            </con:configuration>
-                        </con:assertion>
-                        <con:credentials>
-                            <con:authType>Global HTTP Settings</con:authType>
-                        </con:credentials>
-                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
-                        <con:jmsPropertyConfig />
-                        <con:parameters>
-                            <con:entry key="api_key" value="${#Project#api_key}" />
-                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
-                            <con:entry key="quest_id" value="X" />
-                        </con:parameters>
-                    </con:restRequest>
-                </con:config>
-            </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 5">
-                <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
-                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
                         <con:name>token</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>POST /Auth - Get token</con:sourceStep>
@@ -4282,14 +4226,12 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token" value="7938529de7889d89f4d55e80b29c34901f757a76" />
                             <con:entry key="player_id" value="${#Project#cl_player_id1}" />
-                            <con:entry key="quest_id" value="53903993988040821b8b45c2" />
                         </con:parameters>
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 6">
+            <con:testStep type="transfer" name="Property Transfer 5">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -4345,7 +4287,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 7">
+            <con:testStep type="transfer" name="Property Transfer 6">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -4394,14 +4336,12 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token" value="7938529de7889d89f4d55e80b29c34901f757a76" />
                             <con:entry key="player_id" value="${#Project#cl_player_id1}" />
-                            <con:entry key="quest_id" value="53903993988040821b8b45c2" />
                         </con:parameters>
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 8">
+            <con:testStep type="transfer" name="Property Transfer 7">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -4450,9 +4390,101 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token" value="7938529de7889d89f4d55e80b29c34901f757a76" />
                             <con:entry key="player_id" value="${#Project#cl_player_id1}" />
-                            <con:entry key="quest_id" value="53903993988040821b8b45c2" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="delay" name="Goto Skip">
+                <con:settings />
+                <con:config>
+                    <delay>1</delay>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/available - List available quests for player">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/available" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/available - List available quests for player" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/available';
+                                    //ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 8">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>quest_id_not_for_cl_player_id1</con:sourceType>
+                        <con:sourceStep>#Project#</con:sourceStep>
+                        <con:sourcePath />
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>GET /Quest/:quest_id/available - Test unavailable :quest_id for player</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/:quest_id/available - Test unavailable :quest_id for player">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/${quest_id}/available" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/:quest_id/available - Test unavailable :quest_id for player" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
+//ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="XPath Match" name="XPath Match 1">
+                            <con:configuration>
+                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
+//ns1:Response/ns1:response/ns1:event_status</path>
+                                <content>false</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                            <con:entry key="quest_id" value="X" />
                         </con:parameters>
                     </con:restRequest>
                 </con:config>
