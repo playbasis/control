@@ -4017,7 +4017,6 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:jmsPropertyConfig />
                         <con:parameters>
                             <con:entry key="api_key" value="${#Project#api_key}" />
-                            <con:entry key="quest_id" value="53903993988040821b8b45c2" />
                         </con:parameters>
                         <con:parameterOrder>
                             <con:entry />
@@ -4076,16 +4075,8 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:jmsPropertyConfig />
                         <con:parameters>
                             <con:entry key="api_key" value="${#Project#api_key}" />
-                            <con:entry key="mission_id" value="53903993988040821b8b45c0" />
-                            <con:entry key="quest_id" value="53903993988040821b8b45c2" />
                         </con:parameters>
                     </con:restRequest>
-                </con:config>
-            </con:testStep>
-            <con:testStep type="delay" name="Goto Skip">
-                <con:settings />
-                <con:config>
-                    <delay>1</delay>
                 </con:config>
             </con:testStep>
             <con:testStep type="restrequest" name="GET /Quest/available - List available quests for player">
@@ -4146,7 +4137,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
 //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
@@ -4156,7 +4147,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         </con:assertion>
                         <con:assertion type="XPath Match" name="XPath Match 1">
                             <con:configuration>
-                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
 //ns1:Response/ns1:response/ns1:event_status</path>
                                 <content>true</content>
                                 <allowWildcards>false</allowWildcards>
@@ -4172,7 +4163,6 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:parameters>
                             <con:entry key="api_key" value="${#Project#api_key}" />
                             <con:entry key="player_id" value="${#Project#cl_player_id1}" />
-                            <con:entry key="quest_id" value="53903993988040821b8b45c2" />
                         </con:parameters>
                     </con:restRequest>
                 </con:config>
@@ -4189,7 +4179,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:targetType>token</con:targetType>
                         <con:targetStep>POST /Quest/:quest_id/join - Player join quest=:quest_id</con:targetStep>
                     </con:transfers>
-                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" useXQuery="false" ignoreEmpty="false" transferToAll="false" entitize="false">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
                         <con:name>quest_id</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
@@ -4243,13 +4233,13 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:targetType>token</con:targetType>
                         <con:targetStep>POST /Quest/:quest_id/join - Player join quest=:quest_id again</con:targetStep>
                     </con:transfers>
-                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" useXQuery="false" ignoreEmpty="false" transferToAll="false" entitize="false">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
                         <con:name>quest_id</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
                         <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
                             //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
-                        <con:targetType>token</con:targetType>
+                        <con:targetType>quest_id</con:targetType>
                         <con:targetStep>POST /Quest/:quest_id/join - Player join quest=:quest_id again</con:targetStep>
                     </con:transfers>
                 </con:config>
@@ -4280,9 +4270,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
                         <con:jmsPropertyConfig />
                         <con:parameters>
-                            <con:entry key="token" value="53903993988040821b8b45c2" />
                             <con:entry key="player_id" value="${#Project#cl_player_id1}" />
-                            <con:entry key="quest_id" value="53903993988040821b8b45c2" />
                         </con:parameters>
                     </con:restRequest>
                 </con:config>
@@ -4299,7 +4287,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:targetType>token</con:targetType>
                         <con:targetStep>POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id</con:targetStep>
                     </con:transfers>
-                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" useXQuery="false" ignoreEmpty="false" transferToAll="false" entitize="false">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
                         <con:name>quest_id</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
@@ -4353,7 +4341,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:targetType>token</con:targetType>
                         <con:targetStep>POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id again</con:targetStep>
                     </con:transfers>
-                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" useXQuery="false" ignoreEmpty="false" transferToAll="false" entitize="false">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
                         <con:name>quest_id</con:name>
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
@@ -4458,7 +4446,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
 //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
@@ -4468,7 +4456,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         </con:assertion>
                         <con:assertion type="XPath Match" name="XPath Match 1">
                             <con:configuration>
-                                <path>declare namespace ns1='https://qav2api.pbapp.net/Quest/${quest_id}/available';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
 //ns1:Response/ns1:response/ns1:event_status</path>
                                 <content>false</content>
                                 <allowWildcards>false</allowWildcards>
