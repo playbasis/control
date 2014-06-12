@@ -58,6 +58,14 @@ class Error extends CI_Model
 			$errorData['message'] = "Email is not in black list: ".$dataArray;
 			$errorData['error_code'] = '0804';
 			break;
+		case 'UNSUPPORT_NOTIFICATION_TYPE':
+			$errorData['message'] = "This notification type is not supported: ".$dataArray;
+			$errorData['error_code'] = '0805';
+			break;
+		case 'UNKNOWN_NOTIFICATION_TYPE':
+			$errorData['message'] = "Notification type is unknown";
+			$errorData['error_code'] = '0806';
+			break;
 		case 'INVALID_API_KEY_OR_SECRET':
 			$errorData['message'] = "Invalid API-KEY OR API-SECRET";
 			$errorData['error_code'] = '0001';
