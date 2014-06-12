@@ -33,7 +33,7 @@ abstract class REST2_Controller extends REST_Controller
 	 */
 	protected function early_checks()
 	{
-		$this->load->model('REST_model');
+		$this->load->model('rest_model');
 		$this->load->model('auth_model');
 		/* 1.1 Log request */
 		$token = $this->input->post('token'); // token: POST
@@ -44,7 +44,7 @@ abstract class REST2_Controller extends REST_Controller
 		$this->validToken = !empty($token) ? $this->auth_model->findToken($token) : (!empty($api_key) ? $this->auth_model->createTokenFromAPIKey($api_key) : null);
 		$this->client_id = !empty($this->validToken) ? $this->validToken['client_id'] : null;
 		$this->site_id = !empty($this->validToken) ? $this->validToken['site_id'] : null;
-		$this->log_id = $this->REST_model->logRequest(array(
+		$this->log_id = $this->rest_model->logRequest(array(
 			'client_id' => $this->client_id,
 			'site_id' => $this->site_id,
 			'api_key' => !empty($api_key) ? $api_key : null,
@@ -52,10 +52,10 @@ abstract class REST2_Controller extends REST_Controller
 			'class_name' => null,
 			'class_method' => null,
 			'method' => $this->request->method,
-			'scheme' => $_SERVER['REQUEST_SCHEME'],
+			'scheme' => !empty($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : (!empty($_SERVER['HTTPS']) ? 'https' : 'http'),
 			'uri' => $this->uri->uri_string(),
 			'query' => $_SERVER['QUERY_STRING'],
-			'request' => $_POST, // $this->request->body is not working!
+			'request' => !empty($this->request->body) ? $this->request->body : $_POST,
 			'response' => null,
 			'format' => null,
 			'ip' => $this->input->ip_address(),
@@ -75,7 +75,7 @@ abstract class REST2_Controller extends REST_Controller
 	{
 		/* 1.2 Log class_name and method */
 		$class_name = get_class($this);
-		$this->REST_model->logResponse($this->log_id, $this->site_id, array(
+		$this->rest_model->logResponse($this->log_id, $this->site_id, array(
 			'class_name' => $class_name,
 			'class_method' => $method[1],
 		));
@@ -111,7 +111,7 @@ abstract class REST2_Controller extends REST_Controller
 			log_message('error', $msg);
 			/* 3.2 Log response (exception) */
 			$data = $this->error->setError('INTERNAL_ERROR', $msg);
-			$this->REST_model->logResponse($this->log_id, $this->site_id, array(
+			$this->rest_model->logResponse($this->log_id, $this->site_id, array(
 				'response' => $data,
 				'format' => $this->response->format,
 				'error' => $e->getTraceAsString(),
@@ -199,7 +199,7 @@ abstract class REST2_Controller extends REST_Controller
 		}
 
 		/* 3.1 Log response (actual output) */
-		$this->REST_model->logResponse($this->log_id, $this->site_id, array(
+		$this->rest_model->logResponse($this->log_id, $this->site_id, array(
 			'response' => $data,
 			'format' => $this->response->format,
 		));
