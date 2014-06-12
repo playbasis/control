@@ -64,16 +64,23 @@ class Utility extends CI_Model
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
-	public function email($to, $subject, $message, $message_alt=null, $attachments=array()) {
-		$from = 'info@playbasis.com';
-		$this->amazon_ses->debug(true);
+	public function email($from, $to, $subject, $message, $message_alt=null, $attachments=array()) {
+		log_message('debug', 'from = '.$from);
+		log_message('debug', 'to = '.implode(',', $to));
+		log_message('debug', 'subject = '.$subject);
+		log_message('debug', 'message = '.$message);
+		log_message('debug', 'message_alt = '.$message_alt);
+		log_message('debug', 'count(attachments) = '.count($attachments));
 		$this->amazon_ses->from($from);
 		$this->amazon_ses->to($to);
 		$this->amazon_ses->subject($subject);
 		$this->amazon_ses->message($message);
 		if (!empty($message_alt)) $this->amazon_ses->message_alt($message_alt);
 		if (!empty($attachments)) $this->amazon_ses->attachment($attachments);
-		return $this->amazon_ses->send();
+		$this->amazon_ses->debug(true);
+		$response = $this->amazon_ses->send();
+		log_message('info', 'response = '.$response);
+		return $response;
 	}
 
 	/* http://mpdf1.com/manual/index.php?tid=125 */

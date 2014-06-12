@@ -22,6 +22,7 @@ define('FEED_CHARACTER_LIMIT', 256);
 define('ITEM_DATE_NOT_CONFIG', 'Not Set');
 define('ITEM_QTY_NOT_CONFIG', 'Inf.');
 define('REPORT_DATE_FORMAT', 'd M Y');
+define('EMAIL_FROM', 'info@playbasis.com');
 
 class Report extends REST2_Controller
 {
@@ -129,7 +130,7 @@ class Report extends REST2_Controller
 		        $message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
 		        $file_path = $conf['report_dir'].$params['DIR'].'/'.str_replace('.html', '.pdf', $params['FILE']);
 		        $file_name = 'report-'.$params['SITE_NAME'].'-'.str_replace('.html', '.pdf', $params['FILE']);
-		        $resp = $this->utility->email($email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
+		        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
 		        log_message('debug', 'email = '.print_r($resp, true));
 		        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 		    }
@@ -161,7 +162,7 @@ class Report extends REST2_Controller
 	        $message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$master['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
 	        $file_path = $conf['report_dir'].$master['DIR'].'/'.str_replace('.html', '.pdf', $master['FILE']);
 	        $file_name = 'report-master-'.str_replace('.html', '.pdf', $master['FILE']);
-	        $resp = $this->utility->email($email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
+	        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
 	        log_message('debug', 'email = '.print_r($resp, true));
 	        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 	    }
