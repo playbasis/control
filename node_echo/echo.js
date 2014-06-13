@@ -63,5 +63,12 @@ app.get('/facebook', function(req, res){
 
 app.post('/facebook', function(req, res){
     console.log(req);
+    var body = '';
+    req.on('data', function (data) {
+        body += data;
+    });
+    req.on('end', function () {
+        console.log("Body: " + body);
+    });
     res.send(200);
 });
