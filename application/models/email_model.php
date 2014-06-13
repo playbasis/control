@@ -31,11 +31,12 @@ class Email_model extends MY_Model
 		return $banned;
 	}
 
-	public function addIntoBlackList($site_id, $email)
+	public function addIntoBlackList($site_id, $email, $type)
 	{
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$data['_id'] = $email;
+		$data['type'] = $type;
 		$data['date_added'] = $mongoDate;
 		$data['date_modified'] = $mongoDate;
 		return $this->mongo_db->insert('playbasis_email_blacklist', $data);

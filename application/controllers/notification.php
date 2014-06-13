@@ -24,7 +24,7 @@ class Notification extends REST2_Controller
 				foreach ($message['bounce']['bouncedRecipients'] as $each) {
 					$email = $each['emailAddress'];
 					if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
-					$this->email_model->addIntoBlackList($this->site_id, $email);
+					$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType']);
 				}
 				$this->response($this->resp->setRespond('Process Amazon SES bounce notification successfully'), 200);
 				break;
@@ -32,7 +32,7 @@ class Notification extends REST2_Controller
 				foreach ($message['complaint']['complainedRecipients'] as $each) {
 					$email = $each['emailAddress'];
 					if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
-					$this->email_model->addIntoBlackList($this->site_id, $email);
+					$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType']);
 				}
 				$this->response($this->resp->setRespond('Process Amazon SES complaint notification successfully'), 200);
 				break;
