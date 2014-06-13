@@ -58,7 +58,7 @@ class Error extends CI_Model
 			$errorData['message'] = "Email is not in black list: ".$dataArray;
 			$errorData['error_code'] = '0804';
 			break;
-		case 'UNSUPPORT_NOTIFICATION_TYPE':
+		case 'UNSUPPORTED_NOTIFICATION_TYPE':
 			$errorData['message'] = "This notification type is not supported: ".$dataArray;
 			$errorData['error_code'] = '0805';
 			break;

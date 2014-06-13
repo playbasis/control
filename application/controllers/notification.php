@@ -14,6 +14,11 @@ class Notification extends REST2_Controller
 		$this->load->model('email_model');
 	}
 
+	function index_get()
+	{
+		$this->response($this->resp->setRespond('Not supported method'), 200);
+	}
+
 	function index_post()
 	{
 		$message = $this->request->body;
@@ -50,7 +55,7 @@ class Notification extends REST2_Controller
 				$this->response($this->resp->setRespond('Process Amazon SES complaint notification successfully'), 200);
 				break;
 			default:
-				$this->response($this->error->setError('UNSUPPORT_NOTIFICATION_TYPE', $message['notificationType']), 200);
+				$this->response($this->error->setError('UNSUPPORTED_NOTIFICATION_TYPE', $message['notificationType']), 200);
 				break;
 			}
 		}
