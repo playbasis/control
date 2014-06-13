@@ -1149,50 +1149,6 @@
             "name": "Email API",
             "methods": [
                 {
-                    "MethodName": "Send Email",
-                    "Synopsis": "Send email via Amazon SES.",
-                    "HTTPMethod": "POST",
-                    "URI": "/Email/send",
-                    "RequiresOAuth": "N",
-                    "parameters": [
-                        {
-                            "Name": "token",
-                            "Required": "Y",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "access token returned from Auth"
-                        },
-                        {
-                            "Name": "from",
-                            "Required": "Y",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "email address"
-                        },
-                        {
-                            "Name": "to",
-                            "Required": "Y",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "a list of email addresses, separated by comma"
-                        },
-                        {
-                            "Name": "subject",
-                            "Required": "Y",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "email subject"
-                        },
-                        {
-                            "Name": "message",
-                            "Required": "N",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "email message"
-                        }
-                    ]
-                },
-                {
                     "MethodName": "Is Email in Black List",
                     "Synopsis": "Returns boolean value of whether email is in blacklist or not.",
                     "HTTPMethod": "POST",
