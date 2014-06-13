@@ -21,18 +21,31 @@ class Notification extends REST2_Controller
 		if (array_key_exists('notificationType', $message)) { // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-examples.html
 			switch ($message['notificationType']) {
 			case 'Bounce':
-				foreach ($message['bounce']['bouncedRecipients'] as $each) {
-					$email = $each['emailAddress'];
-					if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
-					$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType']);
+				switch ($message['bounce']['bounceType']) { // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounce-object
+				case 'Permanent':
+					$bounce = $message['bounce'];
+					foreach ($bounce['bouncedRecipients'] as $each) {
+						$email = $each['emailAddress'];
+						if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
+						$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType'], $bounce['bounceSubType'], $bounce['feedbackId']);
+					}
+					$this->response($this->resp->setRespond('Process Amazon SES bounce notification successfully (hard bounce)'), 200);
+					break;
+				case 'Transient':
+					$this->response($this->resp->setRespond('Process Amazon SES bounce notification successfully (soft bounce)'), 200);
+					break;
+				case 'Undetermined':
+				default:
+					$this->response($this->resp->setRespond('Unsupported bounceType: '.$message['bounce']['bounceType']), 200);
+					break;
 				}
-				$this->response($this->resp->setRespond('Process Amazon SES bounce notification successfully'), 200);
 				break;
 			case 'Complaint':
-				foreach ($message['complaint']['complainedRecipients'] as $each) {
+				$complaint = $message['complaint'];
+				foreach ($complaint['complainedRecipients'] as $each) {
 					$email = $each['emailAddress'];
 					if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
-					$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType']);
+					$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
 				}
 				$this->response($this->resp->setRespond('Process Amazon SES complaint notification successfully'), 200);
 				break;
@@ -41,7 +54,6 @@ class Notification extends REST2_Controller
 				break;
 			}
 		}
-		$this->response($this->resp->setRespond($message), 200); // FIXME: this line is for debugging only
-		//$this->response($this->error->setError('UNKNOWN_NOTIFICATION_TYPE'), 200);
+		$this->response($this->resp->setRespond('Unknown message: '.$message), 200);
 	}
 }
