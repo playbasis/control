@@ -19,13 +19,14 @@ class Email extends REST2_Controller
 	public function send_post()
 	{
 		/* process parameters */
-		$required = $this->input->checkParam(array('from', 'to', 'subject', 'message'));
+		$required = $this->input->checkParam(array('from', 'to', 'subject'));
 		if ($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$from = $this->input->post('from');
 		$to = explode(',', $this->input->post('to'));
 		$subject = $this->input->post('subject');
 		$message = $this->input->post('message');
+		if ($message == false) $message = ''; // $message is optional
 		/* check to see if emails are not black list */
 		$res = $this->email_model->isEmailInBlackList($this->site_id, $to);
 		$_to = array();
@@ -50,14 +51,26 @@ class Email extends REST2_Controller
 	}
 
 	/* return TRUE if email is banned, FALSE otherwise */
-	public function isBlackList_get($email)
+	public function isBlackList_post()
 	{
+		/* process parameters */
+		$required = $this->input->checkParam(array('email'));
+		if ($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$email = $this->input->post('email');
+		/* main */
 		$banned = $this->email_model->isEmailInBlackList($this->site_id, $email);
 		$this->response($this->resp->setRespond($banned), 200);
 	}
 
-	public function addBlackList_post($email)
+	public function addBlackList_post()
 	{
+		/* process parameters */
+		$required = $this->input->checkParam(array('email'));
+		if ($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$email = $this->input->post('email');
+		/* main */
 		if ($this->email_model->isEmailInBlackList($this->site_id, $email)) {
 			$this->response($this->error->setError('EMAIL_ALREADY_IN_BLACKLIST', $email), 200);
 		}
@@ -65,8 +78,14 @@ class Email extends REST2_Controller
 		$this->response($this->resp->setRespond('Add email into blacklist successfully'), 200);
 	}
 
-	public function removeBlackList_post($email)
+	public function removeBlackList_post()
 	{
+		/* process parameters */
+		$required = $this->input->checkParam(array('email'));
+		if ($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$email = $this->input->post('email');
+		/* main */
 		if (!$this->email_model->isEmailInBlackList($this->site_id, $email)) {
 			$this->response($this->error->setError('EMAIL_NOT_IN_BLACKLIST', $email), 200);
 		}
