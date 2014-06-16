@@ -48,7 +48,9 @@ class Format {
 
 			else
 			{
-				throw new Exception('Format class does not support conversion from "' . $from_type . '".');
+				//throw new Exception('Format class does not support conversion from "' . $from_type . '".');
+				// Comment above line to allow Format to support a default case,
+				// the case with content-type of "text/plain" (it is also mapped to 'php' by REST_Controller, which shouldn't be)
 			}
 		}
 

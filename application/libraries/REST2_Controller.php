@@ -20,21 +20,25 @@ abstract class REST2_Controller extends REST_Controller
 	private $log_id;
 
 	/**
-	 * Constructor function
-	 * @todo Document more please.
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
-	/**
 	 * Developers can extend this class and add a check in here.
 	 */
 	protected function early_checks()
 	{
+		/* 0.1 Load libraries */
 		$this->load->model('rest_model');
 		$this->load->model('auth_model');
+		/* 0.2 Adjust $this->request->body */
+		if (!empty($this->request->body)) {
+			if (is_array($this->request->body) && count(count($this->request->body) == 1) && array_key_exists(0, $this->request->body)) {
+				$this->request->body = $this->request->body[0];
+			}
+			if (gettype($this->request->body) == 'string') {
+				$str = trim($this->request->body);
+				if ($str[0] == '{' && $str[strlen($str)-1] == '}') {
+					$this->request->body = $this->format->factory($this->request->body, 'json')->to_array();
+				}
+			}
+		}
 		/* 1.1 Log request */
 		$token = $this->input->post('token'); // token: POST
 		$api_key = $this->input->get('api_key'); // api_key: GET/POST
@@ -208,3 +212,4 @@ abstract class REST2_Controller extends REST_Controller
 	}
 
 }
+?>

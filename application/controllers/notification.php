@@ -27,23 +27,23 @@ class Notification extends REST2_Controller
 		// headers = HTTP_X_AMZ_SNS_MESSAGE_TYPE, HTTP_X_AMZ_SNS_MESSAGE_ID, HTTP_X_AMZ_SNS_TOPIC_ARN, HTTP_X_AMZ_SNS_SUBSCRIPTION_ARN
 		// body = $this->request->body
 		$message = $this->request->body;
-		log_message('error', '_SERVER = '.print_r($_SERVER, true));
-		log_message('error', 'message = '.print_r($message, true));
+		log_message('debug', '_SERVER = '.print_r($_SERVER, true));
+		log_message('debug', 'message = '.print_r($message, true));
 		$this->notification_model->log($this->site_id, $message);
 		if (array_key_exists('HTTP_X_AMZ_SNS_MESSAGE_TYPE', $_SERVER)) { // Amazon SNS: http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-header
 			log_message('error', 'type = '.print_r($_SERVER['HTTP_X_AMZ_SNS_MESSAGE_TYPE'], true));
 			switch ($_SERVER['HTTP_X_AMZ_SNS_MESSAGE_TYPE']) {
 				case 'SubscriptionConfirmation': // http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-subscription-confirmation-json
 					// fields: Type, MessageId, Token, TopicArn, Message, SubscribeURL, Timestamp, SignatureVersion, Signature, SigningCertURL
-					log_message('error', 'SubscribeURL = '.print_r($message['SubscribeURL'], true));
+					log_message('debug', 'SubscribeURL = '.print_r($message['SubscribeURL'], true));
 					$response = $this->curl->simple_get($message['SubscribeURL']); // http://philsturgeon.co.uk/code/codeigniter-curl
-					log_message('error', 'response = '.$response);
+					log_message('debug', 'response = '.$response);
 					break;
 				case 'Notification': // http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-notification-json
 					// fields: Type, MessageId, TopicArn, Subject, Message, Timestamp, SignatureVersion, Signature, SigningCertURL, UnsubscribeURL
-					log_message('error', 'message = '.print_r($message['Message'], true));
-					$response = $this->handle($message['Message']);
-					log_message('error', 'response = '.$response);
+					log_message('debug', 'message = '.$message['Message']);
+					$response = $this->handle($this->convertToJson($message['Message']));
+					log_message('debug', 'response = '.$response);
 					break;
 				case 'UnsubscribeConfirmation': // http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-unsubscribe-confirmation-json
 					// fields: Type, MessageId, Token, TopicArn, Message, SubscribeURL, Timestamp, SignatureVersion, Signature, SigningCertURL
@@ -56,6 +56,15 @@ class Notification extends REST2_Controller
 		}
 		// non-Amazon SNS
 		$this->response($this->error->setError('UNKNOWN_MESSAGE', $message), 200);
+	}
+
+	private function convertToJson($str)
+	{
+		$str = trim($str);
+		if ($str[0] == '{' && $str[strlen($str)-1] == '}') {
+			return $this->format->factory($str, 'json')->to_array();
+		}
+		return $str;
 	}
 
 	private function handle($message)
@@ -117,5 +126,5 @@ class Notification extends REST2_Controller
 			$this->email_model->addIntoBlackList($this->site_id, $email, 'Complaint', $complaint['userAgent'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
 		}
 	}
-
 }
+?>
