@@ -11,58 +11,111 @@ class Notification extends REST2_Controller
 		parent::__construct();
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/error', 'error');
+		$this->load->model('notification_model');
 		$this->load->model('email_model');
+		$this->load->library('curl');
 	}
 
-	function index_get()
+	public function index_get()
 	{
-		$this->response($this->resp->setRespond('Not supported method'), 200);
+		$messages = $this->notification_model->list_messages($this->site_id);
+		$this->response($this->resp->setRespond($messages), 200);
 	}
 
-	function index_post()
+	public function index_post()
 	{
+		// headers = HTTP_X_AMZ_SNS_MESSAGE_TYPE, HTTP_X_AMZ_SNS_MESSAGE_ID, HTTP_X_AMZ_SNS_TOPIC_ARN, HTTP_X_AMZ_SNS_SUBSCRIPTION_ARN
+		// body = $this->request->body
 		$message = $this->request->body;
-		if (!empty($message)) {
-			log_message('debug', $message);
-			if (array_key_exists('notificationType', $message)) { // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-examples.html
-				switch ($message['notificationType']) {
-				case 'Bounce':
-					switch ($message['bounce']['bounceType']) { // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounce-object
-					case 'Permanent':
-						$bounce = $message['bounce'];
-						foreach ($bounce['bouncedRecipients'] as $each) {
-							$email = $each['emailAddress'];
-							if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
-							$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType'], $bounce['bounceSubType'], $bounce['feedbackId']);
-						}
-						$this->response($this->resp->setRespond('Process Amazon SES bounce notification successfully (hard bounce)'), 200);
-						break;
-					case 'Transient':
-						$this->response($this->resp->setRespond('Process Amazon SES bounce notification successfully (soft bounce)'), 200);
-						break;
-					case 'Undetermined':
-					default:
-						$this->response($this->resp->setRespond('Unsupported bounceType: '.$message['bounce']['bounceType']), 200);
-						break;
-					}
+		log_message('error', '_SERVER = '.print_r($_SERVER, true));
+		log_message('error', 'message = '.print_r($message, true));
+		$this->notification_model->log($this->site_id, $message);
+		if (array_key_exists('HTTP_X_AMZ_SNS_MESSAGE_TYPE', $_SERVER)) { // Amazon SNS: http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-header
+			log_message('error', 'type = '.print_r($_SERVER['HTTP_X_AMZ_SNS_MESSAGE_TYPE'], true));
+			switch ($_SERVER['HTTP_X_AMZ_SNS_MESSAGE_TYPE']) {
+				case 'SubscriptionConfirmation': // http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-subscription-confirmation-json
+					// fields: Type, MessageId, Token, TopicArn, Message, SubscribeURL, Timestamp, SignatureVersion, Signature, SigningCertURL
+					log_message('error', 'SubscribeURL = '.print_r($message['SubscribeURL'], true));
+					$response = $this->curl->simple_get($message['SubscribeURL']); // http://philsturgeon.co.uk/code/codeigniter-curl
+					log_message('error', 'response = '.$response);
 					break;
-				case 'Complaint':
-					$complaint = $message['complaint'];
-					foreach ($complaint['complainedRecipients'] as $each) {
-						$email = $each['emailAddress'];
-						if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
-						$this->email_model->addIntoBlackList($this->site_id, $email, $message['notificationType'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
-					}
-					$this->response($this->resp->setRespond('Process Amazon SES complaint notification successfully'), 200);
+				case 'Notification': // http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-notification-json
+					// fields: Type, MessageId, TopicArn, Subject, Message, Timestamp, SignatureVersion, Signature, SigningCertURL, UnsubscribeURL
+					log_message('error', 'message = '.print_r($message['Message'], true));
+					$response = $this->handle($message['Message']);
+					log_message('error', 'response = '.$response);
+					break;
+				case 'UnsubscribeConfirmation': // http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-unsubscribe-confirmation-json
+					// fields: Type, MessageId, Token, TopicArn, Message, SubscribeURL, Timestamp, SignatureVersion, Signature, SigningCertURL
 					break;
 				default:
-					$this->response($this->error->setError('UNSUPPORTED_NOTIFICATION_TYPE', $message['notificationType']), 200);
+					$this->response($this->error->setError('UNKNOWN_SNS_MESSAGE_TYPE', $_SERVER['HTTP_X_AMZ_SNS_MESSAGE_TYPE']), 200);
+					break;
+			}
+			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
+		}
+		// non-Amazon SNS
+		$this->response($this->error->setError('UNKNOWN_MESSAGE', $message), 200);
+	}
+
+	private function handle($message)
+	{
+		$ret = false;
+		if (!empty($message)) {
+			if (array_key_exists('notificationType', $message)) { // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-examples.html
+				switch ($message['notificationType']) {
+				// example: http://sesblog.amazon.com/post/TxJE1JNZ6T9JXK/Handling-Bounces-and-Complaints
+				case 'Bounce': // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#bounce-object
+					switch ($message['bounce']['bounceType']) {
+					case 'Transient': // soft bounce
+						switch ($message['bounce']['bounceSubType']) {
+							case 'MailboxFull':
+							case 'MessageTooLarge':
+							case 'ContentRejected':
+							case 'AttachmentRejected':
+								$this->handleBounce($message['bounce']);
+								break;
+							case 'General':
+							default:
+								break;
+						}
+						break;
+					case 'Permanent': // hard bounce
+					case 'Undetermined':
+					default:
+						$this->handleBounce($message['bounce']);
+						break;
+					}
+					$ret = true;
+					break;
+				case 'Complaint': // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/notification-contents.html#complaint-object
+					$this->handleComplaint($message['complaint']);
+					$ret = true;
+					break;
+				default:
 					break;
 				}
 			}
-			$this->response($this->resp->setRespond('Unknown message: '.$message), 200);
-		} else {
-			$this->response($this->resp->setRespond('No message'), 200);
+		}
+		return $ret;
+	}
+
+	private function handleBounce($bounce)
+	{
+		foreach ($bounce['bouncedRecipients'] as $each) {
+			$email = $each['emailAddress'];
+			if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
+			$this->email_model->addIntoBlackList($this->site_id, $email, 'Bounce', $bounce['bounceType'], $bounce['bounceSubType'], $bounce['feedbackId']);
 		}
 	}
+
+	private function handleComplaint($complaint)
+	{
+		foreach ($complaint['complainedRecipients'] as $each) {
+			$email = $each['emailAddress'];
+			if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
+			$this->email_model->addIntoBlackList($this->site_id, $email, 'Complaint', $complaint['userAgent'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
+		}
+	}
+
 }
