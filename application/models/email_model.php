@@ -31,11 +31,12 @@ class Email_model extends MY_Model
 		return $banned;
 	}
 
-	public function addIntoBlackList($site_id, $email, $type, $sub_type=null, $ref_id=null)
+	public function addIntoBlackList($site_id, $email, $bounce_complaint, $type, $sub_type=null, $ref_id=null)
 	{
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$data['_id'] = $email;
+		$data['bounce_complaint'] = $bounce_complaint;
 		$data['type'] = $type;
 		$data['sub_type'] = $sub_type;
 		$data['ref_id'] = $ref_id;
