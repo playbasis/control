@@ -45,56 +45,34 @@ class Redeem extends REST2_Controller
         // if(!$goods)
         //     $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
 
-        //-->NEW
         if(!$goods){
             $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
         }else{
             $per_user = $goods['per_user'];
 
-            $get_player_goods = $this->player_model->getGoods(new MongoId($pb_player_id), $validToken['site_id']);
+//            $get_player_goods = $this->player_model->getGoods(new MongoId($pb_player_id), $validToken['site_id']);
+            $get_player_goods = $this->player_model->getGoodsByGoodsId(new MongoId($pb_player_id), $validToken['site_id'], new MongoId($goods_id));
 
-            $overLimit = false;
 
             if($goods['per_user'] != null){
-                foreach ($get_player_goods as $a_good){
-                    if($a_good['goods_id'] == $goods['goods_id']){
-                        if ($a_good['amount']>=$per_user){
-                            $overLimit = true;
-                            break;
-                        }    
-                    }
-                }    
-            }
-            
-            if ($overLimit){
-                $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
-            }else{
-                $amount = 1;
-                if($this->input->post('amount'))
-                    $amount = (int)$this->input->post('amount');
 
-                $pb_player_id = new MongoId($pb_player_id);
-                $redeemResult = $this->processRedeem($pb_player_id, $goods, $amount, $validToken);
-
-                $this->benchmark->mark('goods_redeem_end');
-                $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
-                $this->response($this->resp->setRespond($redeemResult), 200);              
+                if ($get_player_goods['amount']>=$per_user){
+                    $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
+                    return;
+                }
             }
+
+            $amount = 1;
+            if($this->input->post('amount'))
+                $amount = (int)$this->input->post('amount');
+
+            $pb_player_id = new MongoId($pb_player_id);
+            $redeemResult = $this->processRedeem($pb_player_id, $goods, $amount, $validToken);
+
+            $this->benchmark->mark('goods_redeem_end');
+            $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
+            $this->response($this->resp->setRespond($redeemResult), 200);
         }
-        //-->END NEW
-
-        /*
-        $amount = 1;
-        if($this->input->post('amount'))
-            $amount = (int)$this->input->post('amount');
-
-        $pb_player_id = new MongoId($pb_player_id);
-        $redeemResult = $this->processRedeem($pb_player_id, $goods, $amount, $validToken);
-
-        $this->benchmark->mark('goods_redeem_end');
-        $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
-        $this->response($this->resp->setRespond($redeemResult), 200);
-        */
     }
 
     private function processRedeem($pb_player_id, $goods, $amount, $validToken)
@@ -130,11 +108,11 @@ class Redeem extends REST2_Controller
                 $player_point = 0;
             }
 
-            if((int)$player_point < (int)$goods['redeem']['point']["point_value"]){
+            if((int)($player_point*$amount) < (int)($goods['redeem']['point']["point_value"]*$amount)){
                 $event = array(
                     'event_type' => 'POINT_NOT_ENOUGH',
                     'message' => 'user point not enough',
-                    'incomplete' => (int)$goods['redeem']['point']["point_value"] - (int)$player_point[0]['value']
+                    'incomplete' => (int)($goods['redeem']['point']["point_value"]*$amount) - (int)($player_point[0]['value']*$amount)
                 );
                 array_push($redeemResult['events'], $event);
             }
@@ -155,10 +133,10 @@ class Redeem extends REST2_Controller
                 }
 
                 foreach($goods['redeem']['badge'] as $badgeobj){
-                    if(isset($badge_player_check[$badgeobj["badge_id"]]) && (int)$badge_player_check[$badgeobj["badge_id"]] >= (int)$badgeobj["badge_value"]){
+                    if(isset($badge_player_check[$badgeobj["badge_id"]]) && (int)($badge_player_check[$badgeobj["badge_id"]]*$amount) >= (int)($badgeobj["badge_value"]*$amount)){
                         $badge_can_redeem++;
                     }else{
-                        array_push($badge_incomplete, array($badgeobj["badge_id"]."" => (isset($badge_player_check[$badgeobj["badge_id"]])) ? ((int)$badgeobj["badge_value"] - (int)$badge_player_check[$badgeobj["badge_id"]]) : (int)$badgeobj["badge_value"]));
+                        array_push($badge_incomplete, array($badgeobj["badge_id"]."" => (isset($badge_player_check[$badgeobj["badge_id"]])) ? ((int)($badgeobj["badge_value"]*$amount) - (int)($badge_player_check[$badgeobj["badge_id"]]*$amount)) : (int)($badgeobj["badge_value"]*$amount));
                     }
                 }
             }
@@ -184,10 +162,10 @@ class Redeem extends REST2_Controller
                 $customid =new MongoId($customobj["custom_id"]);
                 $player_custom = $this->player_model->getPlayerPoint($pb_player_id, $customid, $validToken['site_id']);
 
-                if($player_custom && (int)$player_custom[0]['value'] >= (int)$customobj["custom_value"]){
+                if($player_custom && (int)($player_custom[0]['value']*$amount) >= (int)($customobj["custom_value"]*$amount)){
                     $custom_can_redeem++;
                 }else{
-                    array_push($custom_incomplete, array($customid."" => ($player_custom) ? ((int)$customobj["custom_value"] - (int)$player_custom[0]['value']) : (int)$customobj["custom_value"]));
+                    array_push($custom_incomplete, array($customid."" => ($player_custom) ? ((int)($customobj["custom_value"]*$amount) - (int)($player_custom[0]['value']*$amount)) : (int)($customobj["custom_value"]*$amount)));
                 }
             }
 
@@ -297,7 +275,7 @@ class Redeem extends REST2_Controller
             $reward_id =new MongoId($reward_id);
             $player_point = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $validToken['site_id']);
             if((int)$player_point[0]['value'] >= (int)$goods['redeem']['point']["point_value"]){
-                $this->client_model->updatePlayerPointReward($reward_id, (-1*$goods['redeem']['point']["point_value"]), $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id']);
+                $this->client_model->updatePlayerPointReward($reward_id, (-1*$goods['redeem']['point']["point_value"]*$amount), $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id']);
             }
         }
 
@@ -313,7 +291,7 @@ class Redeem extends REST2_Controller
                 foreach($goods['redeem']['badge'] as $badgeobj){
                     if(isset($badge_player_check[$badgeobj["badge_id"]]) && $badge_player_check[$badgeobj["badge_id"]] >= $badgeobj["badge_value"]){
                         $badgeid =new MongoId($badgeobj["badge_id"]);
-                        $this->client_model->updateplayerBadge($badgeid, (-1*$badgeobj["badge_value"]), $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id']);
+                        $this->client_model->updateplayerBadge($badgeid, (-1*$badgeobj["badge_value"]*$amount), $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id']);
                     }
                 }
             }
@@ -331,7 +309,7 @@ class Redeem extends REST2_Controller
                 $customArray['reward_name'] = $custom_name;
 
                 if((int)$player_custom[0]['value'] >= (int)$customobj["custom_value"]){
-                    $this->client_model->updateCustomReward($custom_name, (-1*$customobj["custom_value"]), array_merge($validToken, array('pb_player_id' => $pb_player_id, 'player_id' => $validToken['cl_player_id'])), $customArray);
+                    $this->client_model->updateCustomReward($custom_name, (-1*$customobj["custom_value"]*$amount), array_merge($validToken, array('pb_player_id' => $pb_player_id, 'player_id' => $validToken['cl_player_id'])), $customArray);
                 }
             }
         }

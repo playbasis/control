@@ -764,6 +764,52 @@ class Player_model extends MY_Model
         return $playerGoods;
     }
 
+    public function getGoodsByGoodsId($pb_player_id, $site_id, $goods_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array(
+            'goods_id',
+            'value'
+        ));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'goods_id' => $goods_id
+        ));
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+
+        if(!$goods)
+            return array();
+
+        $goods = $goods[0];
+
+        if(isset($goods['goods_id'])){
+            //get goods data
+            $this->mongo_db->select(array(
+                'image',
+                'name',
+                'description',
+            ));
+            $this->mongo_db->select(array(),array('_id'));
+            $this->mongo_db->where(array(
+                'goods_id' => $goods['goods_id'],
+                'site_id' => $site_id,
+            ));
+            $result = $this->mongo_db->get('playbasis_goods_to_client');
+
+            if(!$result)
+                return array();
+            $result = $result[0];
+            $goods['goods_id'] = $goods['goods_id']."";
+            $goods['image'] = $this->config->item('IMG_PATH') . $result['image'];
+            $goods['name'] = $result['name'];
+            $goods['description'] = $result['description'];
+            $goods['amount'] = $goods['value'];
+            unset($goods['value']);
+        }
+        return $goods;
+    }
+
     private function getActionNameAndStringFilter($action_log_id){
     	$this->mongo_db->select(array('action_name', 'url'));
     	$this->mongo_db->select(array(), array('_id'));
