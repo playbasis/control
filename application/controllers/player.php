@@ -659,7 +659,11 @@ class Player extends REST2_Controller
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'ranked_by'
             )), 200);
-        $leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $this->validToken['client_id'], $this->validToken['site_id']);
+        if ($ranked_by == 'level') {
+            $leaderboard = $this->player_model->getLeaderboardByLevel($limit, $this->validToken['client_id'], $this->validToken['site_id']);
+        } else {
+            $leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $this->validToken['client_id'], $this->validToken['site_id']);
+        }
         $this->response($this->resp->setRespond($leaderboard), 200);
     }
     public function ranks_get($limit = 20)
