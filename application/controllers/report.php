@@ -266,7 +266,7 @@ class Report extends REST2_Controller
 			if (NUMBER_OF_ITEMS > 0 && $i == (NUMBER_OF_ITEMS-1)) break;
 		}
 		// PLAYERS (ranking)
-		$players = $this->player_model->getLeaderboardByLevel(NUMBER_OF_PLAYERS, $site['client_id'], $site['_id']);
+		$players = $this->player_model->getLeaderboardByLevelForReport(NUMBER_OF_PLAYERS, $site['client_id'], $site['_id']);
 		$params['PLAYERS'] = array();
 		if (is_array($players)) foreach ($players as $i => $player) {
 			$name = $player['first_name'].' '.$player['last_name'];

@@ -499,6 +499,27 @@ class Player_model extends MY_Model
 		));
 		$this->mongo_db->order_by(array('level' => -1, 'exp' => -1));
 		$this->mongo_db->limit($limit);
+		$result = $this->mongo_db->get('playbasis_player');
+		$ret = array();
+		foreach ($result as $i => $each) {
+			$ret[] = array(
+				'player_id' => $result[$i]['cl_player_id'],
+				'level' => $result[$i]['level'],
+			);
+		}
+		return $ret;
+	}
+	public function getLeaderboardByLevelForReport($limit, $client_id, $site_id) {
+		//get reward id
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('cl_player_id','first_name','last_name','username','image','exp','level'));
+		$this->mongo_db->where(array(
+			'status' => true,
+			'site_id' => $site_id,
+			'client_id' => $client_id
+		));
+		$this->mongo_db->order_by(array('level' => -1, 'exp' => -1));
+		$this->mongo_db->limit($limit);
 		return $this->mongo_db->get('playbasis_player');
 	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
