@@ -136,7 +136,7 @@ class Redeem extends REST2_Controller
                     if(isset($badge_player_check[$badgeobj["badge_id"]]) && (int)($badge_player_check[$badgeobj["badge_id"]]*$amount) >= (int)($badgeobj["badge_value"]*$amount)){
                         $badge_can_redeem++;
                     }else{
-                        array_push($badge_incomplete, array($badgeobj["badge_id"]."" => (isset($badge_player_check[$badgeobj["badge_id"]])) ? ((int)($badgeobj["badge_value"]*$amount) - (int)($badge_player_check[$badgeobj["badge_id"]]*$amount)) : (int)($badgeobj["badge_value"]*$amount));
+                        array_push($badge_incomplete, array($badgeobj["badge_id"]."" => (isset($badge_player_check[$badgeobj["badge_id"]])) ? ((int)($badgeobj["badge_value"]*$amount) - (int)($badge_player_check[$badgeobj["badge_id"]]*$amount)) : (int)($badgeobj["badge_value"]*$amount)));
                     }
                 }
             }
