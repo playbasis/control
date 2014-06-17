@@ -63,7 +63,7 @@ class Redeem extends REST2_Controller
             }
 
             $amount = 1;
-            if($this->input->post('amount'))
+            if($this->input->post('amount') && $this->input->post('amount') > 0)
                 $amount = (int)$this->input->post('amount');
 
             $pb_player_id = new MongoId($pb_player_id);
