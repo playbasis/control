@@ -150,7 +150,8 @@ $route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 
 //misc
-$route['test']	= 'playbasis/test';
+//$route['test']	= 'playbasis/test';
+$route['test']	= 'notification/index';
 $route['fb'] = 'playbasis/fb';
 $route['login'] = 'playbasis/login';
 $route['memtest'] = 'playbasis/memtest';

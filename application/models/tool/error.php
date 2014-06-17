@@ -38,6 +38,34 @@ class Error extends CI_Model
 				$errorData['error_code'] = '0903';
 			}
 			break;
+		case 'INTERNAL_ERROR':
+			$errorData['message'] = "There is an internal server error: ".$dataArray;
+			$errorData['error_code'] = '0800';
+			break;
+		case 'CANNOT_SEND_EMAIL':
+			$errorData['message'] = "Email error, cannot send email to: ".$dataArray;
+			$errorData['error_code'] = '0801';
+			break;
+		case 'ALL_EMAILS_IN_BLACKLIST':
+			$errorData['message'] = "Email error, all designated recipients are in black list: ".$dataArray;
+			$errorData['error_code'] = '0802';
+			break;
+		case 'EMAIL_ALREADY_IN_BLACKLIST':
+			$errorData['message'] = "Email is already in black list: ".$dataArray;
+			$errorData['error_code'] = '0803';
+			break;
+		case 'EMAIL_NOT_IN_BLACKLIST':
+			$errorData['message'] = "Email is not in black list: ".$dataArray;
+			$errorData['error_code'] = '0804';
+			break;
+		case 'UNSUPPORTED_NOTIFICATION_TYPE':
+			$errorData['message'] = "This notification type is not supported: ".$dataArray;
+			$errorData['error_code'] = '0805';
+			break;
+		case 'UNKNOWN_NOTIFICATION_TYPE':
+			$errorData['message'] = "Notification type is unknown";
+			$errorData['error_code'] = '0806';
+			break;
 		case 'INVALID_API_KEY_OR_SECRET':
 			$errorData['message'] = "Invalid API-KEY OR API-SECRET";
 			$errorData['error_code'] = '0001';

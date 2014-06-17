@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Player extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Player extends REST2_Controller
 {
 	public function __construct()
 	{
@@ -19,27 +19,18 @@ class Player extends REST_Controller
 	}
 	public function index_get($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//read player information
-		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
+		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array(
 			'username',
 			'first_name',
 			'last_name',
@@ -52,34 +43,25 @@ class Player extends REST_Controller
 		));
 
 		//get last login/logout
-		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
-		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
+		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
 		$player['player']['cl_player_id'] = $player_id;
 		$this->response($this->resp->setRespond($player), 200);
 	}
 	public function index_post($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//read player information
-		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
+		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array(
 			'username',
 			'first_name',
 			'last_name',
@@ -93,26 +75,21 @@ class Player extends REST_Controller
 		));
 
 		//get last login/logout
-		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
-		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
+		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
 		$player['player']['cl_player_id'] = $player_id;
 		$this->response($this->resp->setRespond($player), 200);
 	}
     /*public function list_get()
     {
         $required = $this->input->checkParam(array(
-            'api_key',
             'list_player_id'
         ));
         if($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-        $site_id = $validToken['site_id'];
         $list_player_id = explode(",", $this->input->get('list_player_id'));
         //read player information
-        $player['player'] = $this->player_model->readListPlayer($list_player_id, $site_id, array(
+        $player['player'] = $this->player_model->readListPlayer($list_player_id, $this->site_id, array(
             'username',
             'first_name',
             'last_name',
@@ -130,18 +107,13 @@ class Player extends REST_Controller
 //     public function list_post()
 //     {
 //         $required = $this->input->checkParam(array(
-//             'token',
 //             'list_player_id'
 //         ));
 //         if($required)
 //             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-//         $validToken = $this->auth_model->findToken($this->input->post('token'));
-//         if(!$validToken)
-//             $this->response($this->error->setError('INVALID_TOKEN'), 200);
-//         $site_id = $validToken['site_id'];
 //         $list_player_id = explode(",", $this->input->post('list_player_id'));
 //         //read player information
-//         $player['player'] = $this->player_model->readListPlayer($list_player_id, $site_id, array(
+//         $player['player'] = $this->player_model->readListPlayer($list_player_id, $this->site_id, array(
 //             'cl_player_id',
 //             'username',
 //             'first_name',
@@ -165,12 +137,12 @@ class Player extends REST_Controller
 //         	$p['registered'] = datetimeMongotoReadable($p['date_added']);
 //         	unset($p['date_added']);
             
-//         	$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+//         	$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 // 			'cl_player_id' => $p['cl_player_id']
 // 			)));
 
-//         	$p['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
-//         	$p['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+//         	$p['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
+//         	$p['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
 //         }
 
 //         $this->response($this->resp->setRespond($player), 200);
@@ -179,22 +151,17 @@ class Player extends REST_Controller
     public function list_post()
     {
         $required = $this->input->checkParam(array(
-            'token',
             'list_player_id'
         ));
         if($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->findToken($this->input->post('token'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_TOKEN'), 200);
-        $site_id = $validToken['site_id'];
         $list_player_id = explode(",", $this->input->post('list_player_id'));
         //read player information
 		for($i = 0; $i<count($list_player_id); $i++){
-			$data = array('client_id'=>$validToken['client_id'], 'site_id'=>$site_id, 'cl_player_id'=>$list_player_id[$i]);
+			$data = array('client_id'=>$this->validToken['client_id'], 'site_id'=>$this->site_id, 'cl_player_id'=>$list_player_id[$i]);
 			$pb_player_id = $this->player_model->getPlaybasisId($data);
 
-			$player['player'][] = $this->player_model->readPlayer($pb_player_id, $site_id, array('cl_player_id','username',
+			$player['player'][] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array('cl_player_id','username',
 			'first_name',
 			'last_name',
 			'gender',
@@ -205,8 +172,8 @@ class Player extends REST_Controller
 			'date_added',
 			'birth_date'));
 			
-			$player['player'][$i]['last_login']= $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
-			$player['player'][$i]['last_logout']= $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+			$player['player'][$i]['last_login']= $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
+			$player['player'][$i]['last_logout']= $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
 		}     
 
         $this->response($this->resp->setRespond($player), 200);
@@ -216,28 +183,19 @@ class Player extends REST_Controller
     
 	public function details_get($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
 		//read player information
-		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
+		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array(
 			'username',
 			'first_name',
 			'last_name',
@@ -249,7 +207,7 @@ class Player extends REST_Controller
 			'birth_date'
 		));
         //percent exp of level
-        $level = $this->level_model->getLevelDetail($player['player']['level'], $validToken['client_id'], $validToken['site_id']);
+        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
@@ -260,11 +218,11 @@ class Player extends REST_Controller
             $player['player']['percent_of_level'] = 100;
         }
 
-        $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $site_id);
-        $points = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
+        $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
+        $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
         foreach($points as &$point)
         {
-			$point['reward_name'] = $this->point_model->getRewardNameById(array_merge($validToken, array(
+			$point['reward_name'] = $this->point_model->getRewardNameById(array_merge($this->validToken, array(
                 'reward_id' => $point['reward_id']
             )));
             $point['reward_id'] = $point['reward_id']."";
@@ -272,34 +230,25 @@ class Player extends REST_Controller
         }
         $player['player']['points'] = $points;
 		//get last login/logout
-		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
-		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
+		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
 		$this->response($this->resp->setRespond($player), 200);
 	}
 	public function details_post($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
 		//read player information
-		$player['player'] = $this->player_model->readPlayer($pb_player_id, $site_id, array(
+		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array(
 			'username',
 			'first_name',
 			'last_name',
@@ -313,7 +262,7 @@ class Player extends REST_Controller
 		));
 
         //percent exp of level
-        $level = $this->level_model->getLevelDetail($player['player']['level'], $validToken['client_id'], $validToken['site_id']);
+        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
@@ -324,11 +273,11 @@ class Player extends REST_Controller
             $player['player']['percent_of_level'] = 100;
         }
 
-        $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $site_id);
-        $points = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
+        $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
+        $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
         foreach($points as &$point)
         {
-            $point['reward_name'] = $this->point_model->getRewardNameById(array_merge($validToken, array(
+            $point['reward_name'] = $this->point_model->getRewardNameById(array_merge($this->validToken, array(
                 'reward_id' => $point['reward_id']
             )));
             $point['reward_id'] = $point['reward_id']."";
@@ -336,17 +285,12 @@ class Player extends REST_Controller
         }
         $player['player']['points'] = $points;
 		//get last login/logout
-		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGIN');
-		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $site_id, 'LOGOUT');
+		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
+		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
 		$this->response($this->resp->setRespond($player), 200);
 	}
 	public function register_post($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		$required = $this->input->checkParam(array(
 //			'image',
 			'email',
@@ -356,11 +300,8 @@ class Player extends REST_Controller
 			array_push($required, 'player_id');
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if($pb_player_id)
@@ -401,25 +342,17 @@ class Player extends REST_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
-		$this->player_model->createPlayer(array_merge($validToken, $playerInfo));
+		$this->player_model->createPlayer(array_merge($this->validToken, $playerInfo));
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function update_post($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
@@ -470,48 +403,32 @@ class Player extends REST_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
-		$this->player_model->updatePlayer($pb_player_id, $validToken['site_id'], $playerInfo);
+		$this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function delete_post($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$this->player_model->deletePlayer($pb_player_id, $validToken['site_id']);
+		$this->player_model->deletePlayer($pb_player_id, $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function login_post($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
@@ -519,8 +436,8 @@ class Player extends REST_Controller
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('login');
 		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
-			'client_id' => $validToken['client_id'],
-			'site_id' => $validToken['site_id'],
+			'client_id' => $this->validToken['client_id'],
+			'site_id' => $this->validToken['site_id'],
 			'pb_player_id' => $pb_player_id,
 			'action_log_id' => null
 		));
@@ -529,25 +446,17 @@ class Player extends REST_Controller
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'login',
 			'message' => $eventMessage
-		), $validToken['domain_name'], $validToken['site_id']);
+		), $this->validToken['domain_name'], $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function logout_post($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
@@ -555,8 +464,8 @@ class Player extends REST_Controller
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('logout');
 		$this->tracker_model->trackEvent('LOGOUT', $eventMessage, array(
-			'client_id' => $validToken['client_id'],
-			'site_id' => $validToken['site_id'],
+			'client_id' => $this->validToken['client_id'],
+			'site_id' => $this->validToken['site_id'],
 			'pb_player_id' => $pb_player_id,
 			'action_log_id' => null
 		));
@@ -565,35 +474,26 @@ class Player extends REST_Controller
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'logout',
 			'message' => $eventMessage
-		), $validToken['domain_name'], $validToken['site_id']);
+		), $this->validToken['domain_name'], $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function points_get($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$input = array_merge($validToken, array(
+		$input = array_merge($this->validToken, array(
 			'pb_player_id' => $pb_player_id
 		));
 		//get player points
-		$points['points'] = $this->player_model->getPlayerPoints($pb_player_id, $site_id);
+		$points['points'] = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
 		foreach($points['points'] as &$point)
 		{
 			$point['reward_name'] = $this->point_model->getRewardNameById(array_merge($input, array(
@@ -606,11 +506,6 @@ class Player extends REST_Controller
 	}
 	public function point_get($player_id = '', $reward = '')
 	{
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$required = array();
 		if(!$player_id)
 			array_push($required, 'player_id');
@@ -618,23 +513,19 @@ class Player extends REST_Controller
 			array_push($required, 'reward');
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$input = array_merge($validToken, array(
+		$input = array_merge($this->validToken, array(
 			'reward_name' => $reward
 		));
 		$reward_id = $this->point_model->findPoint($input);
 		if(!$reward_id)
 			$this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
-		$point['point'] = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $site_id);
+		$point['point'] = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $this->site_id);
         $point['point'][0]['reward_id'] = $reward_id."";
 		$point['point'][0]['reward_name'] = $reward;
 		ksort($point);
@@ -642,12 +533,6 @@ class Player extends REST_Controller
 	}
 
 	public function point_history_get($player_id =''){
-		$required = $this->input->checkParam(array(
-			'api_key'
-			));
-		if($required){
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		}
 		$required = array();
 		if(!$player_id){
 			array_push($required, 'player_id');
@@ -655,14 +540,8 @@ class Player extends REST_Controller
 		if($required){
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		}
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
 
-		if(!$validToken){
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		}
-		$site_id = $validToken['site_id'];
-
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id){
@@ -678,8 +557,8 @@ class Player extends REST_Controller
 		$reward_name = $this->input->get('point_name');
 
 		$reward = array(
-				'site_id'=>$site_id,
-				'client_id'=>$validToken['client_id'],
+				'site_id'=>$this->site_id,
+				'client_id'=>$this->validToken['client_id'],
 				'reward_name'=>$reward_name
 			);
 
@@ -689,7 +568,7 @@ class Player extends REST_Controller
 			$reward_id = null;
 		}
 
-		$respondThis['points'] = $this->player_model->getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit);
+		$respondThis['points'] = $this->player_model->getPointHistoryFromPlayerID($pb_player_id, $this->site_id, $reward_id, $offset, $limit);
 
 		$this->response($this->resp->setRespond($respondThis), 200);
 
@@ -697,22 +576,13 @@ class Player extends REST_Controller
 
 	public function action_get($player_id = '', $action = '', $option = 'time')
 	{
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$required = array();
 		if(!$player_id)
 			array_push($required, 'player_id');
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
@@ -720,202 +590,120 @@ class Player extends REST_Controller
 		$actions = array();
 		if($action)
 		{
-			$action_id = $this->action_model->findAction(array_merge($validToken, array(
+			$action_id = $this->action_model->findAction(array_merge($this->validToken, array(
 				'action_name' => $action
 			)));
 			if(!$action_id)
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-			$actions['action'] = ($option == 'time') ? $this->player_model->getActionPerform($pb_player_id, $action_id, $site_id) : $this->player_model->getActionCount($pb_player_id, $action_id, $site_id);
+			$actions['action'] = ($option == 'time') ? $this->player_model->getActionPerform($pb_player_id, $action_id, $this->site_id) : $this->player_model->getActionCount($pb_player_id, $action_id, $this->site_id);
 		}
 		else //get last action performed
 		{
 			if($option != 'time')
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-			$actions['action'] = $this->player_model->getLastActionPerform($pb_player_id, $site_id);
+			$actions['action'] = $this->player_model->getLastActionPerform($pb_player_id, $this->site_id);
 		}
 		$this->response($this->resp->setRespond($actions), 200);
 	}
 	public function badge_get($player_id = '')
 	{
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//get player badge
-		$badgeList = $this->player_model->getBadge($pb_player_id, $site_id);
+		$badgeList = $this->player_model->getBadge($pb_player_id, $this->site_id);
 		$this->response($this->resp->setRespond($badgeList), 200);
 	}
 	public function claimBadge_post($player_id='', $badge_id='')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id || !$badge_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id',
 				'badge_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		$site_id = $validToken['site_id'];
-        $client_id = $validToken['client_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->claimBadge($pb_player_id, new MongoId($badge_id), $site_id, $client_id);
+		$result = $this->player_model->claimBadge($pb_player_id, new MongoId($badge_id), $this->site_id, $this->client_id);
 		$this->response($this->resp->setRespond($result), 200);
 	}
 	public function redeemBadge_post($player_id='', $badge_id='')
 	{
-		$required = $this->input->checkParam(array(
-			'token'
-		));
-		if($required)
-			$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 		if(!$player_id || !$badge_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id',
 				'badge_id'
 			)), 200);
-		$validToken = $this->auth_model->findToken($this->input->post('token'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_TOKEN'), 200);
-		$site_id = $validToken['site_id'];
-        $client_id = $validToken['client_id'];
 		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->redeemBadge($pb_player_id, new MongoId($badge_id), $site_id, $client_id);
+		$result = $this->player_model->redeemBadge($pb_player_id, new MongoId($badge_id), $this->site_id, $this->client_id);
 		$this->response($this->resp->setRespond($result), 200);
 	}
     public function rank_get($ranked_by, $limit = 20)
     {
-        $required = $this->input->checkParam(array(
-            'api_key'
-        ));
-        if($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         if(!$ranked_by)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'ranked_by'
             )), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-        $leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $validToken['client_id'], $validToken['site_id']);
+        $leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $this->validToken['client_id'], $this->validToken['site_id']);
         $this->response($this->resp->setRespond($leaderboard), 200);
     }
     public function ranks_get($limit = 20)
     {
-        $required = $this->input->checkParam(array(
-            'api_key'
-        ));
-        if($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-        $leaderboards = $this->player_model->getLeaderboards($limit, $validToken['client_id'], $validToken['site_id']);
+        $leaderboards = $this->player_model->getLeaderboards($limit, $this->validToken['client_id'], $this->validToken['site_id']);
         $this->response($this->resp->setRespond($leaderboards), 200);
     }
     public function level_get($level='')
     {
-        $required = $this->input->checkParam(array(
-            'api_key'
-        ));
-        if($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         if(!$level)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'level'
             )), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 
-        $level= $this->level_model->getLevelDetail($level, $validToken['client_id'], $validToken['site_id']);
+        $level= $this->level_model->getLevelDetail($level, $this->validToken['client_id'], $this->validToken['site_id']);
         $this->response($this->resp->setRespond($level), 200);
     }
     public function levels_get()
     {
-        $required = $this->input->checkParam(array(
-            'api_key'
-        ));
-        if($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-
-        $level= $this->level_model->getLevelsDetail($validToken['client_id'], $validToken['site_id']);
+        $level= $this->level_model->getLevelsDetail($this->validToken['client_id'], $this->validToken['site_id']);
         $this->response($this->resp->setRespond($level), 200);
     }
     public function goods_get($player_id='')
     {
-        $required = $this->input->checkParam(array(
-            'api_key'
-        ));
-        if($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'player_id'
             )), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-        $site_id = $validToken['site_id'];
         //get playbasis player id
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
         if(!$pb_player_id)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         //get player goods
-        $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $site_id);
+        $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
 	public function total_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$sum = 0;
 		$prev = null;
-		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->new_registration($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
@@ -932,20 +720,9 @@ class Player extends REST_Controller
 	}
 	public function new_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->new_registration($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->new_registration($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
@@ -962,20 +739,9 @@ class Player extends REST_Controller
 	/* unused */
 	public function dau_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->daily_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->daily_active_user($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
@@ -991,20 +757,9 @@ class Player extends REST_Controller
 	}
 	public function dauDay_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->daily_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->daily_active_user_per_day($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
@@ -1021,20 +776,9 @@ class Player extends REST_Controller
 	/* unused */
 	public function mau_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->monthy_active_user($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->monthy_active_user($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m', strtotime('+1 month', strtotime($prev.'-01 00:00:00')));
@@ -1050,20 +794,9 @@ class Player extends REST_Controller
 	}
 	public function mauDay_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->monthy_active_user_per_day($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->monthy_active_user_per_day($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
 				if ($prev) {
@@ -1081,20 +814,9 @@ class Player extends REST_Controller
 	}
 	public function mauWeek_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->monthy_active_user_per_week($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->monthy_active_user_per_week($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
 				if ($prev) {
@@ -1118,20 +840,9 @@ class Player extends REST_Controller
 	}
 	public function mauMonth_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->monthy_active_user_per_month($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->monthy_active_user_per_month($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (strtotime($key.'-01 00:00:00') <= time()) { // suppress future calculated results
 				if ($prev) {
@@ -1236,12 +947,5 @@ class Player extends REST_Controller
 		print_r($result);
 		echo '</pre>';
 	}
-
-
-
-
-
-
-
 }
 ?>

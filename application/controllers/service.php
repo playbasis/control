@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Service extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Service extends REST2_Controller
 {
 	public function __construct()
 	{
@@ -186,25 +186,6 @@ class Service extends REST_Controller
 
     public function recent_point_get()
     {
-        $required = $this->input->checkParam(array(
-            'api_key'
-        ));
-        if($required){
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-        $required = array();
-
-        if($required){
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        }
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-
-        if(!$validToken){
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-        }
-        $site_id = $validToken['site_id'];
-
-
         $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
         $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
         if($limit > 500){
@@ -213,9 +194,9 @@ class Service extends REST_Controller
         $reward_name = $this->input->get('point_name');
 
         $reward = array(
-            'site_id'=>$site_id,
-            'client_id'=>$validToken['client_id'],
-            'reward_name'=>$reward_name
+            'site_id' => $this->site_id,
+            'client_id' => $this->client_id,
+            'reward_name' => $reward_name
         );
 
         if($reward){
@@ -224,7 +205,7 @@ class Service extends REST_Controller
             $reward_id = null;
         }
 
-        $respondThis['points'] = $this->service_model->getRecentPoint($site_id, $reward_id, $offset, $limit);
+        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $offset, $limit);
 
         $this->response($this->resp->setRespond($respondThis), 200);
     }

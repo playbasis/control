@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require APPPATH . '/libraries/REST_Controller.php';
+require APPPATH . '/libraries/REST2_Controller.php';
 require APPPATH . '/libraries/facebook-php-sdk/facebook.php';
-class Facebook extends REST_Controller
+class Facebook extends REST2_Controller
 {
 	private $facebook = null;
 	public function __construct()

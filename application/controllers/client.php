@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Client extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Client extends REST2_Controller
 {
 	public function __construct()
 	{

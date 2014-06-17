@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Quest extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Quest extends REST2_Controller
 {
     public function __construct()
     {
@@ -169,6 +169,13 @@ class Quest extends REST_Controller
 
     private function checkConditionQuest($quest, $pb_player_id, $validToken){
 
+        if(empty($quest)){
+            $event = array(
+                'event_type' => 'QUEST_NOT_EXIT',
+                'message' => 'quest not exit'
+            );
+            return $event;
+        }
         //read player information
         $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
             'username',
@@ -284,6 +291,14 @@ class Quest extends REST_Controller
 
     private function checkCompletionMission($quest, $mission, $pb_player_id, $validToken){
 
+        if(empty($quest)){
+            $event = array(
+                'event_type' => 'QUEST_NOT_EXIT',
+                'message' => 'quest not exit'
+            );
+            return $event;
+        }
+        
         if(isset($mission["status"]) && $mission["status"] == "finish")
             return array();
 
@@ -656,24 +671,14 @@ class Quest extends REST_Controller
      * @throws USER_NOT_EXIST if user not found
      */
     public function available_get($quest_id = 0) {
-        $required = $this->input->checkParam(array('api_key'));
-        if ($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if (!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-
         // check user exists
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             "cl_player_id" => $this->input->get("player_id")
         )));
         if (!$pb_player_id)
             $this->response($this->error->setError("USER_NOT_EXIST"), 200);
 
-        $data = array(
-            'client_id' => $validToken['client_id'],
-            'site_id' => $validToken['site_id']
-        );
+        $data = $this->validToken;
 
         // get specific available quest
         if ($quest_id) {
@@ -685,7 +690,8 @@ class Quest extends REST_Controller
 
             $data['quest_id'] = $quest_id;
             $quest = $this->quest_model->getQuest($data); // get quest detail
-            if (!$this->checkConditionQuest($quest, $pb_player_id, $validToken)) {
+
+            if (!$this->checkConditionQuest($quest, $pb_player_id, $this->validToken)) {
 //                array_walk_recursive($quest, array($this, "convert_mongo_object"));
 //                $resp["quest"] = $quest;
 //                $resp["quest"]["quest_id"] = $quest["_id"];
@@ -711,7 +717,7 @@ class Quest extends REST_Controller
             $quests = $this->quest_model->getQuests($data);
             foreach ($quests as $quest => $value) {
                 // condition failed
-                if ($this->checkConditionQuest($quests[$quest], $pb_player_id, $validToken))
+                if ($this->checkConditionQuest($quests[$quest], $pb_player_id, $this->validToken))
                     continue;
                 else {
                     $quests[$quest]["quest_id"] = $quests[$quest]["_id"];
@@ -735,17 +741,7 @@ class Quest extends REST_Controller
      * @throws INVALID_API_KEY_OR_SECRET if apikey is invalid
      */
     public function index_get($quest_id = 0) {
-        $required = $this->input->checkParam(array('api_key'));
-        if ($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if (!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-
-        $data = array(
-            'client_id' => $validToken['client_id'],
-            'site_id' => $validToken['site_id']
-        );
+        $data = $this->validToken;
 
         if ($quest_id) {
             // get specific quest
@@ -793,7 +789,7 @@ class Quest extends REST_Controller
      */
     public function join_post($quest_id = 0) {
         // check put parameter
-        $required = $this->input->checkParam(array("token", "player_id"));
+        $required = $this->input->checkParam(array("player_id"));
         if ($required)
             $this->response($this->error->setError("PARAMETER_MISSING", $required), 200);
 
@@ -802,13 +798,8 @@ class Quest extends REST_Controller
             $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id"
         )), 200);
 
-        // validate token
-        $validToken = $this->auth_model->findToken($this->input->post("token"));
-        if (!$validToken)
-            $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
-
         // check user exists
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             "cl_player_id" => $this->input->post("player_id")
         )));
         if (!$pb_player_id)
@@ -821,8 +812,8 @@ class Quest extends REST_Controller
         }
 
         $data = array(
-            "client_id" => $validToken["client_id"],
-            "site_id" => $validToken["site_id"],
+            "client_id" => $this->validToken["client_id"],
+            "site_id" => $this->validToken["site_id"],
             "pb_player_id" => $pb_player_id,
             "quest_id" => $quest_id
         );
@@ -841,7 +832,7 @@ class Quest extends REST_Controller
         // not join yet, let check condition
         if (!$player_quest) {
             $condition_quest = $this->checkConditionQuest(
-                $quest, $pb_player_id, $validToken);
+                $quest, $pb_player_id, $this->validToken);
             // condition passed
             if (!$condition_quest)
                 $this->quest_model->joinQuest(array_merge($data, $quest));
@@ -882,7 +873,7 @@ class Quest extends REST_Controller
     public function cancel_post($quest_id = 0)
     {
         // check delete parameter
-        $required = $this->input->checkParam(array("token", "player_id"));
+        $required = $this->input->checkParam(array("player_id"));
         if ($required)
             $this->response($this->error->setError("PARAMETER_MISSING", $required), 200);
 
@@ -891,14 +882,9 @@ class Quest extends REST_Controller
             $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id"
         )), 200);
 
-        // validate token
-        $validToken = $this->auth_model->findToken($this->input->post("token"));
-        if (!$validToken)
-            $this->response($this->error->setError("INVALID_API_KEY_OR_SECRET"), 200);
-
         // check user exists
         $pb_player_id = $this->player_model->getPlaybasisId(
-            array_merge($validToken, array(
+            array_merge($this->validToken, array(
             "cl_player_id" => $this->input->post("player_id")
         )));
         if (!$pb_player_id)
@@ -911,8 +897,8 @@ class Quest extends REST_Controller
         }
 
         $data = array(
-            "client_id" => $validToken["client_id"],
-            "site_id" => $validToken["site_id"],
+            "client_id" => $this->validToken["client_id"],
+            "site_id" => $this->validToken["site_id"],
             "pb_player_id" => $pb_player_id,
             "quest_id" => $quest_id
         );
@@ -940,17 +926,7 @@ class Quest extends REST_Controller
     }
 
     public function mission_get($quest_id = '', $mission_id = ''){
-        $required = $this->input->checkParam(array('api_key'));
-        if ($required)
-            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if (!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-
-        $data = array(
-            'client_id' => $validToken['client_id'],
-            'site_id' => $validToken['site_id']
-        );
+        $data = $this->validToken;
 
         if ($quest_id && $mission_id) {
             // get specific quest
@@ -983,24 +959,21 @@ class Quest extends REST_Controller
 
     public function questOfPlayer_get($quest_id = 0)
     {
-        $required = $this->input->checkParam(array('api_key','player_id'));
+        $required = $this->input->checkParam(array('player_id'));
         if ($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-        if (!$validToken)
-            $this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
 
         $player_id = $this->input->get('player_id');
         //get playbasis player id
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
         if(!$pb_player_id)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         $data = array(
-            'client_id' => $validToken['client_id'],
-            'site_id' => $validToken['site_id'],
+            'client_id' => $this->validToken['client_id'],
+            'site_id' => $this->validToken['site_id'],
             'pb_player_id' => $pb_player_id
         );
 
@@ -1022,7 +995,7 @@ class Quest extends REST_Controller
                 foreach($quest_player["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken);
                 }
 
                 $quest['status'] = $quest_player['status'];
@@ -1047,7 +1020,7 @@ class Quest extends REST_Controller
                 foreach($q["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken);
                 }
 
                 $quest['status'] = $q['status'];

@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
+require_once APPPATH . '/libraries/REST2_Controller.php';
 define('PD_BASE_URL', 'https://api.pipedrive.com/v1/');
-class Pipedrive extends REST_Controller
+class Pipedrive extends REST2_Controller
 {
 	public function __construct()
 	{

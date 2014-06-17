@@ -115,7 +115,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -145,7 +145,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -177,7 +177,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -292,7 +292,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -343,7 +343,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -375,7 +375,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -407,7 +407,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -439,7 +439,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -473,7 +473,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -507,7 +507,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -541,7 +541,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -591,7 +591,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -625,7 +625,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -659,7 +659,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -690,13 +690,18 @@
             <con:resource name="badge" path="badge">
                 <con:settings />
                 <con:parameters />
-                <con:resource name="claim" path="${#Project#badge_id}/claim">
+                <con:resource name="claim" path="${badge_id}/claim">
                     <con:settings />
-                    <con:parameters />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>badge_id</con:name>
+                            <con:style>QUERY</con:style>
+                        </con:parameter>
+                    </con:parameters>
                     <con:method name="POST" method="POST">
                         <con:settings />
                         <con:parameters>
-                            <con:parameter>
+                            <con:parameter required="true">
                                 <con:name>token</con:name>
                                 <con:value />
                                 <con:style>QUERY</con:style>
@@ -722,13 +727,18 @@
                         </con:request>
                     </con:method>
                 </con:resource>
-                <con:resource name="redeem" path="${#Project#badge_id}/redeem">
+                <con:resource name="redeem" path="${badge_id}/redeem">
                     <con:settings />
-                    <con:parameters />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>badge_id</con:name>
+                            <con:style>QUERY</con:style>
+                        </con:parameter>
+                    </con:parameters>
                     <con:method name="POST" method="POST">
                         <con:settings />
                         <con:parameters>
-                            <con:parameter>
+                            <con:parameter required="true">
                                 <con:name>token</con:name>
                                 <con:value />
                                 <con:style>QUERY</con:style>
@@ -757,7 +767,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -788,7 +798,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -818,7 +828,7 @@
             <con:method name="POST" method="POST">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>token</con:name>
                         <con:value />
                         <con:style>QUERY</con:style>
@@ -853,7 +863,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -883,7 +893,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -915,7 +925,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -1030,7 +1040,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -1081,7 +1091,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -1113,7 +1123,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -1145,7 +1155,7 @@
                 <con:method name="POST" method="POST">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>token</con:name>
                             <con:value />
                             <con:style>QUERY</con:style>
@@ -1177,7 +1187,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1211,7 +1221,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1245,7 +1255,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1279,7 +1289,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1329,7 +1339,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1363,7 +1373,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1397,7 +1407,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1428,13 +1438,18 @@
             <con:resource name="badge" path="badge">
                 <con:settings />
                 <con:parameters />
-                <con:resource name="claim" path="${#Project#badge_id}/claim">
+                <con:resource name="claim" path="${badge_id}/claim">
                     <con:settings />
-                    <con:parameters />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>badge_id</con:name>
+                            <con:style>QUERY</con:style>
+                        </con:parameter>
+                    </con:parameters>
                     <con:method name="POST" method="POST">
                         <con:settings />
                         <con:parameters>
-                            <con:parameter>
+                            <con:parameter required="true">
                                 <con:name>token</con:name>
                                 <con:value />
                                 <con:style>QUERY</con:style>
@@ -1460,13 +1475,18 @@
                         </con:request>
                     </con:method>
                 </con:resource>
-                <con:resource name="redeem" path="${#Project#badge_id}/redeem">
+                <con:resource name="redeem" path="${badge_id}/redeem">
                     <con:settings />
-                    <con:parameters />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>badge_id</con:name>
+                            <con:style>QUERY</con:style>
+                        </con:parameter>
+                    </con:parameters>
                     <con:method name="POST" method="POST">
                         <con:settings />
                         <con:parameters>
-                            <con:parameter>
+                            <con:parameter required="true">
                                 <con:name>token</con:name>
                                 <con:value />
                                 <con:style>QUERY</con:style>
@@ -1495,7 +1515,7 @@
                 <con:method name="GET" method="GET">
                     <con:settings />
                     <con:parameters>
-                        <con:parameter>
+                        <con:parameter required="true">
                             <con:name>api_key</con:name>
                             <con:value>${#Project#api_key}</con:value>
                             <con:style>QUERY</con:style>
@@ -1526,7 +1546,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1556,7 +1576,7 @@
             <con:method name="POST" method="POST">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>token</con:name>
                         <con:value />
                         <con:style>QUERY</con:style>
@@ -1588,7 +1608,7 @@
             <con:method name="POST" method="POST">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>token</con:name>
                         <con:value />
                         <con:style>QUERY</con:style>
@@ -1628,7 +1648,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1662,7 +1682,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1696,7 +1716,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1730,7 +1750,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1764,7 +1784,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1792,13 +1812,20 @@
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="badge=:badge_id" path="/Badge/${#Project#badge_id}">
+        <con:resource name="badge=:badge_id" path="/Badge/${badge_id}">
             <con:settings />
-            <con:parameters />
+            <con:parameters>
+                <con:parameter required="true">
+                    <con:name>badge_id</con:name>
+                    <con:value />
+                    <con:style>QUERY</con:style>
+                    <con:default />
+                </con:parameter>
+            </con:parameters>
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1832,7 +1859,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1860,13 +1887,18 @@
                 </con:request>
             </con:method>
         </con:resource>
-        <con:resource name="goods=:goods_id" path="/Goods/${#Project#goods_id}">
+        <con:resource name="goods=:goods_id" path="/Goods/${goods_id}">
             <con:settings />
-            <con:parameters />
+            <con:parameters>
+                <con:parameter required="true">
+                    <con:name>goods_id</con:name>
+                    <con:style>QUERY</con:style>
+                </con:parameter>
+            </con:parameters>
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1900,7 +1932,7 @@
             <con:method name="GET" method="GET">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>api_key</con:name>
                         <con:value>${#Project#api_key}</con:value>
                         <con:style>QUERY</con:style>
@@ -1934,7 +1966,7 @@
             <con:method name="POST" method="POST">
                 <con:settings />
                 <con:parameters>
-                    <con:parameter>
+                    <con:parameter required="true">
                         <con:name>token</con:name>
                         <con:value />
                         <con:style>QUERY</con:style>
@@ -1981,6 +2013,280 @@
                         <con:entry>player_id</con:entry>
                         <con:entry>url</con:entry>
                     </con:parameterOrder>
+                </con:request>
+            </con:method>
+        </con:resource>
+        <con:resource name="quest" path="/Quest">
+            <con:settings />
+            <con:parameters />
+            <con:resource name="quest info" path="${quest_id}">
+                <con:settings />
+                <con:parameters>
+                    <con:parameter required="true">
+                        <con:name>quest_id</con:name>
+                        <con:style>QUERY</con:style>
+                    </con:parameter>
+                </con:parameters>
+                <con:resource name="mission info" path="mission/${mission_id}">
+                    <con:settings />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>mission_id</con:name>
+                            <con:style>QUERY</con:style>
+                        </con:parameter>
+                    </con:parameters>
+                    <con:method name="GET" method="GET">
+                        <con:settings />
+                        <con:parameters>
+                            <con:parameter required="true">
+                                <con:name>api_key</con:name>
+                                <con:value>${#Project#api_key}</con:value>
+                                <con:style>QUERY</con:style>
+                                <con:default>${#Project#api_key}</con:default>
+                            </con:parameter>
+                        </con:parameters>
+                        <con:request name="Request 1" mediaType="application/json">
+                            <con:settings>
+                                <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                            </con:settings>
+                            <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                            <con:request />
+                            <con:credentials>
+                                <con:authType>Global HTTP Settings</con:authType>
+                            </con:credentials>
+                            <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                            <con:jmsPropertyConfig />
+                            <con:parameters />
+                            <con:parameterOrder>
+                                <con:entry>api_key</con:entry>
+                            </con:parameterOrder>
+                        </con:request>
+                    </con:method>
+                </con:resource>
+                <con:method name="GET" method="GET">
+                    <con:settings />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>api_key</con:name>
+                            <con:value>${#Project#api_key}</con:value>
+                            <con:style>QUERY</con:style>
+                            <con:default>${#Project#api_key}</con:default>
+                        </con:parameter>
+                    </con:parameters>
+                    <con:request name="Request 1" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters />
+                        <con:parameterOrder>
+                            <con:entry>api_key</con:entry>
+                        </con:parameterOrder>
+                    </con:request>
+                </con:method>
+            </con:resource>
+            <con:resource name="quest list available for player" path="available">
+                <con:settings />
+                <con:parameters />
+                <con:method name="GET" method="GET">
+                    <con:settings />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>api_key</con:name>
+                            <con:value>${#Project#api_key}</con:value>
+                            <con:style>QUERY</con:style>
+                            <con:default>${#Project#api_key}</con:default>
+                        </con:parameter>
+                        <con:parameter>
+                            <con:name>player_id</con:name>
+                            <con:value>${#Project#cl_player_id1}</con:value>
+                            <con:style>QUERY</con:style>
+                            <con:default>${#Project#cl_player_id1}</con:default>
+                        </con:parameter>
+                    </con:parameters>
+                    <con:request name="Request 1" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters />
+                        <con:parameterOrder>
+                            <con:entry>api_key</con:entry>
+                            <con:entry>player_id</con:entry>
+                        </con:parameterOrder>
+                    </con:request>
+                </con:method>
+            </con:resource>
+            <con:resource name="quest available for player" path="/${quest_id}/available">
+                <con:settings />
+                <con:parameters>
+                    <con:parameter required="true">
+                        <con:name>quest_id</con:name>
+                        <con:value />
+                        <con:style>QUERY</con:style>
+                        <con:default />
+                    </con:parameter>
+                </con:parameters>
+                <con:method name="GET" method="GET">
+                    <con:settings />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>api_key</con:name>
+                            <con:value>${#Project#api_key}</con:value>
+                            <con:style>QUERY</con:style>
+                            <con:default>${#Project#api_key}</con:default>
+                        </con:parameter>
+                        <con:parameter>
+                            <con:name>player_id</con:name>
+                            <con:value>${#Project#cl_player_id1}</con:value>
+                            <con:style>QUERY</con:style>
+                            <con:default>${#Project#cl_player_id1}</con:default>
+                        </con:parameter>
+                    </con:parameters>
+                    <con:request name="Request 1" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters />
+                        <con:parameterOrder>
+                            <con:entry>api_key</con:entry>
+                            <con:entry>player_id</con:entry>
+                        </con:parameterOrder>
+                    </con:request>
+                </con:method>
+            </con:resource>
+            <con:resource name="join quest" path="/${quest_id}/join">
+                <con:settings />
+                <con:parameters>
+                    <con:parameter required="true">
+                        <con:name>quest_id</con:name>
+                        <con:value />
+                        <con:style>QUERY</con:style>
+                        <con:default />
+                    </con:parameter>
+                </con:parameters>
+                <con:method name="POST" method="POST">
+                    <con:settings />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>token</con:name>
+                            <con:value />
+                            <con:style>QUERY</con:style>
+                            <con:default />
+                        </con:parameter>
+                        <con:parameter>
+                            <con:name>player_id</con:name>
+                            <con:value>${#Project#cl_player_id1}</con:value>
+                            <con:style>QUERY</con:style>
+                            <con:default>${#Project#cl_player_id1}</con:default>
+                        </con:parameter>
+                    </con:parameters>
+                    <con:request name="Request 1" mediaType="application/json" postQueryString="false">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters />
+                        <con:parameterOrder>
+                            <con:entry>token</con:entry>
+                            <con:entry>player_id</con:entry>
+                            <con:entry>quest_id</con:entry>
+                        </con:parameterOrder>
+                    </con:request>
+                </con:method>
+            </con:resource>
+            <con:resource name="cancel" path="/${quest_id}/cancel">
+                <con:settings />
+                <con:parameters>
+                    <con:parameter required="true">
+                        <con:name>quest_id</con:name>
+                        <con:value />
+                        <con:style>QUERY</con:style>
+                        <con:default />
+                    </con:parameter>
+                </con:parameters>
+                <con:method name="POST" method="POST">
+                    <con:settings />
+                    <con:parameters>
+                        <con:parameter required="true">
+                            <con:name>token</con:name>
+                            <con:value />
+                            <con:style>QUERY</con:style>
+                            <con:default />
+                        </con:parameter>
+                        <con:parameter>
+                            <con:name>player_id</con:name>
+                            <con:value>${#Project#cl_player_id1}</con:value>
+                            <con:style>QUERY</con:style>
+                            <con:default>${#Project#cl_player_id1}</con:default>
+                        </con:parameter>
+                    </con:parameters>
+                    <con:request name="Request 1" mediaType="application/json" postQueryString="false">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters />
+                        <con:parameterOrder>
+                            <con:entry>token</con:entry>
+                            <con:entry>player_id</con:entry>
+                        </con:parameterOrder>
+                    </con:request>
+                </con:method>
+            </con:resource>
+            <con:method name="GET" method="GET">
+                <con:settings />
+                <con:parameters>
+                    <con:parameter required="true">
+                        <con:name>api_key</con:name>
+                        <con:value>${#Project#api_key}</con:value>
+                        <con:style>QUERY</con:style>
+                        <con:default>${#Project#api_key}</con:default>
+                    </con:parameter>
+                </con:parameters>
+                <con:request name="Request 1" mediaType="application/json">
+                    <con:settings>
+                        <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                    </con:settings>
+                    <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                    <con:request />
+                    <con:credentials>
+                        <con:authType>Global HTTP Settings</con:authType>
+                    </con:credentials>
+                    <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                    <con:jmsPropertyConfig />
+                    <con:parameters />
                 </con:request>
             </con:method>
         </con:resource>
@@ -2459,13 +2765,13 @@
                         <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Badges';
                             //ns1:Response/ns1:response/ns1:badges/ns1:e[1]/ns1:badge_id</con:sourcePath>
                         <con:targetType>badge_id</con:targetType>
-                        <con:targetStep>#Project#</con:targetStep>
+                        <con:targetStep>GET /Badge/:badge_id - Info about badge=:badge_id</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
             <con:testStep type="restrequest" name="GET /Badge/:badge_id - Info about badge=:badge_id">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Badge/${#Project#badge_id}" methodName="GET" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Badge/${badge_id}" methodName="GET" xsi:type="con:RestRequestStep">
                     <con:restRequest name="GET /Badge/:badge_id - Info about badge=:badge_id" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
@@ -2474,7 +2780,7 @@
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='${#Project#service_endpoint}/Badge/${#Project#badge_id}';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Badge/${badge_id}';
                                     //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
@@ -2546,7 +2852,7 @@
                         <con:name>goods_id</con:name>
                         <con:type>XPATH</con:type>
                         <con:expression>declare namespace ns1='${#Project#service_endpoint}/Goods';
-                            not(exists(//ns1:Response/ns1:response/ns1:goods/ns1:e[1]/ns1:goods_id))</con:expression>
+                            not(exists(//ns1:Response/ns1:response/ns1:goods_list/ns1:e[1]/ns1:goods_id))</con:expression>
                         <con:targetStep>Goto End</con:targetStep>
                     </con:condition>
                 </con:config>
@@ -2561,13 +2867,13 @@
                         <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Goods';
                             //ns1:Response/ns1:response/ns1:goods/ns1:e[1]/ns1:goods_id</con:sourcePath>
                         <con:targetType>goods_id</con:targetType>
-                        <con:targetStep>#Project#</con:targetStep>
+                        <con:targetStep>GET /Goods/:goods_id - Info about goods=:goods_id</con:targetStep>
                     </con:transfers>
                 </con:config>
             </con:testStep>
             <con:testStep type="restrequest" name="GET /Goods/:goods_id - Info about goods=:goods_id">
                 <con:settings />
-                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Goods/${#Project#goods_id}" methodName="GET" xsi:type="con:RestRequestStep">
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Goods/${goods_id}" methodName="GET" xsi:type="con:RestRequestStep">
                     <con:restRequest name="GET /Goods/:goods_id - Info about goods=:goods_id" mediaType="application/json">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
@@ -2576,7 +2882,7 @@
                         <con:request />
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
-                                <path>declare namespace ns1='${#Project#service_endpoint}/Goods/${#Project#goods_id}';
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Goods/${goods_id}';
                                     //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
@@ -3603,6 +3909,576 @@
             </con:testStep>
             <con:properties />
         </con:testCase>
+        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase - quest" searchProperties="true">
+            <con:settings />
+            <con:testStep type="restrequest" name="POST /Auth - Get token">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="POST" resourcePath="/Auth" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Auth - Get token" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="api_secret" value="${#Project#api_secret}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest - List info of all quests">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest - List info of all quests" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest';
+//ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="goto" name="Conditional Goto">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:GotoStep">
+                    <con:condition>
+                        <con:name>quest_id</con:name>
+                        <con:type>XPATH</con:type>
+                        <con:expression>declare namespace ns1='${#Project#service_endpoint}/Quest';
+not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:expression>
+                        <con:targetStep>Goto Skip</con:targetStep>
+                    </con:condition>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 1">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>GET /Quest/:quest_id - Info about quest=:quest_id</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/:quest_id - Info about quest=:quest_id">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/${quest_id}" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/:quest_id - Info about quest=:quest_id" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}';
+                                    //ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                        </con:parameters>
+                        <con:parameterOrder>
+                            <con:entry />
+                            <con:entry>api_key</con:entry>
+                        </con:parameterOrder>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 2">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>GET /Quest/:quest_id/mission/:mission_id - Info about mission=:mission_id</con:targetStep>
+                    </con:transfers>
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" useXQuery="false" entitize="false" transferToAll="false" ignoreEmpty="false" transferChildNodes="false">
+                        <con:name>mission_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:missions/ns1:e[1]/ns1:mission_id</con:sourcePath>
+                        <con:targetType>mission_id</con:targetType>
+                        <con:targetStep>GET /Quest/:quest_id/mission/:mission_id - Info about mission=:mission_id</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/:quest_id/mission/:mission_id - Info about mission=:mission_id">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/${quest_id}/mission/${mission_id}" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/:quest_id/mission/:mission_id - Info about mission=:mission_id" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/mission/${mission_id}';
+//ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/available - List available quests for player">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/available" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/available - List available quests for player" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/available';
+                                    //ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 3">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>GET /Quest/:quest_id/available - Test available :quest_id for player</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/:quest_id/available - Test available :quest_id for player">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/${quest_id}/available" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/:quest_id/available - Test available :quest_id for player" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
+//ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="XPath Match" name="XPath Match 1">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
+//ns1:Response/ns1:response/ns1:event_status</path>
+                                <content>true</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 4">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>token</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>POST /Auth - Get token</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
+                            //ns1:Response/ns1:response/ns1:token</con:sourcePath>
+                        <con:targetType>token</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/join - Player join quest=:quest_id</con:targetStep>
+                    </con:transfers>
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/join - Player join quest=:quest_id</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="POST /Quest/:quest_id/join - Player join quest=:quest_id">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="POST" resourcePath="/Quest/${quest_id}/join" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Quest/:quest_id/join - Player join quest=:quest_id" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/join';
+                                    //ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 5">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>token</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>POST /Auth - Get token</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
+                            //ns1:Response/ns1:response/ns1:token</con:sourcePath>
+                        <con:targetType>token</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/join - Player join quest=:quest_id again</con:targetStep>
+                    </con:transfers>
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/join - Player join quest=:quest_id again</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="POST /Quest/:quest_id/join - Player join quest=:quest_id again">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="POST" resourcePath="/Quest/${quest_id}/join" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Quest/:quest_id/join - Player join quest=:quest_id again" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/join';
+                                    //ns1:Response/ns1:success</path>
+                                <content>false</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 6">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>token</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>POST /Auth - Get token</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
+                            //ns1:Response/ns1:response/ns1:token</con:sourcePath>
+                        <con:targetType>token</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id</con:targetStep>
+                    </con:transfers>
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="POST" resourcePath="/Quest/${quest_id}/cancel" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/cancel';
+                                    //ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 7">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>token</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>POST /Auth - Get token</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
+                            //ns1:Response/ns1:response/ns1:token</con:sourcePath>
+                        <con:targetType>token</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id again</con:targetStep>
+                    </con:transfers>
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id again</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id again">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="POST" resourcePath="/Quest/${quest_id}/cancel" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /Quest/:quest_id/cancel - Player unjoin quest=:quest_id again" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/cancel';
+                                    //ns1:Response/ns1:success</path>
+                                <content>false</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="delay" name="Goto Skip">
+                <con:settings />
+                <con:config>
+                    <delay>1</delay>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/available - List available quests for player">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/available" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/available - List available quests for player" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/available';
+                                    //ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 8">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>quest_id</con:name>
+                        <con:sourceType>quest_id_not_for_cl_player_id1</con:sourceType>
+                        <con:sourceStep>#Project#</con:sourceStep>
+                        <con:sourcePath />
+                        <con:targetType>quest_id</con:targetType>
+                        <con:targetStep>GET /Quest/:quest_id/available - Test unavailable :quest_id for player</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="GET /Quest/:quest_id/available - Test unavailable :quest_id for player">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/${quest_id}/available" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="GET /Quest/:quest_id/available - Test unavailable :quest_id for player" mediaType="application/json">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
+//ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="XPath Match" name="XPath Match 1">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
+//ns1:Response/ns1:response/ns1:event_status</path>
+                                <content>false</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters>
+                            <con:entry key="api_key" value="${#Project#api_key}" />
+                            <con:entry key="player_id" value="${#Project#cl_player_id1}" />
+                            <con:entry key="quest_id" value="X" />
+                        </con:parameters>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
+            <con:properties />
+        </con:testCase>
         <con:properties />
     </con:testSuite>
     <con:properties>
@@ -3629,14 +4505,6 @@
         <con:property>
             <con:name>error_code_not_exist</con:name>
             <con:value>0200</con:value>
-        </con:property>
-        <con:property>
-            <con:name>badge_id</con:name>
-            <con:value>52ea1ea78d8c89401c000046</con:value>
-        </con:property>
-        <con:property>
-            <con:name>goods_id</con:name>
-            <con:value />
         </con:property>
         <con:property>
             <con:name>offset</con:name>
@@ -3677,6 +4545,10 @@
         <con:property>
             <con:name>action1_url</con:name>
             <con:value>demo_like</con:value>
+        </con:property>
+        <con:property>
+            <con:name>quest_id_not_for_cl_player_id1</con:name>
+            <con:value>X</con:value>
         </con:property>
     </con:properties>
     <con:wssContainer />

@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require_once APPPATH . '/libraries/REST_Controller.php';
-class Reward extends REST_Controller
+require_once APPPATH . '/libraries/REST2_Controller.php';
+class Reward extends REST2_Controller
 {
 	public function __construct()
 	{
@@ -14,19 +14,8 @@ class Reward extends REST_Controller
 	}
 	public function index_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$reward = array();
-		foreach ($this->reward_model->listRewards($validToken) as $key => $value) {
+		foreach ($this->reward_model->listRewards($this->validToken) as $key => $value) {
 			array_push($reward, $value['name']);
 		}
 		array_push($reward, 'level');
@@ -34,20 +23,9 @@ class Reward extends REST_Controller
 	}
 	public function pointLog_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->reward_model->rewardLog($validToken, 'point', $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->reward_model->rewardLog($this->validToken, 'point', $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
@@ -63,20 +41,9 @@ class Reward extends REST_Controller
 	}
 	public function expLog_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->reward_model->rewardLog($validToken, 'exp', $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->reward_model->rewardLog($this->validToken, 'exp', $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
@@ -92,22 +59,11 @@ class Reward extends REST_Controller
 	}
 	public function badgeLog_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->badge_model->getAllBadges($validToken) as $key => $v) {
+		foreach ($this->badge_model->getAllBadges($this->validToken) as $key => $v) {
 			$badge_id = $v['badge_id'];
-			foreach ($this->reward_model->badgeLog($validToken, $badge_id, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			foreach ($this->reward_model->badgeLog($this->validToken, $badge_id, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 				$key = $value['_id'];
 				if ($prev) {
 					$d = $prev;
@@ -136,20 +92,9 @@ class Reward extends REST_Controller
 	}
 	public function levelLog_get()
 	{
-		/* GET */
-		$required = $this->input->checkParam(array(
-			'api_key'
-		));
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-		$validToken = $this->auth_model->createTokenFromAPIKey($this->input->get('api_key'));
-		if(!$validToken)
-			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET'), 200);
-		$site_id = $validToken['site_id'];
-		/* main */
 		$log = array();
 		$prev = null;
-		foreach ($this->reward_model->levelupLog($validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->reward_model->levelupLog($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
