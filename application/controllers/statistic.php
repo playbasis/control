@@ -149,6 +149,7 @@ class Statistic extends CI_Controller
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
+        $this->load->model('Reward_model');
 
         if ($this->input->get('filter_page')) {
             $page = $this->input->get('filter_page');
@@ -163,6 +164,9 @@ class Statistic extends CI_Controller
         } else {
             $data['filter_name'] = null;
         }
+
+        $reward = $this->Reward_model->getRewardByName('point');
+        $reward_id = ($reward ? $reward[0]['_id'] : null);
 
         $iso_data = $this->Player_model->getIsotopePlayer($data);
 
@@ -181,16 +185,16 @@ class Statistic extends CI_Controller
         $players = array();
 
         if ($results) {
+            $action_data = array();
             foreach ($results as $result) {
 
-                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']);
+                $player_action = $this->Player_model->getActionsByPlayerId($result['_id'], $action_data);
 
                 $data_player = array('pb_player_id' => $result['_id']);
                 $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
 
                 $badges = array();
                 if ($player_badge) {
-
                     foreach ($player_badge as $badge) {
 
                         $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
@@ -224,7 +228,6 @@ class Statistic extends CI_Controller
                             $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
                         }
 
-
                         $badges[] = array(
                             'badge_id' => $badge['badge_id'],
                             'name' => $badge_info['name'],
@@ -236,10 +239,9 @@ class Statistic extends CI_Controller
                     }
                 }
 
-                $point = $this->Player_model->getPlayerPoint($data_player);
+                $point = $this->Player_model->getPlayerPoint($data_player, $reward_id);
 
                 $players[] = array(
-//                    'pb_player_id' => $result['_id']['pb_player_id'],
                     'pb_player_id' => $result['_id']."",
                     'firstname' => $result['first_name'],
                     'lastname' => $result['last_name'],
@@ -253,13 +255,10 @@ class Statistic extends CI_Controller
                     'gender' => $result['gender'],
                     'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_added']))),
                     'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_modified']))),
-//                    'action' => $actions,
                     'action' => $player_action,
                     'badges' => $badges
                 );
-
             }
-            $this->benchmark->mark('isotope_loop_end');
         }
 
         $this->data['players'] = $players;
