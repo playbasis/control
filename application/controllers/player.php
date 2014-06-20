@@ -671,6 +671,20 @@ class Player extends REST2_Controller
         $leaderboards = $this->player_model->getLeaderboards($limit, $this->validToken['client_id'], $this->validToken['site_id']);
         $this->response($this->resp->setRespond($leaderboards), 200);
     }
+    public function rankuser_get($player_id = '', $ranked_by = ''){
+    	if($player_id == '' || $ranked_by == ''){
+    		$this->response($this->error->setError('PARAMETER_MISSING', array(
+    		    'ranked_by','player_id'
+    		)), 200);
+    	}else{
+    		$player = $this->player_model->getUserRanking($ranked_by, $player_id, $this->validToken['client_id'], $this->validToken['site_id']);
+    		if(!empty($player)){
+    			$this->response($this->resp->setRespond($player), 200);	
+    		}else{
+    			$this->response($this->error->setError('USER_OR_REWARD_NOT_EXIST'), 200);
+    		}
+    	}
+    }
     public function level_get($level='')
     {
         if(!$level)
