@@ -149,6 +149,12 @@ $route['Quest/available'] = 'quest/available';
 $route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 
+//email API
+$route['Email/send'] = 'email/send';
+$route['Email/isBlackList'] = 'email/isBlackList';
+$route['Email/addBlackList'] = 'email/addBlackList';
+$route['Email/removeBlackList'] = 'email/removeBlackList';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';
