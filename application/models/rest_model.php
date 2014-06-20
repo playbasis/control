@@ -14,7 +14,7 @@ class Rest_model extends MY_Model
 		$this->set_site_mongodb($data['site_id']);
 		$data['date_added'] = $mongoDate;
 		$data['date_modified'] = $mongoDate;
-		return $this->mongo_db->insert('playbasis_web_service_log', $data);
+		return $this->mongo_db->insert('playbasis_web_service_log', $data, array("w" => 0, "j" => false));
 	}
 
 	public function logResponse($id, $site_id, $data)
@@ -25,7 +25,7 @@ class Rest_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
 		$this->mongo_db->set($data);
-		return $this->mongo_db->update('playbasis_web_service_log');
+		return $this->mongo_db->update('playbasis_web_service_log', array("w" => 0, "j" => false));
 	}
 }
 ?>
