@@ -13,7 +13,7 @@ class Rest_model extends MY_Model
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($data['site_id']);
 		$data['date_added'] = $mongoDate;
-		$data['date_modified'] = $mongoDate;
+		$data['date_modified'] = null;
 		return $this->mongo_db->insert('playbasis_web_service_log', $data, array("w" => 0, "j" => false));
 	}
 
