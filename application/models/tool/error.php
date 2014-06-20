@@ -122,6 +122,10 @@ class Error extends CI_Model
             $errorData["message"] = "Quest not found";
             $errorData["error_code"] = "0705";
             break;
+        case "USER_OR_REWARD_NOT_EXIST":
+            $errorData["message"] = "The user or reward type does not exist";
+            $errorData["error_code"] = "5555";
+            break;   
 		default:
 			$errorData['message'] = "Unknow";
 			$errorData['error_code'] = '9999';
