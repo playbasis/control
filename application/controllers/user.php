@@ -816,5 +816,12 @@ class User extends MY_Controller
         }
     }
 
+    public function checksession(){
+        if($this->session->userdata('user_id')){
+            echo json_encode(array("status" => "login"));
+        }else{
+            echo json_encode(array("status" => "logout"));
+        }
+    }
 
 }

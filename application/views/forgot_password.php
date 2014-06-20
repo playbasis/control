@@ -41,10 +41,10 @@
 					</table>
 				</div>
 					
-					<p style="float:left"><a href="<?php echo base_url();?>" id="cancel">Cancel</a>
+					<p style="float:left"><a href="<?php echo base_url();?>" class="btn-not-login" id="cancel">Cancel</a>
 
 				
-				<p style="float:right"><a onclick="$('#form').submit();" class="button" id="submit">Submit</a></p>
+				<p style="float:right"><a onclick="$('#form').submit();" class="button btn-not-login" id="submit">Submit</a></p>
 
 				
 			<?php echo form_close();?>

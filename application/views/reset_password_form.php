@@ -35,7 +35,9 @@
 					<p style="float:left"><a href="<?php echo base_url();?>" id="cancel">Cancel</a>
 
 				
-				<p style="float:right"><a onclick="$('#form').submit();" class="button" id="submit">Change Password</a></p>
+				<p style="float:right">
+                    <a onclick="$('#form').submit();" class="button btn-not-login" id="submit">Change Password</a>
+                </p>
 
 				
 			<?php echo form_close();?>

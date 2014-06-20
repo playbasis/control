@@ -54,9 +54,9 @@
                             
                             <br/>
                             <?php
-                            echo anchor('register', $this->lang->line('text_register'));
+                            echo anchor('register', $this->lang->line('text_register'), array('class' => 'btn-not-login'));
                             echo "<br/>";
-                            echo anchor('forgot_password', $this->lang->line('text_forgot_password'));
+                            echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login'));
                             ?>
                         </td>
                     </tr>
@@ -65,7 +65,7 @@
                     </tr>
                     <tr>
                         <td style="text-align: right;">
-                            <a onclick="$('#form').submit();" class="button"><?php echo $this->lang->line('button_login'); ?></a>
+                            <a onclick="$('#form').submit();" class="button btn-not-login"><?php echo $this->lang->line('button_login'); ?></a>
                         </td>
                     </tr>
                 </table>

@@ -96,7 +96,7 @@
 								<br/>
 								<div class="input-append">
 									<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
-									<button class="btn" type="button" onclick="javascript:Recaptcha.reload()"><span class="icon-refresh"></span></button>
+									<button class="btn btn-not-login" type="button" onclick="javascript:Recaptcha.reload()"><span class="icon-refresh"></span></button>
 <!-- 									<button class="btn" type="button" onclick="javascript:Recaptcha.switch_type('audio')"><span class="icon-volume-up"></span></button>
 									<button class="btn" type="button" onclick="javascript:Recaptcha.switch_type('image')"><span class="icon-font"></span></button> -->
 								</div>
@@ -123,12 +123,12 @@
 						</tr>
 					</table>
 				</div>
-					<p style="float:left"><a href="<?php echo base_url();?>" id="cancel">Cancel</a>
-
-				
-				<p style="float:right"><a onclick="$('#form').submit();" class="button" id="submit">Register</a></p>
-
-				
+					<p style="float:left">
+                        <a href="<?php echo base_url();?>" class="btn-not-login" id="cancel">Cancel</a>
+                    </p>
+                    <p style="float:right">
+                        <a onclick="$('#form').submit();" class="button btn-not-login" id="submit">Register</a>
+                    </p>
 			<?php echo form_close();?>
 		</div><!-- .content-->
 	</div><!-- .box -->
