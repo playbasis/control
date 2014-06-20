@@ -28,7 +28,7 @@ class FileManager extends MY_Controller
 
         $this->data['directory'] = S3_IMAGE . 'data/';
 
-        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
 
         if ($this->input->get('field')) {
             $this->data['field'] = $this->input->get('field');

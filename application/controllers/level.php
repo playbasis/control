@@ -325,21 +325,34 @@ class Level extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
+            $this->Image_model->resize($this->input->post('image'), 40, 40);
+            $this->Image_model->resize($this->input->post('image'), 50, 50);
+            $this->Image_model->resize($this->input->post('image'), 100, 100);
+            $this->Image_model->resize($this->input->post('image'), 140, 140);
         } elseif (!empty($level_info)) {
             $this->data['image'] = $level_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
+        if ($this->data['image']){
+            $info = pathinfo($this->data['image']);
+            $extension = $info['extension'];
+            $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+            $this->data['thumb'] = S3_IMAGE.$new_image;
+        }else{
+            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        }
+
+        /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
         } elseif (!empty($level_info) && $level_info['image'] && (S3_IMAGE . $level_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $level_info['image'] != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($level_info['image'], 100, 100);
         } else {
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
+        }*/
 
-        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
 
         if ($this->input->post('level_title')) {
             $this->data['level_title'] = $this->input->post('level_title');

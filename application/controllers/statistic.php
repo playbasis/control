@@ -182,38 +182,48 @@ class Statistic extends CI_Controller
 
         if ($results) {
             foreach ($results as $result) {
-//                $actions = array();
 
-//                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']['pb_player_id']);
                 $player_action = $this->Player_model->getActionsByPlayerId($result['_id']);
-//                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
 
-                /*if ($player_action) {
-                    foreach ($player_action as $action) {
-                        $actions[] = array(
-                            'action_id' => $action['action_id'],
-                            'name' => $action['name'],
-                            'value' => $action['total'],
-                            'icon' => $action['icon']
-                        );
-                    }
-                }*/
-
-//                $data_player = array('pb_player_id' => $result['_id']['pb_player_id']);
                 $data_player = array('pb_player_id' => $result['_id']);
                 $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
 
                 $badges = array();
                 if ($player_badge) {
+
                     foreach ($player_badge as $badge) {
 
                         $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
 
-                        if ($badge_info && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $thumb = $this->Image_model->resize($badge_info['image'], 40, 40);
+                        /*if ($badge_info){
+                            $info = pathinfo($badge_info['image']);
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-40x40.'.$extension;
+
+                            $headers = get_headers(S3_IMAGE.$new_image, 1);
+                            if($headers[0] != 'HTTP/1.1 404 Not Found' && $headers[0] != 'HTTP/1.0 403 Forbidden'){
+                                $thumb = $new_image;
+                            }else{
+                                $headers = get_headers(S3_IMAGE.$badge_info['image'], 1);
+                                if($headers[0] != 'HTTP/1.1 404 Not Found' && $headers[0] != 'HTTP/1.0 403 Forbidden') {
+                                    $thumb = $this->Image_model->resize($badge_info['image'], 40, 40);
+                                }else{
+                                    $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                                }
+                            }
                         } else {
-                            $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
+                            $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                        }*/
+
+                        if ($badge_info && isset($badge_info['image'])){
+                            $info = pathinfo($badge_info['image']);
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-40x40.'.$extension;
+                            $thumb = S3_IMAGE.$new_image;
+                        }else{
+                            $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
                         }
+
 
                         $badges[] = array(
                             'badge_id' => $badge['badge_id'],
@@ -249,6 +259,7 @@ class Statistic extends CI_Controller
                 );
 
             }
+            $this->benchmark->mark('isotope_loop_end');
         }
 
         $this->data['players'] = $players;

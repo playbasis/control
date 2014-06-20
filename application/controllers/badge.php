@@ -260,11 +260,40 @@ class Badge extends MY_Controller
 
             foreach ($results as $result) {
 
-                if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
+                /*if ($result['image']){
+                    $info = pathinfo($result['image']);
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+
+                    $headers = get_headers(S3_IMAGE.$new_image, 1);
+                    if($headers[0] != 'HTTP/1.1 404 Not Found' && $headers[0] != 'HTTP/1.0 403 Forbidden'){
+                        $image = $new_image;
+                    }else{
+                        $headers = get_headers(S3_IMAGE.$result['image'], 1);
+                        if($headers[0] != 'HTTP/1.1 404 Not Found' && $headers[0] != 'HTTP/1.0 403 Forbidden') {
+                            $image = $this->Image_model->resize($result['image'], 50, 50);
+                        }else{
+                            $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                        }
+                    }
+                } else {
+                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                }*/
+                /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($result['image'], 50, 50);
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
+                }*/
+
+                if ($result['image']){
+                    $info = pathinfo($result['image']);
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                    $image = $new_image;
+                }else{
+                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
                 }
+
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
@@ -295,7 +324,7 @@ class Badge extends MY_Controller
                 $slot_total = $reward_limit_data['limit'] - $badge_total;
 
                 $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+                $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
 
                 foreach ($badges as $badge) {
 
@@ -303,12 +332,20 @@ class Badge extends MY_Controller
 
                     if($badge_info){
 
-                        if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                        if ($badge_info['image']){
+                            $info = pathinfo($badge_info['image']);
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
+                            $image = $new_image;
+                        }else{
+                            $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                        }
+
+                        /*if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
                             $image = $this->Image_model->resize($badge_info['image'], 50, 50);
-                        }
-                        else {
+                        }else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                        }
+                        }*/
                         
                         if(!$badge_info['deleted']){
                             $this->data['badges'][] = array(
@@ -405,11 +442,20 @@ class Badge extends MY_Controller
 
             foreach ($results as $result) {
 
-                if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
+                if ($result['image']){
+                    $info = pathinfo($result['image']);
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                    $image = $new_image;
+                }else{
+                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                }
+
+                /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($result['image'], 50, 50);
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }
+                }*/
                 $badgeIsPublic = $this->checkBadgeIsPublic($result['_id']);
                 $this->data['badges'][] = array(
                     'badge_id' => $result['_id'],
@@ -442,7 +488,7 @@ class Badge extends MY_Controller
                 $slot_total = $reward_limit_data['limit'] - $badge_total;
 
                 $this->data['slots'] = $slot_total;
-                $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+                $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
 
                 foreach ($badges as $badge) {
 
@@ -450,12 +496,21 @@ class Badge extends MY_Controller
 
                     if($badge_info){
 
-                        if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
+                        if ($badge_info['image']){
+                            $info = pathinfo($badge_info['image']);
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
+                            $image = $new_image;
+                        }else{
+                            $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                        }
+
+                        /*if ($badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
                             $image = $this->Image_model->resize($badge_info['image'], 50, 50);
                         }
                         else {
                             $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                        }
+                        }*/
 
                         if(!$badge_info['deleted']){
                             $this->data['badges'][] = array(
@@ -547,21 +602,34 @@ class Badge extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
+            $this->Image_model->resize($this->input->post('image'), 40, 40);
+            $this->Image_model->resize($this->input->post('image'), 50, 50);
+            $this->Image_model->resize($this->input->post('image'), 100, 100);
+            $this->Image_model->resize($this->input->post('image'), 140, 140);
         } elseif (!empty($badge_info)) {
             $this->data['image'] = $badge_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
+        if ($this->data['image']){
+            $info = pathinfo($this->data['image']);
+            $extension = $info['extension'];
+            $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+            $this->data['thumb'] = S3_IMAGE.$new_image;
+        }else{
+            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        }
+
+        /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
         } elseif (!empty($badge_info) && $badge_info['image'] && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($badge_info['image'], 100, 100);
         } else {
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
+        }*/
 
-        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
 
         if ($this->input->post('sort_order')) {
             $this->data['sort_order'] = $this->input->post('sort_order');

@@ -223,12 +223,21 @@ class Client extends MY_Controller
                 $data_client = array("client_id" => $result['_id'], 'site_id'=>$site_id);
                 $domain_total = $this->Domain_model->getTotalDomainsByClientId($data_client);
 
-                if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
+                if (isset($result['image'])){
+                    $info = pathinfo($result['image']);
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-140x140.'.$extension;
+                    $image = S3_IMAGE.$new_image;
+                }else{
+                    $image = S3_IMAGE."cache/no_image-140x140.jpg";
+                }
+
+                /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($result['image'], 140, 140);
                 }
                 else {
                     $image = $this->Image_model->resize('no_image.jpg', 140, 140);
-                }
+                }*/
 
                 $this->data['clients'][] = array(
                     'client_id' => $result['_id'],
@@ -354,21 +363,34 @@ class Client extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
+            $this->Image_model->resize($this->input->post('image'), 40, 40);
+            $this->Image_model->resize($this->input->post('image'), 50, 50);
+            $this->Image_model->resize($this->input->post('image'), 100, 100);
+            $this->Image_model->resize($this->input->post('image'), 140, 140);
         } elseif (!empty($client_info)) {
             $this->data['image'] = $client_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
+        if ($this->data['image']){
+            $info = pathinfo($this->data['image']);
+            $extension = $info['extension'];
+            $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+            $this->data['thumb'] = S3_IMAGE.$new_image;
+        }else{
+            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        }
+
+        /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
         } elseif (!empty($client_info) && $client_info['image'] && (S3_IMAGE . $client_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $client_info['image'] != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($client_info['image'], 100, 100);
         } else {
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
+        }*/
 
-        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');

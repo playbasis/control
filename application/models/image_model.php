@@ -12,19 +12,25 @@ class Image_model extends MY_Model
             $filecopy = str_replace("\\","/",$filename);
         }
 
-        if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
-            if(@fopen(S3_IMAGE . $filename,"r")){
-                @copy(S3_IMAGE . $filename, DIR_IMAGE . $filecopy);
-            }else{
-                return;
-            }
-        }
-
         $info = pathinfo($filename);
         $extension = $info['extension'];
 
         $old_image = $filename;
         $new_image = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
+
+        $headers = get_headers(S3_IMAGE.$new_image, 1);
+
+        if($headers != 'HTTP/1.1 404 Not Found' && $headers != 'HTTP/1.0 403 Forbidden'){
+            return S3_IMAGE.$new_image;
+        }
+
+        if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
+            if(@fopen(S3_IMAGE . $filename,"r")){
+                @copy(S3_IMAGE . $filename, DIR_IMAGE . $filecopy);
+            }else{
+                return S3_IMAGE."cache/no_image-".$width.'x'.$height.".jpg";
+            }
+        }
 
         if (!file_exists(DIR_IMAGE . $new_image) || (filemtime(DIR_IMAGE . $old_image) > filemtime(DIR_IMAGE . $new_image))) {
             $path = '';

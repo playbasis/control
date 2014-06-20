@@ -56,7 +56,7 @@ class Player extends MY_Controller
             if ($result['image']) {
                 $image = $result['image'];
             } else {
-                $image = $this->Image_model->resize('no_image.jpg', 100, 100);
+                $image = S3_IMAGE."cache/no_image-100x100.jpg";
             }
 
             $this->data['players'][] = array(

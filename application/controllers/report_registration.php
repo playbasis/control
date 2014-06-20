@@ -162,11 +162,16 @@ class Report_registration extends MY_Controller{
         	$goods_name = null;
 
 
-        	if (!empty($result['image']) && $result['image'] && ($result['image'] != 'HTTP/1.1 404 Not Found' && $result['image'] != 'HTTP/1.0 403 Forbidden')) {
+            if (!empty($result['image'])){
+                $thumb = $result['image'];
+            }else{
+                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            }
+        	/*if (!empty($result['image']) && $result['image'] && ($result['image'] != 'HTTP/1.1 404 Not Found' && $result['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $result['image'];
             } else {
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }
+            }*/
 
             $this->data['reports'][] = array(
                 'cl_player_id'      => $result['cl_player_id'],
