@@ -14,10 +14,41 @@ class Email extends REST2_Controller
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('email_model');
+		$this->load->model('client_model');
 	}
 
 	public function send_post()
 	{
+        /* check permission */
+        $usage = $this->client_model->getPermissionUsage(
+            $this->client_id,
+            $this->site_id,
+            'notifications',
+            'email');
+        $limit = $this->client_model->getPlanLimitById(
+            $this->site_id,
+            $usage['plan_id'],
+            'notifications',
+            'email'
+        );
+
+        if (!$usage) {
+            $this->response($this->error->setError('INTERNAL_ERROR', array()), 200);
+            return;
+        }
+
+        if ($limit && $usage['value'] >= $limit) {
+            // no permission to use this service
+            $this->response($this->error->setError('ACCESS_DENIED', array()), 200);
+            return;
+        } else {
+            $this->client_model->updatePermission(
+                $this->client_id,
+                $this->site_id,
+                'notifications',
+                'email');
+        }
+
 		/* process parameters */
 		$required = $this->input->checkParam(array('from', 'to', 'subject'));
 		if ($required)
