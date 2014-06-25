@@ -15,6 +15,8 @@
             <a href="#tab-reward"><?php echo $this->lang->line('tab_reward'); ?></a>
             <a href="#tab-jigsaw"><?php echo $this->lang->line('tab_jigsaw'); ?></a>
             <a href="#tab-action"><?php echo $this->lang->line('tab_action'); ?></a>
+            <a href="#tab-notification"><?php echo $this->lang->line('tab_notification'); ?></a>
+            <a href="#tab-requests"><?php echo $this->lang->line('tab_requests'); ?></a>
             <?php if($name!=""){?>
                 <a href="#tab-clients"><?php echo $this->lang->line('tab_clients'); ?></a>
             <?php }?>
@@ -177,20 +179,20 @@
                         <tr>
                             <td class="left"><?php echo ucfirst($reward['name']); ?></td>
                             <td class="left">
-                                <input type="text" 
-                                        name="reward_data[<?php echo $reward['reward_id']; ?>][limit]" 
-                                        value="<?php echo $reward['limit']; ?>" 
-                                        style="width:50px;" 
-                                        class="tooltips" 
-                                        data-placement="left" 
-                                        title="Maximum number of 
-                                        <?php 
-                                            switch ($reward['name']){ 
-                                                case "badge": echo ucfirst($reward['name']).'s'; 
-                                                break; 
-                                                case "exp": echo ucfirst($reward['name']).'s'; 
-                                                break; 
-                                                case "point": echo ucfirst($reward['name']).'s'; 
+                                <input type="text"
+                                        name="reward_data[<?php echo $reward['reward_id']; ?>][limit]"
+                                        value="<?php echo $reward['limit']; ?>"
+                                        style="width:50px;"
+                                        class="tooltips"
+                                        data-placement="left"
+                                        title="Maximum number of
+                                        <?php
+                                            switch ($reward['name']){
+                                                case "badge": echo ucfirst($reward['name']).'s';
+                                                break;
+                                                case "exp": echo ucfirst($reward['name']).'s';
+                                                break;
+                                                case "point": echo ucfirst($reward['name']).'s';
                                                 break;
                                         }?>. if left blank, it is considered unlimited"/>
                                 <input type="hidden" name="reward_data[<?php echo $reward['reward_id']; ?>][reward_id]" value="<?php echo $reward['reward_id']; ?>" />
@@ -202,6 +204,105 @@
                         <td class="center" colspan="2"><?php echo $this->lang->line('text_no_results'); ?></td>
                     </tr>
                         <?php } ?>
+                    <tr>
+                        <td class="center" colspan="2">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab-notification">
+                <table class="list">
+                    <thead>
+                    <tr>
+                        <td class="left"><?php echo $this->lang->line('column_name_notification'); ?></td>
+                        <td class="left" style="width: 150px;"><?php echo $this->lang->line('column_limit'); ?></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($limit_noti) { ?>
+                        <?php foreach ($limit_noti as $key=>$value) { ?>
+                        <tr>
+                            <td class="left"><?php echo strtoupper($key); ?></td>
+                            <td class="left">
+                                <input type="text"
+                                        name="limit_noti[<?php echo $key; ?>][limit]"
+                                        value="<?php echo $value; ?>"
+                                        style="width:50px;"
+                                        class="tooltips"
+                                        data-placement="left"
+                                        title="Maximum number of
+                                        <?php echo strtoupper($key).'s'; ?>. if left blank, it is considered unlimited"/>
+                            </td>
+                        </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                    <tr>
+                        <td class="center" colspan="2"><?php echo $this->lang->line('text_no_results'); ?></td>
+                    </tr>
+                        <?php } ?>
+                    <tr>
+                        <td class="center" colspan="2">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab-requests">
+                <table class="list">
+                    <thead>
+                    <tr>
+                        <td class="left"><?php echo $this->lang->line('column_name_requests'); ?></td>
+                        <td class="left" style="width: 150px;"><?php echo $this->lang->line('column_limit'); ?></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($limit_req): ?>
+                    <?php for ($i=0; $i<=sizeof($limit_req); $i++): ?>
+                        <tr class="form_req">
+                            <td class="left">
+                                <input type="text"
+                                        data-index="<?php echo $i; ?>",
+                                        name="limit_req[<?php echo $i; ?>][field]"
+                                        value="<?php echo isset($limit_req[$i]) ? $limit_req[$i]['field'] : ""; ?>"
+                                        class="tooltips"
+                                        data-placement="left"
+                                        title="URL" />
+                            </td>
+                            <td class="left">
+                                <input type="text"
+                                        data-index="<?php echo $i; ?>",
+                                        name="limit_req[<?php echo $i; ?>][limit]"
+                                        value="<?php echo isset($limit_req[$i]) ? $limit_req[$i]['limit'] : ""; ?>"
+                                        style="width:50px;"
+                                        class="tooltips"
+                                        data-placement="left"
+                                        title="Maximum number of
+                                        <?php echo strtoupper($key).'s'; ?>. if left blank, it is considered unlimited"/>
+                            </td>
+                        </tr>
+                    <?php endfor; ?>
+                    <?php else: ?>
+                        <tr class="form_req">
+                            <td class="left">
+                                <input type="text"
+                                        data-index="0",
+                                        name="limit_req[0][field]"
+                                        value=""
+                                        class="tooltips"
+                                        data-placement="left"
+                                        title="URL" />
+                            </td>
+                            <td class="left">
+                                <input type="text"
+                                        data-index="0",
+                                        name="limit_req[0][limit]"
+                                        value=""
+                                        style="width:50px;"
+                                        class="tooltips"
+                                        data-placement="left"
+                                        title="Maximum number. if left blank, it is considered unlimited"/>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
                     <tr>
                         <td class="center" colspan="2">&nbsp;</td>
                     </tr>
@@ -396,4 +497,19 @@ function image_upload(field, thumb) {
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
 $('#languages a').tabs();
+//--></script>
+//
+<script type="text/javascript"><!--
+    $('table').on('focus', '.form_req:last', function() {
+        var index = parseInt($("input:last", this).data("index")) + 1;
+        $(this).after(
+            "<tr class='form_req'>"+
+            "<td class='left'>"+
+            "<input type='text' data-index='"+index+"'"+
+            "name='limit_req["+index+"][field] value='' class='tooltips' data-placement='left' title='URL' />"+
+            "</td><td class='left'>"+
+            "<input type='text' data-index='"+index+"' "+
+            "name='limit_req["+index+"][limit] value='' style='width:50px;' class='tooltips' data-placement='left' title='Maximum number' /></tr>"
+        );
+    });
 //--></script>

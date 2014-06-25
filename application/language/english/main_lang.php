@@ -246,6 +246,11 @@ $lang['tab_total']               = 'Totals';
 $lang['tab_transaction']         = 'Transactions';
 $lang['tab_voucher']             = 'Vouchers';
 $lang['tab_voucher_history']     = 'Voucher History';
+$lang['tab_notification']        = 'Notifications';
+$lang['tab_email']               = 'Email';
+$lang['tab_requests']            = 'Requests';
+$lang['tab_sms']                 = 'SMS';
+$lang['tab_push']                = 'Push Notification';
 
 // Error
 $lang['error_upload_1']          = 'Warning: The uploaded file exceeds the upload_max_filesize directive in php.ini!';

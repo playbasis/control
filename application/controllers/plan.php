@@ -369,6 +369,33 @@ class Plan extends MY_Controller
             $this->data['reward_data'] = array();
         }
 
+        if ($this->input->post('limit_noti')) {
+            $this->data['limit_noti'] = $this->input->post('limit_noti');
+        } elseif (!empty($plan_info) && isset($plan_info['limit_notifications'])){
+            $this->data['limit_noti'] = $plan_info["limit_notifications"];
+        } else {
+            $this->data['limit_noti'] = array(
+                'sms' => null,
+                'email' => null,
+                'push' => null
+            );
+        }
+
+        if ($this->input->post('limit_req')) {
+            $this->data['limit_req'] = $this->input->post('limit_req');
+        } elseif (!empty($plan_info) && isset($plan_info['limit_requests'])){
+            $limit_req = array();
+            foreach ($plan_info['limit_requests'] as $key=>$value) {
+                $limit_req[] = array(
+                    'field' => $key,
+                    'limit' => $value
+                );
+            }
+            $this->data['limit_req'] = $limit_req;
+        } else {
+            $this->data['limit_req'] = array();
+        }
+
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
