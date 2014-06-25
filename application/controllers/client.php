@@ -225,9 +225,13 @@ class Client extends MY_Controller
 
                 if (isset($result['image'])){
                     $info = pathinfo($result['image']);
-                    $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-140x140.'.$extension;
-                    $image = S3_IMAGE.$new_image;
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-140x140.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-140x140.jpg";
+                    }
                 }else{
                     $image = S3_IMAGE."cache/no_image-140x140.jpg";
                 }
@@ -375,9 +379,13 @@ class Client extends MY_Controller
 
         if ($this->data['image']){
             $info = pathinfo($this->data['image']);
-            $extension = $info['extension'];
-            $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-            $this->data['thumb'] = S3_IMAGE.$new_image;
+            if(isset($info['extension'])){
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+                $this->data['thumb'] = S3_IMAGE.$new_image;
+            }else{
+                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+            }
         }else{
             $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
         }

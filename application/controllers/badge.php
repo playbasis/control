@@ -284,12 +284,15 @@ class Badge extends MY_Controller
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }*/
-
                 if ($result['image']){
                     $info = pathinfo($result['image']);
-                    $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
-                    $image = $new_image;
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
                 }else{
                     $image = S3_IMAGE."cache/no_image-50x50.jpg";
                 }
@@ -334,9 +337,13 @@ class Badge extends MY_Controller
 
                         if ($badge_info['image']){
                             $info = pathinfo($badge_info['image']);
-                            $extension = $info['extension'];
-                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
-                            $image = $new_image;
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
+                                $image = S3_IMAGE.$new_image;
+                            }else{
+                                $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                            }
                         }else{
                             $image = S3_IMAGE."cache/no_image-50x50.jpg";
                         }
@@ -444,9 +451,13 @@ class Badge extends MY_Controller
 
                 if ($result['image']){
                     $info = pathinfo($result['image']);
-                    $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
-                    $image = $new_image;
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
                 }else{
                     $image = S3_IMAGE."cache/no_image-50x50.jpg";
                 }
@@ -498,9 +509,13 @@ class Badge extends MY_Controller
 
                         if ($badge_info['image']){
                             $info = pathinfo($badge_info['image']);
-                            $extension = $info['extension'];
-                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
-                            $image = $new_image;
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-50x50.'.$extension;
+                                $image = S3_IMAGE.$new_image;
+                            }else{
+                                $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                            }
                         }else{
                             $image = S3_IMAGE."cache/no_image-50x50.jpg";
                         }
@@ -614,9 +629,13 @@ class Badge extends MY_Controller
 
         if ($this->data['image']){
             $info = pathinfo($this->data['image']);
-            $extension = $info['extension'];
-            $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-            $this->data['thumb'] = S3_IMAGE.$new_image;
+            if(isset($info['extension'])){
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+                $this->data['thumb'] = S3_IMAGE.$new_image;
+            }elsE{
+                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+            }
         }else{
             $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
         }

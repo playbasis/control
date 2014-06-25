@@ -221,9 +221,13 @@ class Statistic extends CI_Controller
 
                         if ($badge_info && isset($badge_info['image'])){
                             $info = pathinfo($badge_info['image']);
-                            $extension = $info['extension'];
-                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-40x40.'.$extension;
-                            $thumb = S3_IMAGE.$new_image;
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-40x40.'.$extension;
+                                $thumb = S3_IMAGE.$new_image;
+                            }else{
+                                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                            }
                         }else{
                             $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
                         }

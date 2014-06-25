@@ -74,9 +74,13 @@ class Quest extends MY_Controller
             foreach($this->data['quests'] as &$quest){
 //                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
                 $info = pathinfo($quest['image']);
-                $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($quest['image'], 0, utf8_strrpos($quest['image'], '.')).'-100x100.'.$extension;
-                $quest['image'] =  S3_IMAGE.$new_image;
+                if(isset($info['extension'])){
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($quest['image'], 0, utf8_strrpos($quest['image'], '.')).'-100x100.'.$extension;
+                    $quest['image'] =  S3_IMAGE.$new_image;
+                }else{
+                    $quest['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                }
             }
 
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
@@ -286,9 +290,13 @@ class Quest extends MY_Controller
 
         if ($this->data['image']){
             $info = pathinfo($this->data['image']);
-            $extension = $info['extension'];
-            $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-            $this->data['thumb'] = S3_IMAGE.$new_image;
+            if(isset($info['extension'])){
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+                $this->data['thumb'] = S3_IMAGE.$new_image;
+            }else{
+                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+            }
         }else{
             $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
         }
@@ -376,9 +384,13 @@ class Quest extends MY_Controller
 
                         if (isset($condition['condition_data']['image'])){
                             $info = pathinfo($condition['condition_data']['image']);
-                            $extension = $info['extension'];
-                            $new_image = 'cache/' . utf8_substr($condition['condition_data']['image'], 0, utf8_strrpos($condition['condition_data']['image'], '.')).'-100x100.'.$extension;
-                            $this->data['editQuestConditionCon'][$countQuest]['condition_data']['image'] = S3_IMAGE.$new_image;
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($condition['condition_data']['image'], 0, utf8_strrpos($condition['condition_data']['image'], '.')).'-100x100.'.$extension;
+                                $this->data['editQuestConditionCon'][$countQuest]['condition_data']['image'] = S3_IMAGE.$new_image;
+                            }else{
+                                $this->data['editQuestConditionCon'][$countQuest]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                            }
                         }else{
                             $this->data['editQuestConditionCon'][$countQuest]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                         }
@@ -409,9 +421,13 @@ class Quest extends MY_Controller
 
                         if (isset($condition['condition_data']['image'])){
                             $info = pathinfo($condition['condition_data']['image']);
-                            $extension = $info['extension'];
-                            $new_image = 'cache/' . utf8_substr($condition['condition_data']['image'], 0, utf8_strrpos($condition['condition_data']['image'], '.')).'-100x100.'.$extension;
-                            $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = S3_IMAGE.$new_image;
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($condition['condition_data']['image'], 0, utf8_strrpos($condition['condition_data']['image'], '.')).'-100x100.'.$extension;
+                                $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = S3_IMAGE.$new_image;
+                            }else{
+                                $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                            }
                         }else{
                             $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                         }
@@ -454,9 +470,13 @@ class Quest extends MY_Controller
 
                         if (isset($reward['reward_data']['image'])){
                             $info = pathinfo($reward['reward_data']['image']);
-                            $extension = $info['extension'];
-                            $new_image = 'cache/' . utf8_substr($reward['reward_data']['image'], 0, utf8_strrpos($reward['reward_data']['image'], '.')).'-100x100.'.$extension;
-                            $this->data['editBadgeRew'][$countBadges]['reward_data']['image'] = S3_IMAGE.$new_image;
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($reward['reward_data']['image'], 0, utf8_strrpos($reward['reward_data']['image'], '.')).'-100x100.'.$extension;
+                                $this->data['editBadgeRew'][$countBadges]['reward_data']['image'] = S3_IMAGE.$new_image;
+                            }else{
+                                $this->data['editBadgeRew'][$countBadges]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                            }
                         }else{
                             $this->data['editBadgeRew'][$countBadges]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                         }
@@ -483,10 +503,15 @@ class Quest extends MY_Controller
 
                     if (isset($mission['image'])){
                         $info = pathinfo($mission['image']);
-                        $extension = $info['extension'];
-                        $new_image = 'cache/' . utf8_substr($mission['image'], 0, utf8_strrpos($mission['image'], '.')).'-100x100.'.$extension;
-                        $this->data['editMission'][$missionCount]['image'] = S3_IMAGE.$new_image;
-                        $this->data['editMission'][$missionCount]['imagereal'] = $mission['image'];
+                        if(isset($info['extension'])){
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($mission['image'], 0, utf8_strrpos($mission['image'], '.')).'-100x100.'.$extension;
+                            $this->data['editMission'][$missionCount]['image'] = S3_IMAGE.$new_image;
+                            $this->data['editMission'][$missionCount]['imagereal'] = $mission['image'];
+                        }else{
+                            $this->data['editMission'][$missionCount]['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                            $this->data['editMission'][$missionCount]['imagereal'] = S3_IMAGE."no_image.jpg";
+                        }
                     }else{
                         $this->data['editMission'][$missionCount]['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                         $this->data['editMission'][$missionCount]['imagereal'] = S3_IMAGE."no_image.jpg";
@@ -537,9 +562,13 @@ class Quest extends MY_Controller
 
                                 if (isset($mm['completion_data']['image'])){
                                     $info = pathinfo($mm['completion_data']['image']);
-                                    $extension = $info['extension'];
-                                    $new_image = 'cache/' . utf8_substr($mm['completion_data']['image'], 0, utf8_strrpos($mm['completion_data']['image'], '.')).'-100x100.'.$extension;
-                                    $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data']['image'] = S3_IMAGE.$new_image;
+                                    if(isset($info['extension'])){
+                                        $extension = $info['extension'];
+                                        $new_image = 'cache/' . utf8_substr($mm['completion_data']['image'], 0, utf8_strrpos($mm['completion_data']['image'], '.')).'-100x100.'.$extension;
+                                        $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data']['image'] = S3_IMAGE.$new_image;
+                                    }else{
+                                        $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                                    }
                                 }else{
                                     $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                                 }
@@ -585,9 +614,13 @@ class Quest extends MY_Controller
 
                                 if (isset($rr['reward_data']['image'])){
                                     $info = pathinfo($rr['reward_data']['image']);
-                                    $extension = $info['extension'];
-                                    $new_image = 'cache/' . utf8_substr($rr['reward_data']['image'], 0, utf8_strrpos($rr['reward_data']['image'], '.')).'-100x100.'.$extension;
-                                    $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data']['image'] = S3_IMAGE.$new_image;
+                                    if(isset($info['extension'])){
+                                        $extension = $info['extension'];
+                                        $new_image = 'cache/' . utf8_substr($rr['reward_data']['image'], 0, utf8_strrpos($rr['reward_data']['image'], '.')).'-100x100.'.$extension;
+                                        $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data']['image'] = S3_IMAGE.$new_image;
+                                    }else{
+                                        $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                                    }
                                 }else{
                                     $this->data['editMission'][$missionCount]['editBadgeRew'][$countBadge]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                                 }
@@ -714,9 +747,13 @@ class Quest extends MY_Controller
             foreach($this->data['quests'] as &$quest){
 //                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
                 $info = pathinfo($quest['image']);
-                $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($quest['image'], 0, utf8_strrpos($quest['image'], '.')).'-100x100.'.$extension;
-                $quest['image'] = S3_IMAGE.$new_image;
+                if(isset($info['extension'])){
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($quest['image'], 0, utf8_strrpos($quest['image'], '.')).'-100x100.'.$extension;
+                    $quest['image'] = S3_IMAGE.$new_image;
+                }else{
+                    $quest['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                }
             }
 
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);

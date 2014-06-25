@@ -306,9 +306,13 @@ class Goods extends MY_Controller
 
                 if (isset($result['image'])){
                     $info = pathinfo($result['image']);
-                    $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
-                    $image = S3_IMAGE.$new_image;
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
                 }else{
                     $image = S3_IMAGE."cache/no_image-50x50.jpg";
                 }
@@ -343,9 +347,13 @@ class Goods extends MY_Controller
 
                 if (isset($goods['image'])){
                     $info = pathinfo($goods['image']);
-                    $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($goods['image'], 0, utf8_strrpos($goods['image'], '.')).'-50x50.'.$extension;
-                    $image = S3_IMAGE.$new_image;
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($goods['image'], 0, utf8_strrpos($goods['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
                 }else{
                     $image = S3_IMAGE."cache/no_image-50x50.jpg";
                 }
@@ -449,9 +457,13 @@ class Goods extends MY_Controller
 
                 if (isset($result['image'])){
                     $info = pathinfo($result['image']);
-                    $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
-                    $image = S3_IMAGE.$new_image;
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
                 }else{
                     $image = S3_IMAGE."cache/no_image-50x50.jpg";
                 }
@@ -488,9 +500,13 @@ class Goods extends MY_Controller
 
                 if (isset($goods['image'])){
                     $info = pathinfo($goods['image']);
-                    $extension = $info['extension'];
-                    $new_image = 'cache/' . utf8_substr($goods['image'], 0, utf8_strrpos($goods['image'], '.')).'-50x50.'.$extension;
-                    $image = S3_IMAGE.$new_image;
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($goods['image'], 0, utf8_strrpos($goods['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
                 }else{
                     $image = S3_IMAGE."cache/no_image-50x50.jpg";
                 }
@@ -606,9 +622,13 @@ class Goods extends MY_Controller
 
         if ($this->data['image']){
             $info = pathinfo($this->data['image']);
-            $extension = $info['extension'];
-            $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-            $this->data['thumb'] = S3_IMAGE.$new_image;
+            if(isset($info['extension'])){
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+                $this->data['thumb'] = S3_IMAGE.$new_image;
+            }else{
+                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+            }
         }else{
             $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
         }
