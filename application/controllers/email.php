@@ -34,13 +34,11 @@ class Email extends REST2_Controller
 
         if (!$usage) {
             $this->response($this->error->setError('INTERNAL_ERROR', array()), 200);
-            return;
         }
 
         if ($limit && $usage['value'] >= $limit) {
             // no permission to use this service
-            $this->response($this->error->setError('ACCESS_DENIED', array()), 200);
-            return;
+            $this->response($this->error->setError('LIMIT_EXCEED', array()), 200);
         } else {
             $this->client_model->updatePermission(
                 $this->client_id,
