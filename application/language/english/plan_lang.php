@@ -46,6 +46,7 @@ $lang['entry_image']           					= 'Image';
 $lang['entry_sort_order']           			= 'Sort Order';
 $lang['entry_status']           				= 'Status';
 $lang['entry_reward']           				= 'Reward data';
+$lang['entry_limit_num_clients']				= 'Client Limit';
 
 
 // Domain
