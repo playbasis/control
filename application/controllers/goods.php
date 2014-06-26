@@ -304,11 +304,23 @@ class Goods extends MY_Controller
 
             foreach ($results as $result) {
 
-                if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
+                if (isset($result['image'])){
+                    $info = pathinfo($result['image']);
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
+                }else{
+                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                }
+                /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($result['image'], 50, 50);
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }
+                }*/
                 $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
                 $this->data['goods_list'][] = array(
                     'goods_id' => $result['_id'],
@@ -329,16 +341,29 @@ class Goods extends MY_Controller
 
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
-            $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+            $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
 
             foreach ($goods_list as $goods) {
 
-                if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
+                if (isset($goods['image'])){
+                    $info = pathinfo($goods['image']);
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($goods['image'], 0, utf8_strrpos($goods['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
+                }else{
+                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                }
+
+                /*if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($goods['image'], 50, 50);
                 }
                 else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }
+                }*/
 
                 if(!$goods['deleted']){
                     $this->data['goods_list'][] = array(
@@ -430,11 +455,24 @@ class Goods extends MY_Controller
 
             foreach ($results as $result) {
 
-                if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
+                if (isset($result['image'])){
+                    $info = pathinfo($result['image']);
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
+                }else{
+                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                }
+
+                /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($result['image'], 50, 50);
                 } else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }
+                }*/
                 $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
                 $this->data['goods_list'][] = array(
                     'goods_id' => $result['_id'],
@@ -456,16 +494,28 @@ class Goods extends MY_Controller
 
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
 
-            $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 50, 50);
+            $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
 
             foreach ($goods_list as $goods) {
 
-                if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
+                if (isset($goods['image'])){
+                    $info = pathinfo($goods['image']);
+                    if(isset($info['extension'])){
+                        $extension = $info['extension'];
+                        $new_image = 'cache/' . utf8_substr($goods['image'], 0, utf8_strrpos($goods['image'], '.')).'-50x50.'.$extension;
+                        $image = S3_IMAGE.$new_image;
+                    }else{
+                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                    }
+                }else{
+                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
+                }
+                /*if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
                     $image = $this->Image_model->resize($goods['image'], 50, 50);
                 }
                 else {
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }
+                }*/
 
                 if(!$goods['deleted']){
                     $this->data['goods_list'][] = array(
@@ -560,21 +610,38 @@ class Goods extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
+            $this->Image_model->resize($this->input->post('image'), 40, 40);
+            $this->Image_model->resize($this->input->post('image'), 50, 50);
+            $this->Image_model->resize($this->input->post('image'), 100, 100);
+            $this->Image_model->resize($this->input->post('image'), 140, 140);
         } elseif (!empty($goods_info)) {
             $this->data['image'] = $goods_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
+        if ($this->data['image']){
+            $info = pathinfo($this->data['image']);
+            if(isset($info['extension'])){
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+                $this->data['thumb'] = S3_IMAGE.$new_image;
+            }else{
+                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+            }
+        }else{
+            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        }
+
+        /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
         } elseif (!empty($goods_info) && $goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
             $this->data['thumb'] = $this->Image_model->resize($goods_info['image'], 100, 100);
         } else {
             $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }
+        }*/
 
-        $this->data['no_image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
 
         if ($this->input->post('sort_order')) {
             $this->data['sort_order'] = $this->input->post('sort_order');

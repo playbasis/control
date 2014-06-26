@@ -120,5 +120,13 @@ class Reward_model extends MY_Model
 
         return $results;
     }
+
+    public function getRewardByName($name) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('name', $name);
+        return $this->mongo_db->get('playbasis_reward');
+    }
 }
 ?>

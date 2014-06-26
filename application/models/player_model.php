@@ -86,24 +86,12 @@ class Player_model extends MY_Model
         return $player_data;
     }
 
-    public function getPlayerPoint($data){
+    public function getPlayerPoint($data, $reward_id=null){
         $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $reward_filter = "point";
-        if (isset($data['reward_filter'])) {
-            $reward_filter = $data['reward_filter'];
-        }
-
-        $this->mongo_db->select(array('_id'));
-        $this->mongo_db->where('name', $reward_filter);
-        $r =  $this->mongo_db->get('playbasis_reward');
 
         $this->mongo_db->select('value');
         $this->mongo_db->where('pb_player_id', new MongoID($data['pb_player_id']));
-
-        if($r){
-            $this->mongo_db->where('reward_id', new MongoID($r[0]['_id']));
-        }
+        if ($reward_id) $this->mongo_db->where('reward_id', $reward_id);
 
         $point =  $this->mongo_db->get('playbasis_reward_to_player');
 
@@ -1159,9 +1147,10 @@ class Player_model extends MY_Model
             $results = $this->mongo_db->get("playbasis_reward");
             $point_id  = ($results) ? $results[0] : null;
         }
-
+        $this->benchmark->mark('isotope_filter_start');
         $res = $this->filterMongoPlayer($data);
-
+        $this->benchmark->mark('isotope_filter_end');
+        //echo "isotope_filter".$this->benchmark->elapsed_time('isotope_filter_start', 'isotope_filter_end');
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
             $this->mongo_db->where('first_name', $regex);
@@ -1321,30 +1310,36 @@ class Player_model extends MY_Model
         return $results;
     }
 
-    public function getActionsByPlayerId($pb_player_id) {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-//        $this->benchmark->mark('action_start');
-
-
+    public function getActionsByPlayerId($pb_player_id, &$buffer=array()) {
         $this->load->model('Action_model');
 
+        //$this->benchmark->mark('action_start');
+
+        $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('pb_player_id', new MongoID($pb_player_id));
         $action =  $this->mongo_db->get('playbasis_action_log');
 
         $action_data = array();
         foreach ($action as $a) {
-            $action_info = $this->Action_model->getAction($a['action_id']);
-            $action_data[$a['action_id'].""] = array(
-                'action_id' => $a['action_id'],
-                'name' => $a['action_name'],
-                'icon' => $action_info ? $action_info['icon'] : '',
-                'total' => ( isset($action_data[$a['action_id'].""] ) ) ? $action_data[$a['action_id'].""]['total'] + 1 : 1,
-            );
+	        $action_id = $a['action_id']."";
+	        if (!array_key_exists($action_id, $buffer)) {
+		        $action_info = $this->Action_model->getAction($a['action_id']);
+		        $buffer[$action_id] = array(
+			        'action_id' => $a['action_id'],
+			        'name' => $a['action_name'],
+			        'icon' => $action_info ? $action_info['icon'] : '',
+		        );
+	        }
+	        $action_data[$action_id] = $buffer[$action_id];
+	        if (array_key_exists('total', $action_data[$action_id])) {
+		        $action_data[$action_id]['total']++;
+	        } else {
+		        $action_data[$action_id]['total'] = 1;
+	        }
         }
 
-//        $this->benchmark->mark('action_end');
-//
-//        echo "ActionsByPlayerId : ".$this->benchmark->elapsed_time('action_start', 'action_end');
+        //$this->benchmark->mark('action_end');
+        //echo "ActionsByPlayerId : ".$this->benchmark->elapsed_time('action_start', 'action_end');
 
         return $action_data;
     }

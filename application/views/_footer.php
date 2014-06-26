@@ -23,6 +23,18 @@
     </div>
 </div>
 
+<div class="modal hide fade" id="loginModal">
+    <div class="modal-header">
+        <h3>Session Lost</h3>
+    </div>
+    <div class="modal-body">
+        <p>Please login again !!!</p>
+    </div>
+    <div class="modal-footer">
+        <a href="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>login" class="btn btn-primary btn-not-login">go to login</a>
+    </div>
+</div>
+
 <script type="text/javascript" src="./notification/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
 <script type="text/javascript">
     var urlHost = 'https://node.pbapp.net';
@@ -114,6 +126,26 @@
 
         $('#noti-stream').prepend(notification);
 
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $( "a, button, li, span, input").not('.btn-not-login').live("click", function(e) {
+            $.ajax({
+                url: "<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>user/checksession",
+                cache: false,
+                dataType: "json"
+            }).done(function(res) {
+                if(res.status != "login"){
+                    $('.custom_blackdrop').remove();
+                    $('#loginModal').modal({
+                        backdrop: 'static',
+                        keyboard: false}
+                    );
+                    //$('#loginModal').modal('show');
+                }
+            });
+        });
     });
 </script>
 <script>

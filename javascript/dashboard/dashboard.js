@@ -76,7 +76,7 @@ $(function(){
 
   var token = getUrlVars()["token"];
 
-  $.ajax({
+  /*$.ajax({
       url: baseUrlPath+'dashboard/liveFeed',
       data: {
           token: token
@@ -85,7 +85,7 @@ $(function(){
       success: function(data) {
         $("#noti-stream").html(data);
       }
-  });
+  });*/
 });
 
 function circleDay(){

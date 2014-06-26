@@ -144,11 +144,16 @@ class Report_goods extends MY_Controller{
 
         	$player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-        	if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
+            if (!empty($player['image'])){
+                $thumb = $player['image'];
+            }else{
+                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            }
+        	/*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
             } else {
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }
+            }*/
 
             $this->data['reports'][] = array(
                 'cl_player_id'      => $player['cl_player_id'],
@@ -330,11 +335,16 @@ class Report_goods extends MY_Controller{
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
 
-            if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
+            if (!empty($player['image'])){
+                $thumb = $player['image'];
+            }else{
+                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+            }
+            /*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
                 $thumb = $player['image'];
             } else {
                 $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }
+            }*/
 
             if($result['goods_id'] != null){
                 $goods_name = $this->Report_goods_model->getGoodsName($result['goods_id']);

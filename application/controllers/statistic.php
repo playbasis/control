@@ -149,6 +149,7 @@ class Statistic extends CI_Controller
         $this->load->model('Player_model');
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
+        $this->load->model('Reward_model');
 
         if ($this->input->get('filter_page')) {
             $page = $this->input->get('filter_page');
@@ -163,6 +164,9 @@ class Statistic extends CI_Controller
         } else {
             $data['filter_name'] = null;
         }
+
+        $reward = $this->Reward_model->getRewardByName('point');
+        $reward_id = ($reward ? $reward[0]['_id'] : null);
 
         $iso_data = $this->Player_model->getIsotopePlayer($data);
 
@@ -181,25 +185,11 @@ class Statistic extends CI_Controller
         $players = array();
 
         if ($results) {
+            $action_data = array();
             foreach ($results as $result) {
-//                $actions = array();
 
-//                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']['pb_player_id']);
-                $player_action = $this->Player_model->getActionsByPlayerId($result['_id']);
-//                $event_log = $this->Player_model->getEventLog($result['pb_player_id'], 'logout');
+                $player_action = $this->Player_model->getActionsByPlayerId($result['_id'], $action_data);
 
-                /*if ($player_action) {
-                    foreach ($player_action as $action) {
-                        $actions[] = array(
-                            'action_id' => $action['action_id'],
-                            'name' => $action['name'],
-                            'value' => $action['total'],
-                            'icon' => $action['icon']
-                        );
-                    }
-                }*/
-
-//                $data_player = array('pb_player_id' => $result['_id']['pb_player_id']);
                 $data_player = array('pb_player_id' => $result['_id']);
                 $player_badge = $this->Player_model->getBadgeByPlayerId($data_player);
 
@@ -209,10 +199,37 @@ class Statistic extends CI_Controller
 
                         $badge_info = $this->Badge_model->getBadge($badge['badge_id']);
 
-                        if ($badge_info && (S3_IMAGE . $badge_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $badge_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-                            $thumb = $this->Image_model->resize($badge_info['image'], 40, 40);
+                        /*if ($badge_info){
+                            $info = pathinfo($badge_info['image']);
+                            $extension = $info['extension'];
+                            $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-40x40.'.$extension;
+
+                            $headers = get_headers(S3_IMAGE.$new_image, 1);
+                            if($headers[0] != 'HTTP/1.1 404 Not Found' && $headers[0] != 'HTTP/1.0 403 Forbidden'){
+                                $thumb = $new_image;
+                            }else{
+                                $headers = get_headers(S3_IMAGE.$badge_info['image'], 1);
+                                if($headers[0] != 'HTTP/1.1 404 Not Found' && $headers[0] != 'HTTP/1.0 403 Forbidden') {
+                                    $thumb = $this->Image_model->resize($badge_info['image'], 40, 40);
+                                }else{
+                                    $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                                }
+                            }
                         } else {
-                            $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
+                            $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                        }*/
+
+                        if ($badge_info && isset($badge_info['image'])){
+                            $info = pathinfo($badge_info['image']);
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($badge_info['image'], 0, utf8_strrpos($badge_info['image'], '.')).'-40x40.'.$extension;
+                                $thumb = S3_IMAGE.$new_image;
+                            }else{
+                                $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
+                            }
+                        }else{
+                            $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
                         }
 
                         $badges[] = array(
@@ -226,10 +243,9 @@ class Statistic extends CI_Controller
                     }
                 }
 
-                $point = $this->Player_model->getPlayerPoint($data_player);
+                $point = $this->Player_model->getPlayerPoint($data_player, $reward_id);
 
                 $players[] = array(
-//                    'pb_player_id' => $result['_id']['pb_player_id'],
                     'pb_player_id' => $result['_id']."",
                     'firstname' => $result['first_name'],
                     'lastname' => $result['last_name'],
@@ -243,11 +259,9 @@ class Statistic extends CI_Controller
                     'gender' => $result['gender'],
                     'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_added']))),
                     'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($result['date_modified']))),
-//                    'action' => $actions,
                     'action' => $player_action,
                     'badges' => $badges
                 );
-
             }
         }
 
