@@ -62,6 +62,10 @@
                             <?php } ?>
                         </select></td>
                     </tr>
+                    <tr>
+                        <td><?php echo $this->lang->line('entry_limit_num_clients') ?></td>
+                        <td><input type="text" data-placement="right" class="tooltips" title='Number of clients that can subscribe to this plan. If left blank means unlimited number of clients.' name="limit_num_client" value = "<?php echo $limit_num_client; ?>"/></td>
+                    </tr>
                 </table>
             </div>
             <div id="tab-feature">
