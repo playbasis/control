@@ -60,6 +60,36 @@ class Plan_model extends MY_Model
         return $plans;
     }
 
+    public function getAvailablePlans(){
+        $this->set_site_mongodb($this->session->userdata('site_id'));        
+        $plans = $this->mongo_db->get("playbasis_plan");
+
+        foreach($plans as $key => $plan){
+            $planId = $plan['_id'];
+            $count = 1;
+            $this->mongo_db->where('plan_id', new MongoId($planId));
+            $permissions = $this->mongo_db->get('playbasis_permission');
+            $planLimit = !empty($plan['limit_num_client'])?$plan['limit_num_client']:null;
+            if(!empty($planLimit)){
+                foreach ($permissions as $permission) {
+                    $clientId = $permission['client_id'];
+                    $this->mongo_db->where('client_id', new MongoId($clientId));
+                    $client = $this->mongo_db->get('playbasis_client_site');
+                    if (!empty($client)){
+                        $theClient = $client[0];
+                        if($theClient['date_expire'] > new MongoDate()){
+                            $count ++;
+                        }
+                    }
+                }    
+                if($planLimit < $count){
+                    unset($plans[$key]);
+                }
+            }
+        }
+        return $plans;
+    }
+
     public function getTotalPlans($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -283,6 +313,12 @@ class Plan_model extends MY_Model
             // 'sort_order' => (int)$data['sort_order']|1
             'sort_order' => $sort_order
         );
+        if (isset($data['limit_num_client']) && !empty($data['limit_num_client'])){
+            $dinsert['limit_num_client'] = new MongoInt32($data['limit_num_client']);
+        }else{
+            $dinsert['limit_num_client'] = null;
+        }   
+
         if (isset($data['feature_data'])) {
             $feature = array();
             foreach ($data['feature_data'] as $feature_value) {
@@ -324,6 +360,7 @@ class Plan_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($plan_id));
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('limit_num_client', !empty($data['limit_num_client'])?new MongoInt32($data['limit_num_client']):null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
