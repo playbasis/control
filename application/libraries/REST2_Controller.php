@@ -69,6 +69,9 @@ abstract class REST2_Controller extends REST_Controller
 		));
 
         /* 1.2 Client-Site Limit Requests */
+        if (!$this->client_id || !$this->site_id) {
+            return;
+        }
         $url = strtolower(preg_replace(
             "/(\w+)\/.*/", '${1}',
             $this->uri->uri_string));
