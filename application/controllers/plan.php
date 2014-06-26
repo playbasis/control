@@ -58,6 +58,7 @@ class Plan extends MY_Controller
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('description', $this->lang->line('column_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'), 'numeric');
 
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
@@ -103,6 +104,7 @@ class Plan extends MY_Controller
 
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('description', $this->lang->line('column_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'), 'trim|numeric');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -323,6 +325,14 @@ class Plan extends MY_Controller
             $this->data['description'] = $plan_info['description'];
         } else {
             $this->data['description'] = '';
+        }
+
+        if ($this->input->post('limit_num_client')){
+            $this->data['limit_num_client'] = $this->input->post('limit_num_client');
+        }elseif(!empty($plan_info)){
+            $this->data['limit_num_client'] = $plan_info['limit_num_client'];
+        }else{
+            $this->data['limit_num_client'] = null;
         }
 
         if ($this->input->post('feature_data')) {
