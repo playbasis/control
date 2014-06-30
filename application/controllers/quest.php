@@ -124,12 +124,6 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
-            // echo "<pre>";
-            //     var_dump($data);
-            // echo "</pre>";
-
-            
-
             foreach($data as $key => $value){
                 if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
                     $i = 0;
