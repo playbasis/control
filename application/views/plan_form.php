@@ -17,6 +17,7 @@
             <a href="#tab-action"><?php echo $this->lang->line('tab_action'); ?></a>
             <a href="#tab-notification"><?php echo $this->lang->line('tab_notification'); ?></a>
             <a href="#tab-requests"><?php echo $this->lang->line('tab_requests'); ?></a>
+            <a href="#tab-limits"><?php echo $this->lang->line('tab_limits'); ?></a>
             <?php if($name!=""){?>
                 <a href="#tab-clients"><?php echo $this->lang->line('tab_clients'); ?></a>
             <?php }?>
@@ -226,6 +227,42 @@
                             <td class="left">
                                 <input type="text"
                                         name="limit_noti[<?php echo $key; ?>][limit]"
+                                        value="<?php echo $value; ?>"
+                                        style="width:50px;"
+                                        class="tooltips"
+                                        data-placement="left"
+                                        title="Maximum number of
+                                        <?php echo strtoupper($key).'s'; ?>. if left blank, it is considered unlimited"/>
+                            </td>
+                        </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                    <tr>
+                        <td class="center" colspan="2"><?php echo $this->lang->line('text_no_results'); ?></td>
+                    </tr>
+                        <?php } ?>
+                    <tr>
+                        <td class="center" colspan="2">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tab-limits">
+                <table class="list">
+                    <thead>
+                    <tr>
+                        <td class="left"><?php echo $this->lang->line('column_name_feature'); ?></td>
+                        <td class="left" style="width: 150px;"><?php echo $this->lang->line('column_limit'); ?></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($limit_others) { ?>
+                        <?php foreach ($limit_others as $key=>$value) { ?>
+                        <tr>
+                            <td class="left"><?php echo ucfirst($key); ?></td>
+                            <td class="left">
+                                <input type="text"
+                                        name="limit_others[<?php echo $key; ?>][limit]"
                                         value="<?php echo $value; ?>"
                                         style="width:50px;"
                                         class="tooltips"

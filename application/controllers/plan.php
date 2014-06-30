@@ -381,6 +381,19 @@ class Plan extends MY_Controller
             );
         }
 
+        if ($this->input->post('limit_others')) {
+            $this->data['limit_others'] = $this->input->post('limit_others');
+        } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
+            $this->data['limit_others'] = $plan_info["limit_others"];
+        } else {
+            $this->data['limit_others'] = array(
+                'insight' => null,
+                'quest' => null,
+                'mission' => null,
+                'goods' => null
+            );
+        }
+
         if ($this->input->post('limit_req')) {
             $this->data['limit_req'] = $this->input->post('limit_req');
         } elseif (!empty($plan_info) && isset($plan_info['limit_requests'])){
