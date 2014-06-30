@@ -4,7 +4,7 @@
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
         </div><!-- .heading -->
         <div class="content">
-            <?php echo  ?>
+            
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
