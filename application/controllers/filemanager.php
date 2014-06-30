@@ -48,9 +48,9 @@ class FileManager extends MY_Controller
 
     public function image() {
         if ($this->input->get('image')) {
+            //thumbnail
             $this->Image_model->resize($this->input->get('image'), 40, 40);
             $this->Image_model->resize($this->input->get('image'), 50, 50);
-            $this->Image_model->resize($this->input->get('image'), 100, 100);
             $this->Image_model->resize($this->input->get('image'), 140, 140);
             $this->output->set_output($this->Image_model->resize(html_entity_decode($this->input->get('image'), ENT_QUOTES, 'UTF-8'), 100, 100));
         }
