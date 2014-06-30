@@ -459,8 +459,8 @@ class jigsaw extends MY_Model
 		//check posible index page
 		if(!$urlFragment['path'])
 			$inputUrl = '/';
-		if($urlFragment['path'] == '/')
-			$inputUrl = '/';
+		//if($urlFragment['path'] == '/')
+		//	$inputUrl = '/';
 		if(preg_match('/\/index\.[a-zA-Z]{3,}$/', $urlFragment['path'])) // match all "/index.*" 
 			$inputUrl = '/';
 		if(preg_match('/\/index\.[a-zA-Z]{3,}\/$/', $urlFragment['path'])) // match all "/index.*/" 
@@ -473,6 +473,7 @@ class jigsaw extends MY_Model
 			$inputUrl .= '#' . $urlFragment['fragment'];
 		//compare url
 		if($isRegEx){
+			if ($compareUrl == '*') $compareUrl = '.*'; // quick-fix for handling a case of '*' pattern
 			if(!preg_match('/^\//', $compareUrl))
 				$compareUrl = "/".$compareUrl;
 			if(!preg_match('/\/$/', $compareUrl))
