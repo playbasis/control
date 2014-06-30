@@ -124,12 +124,6 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
-            // echo "<pre>";
-            //     var_dump($data);
-            // echo "</pre>";
-
-            
-
             foreach($data as $key => $value){
                 if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
                     $i = 0;
@@ -278,10 +272,6 @@ class Quest extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-            $this->Image_model->resize($this->input->post('image'), 40, 40);
-            $this->Image_model->resize($this->input->post('image'), 50, 50);
-            $this->Image_model->resize($this->input->post('image'), 100, 100);
-            $this->Image_model->resize($this->input->post('image'), 140, 140);
         } elseif (!empty($editQuest)) {
             $this->data['image'] = $editQuest['image'];
         } else {

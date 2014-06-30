@@ -405,6 +405,29 @@ class Plan_model extends MY_Model
             }
             $this->mongo_db->set('reward_to_plan', $reward);
         }
+        if (isset($data['limit_noti'])) {
+            $limit_noti = array();
+            foreach ($data['limit_noti'] as $key => $value) {
+                $limit_noti[$key] = $value['limit'];
+            }
+            $this->mongo_db->set('limit_notifications', $limit_noti);
+        }
+        if (isset($data['limit_req'])) {
+            $limit_req = array();
+            for ($i=0; $i<sizeof($data['limit_req']); $i++) {
+                $item = $data['limit_req'][$i];
+                if (!$item['field']) continue;
+                // strip only first path of the api and lowercase
+                $item['field'] = strtolower(preg_replace(
+                    "/(\w+)\/.*/", '${1}',
+                    $item['field']));
+                if (substr($item['field'], 0, 1) != "/") {
+                    $item['field'] = "/".$item['field'];
+                }
+                $limit_req[$item['field']] = $item['limit'];
+            }
+            $this->mongo_db->set('limit_requests', $limit_req);
+        }
         $this->mongo_db->update('playbasis_plan');
 
     }

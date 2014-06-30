@@ -367,10 +367,6 @@ class Client extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-            $this->Image_model->resize($this->input->post('image'), 40, 40);
-            $this->Image_model->resize($this->input->post('image'), 50, 50);
-            $this->Image_model->resize($this->input->post('image'), 100, 100);
-            $this->Image_model->resize($this->input->post('image'), 140, 140);
         } elseif (!empty($client_info)) {
             $this->data['image'] = $client_info['image'];
         } else {
