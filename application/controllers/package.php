@@ -35,5 +35,15 @@ class Package extends MY_Controller
 
     }
 
+    public function plans(){
+
+    }
+
+    public function billings(){
+        $this->data['main'] = 'package_billing';
+        $this->load->vars($this->data);
+        $this->render_page('template');        
+    }
+
 
 }
