@@ -162,6 +162,8 @@ $route['fb'] = 'playbasis/fb';
 $route['login'] = 'playbasis/login';
 $route['memtest'] = 'playbasis/memtest';
 
+$route['Paypal'] = 'paypal/index';
+
 //dummy 
 //$route['dummy/dummyPlayer/'.ANY_NUMBER.'/'.ANY_NUMBER]	= 'dummy/dummyPlayer/$1/$2/$3';
 //$route['dummy/'.ANY_NUMBER.'/'.ANY_NUMBER.'/'.ANY_NUMBER]	= 'dummy/index/$1/$2/$3';
