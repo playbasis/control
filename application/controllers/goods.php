@@ -610,10 +610,6 @@ class Goods extends MY_Controller
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-            $this->Image_model->resize($this->input->post('image'), 40, 40);
-            $this->Image_model->resize($this->input->post('image'), 50, 50);
-            $this->Image_model->resize($this->input->post('image'), 100, 100);
-            $this->Image_model->resize($this->input->post('image'), 140, 140);
         } elseif (!empty($goods_info)) {
             $this->data['image'] = $goods_info['image'];
         } else {

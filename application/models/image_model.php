@@ -18,11 +18,11 @@ class Image_model extends MY_Model
         $old_image = $filename;
         $new_image = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
 
-        $headers = get_headers(S3_IMAGE.$new_image, 1);
+//        $headers = get_headers(S3_IMAGE.$new_image, 1);
 
-        if($headers != 'HTTP/1.1 404 Not Found' && $headers != 'HTTP/1.0 403 Forbidden'){
-            return S3_IMAGE.$new_image;
-        }
+//        if($headers[0] != 'HTTP/1.1 404 Not Found' || $headers[0] != 'HTTP/1.0 403 Forbidden'){
+//            return S3_IMAGE.$new_image;
+//        }
 
         if (!file_exists(DIR_IMAGE . $filename) || !is_file(DIR_IMAGE . $filename)) {
             if(@fopen(S3_IMAGE . $filename,"r")){
