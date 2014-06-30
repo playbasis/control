@@ -27,6 +27,8 @@ abstract class REST2_Controller extends REST_Controller
 		/* 0.1 Load libraries */
 		$this->load->model('rest_model');
 		$this->load->model('auth_model');
+        $this->load->model('client_model');
+		$this->load->model('tool/error', 'error');
 		/* 0.2 Adjust $this->request->body */
 		if (!empty($this->request->body)) {
 			if (is_array($this->request->body) && count(count($this->request->body) == 1) && array_key_exists(0, $this->request->body)) {
@@ -65,6 +67,48 @@ abstract class REST2_Controller extends REST_Controller
 			'ip' => $this->input->ip_address(),
 			'agent' => array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER['HTTP_USER_AGENT'] : null,
 		));
+
+        /* 1.2 Client-Site Limit Requests */
+        if (!$this->client_id || !$this->site_id) {
+            return;
+        }
+        $url = strtolower(preg_replace(
+            "/(\w+)\/.*/", '${1}',
+            $this->uri->uri_string));
+
+        if (substr($url, 0, 1) != "/") {
+            $url = "/".$url;
+        }
+
+        $usage = $this->client_model->getPermissionUsage(
+            $this->client_id,
+            $this->site_id,
+            'requests',
+            $url
+            );
+
+        $limit = $this->client_model->getPlanLimitById(
+            $this->site_id,
+            $usage['plan_id'],
+            'requests',
+            $url
+        );
+
+        // CRITICAL client-site not found in permission
+        if (!$usage) {
+            $this->response($this->error->setError('INTERNAL_ERROR', array()), 200);
+        }
+
+        if ($limit && $usage['value'] >= $limit) {
+            // no permission to use this service
+            $this->response($this->error->setError('LIMIT_EXCEED', array()), 200);
+        } else {
+            $this->client_model->updatePermission(
+                $this->client_id,
+                $this->site_id,
+                'requests',
+                $url);
+        }
 	}
 
 	/**
