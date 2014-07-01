@@ -272,6 +272,22 @@ class Level_model extends MY_Model
                     );
                     $exp_id = $this->mongo_db->insert('playbasis_client_exp_table', $data_insert);
                     return $exp_id;
+                }elseif($nextLowerLevel['exp'] == null && $nextHigherLevel['exp'] == null){
+                    $data_insert = array(
+                        'client_id' => new MongoID($data['client_id']),
+                        'site_id' => new MongoID($data['site_id']),
+                        'level_title' => $data['level_title']|'' ,
+                        'level' => (int)$data['level'],
+                        'exp' => (int)$data['exp']|0 ,
+                        'image'=> isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+                        // 'tags' => $data['tags']|'' ,
+                        'tags' => (isset($data['tags']))?$data['tags']:0,
+                        'status' => (bool)$data['status'],
+                        'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                    );
+                    $exp_id = $this->mongo_db->insert('playbasis_client_exp_table', $data_insert);
+                    return $exp_id;
                 }else{
                     return false;
                 }
