@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
@@ -13,6 +13,8 @@ class Quest extends MY_Controller
 
         $this->load->model('User_model');
         $this->load->model('Quest_model');
+        $this->load->model('Plan_model');
+        $this->load->model('Permission_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -44,7 +46,6 @@ class Quest extends MY_Controller
     }
 
     public function getList($offset){
-
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $this->load->model('Image_model');
@@ -104,13 +105,41 @@ class Quest extends MY_Controller
         $config['cur_tag_close'] = '</a></li>';
 
         $this->pagination->initialize($config);
-    	
+
     	$this->data['main'] = 'quest';
         $this->render_page('template');
 
     }
 
     public function insert(){
+        // Get Usage
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $quests = $this->Quest_model->getTotalQuestsClientSite(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id
+        ));
+        $missions = $this->Quest_model->getTotalMissionsClientSite(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id
+        ));
+
+        // Get Limit
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $lmts = $this->Plan_model->getPlanLimitById(
+            $site_id,
+            $plan_id,
+            'others',
+            array('quest', 'mission')
+        );
+
+        $this->data['message'] = array();
+        if ($lmts['quest'] && $quests >= $lmts['quest']) {
+            $this->data['message'][] = $this->lang->line('error_quest_limit');
+        }
+        if ($lmts['mission'] && $missions >= $lmts['mission']) {
+            $this->data['message'][] = $this->lang->line('error_mission_limit');
+        }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -124,132 +153,137 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
-            foreach($data as $key => $value){
-                if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
-                    $i = 0;
-                    foreach($value as $k => $v){
-                        foreach($v as $ke => &$item){
-                            if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
-                                $item = new MongoId($item);
-                            }                            
+            if (!$this->data['message']) {
+                foreach($data as $key => $value){
+                    if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
+                        $i = 0;
+                        foreach($value as $k => $v){
+                            foreach($v as $ke => &$item){
+                                if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
+                                    $item = new MongoId($item);
+                                }
+                            }
+                            if(in_array('DATETIME_START', $v)){
+                                $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 00:00:00")));
+                            }
+                            if(in_array('DATETIME_END', $v)){
+                                $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 23:59:59")));
+                            }
+                            $qdata = array(
+                                'client_id' => $client_id,
+                                'site_id' => $site_id
+                            );
+                            unset($data[$key][$k]);
+                            if($key == 'condition'){
+                                $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
+                            }
+                            if($key == 'rewards'){
+                                $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
+                            }
+                            $data[$key][$i] = $v;
+                            if($key == 'missions'){
+                                $data[$key][$i]['mission_number'] = $i + 1;
+                            }
+                            $i++;
                         }
-                        if(in_array('DATETIME_START', $v)){
-                            $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 00:00:00")));
-                        }
-                        if(in_array('DATETIME_END', $v)){
-                            $v['condition_value'] = new MongoDate(strtotime(date($v['condition_value']." 23:59:59")));   
-                        }
-                        $qdata = array(
-                            'client_id' => $client_id,
-                            'site_id' => $site_id
-                        );
-                        unset($data[$key][$k]);
-                        if($key == 'condition'){
-                            $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
-                        }
-                        if($key == 'rewards'){
-                            $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
-                        }
-                        $data[$key][$i] = $v;
-                        if($key == 'missions'){
-                            $data[$key][$i]['mission_number'] = $i + 1;
-                        }
-                        $i++;
                     }
-                }
-                if($key == 'missions'){
-                    $im = 0;
-                    foreach($value as $kk => $val){         
+                    if($key == 'missions'){
+                        $im = 0;
+                        foreach($value as $kk => $val){
 
-                        unset($data[$key][$kk]);
-                        $data[$key][$im] = $val;
-                        $data[$key][$im]['mission_id'] = new MongoId();
-                        foreach($val as $k => $v){
-                            if($k == 'completion' || $k == 'rewards'){
-                                $i = 0;
-                                foreach($v as $koo => $voo){                                    
-                                    foreach($voo as $kkk => &$vvv){
-                                        if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
-                                            $vvv = new MongoId($vvv);
-                                        }
-                                        if($kkk == 'completion_element_id'){
-                                            if(isset($vvv) && empty($vvv)){
-                                                $vvv = new MongoId();
+                            if (!$val['mission_name'] || !$val['mission_number']) {
+                                unset($data[$key][$kk-1]);
+                                continue;
+                            }
+
+                            unset($data[$key][$kk]);
+                            $data[$key][$im] = $val;
+                            $data[$key][$im]['mission_id'] = new MongoId();
+                            foreach($val as $k => $v){
+                                if($k == 'completion' || $k == 'rewards'){
+                                    $i = 0;
+                                    foreach($v as $koo => $voo){
+                                        foreach($voo as $kkk => &$vvv){
+                                            if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
+                                                $vvv = new MongoId($vvv);
+                                            }
+                                            if($kkk == 'completion_element_id'){
+                                                if(isset($vvv) && empty($vvv)){
+                                                    $vvv = new MongoId();
+                                                }
                                             }
                                         }
+                                        $qdata = array(
+                                            'client_id' => $client_id,
+                                            'site_id' => $site_id
+                                        );
+                                        unset($data[$key][$im][$k][$koo]);
+                                        if($k == 'completion'){
+                                            $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
+                                        }
+                                        if($k == 'rewards'){
+                                            $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
+                                        }
+                                        $data[$key][$im][$k][$i] = $voo;
+                                        $i++;
                                     }
-                                    $qdata = array(
-                                        'client_id' => $client_id,
-                                        'site_id' => $site_id
-                                    );
-                                    unset($data[$key][$im][$k][$koo]);
-                                    if($k == 'completion'){
-                                        $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
-                                    }
-                                    if($k == 'rewards'){
-                                        $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
-                                    }
-                                    $data[$key][$im][$k][$i] = $voo;
-                                    $i++;
-                                }    
+                                }
                             }
+                            $im++;
+
                         }
-                        $im++;
-                        
                     }
                 }
-            }
+                if (!isset($data['missions'])) {
+                    $data['missions'] = array();
+                }
+                $data['status'] = (isset($data['status']))?true:false;
+                $data['mission_order'] = (isset($data['mission_order']))?true:false;
 
-            $data['status'] = (isset($data['status']))?true:false;
-            $data['mission_order'] = (isset($data['mission_order']))?true:false;
+                $data['date_added'] = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
-            $data['date_added'] = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+                $data['client_id'] = $client_id;
+                $data['site_id'] = $site_id;
 
-            $data['client_id'] = $client_id;
-            $data['site_id'] = $site_id;
 
-//             echo "<pre>";
-//                 var_dump($data);
-//             echo "</pre>";
+                $this->Quest_model->addQuestToClient($data);
+                redirect('/quest', 'refresh');
 
-            $this->Quest_model->addQuestToClient($data);
-            redirect('/quest', 'refresh');
-            
-        }else{
-            $this->getForm();        
+            } // end validation and message == null
         }
+        $this->getForm();
     }
 
     private function questObjectData($object_data, $key_type, $key_id, $query_data){
         $condition_data = array();
         switch ($object_data[$key_type]) {
-            case "QUEST":
-                $query_data['quest_id'] = $object_data[$key_id];
-                $query_data['short_detail'] = true;
-                $quest_detail = $this->Quest_model->getQuestByClientSiteId($query_data);
-                $condition_data = $quest_detail;
-                break;
-            case "POINT":
-                $condition_data = array("name" => 'point');
-                break;
-            case "CUSTOM_POINT":
-                $query_data['reward_id'] = $object_data[$key_id];
-                $reward_detail = $this->Quest_model->getCustomPoint($query_data);
-                $condition_data = array("name" => $reward_detail['name']);
-                break;
-            case "BADGE":
-                $query_data['badge_id'] = $object_data[$key_id];
-                $badge_detail = $this->Quest_model->getBadge($query_data);
-                $condition_data = $badge_detail;
-                break;
-            case "EXP":
-                $condition_data = array("name" => 'exp');
-                break;
-            case "ACTION":
-                $query_data['action_id'] = $object_data[$key_id];
-                $action_detail = $this->Quest_model->getAction($query_data);
-                $condition_data = $action_detail;
-                break;
+        case "QUEST":
+            $query_data['quest_id'] = $object_data[$key_id];
+            $query_data['short_detail'] = true;
+            $quest_detail = $this->Quest_model->getQuestByClientSiteId($query_data);
+            $condition_data = $quest_detail;
+            break;
+        case "POINT":
+            $condition_data = array("name" => 'point');
+            break;
+        case "CUSTOM_POINT":
+            $query_data['reward_id'] = $object_data[$key_id];
+            $reward_detail = $this->Quest_model->getCustomPoint($query_data);
+            $condition_data = array("name" => $reward_detail['name']);
+            break;
+        case "BADGE":
+            $query_data['badge_id'] = $object_data[$key_id];
+            $badge_detail = $this->Quest_model->getBadge($query_data);
+            $condition_data = $badge_detail;
+            break;
+        case "EXP":
+            $condition_data = array("name" => 'exp');
+            break;
+        case "ACTION":
+            $query_data['action_id'] = $object_data[$key_id];
+            $action_detail = $this->Quest_model->getAction($query_data);
+            $condition_data = $action_detail;
+            break;
         }
         return $condition_data;
     }
@@ -355,7 +389,7 @@ class Quest extends MY_Controller
                         $this->data['editDateEndCon']['condition_type'] = $condition['condition_type'];
                         $this->data['editDateEndCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editDateEndCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
-                    }    
+                    }
 
                     if($condition['condition_type'] == 'LEVEL_START'){
                         $this->data['editLevelStartCon']['condition_type'] = $condition['condition_type'];
@@ -368,7 +402,7 @@ class Quest extends MY_Controller
                         $this->data['editLevelEndCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                     }
                     if($condition['condition_type'] == 'QUEST'){
-                        $this->data['editQuestConditionCon'][$countQuest]['condition_type'] = $condition['condition_type']; 
+                        $this->data['editQuestConditionCon'][$countQuest]['condition_type'] = $condition['condition_type'];
                         $this->data['editQuestConditionCon'][$countQuest]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editQuestConditionCon'][$countQuest]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
 
@@ -393,18 +427,18 @@ class Quest extends MY_Controller
                         $countQuest++;
                     }
                     if($condition['condition_type'] == 'POINT'){
-                        $this->data['editPointsCon']['condition_type'] = $condition['condition_type']; 
+                        $this->data['editPointsCon']['condition_type'] = $condition['condition_type'];
                         $this->data['editPointsCon']['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editPointsCon']['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                     }
                     if($condition['condition_type'] == 'CUSTOM_POINT'){
-                        $this->data['editCustomPointsCon'][$countCustomPoints]['condition_type'] = $condition['condition_type']; 
+                        $this->data['editCustomPointsCon'][$countCustomPoints]['condition_type'] = $condition['condition_type'];
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                         $countCustomPoints++;
                     }
                     if($condition['condition_type'] == 'BADGE'){
-                        $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type']; 
+                        $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type'];
                         $this->data['editBadgeCon'][$countBadges]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editBadgeCon'][$countBadges]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                         $this->data['editBadgeCon'][$countBadges]['condition_data'] = isset($condition['condition_data'])?$condition['condition_data']:null;
@@ -429,7 +463,7 @@ class Quest extends MY_Controller
 
                         $countBadges++;
                     }
-                }    
+                }
             }
 
             if(isset($editQuest['rewards'])){
@@ -437,23 +471,23 @@ class Quest extends MY_Controller
                 $countBadges = 0;
                 foreach($editQuest['rewards'] as $reward){
                     if($reward['reward_type'] == 'POINT'){
-                        $this->data['editPointsRew']['reward_type'] = $reward['reward_type']; 
+                        $this->data['editPointsRew']['reward_type'] = $reward['reward_type'];
                         $this->data['editPointsRew']['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
                         $this->data['editPointsRew']['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
                     }
                     if($reward['reward_type'] == 'EXP'){
-                        $this->data['editExpRew']['reward_type'] = $reward['reward_type']; 
+                        $this->data['editExpRew']['reward_type'] = $reward['reward_type'];
                         $this->data['editExpRew']['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
                         $this->data['editExpRew']['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
                     }
                     if($reward['reward_type'] == 'CUSTOM_POINT'){
-                        $this->data['editCustomPointsRew'][$countCustomPoints]['reward_type'] = $reward['reward_type']; 
+                        $this->data['editCustomPointsRew'][$countCustomPoints]['reward_type'] = $reward['reward_type'];
                         $this->data['editCustomPointsRew'][$countCustomPoints]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
                         $this->data['editCustomPointsRew'][$countCustomPoints]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
                         $countCustomPoints++;
                     }
                     if($reward['reward_type'] == 'BADGE'){
-                        $this->data['editBadgeRew'][$countBadges]['reward_type'] = $reward['reward_type']; 
+                        $this->data['editBadgeRew'][$countBadges]['reward_type'] = $reward['reward_type'];
                         $this->data['editBadgeRew'][$countBadges]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
                         $this->data['editBadgeRew'][$countBadges]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
                         $this->data['editBadgeRew'][$countBadges]['reward_data'] = isset($reward['reward_data'])?$reward['reward_data']:null;
@@ -581,12 +615,12 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editPointRew']['reward_type'] = $rr['reward_type'];
                                 $this->data['editMission'][$missionCount]['editPointRew']['reward_value'] = $rr['reward_value'];
                                 $this->data['editMission'][$missionCount]['editPointRew']['reward_id'] = $rr['reward_id'];
-                            }    
+                            }
 
                             if($rr['reward_type'] == 'EXP'){
                                 $this->data['editMission'][$missionCount]['editExpRew']['reward_type'] = $rr['reward_type'];
                                 $this->data['editMission'][$missionCount]['editExpRew']['reward_value'] = $rr['reward_value'];
-                                $this->data['editMission'][$missionCount]['editExpRew']['reward_id'] = $rr['reward_id'];                         
+                                $this->data['editMission'][$missionCount]['editExpRew']['reward_id'] = $rr['reward_id'];
                             }
 
                             if($rr['reward_type'] == 'CUSTOM_POINT'){
@@ -622,11 +656,11 @@ class Quest extends MY_Controller
 
                                 $countBadge++;
                             }
-                        }    
+                        }
                     }
 
                     $missionCount++;
-                    
+
                 }
             }
         }
@@ -682,7 +716,7 @@ class Quest extends MY_Controller
             $client_id = $this->User_model->getClientId();
             $this->Quest_model->increaseOrderByOneClient($quest_id, $client_id);
         }else{
-            $this->Quest_model->increaseOrderByOne($quest_id);    
+            $this->Quest_model->increaseOrderByOne($quest_id);
         }
 
         // redirect('action', 'refresh');
@@ -699,7 +733,7 @@ class Quest extends MY_Controller
             $client_id = $this->User_model->getClientId();
             $this->Quest_model->decreaseOrderByOneClient($quest_id, $client_id);
         }else{
-            $this->Quest_model->decreaseOrderByOne($quest_id);    
+            $this->Quest_model->decreaseOrderByOne($quest_id);
         }
         // redirect('action', 'refresh');
 
@@ -713,17 +747,17 @@ class Quest extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $this->load->model('Image_model');
-        
+
         $this->load->library('pagination');
 
         $config['per_page'] = 10;
 
         $filter = array(
-                'limit' => $config['per_page'],
-                'start' => $offset,
-                'client_id'=>$client_id,
-                'site_id'=>$site_id,
-            );
+            'limit' => $config['per_page'],
+            'start' => $offset,
+            'client_id'=>$client_id,
+            'site_id'=>$site_id,
+        );
         if(isset($_GET['filter_name'])){
             $filter['filter_name'] = $_GET['filter_name'];
         }
@@ -735,7 +769,7 @@ class Quest extends MY_Controller
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
 
             foreach($this->data['quests'] as &$quest){
-//                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
+                //                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
                 $info = pathinfo($quest['image']);
                 if(isset($info['extension'])){
                     $extension = $info['extension'];
@@ -763,7 +797,7 @@ class Quest extends MY_Controller
 
         $this->error['warning'] = null;
 
-    if(!$this->validateModify()){
+        if(!$this->validateModify()){
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -778,7 +812,7 @@ class Quest extends MY_Controller
                 foreach ($this->input->post('selected') as $action_id) {
                     $this->Action_model->delete($action_id);
                 }
-                */
+                 */
             }
 
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
@@ -790,6 +824,30 @@ class Quest extends MY_Controller
     }
 
     public function edit($quest_id){
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $missions = $this->Quest_model->getTotalMissionsClientSite(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id
+        ));
+
+        $this_missions = $this->Quest_model->getTotalMissionsInQuest(array(
+            'quest_id' => new MongoId($quest_id)
+        ));
+
+        // Get Limit
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $lmts = $this->Plan_model->getPlanLimitById(
+            $site_id,
+            $plan_id,
+            'others',
+            'mission'
+        );
+
+        $this->data['message'] = array();
+        if ($lmts['mission'] && $missions >= $lmts['mission']) {
+            $this->data['message'][] = $this->lang->line('error_mission_limit');
+        }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -804,94 +862,106 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             $data = $this->input->post();
+            $new_missions = sizeof($data['missions']);
+            $all_missions = ($missions - $this_missions) + $new_missions;
 
-            foreach($data as $key => $value){
-                if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
-                    $i = 0;
-                    foreach($value as $k => $v){
-                        foreach($v as $ke => &$item){
-                            if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
-                                $item = new MongoId($item);
+            if ($lmts['mission']
+                && isset($data['status'])
+                && $all_missions > $lmts['mission']) {
+                $this->data['message'][] = $this->lang->line('error_mission_limit');
+            }
+
+            if (!$this->data['message']) {
+                foreach($data as $key => $value){
+                    if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
+                        $i = 0;
+                        foreach($value as $k => $v){
+                            foreach($v as $ke => &$item){
+                                if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
+                                    $item = new MongoId($item);
+                                }
                             }
+                            $qdata = array(
+                                'client_id' => $client_id,
+                                'site_id' => $site_id
+                            );
+                            unset($data[$key][$k]);
+                            if($key == 'condition'){
+                                $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
+                            }
+                            if($key == 'rewards'){
+                                $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
+                            }
+                            $data[$key][$i] = $v;
+                            if($key == 'missions'){
+                                $data[$key][$i]['mission_number'] = $i + 1;
+                            }
+                            $i++;
                         }
-                        $qdata = array(
-                            'client_id' => $client_id,
-                            'site_id' => $site_id
-                        );
-                        unset($data[$key][$k]);
-                        if($key == 'condition'){
-                            $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
-                        }
-                        if($key == 'rewards'){
-                            $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
-                        }
-                        $data[$key][$i] = $v;
-                        if($key == 'missions'){
-                            $data[$key][$i]['mission_number'] = $i + 1;
-                        }
-                        $i++;
                     }
-                }
-                if($key == 'missions'){
-                    $im = 0;
-                    foreach($value as $kk => $val){         
+                    if($key == 'missions'){
+                        $im = 0;
+                        foreach($value as $kk => $val){
+                            if (!$val['mission_name'] || !$val['mission_number']) {
+                                unset($data[$key][$kk-1]);
+                                continue;
+                            }
 
-                        unset($data[$key][$kk]);
-                        $data[$key][$im] = $val;
-                        try {
-                            $data[$key][$im]['mission_id'] = new MongoId($kk);
-                        } catch (MongoException $ex) {
-                            $data[$key][$im]['mission_id'] = new MongoId();
-                        }
+                            unset($data[$key][$kk]);
+                            $data[$key][$im] = $val;
+                            try {
+                                $data[$key][$im]['mission_id'] = new MongoId($kk);
+                            } catch (MongoException $ex) {
+                                $data[$key][$im]['mission_id'] = new MongoId();
+                            }
 
-                        foreach($val as $k => $v){
-                            if($k == 'completion' || $k == 'rewards'){
-                                $i = 0;
-                                foreach($v as $koo => $voo){
-                                    foreach($voo as $kkk => &$vvv){
-                                        if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
-                                            $vvv = new MongoId($vvv);
-                                        }
-                                        if($kkk == 'completion_element_id'){
-                                            if(isset($vvv) && !empty($vvv)){
+                            foreach($val as $k => $v){
+                                if($k == 'completion' || $k == 'rewards'){
+                                    $i = 0;
+                                    foreach($v as $koo => $voo){
+                                        foreach($voo as $kkk => &$vvv){
+                                            if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
                                                 $vvv = new MongoId($vvv);
-                                            }else{
-                                                $vvv = new MongoId();
+                                            }
+                                            if($kkk == 'completion_element_id'){
+                                                if(isset($vvv) && !empty($vvv)){
+                                                    $vvv = new MongoId($vvv);
+                                                }else{
+                                                    $vvv = new MongoId();
+                                                }
                                             }
                                         }
+                                        $qdata = array(
+                                            'client_id' => $client_id,
+                                            'site_id' => $site_id
+                                        );
+                                        unset($data[$key][$im][$k][$koo]);
+                                        if($k == 'completion'){
+                                            $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
+                                        }
+                                        if($k == 'rewards'){
+                                            $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
+                                        }
+                                        $data[$key][$im][$k][$i] = $voo;
+                                        $i++;
                                     }
-                                    $qdata = array(
-                                        'client_id' => $client_id,
-                                        'site_id' => $site_id
-                                    );
-                                    unset($data[$key][$im][$k][$koo]);
-                                    if($k == 'completion'){
-                                        $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
-                                    }
-                                    if($k == 'rewards'){
-                                        $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
-                                    }
-                                    $data[$key][$im][$k][$i] = $voo;
-                                    $i++;
-                                }    
+                                }
                             }
+                            $im++;
+
                         }
-                        $im++;
-                        
                     }
                 }
+
+                $data['status'] = (isset($data['status']))?true:false;
+                $data['mission_order'] = (isset($data['mission_order']))?true:false;
+
+                if($this->Quest_model->editQuestToClient($quest_id, $data)){
+                    redirect('/quest', 'refresh');
+                }else{
+                    echo "Did not update";
+                }
             }
-
-            $data['status'] = (isset($data['status']))?true:false;
-            $data['mission_order'] = (isset($data['mission_order']))?true:false;            
-
-            if($this->Quest_model->editQuestToClient($quest_id, $data)){
-                redirect('/quest', 'refresh');
-            }else{
-                echo "Did not update";
-            }
-
-
         }
 
         if(!empty($client_id) && !empty($site_id)){
@@ -899,10 +969,10 @@ class Quest extends MY_Controller
             $this->getForm($quest_id);
 
         }
-        
+
     }
 
-     private function validateModify() {
+    private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'quest')) {
             return true;

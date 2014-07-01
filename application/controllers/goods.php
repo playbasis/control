@@ -57,15 +57,14 @@ class Goods extends MY_Controller
         $usage = $this->Goods_model->getTotalGoodsBySiteId(
             array('site_id' => $site_id));
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_type = 'others';
-        $limit_field = 'goods';
 
         // Get Limit
         $limit = $this->Plan_model->getPlanLimitById(
             $site_id,
             $plan_id,
-            $limit_type,
-            $limit_field);
+            'others',
+            'goods'
+        );
 
         if ($limit && $usage >= $limit) {
             $this->data['message'] = $this->lang->line('error_limit');
@@ -91,7 +90,6 @@ class Goods extends MY_Controller
             if ($limit && $usage >= $limit) {
                 $this->data['message'] = $this->lang->line('error_limit');
             }
-
 
             $point_empty = true;
             $badge_empty = true;

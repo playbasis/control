@@ -443,7 +443,7 @@ class Plan_model extends MY_Model
      * @param plan_id string
      * @param type notifications | requests
      * @param field string
-     * @return integer | null
+     * @return integer | array | null
      */
     public function getPlanLimitById($site_id, $plan_id, $type, $field)
     {
@@ -455,6 +455,18 @@ class Plan_model extends MY_Model
         if ($res) {
             $res = $res[0];
             $limit = 'limit_'.$type;
+            if (is_array($field)) {
+                $return = array();
+                for ($i=0; $i<sizeof($field); $i++) {
+                    if (isset($res[$limit]) &&
+                        isset($res[$limit][$field[$i]])) {
+                            $return[$field[$i]] = $res[$limit][$field[$i]];
+                        } else {
+                            $return[$field[$i]] = null;
+                        }
+                }
+                return $return;
+            }
             if (isset($res[$limit]) &&
                 isset($res[$limit][$field])) {
                     return $res[$limit][$field];
