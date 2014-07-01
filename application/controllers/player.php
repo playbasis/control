@@ -738,9 +738,30 @@ class Player extends REST2_Controller
 	}
 	public function new_get()
 	{
+        // Limit
+        $site_id = $this->validToken['site_id'];
+        $plan_id = $this->client_model->getPermissionBySiteId($site_id);
+        $limit = $this->client_model->getPlanLimitById(
+            $site_id,
+            $plan_id,
+            'others',
+            'insight'
+        );
+
+        $now = new Datetime();
+        $startDate      = new DateTime($this->input->get('from', TRUE));
+        $endDate        = new DateTime($this->input->get('to', TRUE));
+
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->new_registration($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->new_registration(
+            $this->validToken,
+            $startDate->format('Y-m-d'),
+            $endDate->format('Y-m-d')) as $key => $value) {
+                $dDiff = $now->diff(new DateTime($value["_id"]));
+                if ($limit && $dDiff->days > $limit) {
+                    continue;
+                }
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
