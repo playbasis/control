@@ -285,7 +285,7 @@ class Level_model extends MY_Model
                         'status' => (bool)$data['status'],
                         'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                         'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
-                    );
+                        );
                     $exp_id = $this->mongo_db->insert('playbasis_client_exp_table', $data_insert);
                     return $exp_id;
                 }else{
