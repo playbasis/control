@@ -1329,8 +1329,8 @@ class Player_model extends MY_Model
 			        'name' => $a['action_name'],
 			        'icon' => $action_info ? $action_info['icon'] : '',
 		        );
+                $action_data[$action_id] = $buffer[$action_id];
 	        }
-	        $action_data[$action_id] = $buffer[$action_id];
 	        if (array_key_exists('total', $action_data[$action_id])) {
 		        $action_data[$action_id]['total']++;
 	        } else {
