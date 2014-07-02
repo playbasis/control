@@ -564,10 +564,12 @@ class Player_model extends MY_Model
                 if($check_player > 0){
                     $result[$i]['player_id'] = $result[$i]['cl_player_id'];
                     $result[$i][$ranked_by] = $result[$i]['value'];
+                    unset($result[$i]['cl_player_id']);
+                    unset($result[$i]['value']);
                     $check++;
+                }else{
+                    unset($result[$i]);
                 }
-                unset($result[$i]['cl_player_id']);
-                unset($result[$i]['value']);
             }else{
                 unset($result[$i]);
             }
@@ -671,10 +673,12 @@ class Player_model extends MY_Model
                     if($check_player > 0){
                         $ranking[$i]['player_id'] = $ranking[$i]['cl_player_id'];
                         $ranking[$i][$name] = $ranking[$i]['value'];
+                        unset($ranking[$i]['cl_player_id']);
+                        unset($ranking[$i]['value']);
                         $check++;
+                    }else{
+                        unset($ranking[$i]);
                     }
-                    unset($ranking[$i]['cl_player_id']);
-                    unset($ranking[$i]['value']);
                 }else{
                     unset($ranking[$i]);
                 }
