@@ -1330,7 +1330,9 @@ class Player_model extends MY_Model
 			        'icon' => $action_info ? $action_info['icon'] : '',
 		        );
 	        }
-	        if (!array_key_exists($action_id, $action_data)) $action_data[$action_id] = $buffer[$action_id];
+	        if (!array_key_exists($action_id, $action_data)) {
+		        $action_data[$action_id] = $buffer[$action_id];
+	        }
 	        if (array_key_exists('total', $action_data[$action_id])) {
 		        $action_data[$action_id]['total']++;
 	        } else {

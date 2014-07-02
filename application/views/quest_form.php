@@ -299,7 +299,7 @@
                         <?php foreach($editMission as $mission){ ?>
                         <div class="mission-item-wrapper" data-mission-id="<?php echo $mission['mission_id'] ?>">                        
                             <div class="box-header box-mission-header overflow-visible">                            
-                                <h2><img src="<?php echo $mission['image']; ?>" width="50"><?php echo $mission['mission_name'] ?></h2>                            
+                                <h2><img src="<?php echo $mission['image']; ?>" width="50" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /><?php echo $mission['mission_name'] ?></h2>
                                 <div class="box-icon">                                
                                     <a href="javascript:void(0)" class="btn btn-danger right remove-mission-btn dropdown-toggle" data-toggle="dropdown">Delete </a>                                
                                     <span class="break"></span>                                
