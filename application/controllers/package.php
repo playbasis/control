@@ -10,6 +10,8 @@ class Package extends MY_Controller
         parent::__construct();
         $this->load->model('User_model');
         $this->load->model('Package_model');
+        $this->load->model('Reward_model');
+        $this->load->model('Player_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -23,11 +25,19 @@ class Package extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
     	$currentPlan = $this->Package_model->getCurrentPlan($client_id, $site_id)[0];
-
     	$currentLimitPlayers = $this->Package_model->getLimitPlayers($client_id, $site_id)[0];
+        $num_users = $this->Player_model->getTotalPlayers($site_id, $client_id);
 
+        $rewards = array();
+        foreach($currentPlan['reward_to_plan'] as $i => $reward){
+            $theReward = $this->Reward_model->getReward($reward['reward_id']);
+            $rewards[$i]['name'] = $theReward['name'];
+            $rewards[$i]['limit'] = $reward['limit'];
+        }
 
-    	$this->data['currentPlan'] = $currentPlan;
+        $this->data['num_users'] = $num_users;
+        $this->data['currentPlan'] = $currentPlan;
+        $this->data['rewards'] = $rewards;
     	$this->data['currentLimitPlayers'] = $currentLimitPlayers;
     	$this->data['main'] = 'package';
     	$this->load->vars($this->data);
@@ -37,6 +47,13 @@ class Package extends MY_Controller
 
     public function plans(){
 
+        $allPlans = $this->Package_model->getAllPlans();
+
+        $this->data['allPlans'] = $allPlans;
+
+        $this->data['main'] = 'plans';
+        $this->load->vars($this->data);
+        $this->render_page('template');
     }
 
     public function billings(){

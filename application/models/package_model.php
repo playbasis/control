@@ -23,6 +23,9 @@ class Package_model extends MY_Model
 		return $this->mongo_db->get('playbasis_client_site');
 	}
 
+	public function getAllPlans(){
+		return $this->mongo_db->get('playbasis_plan');
+	}
 	
 
 }
