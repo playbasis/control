@@ -665,7 +665,7 @@ class Player_model extends MY_Model
 			{
                 if($check < $limit){
                     $this->mongo_db->where(array(
-                        'cl_player_id' => $result[$i]['cl_player_id'],
+                        'cl_player_id' => $ranking[$i]['cl_player_id'],
                         'client_id' => $client_id,
                         'site_id' => $site_id
                     ));
