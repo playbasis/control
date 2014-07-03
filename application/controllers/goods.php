@@ -8,6 +8,8 @@ class Goods extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('Plan_model');
+        $this->load->model('Permission_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -50,6 +52,23 @@ class Goods extends MY_Controller
     }
 
     public function insert() {
+        // Get Usage
+        $site_id = $this->User_model->getSiteId();
+        $usage = $this->Goods_model->getTotalGoodsBySiteId(
+            array('site_id' => $site_id));
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+
+        // Get Limit
+        $limit = $this->Plan_model->getPlanLimitById(
+            $site_id,
+            $plan_id,
+            'others',
+            'goods'
+        );
+
+        if ($limit && $usage >= $limit) {
+            $this->data['message'] = $this->lang->line('error_limit');
+        }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -66,6 +85,10 @@ class Goods extends MY_Controller
 
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($limit && $usage >= $limit) {
+                $this->data['message'] = $this->lang->line('error_limit');
             }
 
             $point_empty = true;

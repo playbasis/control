@@ -33,7 +33,66 @@ class Quest_model extends MY_Model{
 		return $this->mongo_db->get('playbasis_quest_to_client');
 	}
 
-	public function getQuestByClientSiteId($data){
+    public function getTotalMissionsClientSite($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $result = $this->mongo_db->command(array(
+            'aggregate' => 'playbasis_quest_to_client',
+            'pipeline' => array(
+                array(
+                    '$group' => array(
+                        '_id' => array(
+                            'client_id' => '$client_id',
+                            'site_id' => '$site_id',
+                            'status' => '$status'),
+                        'missions' => array(
+                            '$sum' => array('$size' => '$missions'))),
+                ),
+                array(
+                    '$match' => array(
+                        '_id' => array(
+                            'client_id' => $data['client_id'],
+                            'site_id' => $data['site_id'],
+                            'status' => true))
+                    )
+            )
+        ));
+
+        if (!$result['result']) {
+            return 0;
+        }
+
+        return $result['result'][0]['missions'];
+    }
+
+    public function getTotalMissionsInQuest($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $result = $this->mongo_db->command(array(
+            'aggregate' => 'playbasis_quest_to_client',
+            'pipeline' => array(
+                array(
+                    '$group' => array(
+                        '_id' => array(
+                            '_id' => '$id',
+                            'status' => '$status'),
+                    'missions' => array(
+                        '$sum' => array('$size' => '$missions'))),
+                ),
+                array(
+                    '$match' => array(
+                        '_id' => $data['quest_id'])
+                    )
+            )
+        ));
+
+        if (!$result['result']) {
+            return 0;
+        }
+
+        return $result['result'][0]['missions'];
+    }
+
+
+    public function getQuestByClientSiteId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if(isset($data['short_detail']) && $data['short_detail']){
@@ -41,27 +100,27 @@ class Quest_model extends MY_Model{
             $this->mongo_db->select(array(),array('_id'));
         }
 
-		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
-		$this->mongo_db->where('_id',  new MongoID($data['quest_id']));		
+        $this->mongo_db->where('_id',  new MongoID($data['quest_id']));
 
-		$quest = $this->mongo_db->get('playbasis_quest_to_client');
+        $quest = $this->mongo_db->get('playbasis_quest_to_client');
 
-		return (isset($quest) || !empty($quest[0]))?$quest[0]:array();
-	}
+        return (isset($quest) || !empty($quest[0]))?$quest[0]:array();
+    }
 
-	public function getTotalQuestsClientSite($data){
+    public function getTotalQuestsClientSite($data){
 
-		$this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
-		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-		$this->mongo_db->where_not_in('deleted', array(true));
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where_not_in('deleted', array(true));
 
-		return $this->mongo_db->count('playbasis_quest_to_client');
+        return $this->mongo_db->count('playbasis_quest_to_client');
 
-	}
+    }
 
     public function getCustomPoint($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -77,16 +136,16 @@ class Quest_model extends MY_Model{
         return $results?$results[0]:array();
     }
 
-	public function getCustomPoints($data){
+    public function getCustomPoints($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-		$this->mongo_db->where_not_in('name', array('badge', 'point', 'exp'));
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where_not_in('name', array('badge', 'point', 'exp'));
 
-		return $this->mongo_db->get('playbasis_reward_to_client');
+        return $this->mongo_db->get('playbasis_reward_to_client');
 
-	}
+    }
 
     public function getBadge($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -102,91 +161,91 @@ class Quest_model extends MY_Model{
 
     }
 
-	public function getBadgesByClientSiteId($data){
+    public function getBadgesByClientSiteId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-		$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
-		return $this->mongo_db->get('playbasis_badge_to_client');
+        return $this->mongo_db->get('playbasis_badge_to_client');
 
-	}
+    }
 
-	/*
-	public function increaseOrderByOne($action_id){
-	    $this->set_site_mongodb($this->session->userdata('site_id'));
+    /*
+    public function increaseOrderByOne($action_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
-	    $this->mongo_db->where('_id', new MongoId($action_id));
-	    $theAction = $this->mongo_db->get('playbasis_action');
+        $this->mongo_db->where('_id', new MongoId($action_id));
+        $theAction = $this->mongo_db->get('playbasis_action');
 
-	    $currentSort = $theAction[0]['sort_order'];
-	    
-	    $newSort = $currentSort+1;
+        $currentSort = $theAction[0]['sort_order'];
 
-	    $this->mongo_db->where('_id', new MongoID($action_id));
-	    $this->mongo_db->set('sort_order', $newSort);
-	    $this->mongo_db->update('playbasis_action');
+        $newSort = $currentSort+1;
 
-	}
-	*/
-	
-	public function increaseOrderByOneClient($quest_id, $client_id){
-	    $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('_id', new MongoID($action_id));
+        $this->mongo_db->set('sort_order', $newSort);
+        $this->mongo_db->update('playbasis_action');
 
-	    $this->mongo_db->where('_id', new MongoId($quest_id));
-	    $this->mongo_db->where('client_id', new MongoId($client_id));
-	    $theQuest = $this->mongo_db->get('playbasis_quest_to_client');
+    }
+     */
 
-	    $currentSort = $theQuest[0]['sort_order'];
-	    
-	    $newSort = $currentSort+1;
+    public function increaseOrderByOneClient($quest_id, $client_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
-	    $this->mongo_db->where('_id', new MongoID($quest_id));
-	    $this->mongo_db->where('client_id', new MongoId($client_id));
-	    $this->mongo_db->set('sort_order', $newSort);
-	    $this->mongo_db->update('playbasis_quest_to_client');
+        $this->mongo_db->where('_id', new MongoId($quest_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $theQuest = $this->mongo_db->get('playbasis_quest_to_client');
 
-	}
+        $currentSort = $theQuest[0]['sort_order'];
 
-	/*
-	public function decreaseOrderByOne($action_id){
-	    $this->set_site_mongodb($this->session->userdata('site_id'));
+        $newSort = $currentSort+1;
 
-	    $this->mongo_db->where('_id', new MongoId($action_id));
-	    $theAction = $this->mongo_db->get('playbasis_action');
+        $this->mongo_db->where('_id', new MongoID($quest_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->set('sort_order', $newSort);
+        $this->mongo_db->update('playbasis_quest_to_client');
 
-	    $currentSort = $theAction[0]['sort_order'];
-	    
-	    if($currentSort != 0){
-	        $newSort = $currentSort-1;    
+    }
 
-	        $this->mongo_db->where('_id', new MongoID($action_id));
-	        $this->mongo_db->set('sort_order', $newSort);
-	        $this->mongo_db->update('playbasis_action');
-	    }
-	}
-	*/
+    /*
+    public function decreaseOrderByOne($action_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
-	public function decreaseOrderByOneClient($quest_id, $client_id){
-	    $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('_id', new MongoId($action_id));
+        $theAction = $this->mongo_db->get('playbasis_action');
 
-	    $this->mongo_db->where('_id', new MongoId($quest_id));
-	    $this->mongo_db->where('client_id', new MongoId($client_id));
-	    $theAction = $this->mongo_db->get('playbasis_quest_to_client');
+        $currentSort = $theAction[0]['sort_order'];
 
-	    $currentSort = $theAction[0]['sort_order'];
-	    
-	    if($currentSort != 0){
-	        $newSort = $currentSort-1;    
+        if($currentSort != 0){
+            $newSort = $currentSort-1;
 
-	        $this->mongo_db->where('_id', new MongoID($quest_id));
-	        $this->mongo_db->where('client_id', new MongoId($client_id));
-	        $this->mongo_db->set('sort_order', $newSort);
-	        $this->mongo_db->update('playbasis_quest_to_client');
-	    }
-	}
+            $this->mongo_db->where('_id', new MongoID($action_id));
+            $this->mongo_db->set('sort_order', $newSort);
+            $this->mongo_db->update('playbasis_action');
+        }
+    }
+     */
 
-	public function deleteQuestClient($quest_id){
+    public function decreaseOrderByOneClient($quest_id, $client_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoId($quest_id));
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $theAction = $this->mongo_db->get('playbasis_quest_to_client');
+
+        $currentSort = $theAction[0]['sort_order'];
+
+        if($currentSort != 0){
+            $newSort = $currentSort-1;
+
+            $this->mongo_db->where('_id', new MongoID($quest_id));
+            $this->mongo_db->where('client_id', new MongoId($client_id));
+            $this->mongo_db->set('sort_order', $newSort);
+            $this->mongo_db->update('playbasis_quest_to_client');
+        }
+    }
+
+    public function deleteQuestClient($quest_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoId($quest_id));
@@ -203,32 +262,32 @@ class Quest_model extends MY_Model{
     public function addQuestToClient($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-    	return $this->mongo_db->insert('playbasis_quest_to_client', $data);
+        return $this->mongo_db->insert('playbasis_quest_to_client', $data);
     }
 
     public function getExpId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-    	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-	    $this->mongo_db->where('name', 'exp');
-    	
-    	$results = $this->mongo_db->get("playbasis_reward_to_client");
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('name', 'exp');
+
+        $results = $this->mongo_db->get("playbasis_reward_to_client");
 
 
-    	return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
+        return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
     }
 
     public function getPointId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-    	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-    	$this->mongo_db->where('name', 'point');
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('name', 'point');
 
-    	$results = $this->mongo_db->get("playbasis_reward_to_client");
+        $results = $this->mongo_db->get("playbasis_reward_to_client");
 
-    	return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
+        return (isset($results[0]['reward_id']))?$results[0]['reward_id']:null;
     }
 
     public function getAction($data){
@@ -248,58 +307,58 @@ class Quest_model extends MY_Model{
     public function getActionsByClientSiteId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-    	$this->mongo_db->where('client_id',  new MongoID($data['client_id']));
-		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-		$this->mongo_db->where('status',true);
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('status',true);
 
-		return $this->mongo_db->get('playbasis_action_to_client');
+        return $this->mongo_db->get('playbasis_action_to_client');
     }
 
     public function editQuestToClient($quest_id, $data){
 
-    	$this->mongo_db->where('_id', new MongoID($quest_id));
+        $this->mongo_db->where('_id', new MongoID($quest_id));
 
-    	if(isset($data['quest_name']) && !is_null($data['quest_name'])){
-    		$this->mongo_db->set('quest_name', $data['quest_name']);
-    	}
+        if(isset($data['quest_name']) && !is_null($data['quest_name'])){
+            $this->mongo_db->set('quest_name', $data['quest_name']);
+        }
 
-    	if(isset($data['description']) && !is_null($data['description'])){
-    		$this->mongo_db->set('description', $data['description']);
-    	}
+        if(isset($data['description']) && !is_null($data['description'])){
+            $this->mongo_db->set('description', $data['description']);
+        }
 
-    	if(isset($data['hint']) && !is_null($data['hint'])){
-    		$this->mongo_db->set('hint', $data['hint']);
-    	}
+        if(isset($data['hint']) && !is_null($data['hint'])){
+            $this->mongo_db->set('hint', $data['hint']);
+        }
 
-    	if(isset($data['image']) && !is_null($data['image'])){
-    		$this->mongo_db->set('image', $data['image']);
-    	}
+        if(isset($data['image']) && !is_null($data['image'])){
+            $this->mongo_db->set('image', $data['image']);
+        }
 
-    	if(isset($data['mission_order']) && !is_null($data['mission_order'])){
-    		$this->mongo_db->set('mission_order', $data['mission_order']);
-    	}
+        if(isset($data['mission_order']) && !is_null($data['mission_order'])){
+            $this->mongo_db->set('mission_order', $data['mission_order']);
+        }
 
-    	if(isset($data['status']) && !is_null($data['status'])){
-    		$this->mongo_db->set('status', $data['status']);
-    	}
-		
-		if(isset($data['sort_order']) && !is_null($data['sort_order'])){
-    		$this->mongo_db->set('sort_order', $data['sort_order']);
-    	}
+        if(isset($data['status']) && !is_null($data['status'])){
+            $this->mongo_db->set('status', $data['status']);
+        }
 
-    	if(isset($data['condition']) && !is_null($data['condition'])){
-    		$this->mongo_db->set('condition', $data['condition']);
-    	}
+        if(isset($data['sort_order']) && !is_null($data['sort_order'])){
+            $this->mongo_db->set('sort_order', $data['sort_order']);
+        }
 
-    	if(isset($data['rewards']) && !is_null($data['rewards'])){
-    		$this->mongo_db->set('rewards', $data['rewards']);
-    	}
+        if(isset($data['condition']) && !is_null($data['condition'])){
+            $this->mongo_db->set('condition', $data['condition']);
+        }
 
-		if(isset($data['missions']) && !is_null($data['missions'])){
-    		$this->mongo_db->set('missions', $data['missions']);
-    	}
+        if(isset($data['rewards']) && !is_null($data['rewards'])){
+            $this->mongo_db->set('rewards', $data['rewards']);
+        }
 
-    	$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        if(isset($data['missions']) && !is_null($data['missions'])){
+            $this->mongo_db->set('missions', $data['missions']);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
         $this->mongo_db->update('playbasis_quest_to_client');
 
@@ -319,13 +378,13 @@ class Quest_model extends MY_Model{
                     $this->mongo_db->set(array('missions.$.completion' => $m['completion']));
                 }
                 if(isset($m['rewards'])){
-                	$this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));	
+                    $this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));
                 }
                 $this->mongo_db->update_all('playbasis_quest_to_player');
             }
         }
 
-    	return true;
+        return true;
 
     }
 
