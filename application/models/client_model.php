@@ -618,5 +618,17 @@ class Client_model extends MY_Model
         $this->mongo_db->inc($type.'.'.$year_month.'.'.$field, $inc);
         $this->mongo_db->update('playbasis_permission');
     }
+
+    public function getPermissionBySiteId($site_id) {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+
+        $this->mongo_db->limit(1);
+
+        $result = $this->mongo_db->get("playbasis_permission");
+
+        return $result ? $result[0]['plan_id'] : null;
+    }
 }
 ?>
