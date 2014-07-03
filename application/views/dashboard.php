@@ -398,7 +398,8 @@
 
                     var notifications = '';
 
-                    for(var i = 0; i < points.length ; i++){
+//                    for(var i = 0; i < points.size ; i++){
+                    for( var i in points ){
 
                         var date_ago = jQuery.timeago(parseInt(Date.parse(points[i].date_added).getTime()));
                         var displayName = (points[i].player.first_name && points[i].player.last_name)? points[i].player.first_name +" "+ points[i].player.last_name :points[i].player.username
@@ -470,6 +471,7 @@
 
                         notifications += '</section>';
                 }
+
                 $('#noti-stream').prepend(notifications);
             }
         })
