@@ -112,8 +112,8 @@ class jigsaw extends MY_Model
 			$exInfo['remaining_time'] = (int) $config['interval'];
 			return false;
 		}
-		$lastTime = $result['date_added']->sec;
-		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime) : (int) (date_diff(new DateTime(), new DateTime(date('Y-m-d H:i:s', $lastTime)))->d);
+		$lastTime = $result['date_added'];
+		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime) : (int) (date_diff(new DateTime(), new DateTime(datetimeMongotoReadable($lastTime)))->d);
 		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
 		$remainingTime = $log['remaining_time'];
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
