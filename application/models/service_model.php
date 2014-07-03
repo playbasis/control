@@ -43,7 +43,7 @@ class Service_model extends MY_Model
             $this->mongo_db->select(array(), array('_id'));
             $player = $this->mongo_db->get('playbasis_player');
 
-            $event['player'] = isset($player) ? $player[0] : null;
+            $event['player'] = isset($player[0]) ? $player[0] : null;
 
             $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
