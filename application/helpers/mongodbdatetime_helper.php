@@ -1,5 +1,5 @@
 <?php
-  function datetimeMongotoReadable($dateTimeMongo)
+    function datetimeMongotoReadable($dateTimeMongo)
     {
         if ($dateTimeMongo) {
             if (isset($dateTimeMongo->sec)) {
