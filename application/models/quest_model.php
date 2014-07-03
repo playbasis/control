@@ -57,11 +57,12 @@ class Quest_model extends MY_Model{
             )
         ));
 
-        if (!$result['result']) {
-            return 0;
-        }
+//        if (!$result['result']) {
+//            return 0;
+//        }
 
-        return $result['result'][0]['missions'];
+//        return $result['result'][0]['missions'];
+        return isset($result['result'][0]['missions'])? $result['result'][0]['missions'] : 0;
     }
 
     public function getTotalMissionsInQuest($data) {
@@ -84,11 +85,12 @@ class Quest_model extends MY_Model{
             )
         ));
 
-        if (!$result['result']) {
-            return 0;
-        }
-
-        return $result['result'][0]['missions'];
+//        if (!$result['result']) {
+//            return 0;
+//        }
+//
+//        return $result['result'][0]['missions'];
+        return isset($result['result'][0]['missions'])? $result['result'][0]['missions'] : 0;
     }
 
 
