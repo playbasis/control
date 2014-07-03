@@ -67,7 +67,7 @@ class Service_model extends MY_Model
                     'deleted' => false
                 ));
                 $result = $this->mongo_db->get('playbasis_badge_to_client');
-                if($result){
+                if(isset($result[0])){
                     $event['badge']['badge_id'] = $result[0]['badge_id']."";
                     $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
                     $event['badge']['name'] = $result[0]['name'];
