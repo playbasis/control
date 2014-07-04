@@ -27,7 +27,7 @@ class Service_model extends MY_Model
         $this->mongo_db->order_by(array('date_added' => -1));
         $event_log = $this->mongo_db->get('playbasis_event_log');
 
-        foreach($event_log as &$event){
+        foreach($event_log as $key => &$event){
 
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('_id', $event['pb_player_id']);
@@ -43,7 +43,11 @@ class Service_model extends MY_Model
             $this->mongo_db->select(array(), array('_id'));
             $player = $this->mongo_db->get('playbasis_player');
 
-            $event['player'] = isset($player) ? $player[0] : null;
+            $event['player'] = isset($player[0]) ? $player[0] : null;
+            if(!$event['player']){
+                unset($event_log[$key]);
+                continue;
+            }
 
             $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
@@ -67,7 +71,7 @@ class Service_model extends MY_Model
                     'deleted' => false
                 ));
                 $result = $this->mongo_db->get('playbasis_badge_to_client');
-                if($result){
+                if(isset($result[0])){
                     $event['badge']['badge_id'] = $result[0]['badge_id']."";
                     $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
                     $event['badge']['name'] = $result[0]['name'];

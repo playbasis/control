@@ -472,7 +472,7 @@ class Player_model extends MY_Model
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
 		$result = $this->mongo_db->get('playbasis_event_log');
 		if($result)
-			return date('Y-m-d H:i:s', $result[0]['date_added']->sec);
+			return datetimeMongotoReadable($result[0]['date_added']);
 		return '0000-00-00 00:00:00';
 	}
 	public function completeObjective($pb_player_id, $objective_id, $client_id, $site_id)
