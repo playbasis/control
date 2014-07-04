@@ -78,7 +78,7 @@ body{
 	width: 220px;
 	height: 80px;
 	display: block;
-	background-image: url("images/pb-logo-dev.png");
+	background-image: url("../images/pb-logo-dev.png");
 }
 .navbar-nav{
 	margin-top: 12px;
