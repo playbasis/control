@@ -749,7 +749,7 @@ class User extends MY_Controller
 
                     $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
                     $this->amazon_ses->to($email);
-                    $this->amazon_ses->bcc('info@playbasis.com');
+                    // $this->amazon_ses->bcc('info@playbasis.com');
                     $this->amazon_ses->subject($subject);
                     $this->amazon_ses->message($htmlMessage);
                     $this->amazon_ses->send();
@@ -798,8 +798,7 @@ class User extends MY_Controller
                     $new_password = $this->input->post('password');
 //                    $user_id = $this->session->userdata('user')[0]['_id'];
                     $user_id = $this->session->userdata('user');
-
-                    $this->User_model->insertNewPassword($user_id, $new_password);
+                    $this->User_model->insertNewPassword($user_id[0]['_id'], $new_password);
                     $this->session->unset_userdata('user');
 
                     echo "<script>alert('Your password has been changed! We will redirect you to our login page.');</script>";
