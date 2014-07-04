@@ -247,6 +247,7 @@ abstract class REST2_Controller extends REST_Controller
 		}
 
 		/* 3.1 Log response (actual output) */
+		ini_set('mongo.allow_empty_keys', TRUE); // allow empty keys to be inserted in MongoDB (for example, insight needs this)
 		$this->rest_model->logResponse($this->log_id, $this->site_id, array(
 			'response' => $data,
 			'format' => $this->response->format,
