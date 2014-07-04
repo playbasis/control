@@ -38,8 +38,9 @@ $lang = array(
 	'form_mission_description'			=> 'Description',
 	'form_mission_hint'					=> 'Hint',
 	'form_mission_image'				=> 'Mission Image',
-	'form_mission_number'				=> 'Mission Number'
-
+	'form_mission_number'				=> 'Mission Number',
+    'error_quest_limit'                 => 'You have reached Quest Limit.',
+    'error_mission_limit'               => 'You have reached Mission Limit.'
 );
 
 

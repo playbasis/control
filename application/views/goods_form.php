@@ -1,5 +1,4 @@
 <div id="content" class="span10">
-
     <div class="box">
         <div class="heading">
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>

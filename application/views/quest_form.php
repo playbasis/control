@@ -22,9 +22,10 @@
             <?php if(validation_errors() || isset($message)){?>
             <div class="content messages half-width">
               <?php echo validation_errors('<div class="warning">', '</div>');?>
-              <?php if (isset($message) && $message){?>
-              <div class="warning"><?php //echo $message;?></div>
-              <?php }?>
+              <?php if (isset($message) && $message){
+                  foreach ($message as $m): ?>
+                      <div class="warning"><?php echo $m;?></div>
+              <?php endforeach; }?>
             </div>
             <?php }?>
             <?php $attributes = array('id' => 'form');?>
