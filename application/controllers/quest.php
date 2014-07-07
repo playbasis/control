@@ -204,7 +204,8 @@ class Quest extends REST2_Controller
 
             foreach($quest["condition"] as $c){
                 if($c["condition_type"] == "DATETIME_START"){
-                    if($c["condition_value"]->sec > time()){
+//                    if($c["condition_value"]->sec > time()){
+                    if(strtotime($c["condition_value"]) > time()){
                         $event = array(
                             'event_type' => 'QUEST_DID_NOT_START',
                             'message' => 'quest did not start'
@@ -212,7 +213,8 @@ class Quest extends REST2_Controller
                         array_push($questEvent, $event);
                     }
                 }else if($c["condition_type"] == "DATETIME_END"){
-                    if($c["condition_value"]->sec < time()){
+//                    if($c["condition_value"]->sec < time()){
+                    if(strtotime($c["condition_value"]) < time()){
                         $event = array(
                             'event_type' => 'QUEST_ALREADY_FINISHED',
                             'message' => 'quest already finished'
