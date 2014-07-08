@@ -23,6 +23,7 @@ $lang['text_success']           				= 'You have successfully created a user!';
 $lang['text_success_update']           			= 'You have successfully updated a user!';
 $lang['text_success_update_user_account']           			= 'You have successfully changed your password!';
 $lang['text_success_delete']           			= 'You have successfully deleted user(s)!';
+$lang['text_success_enable']           			= 'You have successfully enabled user(s)!';
 $lang['text_success_logout']           			= 'You have successfully logged out!';
 //$lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
@@ -38,10 +39,13 @@ $lang['text_no_changes']						= 'No changes has been made!';
 $lang['text_incorrect_captcha']					= 'The captcha was entered incorrectly';
 
 // Column Table
-$lang['column_username']            			= 'Email';
+$lang['column_username']            			= 'Username';
 $lang['column_status']          				= 'Status';
 $lang['column_date_added']      				= 'Date Added';
 $lang['column_action']          				= 'Action';
+$lang['column_title']							= 'Full Name';
+$lang['column_email']							= 'Email';
+$lang['column_random_key']      				= 'Random Key';
 
 //Form fields
 $lang['form_username']							='Username';
@@ -65,3 +69,4 @@ $lang['button_filter']							= 'Filter';
 $lang['button_clear_filter']					= 'Clear filter';
 $lang['button_insert']							= "Insert";
 $lang['button_delete']							= "Delete";
+$lang['button_enable']							= "Enable";

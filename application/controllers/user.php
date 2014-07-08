@@ -656,6 +656,39 @@ class User extends MY_Controller
         $this->render_page('template');
     }
 
+    public function list_pending_users() {
+        $this->data['users'] = array();
+        $results = $this->User_model->listPendingUsers();
+        if ($results) {
+            foreach ($results as $result) {
+                $this->data['users'][] = array(
+                    '_id' => $result['_id'],
+                    'user_group_id' => $result['user_group_id'],
+                    'first_name' => $result['firstname'],
+                    'last_name' => $result['lastname'],
+                    'email' => $result['email'],
+                    'username' => $result['username'],
+                    'status' => $result['status'],
+                    'date_added' => $result['date_added'],
+                    'random_key' => isset($result['random_key']) ? $result['random_key'] : null,
+                );
+            }
+        }
+        $this->load->vars($this->data);
+        $this->render_page('user_pending');
+    }
+
+    public function enable_users() {
+        $this->error['warning'] = null;
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+            foreach ($this->input->post('selected') as $user_id) {
+                $this->User_model->enableUser($user_id);
+            }
+            $this->session->set_flashdata('success', $this->lang->line('text_success_enable'));
+        }
+        redirect('/pending_users', 'refresh');
+    }
+
     public function enable_user(){
         if($_GET['key']){
             $random_key = $_GET['key'];
@@ -669,7 +702,6 @@ class User extends MY_Controller
         }else{
             redirect('login');
         }
-        
     }
 
     public function edit_account(){
@@ -701,7 +733,6 @@ class User extends MY_Controller
 
             $this->data['main'] = 'edit_account.php';
             $this->render_page('template');
-
         }
     }
 
@@ -767,8 +798,7 @@ class User extends MY_Controller
 
         }
         $this->data['main'] = 'forgot_password';
-        $this->render_page('template');       
-        
+        $this->render_page('template');
     }
 
     public function reset_password(){
