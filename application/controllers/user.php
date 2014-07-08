@@ -684,11 +684,21 @@ class User extends MY_Controller
     }
 
     public function enable_users() {
+        $this->load->library('parser');
         $this->error['warning'] = null;
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             if ($this->input->post('selected') && $this->error['warning'] == null) {
                 foreach ($this->input->post('selected') as $user_id) {
                     $this->User_model->enableUser($user_id);
+                    $user = $this->User_model->getById($user_id);
+                    if ($user) {
+                        $vars = array(
+                            'firstname' => $user['firstname'],
+                            'lastname' => $user['lastname'],
+                        );
+                        $htmlMessage = $this->parser->parse('user_activated.html', $vars, true);
+                        $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
+                    }
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_enable'));
             }
@@ -711,6 +721,15 @@ class User extends MY_Controller
         }else{
             redirect('login');
         }
+    }
+
+    private function email($to, $subject, $message) {
+        $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+        $this->amazon_ses->to($to);
+        $this->amazon_ses->bcc('info@playbasis.com');
+        $this->amazon_ses->subject($subject);
+        $this->amazon_ses->message($message);
+        $this->amazon_ses->send();
     }
 
     public function edit_account(){

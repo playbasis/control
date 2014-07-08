@@ -25,26 +25,25 @@
 <table id="user-list" class="list">
     <thead>
     <tr>
-	    <td class="left"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-	    <td class="left">#</td>
+        <td class="left"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+        <td class="left">#</td>
         <td class="left"><?php echo $this->lang->line('column_title'); ?></td>
         <td class="left"><?php echo $this->lang->line('column_username'); ?></td>
-	    <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
-	    <td class="left"><?php echo $this->lang->line('column_random_key'); ?></td>
-        <td class="right"><b><?php echo $this->lang->line('column_date_added'); ?></b></td>
-        <td></td>
+        <td class="left"><?php echo $this->lang->line('column_email'); ?></td>
+        <td class="left"><?php echo $this->lang->line('column_random_key'); ?></td>
+        <td class="right"><?php echo $this->lang->line('column_date_added'); ?></td>
     </tr>
     </thead>
     <?php foreach ($users as $i => $user) { ?>
         <tbody id="user-row<?php echo $i; ?>">
         <tr>
-	        <td class="left"><input type="checkbox" name="selected[]" value="<?php echo $user['_id']; ?>" /></td>
-	        <td class="left"><?php echo $i; ?></td>
+            <td class="left"><input type="checkbox" name="selected[]" value="<?php echo $user['_id']; ?>" /></td>
+            <td class="left"><?php echo $i+1; ?></td>
             <td class="left"><?php echo $user['first_name']; ?> <?php echo $user['last_name']; ?></td>
             <td class="left"><?php echo anchor('user/update/'.$user['_id'], $user['username']); ?></td>
-	        <td class="left"><?php echo $user['email']; ?></td>
-	        <td class="left"><?php echo $user['random_key']; ?></td>
-	        <td class="right"><?php echo date('j F Y g:i a', $user['date_added']->sec); ?></td>
+            <td class="left"><?php echo $user['email']; ?></td>
+            <td class="left"><?php echo $user['random_key']; ?></td>
+            <td class="right"><?php echo date('j F Y g:i a', $user['date_added']->sec); ?></td>
         </tr>
         </tbody>
     <?php } ?>
