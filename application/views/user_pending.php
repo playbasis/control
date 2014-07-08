@@ -12,6 +12,11 @@
 					<div class="success"><?php echo $this->session->flashdata('success'); ?></div>
 				</div>
 			<?php }?>
+			<?php if($this->session->flashdata('error')){ ?>
+				<div class="content messages half-width">
+					<div class="error"><?php echo $this->session->flashdata('error'); ?></div>
+				</div>
+			<?php }?>
 			<div id="users">
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script>

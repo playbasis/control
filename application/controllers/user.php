@@ -658,21 +658,25 @@ class User extends MY_Controller
 
     public function list_pending_users() {
         $this->data['users'] = array();
-        $results = $this->User_model->listPendingUsers();
-        if ($results) {
-            foreach ($results as $result) {
-                $this->data['users'][] = array(
-                    '_id' => $result['_id'],
-                    'user_group_id' => $result['user_group_id'],
-                    'first_name' => $result['firstname'],
-                    'last_name' => $result['lastname'],
-                    'email' => $result['email'],
-                    'username' => $result['username'],
-                    'status' => $result['status'],
-                    'date_added' => $result['date_added'],
-                    'random_key' => isset($result['random_key']) ? $result['random_key'] : null,
-                );
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            $results = $this->User_model->listPendingUsers();
+            if ($results) {
+                foreach ($results as $result) {
+                    $this->data['users'][] = array(
+                        '_id' => $result['_id'],
+                        'user_group_id' => $result['user_group_id'],
+                        'first_name' => $result['firstname'],
+                        'last_name' => $result['lastname'],
+                        'email' => $result['email'],
+                        'username' => $result['username'],
+                        'status' => $result['status'],
+                        'date_added' => $result['date_added'],
+                        'random_key' => isset($result['random_key']) ? $result['random_key'] : null,
+                    );
+                }
             }
+        } else {
+	        $this->session->set_flashdata('error', $this->lang->line('error_access'));
         }
         $this->load->vars($this->data);
         $this->render_page('user_pending');
@@ -680,11 +684,15 @@ class User extends MY_Controller
 
     public function enable_users() {
         $this->error['warning'] = null;
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $user_id) {
-                $this->User_model->enableUser($user_id);
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            if ($this->input->post('selected') && $this->error['warning'] == null) {
+                foreach ($this->input->post('selected') as $user_id) {
+                    $this->User_model->enableUser($user_id);
+                }
+                $this->session->set_flashdata('success', $this->lang->line('text_success_enable'));
             }
-            $this->session->set_flashdata('success', $this->lang->line('text_success_enable'));
+        } else {
+            $this->session->set_flashdata('error', $this->lang->line('error_access'));
         }
         redirect('/pending_users', 'refresh');
     }
