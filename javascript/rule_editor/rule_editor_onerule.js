@@ -1,7 +1,6 @@
 // rule_editor.js
 var DEBUG = false;
 
-
 //########################################
 //Header
 //########################################
@@ -129,7 +128,7 @@ oneRuleMan = {
 
         for(var index in jigsaws){
             if(DEBUG)console.log('Init >> ');
-            if(DEBUG)console.log(jigsaws[index])
+            if(DEBUG)console.log(jigsaws[index]);
             this.nodeList.push(new Node(jigsaws[index]));
         }
 
@@ -212,6 +211,7 @@ oneRuleMan = {
 
 
     saveRule:function(){
+
         /*Gathering json string
          >from header
          >from each node re-check -> rule process
@@ -236,8 +236,6 @@ oneRuleMan = {
         output.active_status = this.active_status;
         output.tags = this.rule_tags;
 
-
-
         //Update action_id
         //Assuminf first node is action node
         var getActionID = oneRuleMan.nodeList[0].getJSON();
@@ -250,9 +248,8 @@ oneRuleMan = {
         for(var index in oneRuleMan.nodeList){
 //            console.log(oneRuleMan.nodeList[index]);
 //            console.log(oneRuleMan.nodeList[index].getJSON());
-            output.jigsaw_set.push(oneRuleMan.nodeList[index].getJSON())
+            output.jigsaw_set.push(oneRuleMan.nodeList[index].getJSON());
         }
-
 
         //Convert Active Status to Number
         if(output.active_status == 'Enable')
@@ -348,25 +345,6 @@ oneRuleMan = {
 
 
 },//->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //Mod : node chaining manager
@@ -538,37 +516,12 @@ oneRuleMan = {
     },//->
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //Mod : all about one node in chain 
     nodeMan = {
         newNode:function(){
 
         },
     },//->
-
-
-
-
-
-
-
-
-
-
-
 
 
 //Mod : all about fields in node , field validation , dataset detail render control
@@ -578,9 +531,6 @@ oneRuleMan = {
         },
     }//->
 //End Section : oneRule
-
-
-
 
 
 perventDialogMan = {
@@ -621,8 +571,6 @@ perventDialogMan = {
         })
 
     },
-
-
 
     updateUIAfterGetAnswer:function(direction,answer,targetElement){
         /*
@@ -702,9 +650,6 @@ perventDialogMan = {
 
 }
 
-
-
-
 preventUnusual ={
     message:function(msg,title){
         if(msg=='' || msg== undefined)return;
@@ -736,21 +681,6 @@ $('.one_rule_save_btn').live('click',function(){
     }
     return true;
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1115,7 +1045,8 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
     }
 })
 
-
-
-
 // }
+
+$("input").live('keyup', function(){
+    this.value = this.value.replace(/[^0-9a-z\_\. ]/g,'');
+});
