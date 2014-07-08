@@ -235,6 +235,29 @@ class User_model extends MY_Model
         return $this->mongo_db->insert('user_to_client', $data_insert);
     }
 
+    public function listPendingUsers() {
+        $this->set_site_mongodb(0); // use default in case of pending users
+        $this->mongo_db->where('status', false);
+        $this->mongo_db->order_by(array('date_added' => -1));
+        $results = $this->mongo_db->get("user");
+        return $results;
+    }
+
+    public function enableUser($user_id) {
+        $this->set_site_mongodb(0); // use default in case of pending users
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $this->mongo_db->set('status', true);
+        $this->mongo_db->set('random_key', null);
+        $this->mongo_db->update('user');
+    }
+
+    public function getById($user_id) {
+        $this->set_site_mongodb(0); // use default in case of pending users
+        $this->mongo_db->where('_id', new MongoID($user_id));
+        $results = $this->mongo_db->get("user");
+        return ($results && count($results) > 0) ? $results[0] : null;
+    }
+
     public function fetchAllUsers($data){
         $this->set_site_mongodb($this->site_id);
 

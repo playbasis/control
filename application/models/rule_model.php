@@ -21,8 +21,8 @@ class Rule_model extends MY_Model
             if(count($results)>0){
                 foreach ($results as &$rowx) {
                     $rowx['specific_id'] = $rowx['action_id']."";
-                    $rowx['name'] = str_replace("'", "&#9048;", $rowx['name']);
-                    $rowx['description'] = str_replace("'", "&#9048;", $rowx['description']);
+                    $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
+                    $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
 //                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['dataSet'] = $rowx['init_dataset'];
 //                    $rowx['id']=1;#hard code set id to be '1'
@@ -58,8 +58,8 @@ class Rule_model extends MY_Model
             if(count($results)>0){
                 foreach ($results as &$rowx) {
                     $rowx['id']=$rowx['jigsaw_id']."";
-                    $rowx['name'] = str_replace("'", "&#9048;", $rowx['name']);
-                    $rowx['description'] = str_replace("'", "&#9048;", $rowx['description']);
+                    $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
+                    $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
 //                    $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
                     $rowx['dataSet'] = $rowx['init_dataset'];
                     $rowx['specific_id']= $rowx['jigsaw_id']."";//'';//no specific id for contion so using the same id with jigsaw id.
@@ -107,8 +107,8 @@ class Rule_model extends MY_Model
             if(count($ds)>0){
                 foreach ($ds as &$rowx) {
                     $rowx['specific_id'] = $rowx['reward_id']."";
-                    $rowx['name'] = str_replace("'", "&#9048;", $rowx['name']);
-                    $rowx['description'] = str_replace("'", "&#9048;", $rowx['description']);
+                    $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
+                    $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
 //                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['dataSet'] = $rowx['init_dataset'];
 //                    $rowx['id']=2;#hard code set id to be '2'

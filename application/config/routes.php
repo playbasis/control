@@ -44,6 +44,7 @@ $route['404_override'] = '';
 $route['login'] = 'user/login';
 $route['register'] = 'user/register';
 $route['logout'] = 'user/logout';
+$route['pending_users'] = 'user/list_pending_users';
 $route['enable_user'] = 'user/enable_user';
 $route['forgot_password'] = '/user/forgot_password';
 $route['reset_password'] = '/user/reset_password';

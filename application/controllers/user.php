@@ -656,6 +656,64 @@ class User extends MY_Controller
         $this->render_page('template');
     }
 
+    public function list_pending_users() {
+        $this->data['users'] = array();
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            $results = $this->User_model->listPendingUsers();
+            if ($results) {
+                foreach ($results as $result) {
+                    $this->data['users'][] = array(
+                        '_id' => $result['_id'],
+                        'user_group_id' => $result['user_group_id'],
+                        'first_name' => $result['firstname'],
+                        'last_name' => $result['lastname'],
+                        'email' => $result['email'],
+                        'username' => $result['username'],
+                        'status' => $result['status'],
+                        'date_added' => $result['date_added'],
+                        'random_key' => isset($result['random_key']) ? $result['random_key'] : null,
+                    );
+                }
+            }
+        } else {
+	        $this->session->set_flashdata('error', $this->lang->line('error_access'));
+        }
+        $this->data['main'] = 'user_pending';
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
+    public function enable_users() {
+        $this->load->library('parser');
+        $this->error['warning'] = null;
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            if ($this->input->post('selected') && $this->error['warning'] == null) {
+                foreach ($this->input->post('selected') as $user_id) {
+                    $initial_password = get_random_password(8,8);
+                    $this->User_model->insertNewPassword($user_id, $initial_password);
+                    $this->User_model->enableUser($user_id);
+                    $user = $this->User_model->getById($user_id);
+                    if ($user) {
+                        $vars = array(
+                            'firstname' => $user['firstname'],
+                            'lastname' => $user['lastname'],
+                            'username' => $user['username'],
+                            'password' => $initial_password,
+                        );
+                        $htmlMessage = $this->parser->parse('user_activated.html', $vars, true);
+                        $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
+                        $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
+                        $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
+                    }
+                }
+                $this->session->set_flashdata('success', $this->lang->line('text_success_enable'));
+            }
+        } else {
+            $this->session->set_flashdata('error', $this->lang->line('error_access'));
+        }
+        redirect('/pending_users', 'refresh');
+    }
+
     public function enable_user(){
         if($_GET['key']){
             $random_key = $_GET['key'];
@@ -669,7 +727,15 @@ class User extends MY_Controller
         }else{
             redirect('login');
         }
-        
+    }
+
+    private function email($to, $subject, $message) {
+        $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+        $this->amazon_ses->to($to);
+        $this->amazon_ses->bcc('info@playbasis.com');
+        $this->amazon_ses->subject($subject);
+        $this->amazon_ses->message($message);
+        $this->amazon_ses->send();
     }
 
     public function edit_account(){
@@ -724,7 +790,6 @@ class User extends MY_Controller
 
             $this->data['main'] = 'edit_account.php';
             $this->render_page('template');
-
         }
     }
 
@@ -790,8 +855,7 @@ class User extends MY_Controller
 
         }
         $this->data['main'] = 'forgot_password';
-        $this->render_page('template');       
-        
+        $this->render_page('template');
     }
 
     public function reset_password(){
