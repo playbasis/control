@@ -574,6 +574,8 @@ class Player_model extends MY_Model
                 unset($result[$i]);
             }
 		}
+
+        $result = array_values($result);
 		return $result;
 	}
 	public function getUserRanking($ranked_by, $player_id, $client_id, $site_id)
@@ -683,6 +685,7 @@ class Player_model extends MY_Model
                     unset($ranking[$i]);
                 }
 			}
+            $ranking = array_values($ranking);
 			$result[$name] = $ranking;
 		}
 		return $result;
