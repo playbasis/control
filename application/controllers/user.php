@@ -678,8 +678,9 @@ class User extends MY_Controller
         } else {
 	        $this->session->set_flashdata('error', $this->lang->line('error_access'));
         }
+        $this->data['main'] = 'user_pending';
         $this->load->vars($this->data);
-        $this->render_page('user_pending');
+        $this->render_page('template');
     }
 
     public function enable_users() {
