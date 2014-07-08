@@ -184,8 +184,11 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
 
                 <li class="dropdown">
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="icon-user icon-white"></i>
+                        <div class='profilepic'>
+                            <img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                        
                         <span class="caret"></span>
+                        </div>
                     </a>
                     <ul class="dropdown-menu">
                         <?php if($client_id){?>

@@ -682,7 +682,29 @@ class User extends MY_Controller
             $this->data['title'] = $this->lang->line('text_edit_account');
             $this->data['form'] = 'user/edit_account';
 
-            $this->data['user_info'] = $this->User_model->getUserInfo($user_id);
+            $this->data['user_info'] = $this->User_model->getUserInfo($user_id);            
+
+            if ($this->input->post('image')) {
+                $this->data['image'] = $this->input->post('image');
+            } elseif (!empty($this->data['user_info'])) {
+                $this->data['image'] = $this->data['user_info']['image'];
+            } else {
+                $this->data['image'] = 'no_image.jpg';
+            }
+
+            if ($this->data['image']){
+                $info = pathinfo($this->data['image']);
+                if(isset($info['extension'])){
+                    $extension = $info['extension'];
+                    $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
+                    $this->data['thumb'] = S3_IMAGE.$new_image;
+                }else{
+                    $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                }
+            }else{
+                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+            }
+
             $this->data['usergroup_name'] = $this->User_model->getUserGroupNameForUser($user_id);
 
             $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[40]|xss_clean|check_space');
@@ -692,8 +714,9 @@ class User extends MY_Controller
                 $data = array(
                     'password'=>$this->input->post('password'),
                     'confirm_password' =>$this->input->post('password_confirm'),
-                    'edit_account'=>true
-                    );
+                    'edit_account'=>true,
+                    'image' =>$this->input->post('image'),
+                );
                 if($this->form_validation->run()){
                     $this->User_model->editUser($user_id, $data);
                 }

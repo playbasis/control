@@ -85,10 +85,15 @@ class User_model extends MY_Model
         if(isset($data['status']) && !is_null($data['status'])){
             $this->mongo_db->set('status', (bool)$data['status']);    
         }
+
+        if(isset($data['image']) && !is_null($data['image'])){
+            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));    
+        }
         
         if($data['password'] == $data['confirm_password']){
             
             if(trim($data['password']) =="" || trim($data['confirm_password']=="")){
+                /*
                 if(isset($data['edit_account'])){
                     $this->session->set_flashdata('no_changes', $this->lang->line('text_no_changes'));
                     redirect('user/edit_account');
@@ -98,7 +103,8 @@ class User_model extends MY_Model
                         
                     redirect('/user', 'refresh');    
                 }
-                
+                */
+                $this->mongo_db->update('user');
             }else{
                 $this->mongo_db->set('password', dohash($data['password'],$salt));    
                 $this->mongo_db->update('user');
@@ -110,7 +116,7 @@ class User_model extends MY_Model
                         redirect('/user', 'refresh');        
                     }
             }
-        }      
+        } 
     }
 
     public function insertUser(){
@@ -663,5 +669,6 @@ class User_model extends MY_Model
 
 		return $result ? $result[0] : null;
 	}
+
 }
 ?>

@@ -126,6 +126,15 @@ class  MY_Controller  extends  CI_Controller  {
 
             $this->data['username'] = $this->User_model->getUserName();
 
+            $userInfo = $this->User_model->getUserInfo($this->session->userdata('user_id'));
+
+            if(isset($userInfo['image'])){
+                $this->data['thumb'] = S3_IMAGE.$this->User_model->getUserInfo($this->session->userdata('user_id'))['image'];
+            }else{
+                $this->data['thumb'] = '';
+            }
+
+
             if($this->data['site_id']){
 
 

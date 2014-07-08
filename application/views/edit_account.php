@@ -53,8 +53,43 @@
 	                    <td><?php echo $this->lang->line('form_confirm_password'); ?></td>
 	                    <td><input type="password" name="password_confirm" size="100"/></td>
 	                </tr>
+	                <tr>
+                        <td><?php echo $this->lang->line('form_image_profile'); ?>:</td>
+                        <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                            <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
+                            <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
+                    </tr>
 	        	</table>
 	        <?php echo form_close();?>
         </div>
     </div><!-- .box -->
 </div><!-- #content .span10 -->
+
+
+<script type="text/javascript"><!--
+function image_upload(field, thumb) {
+    $('#dialog').remove();
+
+    $('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="'+baseUrlPath+'filemanager?field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 200px; height: 100%;" frameborder="no" scrolling="no"></iframe></div>');
+
+    $('#dialog').dialog({
+        title: '<?php echo $this->lang->line('text_image_manager'); ?>',
+        close: function (event, ui) {
+            if ($('#' + field).attr('value')) {
+                $.ajax({
+                    url: baseUrlPath+'filemanager/image?image=' + encodeURIComponent($('#' + field).val()),
+                    dataType: 'text',
+                    success: function(data) {
+                        $('#' + thumb).replaceWith('<img src="' + data + '" alt="" id="' + thumb + '" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />');
+                    }
+                });
+            }
+        },
+        bgiframe: false,
+        width: 200,
+        height: 100,
+        resizable: false,
+        modal: false
+    });
+};
+//--></script>
