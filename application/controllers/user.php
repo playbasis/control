@@ -689,15 +689,21 @@ class User extends MY_Controller
         if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
             if ($this->input->post('selected') && $this->error['warning'] == null) {
                 foreach ($this->input->post('selected') as $user_id) {
+                    $initial_password = get_random_password(8,8);
+                    $this->User_model->insertNewPassword($user_id, $initial_password);
                     $this->User_model->enableUser($user_id);
                     $user = $this->User_model->getById($user_id);
                     if ($user) {
                         $vars = array(
                             'firstname' => $user['firstname'],
                             'lastname' => $user['lastname'],
+                            'username' => $user['username'],
+                            'password' => $initial_password,
                         );
                         $htmlMessage = $this->parser->parse('user_activated.html', $vars, true);
                         $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
+                        $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
+                        $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
                     }
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_enable'));
