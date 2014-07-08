@@ -211,7 +211,7 @@ class Player extends REST2_Controller
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
-        if(isset($level['max_exp'])){
+        if(isset($level['max_exp']) && $max_exp != 0){
             $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
             $player['player']['percent_of_level'] = round($percent_exp,2);
         }else{
