@@ -150,8 +150,8 @@ Node.prototype.getJSON = function() {
     //Get attribute of this object to be json output
     var output = {};
     output.id = this.jigsawId;
-    output.name = this.jigsawName;
-    output.description = this.jigsawDescription;
+    output.name = $('<textarea/>').html(this.jigsawName).val();
+    output.description = $('<textarea/>').html(this.jigsawDescription).val();
     output.specific_id = this.specificId;
     output.category = this.category;
     output.sort_order = this.sortOrder;
