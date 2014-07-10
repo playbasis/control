@@ -752,7 +752,7 @@ class User extends MY_Controller
 
             if ($this->input->post('image')) {
                 $this->data['image'] = $this->input->post('image');
-            } elseif (!empty($this->data['user_info'])) {
+            } elseif (!empty($this->data['user_info']) && isset($this->data['user_info']['image'])) {
                 $this->data['image'] = $this->data['user_info']['image'];
             } else {
                 $this->data['image'] = 'no_image.jpg';
