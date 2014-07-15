@@ -107,7 +107,25 @@ class Player_model extends MY_Model
 			return false;
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
-		return $this->mongo_db->delete('playbasis_player');
+		$this->mongo_db->delete('playbasis_player');
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('pb_player_id', $id);
+        $this->mongo_db->delete('playbasis_badge_to_player');
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('pb_player_id', $id);
+        $this->mongo_db->delete('playbasis_goods_to_player');
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('pb_player_id', $id);
+        $this->mongo_db->delete('playbasis_quest_to_player');
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('pb_player_id', $id);
+        $this->mongo_db->delete('playbasis_reward_to_player');
+
+        return true;
 	}
 	public function getPlaybasisId($clientData)
 	{
@@ -539,6 +557,7 @@ class Player_model extends MY_Model
 		$result = $result[0];
 		//get points for the reward id
 		$this->mongo_db->select(array(
+            'pb_player_id',
 			'cl_player_id',
 			'value'
 		));
@@ -550,33 +569,34 @@ class Player_model extends MY_Model
 		));
 		$this->mongo_db->order_by(array('value' => 'desc'));
 		$this->mongo_db->limit($limit+5);
-		$result = $this->mongo_db->get('playbasis_reward_to_player');
-		$count = count($result);
+		$result1 = $this->mongo_db->get('playbasis_reward_to_player');
+
+		$count = count($result1);
         $check = 0;
 		for($i=0; $i < $count; ++$i)
 		{
             if($check < $limit){
                 $this->mongo_db->where(array(
-                    'cl_player_id' => $result[$i]['cl_player_id'],
+                    '_id' => $result1[$i]['pb_player_id'],
                     'client_id' => $client_id,
                     'site_id' => $site_id
                 ));
                 $check_player = $this->mongo_db->count('playbasis_player');
                 if($check_player > 0){
-                    $result[$i]['player_id'] = $result[$i]['cl_player_id'];
-                    $result[$i][$ranked_by] = $result[$i]['value'];
-                    unset($result[$i]['cl_player_id']);
-                    unset($result[$i]['value']);
+                    $result1[$i]['player_id'] = $result1[$i]['cl_player_id'];
+                    $result1[$i][$ranked_by] = $result1[$i]['value'];
+                    unset($result1[$i]['cl_player_id']);
+                    unset($result1[$i]['value']);
                     $check++;
                 }else{
-                    unset($result[$i]);
+                    unset($result1[$i]);
                 }
             }else{
-                unset($result[$i]);
+                unset($result1[$i]);
             }
 		}
 
-        $result = array_values($result);
+        $result = array_values($result1);
 		return $result;
 	}
 	public function getUserRanking($ranked_by, $player_id, $client_id, $site_id)
@@ -650,6 +670,7 @@ class Player_model extends MY_Model
 			$reward_id = $reward['reward_id'];
 			$name = $reward['name'];
 			$this->mongo_db->select(array(
+				'pb_player_id',
 				'cl_player_id',
 				'value'
 			));
@@ -668,7 +689,7 @@ class Player_model extends MY_Model
 			{
                 if($check < $limit){
                     $this->mongo_db->where(array(
-                        'cl_player_id' => $ranking[$i]['cl_player_id'],
+                        '_id' => $ranking[$i]['pb_player_id'],
                         'client_id' => $client_id,
                         'site_id' => $site_id
                     ));
