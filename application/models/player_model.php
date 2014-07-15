@@ -353,7 +353,8 @@ class Player_model extends MY_Model
         ));
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         if(!$result)
-            return;
+            return false;
+
         $badgeInfo = $result[0];
 
         if(isset($badgeInfo['claim']) && $badgeInfo['claim']){
@@ -364,7 +365,7 @@ class Player_model extends MY_Model
             $result = $this->mongo_db->get('playbasis_reward_to_player');
 
             if(!$result)
-                return;
+                return false;
 
             $badge = $result[0];
             if(isset($badge['claimed']) && (int)($badge['claimed']) > 0){
@@ -423,7 +424,7 @@ class Player_model extends MY_Model
         ));
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         if(!$result)
-            return;
+            return false;
         $badgeInfo = $result[0];
 
         if(isset($badgeInfo['redeem']) && $badgeInfo['redeem']){
@@ -434,7 +435,7 @@ class Player_model extends MY_Model
             $result = $this->mongo_db->get('playbasis_reward_to_player');
 
             if(!$result)
-                return;
+                return false;
 
             $badge = $result[0];
             if(isset($badge['redeemed']) && (int)($badge['redeemed']) > 0){
