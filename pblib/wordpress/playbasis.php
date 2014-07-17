@@ -13,8 +13,8 @@ require 'pblib/playbasis.php';
 class PlaybasisWP
 {
 	public $pb = null;
-	const api_key = 'abc';
-	const api_secret = 'abcde';
+	const api_key = '';
+	const api_secret = '';
 	const commentAction = 'comment';
 	const userIdPrefix = 'wpusr_';
 	const userNamePrefix = 'wpusr_';

@@ -6,9 +6,11 @@ html
         -else
             - var title = 'Live Documentation'
         title=title
+        link(rel='shortcut icon', href='http://doc.playbasis.com/images/favicon.ico')
         link(rel='stylesheet', href='/stylesheets/prettify.css')
         link(rel='stylesheet', href='/stylesheets/style.css')
         link(rel='stylesheet', href='/stylesheets/custom.css')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans:400,600')
 
     body
         !{body}
@@ -25,3 +27,10 @@ html
         
         script(src='/javascripts/jquery-1.9.1.min.js')
         script(src='/javascripts/custom.js')
+        script(src='//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js')
+        script(src='/javascripts/css3-mediaqueries.js')
+
+        <!--[if lt IE 9]> 
+        <script type='text/javascript' src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script> 
+        <![endif]-->

@@ -123,7 +123,7 @@ class Mongo_db
 	 * @var string
 	 * @access private
 	 */
-	private $_query_safety = 'safe';
+	private $_query_safety = 'w';
 
 	/**
 	 * Selects array.
@@ -211,7 +211,8 @@ class Mongo_db
 			$this->_ci = NULL;
 		}
 
-        MongoCursor::$timeout = -1;
+		/* MongoCursor::$timeout = -1; */
+		MongoCursor::$timeout = 2*60000; // prevent MongoCursorTimeoutException, set timeout to be (default = 30000 milli secs, -1 = no timeout)
 
 		$this->load();
 	}
@@ -997,7 +998,7 @@ class Mongo_db
 		
 		$options = array_merge(
 					array(
-						$this->_query_safety => TRUE
+						/* $this->_query_safety => TRUE */
 					),
 					$options
 				);
@@ -1055,7 +1056,7 @@ class Mongo_db
 		
 		$options = array_merge(
 					array(
-						$this->_query_safety => TRUE
+						/* $this->_query_safety => TRUE */
 					),
 					$options
 				);
@@ -1102,7 +1103,8 @@ class Mongo_db
 				
 		try
 		{
-			$options = array_merge(array($this->_query_safety => TRUE, 'multiple' => FALSE), $options);
+			/* $options = array_merge(array($this->_query_safety => TRUE, 'multiple' => FALSE), $options); */
+			$options = array_merge(array('multiple' => FALSE), $options);
 			$result = $this->_dbhandle->{$collection}->update($this->wheres, $this->updates, $options);
 			$this->_clear($collection, 'update');
 			
@@ -1150,7 +1152,8 @@ class Mongo_db
 				
 		try
 		{
-			$options = array_merge(array($this->_query_safety => TRUE, 'multiple' => TRUE), $options);
+			/* $options = array_merge(array($this->_query_safety => TRUE, 'multiple' => TRUE), $options); */
+			$options = array_merge(array('multiple' => TRUE), $options);
 			$result = $this->_dbhandle->{$collection}->update($this->wheres, $this->updates, $options);
 			$this->_clear($collection, 'update_all');
 			
@@ -1481,7 +1484,8 @@ class Mongo_db
 		
 		try
 		{
-			$this->_dbhandle->{$collection}->remove($this->wheres, array($this->_query_safety => TRUE, 'justOne' => TRUE));
+			/* $this->_dbhandle->{$collection}->remove($this->wheres, array($this->_query_safety => TRUE, 'justOne' => TRUE)); */
+			$this->_dbhandle->{$collection}->remove($this->wheres, array('justOne' => TRUE));
 			$this->_clear($collection, 'delete');
 			return TRUE;
 		}
@@ -1520,7 +1524,8 @@ class Mongo_db
 		
 		try
 		{
-			$this->_dbhandle->{$collection}->remove($this->wheres, array($this->_query_safety => TRUE, 'justOne' => FALSE));
+			/* $this->_dbhandle->{$collection}->remove($this->wheres, array($this->_query_safety => TRUE, 'justOne' => FALSE)); */
+			$this->_dbhandle->{$collection}->remove($this->wheres, array('justOne' => FALSE));
 			$this->_clear($collection, 'delete_all');
 			return TRUE;
 		}

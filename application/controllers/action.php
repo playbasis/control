@@ -8,6 +8,7 @@ class Action extends REST2_Controller
 		parent::__construct();
 		$this->load->model('auth_model');
 		$this->load->model('action_model');
+		$this->load->model('client_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/respond', 'resp');
 	}
@@ -22,11 +23,33 @@ class Action extends REST2_Controller
 
 	public function log_get()
 	{
+        // Limit
+        $site_id = $this->validToken['site_id'];
+        $plan_id = $this->client_model->getPermissionBySiteId($site_id);
+        $limit = $this->client_model->getPlanLimitById(
+            $site_id,
+            $plan_id,
+            'others',
+            'insight'
+        );
+
+        $now = new Datetime();
+        $startDate      = new DateTime($this->input->get('from', TRUE));
+        $endDate        = new DateTime($this->input->get('to', TRUE));
+
 		$log = array();
 		$prev = null;
 		foreach ($this->action_model->listActions($this->validToken) as $key => $v) {
 			$action_name = $v['name'];
-			foreach ($this->action_model->actionLog($this->validToken, $action_name, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+			foreach ($this->action_model->actionLog(
+                $this->validToken,
+                $action_name,
+                $startDate->format('Y-m-d'),
+                $endDate->format('Y-m-d')) as $key => $value) {
+                    $dDiff = $now->diff(new DateTime($value["_id"]));
+                    if ($limit && $dDiff->days > $limit) {
+                        continue;
+                    }
 				$key = $value['_id'];
 				if ($prev) {
 					$d = $prev;

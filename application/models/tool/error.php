@@ -74,6 +74,10 @@ class Error extends CI_Model
             $errorData['message'] = "Can\'t Access ,Permission Denied";
             $errorData['error_code'] = '0002';
             break;
+        case 'LIMIT_EXCEED':
+            $errorData['message'] = "Limit Exceed, Contact Admin";
+            $errorData['error_code'] = '0003';
+            break;
         case 'USER_NOT_EXIST':
             $errorData['message'] = "User doesn't exist";
             $errorData['error_code'] = '0200';

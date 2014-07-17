@@ -211,7 +211,7 @@ class Player extends REST2_Controller
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
-        if(isset($level['max_exp'])){
+        if(isset($level['max_exp']) && $max_exp != 0){
             $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
             $player['player']['percent_of_level'] = round($percent_exp,2);
         }else{
@@ -634,8 +634,17 @@ class Player extends REST2_Controller
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->claimBadge($pb_player_id, new MongoId($badge_id), $this->site_id, $this->client_id);
-		$this->response($this->resp->setRespond($result), 200);
+        try{
+            $badge_id = new MongoId($badge_id);
+        } catch (Exception $e) {
+            $badge_id = $badge_id;
+        }
+		$result = $this->player_model->claimBadge($pb_player_id, $badge_id, $this->site_id, $this->client_id);
+        if($result){
+            $this->response($this->resp->setRespond($result), 200);
+        }else{
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+        }
 	}
 	public function redeemBadge_post($player_id='', $badge_id='')
 	{
@@ -650,8 +659,17 @@ class Player extends REST2_Controller
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->redeemBadge($pb_player_id, new MongoId($badge_id), $this->site_id, $this->client_id);
-		$this->response($this->resp->setRespond($result), 200);
+        try{
+            $badge_id = new MongoId($badge_id);
+        } catch (Exception $e) {
+            $badge_id = $badge_id;
+        }
+		$result = $this->player_model->redeemBadge($pb_player_id, $badge_id, $this->site_id, $this->client_id);
+        if($result){
+            $this->response($this->resp->setRespond($result), 200);
+        }else{
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+        }
 	}
     public function rank_get($ranked_by, $limit = 20)
     {
@@ -738,9 +756,30 @@ class Player extends REST2_Controller
 	}
 	public function new_get()
 	{
+        // Limit
+        $site_id = $this->validToken['site_id'];
+        $plan_id = $this->client_model->getPermissionBySiteId($site_id);
+        $limit = $this->client_model->getPlanLimitById(
+            $site_id,
+            $plan_id,
+            'others',
+            'insight'
+        );
+
+        $now = new Datetime();
+        $startDate      = new DateTime($this->input->get('from', TRUE));
+        $endDate        = new DateTime($this->input->get('to', TRUE));
+
 		$log = array();
 		$prev = null;
-		foreach ($this->player_model->new_registration($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
+		foreach ($this->player_model->new_registration(
+            $this->validToken,
+            $startDate->format('Y-m-d'),
+            $endDate->format('Y-m-d')) as $key => $value) {
+                $dDiff = $now->diff(new DateTime($value["_id"]));
+                if ($limit && $dDiff->days > $limit) {
+                    continue;
+                }
 			$key = $value['_id'];
 			if ($prev) {
 				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
