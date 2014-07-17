@@ -162,9 +162,15 @@ class Level extends MY_Controller
                 $site_id = "";
             }
 
+            $max = $this->input->post("max");
+            if ($max && intval($max))
+                $max = intval($max);
+            else
+                $max = 100;
+
             try
             {
-                $result = $this->Level_model->addTemplate($template, $client_id, $site_id);
+                $result = $this->Level_model->addTemplate($template, $client_id, $site_id, $max);
                 if ($result) {
                     $this->session->set_flashdata("success", $this->lang->line("text_success"));
                 } else {
@@ -246,6 +252,9 @@ class Level extends MY_Controller
             $data['client_id'] = $this->User_model->getClientId();
             $data['site_id'] = $this->User_model->getSiteId();
 
+            $client_id = $data["client_id"];
+            $site_id = $data["site_id"];
+
             $total = $this->Level_model->getTotalLevelsSite($data);
 
             $results = $this->Level_model->getLevelsSite($data);
@@ -253,6 +262,9 @@ class Level extends MY_Controller
             $total = $this->Level_model->getTotalLevels($data);
 
             $results = $this->Level_model->getLevels($data);
+
+            $client_id = "";
+            $site_id = "";
         }
 
         if ($results) {
@@ -309,6 +321,8 @@ class Level extends MY_Controller
 
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['main'] = 'level';
+
+        $this->data["all_levels"] = $this->Level_model->countLevels($client_id, $site_id);
 
         $this->load->vars($this->data);
         $this->render_page('template');

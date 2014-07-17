@@ -10,6 +10,8 @@
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
+            Number of Levels:
+            <input id="template_max" size="4" maxlength="4" type="text" value="<?php echo $all_levels; ?>" style="width: 2.2em;">
                 <!-- Start Level Template -->
                 <div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Template<span class="caret"></span></button>
@@ -92,7 +94,8 @@
         $(".template_sel").click(function(){
             var id = $(this).data("template"),
                 client_id = $(this).data("client_id"),
-                site_id = $(this).data("site_id");
+                site_id = $(this).data("site_id"),
+                max_num = $("#template_max").val();
             $("<div></div>").appendTo("body")
                 .html(
                     "<div>" +
@@ -109,6 +112,7 @@
                         buttons: {
                             Yes: function () {
                                  $("<form method='POST' action='index.php/level/useTemplate/" + id + "'>" +
+                                   "<input type='text' name='max' value='" + max_num + "' />" +
                                    "<input type='hidden' name='client_id' value='" + client_id + "' />" +
                                    "<input type='hidden' name='site_id' value='" + site_id + "' />" +
                                    "</form>").appendTo('body').submit();
