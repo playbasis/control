@@ -27,6 +27,7 @@ class Custompoints_model extends MY_Model
 
 		$this->mongo_db->where('client_id', new MongoId($client_id));
 		$this->mongo_db->where('site_id', new MongoId($site_id));
+		$this->mongo_db->where('is_custom', true);
 		$allCustomPoints = $this->mongo_db->get('playbasis_reward_to_client');
 
 		return $allCustomPoints;
