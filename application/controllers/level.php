@@ -143,6 +143,41 @@ class Level extends MY_Controller
         $this->getForm($level_id);
     }
 
+    public function useTemplate($template) {
+        $this->data['message'] = null;
+
+        if (!$this->validateModify()) {
+            $this->data['message'] = $this->lang->line('error_permission');
+        }
+
+        if($this->data['message'] == null) {
+            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+
+                // playbasis_client_exp_table
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+            } else {
+                // playbasis_exp_table
+                $client_id = "";
+                $site_id = "";
+            }
+
+            try
+            {
+                $result = $this->Level_model->addTemplate($template, $client_id, $site_id);
+                if ($result) {
+                    $this->session->set_flashdata("success", $this->lang->line("text_success"));
+                } else {
+                    $this->data["message"] = $this->lang->line("error_exp_level");
+                }
+            }
+            catch (Exception $e) {
+                error_log($e->getMessage());
+            }
+            redirect("/level", "refresh");
+        }
+    }
+
     public function delete() {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');

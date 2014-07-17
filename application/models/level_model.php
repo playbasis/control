@@ -469,6 +469,97 @@ class Level_model extends MY_Model
         $this->mongo_db->delete('playbasis_client_exp_table');
     }
 
+    /*
+     * Purge all levels in playbasis_exp_table
+     * if not client_id and site_id given
+     * or playbasis_client_exp_table
+     * if client_id and site_id is given
+     * @param string $client_id optional
+     * @param string $site_id optional
+     * @return object
+     */
+    private function purgeLevel($client_id="", $site_id="")
+    {
+        if (filter_var($client_id, FILTER_VALIDATE_BOOLEAN) !=
+            filter_var($site_id, FILTER_VALIDATE_BOOLEAN))
+            throw new Exception("error_xor_client_site");
+        $this->set_site_mongodb($this->session->userdata("site_id"));
+        if ($client_id) {
+            $this->mongo_db->where("client_id",  new MongoID($client_id));
+            $this->mongo_db->where("site_id",  new MongoID($site_id));
+            return $this->mongo_db->delete_all('playbasis_client_exp_table');
+        } else {
+            return $this->mongo_db->delete_all('playbasis_exp_table');
+        }
+    }
+
+    /*
+     * Add Template to playbasis_exp_table
+     * if no client_id and site_id
+     * playbasis_client_exp_table
+     * if client_id and site_id is given
+     * @param string $template which template will be use
+     * @param int $max_level optional
+     * @throws "Invalid Template"
+     * @return void
+     */
+    public function addTemplate($template, $client_id="", $site_id="", $max_level=100)
+    {
+        if (filter_var($client_id, FILTER_VALIDATE_BOOLEAN) !=
+            filter_var($site_id, FILTER_VALIDATE_BOOLEAN))
+            throw new Exception("error_xor_client_site");
+        // empty set of level
+        $levels = array();
+        $time = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        for ($i=1; $i<=$max_level; ++$i) {
+                $levels[$i] = array(
+                    "level_title" => "Level ". strval($i),
+                    "level" => $i,
+                    "exp" => 0,
+                    "image" => "",
+                    "tags" => 0,
+                    "status" => true,
+                    "date_modified" => $time,
+                    "date_added" => $time
+                );
+                if ($client_id) {
+                    $levels[$i]["client_id"] = new MongoID($client_id);
+                    $levels[$i]["site_id"] = new MongoID($site_id);
+                }
+        }
+        // set exp based on template
+        switch ($template)
+        {
+        case "Curve":
+            for ($i=1; $i<=$max_level; ++$i) {
+                $levels[$i]["exp"] = (25 * $i * $i) - (25 * $i);
+            }
+            break;
+        case "Pokemon":
+            for ($i=1; $i<=$max_level; ++$i) {
+                $levels[$i]["exp"] = round((4 * (pow($i,3))) / 5) - 1;
+            }
+            break;
+        case "Disgea":
+            for ($i=1; $i<=$max_level; ++$i) {
+                $levels[$i]["exp"] = round(0.04 * (pow($i,3)) + 0.8 * (pow($i,2)) + 2 * $i) - 3;
+            }
+            break;
+        default:
+            throw new Exception("error_invalid_template");
+            break;
+        }
+        // purge all levels
+        if (!$this->purgeLevel($client_id, $site_id))
+            throw new Exception("error_database");
+        // add template to database
+        $this->set_site_mongodb($this->session->userdata("site_id"));
+        if ($client_id)
+            return $this->mongo_db->batch_insert("playbasis_client_exp_table", $levels);
+        else
+            return $this->mongo_db->batch_insert("playbasis_exp_table", $levels);
+    }
+
     private function datetimeMongotoReadable($dateTimeMongo)
     {
         if ($dateTimeMongo) {

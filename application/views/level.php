@@ -8,7 +8,24 @@
     <div class="box">
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
+
             <div class="buttons">
+                <!-- Start Level Template -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Template<span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                    <li><a class="template_sel" data-template="Curve"
+                            data-client_id="<?php echo $client_id; ?>"
+                            data-site_id="<?php echo $site_id; ?>" href="#">Curve</a></li>
+                        <li><a class="template_sel" data-template="Pokemon"
+                            data-client_id="<?php echo $client_id; ?>"
+                            data-site_id="<?php echo $site_id; ?>" href="#">Pokemon</a></li>
+                        <li><a class="template_sel" data-template="Disgea"
+                            data-client_id="<?php echo $client_id; ?>"
+                            data-site_id="<?php echo $site_id; ?>" href="#">Disgea</a></li>
+                    </ul>
+                </div>
+                <!-- End Level Template -->
                 <button class="btn btn-info" onclick="location = baseUrlPath+'level/insert'" type="button"><?php echo $this->lang->line('button_insert'); ?></button>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
@@ -70,3 +87,41 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function(){
+        $(".template_sel").click(function(){
+            var id = $(this).data("template"),
+                client_id = $(this).data("client_id"),
+                site_id = $(this).data("site_id");
+            $("<div></div>").appendTo("body")
+                .html(
+                    "<div>" +
+                    "<span class='text-error'>" +
+                    "This will reset all current level.</span>" +
+                    "<h6>Are you sure?</h6></div>")
+                .dialog({
+                    modal: true,
+                        title: "Do you want to use " + id,
+                        zIndex: 10000,
+                        autoOpen: true,
+                        width: "auto",
+                        resizable: false,
+                        buttons: {
+                            Yes: function () {
+                                 $("<form method='POST' action='index.php/level/useTemplate/" + id + "'>" +
+                                   "<input type='hidden' name='client_id' value='" + client_id + "' />" +
+                                   "<input type='hidden' name='site_id' value='" + site_id + "' />" +
+                                   "</form>").appendTo('body').submit();
+                                $(this).dialog("close");
+                            },
+                                No: function () {
+                                    $(this).dialog("close");
+                                }
+                        },
+                            close: function (event, ui) {
+                                $(this).remove();
+                            }
+                });
+        });
+    });
+</script>
