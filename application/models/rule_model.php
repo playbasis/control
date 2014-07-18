@@ -93,7 +93,9 @@ class Rule_model extends MY_Model
         $this->mongo_db->select(array('reward_id','name','description','sort_order','icon','status','init_dataset'));
         $this->mongo_db->where('site_id', new MongoID($siteId));
         $this->mongo_db->where('client_id', new MongoID($clientId));
-        $this->mongo_db->where('reward_id', array('$in'=>$reward_id));
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->or_where(array('is_custom'=>true, 'reward_id'=>array('$in'=>$reward_id)));
+        // $this->mongo_db->where('reward_id', array('$in'=>$reward_id));
         $ds = $this->mongo_db->get("playbasis_reward_to_client");
 
         $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
@@ -101,6 +103,7 @@ class Rule_model extends MY_Model
         $this->mongo_db->select(array('_id'));
         $this->mongo_db->where('name',  'reward');
         $this->mongo_db->where('category',  'REWARD');
+        $this->mongo_db->where('status', true);
         $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
 
         try{
@@ -110,7 +113,7 @@ class Rule_model extends MY_Model
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
 //                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
-                    $rowx['dataSet'] = $rowx['init_dataset'];
+                    $rowx['dataSet'] = isset($rowx['init_dataset'])?$rowx['init_dataset']:null;
 //                    $rowx['id']=2;#hard code set id to be '2'
                     $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='REWARD';
@@ -124,7 +127,8 @@ class Rule_model extends MY_Model
                 $this->mongo_db->where('site_id', new MongoID($siteId));
                 $this->mongo_db->where('client_id', new MongoID($clientId));
                 $this->mongo_db->where('category', 'REWARD');
-                $this->mongo_db->where('name', array('$ne'=>'reward'));
+                $this->mongo_db->where('status', true);
+                $this->mongo_db->where('name', array('$nin'=>array('reward', 'customPointReward')));
                 $ds2 = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
 
                 if(count($ds2)>0){
