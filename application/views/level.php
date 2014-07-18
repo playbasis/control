@@ -11,7 +11,7 @@
 
             <div class="buttons">
             Number of Levels:
-            <input id="template_max" size="4" maxlength="4" type="text" value="<?php echo $all_levels; ?>" style="width: 2.2em;">
+            <input id="template_max" size="4" maxlength="4" type="text" value="<?php echo $all_levels; ?>">
                 <!-- Start Level Template -->
                 <div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Template<span class="caret"></span></button>

@@ -151,3 +151,9 @@
 .profilepic img{
 	height:25px;
 }
+
+/* level */
+#template_max {
+    width: 2.2em;
+    margin-bottom: 0;
+}
