@@ -61,20 +61,21 @@ class Custompoints extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $custompoints_data = $this->input->post();
 
-            $data['client_id'] = $this->User_model->getClientId();
-            $data['site_id'] = $this->User_model->getSiteId();
-            $data['name'] = $custompoints_data['name'];
-            $data['status'] = $custompoints_data['status'];
+           if($this->form_validation->run()){
+                $custompoints_data = $this->input->post();
 
-            $insert = $this->Custompoints_model->insertCustompoints($data);
-            if($insert){
-                redirect('/custompoints', 'refresh');
-            }
+                $data['client_id'] = $this->User_model->getClientId();
+                $data['site_id'] = $this->User_model->getSiteId();
+                $data['name'] = $custompoints_data['name'];
+                $data['status'] = $custompoints_data['status'];
+
+                $insert = $this->Custompoints_model->insertCustompoints($data);
+                if($insert){
+                    redirect('/custompoints', 'refresh');
+                }
+            }      
         }
-
-
         $this->getForm();
     }
 
@@ -203,18 +204,19 @@ class Custompoints extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $custompoints_data = $this->input->post();
+            if($this->form_validation->run()){
+                $custompoints_data = $this->input->post();
 
-            $data['client_id'] = $this->User_model->getClientId();
-            $data['site_id'] = $this->User_model->getSiteId();
-            $data['reward_id'] = $custompoints_id;
-            $data['name'] = $custompoints_data['name'];
-            $data['status'] = $custompoints_data['status'];
+                $data['client_id'] = $this->User_model->getClientId();
+                $data['site_id'] = $this->User_model->getSiteId();
+                $data['reward_id'] = $custompoints_id;
+                $data['name'] = $custompoints_data['name'];
 
-            $update = $this->Custompoints_model->updateCustompoints($data);
-            if($update){
-                redirect('/custompoints', 'refresh');
-            }
+                $update = $this->Custompoints_model->updateCustompoints($data);
+                if($update){
+                    redirect('/custompoints', 'refresh');
+                }
+            } 
         }       
 
         $this->getForm($custompoints_id);

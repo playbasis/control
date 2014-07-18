@@ -40,20 +40,6 @@
                                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?>:</td>
                                 <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" /></td>
                             </tr>
-
-                            <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('entry_status'); ?>:</td>
-                                <td><select name="status">
-                                    <?php if ($status) { ?>
-                                    <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                    <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                    <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                    <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select></td>
-                            </tr>
-                            
                         </table>
 
                 </div>

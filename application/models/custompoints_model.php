@@ -14,7 +14,7 @@ class Custompoints_model extends MY_Model
             'limit' => null,
             'description' => null,
             'sort' => 1,
-            'status' => (bool)$data['status'],
+            'status' => true,
             'is_custom' => true,
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -28,6 +28,7 @@ class Custompoints_model extends MY_Model
 		$this->mongo_db->where('client_id', new MongoId($client_id));
 		$this->mongo_db->where('site_id', new MongoId($site_id));
 		$this->mongo_db->where('is_custom', true);
+		$this->mongo_db->where('status', true);
 		$allCustomPoints = $this->mongo_db->get('playbasis_reward_to_client');
 
 		return $allCustomPoints;
@@ -38,6 +39,7 @@ class Custompoints_model extends MY_Model
 		$this->mongo_db->where('client_id', new MongoId($client_id));
 		$this->mongo_db->where('site_id', new MongoId($site_id));
 		$this->mongo_db->where('is_custom', true);
+		$this->mongo_db->where('status', true);
 		$countCustompoints = $this->mongo_db->count('playbasis_reward_to_client');
 
 		return $countCustompoints;
@@ -62,8 +64,6 @@ class Custompoints_model extends MY_Model
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
 		$this->mongo_db->set('name', $data['name']);
-		$this->mongo_db->set('status', (bool)$data['status']);
-		
 
 		$update = $this->mongo_db->update('playbasis_reward_to_client');
 
@@ -74,7 +74,7 @@ class Custompoints_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('reward_id', new MongoID($custompoint_id));
-        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
         $this->mongo_db->update('playbasis_reward_to_client');
         
     }
