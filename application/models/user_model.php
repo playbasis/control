@@ -193,7 +193,7 @@ class User_model extends MY_Model
 
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
-            $subject = "Playbasis";
+            $subject = "[Playbasis] Welcome to Playbasis";
             //$htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
             $htmlMessage = $this->parser->parse('wait_activate.html', $validate_email, true);
 
