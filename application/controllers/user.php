@@ -812,7 +812,6 @@ class User extends MY_Controller
                     $random_key = get_random_password(8,8);
                     $this->User_model->insertRandomPasswordKey($random_key, $check_email[0]['_id']);
                     $email = $check_email[0]['email'];
-                    $subject = 'Reset your password';
 
                     $this->load->library('email');
                     $this->load->library('parser');
@@ -823,7 +822,7 @@ class User extends MY_Controller
 
                     $config['mailtype'] = 'html';
                     $config['charset'] = 'utf-8';
-                    $subject = "Playbasis";
+                    $subject = "[Playbasis] Reset Your Password";
                     $htmlMessage = $this->parser->parse('reset_password.html', $data, true);
 
                     /*$this->email->initialize($config);
