@@ -143,6 +143,47 @@ class Level extends MY_Controller
         $this->getForm($level_id);
     }
 
+    public function useTemplate($template) {
+        $this->data['message'] = null;
+
+        if (!$this->validateModify()) {
+            $this->data['message'] = $this->lang->line('error_permission');
+        }
+
+        if($this->data['message'] == null) {
+            if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+
+                // playbasis_client_exp_table
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+            } else {
+                // playbasis_exp_table
+                $client_id = "";
+                $site_id = "";
+            }
+
+            $max = $this->input->post("max");
+            if ($max && intval($max))
+                $max = intval($max);
+            else
+                $max = 100;
+
+            try
+            {
+                $result = $this->Level_model->addTemplate($template, $client_id, $site_id, $max);
+                if ($result) {
+                    $this->session->set_flashdata("success", $this->lang->line("text_success"));
+                } else {
+                    $this->data["message"] = $this->lang->line("error_exp_level");
+                }
+            }
+            catch (Exception $e) {
+                error_log($e->getMessage());
+            }
+            redirect("/level", "refresh");
+        }
+    }
+
     public function delete() {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -211,6 +252,9 @@ class Level extends MY_Controller
             $data['client_id'] = $this->User_model->getClientId();
             $data['site_id'] = $this->User_model->getSiteId();
 
+            $client_id = $data["client_id"];
+            $site_id = $data["site_id"];
+
             $total = $this->Level_model->getTotalLevelsSite($data);
 
             $results = $this->Level_model->getLevelsSite($data);
@@ -218,6 +262,9 @@ class Level extends MY_Controller
             $total = $this->Level_model->getTotalLevels($data);
 
             $results = $this->Level_model->getLevels($data);
+
+            $client_id = "";
+            $site_id = "";
         }
 
         if ($results) {
@@ -274,6 +321,8 @@ class Level extends MY_Controller
 
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['main'] = 'level';
+
+        $this->data["all_levels"] = $this->Level_model->countLevels($client_id, $site_id);
 
         $this->load->vars($this->data);
         $this->render_page('template');
