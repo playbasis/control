@@ -68,7 +68,7 @@ class Custompoints extends MY_Controller
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $custompoints_data['name'];
-                $data['status'] = $custompoints_data['status'];
+                $data['status'] = true;
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
                 if($insert){

@@ -5,6 +5,33 @@ class Custompoints_model extends MY_Model
 
 	public function insertCustompoints($data){
 
+		$field1 = array(
+			"field_type" => "read_only",
+			"label" => "Name",
+			"param_name" => "reward_name",
+			"placeholder" => "",
+			"sortOrder" => "0",
+			"value" => strtolower($data['name']), 
+		);
+
+		$field2 = array(
+			"param_name" => "item_id",
+			"label" => "",
+			"placeholder" => "",
+			"sortOrder" => "0",
+			"field_type" => "hidden",
+			"value" => "",
+		);
+
+		$field3 = array(
+			"field_type" => "number",
+			"label" => strtolower($data['name']),
+			"param_name" => "quantity",
+			"placeholder" => "How many ...",
+			"sortOrder" => "0",
+			"value" => "0",
+		);
+
 		$insert = $this->mongo_db->insert('playbasis_reward_to_client', array(
 		    'reward_id' => new MongoId(),
 		    'client_id' => $data['client_id'],
@@ -16,6 +43,7 @@ class Custompoints_model extends MY_Model
             'sort' => 1,
             'status' => true,
             'is_custom' => true,
+            'init_dataset'=>array($field1,$field2,$field3),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
 		));
