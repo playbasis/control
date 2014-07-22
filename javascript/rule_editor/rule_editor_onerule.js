@@ -670,6 +670,11 @@ preventUnusual ={
 //Rule Editor main Event 
 
 
+//Event: select template
+$(".template_sel").click(function(){
+    dataMan.cloneRule($(this).data("template"));
+});
+
 //Event : prevent user
 $('.one_rule_save_btn').live('click',function(){
     if(chainMan.getLen()<1){
@@ -681,8 +686,6 @@ $('.one_rule_save_btn').live('click',function(){
     }
     return true;
 })
-
-
 
 //Event : Click on [+New Rule] button
 $('.one_rule_new_btn').live('click',function(){

@@ -23,12 +23,14 @@ urlConfig = {
       }else{
           url = protocal+root+paramset;
       }
+      console.log(url);
       return url;
   },
 
   URL_getRules: function(){ return this.forgeCustomActionURL('jsonGetRules')},
   URL_getRuleById: function(){ return this.forgeCustomActionURL('jsonGetRuleById')},
   URL_saveRule: function(){ return this.forgeCustomActionURL('jsonSaveRule')},
+  URL_cloneRule: function(){ return this.forgeCustomActionURL('jsonCloneRule')},
   URL_deleteRule: function(){ return this.forgeCustomActionURL('deleteRule')},
   URL_changeRuleState: function(){ return this.forgeCustomActionURL('setRuleState')},
   URL_getBadges: function(){ return this.forgeCustomActionURL('loadBadges')},
@@ -50,7 +52,6 @@ dataMan = {
   loadPrerender_jigsawConfig: function(){},
   loadPrerender_jigsawBadges: function(){},
   loadRulesTable:function() {
-      console.log(urlConfig.URL_getRules());
     $.ajax({
       url: urlConfig.URL_getRules(),
       data: 'ts='+(new Date()).getMilliseconds(),
@@ -135,6 +136,74 @@ dataMan = {
     });
 
 
+  },
+
+  cloneRule:function(rule_id){
+        var save_status = false;
+        $.ajax({
+          url: urlConfig.URL_cloneRule(),
+          data: {
+              'id': rule_id,
+              'site_id': jsonConfig_siteId,
+              'client_id' : jsonConfig_clientId
+          },
+          type:'POST',
+          // dataType:'json',
+          beforeSend:function(){
+            progressDialog.show('Saving rule ...');
+          },
+          success:function(data){
+            //console.log('on success')
+            //console.log(data);
+
+            if(($.parseJSON(data)).success==true)
+              dialogMsg = 'Save rule to server successfully';
+            else
+              dialogMsg = 'Unable to save rule to server , Please make sure all field been filled';
+
+            save_status = true;
+          },
+          error:function(){
+            //console.log('on error')
+            dialogMsg = 'Cannot save file to server,\n Please try again later';
+
+          },
+          complete:function(){
+            //console.log('on complete')
+            notificationManagerJS.showAlertDialog('save',dialogMsg);
+            progressDialog.hide();
+
+            if(save_status){
+              //Reload - Update Rule table on left
+              setTimeout(function(){dataMan.loadRulesTable()},500);
+
+              //Prevent user to saving the same rule again
+              oneRuleMan.discardCurrentRule();
+              // $('.one_rule_discard_btn').trigger('click');
+
+                            /* for sure have functon */
+                            if($.isFunction($.fn.slidePanel)){
+                                $().slidePanel();
+                                $(".pbd_one_rule_holder").hide();
+                            }
+                            if($.isFunction($.fn.disableFixMenu)){
+                                $(".fixMenu").disableFixMenu();
+                            }
+
+                            oneRuleMan.ruleActionPanelControl('not_editing');
+            }
+
+
+            // notificationManagerJS.showAlertDialog('','Updateing Rule table...');
+            // // alert('refresing rule table')
+            // setTimeout(function(){
+            //  initRulelist();
+            // },1000);
+
+            /*TODO : Implement Rule set updating*/
+
+          }
+        });
   },
 
 

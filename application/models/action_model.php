@@ -651,5 +651,18 @@ class Action_model extends MY_Model
 
     }
 
+    /*
+     * Get all actions from playbasis_action
+     * @param bool $includeDisable
+     * @return array
+     */
+    public function getAllActions($includeDisable=false) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        if ($includeDisable)
+            $this->mongo_db->where('status',  true);
+        return $this->mongo_db->get("playbasis_action");
+    }
+
 }
 ?>

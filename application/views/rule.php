@@ -166,6 +166,22 @@
                 <button class='btn btn-primary  one_rule_new_btn right'> + New Rule</button>
                 <!-- <div class="screen-width-768 "> -->
                 <span class=' one_rule_actionbtn_holder hide pull-right'>
+                    <?php if (!$isAdmin && sizeof($ruleTemplate) > 0): ?>
+                    <!-- Start Rule Template -->
+                    <div class="btn-group">
+                        <button type="button"
+                                class="btn btn-info dropdown-toggle"
+                                data-toggle="dropdown">Template
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                        <?php foreach($ruleTemplate as $key => $value): ?>
+                        <!-- TODO -->
+                        <li><a class="template_sel" data-template="<?php echo $value; ?>" href="#"><?php echo $key; ?> </a></li>
+                        <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <!-- End Rule Template -->
+                    <?php endif; ?>
                     <button class='btn btn-success one_rule_save_btn'> Save </button>
                     <button class='btn btn-danger one_rule_discard_btn' style='margin-left:4px'> Discard </button>
                   </span>
@@ -560,6 +576,7 @@
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
     </div>
 </div>
+
 <!-- /Error Modal -->
 
 <!-- ############################################# -->
