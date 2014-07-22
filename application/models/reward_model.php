@@ -104,6 +104,7 @@ class Reward_model extends MY_Model
 
         $this->mongo_db->where('site_id',  new MongoID($site_id));
         $this->mongo_db->where('group',  'POINT');
+        $this->mongo_db->where('status', true);
         $this->mongo_db->where_not_in('name',  array('badge','exp','point'));
         $results = $this->mongo_db->get("playbasis_reward_to_client");
 
