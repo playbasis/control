@@ -55,6 +55,7 @@ class Service_model extends MY_Model
             if($actionAndStringFilter){
                 $event['action_name'] = $actionAndStringFilter['action_name'];
                 $event['string_filter'] = $actionAndStringFilter['url'];
+                $event['action_icon'] = $actionAndStringFilter['icon'];
             }
             unset($event['action_log_id']);
             unset($event['pb_player_id']);
@@ -89,11 +90,30 @@ class Service_model extends MY_Model
     }
 
     private function getActionNameAndStringFilter($action_log_id){
-        $this->mongo_db->select(array('action_name', 'url'));
+        $this->mongo_db->select(array('action_name', 'url', 'client_id', 'site_id'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where('_id', new MongoID($action_log_id));
         $returnThis = $this->mongo_db->get('playbasis_action_log');
-        return ($returnThis)?$returnThis[0]:array();
+
+        if($returnThis){
+            $returnThis = $returnThis[0];
+
+            $this->mongo_db->select(array('action_id', 'icon'));
+            $this->mongo_db->where(array(
+                'client_id' => $returnThis['client_id'],
+                'site_id' => $returnThis['site_id'],
+                'name' => $returnThis['action_name']
+            ));
+            $action = $this->mongo_db->get('playbasis_action_to_client');
+
+            if($action){
+                $returnThis['icon'] = $action[0]['icon'];
+            }
+        }else{
+            return array();
+        }
+
+        return $returnThis;
     }
 }
 ?>
