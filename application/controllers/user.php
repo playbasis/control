@@ -732,7 +732,7 @@ class User extends MY_Controller
     private function email($to, $subject, $message) {
         $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
         $this->amazon_ses->to($to);
-        $this->amazon_ses->bcc('info@playbasis.com');
+        $this->amazon_ses->bcc(array('info@playbasis.com','pascal@playbasis.com'));
         $this->amazon_ses->subject($subject);
         $this->amazon_ses->message($message);
         $this->amazon_ses->send();
