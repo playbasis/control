@@ -207,7 +207,8 @@ class Player extends REST2_Controller
 			'birth_date'
 		));
         //percent exp of level
-        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+//        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+        $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'], $this->validToken['site_id']);
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
@@ -217,6 +218,9 @@ class Player extends REST2_Controller
         }else{
             $player['player']['percent_of_level'] = 100;
         }
+        $player['player']['level'] = $level['level'];
+        $player['player']['level_title'] = $level['level_title'];
+        $player['player']['level_image'] = $level['level_image'];
 
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
@@ -262,7 +266,8 @@ class Player extends REST2_Controller
 		));
 
         //percent exp of level
-        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+//        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+        $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'], $this->validToken['site_id']);
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
@@ -272,6 +277,9 @@ class Player extends REST2_Controller
         }else{
             $player['player']['percent_of_level'] = 100;
         }
+        $player['player']['level'] = $level['level'];
+        $player['player']['level_title'] = $level['level_title'];
+        $player['player']['level_image'] = $level['level_image'];
 
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
