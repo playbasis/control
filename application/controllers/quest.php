@@ -513,6 +513,7 @@ class Quest extends REST2_Controller
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
                     'action_name' => 'mission_reward',
+                    'action_icon' => 'fa-icon-trophy',
                     'message' => $eventMessage,
                     'badge' => $event['reward_data']
                 )), $validToken['domain_name'], $validToken['site_id']);
@@ -531,6 +532,7 @@ class Quest extends REST2_Controller
                         //publish to node stream
                         $this->node->publish(array_merge($update_config, array(
                             'action_name' => 'mission_reward',
+                            'action_icon' => 'fa-icon-trophy',
                             'message' => $eventMessage,
                             'level' => $lv
                         )), $validToken['domain_name'], $validToken['site_id']);
@@ -571,6 +573,7 @@ class Quest extends REST2_Controller
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
                     'action_name' => 'mission_reward',
+                    'action_icon' => 'fa-icon-trophy',
                     'message' => $eventMessage,
                     'amount' => $r["reward_value"],
                     'point' => $reward_type_name
