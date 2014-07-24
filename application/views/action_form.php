@@ -77,7 +77,8 @@
             						<?php if(isset($icons)){?>
             							<?php for($i = 0 ; $i<count($icons); $i++){?>
             								<div class="<?php if($i%2==0){echo 'even';}else{echo 'odd';}?>">
-            									<input type="radio" <?php if($icons[$i]==$action['icon'] || $icons[$i]==set_value('icon')){echo "checked = 'checked'";}?> name="icon" value="<?php echo $icons[$i];?>"> <i style="color:grey" class="<?php echo $icons[$i];?> icon-large"></i> <?php echo ucfirst(substr($icons[$i], 8));?>
+            									<!--input type="radio" <?php if($icons[$i]==$action['icon'] || $icons[$i]==set_value('icon')){echo "checked = 'checked'";}?> name="icon" value="<?php echo $icons[$i];?>"> <i style="color:grey" class="<?php echo $icons[$i];?> icon-large"></i> <?php echo ucfirst(substr($icons[$i], 8));?> -->
+            									<input type="radio" <?php if($icons[$i]==$action['icon'] || $icons[$i]==set_value('icon')){echo "checked = 'checked'";}?> name="icon" value="<?php echo $icons[$i];?>"> <i style="color:grey" class="fa <?php echo $icons[$i];?> fa-lg"></i> <?php echo substr($icons[$i], 3);?>
             								</div>
             							<?php }?>
             						<?php }?>

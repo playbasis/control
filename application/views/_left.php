@@ -6,7 +6,7 @@
             <?php foreach ($features as $feature) { ?>
                 <li>
                     <?php
-                    echo anchor($feature['link'], '<i class="'.$feature["icon"].'"></i><span class="hidden-tablet">'.$feature['name'].'</span>');
+                    echo anchor($feature['link'], '<i class="fa '.$feature["icon"].'"></i><span class="hidden-tablet">'.$feature['name'].'</span>');
                     ?>
                     <?php
                     if(false){
