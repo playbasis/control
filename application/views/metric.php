@@ -13,7 +13,7 @@
 
 		        <div class="box span12" onTablet="span12" onDesktop="span12">
 			        <div class="box-header">
-				        <h2><i class="icon-star"></i><span class="break"></span>Clients</h2>
+				        <h2><i class="icon-star"></i><span class="break"></span>Requests to API</h2>
 				        <div class="box-icon">
 					        <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
 				        </div>
