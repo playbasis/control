@@ -45,6 +45,8 @@ class MY_Model extends CI_Model
 	{
 		return $this->db; //$this->dbs[$this->site];
 	}
-
+	public function new_mongo_date($str, $t='00:00:00') {
+		return new MongoDate(strtotime($str.' '.$t));
+	}
 }
 
