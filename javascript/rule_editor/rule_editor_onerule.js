@@ -672,7 +672,32 @@ preventUnusual ={
 
 //Event: select template
 $(".template_sel").click(function(){
-    dataMan.cloneRule($(this).data("template"));
+    var id = $(this).data("id");
+    var name = $(this).data("name");
+    $("<div></div>").appendTo("body")
+    .html(
+        "<div>" +
+        "<h6>Are you sure?</h6></div>")
+    .dialog({
+        modal: true,
+    title: 'Do you want to use "' + name + '"',
+    zIndex: 10000,
+    autoOpen: true,
+    width: "auto",
+    resizable: false,
+    buttons: {
+        Yes: function () {
+                 dataMan.cloneRule(id);
+                 $(this).dialog("close");
+             },
+    No: function () {
+            $(this).dialog("close");
+        }
+    },
+    close: function (event, ui) {
+               $(this).remove();
+           }
+    });
 });
 
 //Event : prevent user

@@ -176,7 +176,10 @@
                         <ul class="dropdown-menu" role="menu">
                         <?php foreach($ruleTemplate as $key => $value): ?>
                         <!-- TODO -->
-                        <li><a class="template_sel" data-template="<?php echo $value; ?>" href="#"><?php echo $key; ?> </a></li>
+                        <li><a class="template_sel"
+                               data-name="<?php echo $key; ?>"
+                               data-id="<?php echo $value; ?>"
+                               href="#"><?php echo $key; ?></a></li>
                         <?php endforeach; ?>
                         </ul>
                     </div>
