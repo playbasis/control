@@ -142,7 +142,7 @@ class Janrain extends REST2_Controller
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'login',
-			'action_icon' => 'Signin',
+			'action_icon' => 'fa-sign-in',
 			'message' => $eventMessage
 		), $validToken['domain_name'], $site_id);
 		//var_dump($eventMessage);

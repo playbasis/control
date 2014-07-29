@@ -453,7 +453,7 @@ class Player extends REST2_Controller
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'login',
-			'action_icon' => 'Signin',
+			'action_icon' => 'fa-sign-in',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
