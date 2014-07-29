@@ -21,7 +21,8 @@ class jigsaw extends MY_Model
 			//validate url
 			$input['url'] = urldecode($input['url']);
 			$exInfo['input_url'] = $input['url'];
-			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
+//			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
+			return (boolean) $this->matchUrl($input['url'], $config['url']);
 		}
 		return true;
 	}
@@ -451,7 +452,8 @@ class jigsaw extends MY_Model
 
 		return $result['limit'] > 0;
 	}
-	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
+//	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
+    private function matchUrl($inputUrl, $compareUrl)
 	{
 		// return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
 
@@ -472,16 +474,20 @@ class jigsaw extends MY_Model
 		if(isset($urlFragment['fragment']) && $urlFragment['fragment'])
 			$inputUrl .= '#' . $urlFragment['fragment'];
 		//compare url
-		if($isRegEx){
-			if ($compareUrl == '*') $compareUrl = '.*'; // quick-fix for handling a case of '*' pattern
-			if(!preg_match('/^\//', $compareUrl))
-				$compareUrl = "/".$compareUrl;
-			if(!preg_match('/\/$/', $compareUrl))
-				$compareUrl = $compareUrl."/";
-			$match = preg_match($compareUrl, $inputUrl);
-		}else{
-			$match = (string) $compareUrl === (string) $inputUrl;
-		}
+//		if($isRegEx){
+//			if ($compareUrl == '*') $compareUrl = '.*'; // quick-fix for handling a case of '*' pattern
+//			if(!preg_match('/^\//', $compareUrl))
+//				$compareUrl = "/".$compareUrl;
+//			if(!preg_match('/\/$/', $compareUrl))
+//				$compareUrl = $compareUrl."/";
+//			$match = preg_match($compareUrl, $inputUrl);
+//		}else{
+//			$match = (string) $compareUrl === (string) $inputUrl;
+//		}
+
+
+        $match = (string) $compareUrl === (string) $inputUrl;
+
 		return $match;
 		//e.g.
 		//inputurl domain/forum/hello-my-new-notebook
