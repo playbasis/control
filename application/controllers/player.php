@@ -7,11 +7,12 @@ class Player extends REST2_Controller
 	{
 		parent::__construct();
 		$this->load->model('auth_model');
+		$this->load->model('client_model');
 		$this->load->model('player_model');
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
 		$this->load->model('action_model');
-        $this->load->model('level_model');
+		$this->load->model('level_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -350,7 +351,24 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
-		$this->player_model->createPlayer(array_merge($this->validToken, $playerInfo));
+		$pb_player_id = $this->player_model->createPlayer(array_merge($this->validToken, $playerInfo));
+		/* track action=register automatically after creating a new player */
+		$action_name = 'register';
+		$action = $this->client_model->getAction(array(
+			'client_id'   => $this->validToken['client_id'],
+			'site_id'     => $this->validToken['site_id'],
+			'action_name' => $action_name
+		));
+		if ($action) {
+			$this->tracker_model->trackAction(array(
+				'pb_player_id' => $pb_player_id,
+				'client_id'    => $this->validToken['client_id'],
+				'site_id'      => $this->validToken['site_id'],
+				'action_id'    => $action['action_id'],
+				'action_name'  => $action_name,
+				'url'          => null,
+			));
+		}
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function update_post($player_id = '')
