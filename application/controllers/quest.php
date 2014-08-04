@@ -15,7 +15,7 @@ class Quest extends MY_Controller
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
-        
+
         $this->load->model('Quest_model');
         $this->load->model('Plan_model');
         $this->load->model('Permission_model');

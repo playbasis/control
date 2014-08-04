@@ -364,14 +364,14 @@ class Action_model extends MY_Model
              'field_type' => 'text',
              'value' => ''
             );
-        $temp[1] = (object)array(
-            'param_name' => 'regex',
-             'label' => 'Regex',
-             'placeholder' => '',
-             'sortOrder' => $data['sort_order'],
-             'field_type' => 'boolean',
-             'value' => false,
-            );
+//        $temp[1] = (object)array(
+//            'param_name' => 'regex',
+//             'label' => 'Regex',
+//             'placeholder' => '',
+//             'sortOrder' => $data['sort_order'],
+//             'field_type' => 'boolean',
+//             'value' => false,
+//            );
 
 //        $init_dataset = serialize($temp);
         $init_dataset = $temp;
@@ -406,14 +406,14 @@ class Action_model extends MY_Model
              'field_type' => 'text',
              'value' => ''
             );
-        $temp[1] = (object)array(
-            'param_name' => 'regex',
-             'label' => 'Regex',
-             'placeholder' => '',
-             'sortOrder' => $data['sort_order'],
-             'field_type' => 'boolean',
-             'value' => false
-            );
+//        $temp[1] = (object)array(
+//            'param_name' => 'regex',
+//             'label' => 'Regex',
+//             'placeholder' => '',
+//             'sortOrder' => $data['sort_order'],
+//             'field_type' => 'boolean',
+//             'value' => false
+//            );
 
 //        $init_dataset = serialize($temp);
         $init_dataset = $temp;
