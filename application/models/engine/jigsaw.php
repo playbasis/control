@@ -183,7 +183,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['timestamp']));
 		assert($input != false);
 		assert(is_array($input));
-		return ($config['timestamp'] > time());
+		return (strtotime($config['timestamp']) > time());
 	}
 	public function after($config, $input, &$exInfo = array())
 	{
@@ -192,7 +192,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['timestamp']));
 		assert($input != false);
 		assert(is_array($input));
-		return ($config['timestamp'] < time());
+		return (strtotime($config['timestamp']) < time());
 	}
 	public function between($config, $input, &$exInfo = array())
 	{
