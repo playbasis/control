@@ -80,6 +80,17 @@ class Client_model extends MY_Model
         return $results;
     }
 
+    public function listClients($fields){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select($fields);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->order_by(array('first_name' => 1));
+        $results = $this->mongo_db->get("playbasis_client");
+
+        return $results;
+    }
+
     public function addClient($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

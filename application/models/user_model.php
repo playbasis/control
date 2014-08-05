@@ -193,7 +193,7 @@ class User_model extends MY_Model
 
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
-            $subject = "Playbasis";
+            $subject = "[Playbasis] Welcome to Playbasis";
             //$htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
             $htmlMessage = $this->parser->parse('wait_activate.html', $validate_email, true);
 
@@ -209,7 +209,7 @@ class User_model extends MY_Model
 
             $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
             $this->amazon_ses->to($email);
-            $this->amazon_ses->bcc('info@playbasis.com');
+            $this->amazon_ses->bcc(array('info@playbasis.com','pascal@playbasis.com'));
             $this->amazon_ses->subject($subject);
             $this->amazon_ses->message($htmlMessage);
             $this->amazon_ses->send();

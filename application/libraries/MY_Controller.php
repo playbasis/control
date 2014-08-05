@@ -3,7 +3,13 @@ class  MY_Controller  extends  CI_Controller  {
 
     function MY_Controller ()  {
         parent::__construct();
-
+        if ($this->session->userdata('user_id')) {
+            setcookie("client_id", $this->session->userdata('client_id'));
+            setcookie("site_id", $this->session->userdata('site_id'));
+        } else {
+            setcookie("client_id", null);
+            setcookie("site_id", null);
+        }
     }
 
     function render_page($view) {

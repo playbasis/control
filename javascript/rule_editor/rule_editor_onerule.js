@@ -178,7 +178,7 @@ oneRuleMan = {
                 if(whereSpaceExist>-1)
                     listItem.name = listItem.name.substr(0,whereSpaceExist);
                 if(DEBUG)console.log('>>'+listItem.name+'<<')
-                detail.append('<li id="'+listItem.specific_id+'" title="'+listItem.description+'" class="mini-round jigsaw_select_btn line" > <i class="'+ic+'"/><div class="text">'+listItem.name+'</div><div class="text_description">'+listItem.description+'</div></li>');
+                detail.append('<li id="'+listItem.specific_id+'" title="'+listItem.description+'" class="mini-round jigsaw_select_btn line" > <i class="fa '+ic+'"/><div class="text">'+listItem.name+'</div><div class="text_description">'+listItem.description+'</div></li>');
             }
 
             targetDiv.append(detail);

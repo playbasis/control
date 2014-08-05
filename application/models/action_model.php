@@ -328,12 +328,18 @@ class Action_model extends MY_Model
 
         if($handle){
             while(($line = fgets($handle)) != false){
-                $fa_line = substr($line, 0, 3);
-                if($fa_line == ".fa"){
-                    $temp = explode(":b", $line);
-                    if((substr($temp[0], 1) != 'fa-icon-large')){
-                        $all_icons[] = substr($temp[0], 1);    
-                    }
+//                $fa_line = substr($line, 0, 3);
+//                if($fa_line == ".fa"){
+//                    $temp = explode(":b", $line);
+//                    if((substr($temp[0], 1) != 'fa-icon-large')){
+//                        $all_icons[] = substr($temp[0], 1);
+//                    }
+//                }
+
+
+                $temp = explode(":before", $line);
+                if(count($temp) > 1){
+                    $all_icons[] = substr($temp[0], 1);
                 }
             }
         }else{
@@ -358,14 +364,14 @@ class Action_model extends MY_Model
              'field_type' => 'text',
              'value' => ''
             );
-        $temp[1] = (object)array(
-            'param_name' => 'regex',
-             'label' => 'Regex',
-             'placeholder' => '',
-             'sortOrder' => $data['sort_order'],
-             'field_type' => 'boolean',
-             'value' => false,
-            );
+//        $temp[1] = (object)array(
+//            'param_name' => 'regex',
+//             'label' => 'Regex',
+//             'placeholder' => '',
+//             'sortOrder' => $data['sort_order'],
+//             'field_type' => 'boolean',
+//             'value' => false,
+//            );
 
 //        $init_dataset = serialize($temp);
         $init_dataset = $temp;
@@ -400,14 +406,14 @@ class Action_model extends MY_Model
              'field_type' => 'text',
              'value' => ''
             );
-        $temp[1] = (object)array(
-            'param_name' => 'regex',
-             'label' => 'Regex',
-             'placeholder' => '',
-             'sortOrder' => $data['sort_order'],
-             'field_type' => 'boolean',
-             'value' => false
-            );
+//        $temp[1] = (object)array(
+//            'param_name' => 'regex',
+//             'label' => 'Regex',
+//             'placeholder' => '',
+//             'sortOrder' => $data['sort_order'],
+//             'field_type' => 'boolean',
+//             'value' => false
+//            );
 
 //        $init_dataset = serialize($temp);
         $init_dataset = $temp;

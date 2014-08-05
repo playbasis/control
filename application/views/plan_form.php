@@ -539,7 +539,7 @@ function image_upload(field, thumb) {
 $('#tabs a').tabs();
 $('#languages a').tabs();
 //--></script>
-//
+
 <script type="text/javascript"><!--
     $('table').on('focus', '.form_req:last', function() {
         var index = parseInt($("input:last", this).data("index")) + 1;
