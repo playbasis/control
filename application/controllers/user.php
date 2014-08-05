@@ -517,6 +517,8 @@ class User extends MY_Controller
     public function logout(){
         $this->load->model('User_model');
         $this->User_model->logout();
+        setcookie("client_id", null);
+        setcookie("site_id", null);
 
         redirect('/', 'refresh');
     }
