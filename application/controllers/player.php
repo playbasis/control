@@ -500,7 +500,7 @@ class Player extends REST2_Controller
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'logout',
-			'action_icon' => 'Key',
+			'action_icon' => 'fa-sign-out',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
