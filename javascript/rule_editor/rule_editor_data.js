@@ -31,6 +31,7 @@ urlConfig = {
   URL_getRuleById: function(){ return this.forgeCustomActionURL('jsonGetRuleById')},
   URL_saveRule: function(){ return this.forgeCustomActionURL('jsonSaveRule')},
   URL_cloneRule: function(){ return this.forgeCustomActionURL('jsonCloneRule')},
+  URL_playRule: function(){ return this.forgeCustomActionURL('jsonPlayRule')},
   URL_deleteRule: function(){ return this.forgeCustomActionURL('deleteRule')},
   URL_changeRuleState: function(){ return this.forgeCustomActionURL('setRuleState')},
   URL_getBadges: function(){ return this.forgeCustomActionURL('loadBadges')},
@@ -193,14 +194,57 @@ dataMan = {
                             oneRuleMan.ruleActionPanelControl('not_editing');
             }
 
+          }
+        });
+  },
 
-            // notificationManagerJS.showAlertDialog('','Updateing Rule table...');
-            // // alert('refresing rule table')
-            // setTimeout(function(){
-            //  initRulelist();
-            // },1000);
+  playRule:function(rule_id){
+        $.ajax({
+          url: urlConfig.URL_playRule(),
+          data: {
+              'id': rule_id,
+              'site_id': jsonConfig_siteId,
+              'client_id' : jsonConfig_clientId
+          },
+          type:'POST',
+          beforeSend:function(){
+            progressDialog.show('Playing rule ...');
+          },
+          success:function(data){
+            var j = JSON.parse(data);
+            var pretty = prettyPrint(j, {maxDepth:10});
+            $("#playModal").append(pretty);
+            $("#playModal").dialog({draggable: false, resizable: false, width: "auto"});
+          },
+          error:function(){
+            //console.log('on error')
+            dialogMsg = 'Cannot play rule,\n Please try again later';
 
-            /*TODO : Implement Rule set updating*/
+          },
+          complete:function(){
+            //console.log('on complete')
+            notificationManagerJS.showAlertDialog('played',dialogMsg);
+            progressDialog.hide();
+
+            // if(play_status){
+            //   //Reload - Update Rule table on left
+            //   setTimeout(function(){dataMan.loadRulesTable()},500);
+
+            //   //Prevent user to saving the same rule again
+            //   oneRuleMan.discardCurrentRule();
+            //   // $('.one_rule_discard_btn').trigger('click');
+
+            //                 /* for sure have functon */
+            //                 if($.isFunction($.fn.slidePanel)){
+            //                     $().slidePanel();
+            //                     $(".pbd_one_rule_holder").hide();
+            //                 }
+            //                 if($.isFunction($.fn.disableFixMenu)){
+            //                     $(".fixMenu").disableFixMenu();
+            //                 }
+
+            //                 oneRuleMan.ruleActionPanelControl('not_editing');
+            // }
 
           }
         });

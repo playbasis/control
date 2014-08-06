@@ -43,7 +43,6 @@ class Rule extends MY_Controller
 
         $adminGroup = $this->User_model->getAdminGroupID();
         if ($this->User_model->isAdmin()) {
-            error_log("I am admin");
             $s_siteId = $adminGroup;
             $s_clientId = $adminGroup;
             $this->data["isAdmin"] = true;
@@ -169,6 +168,33 @@ class Rule extends MY_Controller
                 $id, $client_id, $site_id)));
     }
 
+    public function jsonPlayRule() {
+        $id = $this->input->post("id");
+        $client_id = $this->input->post("client_id");
+        $site_id = $this->input->post("site_id");
+        $rule = $this->Rule_model->getById($id);
+
+        // process each rule
+        $result = array();
+        foreach ($rule["jigsaw_set"] as $jigsaw) {
+            if ($jigsaw["category"] == "ACTION") {
+                foreach ($jigsaw["dataSet"] as $dataSet) {
+                    if ($dataSet["param_name"] == "url")
+                        $result = $this->curl(
+                            $this->config->item("server") . "/Engine/rule",
+                            array("rule_id" => strval($rule["_id"]),
+                            "action" => $jigsaw["name"],
+                            "url" => $dataSet["value"],
+                            "client_id" => $client_id,
+                            "site_id" => $site_id,
+                            "test" => true));
+                }
+            }
+        }
+
+        $this->output->set_output($result);
+    }
+
     public function deleteRule(){
         $adminGroup = $this->User_model->getAdminGroupID();
         if ($this->User_model->isAdmin()) {
@@ -269,5 +295,17 @@ class Rule extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function curl($url, $data) {
+        $data = http_build_query($data);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_output = curl_exec ($ch);
+        curl_close ($ch);
+        return $server_output;
     }
 }

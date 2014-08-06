@@ -8,6 +8,7 @@
 
 <script type="text/javascript" src="<?php echo base_url();?>javascript/md5.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/mongoid.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/prettyprint.js"></script>
 
 <!-- ############################################# -->
 <!-- CONTENT -->
@@ -175,7 +176,6 @@
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
                         <?php foreach($ruleTemplate as $key => $value): ?>
-                        <!-- TODO -->
                         <li><a class="template_sel"
                                data-name="<?php echo $key; ?>"
                                data-id="<?php echo $value; ?>"
@@ -579,6 +579,10 @@
         <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
     </div>
 </div>
+
+<div id="playModal" title="Success Response">
+</div>
+
 
 <!-- /Error Modal -->
 

@@ -769,6 +769,12 @@ $('.gen_rule_edit_btn').live('click',function(event){
     oneRuleMan.ruleActionPanelControl('editing');
 })
 
+//Event : Play rule
+$(".gen_rule_play_btn").live("click", function(event){
+    event.preventDefault();
+    var id = $(this).parents("tr").attr("id");
+    dataMan.playRule(id);
+});
 
 
 //Event : Insert new Action

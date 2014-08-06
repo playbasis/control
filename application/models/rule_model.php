@@ -306,14 +306,9 @@ class Rule_model extends MY_Model
         );
         // get template rule
         if (!$is_client_used) {
-            $template = $this->mongo_db->get_where("playbasis_rule",
-                array(
-                    "_id" => $rule_obj
-                )
-            );
+            $template = $this->getById($rule_obj);
             if ($template) {
                 // move _id to clone_id
-                $template = $template[0];
                 $template["clone_id"] = $template["_id"];
                 $template["_id"] = new MongoID();
                 // save to client
@@ -328,6 +323,27 @@ class Rule_model extends MY_Model
         }
         // clone process not complete
         return $response(false);
+    }
+
+    /*
+     * get rule by _id
+     * @param string id
+     * @return array
+     */
+    public function getById($id)
+    {
+        try {
+            $id = new MongoID($id);
+        } catch (Exception $e) {
+            return array();
+        }
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $result = $this->mongo_db->get_where("playbasis_rule",
+            array("_id" => $id));
+        if ($result)
+            return $result[0];
+        else
+            return array();
     }
 
     public function deleteRule($ruleId,$siteId,$clientId){

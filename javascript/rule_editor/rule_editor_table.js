@@ -104,6 +104,12 @@ var ruleTableMan = {
               .append(
                 $('<li><a tabindex="-1" href="#" class="gen_rule_delete_btn"><i class="icon-trash"></i>Delete</a></li>')
               )
+              .append(
+                $('<li class="divider"></li>')
+              )
+              .append(
+                $('<li><a tabindex="-1" href="#" class="gen_rule_play_btn"><i class="icon-play"></i>Play</a></li>')
+              )
           )
       )
 
