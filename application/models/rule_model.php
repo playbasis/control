@@ -317,6 +317,7 @@ class Rule_model extends MY_Model
         }
 
         $this->vsort($output, "date_added");
+
         return $output;
     }
 

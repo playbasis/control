@@ -117,7 +117,7 @@ var ruleTableMan = {
     setTimeout(function() {
     if (jQuery().tablecloth) {
       $("table." + ruleTableMan.targetTable ).tablecloth({ 
-        sortable: true,
+        sortable: true
       });
       ruleTableMan.tableclothed = true;
     }
