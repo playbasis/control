@@ -1,0 +1,1 @@
+Your account has been activated and your password has been sent to your email.
