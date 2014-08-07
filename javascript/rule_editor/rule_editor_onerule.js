@@ -178,7 +178,14 @@ oneRuleMan = {
                 if(whereSpaceExist>-1)
                     listItem.name = listItem.name.substr(0,whereSpaceExist);
                 if(DEBUG)console.log('>>'+listItem.name+'<<')
-                detail.append('<li id="'+listItem.specific_id+'" title="'+listItem.description+'" class="mini-round jigsaw_select_btn line" > <i class="fa '+ic+'"/><div class="text">'+listItem.name+'</div><div class="text_description">'+listItem.description+'</div></li>');
+                if(listItem.name == "customPointReward" || listItem.name == "specialReward"){
+                    listItem.name = "specialReward";
+                    listItem.description = "You can send dynamic reward on engine.";
+                }
+                detail.append('<li id="'+listItem.specific_id+'" title="'+
+                    listItem.description+'" class="mini-round jigsaw_select_btn line" > <i class="fa '+ic+'"/>' +
+                    '<div class="text">'+listItem.name+'</div><div class="text_description">'+listItem.description+
+                    '</div></li>');
             }
 
             targetDiv.append(detail);
@@ -1048,5 +1055,5 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
 // }
 
 $("input").live('keyup', function(){
-    this.value = this.value.replace(/[^0-9a-z\_\. ]/g,'');
+    this.value = this.value.replace(/[^0-9a-zA-Z\,\_\. ]/g,'');
 });
