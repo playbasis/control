@@ -732,7 +732,11 @@ class User extends MY_Controller
     }
 
     public function enable_user(){
-        if($_GET['key']){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'enable user';
+        $this->data['title'] = $this->lang->line('title');
+
+        if(isset($_GET['key'])){
             $random_key = $_GET['key'];
             $user = $this->User_model->checkRandomKey($random_key);
             if($user != null){
@@ -746,7 +750,8 @@ class User extends MY_Controller
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                 $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
 
-                $this->render_page('account_activated');
+                $this->data['main'] = 'account_activated';
+                $this->render_page('template');
             }else{
                 echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
                 echo "<script>window.location.href = '".site_url()."';</script>";
