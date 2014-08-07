@@ -170,6 +170,7 @@ class Client_model extends MY_Model
 		}
 		if(!$customRewardId)
 		{
+            return 0;
 			//reward does not exist, add new custom point where id is max(reward_id)+1
 			//$this->mongo_db->select(array('reward_id'));
 			//$this->mongo_db->where(array(
@@ -183,7 +184,7 @@ class Client_model extends MY_Model
 			//if($customRewardId < CUSTOM_POINT_START_ID)
 			//	$customRewardId = CUSTOM_POINT_START_ID;
 
-            $field1 = array(
+            /*$field1 = array(
                 'field_type' => 'read_only',
                 'label' => 'Name',
                 'param_name' => 'reward_name',
@@ -228,7 +229,7 @@ class Client_model extends MY_Model
 				'is_custom' => true,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
-			));
+			));*/
 		}
 		$level = 0;
 		if($rewardName == 'exp')

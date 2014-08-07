@@ -285,6 +285,7 @@ class Engine extends Quest
 			$input['rule_name'] = $rule['name'];
 //			$jigsawSet = unserialize($rule['jigsaw_set']);
 			$jigsawSet = (isset($rule['jigsaw_set'])&& !empty($rule['jigsaw_set']))?$rule['jigsaw_set']:array();
+
 			foreach($jigsawSet as $jigsaw)
 			{
                 try {
@@ -307,6 +308,7 @@ class Engine extends Quest
 				$jigsawConfig = $jigsaw['config'];
 				//get class path to precess jigsaw
 				$processor = $this->client_model->getJigsawProcessor($jigsaw_id, $site_id);
+
 				if($this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo))
 				{
 					if($jigsaw['category'] == 'REWARD')
