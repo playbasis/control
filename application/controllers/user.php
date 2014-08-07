@@ -738,17 +738,17 @@ class User extends MY_Controller
 
         if(isset($_GET['key'])){
             $random_key = $_GET['key'];
-            $user = $this->User_model->checkRandomKey($random_key);
-            if($user != null){
+            $user_info = $this->User_model->checkRandomKey($random_key);
+            if($user_info != null){
                 $this->load->library('parser');
                 $vars = array(
-                    'firstname' => $user['firstname'],
-                    'lastname' => $user['lastname'],
-                    'username' => $user['username'],
+                    'firstname' => $user_info['firstname'],
+                    'lastname' => $user_info['lastname'],
+                    'username' => $user_info['username'],
                     'password' => 'playbasis',
                 );
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
-                $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
+                $this->email($user_info['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
 
                 $this->data['main'] = 'account_activated';
                 $this->render_page('template');
