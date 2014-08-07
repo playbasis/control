@@ -562,15 +562,13 @@ class User extends MY_Controller
                 $_POST['password'] = 'playbasis';
                 $_POST['password_confirm'] = 'playbasis';
                 $_POST['site_name'] = $_POST['domain_name'];
-            }else{
-                $recaptcha_challenge_field = isset($_POST["recaptcha_challenge_field"])?$_POST["recaptcha_challenge_field"]:null;
-                $recaptcha_response_field = isset($_POST["recaptcha_response_field"])?$_POST["recaptcha_response_field"]:null;
-
-                $resp = recaptcha_check_answer ($privateKey,
-                    $_SERVER["REMOTE_ADDR"],
-                    $recaptcha_challenge_field,
-                    $recaptcha_response_field);
             }
+
+            $recaptcha_challenge_field = isset($_POST["recaptcha_challenge_field"])?$_POST["recaptcha_challenge_field"]:null;
+            $recaptcha_response_field = isset($_POST["recaptcha_response_field"])?$_POST["recaptcha_response_field"]:null;
+
+            $resp = recaptcha_check_answer($privateKey,$_SERVER["REMOTE_ADDR"],$recaptcha_challenge_field,$recaptcha_response_field);
+
             if($this->form_validation->run()){
                 // $user_id = $this->User_model->insertUser();
                 $domain = $this->Domain_model->checkDomainExists($this->input->post());
@@ -580,6 +578,10 @@ class User extends MY_Controller
                     // if(!$domain){
                     if (isset($resp) && !$resp->is_valid) {
                     // What happens when the CAPTCHA was entered incorrectly
+                        if($this->input->post('format') == 'json'){
+                            echo json_encode('Incorrect captcha code');
+                            exit();
+                        }
                         $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
                         $this->data['temp_fields'] = $this->input->post();
                     }else{
