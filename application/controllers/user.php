@@ -626,7 +626,8 @@ class User extends MY_Controller
                                     'lastname' => $user_info['lastname'],
                                     'username' => $user_info['email'],
                                     'password' => 'playbasis',
-                                    'key' => $user_info['random_key']
+                                    'key' => $user_info['random_key'],
+                                    'url'=> base_url('enable_user/?key='),
                                 );
                                 $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
                                 $this->email($_POST['email'], '[Playbasis] Your account has been activated', $htmlMessage);
