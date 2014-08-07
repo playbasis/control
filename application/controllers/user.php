@@ -619,6 +619,18 @@ class User extends MY_Controller
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
+
+                                $this->load->library('parser');
+                                $vars = array(
+                                    'firstname' => $user_info['firstname'],
+                                    'lastname' => $user_info['lastname'],
+                                    'username' => $user_info['email'],
+                                    'password' => 'playbasis',
+                                    'key' => $user_info['random_key']
+                                );
+                                $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
+                                $this->email($_POST['email'], '[Playbasis] Your account has been activated', $htmlMessage);
+
                                 exit();
                             }
                             // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
@@ -721,15 +733,26 @@ class User extends MY_Controller
     public function enable_user(){
         if($_GET['key']){
             $random_key = $_GET['key'];
-            if($this->User_model->checkRandomKey($random_key)){
-                echo "<script>alert('Your account has been activated! We will redirect you to our login page.');</script>";
-                echo "<script>window.location.href = '".site_url()."';</script>";
+            $user = $this->User_model->checkRandomKey($random_key);
+            if($user != null){
+                $this->load->library('parser');
+                $vars = array(
+                    'firstname' => $user['firstname'],
+                    'lastname' => $user['lastname'],
+                    'username' => $user['username'],
+                    'password' => 'playbasis',
+                );
+                $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
+                $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
+
+                $this->render_page('account_activated');
             }else{
                 echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
                 echo "<script>window.location.href = '".site_url()."';</script>";
             }
         }else{
-            redirect('login');
+            echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
+            echo "<script>window.location.href = '".site_url()."';</script>";
         }
     }
 
