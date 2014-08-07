@@ -592,7 +592,7 @@ class User_model extends MY_Model
             $this->mongo_db->set('random_key', null);
             $this->mongo_db->update('user');
 
-            return $user[0];
+            return true;
         }else{
             return false;
         }
