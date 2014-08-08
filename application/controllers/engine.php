@@ -309,11 +309,9 @@ class Engine extends Quest
 		foreach($ruleSet as $rule) {
 			$input['rule_id'] = new MongoId($rule['rule_id']);
 			$input['rule_name'] = $rule['name'];
-
 			$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set']: array();
 
 			foreach($jigsawSet as $jigsaw) {
-
                 try {
                     $jigsaw_id = new MongoId($jigsaw['id']);
                 } catch (MongoException $ex) {
@@ -347,7 +345,6 @@ class Engine extends Quest
 				if($jigsaw_model) {
 					if($jigsaw['category'] == 'REWARD') {
 						if(isset($exInfo['dynamic'])) {
-
 							//reward is a custom point
 							assert('$exInfo["dynamic"]["reward_name"]');
 							assert('$exInfo["dynamic"]["quantity"]');
