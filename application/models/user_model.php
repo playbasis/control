@@ -583,16 +583,16 @@ class User_model extends MY_Model
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('random_key', $random_key);
-        $user = $this->mongo_db->get('user');
+        $user_info = $this->mongo_db->get('user');
 
-        if($user){
+        if($user_info){
 
-            $this->mongo_db->where('_id', new MongoID($user[0]['_id']));
+            $this->mongo_db->where('_id', new MongoID($user_info[0]['_id']));
             $this->mongo_db->set('status', true);
             $this->mongo_db->set('random_key', null);
             $this->mongo_db->update('user');
 
-            return $user[0];
+            return $user_info[0];
         }else{
             return false;
         }
