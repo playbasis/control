@@ -7,11 +7,12 @@ class Player extends REST2_Controller
 	{
 		parent::__construct();
 		$this->load->model('auth_model');
+		$this->load->model('client_model');
 		$this->load->model('player_model');
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
 		$this->load->model('action_model');
-        $this->load->model('level_model');
+		$this->load->model('level_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -207,16 +208,20 @@ class Player extends REST2_Controller
 			'birth_date'
 		));
         //percent exp of level
-        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+//        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+        $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'], $this->validToken['site_id']);
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
-        if(isset($level['max_exp'])){
+        if(isset($level['max_exp']) && $max_exp != 0){
             $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
             $player['player']['percent_of_level'] = round($percent_exp,2);
         }else{
             $player['player']['percent_of_level'] = 100;
         }
+        $player['player']['level'] = $level['level'];
+        $player['player']['level_title'] = $level['level_title'];
+        $player['player']['level_image'] = $level['level_image'];
 
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
@@ -262,7 +267,8 @@ class Player extends REST2_Controller
 		));
 
         //percent exp of level
-        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+//        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
+        $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'], $this->validToken['site_id']);
         $base_exp = $level['min_exp'];
         $max_exp = $level['max_exp'] - $base_exp;
         $now_exp = $player['player']['exp'] - $base_exp;
@@ -272,6 +278,9 @@ class Player extends REST2_Controller
         }else{
             $player['player']['percent_of_level'] = 100;
         }
+        $player['player']['level'] = $level['level'];
+        $player['player']['level_title'] = $level['level_title'];
+        $player['player']['level_image'] = $level['level_image'];
 
         $player['player']['badges'] = $this->player_model->getBadge($pb_player_id, $this->site_id);
         $points = $this->player_model->getPlayerPoints($pb_player_id, $this->site_id);
@@ -342,7 +351,24 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
-		$this->player_model->createPlayer(array_merge($this->validToken, $playerInfo));
+		$pb_player_id = $this->player_model->createPlayer(array_merge($this->validToken, $playerInfo));
+		/* track action=register automatically after creating a new player */
+		$action_name = 'register';
+		$action = $this->client_model->getAction(array(
+			'client_id'   => $this->validToken['client_id'],
+			'site_id'     => $this->validToken['site_id'],
+			'action_name' => $action_name
+		));
+		if ($action) {
+			$this->tracker_model->trackAction(array(
+				'pb_player_id' => $pb_player_id,
+				'client_id'    => $this->validToken['client_id'],
+				'site_id'      => $this->validToken['site_id'],
+				'action_id'    => $action['action_id'],
+				'action_name'  => $action_name,
+				'url'          => null,
+			));
+		}
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function update_post($player_id = '')
@@ -445,6 +471,7 @@ class Player extends REST2_Controller
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'login',
+			'action_icon' => 'fa-sign-in',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
@@ -473,6 +500,7 @@ class Player extends REST2_Controller
 		$this->node->publish(array(
 			'pb_player_id' => $pb_player_id,
 			'action_name' => 'logout',
+			'action_icon' => 'fa-sign-out',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
@@ -634,8 +662,17 @@ class Player extends REST2_Controller
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->claimBadge($pb_player_id, new MongoId($badge_id), $this->site_id, $this->client_id);
-		$this->response($this->resp->setRespond($result), 200);
+        try{
+            $badge_id = new MongoId($badge_id);
+        } catch (Exception $e) {
+            $badge_id = $badge_id;
+        }
+		$result = $this->player_model->claimBadge($pb_player_id, $badge_id, $this->site_id, $this->client_id);
+        if($result){
+            $this->response($this->resp->setRespond($result), 200);
+        }else{
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+        }
 	}
 	public function redeemBadge_post($player_id='', $badge_id='')
 	{
@@ -650,8 +687,17 @@ class Player extends REST2_Controller
 		)));
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		$result = $this->player_model->redeemBadge($pb_player_id, new MongoId($badge_id), $this->site_id, $this->client_id);
-		$this->response($this->resp->setRespond($result), 200);
+        try{
+            $badge_id = new MongoId($badge_id);
+        } catch (Exception $e) {
+            $badge_id = $badge_id;
+        }
+		$result = $this->player_model->redeemBadge($pb_player_id, $badge_id, $this->site_id, $this->client_id);
+        if($result){
+            $this->response($this->resp->setRespond($result), 200);
+        }else{
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+        }
 	}
     public function rank_get($ranked_by, $limit = 20)
     {

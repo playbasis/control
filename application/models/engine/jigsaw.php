@@ -21,7 +21,8 @@ class jigsaw extends MY_Model
 			//validate url
 			$input['url'] = urldecode($input['url']);
 			$exInfo['input_url'] = $input['url'];
-			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
+//			return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
+			return (boolean) $this->matchUrl($input['url'], $config['url']);
 		}
 		return true;
 	}
@@ -68,6 +69,24 @@ class jigsaw extends MY_Model
 		$exInfo['dynamic']['quantity'] = $quan;
 		return $name && $quan;
 	}
+    public function specialReward($config, $input, &$exInfo = array())
+    {
+        assert($config != false);
+        assert(is_array($config));
+        $name = $config['reward_name'];
+        $quan = $config['quantity'];
+        if(!$name && isset($input['reward']) && $input['reward'])
+        {
+            $name = $input['reward'];
+        }
+        if(!$quan && isset($input['quantity']) && $input['quantity'])
+        {
+            $quan = $input['quantity'];
+        }
+        $exInfo['dynamic']['reward_name'] = $name;
+        $exInfo['dynamic']['quantity'] = $quan;
+        return $name && $quan;
+    }
 	public function counter($config, $input, &$exInfo = array())
 	{
 		assert($config != false);
@@ -112,8 +131,8 @@ class jigsaw extends MY_Model
 			$exInfo['remaining_time'] = (int) $config['interval'];
 			return false;
 		}
-		$lastTime = $result['date_added']->sec;
-		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime) : (int) (date_diff(new DateTime(), new DateTime(date('Y-m-d H:i:s', $lastTime)))->d);
+		$lastTime = $result['date_added'];
+		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime->sec) : (int) (date_diff(new DateTime(), new DateTime(datetimeMongotoReadable($lastTime)))->d);
 		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
 		$remainingTime = $log['remaining_time'];
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
@@ -162,8 +181,8 @@ class jigsaw extends MY_Model
 		$timeNow = time();
 //		$log = unserialize($result['input']);
 		$log = $result['input'];
-		$lastTime = $result['date_added']->sec;
-		$timeDiff = (int) ($timeNow - $lastTime);
+		$lastTime = $result['date_added'];
+		$timeDiff = (int) ($timeNow - $lastTime->sec);
 		if($timeDiff > $log['remaining_cooldown'])
 		{
 			$exInfo['remaining_cooldown'] = (int) $config['cooldown'];
@@ -182,7 +201,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['timestamp']));
 		assert($input != false);
 		assert(is_array($input));
-		return ($config['timestamp'] > time());
+		return (strtotime($config['timestamp']) > time());
 	}
 	public function after($config, $input, &$exInfo = array())
 	{
@@ -191,7 +210,7 @@ class jigsaw extends MY_Model
 		assert(isset($config['timestamp']));
 		assert($input != false);
 		assert(is_array($input));
-		return ($config['timestamp'] < time());
+		return (strtotime($config['timestamp']) < time());
 	}
 	public function between($config, $input, &$exInfo = array())
 	{
@@ -223,8 +242,8 @@ class jigsaw extends MY_Model
 		));
 		if(!$result)
 			return true;
-		$lastTime = $result['date_added']->sec;
-		$datediff = date_diff(new DateTime(), new DateTime(date('Y-m-d H:i:s', $lastTime)));
+		$lastTime = $result['date_added'];
+		$datediff = date_diff(new DateTime(), new DateTime(datetimeMongotoReadable($lastTime)));
 		//if more than 2 day
 		if($datediff->d > 1)
 			return true;
@@ -451,7 +470,8 @@ class jigsaw extends MY_Model
 
 		return $result['limit'] > 0;
 	}
-	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
+//	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
+    private function matchUrl($inputUrl, $compareUrl)
 	{
 		// return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
 
@@ -459,8 +479,8 @@ class jigsaw extends MY_Model
 		//check posible index page
 		if(!$urlFragment['path'])
 			$inputUrl = '/';
-		if($urlFragment['path'] == '/')
-			$inputUrl = '/';
+		//if($urlFragment['path'] == '/')
+		//	$inputUrl = '/';
 		if(preg_match('/\/index\.[a-zA-Z]{3,}$/', $urlFragment['path'])) // match all "/index.*" 
 			$inputUrl = '/';
 		if(preg_match('/\/index\.[a-zA-Z]{3,}\/$/', $urlFragment['path'])) // match all "/index.*/" 
@@ -472,15 +492,20 @@ class jigsaw extends MY_Model
 		if(isset($urlFragment['fragment']) && $urlFragment['fragment'])
 			$inputUrl .= '#' . $urlFragment['fragment'];
 		//compare url
-		if($isRegEx){
-			if(!preg_match('/^\//', $compareUrl))
-				$compareUrl = "/".$compareUrl;
-			if(!preg_match('/\/$/', $compareUrl))
-				$compareUrl = $compareUrl."/";
-			$match = preg_match($compareUrl, $inputUrl);
-		}else{
-			$match = (string) $compareUrl === (string) $inputUrl;
-		}
+//		if($isRegEx){
+//			if ($compareUrl == '*') $compareUrl = '.*'; // quick-fix for handling a case of '*' pattern
+//			if(!preg_match('/^\//', $compareUrl))
+//				$compareUrl = "/".$compareUrl;
+//			if(!preg_match('/\/$/', $compareUrl))
+//				$compareUrl = $compareUrl."/";
+//			$match = preg_match($compareUrl, $inputUrl);
+//		}else{
+//			$match = (string) $compareUrl === (string) $inputUrl;
+//		}
+
+
+        $match = (string) $compareUrl === (string) $inputUrl;
+
 		return $match;
 		//e.g.
 		//inputurl domain/forum/hello-my-new-notebook

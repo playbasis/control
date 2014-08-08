@@ -204,7 +204,8 @@ class Redeem extends REST2_Controller
                 'goods_name' => $goodsData['name'],
                 'amount' => $amount,
                 'redeem' => $goodsData['redeem'],
-                'action_name' => 'redeem_goods'
+                'action_name' => 'redeem_goods',
+                'action_icon' => 'fa-icon-shopping-cart',
             ));
             //log event - goods
             $this->tracker_model->trackGoods($validToken);

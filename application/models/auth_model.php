@@ -49,7 +49,8 @@ class Auth_model extends MY_Model
 		if($token && $token[0])
 		{
 			$result['token'] = $token[0]['token'];
-			$result['date_expire'] = date('Y-m-d H:i:s', $token[0]['date_expire']->sec);
+//			$result['date_expire'] = date('Y-m-d H:i:s', $token[0]['date_expire']->sec);
+			$result['date_expire'] = datetimeMongotoReadable($token[0]['date_expire']);
 			return $result;
 		}
 		return $this->renewToken($data);
@@ -72,7 +73,7 @@ class Auth_model extends MY_Model
 				'site_id' => $data['site_id'],
 				'client_id' => $data['client_id']
 			));
-			$this->mongo_db->delete('playbasis_token');
+			$this->mongo_db->delete_all('playbasis_token');
 			//insert new token
 			$this->mongo_db->insert('playbasis_token', array(
 				'client_id' => $data['client_id'],
@@ -81,7 +82,8 @@ class Auth_model extends MY_Model
 				'date_expire' => $expire
 			));
 		}
-		$token['date_expire'] = date('Y-m-d H:i:s', $expire->sec);
+//		$token['date_expire'] = date('Y-m-d H:i:s', $expire->sec);
+		$token['date_expire'] = datetimeMongotoReadable($expire);
 		return $token;
 	}
 	public function findToken($token)

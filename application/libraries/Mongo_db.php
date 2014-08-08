@@ -211,7 +211,8 @@ class Mongo_db
 			$this->_ci = NULL;
 		}
 
-        /* MongoCursor::$timeout = -1; */
+		/* MongoCursor::$timeout = -1; */
+		MongoCursor::$timeout = 2*60000; // prevent MongoCursorTimeoutException, set timeout to be (default = 30000 milli secs, -1 = no timeout)
 
 		$this->load();
 	}

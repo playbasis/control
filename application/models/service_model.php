@@ -14,10 +14,11 @@ class Service_model extends MY_Model
 
         if($reward_id){
             $this->mongo_db->where('reward_id', $reward_id);
+        }else{
+            $this->mongo_db->where_ne('reward_id', null);
         }
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('event_type', 'REWARD');
-        $this->mongo_db->where_ne('reward_id', null);
         $this->mongo_db->where_gt('value', 0);
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
@@ -26,7 +27,7 @@ class Service_model extends MY_Model
         $this->mongo_db->order_by(array('date_added' => -1));
         $event_log = $this->mongo_db->get('playbasis_event_log');
 
-        foreach($event_log as &$event){
+        foreach($event_log as $key => &$event){
 
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('_id', $event['pb_player_id']);
@@ -42,7 +43,11 @@ class Service_model extends MY_Model
             $this->mongo_db->select(array(), array('_id'));
             $player = $this->mongo_db->get('playbasis_player');
 
-            $event['player'] = isset($player) ? $player[0] : null;
+            $event['player'] = isset($player[0]) ? $player[0] : null;
+            if(!$event['player']){
+                unset($event_log[$key]);
+                continue;
+            }
 
             $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
@@ -50,6 +55,7 @@ class Service_model extends MY_Model
             if($actionAndStringFilter){
                 $event['action_name'] = $actionAndStringFilter['action_name'];
                 $event['string_filter'] = $actionAndStringFilter['url'];
+                $event['action_icon'] = $actionAndStringFilter['icon'];
             }
             unset($event['action_log_id']);
             unset($event['pb_player_id']);
@@ -66,7 +72,7 @@ class Service_model extends MY_Model
                     'deleted' => false
                 ));
                 $result = $this->mongo_db->get('playbasis_badge_to_client');
-                if($result){
+                if(isset($result[0])){
                     $event['badge']['badge_id'] = $result[0]['badge_id']."";
                     $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
                     $event['badge']['name'] = $result[0]['name'];
@@ -84,11 +90,30 @@ class Service_model extends MY_Model
     }
 
     private function getActionNameAndStringFilter($action_log_id){
-        $this->mongo_db->select(array('action_name', 'url'));
+        $this->mongo_db->select(array('action_name', 'url', 'client_id', 'site_id'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->where('_id', new MongoID($action_log_id));
         $returnThis = $this->mongo_db->get('playbasis_action_log');
-        return ($returnThis)?$returnThis[0]:array();
+
+        if($returnThis){
+            $returnThis = $returnThis[0];
+
+            $this->mongo_db->select(array('action_id', 'icon'));
+            $this->mongo_db->where(array(
+                'client_id' => $returnThis['client_id'],
+                'site_id' => $returnThis['site_id'],
+                'name' => $returnThis['action_name']
+            ));
+            $action = $this->mongo_db->get('playbasis_action_to_client');
+
+            if($action){
+                $returnThis['icon'] = $action[0]['icon'];
+            }
+        }else{
+            return array();
+        }
+
+        return $returnThis;
     }
 }
 ?>

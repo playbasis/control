@@ -45,12 +45,13 @@ class Engine extends Quest
 			{
 				$config = array(
 					'url' => $actionInput['url'],
-					'regex' => $actionInput['regex']
+//					'regex' => $actionInput['regex']
 				);
 				$found = false;
 				foreach($actionConfig[$actionId]['config'] as $configElement)
 				{
-					if($config['url'] != $configElement['url'] || $config['regex'] != $configElement['regex'])
+//					if($config['url'] != $configElement['url'] || $config['regex'] != $configElement['regex'])
+					if($config['url'] != $configElement['url'])
 						continue;
 					$found = true;
 					break;
@@ -65,7 +66,7 @@ class Engine extends Quest
 					'config' => array(
 						array(
 							'url' => $actionInput['url'],
-							'regex' => $actionInput['regex']
+//							'regex' => $actionInput['regex']
 						)
 					)
 				);
@@ -109,17 +110,27 @@ class Engine extends Quest
 			if($pb_player_id < 0)
 				$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 			$actionName = $fbData['action'];
-			$actionId = $this->client_model->getActionId(array(
-				'client_id' => $validToken['client_id'],
-				'site_id' => $validToken['site_id'],
-				'action_name' => $actionName
-			));
-			if(!$actionId)
+//			$actionId = $this->client_model->getActionId(array(
+//				'client_id' => $validToken['client_id'],
+//				'site_id' => $validToken['site_id'],
+//				'action_name' => $actionName
+//			));
+//            if(!$actionId)
+//                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+            $action = $this->client_model->getAction(array(
+                'client_id' => $validToken['client_id'],
+                'site_id' => $validToken['site_id'],
+                'action_name' => $actionName
+            ));
+			if(!$action)
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+            $actionId = $action['action_id'];
+            $actionIcon = $action['icon'];
 			$input = array_merge($validToken, array(
 				'pb_player_id' => $pb_player_id,
 				'action_id' => $actionId,
-				'action_name' => $actionName
+				'action_name' => $actionName,
+				'action_icon' => $actionIcon
 			));
 			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 		}
@@ -136,18 +147,28 @@ class Engine extends Quest
 				if($pb_player_id < 0)
 					continue;
 				$actionName = $twData['action'];
-				$actionId = $this->client_model->getActionId(array(
-					'client_id' => $validToken['client_id'],
-					'site_id' => $validToken['site_id'],
-					'action_name' => $actionName
-				));
-				if(!$actionId)
-					continue;
-				$input = array_merge($validToken, array(
-					'pb_player_id' => $pb_player_id,
-					'action_id' => $actionId,
-					'action_name' => $actionName
-				));
+//				$actionId = $this->client_model->getActionId(array(
+//					'client_id' => $validToken['client_id'],
+//					'site_id' => $validToken['site_id'],
+//					'action_name' => $actionName
+//				));
+//				if(!$actionId)
+//					continue;
+                $action = $this->client_model->getAction(array(
+                    'client_id' => $validToken['client_id'],
+                    'site_id' => $validToken['site_id'],
+                    'action_name' => $actionName
+                ));
+                if(!$action)
+                    continue;
+                $actionId = $action['action_id'];
+                $actionIcon = $action['icon'];
+                $input = array_merge($validToken, array(
+                    'pb_player_id' => $pb_player_id,
+                    'action_id' => $actionId,
+                    'action_name' => $actionName,
+                    'action_icon' => $actionIcon
+                ));
 				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 			}
 		}

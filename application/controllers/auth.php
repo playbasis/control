@@ -52,7 +52,7 @@ class Auth extends REST2_Controller
 			$this->response($this->error->setError('INVALID_API_KEY_OR_SECRET', $required), 200);
 		}
 	}
-	public function test_get()
+	/*public function test_get()
 	{
 		echo '<pre>';
 		$credential = array(
@@ -79,6 +79,6 @@ class Auth extends REST2_Controller
 		$result = $this->auth_model->createTokenFromAPIKey($credential['key']);
 		print_r($result);
 		echo '</pre>';
-	}
+	}*/
 }
 ?>
