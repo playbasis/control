@@ -67,7 +67,7 @@ class Quest extends REST2_Controller
 
                     //for check first mission of player that will be automatic join
                     $mission_status_check_unjoin = array("join", "finish");
-                    if(!in_array($player_missions[$missions[$first_mission]["mission_id"].""], $mission_status_check_unjoin)){
+                    if(isset($player_missions[$missions[$first_mission]["mission_id"].""]) && !in_array($player_missions[$missions[$first_mission]["mission_id"].""], $mission_status_check_unjoin)){
                         $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $missions[$first_mission]["mission_id"], $validToken, "join");
                         $player_missions[$missions[$first_mission]["mission_id"].""] = "join";
                     }
@@ -83,7 +83,7 @@ class Quest extends REST2_Controller
                             $next_mission = false;
                         }
 
-                        if($player_missions[$m["mission_id"].""] == "join"){
+                        if(isset($player_missions[$m["mission_id"].""]) && $player_missions[$m["mission_id"].""] == "join"){
                             //echo "join";
                             $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
                             if(!(count($event_of_mission) > 0)){
@@ -95,7 +95,7 @@ class Quest extends REST2_Controller
                                 $player_finish_count++;
                                 $next_mission = true;
                             }
-                        }else if($player_missions[$m["mission_id"].""] == "finish"){
+                        }else if(isset($player_missions[$m["mission_id"].""]) && $player_missions[$m["mission_id"].""] == "finish"){
                             //echo "finish";
                             //for check total mission finish
                             $player_finish_count++;
@@ -117,9 +117,9 @@ class Quest extends REST2_Controller
 
                     foreach($quest["missions"] as $m){
 
-                        if($player_missions[$m["mission_id"].""] != "finish"){
+                        if(isset($player_missions[$m["mission_id"].""]) && $player_missions[$m["mission_id"].""] != "finish"){
 
-                            if($player_missions[$m["mission_id"].""] == "unjoin"){
+                            if(isset($player_missions[$m["mission_id"].""]) && $player_missions[$m["mission_id"].""] == "unjoin"){
                                 $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"join");
                             }
 
@@ -513,6 +513,7 @@ class Quest extends REST2_Controller
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
                     'action_name' => 'mission_reward',
+                    'action_icon' => 'fa-icon-trophy',
                     'message' => $eventMessage,
                     'badge' => $event['reward_data']
                 )), $validToken['domain_name'], $validToken['site_id']);
@@ -531,6 +532,7 @@ class Quest extends REST2_Controller
                         //publish to node stream
                         $this->node->publish(array_merge($update_config, array(
                             'action_name' => 'mission_reward',
+                            'action_icon' => 'fa-icon-trophy',
                             'message' => $eventMessage,
                             'level' => $lv
                         )), $validToken['domain_name'], $validToken['site_id']);
@@ -571,6 +573,7 @@ class Quest extends REST2_Controller
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
                     'action_name' => 'mission_reward',
+                    'action_icon' => 'fa-icon-trophy',
                     'message' => $eventMessage,
                     'amount' => $r["reward_value"],
                     'point' => $reward_type_name

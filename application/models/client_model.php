@@ -38,6 +38,23 @@ class Client_model extends MY_Model
 		$id = $this->mongo_db->get('playbasis_action_to_client');
 		return ($id && $id[0]) ? $id[0]['action_id'] : 0;
 	}
+    public function getAction($clientData)
+    {
+        assert($clientData);
+        assert(is_array($clientData));
+        assert(isset($clientData['client_id']));
+        assert(isset($clientData['site_id']));
+        assert(isset($clientData['action_name']));
+        $this->set_site_mongodb($clientData['site_id']);
+        $this->mongo_db->select(array('action_id', 'icon'));
+        $this->mongo_db->where(array(
+            'client_id' => $clientData['client_id'],
+            'site_id' => $clientData['site_id'],
+            'name' => $clientData['action_name']
+        ));
+        $id = $this->mongo_db->get('playbasis_action_to_client');
+        return ($id && $id[0]) ? $id[0] : array();
+    }
 	public function getRuleSetByActionId($clientData)
 	{
 		assert($clientData);
@@ -153,6 +170,7 @@ class Client_model extends MY_Model
 		}
 		if(!$customRewardId)
 		{
+            return 0;
 			//reward does not exist, add new custom point where id is max(reward_id)+1
 			//$this->mongo_db->select(array('reward_id'));
 			//$this->mongo_db->where(array(
@@ -165,6 +183,36 @@ class Client_model extends MY_Model
 			//$customRewardId = $result['reward_id'] + 1;
 			//if($customRewardId < CUSTOM_POINT_START_ID)
 			//	$customRewardId = CUSTOM_POINT_START_ID;
+
+            /*$field1 = array(
+                'field_type' => 'read_only',
+                'label' => 'Name',
+                'param_name' => 'reward_name',
+                'placeholder' => '',
+                'sortOrder' => '0',
+                'value' => strtolower($rewardName)
+            );
+
+            $field2 = array(
+                'field_type' => 'hidden',
+                'label' => '',
+                'param_name' => 'item_id',
+                'placeholder' => '',
+                'sortOrder' => '0',
+                'value' => ''
+            );
+
+            $field3 = array(
+                'field_type' => 'number',
+                'label' => strtolower($rewardName),
+                'param_name' => 'quantity',
+                'placeholder' => 'How many ...',
+                'sortOrder' => '0',
+                'value' => '0'
+            );
+
+            $init_dataset = array($field1,$field2,$field3);
+
 			$customRewardId = new MongoId();
 			$mongoDate = new MongoDate(time());
 			$this->mongo_db->insert('playbasis_reward_to_client', array(
@@ -175,12 +223,13 @@ class Client_model extends MY_Model
 				'name' => strtolower($rewardName),
 				'limit' => null,
 				'description' => null,
+                'init_dataset' => $init_dataset,
 				'sort_order' => 1,
 				'status' => true,
 				'is_custom' => true,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate
-			));
+			));*/
 		}
 		$level = 0;
 		if($rewardName == 'exp')

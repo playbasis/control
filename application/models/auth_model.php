@@ -73,7 +73,7 @@ class Auth_model extends MY_Model
 				'site_id' => $data['site_id'],
 				'client_id' => $data['client_id']
 			));
-			$this->mongo_db->delete('playbasis_token');
+			$this->mongo_db->delete_all('playbasis_token');
 			//insert new token
 			$this->mongo_db->insert('playbasis_token', array(
 				'client_id' => $data['client_id'],
