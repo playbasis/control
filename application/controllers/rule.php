@@ -89,7 +89,7 @@ class Rule extends MY_Controller
         );
         $this->data["ruleTemplate"] = array();
 
-        if($templates['success']){
+        if(!isset($templates["error"])){
             foreach ($templates as $template) {
                 $name = $template["name"];
                 $this->data["ruleTemplate"][$name] = $template["rule_id"];
