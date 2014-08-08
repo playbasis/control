@@ -88,9 +88,12 @@ class Rule extends MY_Controller
             $adminGroup
         );
         $this->data["ruleTemplate"] = array();
-        foreach ($templates as $template) {
-            $name = $template["name"];
-            $this->data["ruleTemplate"][$name] = $template["rule_id"];
+
+        if($templates['success']){
+            foreach ($templates as $template) {
+                $name = $template["name"];
+                $this->data["ruleTemplate"][$name] = $template["rule_id"];
+            }    
         }
 
         $this->load->vars($this->data);
@@ -181,7 +184,7 @@ class Rule extends MY_Controller
                 foreach ($jigsaw["dataSet"] as $dataSet) {
                     if ($dataSet["param_name"] == "url")
                         $result = $this->curl(
-                            $this->config->item("server") . "/Engine/rule",
+                            $this->config->item("server") . "Engine/rule",
                             array("rule_id" => strval($rule["_id"]),
                             "action" => $jigsaw["name"],
                             "url" => $dataSet["value"],
