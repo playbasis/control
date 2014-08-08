@@ -738,18 +738,24 @@ class User extends MY_Controller
 
         if(isset($_GET['key'])){
             $random_key = $_GET['key'];
-            $user_info = $this->User_model->checkRandomKey($random_key);
-            if($user_info != null){
+            $user = $this->User_model->checkRandomKey($random_key);
+            if($user != null){
+                $user_id = $user[0]['_id'];
+                $initial_password = get_random_password(8,8);
+                $this->User_model->insertNewPassword($user_id, $initial_password);
+                $user = $this->User_model->getById($user_id);
+
                 $this->load->library('parser');
                 $vars = array(
-                    'firstname' => $user_info['firstname'],
-                    'lastname' => $user_info['lastname'],
-                    'username' => $user_info['username'],
-                    'password' => 'playbasis',
+                    'firstname' => $user['firstname'],
+                    'lastname' => $user['lastname'],
+                    'username' => $user['username'],
+                    'password' => $initial_password,
                 );
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
-                $this->email($user_info['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
+                $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
 
+                $this->data['username'] = null;
                 $this->data['main'] = 'account_activated';
                 $this->render_page('template');
             }else{
