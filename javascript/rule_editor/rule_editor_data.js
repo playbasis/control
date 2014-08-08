@@ -213,6 +213,7 @@ dataMan = {
           success:function(data){
             var j = JSON.parse(data);
             var pretty = prettyPrint(j, {maxDepth:10});
+            $("#playModal").empty();
             $("#playModal").append(pretty);
             $("#playModal").dialog({draggable: false, resizable: false, width: "auto"});
           },
