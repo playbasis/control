@@ -320,9 +320,9 @@ class Plan extends MY_Controller
         }
 
         if ($this->input->post('description')) {
-            $this->data['description'] = $this->input->post('description');
+            $this->data['description'] = htmlentities($this->input->post('description'));
         } elseif (!empty($plan_info)) {
-            $this->data['description'] = $plan_info['description'];
+            $this->data['description'] = htmlentities($plan_info['description']);
         } else {
             $this->data['description'] = '';
         }
