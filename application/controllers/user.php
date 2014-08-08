@@ -612,10 +612,10 @@ class User extends MY_Controller
                             $this->Client_model->editClientPlan($client_id, $another_data);
 
                             $data = array();
-                                $data['client_id'] = $client_id;
-                                $data['plan_id'] = $plan_id;
-                                $data['site_id'] = $site_id;
-                                $this->Permission_model->addPlanToPermission($data);
+                            $data['client_id'] = $client_id;
+                            $data['plan_id'] = $plan_id;
+                            $data['site_id'] = $site_id;
+                            $this->Permission_model->addPlanToPermission($data);
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
@@ -662,7 +662,7 @@ class User extends MY_Controller
                 }
             }else{
                 if($this->input->post('format') == 'json'){
-                    echo json_encode(validation_errors());
+                    echo json_encode(strip_tags(validation_errors()));
                     exit();
                 }
             }
