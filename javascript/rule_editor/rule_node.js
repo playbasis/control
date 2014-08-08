@@ -64,6 +64,35 @@ Node.prototype.getHTML = function(){
         case 'REWARD':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
     }
 
+    var htmlElement = '';
+    if(this.jigsawName == "customPointReward" || this.jigsawName == "specialReward"){
+        this.jigsawName = "specialReward";
+        this.jigsawDescription = "You can send dynamic reward on engine.";
+        htmlElement = '<table class="table table-bordered"><tbody>' +
+            '<tr class="pbd_rule_param state_text parent_id_'+this.uid+'">' +
+            '<td class="pbd_rule_label field_type_text sort_0 name_reward_name hide">Name' +
+            '<a rel="tooltip" data-original-title="name of point to award"><i class="icon-question-sign icon-white help"></i></a></td>' +
+            '<td class="pbd_rule_data hide"><span class="pbd_rule_text view_as_text" style="display: inline;"></span>' +
+            '<span class="pbd_rule_field" style="display: none;">' +
+            '<input type="text" class="" placeholder="" value="" maxlength="60"></span>' +
+            '<span class="pbd_rule_action parent_id_'+this.uid+'">' +
+            '<span class="btn btn-info btn-mini" id="pbd_rule_action_edit"><i class="icon-edit icon-white"></i></span>' +
+            '<span class="btn btn-info btn-mini" id="pbd_rule_action_save" style="display: none;">' +
+            '<i class="icon-ok icon-white"></i></span><span class="btn btn-info btn-mini" id="pbd_rule_action_cancel" style="display: none;">' +
+            '<i class="icon-remove icon-white"></i></span></span></td></tr>' +
+            '<tr class="pbd_rule_param state_text parent_id_'+this.uid+'">' +
+            '<td class="pbd_rule_label field_type_number sort_0 name_quantity hide">Quantity<a rel="tooltip" data-original-title="amount of point to award">' +
+            '<i class="icon-question-sign icon-white help"></i></a></td>' +
+            '<td class="pbd_rule_data hide"><span class="pbd_rule_text view_as_number" style="display: inline;"></span>' +
+            '<span class="pbd_rule_field" style="display: none;"><input type="text" class="input_number number" placeholder="How many ..." value="" maxlength="20"></span>' +
+            '<span class="pbd_rule_action parent_id_'+this.uid+'">' +
+            '<span class="btn btn-info btn-mini" id="pbd_rule_action_edit"><i class="icon-edit icon-white"></i></span>' +
+            '<span class="btn btn-info btn-mini" id="pbd_rule_action_save" style="display: none;"><i class="icon-ok icon-white"></i></span>' +
+            '<span class="btn btn-info btn-mini" id="pbd_rule_action_cancel" style="display: none;"><i class="icon-remove icon-white"></i></span></span></td></tr></tbody></table>';
+    }else{
+        htmlElement = this.currentDataSet.getHTML();
+    }
+
     if(DEBUG)console.log('styling to >> '+boxStyle);
     this.mRuleHTML = '';
 //    console.log(this.uid);
@@ -72,11 +101,17 @@ Node.prototype.getHTML = function(){
     //node stying defined
     this.mRuleHTML += '<div class="box span12 pbd_box '+boxStyle+'">';
     //node header content -> top bar of node
-    this.mRuleHTML += '<div class="box-header"><h2><span class="icon-holder"><i class="'+boxIcon+' icon-white"></i></span><span class="break"></span><span class="pbd_rulebox_name"><span class="name_only"><span class="name_type">'+this.category+'</span>&nbsp;:&nbsp;'+this.jigsawName.toUpperCase()+'</span>  </span></h2><div class="rule-mini"></div><div class="box-icon"><a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a><a href="#" class="pbd_btn_close"><i class="icon-remove"></i></a></div></div>';
+    this.mRuleHTML += '<div class="box-header"><h2><span class="icon-holder">' +
+        '<i class="'+boxIcon+' icon-white"></i></span><span class="break"></span>' +
+        '<span class="pbd_rulebox_name"><span class="name_only">' +
+        '<span class="name_type">'+this.category+'</span>&nbsp;:&nbsp;'+this.jigsawName.toUpperCase()+'</span>  </span></h2>' +
+        '<div class="rule-mini"></div><div class="box-icon"><a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>' +
+        '<a href="#" class="pbd_btn_close"><i class="icon-remove"></i></a></div></div>';
     //node body content
-    this.mRuleHTML += '<div class="box-content"><span class="pbd_boxcontent_description">'+this.jigsawDescription+'</span><span class="pbd_boxcontent_action">';
+    this.mRuleHTML += '<div class="box-content"><span class="pbd_boxcontent_description">'+this.jigsawDescription+'</span>' +
+        '<span class="pbd_boxcontent_action">';
     //add dataset Table
-    this.mRuleHTML += this.currentDataSet.getHTML()+'</span></div>';
+    this.mRuleHTML += htmlElement+'</span></div>';
     //Add connection link
     this.mRuleHTML += '<div class="row connection"><div class="line_connect line_top offset6"></div><div class="offset6 new_node_connect"><div class="new_node_connect_btn circle" style="margin-top: -20px;"><div class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="1"><i class="icon-plus icon-white"></i> Add : condition & reward</a><ul class="dropdown-menu pbd_dropdown-menu" role="menu" aria-labelledby="dLabel"><li><a tabindex="-1" id="new_condition_btn" href="#"><i class="fa-icon-cogs"></i> Condition</a></li><li><a tabindex="-1" id="new_reward_btn" href="#"><i class="fa-icon-trophy"></i> Reward</a></li></ul></div></div></div></div></div>';
     //End node enclosure
@@ -120,7 +155,8 @@ function pb_sweapNodeDataRow() {
 
 Node.prototype.updateTitle = function() {
     var titleString = '';
-    titleString += '<span class="name_only"><span class="name_type">'+this.category+'</span>&nbsp;:&nbsp;'+this.jigsawName.toUpperCase()+'</span>';
+    titleString += '<span class="name_only"><span class="name_type">'+this.category+
+        '</span>&nbsp;:&nbsp;'+this.jigsawName.toUpperCase()+'</span>';
     //Customize output
     if(this.category!='ACTION'){
         var currentData = this.currentDataSet.getJSON();

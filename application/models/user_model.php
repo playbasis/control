@@ -195,7 +195,7 @@ class User_model extends MY_Model
             $config['charset'] = 'utf-8';
             $subject = "[Playbasis] Welcome to Playbasis";
             //$htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
-            $htmlMessage = $this->parser->parse('wait_activate.html', $validate_email, true);
+            // $htmlMessage = $this->parser->parse('wait_activate.html', $validate_email, true);
 
             //email client to upgrade account
             /*$this->email->initialize($config);
@@ -207,12 +207,12 @@ class User_model extends MY_Model
             $this->email->message($htmlMessage);
             $this->email->send();*/
 
-            $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
-            $this->amazon_ses->to($email);
-            $this->amazon_ses->bcc(array('info@playbasis.com','pascal@playbasis.com'));
-            $this->amazon_ses->subject($subject);
-            $this->amazon_ses->message($htmlMessage);
-            $this->amazon_ses->send();
+            // $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+            // $this->amazon_ses->to($email);
+            // $this->amazon_ses->bcc(array('info@playbasis.com','pascal@playbasis.com'));
+            // $this->amazon_ses->subject($subject);
+            // $this->amazon_ses->message($htmlMessage);
+            // $this->amazon_ses->send();
 
             //END EMAIL STUFF
 
@@ -592,7 +592,7 @@ class User_model extends MY_Model
             $this->mongo_db->set('random_key', null);
             $this->mongo_db->update('user');
 
-            return true;
+            return $user[0];
         }else{
             return false;
         }

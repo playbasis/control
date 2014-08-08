@@ -97,16 +97,17 @@
           // debug: true,
           headers: { 
             // we start counting zero) 
-            2: { 
+            2: {
                 // disable it by setting the property sorter to false 
                 sorter: false 
             }, 
             
-            3: { 
+            3: {
                 // disable it by setting the property sorter to false 
                 sorter: false 
             } 
-          } 
+          },
+          sortList: [[0,0]]
         });
       }
       else {

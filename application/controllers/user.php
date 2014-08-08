@@ -562,15 +562,13 @@ class User extends MY_Controller
                 $_POST['password'] = 'playbasis';
                 $_POST['password_confirm'] = 'playbasis';
                 $_POST['site_name'] = $_POST['domain_name'];
-            }else{
-                $recaptcha_challenge_field = isset($_POST["recaptcha_challenge_field"])?$_POST["recaptcha_challenge_field"]:null;
-                $recaptcha_response_field = isset($_POST["recaptcha_response_field"])?$_POST["recaptcha_response_field"]:null;
-
-                $resp = recaptcha_check_answer ($privateKey,
-                    $_SERVER["REMOTE_ADDR"],
-                    $recaptcha_challenge_field,
-                    $recaptcha_response_field);
             }
+
+            $recaptcha_challenge_field = isset($_POST["recaptcha_challenge_field"])?$_POST["recaptcha_challenge_field"]:null;
+            $recaptcha_response_field = isset($_POST["recaptcha_response_field"])?$_POST["recaptcha_response_field"]:null;
+
+            $resp = recaptcha_check_answer($privateKey,$_SERVER["REMOTE_ADDR"],$recaptcha_challenge_field,$recaptcha_response_field);
+
             if($this->form_validation->run()){
                 // $user_id = $this->User_model->insertUser();
                 $domain = $this->Domain_model->checkDomainExists($this->input->post());
@@ -580,6 +578,10 @@ class User extends MY_Controller
                     // if(!$domain){
                     if (isset($resp) && !$resp->is_valid) {
                     // What happens when the CAPTCHA was entered incorrectly
+                        if($this->input->post('format') == 'json'){
+                            echo json_encode('Incorrect captcha code');
+                            exit();
+                        }
                         $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
                         $this->data['temp_fields'] = $this->input->post();
                     }else{
@@ -617,6 +619,19 @@ class User extends MY_Controller
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
+
+                                $this->load->library('parser');
+                                $vars = array(
+                                    'firstname' => $user_info['firstname'],
+                                    'lastname' => $user_info['lastname'],
+                                    'username' => $user_info['email'],
+                                    'password' => 'playbasis',
+                                    'key' => $user_info['random_key'],
+                                    'url'=> base_url('enable_user/?key='),
+                                );
+                                $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
+                                $this->email($_POST['email'], '[Playbasis] Your account has been activated', $htmlMessage);
+
                                 exit();
                             }
                             // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
@@ -717,17 +732,33 @@ class User extends MY_Controller
     }
 
     public function enable_user(){
-        if($_GET['key']){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'enable user';
+        $this->data['title'] = $this->lang->line('title');
+
+        if(isset($_GET['key'])){
             $random_key = $_GET['key'];
-            if($this->User_model->checkRandomKey($random_key)){
-                echo "<script>alert('Your account has been activated! We will redirect you to our login page.');</script>";
-                echo "<script>window.location.href = '".site_url()."';</script>";
+            $user_info = $this->User_model->checkRandomKey($random_key);
+            if($user_info != null){
+                $this->load->library('parser');
+                $vars = array(
+                    'firstname' => $user_info['firstname'],
+                    'lastname' => $user_info['lastname'],
+                    'username' => $user_info['username'],
+                    'password' => 'playbasis',
+                );
+                $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
+                $this->email($user_info['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
+
+                $this->data['main'] = 'account_activated';
+                $this->render_page('template');
             }else{
                 echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
                 echo "<script>window.location.href = '".site_url()."';</script>";
             }
         }else{
-            redirect('login');
+            echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
+            echo "<script>window.location.href = '".site_url()."';</script>";
         }
     }
 

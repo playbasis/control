@@ -1,18 +1,26 @@
 .table th.center, .table td.center  { text-align:center; }
 .table th.right, .table td.right    { text-align:right; }
 
+.table th.headerSortable {
+    background-image: url('../../image/ud.gif');
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center right;
+    padding-right:16px !important;
+}
+
 .table th.headerSortable:hover {
   cursor:pointer;
 }
 .table th.headerSortDown {
-  background-image: url('../../image//asc.gif');
+  background-image: url('../../image/asc.gif');
   cursor: pointer;
   background-repeat: no-repeat;
   background-position: center right;
   padding-right:16px !important;
 }
 .table th.headerSortUp {
-  background-image: url('../../image//desc.gif');
+  background-image: url('../../image/desc.gif');
   cursor: pointer;
   background-repeat: no-repeat;
   background-position: center right;
@@ -65,7 +73,7 @@
 .table-dark th.headerSortDown,
 .table-dark th.headerSortUp {
   background-color:#000;
-  background-image: url('../../image//asc_light.gif');
+  background-image: url('../../image/asc_light.gif');
   background-repeat: no-repeat;
   background-position: center right;
 }
@@ -106,7 +114,7 @@
 .table-dark.table-bordered thead:first-child tr:first-child th,
 .table-dark.table-bordered tbody:first-child tr:first-child th,
 .table-dark.table-bordered tbody:first-child tr:first-child td {
-.table-dark  border-top: 0;
+  border-top: 0;
 }
 .table-dark.table-bordered thead:first-child tr:first-child th:first-child,
 .table-dark.table-bordered tbody:first-child tr:first-child td:first-child {
@@ -242,13 +250,13 @@
 .table-stats th.headerSortUp { background-color:#CCC; }
 .table-stats thead tr:nth-child(1) th.headerSortDown {
   background-color:#333;
-  background-image: url('../../image//asc_light.gif');
+  background-image: url('../../image/asc_light.gif');
   background-repeat: no-repeat;
   background-position: center right;
 }
 .table-stats thead tr:nth-child(1) th.headerSortUp {
   background-color:#333;
-  background-image: url('../../image//desc_light.gif');
+  background-image: url('../../image/desc_light.gif');
   background-repeat: no-repeat;
   background-position: center right;
 }
