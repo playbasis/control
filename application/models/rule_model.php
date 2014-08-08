@@ -172,29 +172,6 @@ class Rule_model extends MY_Model
                 }
 
                 // append custom reward
-<<<<<<< HEAD
-
-                $this->mongo_db->select(array('jigsaw_id','name','description','sort_order','icon','status','category','init_dataset'));
-                $this->mongo_db->where('site_id', new MongoID($siteId));
-                $this->mongo_db->where('client_id', new MongoID($clientId));
-                $this->mongo_db->where('category', 'REWARD');
-                $this->mongo_db->where('status', true);
-//                $this->mongo_db->where('name', array('$nin'=>array('reward', 'customPointReward')));
-                $ds2 = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
-
-                if(count($ds2)>0){
-                    $ds2[0]['specific_id'] = $ds2[0]['jigsaw_id']."";//'';
-                    $ds2[0]['jigsaw_category'] = 'REWARD';
-
-//                    $ds2[0]['dataSet'] = unserialize(trim($ds2[0]['init_dataset']));
-                    $ds2[0]['dataSet'] = $ds2[0]['init_dataset'];
-                    $ds2[0]['id']=$ds2[0]['jigsaw_id']."";
-                    $ds2[0]['category']='REWARD';
-
-                    unset($ds2[0]['jigsaw_id']);
-                    unset($ds2[0]['init_dataset']);
-                    array_push($ds, $ds2[0]);
-=======
                 if ($clientId) {
                     $this->mongo_db->select(array(
                         'jigsaw_id',
@@ -225,7 +202,6 @@ class Rule_model extends MY_Model
                         unset($ds2[0]['init_dataset']);
                         array_push($ds, $ds2[0]);
                     }
->>>>>>> e96c153c93e391dc5683ff48a44b89f67f3dcc0e
                 }
 
                 $output = $ds;
@@ -506,13 +482,8 @@ class Rule_model extends MY_Model
             //Exception stuff
         }
 
-<<<<<<< HEAD
-        $this->vsort($output, "date_added");
-
-=======
         if (isset($output["date_added"]))
             $this->vsort($output, "date_added");
->>>>>>> e96c153c93e391dc5683ff48a44b89f67f3dcc0e
         return $output;
     }
 

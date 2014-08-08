@@ -1089,10 +1089,5 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
 // }
 
 $("input").live('keyup', function(){
-<<<<<<< HEAD
     this.value = this.value.replace(/[^0-9a-zA-Z\,\_\. ]/g,'');
 });
-=======
-    this.value = this.value.replace(/[^0-9a-z\_\. ]/g,'');
-});
->>>>>>> e96c153c93e391dc5683ff48a44b89f67f3dcc0e
