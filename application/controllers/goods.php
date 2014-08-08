@@ -624,9 +624,9 @@ class Goods extends MY_Controller
         }
 
         if ($this->input->post('description')) {
-            $this->data['description'] = $this->input->post('description');
+            $this->data['description'] = htmlentities($this->input->post('description'));
         } elseif (isset($goods_id) && ($goods_id != 0)) {
-            $this->data['description'] = $goods_info['description'];
+            $this->data['description'] = htmlentities($goods_info['description']);
         } else {
             $this->data['description'] = '';
         }

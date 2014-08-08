@@ -600,9 +600,9 @@ class Badge extends MY_Controller
         }
 
         if ($this->input->post('description')) {
-            $this->data['description'] = $this->input->post('description');
+            $this->data['description'] = htmlentities($this->input->post('description'));
         } elseif (isset($badge_id) && ($badge_id != 0)) {
-            $this->data['description'] = $badge_info['description'];
+            $this->data['description'] = htmlentities($badge_info['description']);
         } else {
             $this->data['description'] = '';
         }
