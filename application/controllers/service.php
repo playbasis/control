@@ -188,6 +188,9 @@ class Service extends REST2_Controller
     {
         $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
         $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
+
+        $show_login = ($this->input->get('show_login'))?$this->input->get('show_login'):false;
+
         if($limit > 500){
             $limit = 500;
         }
@@ -205,7 +208,7 @@ class Service extends REST2_Controller
             $reward_id = null;
         }
 
-        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $offset, $limit);
+        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $offset, $limit, $show_login);
 
         $this->response($this->resp->setRespond($respondThis), 200);
     }
