@@ -167,6 +167,7 @@ class Quest_model extends MY_Model{
     public function getBadgesByClientSiteId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->where_ne('deleted',  true);
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
