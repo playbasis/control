@@ -677,6 +677,36 @@ preventUnusual ={
 //Rule Editor main Event 
 
 
+//Event: select template
+$(".template_sel").click(function(){
+    var id = $(this).data("id");
+    var name = $(this).data("name");
+    $("<div></div>").appendTo("body")
+    .html(
+        "<div>" +
+        "<h6>Are you sure?</h6></div>")
+    .dialog({
+        modal: true,
+    title: 'Do you want to use "' + name + '"',
+    zIndex: 10000,
+    autoOpen: true,
+    width: "auto",
+    resizable: false,
+    buttons: {
+        Yes: function () {
+                 dataMan.cloneRule(id);
+                 $(this).dialog("close");
+             },
+    No: function () {
+            $(this).dialog("close");
+        }
+    },
+    close: function (event, ui) {
+               $(this).remove();
+           }
+    });
+});
+
 //Event : prevent user
 $('.one_rule_save_btn').live('click',function(){
     if(chainMan.getLen()<1){
@@ -688,8 +718,6 @@ $('.one_rule_save_btn').live('click',function(){
     }
     return true;
 })
-
-
 
 //Event : Click on [+New Rule] button
 $('.one_rule_new_btn').live('click',function(){
@@ -748,6 +776,12 @@ $('.gen_rule_edit_btn').live('click',function(event){
     oneRuleMan.ruleActionPanelControl('editing');
 })
 
+//Event : Play rule
+$(".gen_rule_play_btn").live("click", function(event){
+    event.preventDefault();
+    var id = $(this).parents("tr").attr("id");
+    dataMan.playRule(id);
+});
 
 
 //Event : Insert new Action
@@ -1055,5 +1089,10 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
 // }
 
 $("input").live('keyup', function(){
+<<<<<<< HEAD
     this.value = this.value.replace(/[^0-9a-zA-Z\,\_\. ]/g,'');
 });
+=======
+    this.value = this.value.replace(/[^0-9a-z\_\. ]/g,'');
+});
+>>>>>>> e96c153c93e391dc5683ff48a44b89f67f3dcc0e

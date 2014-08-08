@@ -684,14 +684,23 @@ class User_model extends MY_Model
 	public function get_api_key_secret($client_id, $site_id) {
 		$this->set_site_mongodb($this->session->userdata('site_id'));
 
-		$this->mongo_db->where('client_id', new MongoID($client_id));
-		$this->mongo_db->where('_id', new MongoID($site_id));
-		$this->mongo_db->limit(1);
+        try {
+            $this->mongo_db->where('client_id', new MongoID($client_id));
+            $this->mongo_db->where('_id', new MongoID($site_id));
+            $this->mongo_db->limit(1);
+        }
+        catch (Exception $e) {
+        }
 
 		$result = $this->mongo_db->get("playbasis_client_site");
 
 		return $result ? $result[0] : null;
 	}
+
+    public function isAdmin()
+    {
+        return $this->getAdminGroupID() == $this->getUserGroupId();
+    }
 
 }
 ?>
