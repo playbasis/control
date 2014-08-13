@@ -4,6 +4,7 @@
     $height =  isset($_GET['height'] )  ? $_GET['height'] : '360';
     $color =  isset($_GET['color'] )  ? $_GET['color'] : '#0e9ce41';
     $rankby =  isset($_GET['rankby'] )  ? $_GET['rankby'] : 'point';
+    $displaypoint =  isset($_GET['displaypoint'] )  ? $_GET['displaypoint'] : 'point';
 
     // echo $width.'<br>';
     // echo $height.'<br>';
@@ -45,8 +46,9 @@
 
 
 <?php if($typeWidget == 'profile'): ?>
+    <?php if($width < 500){$width = 500;} ?>
     <div style="width:<?php echo $width; ?>px;margin:40px auto;">
-        <div class="pb-profile" data-pb-width="500" ></div>
+        <div class="pb-profile" data-pb-width="<?php echo $width; ?>" data-pb-displayPoint="<?php echo $displaypoint; ?>" ></div>
     </div>
 <?php endif; ?>
 
@@ -71,9 +73,9 @@
 <!-- <div class="playbasis-leaderboard" data-leaderboard-id="221015714591364" data-leaderboard-width="300" data-leaderboard-height="600" ></div> -->
 <!--Widget Code Ends-->
 
-<!--Widget Code Starts-->
-<!-- <div class="pb-userbar" ></div> -->
-<!--Widget Code Ends-->
+<?php if($typeWidget == 'userbar'): ?>
+<div class="pb-userbar"  data-pb-displayPoint="<?php echo $displaypoint; ?>" ></div>
+<?php endif; ?>
 
 </body>
 </html>
