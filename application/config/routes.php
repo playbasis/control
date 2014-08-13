@@ -123,6 +123,7 @@ $route['Redeem/goods'] = 'redeem/goods/0';
 // api-carlos
 $route['Action'] = 'action/index';
 $route['Action/log'] = 'action/log';
+$route['Action/usedonly'] = 'action/usedonly';
 $route['Reward'] = 'reward/index';
 $route['Reward/badge'] = 'badge/index'; // reuse
 $route['Reward/'.ANY_STRING.'/log'] = 'reward/$1Log';

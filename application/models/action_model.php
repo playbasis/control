@@ -23,6 +23,35 @@ class Action_model extends MY_Model
 		if (!$result) $result = array();
 		return $result;
 	}
+
+	public function listActionsOnlyUsed($data)
+	{
+		$rawUsedActions = $this->getUsedActionByClientSiteId($data['client_id'], $data['site_id']);
+
+		$usedActions = $rawUsedActions['values'];
+
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->select(array('name','icon'));
+		$this->mongo_db->select(array(),array('_id'));
+		
+		$this->mongo_db->where_in('action_id', $usedActions);
+
+		$this->mongo_db->where(array(
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'status' => true
+		));
+
+		$result = $this->mongo_db->get('playbasis_action_to_client');
+		if (!$result) $result = array();
+
+		return $result;
+	}
+
+	public function getUsedActionByClientSiteId($client_id, $site_id){
+		return $this->mongo_db->command(array('distinct'=>'playbasis_rule', 'key'=>'action_id','query'=>array('client_id'=>$client_id, 'site_id'=>$site_id,'active_status'=>true)));
+	}
+	
 	public function findAction($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
