@@ -39,6 +39,11 @@ class PlaybasisApi{
         return $result;
     }
 
+    public function getActionUsedonly(){
+        $result = $this->_get('Action/usedonly');
+        return $result;
+    }
+
     public function getActionLog($startDate,$endDate){
         $param = array(
             'from' => $startDate,
