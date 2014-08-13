@@ -31,5 +31,14 @@ class Widget extends MY_Controller
         $this->data['main'] = 'widget';
         $this->render_page('template');
     }
+
+    public function preview(){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        // $this->data['main'] = 'widget_preview';
+        $this->render_page('widget_preview');
+    }
 }
 ?>
