@@ -26,12 +26,45 @@ class Action_model extends MY_Model
 
 	public function listActionsOnlyUsed($data)
 	{
-		$rawUsedActions = $this->getUsedActionByClientSiteId($data['client_id'], $data['site_id']);
+
+		/*
+		| -----------------------------------------------------------------------
+		| ACTIONS THAT ARE IN PLAYERS HAVE...
+		| -----------------------------------------------------------------------
+		*/
+		$rawUsedActions = $this->mongo_db->command(array('distinct'=>'playbasis_action_log', 'key'=>'action_id','query'=>array('client_id'=>$data['client_id'], 'site_id'=>$data['site_id'])));
 
 		$usedActions = $rawUsedActions['values'];
 
 		$this->set_site_mongodb($data['site_id']);
+
 		$this->mongo_db->select(array('name','icon'));
+
+		$this->mongo_db->select(array(),array('_id'));
+		
+		$this->mongo_db->where_in('action_id', $usedActions);
+
+		$this->mongo_db->where(array(
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'status' => true
+		));
+
+		$result = $this->mongo_db->get('playbasis_action_to_client');
+		if (!$result) $result = array();		
+
+		/*
+		| -----------------------------------------------------------------------
+		| ACTIONS THAT ARE IN RULE ENGINES BUT PLAYERS MAY OR MAY HAVE NOT HAVE THEM...
+		| -----------------------------------------------------------------------
+
+		$rawUsedActions = $this->getUsedActionByClientSiteId($data['client_id'], $data['site_id']);
+
+		$usedActions = $rawUsedActions['values'];
+		$this->set_site_mongodb($data['site_id']);
+
+		$this->mongo_db->select(array('name','icon'));
+
 		$this->mongo_db->select(array(),array('_id'));
 		
 		$this->mongo_db->where_in('action_id', $usedActions);
@@ -44,6 +77,7 @@ class Action_model extends MY_Model
 
 		$result = $this->mongo_db->get('playbasis_action_to_client');
 		if (!$result) $result = array();
+		*/
 
 		return $result;
 	}
