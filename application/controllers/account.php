@@ -10,8 +10,12 @@ class Account extends MY_Controller
         $this->load->model('User_model');
 	    $this->load->model('Client_model');
 	    $this->load->model('Plan_model');
+	    $this->load->model('Payment_model');
 
-        if(!$this->User_model->isLogged()){
+	    $router =& load_class('Router', 'core');
+	    $method = $router->fetch_method();
+
+        if(!$this->User_model->isLogged() && !in_array($method, array('paypal_notification'))){
             redirect('/login', 'refresh');
         }
 
@@ -31,30 +35,15 @@ class Account extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-	    // register select plan imm -> keep date
-	    // 1st page show only active plans
-
-	    // billing every month (using due date when select plan)
-
-	    // get current credit of the client
 	    $client = $this->Client_model->getClientById($this->User_model->getClientId());
-	    // get current plan
-	    // get due date of the client
 	    $plan_registration = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-	    // get plan's price
 	    $plan = $this->Plan_model->getPlanById($plan_registration['plan_id']);
 
-	    // select #months to pay
-	    // select channel for payment
-	    // pay via paypal
-
-	    // payment history
-
 	    if (!array_key_exists('credit', $client)) {
-		    $client['credit'] = 1234;
+		    $client['credit'] = 0; // default credit
 	    }
 	    if (!array_key_exists('price', $plan)) {
-		    $plan['price'] = 99;
+		    $plan['price'] = 99; // default plan price
 	    }
 	    $this->data['client'] = $client;
 	    $this->data['plan'] = $plan;
@@ -62,20 +51,13 @@ class Account extends MY_Controller
 	    $this->data['plan']['registration_date_modified'] = $plan_registration['date_modified']->sec;
 	    $this->data['main'] = 'account';
 	    $this->data['form'] = 'account/add_credit';
-/*print('<pre>');print_r($this->data['client']);print('</pre>');
-print('email = '.$this->data['client']['email']);
-print('credit = '.$this->data['client']['credit']);
-print('<pre>');print_r($this->data['plan']);print('</pre>');
-print('plan = '.$this->data['plan']['_id']);
-print('price = '.$this->data['plan']['price']);*/
 	    $this->session->set_userdata('price', $this->data['plan']['price']);
-//print('date = '.$this->data['plan']['registration_date_modified']);
 	    $this->load->vars($this->data);
 	    $this->render_page('template');
 
 	    // playbasis_client => store current credit amount
 	    // playbasis_permission => to find associated plan of a client
-	    // playbasis_plan => store plan details and price
+	    // playbasis_plan => store plan details and price with active flags
 	    // playbasis_payment_log => store payment transactions done by clients
 	    // playbasis_payment_chennel => store all payment channels
     }
@@ -114,10 +96,17 @@ print('price = '.$this->data['plan']['price']);*/
 		if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 			$this->data['message'] = null;
 
+			$credit = $this->input->post('credit');
+			$channel = $this->input->post('channel');
+			if ($credit) $credit = intval($credit);
+			if ($credit <= 0) $this->data['message'] = 'Credit has to be greater than zero'; // manual validation (> 0)
+
 			if($this->form_validation->run() && $this->data['message'] == null){
-				$credit = $this->input->post('credit');
+				$ci =& get_instance();
 				$this->session->set_userdata('credit', $credit);
-				$channel = $this->input->post('channel');
+				$this->session->set_userdata('channel', $channel);
+				$this->session->set_userdata('callback', $ci->config->config['server'].'notification');
+				$this->Payment_model->add_credit_event($credit, $channel, 'Pending');
 				switch ($channel) {
 					case 'paypal':
 						$this->data['main'] = 'account_purchase_paypal';
@@ -138,11 +127,46 @@ print('price = '.$this->data['plan']['price']);*/
 		$this->render_page('template');
 	}
 
-	public function payment_notification() {
-		$raw_post_data = file_get_contents('php://input');
-print_r($raw_post_data);
-		// insert into playbasis_payment_log and update credit in playbasis_client
-		//redirect('/account', 'refresh');
+	public function paypal_done() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['wait_title'] = $this->lang->line('wait_title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		/* clear basket in the session */
+		$this->session->set_userdata('credit', null);
+		$this->session->set_userdata('channel', null);
+		$this->session->set_userdata('callback', null);
+
+		$this->data['main'] = 'account_purchase_paypal_done';
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
+	public function paypal_notification() {
+		// TODO: handle IPN message
+log_message('error', '--------- paypal_notification');
+
+log_message('error', '_SERVER = '.print_r($_SERVER, true));
+log_message('error', '_GET = '.print_r($_GET, true));
+log_message('error', '_POST = '.print_r($_POST, true));
+
+log_message('error', 'server = '.print_r($this->input->server() , true));
+log_message('error', 'get = '.print_r($this->input->get() , true));
+log_message('error', 'post = '.print_r($this->input->post() , true));
+log_message('error', 'user_agent = '.print_r($this->input->user_agent() , true));
+
+		$credit = 123; // from IPN
+		$channel = 'paypal';
+		$this->Payment_model->add_credit_event($credit, $channel, 'completed');
+
+$body = file_get_contents('php://input');
+log_message('error', 'body = '.print_r($body, true));
 	}
 
     private function validateAccess(){

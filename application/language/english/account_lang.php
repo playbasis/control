@@ -3,6 +3,7 @@
 $lang['heading_title']          				= 'Account Details';
 $lang['payment_title']          				= 'Payment Channel';
 $lang['order_title']          				= 'Order Details';
+$lang['wait_title']          				= 'Congratulations!';
 
 // Text
 $lang['text_success']           				= 'You have successfully updated your account!';

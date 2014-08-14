@@ -9,7 +9,7 @@
 
             <div class="button-wrapper">
                 <?php
-                echo anchor('login'.$action['action_id'], 'Go to Login', array('class'=>'button'));
+                echo anchor('login', 'Go to Login', array('class'=>'button'));
                 ?>
             </div>
 
