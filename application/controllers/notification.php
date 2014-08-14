@@ -141,7 +141,7 @@ class Notification extends REST2_Controller
 				$this->response($this->error->setError('INVALID_PAYPAL_IPN', $res), 200);
 			}
 		}
-		$this->response($this->error->setError('UNKNOWN_MESSAGE', $message), 200);
+		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
 
 	private function convertToJson($str)
