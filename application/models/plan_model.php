@@ -11,6 +11,13 @@ class Plan_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getPlanById($plan_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('_id',  $plan_id);
+        $results = $this->mongo_db->get("playbasis_plan");
+        return $results ? $results[0] : null;
+    }
+
     public function getPlans($data = array()) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

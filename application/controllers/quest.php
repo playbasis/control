@@ -849,7 +849,7 @@ class Quest extends MY_Controller
         );
 
         $this->data['message'] = array();
-        if ($lmts['mission'] && $missions >= $lmts['mission']) {
+        if (isset($lmts['mission']) && $missions >= $lmts['mission']) {
             $this->data['message'][] = $this->lang->line('error_mission_limit');
         }
 
@@ -869,7 +869,7 @@ class Quest extends MY_Controller
             $new_missions = sizeof($data['missions']);
             $all_missions = ($missions - $this_missions) + $new_missions;
 
-            if ($lmts['mission']
+            if (isset($lmts['mission'])
                 && isset($data['status'])
                 && $all_missions > $lmts['mission']) {
                 $this->data['message'][] = $this->lang->line('error_mission_limit');
