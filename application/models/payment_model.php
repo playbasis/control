@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Payment_model extends MY_Model
 {
-	// status = init, pending, completed
+    // status = Pending, Completed
     public function add_credit_event($credit, $channel, $status) {
 	    $this->set_site_mongodb($this->session->userdata('site_id'));
 

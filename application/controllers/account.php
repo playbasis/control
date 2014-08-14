@@ -80,7 +80,6 @@ class Account extends MY_Controller
 	}
 
 	public function purchase() {
-log_message('error', '--------- paypal_purchase');
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -103,9 +102,11 @@ log_message('error', '--------- paypal_purchase');
 			if ($credit <= 0) $this->data['message'] = 'Credit has to be greater than zero'; // manual validation (> 0)
 
 			if($this->form_validation->run() && $this->data['message'] == null){
+				$ci =& get_instance();
 				$this->session->set_userdata('credit', $credit);
 				$this->session->set_userdata('channel', $channel);
-				$this->Payment_model->add_credit_event($credit, $channel, 'pending');
+				$this->session->set_userdata('callback', $ci->config->config['server'].'notification');
+				$this->Payment_model->add_credit_event($credit, $channel, 'Pending');
 				switch ($channel) {
 					case 'paypal':
 						$this->data['main'] = 'account_purchase_paypal';
@@ -127,7 +128,6 @@ log_message('error', '--------- paypal_purchase');
 	}
 
 	public function paypal_done() {
-log_message('error', '--------- paypal_done');
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -141,6 +141,7 @@ log_message('error', '--------- paypal_done');
 		/* clear basket in the session */
 		$this->session->set_userdata('credit', null);
 		$this->session->set_userdata('channel', null);
+		$this->session->set_userdata('callback', null);
 
 		$this->data['main'] = 'account_purchase_paypal_done';
 		$this->load->vars($this->data);
