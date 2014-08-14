@@ -27,7 +27,7 @@ class Notification extends REST2_Controller
 	{
 		// headers = HTTP_X_AMZ_SNS_MESSAGE_TYPE, HTTP_X_AMZ_SNS_MESSAGE_ID, HTTP_X_AMZ_SNS_TOPIC_ARN, HTTP_X_AMZ_SNS_SUBSCRIPTION_ARN
 		// body = $this->request->body
-		$message = $this->request->body;
+		$message = !empty($this->request->body) ? $this->request->body : $_POST;
 		log_message('debug', '_SERVER = '.print_r($_SERVER, true));
 		log_message('debug', 'message = '.print_r($message, true));
 		$this->notification_model->log($this->site_id, $message);
@@ -54,13 +54,13 @@ class Notification extends REST2_Controller
 					break;
 			}
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
-		} else if (strrpos($_SERVER['HTTP_USER_AGENT'], 'PayPal IPN') !== false) { // PayPal IPN: https://developer.paypal.com/docs/classic/ipn/ht_ipn/
+		} else if (strpos($_SERVER['HTTP_USER_AGENT'], 'PayPal') === false ? false : true) { // PayPal IPN: https://developer.paypal.com/docs/classic/ipn/ht_ipn/
 			// STEP 1: read POST data
 
 			// Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
 			// Instead, read raw POST data from the input stream.
-			$raw_post_array = explode('&', $message);
 			$myPost = array();
+			$raw_post_array = explode('&', $this->request->raw);
 			foreach ($raw_post_array as $keyval) {
 				$keyval = explode ('=', $keyval);
 				if (count($keyval) == 2)
@@ -83,7 +83,7 @@ class Notification extends REST2_Controller
 
 			// Step 2: POST IPN data back to PayPal to validate
 
-			$ch = curl_init('https://www.paypal.com/cgi-bin/webscr');
+			$ch = curl_init('https://www.sandbox.paypal.com/cgi-bin/webscr');
 			curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
@@ -95,7 +95,7 @@ class Notification extends REST2_Controller
 			// In wamp-like environments that do not come bundled with root authority certificates,
 			// please download 'cacert.pem' from "http://curl.haxx.se/docs/caextract.html" and set
 			// the directory path of the certificate as shown below:
-			// curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . '/cacert.pem');
+			curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__).'/../certs/cacert.pem');
 			if( !($res = curl_exec($ch)) ) {
 				$msg = 'Getting a problem when trying to verify PayPal IPN, response: '.curl_error($ch);
 				log_message('error', $msg);

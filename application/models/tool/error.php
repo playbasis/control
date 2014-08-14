@@ -63,7 +63,7 @@ class Error extends CI_Model
             $errorData['error_code'] = '0805';
             break;
         case 'UNKNOWN_NOTIFICATION_MESSAGE':
-            $errorData['message'] = "Notification type is unknown";
+            $errorData['message'] = "Unknown notification message";
             $errorData['error_code'] = '0806';
             break;
         case 'CANNOT_VERIFY_PAYPAL_IPN':

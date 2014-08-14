@@ -839,7 +839,8 @@ abstract class REST_Controller extends CI_Controller
 	{
 		$this->_post_args = $_POST;
 
-		$this->request->format and $this->request->body = file_get_contents('php://input');
+		$this->request->raw = file_get_contents('php://input');
+		$this->request->format and $this->request->body = $this->request->raw;
 	}
 
 	/**
@@ -848,15 +849,16 @@ abstract class REST_Controller extends CI_Controller
 	protected function _parse_put()
 	{
 		// It might be a HTTP body
+		$this->request->raw = file_get_contents('php://input');
 		if ($this->request->format)
 		{
-			$this->request->body = file_get_contents('php://input');
+			$this->request->body = $this->request->raw;
 		}
 
 		// If no file type is provided, this is probably just arguments
 		else
 		{
-			parse_str(file_get_contents('php://input'), $this->_put_args);
+			parse_str($this->request->raw, $this->_put_args);
 		}
 	}
 
@@ -866,7 +868,8 @@ abstract class REST_Controller extends CI_Controller
 	protected function _parse_delete()
 	{
 		// Set up out DELETE variables (which shouldn't really exist, but sssh!)
-		parse_str(file_get_contents('php://input'), $this->_delete_args);
+		$this->request->raw = file_get_contents('php://input');
+		parse_str($this->request->raw, $this->_delete_args);
 	}
 
 	// INPUT FUNCTION --------------------------------------------------------------
