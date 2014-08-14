@@ -585,11 +585,11 @@ class User extends MY_Controller
                 $availablePlans = array('PLAN1', 'PLAN2', 'PLAN3');
 
                 if (!in_array($chosenPlan, $availablePlans)){
-                    echo 'Trying to do something weird?';
+                    echo 'Plan is not available!';
                     exit();
                 }
             }else{
-                echo 'Please choose a plan!';
+                echo 'Please dont provide empty plan';
                 exit();
             }
 
