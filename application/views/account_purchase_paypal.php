@@ -51,6 +51,7 @@
 			                    data-quantity="1"
 			                    data-amount="<?php echo $this->session->userdata('credit'); ?>"
 			                    data-currency="USD"
+			                    data-custom="<?php echo $this->session->userdata('client_id')->{'$id'}; ?>"
 			                    data-cancel_return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/add_credit"
 			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_done"
 			                    data-callback="<?php echo $this->session->userdata('callback'); ?>"
