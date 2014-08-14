@@ -37,10 +37,10 @@ class Account extends MY_Controller
 	    $plan = $this->Plan_model->getPlanById($plan_registration['plan_id']);
 
 	    if (!array_key_exists('credit', $client)) {
-		    $client['credit'] = 1234;
+		    $client['credit'] = 0; // default credit
 	    }
 	    if (!array_key_exists('price', $plan)) {
-		    $plan['price'] = 99;
+		    $plan['price'] = 99; // default plan price
 	    }
 	    $this->data['client'] = $client;
 	    $this->data['plan'] = $plan;
@@ -93,12 +93,15 @@ class Account extends MY_Controller
 		if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 			$this->data['message'] = null;
 
+			$credit = $this->input->post('credit');
+			$channel = $this->input->post('channel');
+			if ($credit) $credit = intval($credit);
+			if ($credit <= 0) $this->data['message'] = 'Credit has to be greater than zero'; // manual validation (> 0)
+
 			if($this->form_validation->run() && $this->data['message'] == null){
-				$credit = $this->input->post('credit');
-				$channel = $this->input->post('channel');
 				$this->session->set_userdata('credit', $credit);
 				$this->session->set_userdata('channel', $channel);
-				$this->Payment_model->add_credit_event($credit, $channel, 'init');
+				$this->Payment_model->add_credit_event($credit, $channel, 'pending');
 				switch ($channel) {
 					case 'paypal':
 						$this->data['main'] = 'account_purchase_paypal';
@@ -130,11 +133,9 @@ class Account extends MY_Controller
 		$this->data['wait_title'] = $this->lang->line('wait_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-		$credit = $this->input->post('credit');
-		$channel = $this->input->post('channel');
+		/* clear basket in the session */
 		$this->session->set_userdata('credit', null);
 		$this->session->set_userdata('channel', null);
-		$this->Payment_model->add_credit_event($credit, $channel, 'pending');
 
 		$this->data['main'] = 'account_purchase_paypal_done';
 		$this->load->vars($this->data);
@@ -143,6 +144,18 @@ class Account extends MY_Controller
 
 	public function paypal_notification() {
 		// TODO: handle IPN message
+		$body = file_get_contents('php://input');
+
+log_message('error', '_SERVER = '.print_r($_SERVER, true));
+log_message('error', '_GET = '.print_r($_GET, true));
+log_message('error', '_POST = '.print_r($_POST, true));
+log_message('error', 'body = '.print_r($body, true));
+
+log_message('error', 'server = '.print_r($this->input->server() , true));
+log_message('error', 'get = '.print_r($this->input->get() , true));
+log_message('error', 'post = '.print_r($this->input->post() , true));
+log_message('error', 'user_agent = '.print_r($this->input->user_agent() , true));
+
 		$credit = 123; // from IPN
 		$channel = 'paypal';
 		$this->Payment_model->add_credit_event($credit, $channel, 'completed');
