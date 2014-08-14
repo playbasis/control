@@ -53,7 +53,7 @@
 			                    data-currency="USD"
 			                    data-cancel_return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/add_credit"
 			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_done"
-			                    data-callback="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_notification"
+			                    data-callback="<?php echo $this->session->userdata('callback'); ?>"
 			                    data-env="sandbox"
 				        ></script>
             		</table>
