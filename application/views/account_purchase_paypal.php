@@ -38,11 +38,11 @@
 				            <td><input type="text" value="<?php echo $this->session->userdata('credit'); ?>" disabled /></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_product'); ?> (USD):</td>
+				            <td><?php echo $this->lang->line('form_product'); ?>:</td>
 				            <td><input type="text" value="Playbasis Platform Service" disabled /></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_transaction_date'); ?> (USD):</td>
+				            <td><?php echo $this->lang->line('form_transaction_date'); ?>:</td>
 				            <td><input type="text" value="<?php echo date('d M Y'); ?>" disabled /></td>
 			            </tr>
 			            <script async="async" src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=pechpras-facilitator@playbasis.com"
@@ -51,7 +51,9 @@
 			                    data-quantity="1"
 			                    data-amount="<?php echo $this->session->userdata('credit'); ?>"
 			                    data-currency="USD"
-			                    data-callback="<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>account/payment_notification"
+			                    data-cancel_return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/add_credit"
+			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_done"
+			                    data-callback="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_notification"
 			                    data-env="sandbox"
 				        ></script>
             		</table>

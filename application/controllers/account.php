@@ -138,7 +138,23 @@ print('price = '.$this->data['plan']['price']);*/
 		$this->render_page('template');
 	}
 
-	public function payment_notification() {
+	public function paypal_done() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['wait_title'] = $this->lang->line('wait_title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		$this->data['main'] = 'account_purchase_paypal_done';
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
+	public function paypal_notification() {
 		$raw_post_data = file_get_contents('php://input');
 print_r($raw_post_data);
 		// insert into playbasis_payment_log and update credit in playbasis_client
