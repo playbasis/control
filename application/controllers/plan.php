@@ -379,29 +379,46 @@ class Plan extends MY_Controller
             $this->data['reward_data'] = array();
         }
 
+        // default limit noti has to have
+        // sms, email and push
+        $default_limit_noti = array(
+            "sms" => null,
+            "email" => null,
+            "push" => null
+        );
         if ($this->input->post('limit_noti')) {
             $this->data['limit_noti'] = $this->input->post('limit_noti');
         } elseif (!empty($plan_info) && isset($plan_info['limit_notifications'])){
             $this->data['limit_noti'] = $plan_info["limit_notifications"];
-        } else {
-            $this->data['limit_noti'] = array(
-                'sms' => null,
-                'email' => null,
-                'push' => null
+            // merge with default, prevent missing fields
+            $this->data["limit_noti"] = array_merge(
+                $default_limit_noti,
+                $this->data["limit_noti"]
             );
+        } else {
+            // Client don't have this field in DB, use default
+            $this->data['limit_noti'] = $default_limit_noti;
         }
 
+        // default limit others has to have
+        // insight, quest, mission, goods and user
+        $default_limit_others = array(
+            "insight" => null,
+            "quest" => null,
+            "mission" => null,
+            "goods" => null,
+            "user" => null);
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
             $this->data['limit_others'] = $plan_info["limit_others"];
+            // merge with default, prevent missing fields
+            $this->data["limit_others"] = array_merge(
+                $default_limit_others,
+                $this->data["limit_others"]);
         } else {
-            $this->data['limit_others'] = array(
-                'insight' => null,
-                'quest' => null,
-                'mission' => null,
-                'goods' => null
-            );
+            // Client don't have this field in DB, use default
+            $this->data["limit_others"] = $default_limit_others;
         }
 
         if ($this->input->post('limit_req')) {

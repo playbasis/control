@@ -485,12 +485,16 @@ class Plan_model extends MY_Model
      * e.g. notifications email
      * @param site_id string
      * @param plan_id string
-     * @param type notifications | requests
+     * @param type notifications | requests | others
      * @param field string
      * @return integer | array | null
      */
     public function getPlanLimitById($site_id, $plan_id, $type, $field)
     {
+        // wrong type
+        if ($type != "notifications" && $type != "requests" && $type != "others")
+            throw new Exception("getPermissionUsage wrong type");
+
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
             '_id' => $plan_id,
@@ -498,18 +502,18 @@ class Plan_model extends MY_Model
         $res = $this->mongo_db->get('playbasis_plan');
         if ($res) {
             $res = $res[0];
-            $limit = 'limit_'.$type;
+            $limit = 'limit_'.$type;  // mongodb_field
             if (is_array($field)) {
-                $return = array();
-                for ($i=0; $i<sizeof($field); $i++) {
+                $result = array();
+                for ($i=0; $i<sizeof($field); $i++) {  // get multiple limits
                     if (isset($res[$limit]) &&
                         isset($res[$limit][$field[$i]])) {
-                            $return[$field[$i]] = $res[$limit][$field[$i]];
+                            $result[$field[$i]] = $res[$limit][$field[$i]];
                         } else {
-                            $return[$field[$i]] = null;
+                            $result[$field[$i]] = null;
                         }
                 }
-                return $return;
+                return $result;
             }
             if (isset($res[$limit]) &&
                 isset($res[$limit][$field])) {
@@ -530,7 +534,7 @@ class Plan_model extends MY_Model
      * e.g. notifications email
      * @param client_id string
      * @param site_id string
-     * @param type notifications | requests
+     * @param type notifications | requests | others
      * @param field string
      * @return array('plan_id' => string, 'value' => integer) | null
      */
