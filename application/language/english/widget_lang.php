@@ -14,14 +14,14 @@ $lang['text_criteria']          				= 'Domain View';
 $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
 
 $lang['text_choose_type']			           	= 'Choose a type of widget';
-$lang['text_leaderboard_widget']			    = 'Leaderboard Wetget';
+$lang['text_leaderboard_widget']			    = 'Leaderboard Widget';
 $lang['text_pixel_width']			           	= 'The pixel width of the widget';
 $lang['text_pixel_height']			           	= 'The pixel height of the widget';
 $lang['text_preview']			           	    = 'Preview';
 $lang['text_get_code']			           	    = 'Get code';
-$lang['text_livefeed_widget']			        = 'Livefeed Wetget';
-$lang['text_profile_widget']			        = 'Profile Wetget';
-$lang['text_userbar_widget']			        = 'Userbar Wetget';
+$lang['text_livefeed_widget']			        = 'Livefeed Widget';
+$lang['text_profile_widget']			        = 'Profile Widget';
+$lang['text_userbar_widget']			        = 'Userbar Widget';
 $lang['text_require']			                = 'Require';
 
 // Column Table
