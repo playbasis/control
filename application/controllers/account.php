@@ -75,7 +75,7 @@ print('price = '.$this->data['plan']['price']);*/
 
 	    // playbasis_client => store current credit amount
 	    // playbasis_permission => to find associated plan of a client
-	    // playbasis_plan => store plan details and price
+	    // playbasis_plan => store plan details and price with active flags
 	    // playbasis_payment_log => store payment transactions done by clients
 	    // playbasis_payment_chennel => store all payment channels
     }
