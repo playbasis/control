@@ -37,6 +37,8 @@ $lang['text_email_sent']						= 'We have sent you an email, please click the lin
 $lang['text_edit_account']						= 'Edit Account';
 $lang['text_no_changes']						= 'No changes has been made!';
 $lang['text_incorrect_captcha']					= 'The captcha was entered incorrectly';
+$lang["text_fail_internal"]                     = "Internal error, Please try again later.";
+$lang["text_fail_limit_user"]                   = "Sorry, you have reach user limit";
 
 // Column Table
 $lang['column_username']            			= 'Username';

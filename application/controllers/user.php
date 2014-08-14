@@ -223,7 +223,7 @@ class User extends MY_Controller
                     if (!isset($user_limit["value"]) || !$user_limit["value"])
                         $user_limit["value"] = 3;  // default
                 } catch(Exception $e) {
-                    $this->session->set_flashdata("fail", $this->lang->line("text_fail"));
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
                     redirect("user/");
                 }
 
@@ -233,7 +233,7 @@ class User extends MY_Controller
 
                 // compute
                 if ($user_usage >= $user_limit["value"]) {
-                    $this->session->set_flashdata("fail", $this->lang->line("text_fail"));
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_user"));
                     redirect("user/");
                 }
 
