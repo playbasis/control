@@ -534,7 +534,7 @@ class User extends MY_Controller
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
-        $this->data['form'] = 'user/register';
+        $this->data['form'] = 'user/register?plan';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
 
         //Set rules for form regsitration
@@ -555,12 +555,19 @@ class User extends MY_Controller
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
-            // if (isset($this->input->get('plan')){
-            //     $chosenPlan = $this->input->get('plan');
-            //     if ($chosenPlan != 'plan1' || $chosenPlan != 'plan2' || $chosenPlan != 'plan3'){
-            //         echo "then leave";
-            //     }    
-            // }
+            if (isset($_POST['plan'])){
+                $chosenPlan = $this->input->post('plan');
+
+                $availablePlans = array('PLAN1', 'PLAN2', 'PLAN3');
+
+                if (!in_array($chosenPlan, $availablePlans)){
+                    echo 'Trying to do something weird?';
+                    exit();
+                }
+            }else{
+                echo 'Please choose a plan!';
+                exit();
+            }
 
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
@@ -608,8 +615,10 @@ class User extends MY_Controller
 
                             $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
 
-                            $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
-                            // $plan_id = $this->Plan_model->getPlanID($chosenPlan);
+                            // $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+
+                            //Chosen plan either plan1 or plan2 or plan3
+                            $plan_id = $this->Plan_model->getPlanID($chosenPlan);
 
                             $another_data['domain_value'] = array(
                                     'site_id' =>$site_id,

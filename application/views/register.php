@@ -1,6 +1,5 @@
 <div id="content" >
 	<div class = "box" style = "position: relative; max-width: 750px; margin:0 auto;">
-		
 		<div class="heading">
 			<h1><img src="<?php echo base_url('image/user-group.png')?>" alt="" /><?php echo $heading_title_register;?></h1>
 		</div><!-- .heading -->
@@ -38,6 +37,31 @@
 			<?php echo form_open_multipart($form, $attributes);?>
 				<div id="pg1">
 					<table class="form">
+						<!-- Chosen plan -->
+						<?php $availablePlans = array('PLAN1', 'PLAN2', 'PLAN3'); ?>
+						
+						<?php
+							$chosenPlan = null;; 
+							if(isset($_GET['plan'])){
+								$chosenPlan = $_GET['plan'];
+							}
+							if(isset($temp_fields['plan'])){
+								$chosenPlan = $temp_fields['plan'];
+							}
+						?>
+						
+						<?php if(in_array($chosenPlan, $availablePlans)){ ?>
+							<input type = 'hidden' value = '<?php echo $chosenPlan; ?>' name = 'plan'/>
+						<?php }else{ ?>
+							<?php echo "STOP, WHAT ARE YOU DOING?"; ?>
+							<?php exit(); ?>
+						<?php } ?>
+
+
+
+
+
+						<!-- End chosen plan -->
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_email');?>: </td>
 							<td><input type = "text" name="email" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['email'];}?>" class="tooltips" data-placement="right" title="Your Email address is used to log into the system"></td>
