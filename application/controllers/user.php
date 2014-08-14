@@ -187,6 +187,11 @@ class User extends MY_Controller
 
     }
 
+    /*
+     * Add Other user to use the same Client-Site
+     * Each Client-Site has limit according to plan
+     * ** Compatible-purpose ** default is 3
+     */
     public function insert(){
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -211,8 +216,30 @@ class User extends MY_Controller
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
 
             if($this->form_validation->run()){
+                // get Plan limit_others.user
+                try {
+                    $user_limit = $this->Plan_model->getPermissionUsage(
+                        $client_id, $site_id, "others", "user");
+                    if (!isset($user_limit["value"]))
+                        $user_limit["value"] = 2;  // default
+                } catch(Exception $e) {
+                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    redirect('user/insert');
+                }
+
+                // get current user usage from this client
+                $user_usage = $this->User_model->getTotalUserByClientId(
+                    array("client_id" => $client_id));
+
+                // TODO compute
+                if ($user_usage >= $user_limit["value"]) {
+                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
+                    redirect('user/insert');
+                }
+
                 $user_id = $this->User_model->insertUser();
 
                 if($user_id){

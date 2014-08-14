@@ -407,7 +407,8 @@ class Plan extends MY_Controller
             "quest" => null,
             "mission" => null,
             "goods" => null,
-            "user" => null);
+            "user" => null,
+            "trial" => null);
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){

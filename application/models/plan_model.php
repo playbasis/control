@@ -596,5 +596,28 @@ class Plan_model extends MY_Model
         $this->mongo_db->inc($type.'.'.$year_month.'.'.$field, $inc);
         $this->mongo_db->update('playbasis_permission');
     }
+
+    /*
+     * Get Plan ID from ClientSite
+     * @param string client_id
+     * @param string site_id
+     * @return array
+     */
+    public function getPlanIDfromClientSite($client_id, $site_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        $select = array("plan_id");
+        $criteria = array(
+            "client_id" => $client_id,
+            "site_id" => $site_id);
+
+        $this->mongo_db->select($select);
+        $result = $this->mongo_db->get_where("playbasis_permission", $criteria);
+        if ($result)
+            return $result[0];
+        else
+            return array();
+    }
 }
 ?>
