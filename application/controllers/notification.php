@@ -12,6 +12,7 @@ class Notification extends REST2_Controller
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('notification_model');
+		$this->load->model('payment_model');
 		$this->load->model('email_model');
 		$this->load->library('curl');
 	}
@@ -121,6 +122,7 @@ class Notification extends REST2_Controller
 				$txn_id = $_POST['txn_id'];
 				$receiver_email = $_POST['receiver_email'];
 				$payer_email = $_POST['payer_email'];
+				$custom = $_POST['custom'];
 
 				// IPN message values depend upon the type of notification sent.
 				// To loop through the &_POST array and print the NV pairs to the screen:
@@ -128,8 +130,11 @@ class Notification extends REST2_Controller
 					echo $key." = ". $value."<br>";
 				}
 
+				$this->payment_model->add_credit_event(new MongoId($custom), $payment_amount, 'paypal', $payment_status);
 				log_message('debug', 'IPN: '.print_r($_POST, true));
+				log_message('debug', 'payment_status: '.$payment_status);
 				$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
+				// TODO: in case of payment status != 'Completed', we should send email to the client to let them know
 			} else if (strcmp($res, "INVALID") == 0) {
 				// IPN invalid, log for manual investigation
 				log_message('error', 'Invalid PayPal IPN message, response: '.$res);
