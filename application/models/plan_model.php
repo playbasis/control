@@ -415,14 +415,14 @@ class Plan_model extends MY_Model
         if (isset($data['limit_noti'])) {
             $limit_noti = array();
             foreach ($data['limit_noti'] as $key => $value) {
-                $limit_noti[$key] = $value['limit'];
+                $limit_noti[$key] = intval($value['limit']);
             }
             $this->mongo_db->set('limit_notifications', $limit_noti);
         }
         if (isset($data['limit_others'])) {
             $limit_others = array();
             foreach ($data['limit_others'] as $key => $value) {
-                $limit_others[$key] = $value['limit'];
+                $limit_others[$key] = intval($value['limit']);
             }
             $this->mongo_db->set('limit_others', $limit_others);
         }
@@ -438,7 +438,7 @@ class Plan_model extends MY_Model
                 if (substr($item['field'], 0, 1) != "/") {
                     $item['field'] = "/".$item['field'];
                 }
-                $limit_req[$item['field']] = $item['limit'];
+                $limit_req[$item['field']] = intval($item['limit']);
             }
             $this->mongo_db->set('limit_requests', $limit_req);
         }
