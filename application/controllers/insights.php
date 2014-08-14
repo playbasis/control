@@ -41,7 +41,8 @@ class Insights extends MY_Controller {
     // API Calls
 
     public function getAction(){
-        $action = $this->_api->getAction();
+        // $action = $this->_api->getAction();
+        $action = $this->_api->getActionUsedOnly();
         $this->responseJson($action);
     }
 

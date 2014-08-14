@@ -11,7 +11,6 @@ Node = function(json){
     }else{
         idgen = mongoIDjs();
     }
-//    console.log(idgen);
     this.uid = idgen;
     this.jigsawId = json.id;
     this.specificId = json.specific_id;

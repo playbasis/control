@@ -555,6 +555,13 @@ class User extends MY_Controller
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
+            // if (isset($this->input->get('plan')){
+            //     $chosenPlan = $this->input->get('plan');
+            //     if ($chosenPlan != 'plan1' || $chosenPlan != 'plan2' || $chosenPlan != 'plan3'){
+            //         echo "then leave";
+            //     }    
+            // }
+
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
@@ -602,6 +609,7 @@ class User extends MY_Controller
                             $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
 
                             $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+                            // $plan_id = $this->Plan_model->getPlanID($chosenPlan);
 
                             $another_data['domain_value'] = array(
                                     'site_id' =>$site_id,
@@ -619,18 +627,6 @@ class User extends MY_Controller
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
-
-                                $this->load->library('parser');
-                                $vars = array(
-                                    'firstname' => $user_info['firstname'],
-                                    'lastname' => $user_info['lastname'],
-                                    'username' => $user_info['email'],
-                                    'password' => 'playbasis',
-                                    'key' => $user_info['random_key'],
-                                    'url'=> base_url('enable_user/?key='),
-                                );
-                                $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
-                                $this->email($_POST['email'], '[Playbasis] Your account has been activated', $htmlMessage);
 
                                 exit();
                             }
@@ -741,8 +737,14 @@ class User extends MY_Controller
             $user = $this->User_model->checkRandomKey($random_key);
             if($user != null){
                 $user_id = $user[0]['_id'];
-                $initial_password = get_random_password(8,8);
-                $this->User_model->insertNewPassword($user_id, $initial_password);
+
+                if(dohash('playbasis',$user[0]['salt']) == $user[0]['password']){
+                    $initial_password = get_random_password(8,8);
+                    $this->User_model->insertNewPassword($user_id, $initial_password);
+                }else{
+                    $initial_password = '******';
+                }
+                
                 $user = $this->User_model->getById($user_id);
 
                 $this->load->library('parser');
