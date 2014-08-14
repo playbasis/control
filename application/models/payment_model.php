@@ -24,7 +24,7 @@ class Payment_model extends MY_Model
 	    ));
 
 	    // adjust actual credit if the transaction is finalized
-	    if ($status == 'completed') {
+	    if ($status == 'Completed') {
 		    // get current credit
 		    $this->mongo_db->where(array(
 			    '_id' => $client_id,
