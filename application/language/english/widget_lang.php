@@ -21,6 +21,7 @@ $lang['text_preview']			           	    = 'Preview';
 $lang['text_get_code']			           	    = 'Get code';
 $lang['text_livefeed_widget']			        = 'Livefeed Wetget';
 $lang['text_profile_widget']			        = 'Profile Wetget';
+$lang['text_userbar_widget']			        = 'Userbar Wetget';
 
 // Column Table
 $lang['column_leaderboard']            			= 'Leaderboard';
@@ -33,17 +34,7 @@ $lang['form_width']							    ='Width';
 $lang['form_height']							='Height';
 $lang['form_color']							    ="Color";
 $lang['form_rankby']							="Rank by";
-$lang['form_lastname']							="Lastname";
-$lang['form_password']							="Password";
-$lang['form_confirm_password']					="Confirm Password";
-$lang['form_email']								="Email";
-$lang['form_user_group']						="User Group";
-$lang['form_domain']							="Domain (URL)";
-$lang['form_site']								="Site Name";
-$lang['form_logo_image']						="Company Logo Image";
-$lang['form_limit_users']						="Limit Users";
-$lang['form_company_name']						="Company Name";
-$lang['form_captcha']							="Captcha";
-$lang['form_image_profile']						="Image Profile";
+$lang['form_type_display']						="Type point display";
+
 
 ?>

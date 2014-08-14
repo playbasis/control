@@ -129,7 +129,7 @@
 	        	</div><!-- .tab-pane -->
 	        	<div class="tab-pane" id="widget-profile">
 
-            <h3><?php echo $this->lang->line('form_width'); ?></h3>
+            <h3><?php echo $this->lang->line('text_profile_widget'); ?></h3>
 			
 			<div class="row">
 		        	<div class="span6 offset3">
@@ -151,7 +151,7 @@
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="wg-displaypoint">Type point display </label>
+						<label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
 						<div class="controls">
 							<select class="wg-displaypoint" >
 							  <option value="point">Point</option>
@@ -163,8 +163,8 @@
 					<div class="control-group">
 						<label class="control-label" ></label>
 						<div class="controls">
-							<a href="javascript:void(0);" onclick="reloadProfile()" class="btn">Preview</a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn">Get code</a>
+							<a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
 					
@@ -177,7 +177,7 @@
 		        	</div>
 	        	</div><!-- .tab-pane -->
 	        	<div class="tab-pane" id="widget-userbar">
-	        		<h3>Userbar Wetget</h3>
+	        		<h3><?php echo $this->lang->line('text_userbar_widget'); ?></h3>
 			
 			<div class="row">
 		        	<div class="span6 offset3">
@@ -190,7 +190,7 @@
 					</div> -->
 					
 					<div class="control-group">
-						<label class="control-label" >Color</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
 						<div class="controls">
 							<div class="input-prepend">
 							  <span class="colorSelectorHolder add-on"></span>
@@ -199,7 +199,7 @@
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="wg-displaypoint">Type point display </label>
+						<label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
 						<div class="controls">
 							<select class="wg-displaypoint" >
 							  <option value="point">Point</option>
@@ -211,8 +211,8 @@
 					<div class="control-group">
 						<label class="control-label" ></label>
 						<div class="controls">
-							<a href="javascript:void(0);" onclick="reloadUserbar()" class="btn">Preview</a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn">Get code</a>
+							<a href="javascript:void(0);" onclick="reloadUserbar()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
 					
