@@ -154,22 +154,22 @@ class Domain_model extends MY_Model
         return $client_data;
     }
 
-    public function resetToken ($site_id) {
+    public function resetToken($site_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $secret = $this->genAccessSecret($site_id);
 
-        $token = $this->checkAccessToken("",$secret, $site_id);
+        $token = $this->checkSecret($secret);
 
         if ($token == '0' || $token == 0) {
-                $this->mongo_db->where('_id', new MongoID($site_id));
+            $this->mongo_db->where('_id', new MongoID($site_id));
             $this->mongo_db->set('api_secret', $secret);
             $this->mongo_db->update('playbasis_client_site');
         }
     }
 
 
-    public function checkAccessToken($keys="", $secret) {
+    public function checkSecret($secret) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);
