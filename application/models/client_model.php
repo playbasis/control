@@ -64,7 +64,6 @@ class Client_model extends MY_Model
         }
         return $rules;
     }
-
 	public function getRuleSetByActionId($clientData)
 	{
 		assert($clientData);

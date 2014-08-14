@@ -10,16 +10,25 @@ class Service_model extends MY_Model
         $this->load->helper('memcache');
         $this->load->library('mongo_db');
     }
-    public function getRecentPoint($site_id, $reward_id, $offset, $limit){
+    public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false){
 
-        if($reward_id){
-            $this->mongo_db->where('reward_id', $reward_id);
-        }else{
-            $this->mongo_db->where_ne('reward_id', null);
-        }
         $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('event_type', 'REWARD');
-        $this->mongo_db->where_gt('value', 0);
+
+        if($show_login){
+            if($reward_id){
+                $this->mongo_db->where('reward_id', $reward_id);
+            }
+            $this->mongo_db->where_in('event_type', array('REWARD', 'LOGIN'));
+        }else{
+            if($reward_id){
+                $this->mongo_db->where('reward_id', $reward_id);
+            }else{
+                $this->mongo_db->where_ne('reward_id', null);
+            }
+            $this->mongo_db->where_in('event_type', array('REWARD'));
+            $this->mongo_db->where_gt('value', 0);
+        }
+
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
         $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id'));
