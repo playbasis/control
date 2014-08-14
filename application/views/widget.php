@@ -5,25 +5,25 @@
         </div><!-- .heading -->
 
         <div class="content">
-        <h1>Choose a type of widget</h1>
+        <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
         <ul class="nav nav-tabs">
-	  <li class="active"><a href="#widget-leaderboard"  data-toggle="tab">Leaderboard</a></li>
-	  <li><a href="#widget-livefeed" data-toggle="tab">Livefeed</a></li>
-	  <li><a href="#widget-profile" data-toggle="tab">Profile</a></li>
-	  <li><a href="#widget-userbar" data-toggle="tab">Userbar</a></li>
+	  <li class="active"><a href="#widget-leaderboard"  data-toggle="tab"><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
+	  <li><a href="#widget-livefeed" data-toggle="tab"><?php echo $this->lang->line('column_livefeed'); ?></a></li>
+	  <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
+	  <li><a href="#widget-userbar" data-toggle="tab"><?php echo $this->lang->line('column_userbar'); ?></a></li>
 	</ul>
 
 	<div class="tab-content">
 		<div class="tab-pane active" id="widget-leaderboard">
 			
-			<h3>Leaderboard Wetget</h3>
+			<h3><?php echo $this->lang->line('text_leaderboard_widget'); ?></h3>
 			
 			<div class="row">
 		        	<div class="span5">
 				<form class="form-horizontal">
 					<div class="control-group">
-						<label class="control-label" >Width</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
 						<div class="controls">
 							<input type="text" class="wg-width" placeholder="The pixel width of the widget">
 						</div>
@@ -35,7 +35,7 @@
 						</div>
 					</div> -->
 					<div class="control-group">
-						<label class="control-label" >Color</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
 						<div class="controls">
 							<div class="input-prepend">
 							  <span class="colorSelectorHolder add-on"></span>
@@ -44,7 +44,7 @@
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="wg-rank">Rank by</label>
+						<label class="control-label" for="wg-rank"><?php echo $this->lang->line('form_rankby'); ?></label>
 						<div class="controls">
 							<select class="wg-rankby" >
 							  <option value="point">Point</option>

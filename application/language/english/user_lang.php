@@ -62,7 +62,7 @@ $lang['form_logo_image']						="Company Logo Image";
 $lang['form_limit_users']						="Limit Users";
 $lang['form_company_name']						="Company Name";
 $lang['form_captcha']							="Captcha";
-$lang['form_image_profile']							="Image Profile";
+$lang['form_image_profile']						="Image Profile";
 
 
 // Button
