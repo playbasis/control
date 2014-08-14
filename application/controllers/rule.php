@@ -39,6 +39,21 @@ class Rule extends MY_Controller
 
         $s_siteId = $this->User_model->getSiteId();
         $s_clientId = $this->User_model->getClientId();
+        $this->data["isAdmin"] = false;
+
+        $adminGroup = $this->User_model->getAdminGroupID();
+        if ($this->User_model->isAdmin()) {
+            $s_siteId = $adminGroup;
+            $s_clientId = $adminGroup;
+            $this->data["isAdmin"] = true;
+            // for query mongodb purpose
+            $client_id = "";
+            $site_id = "";
+        } else {
+            // for query mongodb purpose
+            $client_id = $s_clientId;
+            $site_id = $s_siteId;
+        }
 
         $this->data['jsonConfig_siteId'] = $s_siteId;
         $this->data['jsonConfig_clientId'] = $s_clientId;
@@ -49,18 +64,37 @@ class Rule extends MY_Controller
         $this->data['ruleList'] = json_encode(array());
 
         if($s_clientId){
-            $this->data['actionList'] = json_encode($this->Rule_model->getActionGigsawList($s_siteId,$s_clientId));
-            $this->data['conditionList'] = json_encode($this->Rule_model->getConditionGigsawList($s_siteId,$s_clientId));
-            $this->data['rewardList'] = json_encode($this->Rule_model->getRewardGigsawList($s_siteId,$s_clientId));
-            $this->data['ruleList'] = json_encode($this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId));
+            $this->data['actionList'] = json_encode(
+                $this->Rule_model->getActionGigsawList($site_id, $client_id)
+            );
+            $this->data['conditionList'] = json_encode(
+                $this->Rule_model->getConditionGigsawList($site_id, $client_id)
+            );
+            $this->data['rewardList'] = json_encode(
+                $this->Rule_model->getRewardGigsawList($site_id, $client_id)
+            );
+            $this->data['ruleList'] = json_encode(
+                $this->Rule_model->getRulesByCombinationId($site_id, $client_id)
+            );
         }
 
         $this->data['jsonIcons'] = json_encode($icons);
-
-
         $this->data['requestParams'] = '&siteId='.$s_siteId.'&clientId='.$s_clientId;
-
         $this->data['main'] = 'rule';
+
+        // Template
+        $templates = $this->Rule_model->getRulesByCombinationId(
+            $adminGroup,
+            $adminGroup
+        );
+        $this->data["ruleTemplate"] = array();
+
+        if(!isset($templates["error"])){
+            foreach ($templates as $template) {
+                $name = $template["name"];
+                $this->data["ruleTemplate"][$name] = $template["rule_id"];
+            }    
+        }
 
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -68,17 +102,34 @@ class Rule extends MY_Controller
     }
 
     public function jsonGetRules(){
-
-        $s_siteId = $this->User_model->getSiteId();
-        $s_clientId = $this->User_model->getClientId();
+        $adminGroup = $this->User_model->getAdminGroupID();
+        $userGroup = $this->User_model->getUserGroupId();
+        if ($this->User_model->isAdmin()) {
+            $s_siteId = $adminGroup;
+            $s_clientId = $adminGroup;
+        } else {
+            $s_siteId = $this->User_model->getSiteId();
+            $s_clientId = $this->User_model->getClientId();
+        }
 
         $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId);
         $this->output->set_output(json_encode($result));
     }
 
-    public function setRuleState(){
+    public function setRuleState() {
+        $adminGroup = $this->User_model->getAdminGroupID();
+        if ($this->User_model->isAdmin()) {
+            $s_siteId = $adminGroup;
+            $s_clientId = $adminGroup;
+        } else {
+            $s_siteId = $this->User_model->getSiteId();
+            $s_clientId = $this->User_model->getClientId();
+        }
 
-        if(!$this->input->post('ruleId') && !$this->input->post('siteId') && !$this->input->post('clientId') && !$this->input->post('state')){
+        if(!$this->input->post('ruleId') &&
+           !$this->input->post('siteId') &&
+           !$this->input->post('clientId') &&
+           !$this->input->post('state')){
             $this->jsonErrorResponse();
             return ;
         }
@@ -90,63 +141,141 @@ class Rule extends MY_Controller
             $state='1';
 
         // $this->jsonResponse($params);
-        $this->output->set_output(json_encode($this->Rule_model->changeRuleState($this->input->post('ruleId'),$state,$this->User_model->getSiteId(),$this->User_model->getClientId())));
+        $this->output->set_output(json_encode(
+            $this->Rule_model->changeRuleState(
+                $this->input->post('ruleId'),
+                $state,
+                $s_siteId,
+                $s_clientId)));
     }
 
     public function jsonSaveRule(){
-
         if(!$this->input->post('json')){
             $this->jsonErrorResponse();
             return ;
         }
-
         $input = json_decode(html_entity_decode($this->input->post('json')),true);
-
         $this->output->set_output(json_encode($this->Rule_model->saveRule($input)));
     }
 
+    public function jsonCloneRule(){
+        $id = $this->input->post("id");
+        $client_id = $this->input->post("client_id");
+        $site_id = $this->input->post("site_id");
+        if(!$id){
+            $this->jsonErrorResponse();
+            return ;
+        }
+        $this->output->set_output(json_encode(
+            $this->Rule_model->cloneRule(
+                $id, $client_id, $site_id)));
+    }
+
+    public function jsonPlayRule() {
+        $id = $this->input->post("id");
+        $client_id = $this->input->post("client_id");
+        $site_id = $this->input->post("site_id");
+        $rule = $this->Rule_model->getById($id);
+
+        // process each rule
+        $result = array();
+        foreach ($rule["jigsaw_set"] as $jigsaw) {
+            if ($jigsaw["category"] == "ACTION") {
+                foreach ($jigsaw["dataSet"] as $dataSet) {
+                    if ($dataSet["param_name"] == "url")
+                        $result = $this->curl(
+                            $this->config->item("server") . "Engine/rule",
+                            array("rule_id" => strval($rule["_id"]),
+                            "action" => $jigsaw["name"],
+                            "url" => $dataSet["value"],
+                            "client_id" => $client_id,
+                            "site_id" => $site_id,
+                            "test" => true));
+                }
+            }
+        }
+
+        $this->output->set_output($result);
+    }
 
     public function deleteRule(){
-
+        $adminGroup = $this->User_model->getAdminGroupID();
+        if ($this->User_model->isAdmin()) {
+            $s_siteId = $adminGroup;
+            $s_clientId = $adminGroup;
+        } else {
+            $s_siteId = $this->User_model->getSiteId();
+            $s_clientId = $this->User_model->getClientId();
+        }
         /*start  : Wrap all of this to be reqireParam('post','rulesID')*/
-        if(!$this->input->post('ruleId') && !$this->input->post('siteId') && !$this->input->post('clientId')){
+        if(!$this->input->post('ruleId') &&
+           !$this->input->post('siteId') &&
+           !$this->input->post('clientId')){
             $this->jsonErrorResponse();
             return ;
         }
 
-        $this->output->set_output(json_encode($this->Rule_model->deleteRule($this->input->post('ruleId'),$this->User_model->getSiteId(),$this->User_model->getClientId())));
+        $this->output->set_output(json_encode(
+            $this->Rule_model->deleteRule(
+                $this->input->post('ruleId'),
+                $s_siteId,
+                $s_clientId)));
     }
 
     public function loadBadges() {
         $this->load->model('Badge_model');
 
-        $badge_data = array ('site_id'=>$this->User_model->getSiteId(), 'sort'=>'sort_order');
-
-        $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
-
-        foreach($badges as &$b){
-            $b['_id'] = $b['_id']."";
-            $b['badge_id'] = $b['badge_id']."";
-            $b['client_id'] = $b['client_id']."";
-            $b['site_id'] = $b['site_id']."";
+        $adminGroup = $this->User_model->getAdminGroupID();
+        if ($this->User_model->isAdmin()) {
+            $site_id = $adminGroup;
+        } else {
+            $site_id  = $this->User_model->getSiteId();
         }
-        $json['badges'] = $badges;
 
-        $this->output->set_output(json_encode($json));
+        if ($site_id) {
+            $badge_data = array (
+                'site_id'=> $site_id,
+                'sort'=>'sort_order'
+            );
 
+            $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
+
+            foreach($badges as &$b){
+                $b['_id'] = $b['_id']."";
+                $b['badge_id'] = $b['badge_id']."";
+                $b['client_id'] = $b['client_id']."";
+                $b['site_id'] = $b['site_id']."";
+            }
+            $json['badges'] = $badges;
+
+            $this->output->set_output(json_encode($json));
+
+        }
     }
 
     public function jsonGetRuleById(){
+        $adminGroup = $this->User_model->getAdminGroupID();
+        if ($this->User_model->isAdmin()) {
+            $s_siteId = $adminGroup;
+            $s_clientId = $adminGroup;
+        } else {
+            $s_siteId = $this->User_model->getSiteId();
+            $s_clientId = $this->User_model->getClientId();
+        }
 
         if(!$this->input->get('ruleId')){
             $this->jsonErrorResponse();
             return ;
         }
 
-        $json = $this->Rule_model->getRuleById($this->User_model->getSiteId(),$this->User_model->getClientId(),$this->input->get('ruleId'));
+        $json = $this->Rule_model->getRuleById(
+            $s_siteId,
+            $s_clientId,
+            $this->input->get('ruleId'));
 
         if($json){
-            $this->output->set_output($this->input->get('callback')."(".json_encode($json[0]).")");
+            $this->output->set_output(
+                $this->input->get('callback')."(".json_encode($json[0]).")");
         }else{
             $this->jsonErrorResponse();
         }
@@ -169,5 +298,17 @@ class Rule extends MY_Controller
         } else {
             return false;
         }
+    }
+
+    private function curl($url, $data) {
+        $data = http_build_query($data);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_output = curl_exec ($ch);
+        curl_close ($ch);
+        return $server_output;
     }
 }
