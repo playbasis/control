@@ -15,8 +15,12 @@ $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure yo
 
 $lang['text_choose_type']			           	= 'Choose a type of widget';
 $lang['text_leaderboard_widget']			    = 'Leaderboard Wetget';
-$lang['text_choose_type']			           	= 'Choose a type of widget';
-$lang['text_choose_type']			           	= 'Choose a type of widget';
+$lang['text_pixel_width']			           	= 'The pixel width of the widget';
+$lang['text_pixel_height']			           	= 'The pixel height of the widget';
+$lang['text_preview']			           	    = 'Preview';
+$lang['text_get_code']			           	    = 'Get code';
+$lang['text_livefeed_widget']			        = 'Livefeed Wetget';
+$lang['text_profile_widget']			        = 'Profile Wetget';
 
 // Column Table
 $lang['column_leaderboard']            			= 'Leaderboard';
@@ -26,6 +30,7 @@ $lang['column_userbar']          				= 'Userbar';
 
 //Form fields
 $lang['form_width']							    ='Width';
+$lang['form_height']							='Height';
 $lang['form_color']							    ="Color";
 $lang['form_rankby']							="Rank by";
 $lang['form_lastname']							="Lastname";

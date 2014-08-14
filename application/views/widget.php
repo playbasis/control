@@ -25,7 +25,7 @@
 					<div class="control-group">
 						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
 						<div class="controls">
-							<input type="text" class="wg-width" placeholder="The pixel width of the widget">
+							<input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
 						</div>
 					</div>
 					<!-- <div class="control-group">
@@ -48,7 +48,7 @@
 						<div class="controls">
 							<select class="wg-rankby" >
 							  <option value="point">Point</option>
-							  <option  value="exp">EXP</option>
+							  <option  value="exp">Exp</option>
 							</select>
 						</div>
 					</div>
@@ -69,8 +69,8 @@
 					<div class="control-group">
 						<label class="control-label" ></label>
 						<div class="controls">
-							<a href="javascript:void(0);" onclick="reloadLeaderboard()" class="btn">Preview</a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn">Get code</a>
+							<a href="javascript:void(0);" onclick="reloadLeaderboard()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
 					
@@ -84,25 +84,25 @@
 	        	</div><!-- .tab-pane -->
 	        	<div class="tab-pane" id="widget-livefeed">
 			
-			<h3>Livefeed Wetget</h3>
+			<h3><?php echo $this->lang->line('text_livefeed_widget'); ?></h3>
 			
 			<div class="row">
 		        	<div class="span5">
 				<form class="form-horizontal">
 					<div class="control-group">
-						<label class="control-label" >Width</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
 						<div class="controls">
-							<input type="text" class="wg-width" placeholder="The pixel width of the widget">
+							<input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" >Height</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
 						<div class="controls">
-							<input type="text" class="wg-height" placeholder="The pixel height of the widget">
+							<input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" >Color</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
 						<div class="controls">
 							<div class="input-prepend">
 							  <span class="colorSelectorHolder add-on"></span>
@@ -114,8 +114,8 @@
 					<div class="control-group">
 						<label class="control-label" ></label>
 						<div class="controls">
-							<a href="javascript:void(0);" onclick="reloadLivefeed()" class="btn">Preview</a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn">Get code</a>
+							<a href="javascript:void(0);" onclick="reloadLivefeed()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
 					
@@ -128,20 +128,21 @@
 		        	</div>
 	        	</div><!-- .tab-pane -->
 	        	<div class="tab-pane" id="widget-profile">
-	        		<h3>Profile Wetget</h3>
+
+            <h3><?php echo $this->lang->line('form_width'); ?></h3>
 			
 			<div class="row">
 		        	<div class="span6 offset3">
 				<form class="form-horizontal">
 					<div class="control-group">
-						<label class="control-label" >Width</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
 						<div class="controls">
-							<input type="text" class="wg-width" placeholder="The pixel width of the widget">
+							<input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
 						</div>
 					</div>
 					
 					<div class="control-group">
-						<label class="control-label" >Color</label>
+						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
 						<div class="controls">
 							<div class="input-prepend">
 							  <span class="colorSelectorHolder add-on"></span>
