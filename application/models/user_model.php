@@ -155,7 +155,9 @@ class User_model extends MY_Model
             $ip = $_SERVER['REMOTE_ADDR'];
             $salt = get_random_password(10,10);
 
-            $password = dohash($this->input->post('password'), $salt);
+            $insert_password = $this->input->post('password');
+
+            $password = dohash($insert_password, $salt);
 
             $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 
@@ -178,43 +180,24 @@ class User_model extends MY_Model
                 'password_key'=> null
                 );
 
-            //SEND EMAIL WITH URL + RANDOM KEY
-
-            $this->load->library('email');
             $this->load->library('parser');
-       
-            $validate_email = array(
+            $this->load->library('email');
+            $vars = array(
                 'firstname' => $firstname,
-                'lastname' =>$lastname,
-                'username' =>$username,
-                'password' =>$this->input->post('password'),
-                'url' => site_url('enable_user?key='.$random_key)
-                );
+                'lastname' => $lastname,
+                'username' => $email,
+                'password' => $insert_password,
+                'key' => $random_key,
+                'url'=> base_url('enable_user/?key='),
+            );
 
-            $config['mailtype'] = 'html';
-            $config['charset'] = 'utf-8';
-            $subject = "[Playbasis] Welcome to Playbasis";
-            //$htmlMessage = $this->parser->parse('validate_email.html', $validate_email, true);
-            // $htmlMessage = $this->parser->parse('wait_activate.html', $validate_email, true);
-
-            //email client to upgrade account
-            /*$this->email->initialize($config);
-            $this->email->clear();
-            $this->email->from('info@playbasis.com', 'Playbasis');
-            $this->email->to($email);
-            $this->email->bcc('info@playbasis.com');
-            $this->email->subject($subject);
-            $this->email->message($htmlMessage);
-            $this->email->send();*/
-
-            // $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
-            // $this->amazon_ses->to($email);
-            // $this->amazon_ses->bcc(array('info@playbasis.com','pascal@playbasis.com'));
-            // $this->amazon_ses->subject($subject);
-            // $this->amazon_ses->message($htmlMessage);
-            // $this->amazon_ses->send();
-
-            //END EMAIL STUFF
+            if($insert_password == 'playbasis'){
+                $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
+            }else{
+                $htmlMessage = $this->parser->parse('user_activateaccountwithpassword.html', $vars, true);
+            }
+            
+            $this->email($email, '[Playbasis] Your account has been activated', $htmlMessage);
 
             return $this->mongo_db->insert('user', $data);
         }else{
@@ -222,6 +205,15 @@ class User_model extends MY_Model
         }
 
         
+    }
+
+    private function email($to, $subject, $message) {
+        $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+        $this->amazon_ses->to($to);
+        $this->amazon_ses->bcc(array('info@playbasis.com','pascal@playbasis.com'));
+        $this->amazon_ses->subject($subject);
+        $this->amazon_ses->message($message);
+        $this->amazon_ses->send();
     }
 
     public function addUserToClient($data){
