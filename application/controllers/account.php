@@ -106,7 +106,7 @@ class Account extends MY_Controller
 				$this->session->set_userdata('credit', $credit);
 				$this->session->set_userdata('channel', $channel);
 				$this->session->set_userdata('callback', $ci->config->config['server'].'notification');
-				$this->Payment_model->add_credit_event($credit, $channel, 'pending');
+				$this->Payment_model->add_credit_event($credit, $channel, 'Pending');
 				switch ($channel) {
 					case 'paypal':
 						$this->data['main'] = 'account_purchase_paypal';
