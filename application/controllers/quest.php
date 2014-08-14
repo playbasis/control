@@ -985,4 +985,35 @@ class Quest extends MY_Controller
         }
     }
 
+    public function playQuest($quest_id=NULL) {
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $raw_result = $this->curl(
+            $this->config->item("server") . "Engine/quest",
+            array("client_id" => strval($client_id),
+                "site_id" => strval($site_id),
+                "quest_id" => strval($quest_id)));
+        $obj_result = json_decode($raw_result);
+
+        // if success, assume that this quest ok
+        if ($obj_result->success)
+            $this->output->set_output(json_encode(array("success" => true)));
+        else
+            $this->output->set_output(json_encode(array("success" => false)));
+    }
+
+    private function curl($url, $data) {
+        $data = http_build_query($data);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $server_output = curl_exec ($ch);
+        curl_close ($ch);
+        return $server_output;
+    }
+
 }

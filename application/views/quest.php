@@ -55,7 +55,9 @@
                                     <td class="right"><?php echo $quest['quest_name']; ?></td>   
                                     <td class="right"><?php echo ($quest['status'])?'Active':'Inactive';?></td>
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
-                                    <td class="right">[ <?php if($client_id){
+                                    <td class="right">
+                                    [<a class="quest_play" href="#" data-quest_id="<?php echo $quest["_id"]; ?>">Play</a>]
+                                        [ <?php if($client_id){
                                             // echo anchor('quest/update/'.$quest['action_id'], 'Edit');
                                             echo anchor('quest/edit/'.$quest['_id'], 'Edit');
                                         }else{
@@ -121,14 +123,12 @@ function filter() {
                     url: baseUrlPath+'quest/autocomplete?filter_name=' +  encodeURIComponent(request.term),
                     dataType: 'json',
                     success: function(json) {
-                        console.log(json);
                         response($.map(json, function(item) {
                             return {
                                 label: item.name,
                                 name: item.name
                             }
                         }));
-                        console.log(response);
                     }
                 });
             },
@@ -159,7 +159,6 @@ $( ".push_down" ).live( "click", function() {
             getNum = 0;
         }
         $('#actions').load(baseUrlPath+getListForAjax+getNum);
-        console.log(baseUrlPath+getListForAjax+getNum);
     });
 
 
@@ -186,6 +185,29 @@ $( ".push_up" ).live( "click", function() {
 
 
   return false;
+});
+
+// play quest
+$(".quest_play").click(function() {
+    var id = $(this).data("quest_id");
+    var that = $(this);
+    $.ajax({
+        url: baseUrlPath + "quest/playQuest/" + id,
+            type:'GET',
+            beforeSend: function() {
+                $(".icon-ok").remove();
+                that.parent().prepend("<div class='small progress spinner'><div>Loading...</div></div>");
+            },
+            success:function(data){
+                $(".spinner").remove();
+                var j = JSON.parse(data);
+                if (j["success"]) {
+                    that.parent().prepend("<i class='icon-ok' style='font-size: 3em'></i>");
+                } else {
+                    that.parent().prepend("<i class='icon-remove' style='font-size: 3em'></i>");
+                }
+            }
+    });
 });
 
 </script>
