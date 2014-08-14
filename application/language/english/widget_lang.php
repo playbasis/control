@@ -13,4 +13,30 @@ $lang['text_clear']             				= 'Clear Image';
 $lang['text_criteria']          				= 'Domain View';
 $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
 
+$lang['text_choose_type']			           	= 'Choose a type of widget';
+$lang['text_leaderboard_widget']			    = 'Leaderboard Wetget';
+$lang['text_pixel_width']			           	= 'The pixel width of the widget';
+$lang['text_pixel_height']			           	= 'The pixel height of the widget';
+$lang['text_preview']			           	    = 'Preview';
+$lang['text_get_code']			           	    = 'Get code';
+$lang['text_livefeed_widget']			        = 'Livefeed Wetget';
+$lang['text_profile_widget']			        = 'Profile Wetget';
+$lang['text_userbar_widget']			        = 'Userbar Wetget';
+$lang['text_require']			                = 'Require';
+
+// Column Table
+$lang['column_leaderboard']            			= 'Leaderboard';
+$lang['column_livefeed']          				= 'Livefeed';
+$lang['column_profile']      				    = 'Profile';
+$lang['column_userbar']          				= 'Userbar';
+
+//Form fields
+$lang['form_width']							    ='Width';
+$lang['form_height']							='Height';
+$lang['form_color']							    ="Color";
+$lang['form_rankby']							="Rank by";
+$lang['form_type_display']						="Type point display";
+$lang['form_player_id']						    ="Player ID for test";
+
+
 ?>

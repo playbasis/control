@@ -182,3 +182,41 @@
 .register-success-wrapper .button-wrapper a:hover{
 	color:#fff;
 }
+
+
+/* ====== [ Widget Page ] ======= */
+.widget-page .nav{
+	margin-bottom: 0;
+}
+.widget-page .tab-pane:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.widget-page iframe{
+	border-radius: 5px;
+	border: 1px solid #F5F5F5;
+}
+.widget-page .tab-pane{
+	padding: 30px;
+	background: #FFF;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 20px;
+}
+.widget-page .tab-pane h3{
+	font-size: 26px;
+	margin-bottom: 30px;
+	font-weight: normal;
+}
+
+/* ====== [ Color Picker ] ======= */
+.colorpicker{
+	z-index: 100;
+}
+.colorpicker input{
+	width: auto;
+	line-height: 14px;
+	border: none;
+}

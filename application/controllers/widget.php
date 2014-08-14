@@ -12,6 +12,8 @@ class Widget extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('Domain_model');
+        $this->load->model('Custompoints_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -28,8 +30,32 @@ class Widget extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
+        $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+
+        $this->data['site_data'] = $site_data;
+        $this->data['points_data'] = $points_data;
         $this->data['main'] = 'widget';
         $this->render_page('template');
+    }
+
+    public function preview(){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
+        $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+
+        $this->data['site_data'] = $site_data;
+        $this->data['points_data'] = $points_data;
+        $this->render_page('widget_preview');
     }
 }
 ?>
