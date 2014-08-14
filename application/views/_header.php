@@ -26,6 +26,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/jquery-ui-1.8.21.custom.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/style.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/custom/spinner.css" />
 
     <link id="base-style-responsive" href="<?php echo base_url();?>stylesheet/custom/style-responsive.css" rel="stylesheet">
     <link id="base-style-responsive" href="<?php echo base_url();?>stylesheet/custom/bootstrap-responsive.css" rel="stylesheet">
