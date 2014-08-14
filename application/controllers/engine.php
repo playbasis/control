@@ -83,6 +83,24 @@ class Engine extends Quest
 		$challenge = $this->input->get('hub_challenge');
 		echo $challenge;
 	}
+
+    /*
+     * Get response from Quest but not edit
+     * any database
+     */
+    public function quest_post()
+    {
+        $token = array(
+            "client_id" => $this->input->post("client_id"),
+            "site_id" => $this->input->post("site_id"),
+            "domain_name" => NULL
+        );
+        $quest_id = $this->input->post("quest_id");
+
+        $response =  $this->QuestProcess(NULL, $token, $quest_id);
+		$this->response($this->resp->setRespond($response), 200);
+    }
+
 	public function rule_post($option = 0)
 	{
 		$this->benchmark->mark('engine_rule_start');

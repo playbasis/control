@@ -115,6 +115,7 @@ $route['Engine/actionConfig']	= 'engine/getActionConfig';
 $route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
 $route['Engine/facebook']	= 'engine/rule/facebook';
+$route['Engine/quest']	= 'engine/quest';
 
 //redeem API
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';

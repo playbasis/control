@@ -1364,6 +1364,37 @@ class Player_model extends MY_Model
         return $this->mongo_db->get('playbasis_quest_to_player');
     }
 
+    /*
+     * Get all quests from _id
+     * @param string $quest_id
+     * @return array
+     */
+    public function getQuestsByID($site_id, $quest_id)
+    {
+        $this->set_site_mongodb($site_id);
+
+        try {
+            $quest_id = new MongoID($quest_id);
+        } catch(MongoException $e) {
+            return array();
+        }
+
+        $this->mongo_db->where(array(
+            '_id' => $quest_id,
+        ));
+
+        $results = $this->mongo_db->get('playbasis_quest_to_client');
+        if ($results) {
+            for ($i=0; $i<sizeof($results); ++$i) {
+                $results[$i]["quest_id"] = $results[$i]["_id"];
+            }
+        } else {
+            $results = array();
+        }
+
+        return $results;
+    }
+
     public function getMission($pb_player_id, $quest_id, $mission_id, $site_id)
     {
         $this->set_site_mongodb($site_id);

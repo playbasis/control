@@ -7,18 +7,23 @@ class Quest_model extends MY_Model
         parent::__construct();
         $this->config->load('playbasis');
     }
-    public function getQuest($data)
+    public function getQuest($data, $test=NULL)
     {
         //get quest
         $this->set_site_mongodb($data['site_id']);
 
-        $this->mongo_db->where(array(
+        $criteria = array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             '_id' => $data['quest_id'],
-            'status' => true
-        ));
+        );
+
+        if (!$test)
+            $criteria["status"] = true;
+
+        $this->mongo_db->where($criteria);
         $this->mongo_db->where_ne('deleted', true);
+
         $result = $this->mongo_db->get('playbasis_quest_to_client');
 
         $result = $result ? $result[0] : array();
