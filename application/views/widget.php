@@ -28,12 +28,7 @@
 							<input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
 						</div>
 					</div>
-					<!-- <div class="control-group">
-						<label class="control-label" >Height</label>
-						<div class="controls">
-							<input type="text" class="wg-height" placeholder="The pixel height of the widget">
-						</div>
-					</div> -->
+
 					<div class="control-group">
 						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
 						<div class="controls">
@@ -48,24 +43,18 @@
 						<div class="controls">
 							<select class="wg-rankby" >
 							  <option value="point">Point</option>
-							  <option  value="exp">Exp</option>
+							  <option value="exp">Exp</option>
+                                <?php
+                                foreach($points_data as $p){
+                                ?>
+                                    <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                <?php
+                                }
+                                ?>
 							</select>
 						</div>
 					</div>
 
-					<!--
-					<div class="control-group">
-						<label class="control-label" >Options</label>
-						<div class="controls">
-							<label class="checkbox">
-								<input type="checkbox"> Remember me
-							</label>
-							<label class="checkbox">
-								<input type="checkbox"> Remember me
-							</label>
-						</div>
-					</div>
-					-->
 					<div class="control-group">
 						<label class="control-label" ></label>
 						<div class="controls">
@@ -155,10 +144,23 @@
 						<div class="controls">
 							<select class="wg-displaypoint" >
 							  <option value="point">Point</option>
-							  <option  value="exp">EXP</option>
+							  <option value="exp">EXP</option>
+                                <?php
+                                foreach($points_data as $p){
+                                ?>
+                                    <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                <?php
+                                }
+                                ?>
 							</select>
 						</div>
 					</div>
+                    <div class="control-group">
+                        <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
+                        <div class="controls">
+                            <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                        </div>
+                    </div>
 
 					<div class="control-group">
 						<label class="control-label" ></label>
@@ -177,17 +179,12 @@
 		        	</div>
 	        	</div><!-- .tab-pane -->
 	        	<div class="tab-pane" id="widget-userbar">
-	        		<h3><?php echo $this->lang->line('text_userbar_widget'); ?></h3>
+
+            <h3><?php echo $this->lang->line('text_userbar_widget'); ?></h3>
 			
 			<div class="row">
 		        	<div class="span6 offset3">
 				<form class="form-horizontal">
-					<!-- <div class="control-group">
-						<label class="control-label" >Width</label>
-						<div class="controls">
-							<input type="text" class="wg-width" placeholder="The pixel width of the widget">
-						</div>
-					</div> -->
 					
 					<div class="control-group">
 						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
@@ -203,10 +200,23 @@
 						<div class="controls">
 							<select class="wg-displaypoint" >
 							  <option value="point">Point</option>
-							  <option  value="exp">EXP</option>
+							  <option value="exp">EXP</option>
+                                <?php
+                                foreach($points_data as $p){
+                                ?>
+                                    <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                <?php
+                                }
+                                ?>
 							</select>
 						</div>
 					</div>
+                    <div class="control-group">
+                        <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
+                        <div class="controls">
+                            <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                        </div>
+                    </div>
 
 					<div class="control-group">
 						<label class="control-label" ></label>
@@ -237,7 +247,6 @@
 		$('.colorSelector').ColorPicker({
 			onBeforeShow: function () {
 				$(this).ColorPickerSetColor(this.value);
-				console.log($(this));
 			},
 			onShow: function (colpkr) {
 				$(colpkr).fadeIn(200);
@@ -255,7 +264,12 @@
 				// reloadLivefeed();
 				// reloadProfile();
 				// reloadUserbar();
-			}
+			},
+            onSubmit: function(hsb, hex, rgb, el) {
+                $('.colorSelectorHolder').css('backgroundColor', '#' + hex);
+                $('.colorSelectorHolder').val('#' +hex);
+                $(el).ColorPickerHide();
+            }
 		}).bind('keyup', function(){
 			$(this).ColorPickerSetColor(this.value);
 			$('.colorSelectorHolder').css('backgroundColor', this.value);
@@ -312,17 +326,20 @@
 
 	});
 	var tabActive = '#widget-leaderboard';
-	reloadLeaderboard();
 	var timeBuffer = 500;
 	var isReload = false;
 	var timeout = setTimeout(void(0),0);
-	function updateWidget(type){
+    var codeHeaderTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
+    var codeHeaderPlayerTestTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4',\n\t\tplayerId :'playertest'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
+
+    reloadLeaderboard();
+
+    function updateWidget(type){
 		clearTimeout(timeout);
 		timeout = setTimeout(reloadLeaderboard,timeBuffer);
 	}
 	function reloadLeaderboard(){
 		var width = getVal($('#widget-leaderboard .wg-width').val());
-		// var height = getVal($('#widget-leaderboard .wg-height').val());
 		var color =getColor($('#widget-leaderboard .wg-color').val());
 		var rankby =$('#widget-leaderboard .wg-rankby').val();
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=leaderboard';
@@ -333,12 +350,10 @@
 			url+='&width='+width;
 			codeElement += 'data-pb-width="'+width+'" ';
 		}
-		// if(typeof height != 'undefined' && height != ""){
-		// 	url+='&height='+height;
-		// }
+
 		if(typeof color != 'undefined' && color != ""){
 			url+='&color='+color;
-			codeHeader = codeHeader.replace(/#0e9ce4/, color);
+			codeHeader = codeHeader.replace("#0e9ce4", color);
 		}
 		if(typeof rankby != 'undefined'  && rankby != ""){
 			url+='&rankby='+rankby;
@@ -369,7 +384,7 @@
 		}
 		if(typeof color != 'undefined' && color != ""){
 			url+='&color='+color;
-			codeHeader = codeHeader.replace(/#0e9ce4/, color);
+			codeHeader = codeHeader.replace("#0e9ce4", color);
 		}
 		codeElement += '&gt;&lt;/div&gt;';
 		$('#iframe-livefeed').attr('src',url);
@@ -381,9 +396,10 @@
 		var width = getVal($('#widget-profile .wg-width').val());
 		var color =getColor($('#widget-profile .wg-color').val());
 		var displaypoint =getColor($('#widget-profile .wg-displaypoint').val());
+		var playerIdTest =$('#widget-profile .wg-player-id').val();
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=profile';
 		var codeElement = '&lt;div class="pb-profile" ';
-		var codeHeader = codeHeaderTemplate;
+		var codeHeader = codeHeaderPlayerTestTemplate;
 
 		if(typeof width != 'undefined' && width != ""){
 			url+='&width='+width;
@@ -391,12 +407,16 @@
 		}
 		if(typeof color != 'undefined' && color != ""){
 			url+='&color='+color;
-			codeHeader = codeHeader.replace(/#0e9ce4/, color);
+			codeHeader = codeHeader.replace("#0e9ce4", color);
 		}
 		if(typeof displaypoint != 'undefined'  && displaypoint != ""){
-			url+='&displaypoint='+displaypoint;
-			codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
-		}
+            url+='&displaypoint='+displaypoint;
+            codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
+        }
+        if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
+            url+='&playerId='+playerIdTest;
+            codeHeader = codeHeader.replace("playertest", playerIdTest);
+        }
 		codeElement += '&gt;&lt;/div&gt;';
 		$('#iframe-profile').attr('src',url);
 		$('#getcode-modal .code-element').html(codeElement);
@@ -404,19 +424,24 @@
 	}
 	function reloadUserbar(){
 		var color =getColor($('#widget-userbar .wg-color').val());
-		var displaypoint =getColor($('#widget-profile .wg-displaypoint').val());
+		var displaypoint =getColor($('#widget-userbar .wg-displaypoint').val());
+        var playerIdTest =$('#widget-userbar .wg-player-id').val();
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=userbar';
-		var codeElement = '&lt;div class="pb-profile" ';
-		var codeHeader = codeHeaderTemplate;
+		var codeElement = '&lt;div class="pb-userbar" ';
+		var codeHeader = codeHeaderPlayerTestTemplate;
 
 		if(typeof color != 'undefined' && color != ""){
 			url+='&color='+color;
-			codeHeader = codeHeader.replace(/#0e9ce4/, color);
+			codeHeader = codeHeader.replace("#0e9ce4", color);
 		}
 		if(typeof displaypoint != 'undefined'  && displaypoint != ""){
 			url+='&displaypoint='+displaypoint;
 			codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
 		}
+        if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
+            url+='&playerId='+playerIdTest;
+            codeHeader = codeHeader.replace("playertest", playerIdTest);
+        }
 		codeElement += '&gt;&lt;/div&gt;';
 		$('#iframe-userbar').attr('src',url);
 		$('#getcode-modal .code-element').html(codeElement);
@@ -438,9 +463,6 @@
 		return color;
 	}
 
-	var codeHeaderTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
-
-
 </script>
 
 <div id="getcode-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:800px;margin-left:-400px">
@@ -454,7 +476,7 @@
 &lt;script&gt;
 window.PBAsyncInit = function(){
     PB.init({
-        api_key:'abc',
+        api_key:'<?php echo $site_data["api_key"]; ?>',
         theme_color :'#52b398'
     });
 };(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://widget.pbapp.net/playbasis/en/all.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","playbasis-js"));&lt;/script&gt;

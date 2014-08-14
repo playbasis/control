@@ -5,6 +5,7 @@
     $color =  isset($_GET['color'] )  ? $_GET['color'] : '#0e9ce41';
     $rankby =  isset($_GET['rankby'] )  ? $_GET['rankby'] : 'point';
     $displaypoint =  isset($_GET['displaypoint'] )  ? $_GET['displaypoint'] : 'point';
+    $player_id =  isset($_GET['playerId'] )  ? $_GET['playerId'] : '';
 
     // echo $width.'<br>';
     // echo $height.'<br>';
@@ -30,9 +31,15 @@
 <script type='text/javascript'>
     window.PBAsyncInit = function(){
         PB.init({
-            api_key:'abc',
+            api_key:'<?php echo $site_data["api_key"]; ?>',
             theme_color :'#<?php echo $color; ?>',//'#52b398',
-            playerId : '1201407222facebook'
+            <?php
+            if($player_id){
+            ?>
+            playerId : '<?php echo $player_id; ?>'//optional
+            <?php
+            }
+            ?>
         });
     };
     (!function(d,s,id){

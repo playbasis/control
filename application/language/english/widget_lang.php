@@ -22,6 +22,7 @@ $lang['text_get_code']			           	    = 'Get code';
 $lang['text_livefeed_widget']			        = 'Livefeed Wetget';
 $lang['text_profile_widget']			        = 'Profile Wetget';
 $lang['text_userbar_widget']			        = 'Userbar Wetget';
+$lang['text_require']			                = 'Require';
 
 // Column Table
 $lang['column_leaderboard']            			= 'Leaderboard';
@@ -35,6 +36,7 @@ $lang['form_height']							='Height';
 $lang['form_color']							    ="Color";
 $lang['form_rankby']							="Rank by";
 $lang['form_type_display']						="Type point display";
+$lang['form_player_id']						    ="Player ID for test";
 
 
 ?>
