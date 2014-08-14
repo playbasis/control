@@ -210,9 +210,6 @@ class User extends MY_Controller
         $this->form_validation->set_rules('user_group', "", '');
         $this->form_validation->set_rules('status', "", '');
 
-
-
-
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             $client_id = $this->User_model->getClientId();
@@ -223,21 +220,21 @@ class User extends MY_Controller
                 try {
                     $user_limit = $this->Plan_model->getPermissionUsage(
                         $client_id, $site_id, "others", "user");
-                    if (!isset($user_limit["value"]))
-                        $user_limit["value"] = 2;  // default
+                    if (!isset($user_limit["value"]) || !$user_limit["value"])
+                        $user_limit["value"] = 3;  // default
                 } catch(Exception $e) {
-                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                    redirect('user/insert');
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail"));
+                    redirect("user/");
                 }
 
                 // get current user usage from this client
                 $user_usage = $this->User_model->getTotalUserByClientId(
                     array("client_id" => $client_id));
 
-                // TODO compute
+                // compute
                 if ($user_usage >= $user_limit["value"]) {
-                    $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
-                    redirect('user/insert');
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail"));
+                    redirect("user/");
                 }
 
                 $user_id = $this->User_model->insertUser();
