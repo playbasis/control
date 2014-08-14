@@ -12,7 +12,10 @@ class Account extends MY_Controller
 	    $this->load->model('Plan_model');
 	    $this->load->model('Payment_model');
 
-        if(!$this->User_model->isLogged()){
+	    $router =& load_class('Router', 'core');
+	    $method = $router->fetch_method();
+
+        if(!$this->User_model->isLogged() && !in_array($method, array('paypal_notification'))){
             redirect('/login', 'refresh');
         }
 
@@ -77,6 +80,7 @@ class Account extends MY_Controller
 	}
 
 	public function purchase() {
+log_message('error', '--------- paypal_purchase');
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -123,6 +127,7 @@ class Account extends MY_Controller
 	}
 
 	public function paypal_done() {
+log_message('error', '--------- paypal_done');
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -144,12 +149,11 @@ class Account extends MY_Controller
 
 	public function paypal_notification() {
 		// TODO: handle IPN message
-		$body = file_get_contents('php://input');
+log_message('error', '--------- paypal_notification');
 
 log_message('error', '_SERVER = '.print_r($_SERVER, true));
 log_message('error', '_GET = '.print_r($_GET, true));
 log_message('error', '_POST = '.print_r($_POST, true));
-log_message('error', 'body = '.print_r($body, true));
 
 log_message('error', 'server = '.print_r($this->input->server() , true));
 log_message('error', 'get = '.print_r($this->input->get() , true));
@@ -159,6 +163,9 @@ log_message('error', 'user_agent = '.print_r($this->input->user_agent() , true))
 		$credit = 123; // from IPN
 		$channel = 'paypal';
 		$this->Payment_model->add_credit_event($credit, $channel, 'completed');
+
+$body = file_get_contents('php://input');
+log_message('error', 'body = '.print_r($body, true));
 	}
 
     private function validateAccess(){

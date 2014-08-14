@@ -19,8 +19,8 @@
             		<?php }?>
             	</div>
             <?php }?>
-            You payment is almost finish. After we receive confirmation message from PayPal,<br>
-	        you would be able to see updated credit value in your account.
+            You payment is almost completed. We just have to wait for a confirmation message from PayPal.<br>
+	        After that you would be able to see an updated credit into your account.
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
