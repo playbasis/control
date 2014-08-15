@@ -84,6 +84,17 @@ class Domain_model extends MY_Model
         return $client_data;
     }
 
+    public function getDomainsBySiteId($site_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('_id', new MongoID($site_id));
+
+        $results = $this->mongo_db->get("playbasis_client_site");
+
+        return $results ? $results[0] : null;
+    }
+
     public function getTotalDomains($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

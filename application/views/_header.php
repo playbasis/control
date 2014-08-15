@@ -131,6 +131,11 @@
     <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/strip_tags.js"></script>
 
     <script type="text/javascript" src="<?php echo base_url();?>javascript/html5.js"></script>
+
+    <link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>javascript/colorpicker/css/colorpicker.css" />
+    <script type="text/javascript" src="<?php echo base_url();?>javascript/colorpicker/js/colorpicker.js"></script>
+
+
 </head>
 <body>
 
