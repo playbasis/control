@@ -187,6 +187,11 @@ class User extends MY_Controller
 
     }
 
+    /*
+     * Add Other user to use the same Client-Site
+     * Each Client-Site has limit according to plan
+     * ** Compatible-purpose ** default is 3
+     */
     public function insert(){
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -205,14 +210,33 @@ class User extends MY_Controller
         $this->form_validation->set_rules('user_group', "", '');
         $this->form_validation->set_rules('status', "", '');
 
-
-
-
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
 
             if($this->form_validation->run()){
+                // get Plan limit_others.user
+                try {
+                    $user_limit = $this->Plan_model->getPermissionUsage(
+                        $client_id, $site_id, "others", "user");
+                    if (!isset($user_limit["value"]) || !$user_limit["value"])
+                        $user_limit["value"] = 3;  // default
+                } catch(Exception $e) {
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail"));
+                    redirect("user/");
+                }
+
+                // get current user usage from this client
+                $user_usage = $this->User_model->getTotalUserByClientId(
+                    array("client_id" => $client_id));
+
+                // compute
+                if ($user_usage >= $user_limit["value"]) {
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail"));
+                    redirect("user/");
+                }
+
                 $user_id = $this->User_model->insertUser();
 
                 if($user_id){
@@ -534,7 +558,7 @@ class User extends MY_Controller
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
-        $this->data['form'] = 'user/register';
+        $this->data['form'] = 'user/register?plan';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
 
         //Set rules for form regsitration
@@ -555,12 +579,19 @@ class User extends MY_Controller
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
-            // if (isset($this->input->get('plan')){
-            //     $chosenPlan = $this->input->get('plan');
-            //     if ($chosenPlan != 'plan1' || $chosenPlan != 'plan2' || $chosenPlan != 'plan3'){
-            //         echo "then leave";
-            //     }    
-            // }
+            if (isset($_POST['plan'])){
+                $chosenPlan = $this->input->post('plan');
+
+                $availablePlans = array('PLAN1', 'PLAN2', 'PLAN3');
+
+                if (!in_array($chosenPlan, $availablePlans)){
+                    echo 'Plan is not available!';
+                    exit();
+                }
+            }else{
+                echo 'Please dont provide empty plan';
+                exit();
+            }
 
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
@@ -582,7 +613,6 @@ class User extends MY_Controller
 
                 // if($user_id){
                 if(!$domain){    
-                    // if(!$domain){
                     if (isset($resp) && !$resp->is_valid) {
                     // What happens when the CAPTCHA was entered incorrectly
                         if($this->input->post('format') == 'json'){
@@ -596,20 +626,24 @@ class User extends MY_Controller
                             $user_info = $this->User_model->getUserInfo($user_id);
 
                             $client_id = $this->Client_model->insertClient();
+                            $plan_trial_days = $this->Plan_model->getPlanTrialDays($chosenPlan);
 
                             $data = $this->input->post();
                             $data['client_id'] = $client_id;
                             $data['user_id'] =  $user_info['_id'];
                             $data['limit_users'] = 1000;
                             $data['date_start'] = date("Y-m-d H:i:s");
-                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 month"));
+                            // $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 month"));
+                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+".$plan_trial_days." day"));
 
                             $this->User_model->addUserToClient($data);
 
                             $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
 
-                            $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
-                            // $plan_id = $this->Plan_model->getPlanID($chosenPlan);
+                            // $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+
+                            //Chosen plan either plan1 or plan2 or plan3
+                            $plan_id = $this->Plan_model->getPlanID($chosenPlan);
 
                             $another_data['domain_value'] = array(
                                     'site_id' =>$site_id,
