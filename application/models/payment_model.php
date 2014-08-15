@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Payment_model extends MY_Model
 {
-	// status = init, pending, completed
+    // status = Pending, Completed
     public function add_credit_event($credit, $channel, $status) {
 	    $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -21,11 +21,20 @@ class Payment_model extends MY_Model
 
 	    // adjust actual credit if the transaction is finalized
 	    if ($status == 'completed') {
+		    // get current credit
 		    $this->mongo_db->where(array(
 			    '_id' => $client_id,
 		    ));
-		    $this->mongo_db->inc('credit', $credit);
-		    $this->mongo_db->update('playbasis_client');
+		    $res = $this->mongo_db->get('playbasis_client');
+		    if ($res) {
+			    $old = ($res && array_key_exists('credit', $res) ? $res['credit'] : 0);
+			    // set new credit
+			    $this->mongo_db->where(array(
+				    '_id' => $client_id,
+			    ));
+			    $this->mongo_db->set('credit', $old + $credit);
+			    $this->mongo_db->update('playbasis_client');
+		    }
 	    }
     }
 }
