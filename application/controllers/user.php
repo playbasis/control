@@ -560,6 +560,7 @@ class User extends MY_Controller
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
         $this->data['form'] = 'user/register?plan';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
+        $this->data['availablePlans'] = $this->Plan_model->getAvailableStaticPlans();
 
         //Set rules for form regsitration
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
@@ -576,13 +577,12 @@ class User extends MY_Controller
         $publicKey = CAPTCHA_PUBLIC_KEY;
         $this->data['recaptcha'] = recaptcha_get_html($publicKey);
 
-
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             if (isset($_POST['plan'])){
                 $chosenPlan = $this->input->post('plan');
 
-                $availablePlans = array('PLAN1', 'PLAN2', 'PLAN3');
+                $availablePlans = $this->data['availablePlans'];
 
                 if (!in_array($chosenPlan, $availablePlans)){
                     echo 'Plan is not available!';
@@ -633,8 +633,12 @@ class User extends MY_Controller
                             $data['user_id'] =  $user_info['_id'];
                             $data['limit_users'] = 1000;
                             $data['date_start'] = date("Y-m-d H:i:s");
-                            // $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 month"));
-                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+".$plan_trial_days." day"));
+
+                            if($plan_trial_days != null){
+                                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+".$plan_trial_days." day"));
+                            }else{
+                                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+100 year"));
+                            }
 
                             $this->User_model->addUserToClient($data);
 
@@ -642,7 +646,7 @@ class User extends MY_Controller
 
                             // $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
 
-                            //Chosen plan either plan1 or plan2 or plan3
+                            //Chosen plan either plan1 or plan2 or plan3 or plan4
                             $plan_id = $this->Plan_model->getPlanID($chosenPlan);
 
                             $another_data['domain_value'] = array(

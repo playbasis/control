@@ -38,7 +38,7 @@
 				<div id="pg1">
 					<table class="form">
 						<!-- Chosen plan -->
-						<?php $availablePlans = array('PLAN1', 'PLAN2', 'PLAN3'); ?>
+						<?php $availablePlans = array('PLAN1', 'PLAN2', 'PLAN3', 'PLAN4'); ?>
 						
 						<?php
 							$chosenPlan = null;; 

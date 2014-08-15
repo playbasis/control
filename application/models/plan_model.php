@@ -471,6 +471,10 @@ class Plan_model extends MY_Model
         return $results ? $results[0]['limit_others']['trial'] : null;
     }
 
+    public function getAvailableStaticPlans(){
+        return array('PLAN1', 'PLAN2', 'PLAN3', 'PLAN4');
+    }
+
 
     public function checkPlanExistsByName($plan_name){
         $this->set_site_mongodb($this->session->userdata('site_id'));
