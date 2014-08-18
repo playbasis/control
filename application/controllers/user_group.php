@@ -26,6 +26,7 @@ class User_group extends MY_Controller{
 	public function index(){
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            return;
         }
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -41,6 +42,7 @@ class User_group extends MY_Controller{
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            return;
         }
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
