@@ -31,13 +31,16 @@ class Payment_model extends MY_Model
 		    ));
 		    $res = $this->mongo_db->get('playbasis_client');
 		    if ($res) {
-			    $old = ($res && array_key_exists('credit', $res) ? $res['credit'] : 0);
+			    $c = $res[0];
+			    $old = (array_key_exists('credit', $c) ? $c['credit'] : 0);
 			    // set new credit
 			    $this->mongo_db->where(array(
 				    '_id' => $client_id,
 			    ));
 			    $this->mongo_db->set('credit', $old + $credit);
 			    $this->mongo_db->update('playbasis_client');
+		    } else {
+			    log_message('error', 'Cannot find client_id: '.print_r($client_id, true));
 		    }
 	    }
 	}
