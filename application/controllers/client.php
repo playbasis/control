@@ -8,9 +8,9 @@ class Client extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        // if(!$this->User_model->isLogged()){
-        //     redirect('/login', 'refresh');
-        // }
+        if(!$this->User_model->isLogged()){
+            redirect('/login', 'refresh');
+        }
 
         $this->load->model('Client_model');
 
