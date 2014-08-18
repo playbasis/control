@@ -14,6 +14,9 @@ class User_group extends MY_Controller{
 
         $this->load->model('User_group_model');
         $this->load->model('User_model');
+        if(!$this->User_model->isLogged()){
+            redirect('/login', 'refresh');
+        }
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -21,9 +24,9 @@ class User_group extends MY_Controller{
 	}
 
 	public function index(){
-        // if(!$this->validateAccess()){
-        //     echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        // }
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
