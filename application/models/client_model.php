@@ -21,6 +21,23 @@ class Client_model extends MY_Model
 		$this->mongo_db->where($clientData);
 		return $this->mongo_db->get('playbasis_rule');
 	}
+    public function getAction($clientData)
+    {
+        assert($clientData);
+        assert(is_array($clientData));
+        assert(isset($clientData['client_id']));
+        assert(isset($clientData['site_id']));
+        assert(isset($clientData['action_name']));
+        $this->set_site_mongodb($clientData['site_id']);
+        $this->mongo_db->select(array('action_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $clientData['client_id'],
+            'site_id' => $clientData['site_id'],
+            'name' => $clientData['action_name']
+        ));
+        $id = $this->mongo_db->get('playbasis_action_to_client');
+        return ($id && $id[0]) ? $id[0] : array();
+    }
 	public function getActionId($clientData)
 	{
 		assert($clientData);
