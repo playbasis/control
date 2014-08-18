@@ -21,6 +21,15 @@ class Action extends REST2_Controller
 		$this->response($this->resp->setRespond($action), 200);
 	}
 
+	public function usedonly_get()
+	{
+		$action = array();
+		foreach ($this->action_model->listActionsOnlyUsed($this->validToken) as $key => $value) {
+			array_push($action, $value['name']);
+		}
+		$this->response($this->resp->setRespond($action), 200);
+	}
+
 	public function log_get()
 	{
         // Limit

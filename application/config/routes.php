@@ -115,6 +115,7 @@ $route['Engine/actionConfig']	= 'engine/getActionConfig';
 $route['Engine/rule/'.ANY_STRING] = 'engine/rule/$1';
 $route['Engine/rule']	= 'engine/rule/0';
 $route['Engine/facebook']	= 'engine/rule/facebook';
+$route['Engine/quest']	= 'engine/quest';
 
 //redeem API
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
@@ -123,6 +124,7 @@ $route['Redeem/goods'] = 'redeem/goods/0';
 // api-carlos
 $route['Action'] = 'action/index';
 $route['Action/log'] = 'action/log';
+$route['Action/usedonly'] = 'action/usedonly';
 $route['Reward'] = 'reward/index';
 $route['Reward/badge'] = 'badge/index'; // reuse
 $route['Reward/'.ANY_STRING.'/log'] = 'reward/$1Log';
