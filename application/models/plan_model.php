@@ -468,7 +468,8 @@ class Plan_model extends MY_Model
 
         $this->mongo_db->where('name', $name);
         $results =  $this->mongo_db->get('playbasis_plan');
-        return $results ? $results[0]['limit_others']['trial'] : null;
+
+        return $results && isset($results[0]['limit_others']['trial']) ? $results[0]['limit_others']['trial'] : null;
     }
 
     public function getAvailableStaticPlans(){
