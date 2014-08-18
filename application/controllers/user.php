@@ -602,7 +602,8 @@ class User extends MY_Controller
                             $data['user_id'] =  $user_info['_id'];
                             $data['limit_users'] = 1000;
                             $data['date_start'] = date("Y-m-d H:i:s");
-                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 month"));
+//                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 month"));
+                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+100 year"));
 
                             $this->User_model->addUserToClient($data);
 
