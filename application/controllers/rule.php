@@ -171,6 +171,10 @@ class Rule extends MY_Controller
                 $id, $client_id, $site_id)));
     }
 
+    /*
+     * Play Action according to the rule
+     * does not edit anything in database
+     */
     public function jsonPlayRule() {
         $id = $this->input->post("id");
         $client_id = $this->input->post("client_id");
@@ -307,6 +311,7 @@ class Rule extends MY_Controller
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $server_output = curl_exec ($ch);
         curl_close ($ch);
         return $server_output;
