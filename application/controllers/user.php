@@ -860,9 +860,11 @@ class User extends MY_Controller
                     'password'=>$this->input->post('password'),
                     'confirm_password' =>$this->input->post('password_confirm'),
                     'edit_account'=>true,
-                    'image' =>$this->input->post('image'),
                 );
-                if($this->form_validation->run()){
+                if($this->input->post('image') != ""){
+                    $data['image'] =$this->input->post('image');
+                }
+                if($this->input->post('password') != '' && $this->input->post('image') != '' && $this->form_validation->run()){
                     $this->User_model->editUser($user_id, $data);
                 }
             }
