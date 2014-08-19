@@ -1,7 +1,7 @@
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
-        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $payment_title; ?></h1>
+        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $subscribe_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_purchase'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'account'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
@@ -25,29 +25,30 @@
             <?php echo form_open($form, $attributes);?>
             	<div id="tab-general">
             		<table class="form">
+			            <tr>
+				            <td><span class="required">*</span> <?php echo $this->lang->line('form_package'); ?>:</td>
+				            <td>
+					            <select name="price">
+						            <option value="29">Starter ($29)</option>
+						            <option selected="selected" value="99">Standard ($99)</option>
+					            </select>
+				            </td>
+			            </tr>
             			<tr>
-            				<td><?php echo $this->lang->line('form_months'); ?>:</td>
+            				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
             				<td>
-            					<select name = 'month' onchange="calculate(this.value, <?php echo $this->session->userdata('price') ?>); return true;">
-						            <option selected='selected' value="">N/A</option>
-						            <option value="1">1 Month</option>
-						            <option value="2">2 Months</option>
-						            <option value="3">3 Months</option>
+            					<select name="months">
 						            <option value="6">6 Months</option>
-						            <option value="12">12 Months</option>
+						            <option selected="selected" value="12">12 Months</option>
 						            <option value="24">24 Months</option>
             					</select>
             				</td>
             			</tr>
-			            <tr>
-				            <td><span class="required">*</span> <?php echo $this->lang->line('form_credit_to_add'); ?> (USD):</td>
-				            <td><input type="text" name="credit" onchange="$('[name=month]').val('')" /></td>
-			            </tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_channel'); ?>:</td>
             				<td>
-					            <select name = 'channel'>
-						            <option selected='selected' value="paypal">PayPal</option>
+					            <select name="channel">
+						            <option selected="selected" value="paypal">PayPal</option>
 					            </select>
             				</td>
             			</tr>
@@ -57,8 +58,3 @@
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
-<script type="text/javascript">
-function calculate(val, price) {
-	$('[name=credit]').val(val*price)
-}
-</script>

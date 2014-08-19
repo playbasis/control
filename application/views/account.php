@@ -3,7 +3,7 @@
         <div class="heading">
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_add_more_credit'); ?></button>
+                    You are in a trial period, please <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_subscribe'); ?></button>
             </div><!-- .buttons -->
         </div><!-- .heading -->
         <div class="content">
@@ -50,10 +50,6 @@
             					</select>
             				</td>
             			</tr>
-			            <tr>
-				            <td><?php echo $this->lang->line('form_credit'); ?> (USD):</td>
-				            <td><?php echo $client['credit']; ?></td>
-			            </tr>
 			            <tr>
 				            <td><?php echo $this->lang->line('form_plan_name'); ?>:</td>
 				            <td><?php echo $plan['name']; ?></td>

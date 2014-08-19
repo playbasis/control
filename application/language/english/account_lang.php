@@ -1,6 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          				= 'Account Details';
+$lang['subscribe_title']          				= 'To Subscribe';
 $lang['payment_title']          				= 'Payment Channel';
 $lang['order_title']          				= 'Order Details';
 $lang['wait_title']          				= 'Congratulations!';
@@ -52,7 +53,7 @@ $lang['entry_reward']           				= 'Reward data';
 $lang['entry_limit_num_clients']				= 'Client Limit';
 
 // Button
-$lang['button_add_more_credit']         = 'Add More Credit';
+$lang['button_subscribe']         = 'Subscribe';
 $lang['button_purchase']         = 'Purchase';
 
 // Form
@@ -60,16 +61,15 @@ $lang['form_name']						= 'Name';
 $lang['form_email']						= 'E-mail';
 $lang['form_company']						= 'Company';
 $lang['form_status']						= 'Status';
-$lang['form_credit']						= 'Credit Balance';
 $lang['form_plan_name']						= 'Plan Name';
 $lang['form_plan_price']						= 'Plan Price';
 $lang['form_plan_registration']						= 'Plan Registration Date';
+$lang['form_package']						= 'Package';
 $lang['form_months']						= 'Number of Months';
-$lang['form_credit_to_add']						= 'Credit To Add';
 $lang['form_channel']						= 'Payment Channel';
-$lang['form_outstanding_amount']						= 'Outstanding Amount';
+$lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';
-$lang['form_transaction_date']						= 'Transaction Date';
+$lang['form_billing_date']						= 'Effective Billing Date';
 
 // Error 
 $lang['error_warning']          				= 'Warning: Please check the form carefully for errors!';

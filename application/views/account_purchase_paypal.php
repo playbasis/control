@@ -34,26 +34,31 @@
 				            </td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_outstanding_amount'); ?> (USD):</td>
-				            <td><input type="text" value="<?php echo $this->session->userdata('credit'); ?>" disabled /></td>
+				            <td><?php echo $this->lang->line('form_price'); ?> (USD):</td>
+				            <td><input type="text" value="<?php echo $this->session->userdata('price'); ?>" disabled /></td>
+			            </tr>
+			            <tr>
+				            <td><?php echo $this->lang->line('form_months'); ?></td>
+				            <td><input type="text" value="<?php echo $this->session->userdata('months'); ?>" disabled /></td>
 			            </tr>
 			            <tr>
 				            <td><?php echo $this->lang->line('form_product'); ?>:</td>
-				            <td><input type="text" value="Playbasis Platform Service" disabled /></td>
+				            <td><input type="text" value="Playbasis Platform Subscription" disabled /></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_transaction_date'); ?>:</td>
+				            <td><?php echo $this->lang->line('form_billing_date'); ?>:</td>
 				            <td><input type="text" value="<?php echo date('d M Y'); ?>" disabled /></td>
 			            </tr>
 			            <script async="async" src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=pechpras-facilitator@playbasis.com"
-			                    data-button="buynow"
-			                    data-name="Playbasis Platform"
-			                    data-quantity="1"
-			                    data-amount="<?php echo $this->session->userdata('credit'); ?>"
+			                    data-button="subscribe"
+			                    data-name="Playbasis Platform Subscription"
+			                    data-amount="<?php echo $this->session->userdata('price'); ?>"
 			                    data-currency="USD"
+			                    data-recurrence="<?php echo $this->session->userdata('months'); ?>"
+			                    data-period="M"
 			                    data-custom="<?php echo $this->session->userdata('client_id')->{'$id'}; ?>"
-			                    data-cancel_return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/add_credit"
-			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_done"
+			                    data-cancel_return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/subscribe"
+			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_completed"
 			                    data-callback="<?php echo $this->session->userdata('callback'); ?>"
 			                    data-env="sandbox"
 				        ></script>
