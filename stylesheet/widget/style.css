@@ -579,7 +579,7 @@ span.social-box-highlight,
 ===================================*/
 .social-content {
     opacity: 0;
-    width: 480px;
+    width: 280px;
     padding: 20px;
     margin-left: -10px;
     -webkit-transition: all 0.1s ease-out;
@@ -601,7 +601,7 @@ span.social-box-highlight,
 
 .social-title > input,
 .social-description > textarea {
-    width: 480px;
+    width: 280px;
     padding: 2px 6px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     height: auto;
@@ -1095,19 +1095,6 @@ span.social-box-highlight,
     margin: 0 -82px 0 0;
 }
 
-
-/* Custom styles for new social
-===================================*/
-#add-social .social-header {
-    color: #999;
-    background: #f2f2f2;
-}
-#add-social .social-description,
-#add-social .social-templates {
-    opacity: 0;
-    display: none;
-}
-#add-social .social-content {
-    opacity: 0;
-    margin-left: -10px;
+.row div[class*="span"]:first-child .controls{
+    margin-left: 50px;
 }
