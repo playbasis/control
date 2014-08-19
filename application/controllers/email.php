@@ -19,32 +19,21 @@ class Email extends REST2_Controller
 
 	public function send_post()
 	{
-        /* check permission */
-        $usage = $this->client_model->getPermissionUsage(
-            $this->client_id,
-            $this->site_id,
-            'notifications',
-            'email');
-        $limit = $this->client_model->getPlanLimitById(
-            $this->site_id,
-            $usage['plan_id'],
-            'notifications',
-            'email'
-        );
-
-        if (!$usage) {
-            $this->response($this->error->setError('INTERNAL_ERROR', array()), 200);
-        }
-
-        if ($limit && $usage['value'] >= $limit) {
-            // no permission to use this service
-            $this->response($this->error->setError('LIMIT_EXCEED', array()), 200);
-        } else {
-            $this->client_model->updatePermission(
+        /* check permission to send email in this bill cycle */
+        try {
+            $this->client_model->permissionProcess(
                 $this->client_id,
                 $this->site_id,
-                'notifications',
-                'email');
+                "notifications",
+                "email"
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $this->response($this->error->setError(
+                    "LIMIT_EXCEED", array()), 200);
+            else
+                $this->response($this->error->setError(
+                    "INTERNAL_ERROR", array()), 200);
         }
 
 		/* process parameters */

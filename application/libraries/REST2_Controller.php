@@ -72,42 +72,28 @@ abstract class REST2_Controller extends REST_Controller
         if (!$this->client_id || !$this->site_id) {
             return;
         }
+
         $url = strtolower(preg_replace(
             "/(\w+)\/.*/", '${1}',
             $this->uri->uri_string));
-
         if (substr($url, 0, 1) != "/") {
             $url = "/".$url;
         }
 
-        $usage = $this->client_model->getPermissionUsage(
-            $this->client_id,
-            $this->site_id,
-            'requests',
-            $url
-            );
-
-        $limit = $this->client_model->getPlanLimitById(
-            $this->site_id,
-            $usage['plan_id'],
-            'requests',
-            $url
-        );
-
-        // CRITICAL client-site not found in permission
-        if (!$usage) {
-            $this->response($this->error->setError('INTERNAL_ERROR', array()), 200);
-        }
-
-        if ($limit && $usage['value'] >= $limit) {
-            // no permission to use this service
-            $this->response($this->error->setError('LIMIT_EXCEED', array()), 200);
-        } else {
-            $this->client_model->updatePermission(
+        try {
+            $this->client_model->permissionProcess(
                 $this->client_id,
                 $this->site_id,
-                'requests',
-                $url);
+                "requests",
+                $url
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $this->response($this->error->setError(
+                    "LIMIT_EXCEED", array()), 200);
+            else
+                $this->response($this->error->setError(
+                    "INTERNAL_ERROR", array()), 200);
         }
 	}
 

@@ -592,6 +592,18 @@ class Client_model extends MY_Model
 		return is_array($ret) && count($ret) == 1 ? $ret[0] : $ret;
 	}
 
+    public function getPermissionBySiteId($site_id) {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+
+        $this->mongo_db->limit(1);
+
+        $result = $this->mongo_db->get("playbasis_permission");
+
+        return $result ? $result[0]['plan_id'] : null;
+    }
+
     /**
      * Return Permission limitation by Plan ID
      * in particular type and field
@@ -602,7 +614,7 @@ class Client_model extends MY_Model
      * @param field string
      * @return integer | null
      */
-    public function getPlanLimitById($site_id, $plan_id, $type, $field)
+    private function getPlanLimitById($site_id, $plan_id, $type, $field)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
@@ -621,7 +633,7 @@ class Client_model extends MY_Model
             }
         }
         else {
-            throw new Exception("getPlanLimitById plan_id not found");
+            throw new Exception("PLANID_NOTFOUND");
         }
     }
 
@@ -635,41 +647,46 @@ class Client_model extends MY_Model
      * @param field string
      * @return array('plan_id' => string, 'value' => integer) | null
      */
-    public function getPermissionUsage($client_id, $site_id, $type, $field)
+    private function getPermissionUsage($client_id, $site_id, $type, $field)
     {
         // wrong type
         if ($type != "notifications" && $type != "requests")
-            throw new Exception("getPermissionUsage wrong type");
+            throw new Exception("WRONG_TYPE");
 
-        $year_month = date("Ym");
         $this->set_site_mongodb($site_id);
+
+        // Sync current bill usage with Client bill
+        // TODO If not sync, Sync date and Reset usage
+
+        // Get current bill usage
         $this->mongo_db->select(
-            array('plan_id', $type.'.'.$year_month.'.'.$field)
+            array(
+                "plan_id",
+                "usage.". $type. ".". $field)
         );
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id
         ));
         $res = $this->mongo_db->get('playbasis_permission');
+
+        $result = array();
         if ($res) {
-            // check this limitation on this client-site
             $res = $res[0];
+            $result["plan_id"] = $res["plan_id"];
+
+            // check this limitation on this client-site
             if (isset($res[$type]) &&
-                isset($res[$type][$year_month]) &&
-                isset($res[$type][$year_month][$field])) {
-                return array(
-                    'plan_id' => $res['plan_id'],
-                    'value' => $res[$type][$year_month][$field]
-                );
-            } else { // this limitation is not found in database
-                return array(
-                    'plan_id' => $res['plan_id'],
-                    'value' => 0
-                );
-            }
+                isset($res[$type][$field]))
+                    $result["value"] = $res[$type][$field];
+
+            else // this limitation is not found in database
+                $result["value"] = 0;
+
+            return $result;
         }
         else { // client-site is not found
-            throw new Exception("getPermissionUsage client-site not found");
+            throw new Exception("CLIENTSITE_NOTFOUND");
         }
     }
 
@@ -682,28 +699,79 @@ class Client_model extends MY_Model
      * @param type notifications | requests
      * @param field string
      */
-    public function updatePermission($client_id, $site_id, $type, $field, $inc=1)
+    private function updatePermission(
+        $client_id, $site_id, $type, $field, $inc=1)
     {
-        $year_month = date("Ym");
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id
         ));
-        $this->mongo_db->inc($type.'.'.$year_month.'.'.$field, $inc);
+        $this->mongo_db->inc("usage.". $type. ".". $field, $inc);
         $this->mongo_db->update('playbasis_permission');
     }
 
-    public function getPermissionBySiteId($site_id) {
+    /*
+     * Sync Permission billing date with Client billing date
+     * @param string @client_id
+     * @param string @site_id
+     * @param datetime @start_date
+     * @param datetime @end_date
+     */
+    private function syncPermissionDate($client_id, $site_id)
+    {
+        // TODO
+    }
+
+    /*
+     * Get plan price if price not set default is 0
+     * @param string $plan_id
+     * @return int
+     */
+    private function getPlanPrice($site_id, $plan_id)
+    {
         $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array("price"));
+        $this->mongo_db->where(array(
+            '_id' => $plan_id,
+        ));
+        $res = $this->mongo_db->get('playbasis_plan');
 
-        $this->mongo_db->where('site_id', new MongoID($site_id));
+        if ($res) {
+            $res = $res[0];
+            if (isset($res["price"]))
+                return intval($res["price"]);
+            else
+                return 0;
+        } else {
+            return 0;
+        }
+    }
 
-        $this->mongo_db->limit(1);
+    /*
+     * Check & Update permission usage
+     * @param string $client_id
+     * @param string $site_id
+     * @param (notifications | requests) $type
+     * @particular string $field
+     */
+    public function permissionProcess($client_id, $site_id, $type, $field) {
+        // TODO
+        // get current usage
+        $usage = $this->getPermissionUsage(
+            $client_id, $site_id, $type, $field);
 
-        $result = $this->mongo_db->get("playbasis_permission");
+        // get limit by plan
+        $limit = $this->getPlanLimitById(
+            $site_id, $usage["plan_id"], $type, $field);
 
-        return $result ? $result[0]['plan_id'] : null;
+        // compare
+        if ($limit && $usage["value"] >= $limit) {
+            // no permission to use this service
+            throw new Exception("LIMIT_EXCEED");
+        } else {  // increase service usage
+            $this->updatePermission($client_id, $site_id, $type, $field);
+        }
     }
 }
 ?>
