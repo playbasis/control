@@ -808,8 +808,8 @@ class Player_model extends MY_Model
 	}
 	private function updateLastAlertLimitUser($client_id, $site_id)
     {
-		$mongoDate = new MongoDate();
 		$this->set_site_mongodb($site_id);
+		$mongoDate = new MongoDate();
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'_id' => $site_id
@@ -819,6 +819,7 @@ class Player_model extends MY_Model
 			"_id" => $site_id))->set(array(
                 "last_send_limit_users" => $mongoDate
             ))->update("playbasis_client_site");
+        return $mongoDate;
     }
 
     public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit){
