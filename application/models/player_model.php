@@ -759,6 +759,9 @@ class Player_model extends MY_Model
 			foreach ($result as $r)
                 array_push($email_list,$r['email']);
 
+
+            $checkmongoDate = $this->updateLastAlertLimitUser($client_id, $site_id);
+
             //$this->load->library('email');
             $this->load->library('parser');
 			$data = array(
@@ -766,6 +769,7 @@ class Player_model extends MY_Model
 				'user_count' => $usersCount,
 				'user_limit' => $limit,
                 'domain_name_client' => $domain_name_client,
+                'mongoDate' => $checkmongoDate
 			);
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
@@ -786,17 +790,16 @@ class Player_model extends MY_Model
 
             $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
             $this->amazon_ses->to('cscteam@playbasis.com','devteam@playbasis.com');
+            $this->amazon_ses->to('cscteam@playbasis.com','devteam@playbasis.com');
             $this->amazon_ses->subject($subject);
             $this->amazon_ses->message($htmlMessage);
             $this->amazon_ses->send();
-
-            $this->updateLastAlertLimitUser($client_id, $site_id);
 		}
 	}
 	private function updateLastAlertLimitUser($client_id, $site_id)
     {
-		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'_id' => $site_id
@@ -804,6 +807,8 @@ class Player_model extends MY_Model
 		$this->mongo_db->update('playbasis_client_site', array(
 			'last_send_limit_users' => $mongoDate
 		));
+
+        return $mongoDate;
     }
 
     public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit){
