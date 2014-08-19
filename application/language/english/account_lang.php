@@ -70,6 +70,10 @@ $lang['form_channel']						= 'Payment Channel';
 $lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';
 $lang['form_billing_date']						= 'Effective Billing Date';
+$lang['form_date_added']						= 'Creation Date';
+$lang['form_trial_flag']						= 'Trial Period';
+$lang['form_trial_days']						= 'Trial Period, Total Allowed Days';
+$lang['form_trial_remaining_days']						= 'Trial Period, Remaining Days';
 
 // Error 
 $lang['error_warning']          				= 'Warning: Please check the form carefully for errors!';

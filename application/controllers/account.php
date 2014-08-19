@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
+define('DEFAULT_PLAN_PRICE', 0); // default is free package
+define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
+
 class Account extends MY_Controller
 {
     public function __construct()
@@ -59,14 +63,15 @@ class Account extends MY_Controller
 	    $client = $this->Client_model->getClientById($this->User_model->getClientId());
 	    $plan_registration = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
 	    $plan = $this->Plan_model->getPlanById($plan_registration['plan_id']);
-
-	    if (!array_key_exists('credit', $client)) {
-		    $client['credit'] = 0; // default credit
-	    }
 	    if (!array_key_exists('price', $plan)) {
-		    $plan['price'] = 99; // default plan price
+		    $plan['price'] = DEFAULT_PLAN_PRICE;
 	    }
+	    $trial_days = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+	    $remaining_days = $this->find_remaining_days_after_trial($client['date_added']->sec, $trial_days);
 	    $this->data['client'] = $client;
+	    $this->data['client']['trial_flag'] = $remaining_days > 0;
+	    $this->data['client']['trial_days'] = $trial_days;
+	    $this->data['client']['trial_remaining_days'] = $remaining_days;
 	    $this->data['plan'] = $plan;
 	    $this->data['plan']['registration_date_added'] = $plan_registration['date_added']->sec;
 	    $this->data['plan']['registration_date_modified'] = $plan_registration['date_modified']->sec;
@@ -165,6 +170,14 @@ class Account extends MY_Controller
 		$this->data['main'] = 'account_purchase_paypal_done';
 		$this->load->vars($this->data);
 		$this->render_page('template');
+	}
+
+	private function find_remaining_days_after_trial($date_added_sec, $days) {
+		$begin = new DateTime(date("Y-m-d", $date_added_sec));
+		$now = new DateTime(date("Y-m-d"));
+		$interval = $begin->diff($now);
+		$interval_ndays = intval($interval->format('%R%a'));
+		return $days - $interval_ndays;
 	}
 
     private function validateAccess(){
