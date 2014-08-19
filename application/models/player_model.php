@@ -810,10 +810,7 @@ class Player_model extends MY_Model
     {
 		$this->set_site_mongodb($site_id);
 		$mongoDate = new MongoDate();
-		$this->mongo_db->where(array(
-			'client_id' => $client_id,
-			'_id' => $site_id
-		));
+
         $this->mongo_db->where(array(
 			"client_id" => $client_id,
 			"_id" => $site_id))->set(array(
