@@ -17,6 +17,10 @@ a
 
 /* ---- isotope ---- */
 
+.isotope {
+    width:100%;
+}
+
 /* clear fix */
 .isotope:after {
     content: '';
@@ -398,8 +402,8 @@ span.social-box-highlight,
                 transition: all 0.4s ease-in-out;*/
 }
 .social-container.large {
-    width: 522px;
-    height: 642px;
+    width: 322px;
+    height: 282px;
     cursor: auto;
 }
 
@@ -420,8 +424,8 @@ span.social-box-highlight,
     transition: all 0.4s ease-in-out;
 }
 .large .social {
-    width: 520px;
-    height: 640px;
+    width: 320px;
+    height: 280px;
 }
 /* TODO: Stop hacking */
 .social input,

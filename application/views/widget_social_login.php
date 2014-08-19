@@ -23,9 +23,9 @@
     <h3><?php echo $this->lang->line('text_social_login_widget'); ?></h3>
 
     <div class="row">
-        <div class="span5">
+        <div class="span11">
             <form class="form-horizontal">
-                <div class="social-panel">
+                <div id="social-panel">
 
                     <!-- start -->
                     <div class="social-container social-blue">
@@ -80,66 +80,218 @@
                     </div>
                     <!-- end -->
 
+                    <!-- start -->
+                    <div class="social-container social-azure">
+                        <div class="social">
 
-                    <div class="social-blue social-container">
-                        <div class="social-template social-box social-box-extra">
-                            <div class="social-template-provider social-box-header">
-                                <i class="icon-bookmark-empty"></i>
-                                <span>Facebook</span>
+                            <div class="social-header social-box-header">
+                                <i class="fa fa-twitter"></i>
                             </div>
-                            <div class="social-template-button social-box-footer social-facebook">
-                                <span>Edit</span>
+
+                            <div class="social-name">
+                                <h4 title="Twitter">Twitter</h4>
                             </div>
+
+                            <div class="social-minimize">
+                                <span title="Minimize social">X</span>
+                            </div>
+
+
+                            <div class="social-content">
+
+                                <div class="social-key">
+                                    <input type="text" name="key" placeholder="api key" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                                <div class="social-secret">
+                                    <input type="text" name="secret" placeholder="api secret" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="social-footer">
+
+                                <div class="social-controls">
+                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
+                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
+                                </div>
+
+                                <div class="social-status enabled">
+                                    <div class="social-status-toggle">
+                                        <span>enabled</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
+                    <!-- end -->
 
-                    <div class="social-azure social-container">
-                        <div class="social-template social-box social-box-extra">
-                            <div class="social-template-provider social-box-header">
-                                <i class="icon-bookmark-empty"></i>
-                                <span>Twitter</span>
+                    <!-- start -->
+                    <div class="social-container social-scarlet">
+                        <div class="social">
+
+                            <div class="social-header social-box-header">
+                                <i class="fa fa-google-plus"></i>
                             </div>
-                            <div class="social-template-button social-box-footer social-twitter">
-                                <span>Edit</span>
+
+                            <div class="social-name">
+                                <h4 title="Google Plus">Google Plus</h4>
                             </div>
+
+                            <div class="social-minimize">
+                                <span title="Minimize social">X</span>
+                            </div>
+
+
+                            <div class="social-content">
+
+                                <div class="social-key">
+                                    <input type="text" name="key" placeholder="api key" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                                <div class="social-secret">
+                                    <input type="text" name="secret" placeholder="api secret" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="social-footer">
+
+                                <div class="social-controls">
+                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
+                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
+                                </div>
+
+                                <div class="social-status enabled">
+                                    <div class="social-status-toggle">
+                                        <span>enabled</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
+                    <!-- end -->
 
-                    <div class="social-scarlet social-container">
-                        <div class="social-template social-box social-box-extra">
-                            <div class="social-template-provider social-box-header">
-                                <i class="icon-bookmark-empty"></i>
-                                <span>Google Plus</span>
+                    <!-- start -->
+                    <div class="social-container social-cesocialan">
+                        <div class="social">
+
+                            <div class="social-header social-box-header">
+                                <i class="fa fa-linkedin-square"></i>
                             </div>
-                            <div class="social-template-button social-box-footer social-google-plus">
-                                <span>Edit</span>
+
+                            <div class="social-name">
+                                <h4 title="Linkedin">Linkedin</h4>
                             </div>
+
+                            <div class="social-minimize">
+                                <span title="Minimize social">X</span>
+                            </div>
+
+
+                            <div class="social-content">
+
+                                <div class="social-key">
+                                    <input type="text" name="key" placeholder="api key" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                                <div class="social-secret">
+                                    <input type="text" name="secret" placeholder="api secret" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="social-footer">
+
+                                <div class="social-controls">
+                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
+                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
+                                </div>
+
+                                <div class="social-status enabled">
+                                    <div class="social-status-toggle">
+                                        <span>enabled</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
+                    <!-- end -->
 
-                    <div class="social-cesocialan social-container">
-                        <div class="social-template social-box social-box-extra">
-                            <div class="social-template-provider social-box-header">
-                                <i class="icon-bookmark-empty"></i>
-                                <span>Linkedin</span>
+                    <!-- start -->
+                    <div class="social-container social-persian-blue">
+                        <div class="social">
+
+                            <div class="social-header social-box-header">
+                                <i class="fa fa-instagram"></i>
                             </div>
-                            <div class="social-template-button social-box-footer social-twitter">
-                                <span>Edit</span>
+
+                            <div class="social-name">
+                                <h4 title="Instagram">Instagram</h4>
                             </div>
+
+                            <div class="social-minimize">
+                                <span title="Minimize social">X</span>
+                            </div>
+
+
+                            <div class="social-content">
+
+                                <div class="social-key">
+                                    <input type="text" name="key" placeholder="api key" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                                <div class="social-secret">
+                                    <input type="text" name="secret" placeholder="api secret" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="social-footer">
+
+                                <div class="social-controls">
+                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
+                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
+                                </div>
+
+                                <div class="social-status enabled">
+                                    <div class="social-status-toggle">
+                                        <span>enabled</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
+                    <!-- end -->
 
-                    <div class="social-persian-blue social-container">
-                        <div class="social-template social-box social-box-extra">
-                            <div class="social-template-provider social-box-header">
-                                <i class="icon-bookmark-empty"></i>
-                                <span>Instagram</span>
-                            </div>
-                            <div class="social-template-button social-box-footer social-instagram">
-                                <span>Edit</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="control-group">
