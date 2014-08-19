@@ -408,6 +408,7 @@ class Plan extends MY_Controller
             "mission" => null,
             "goods" => null,
             "user" => null,
+            "player" => null,
             "trial" => null);
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
