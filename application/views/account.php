@@ -56,20 +56,18 @@
             			<!--tr>
             				<td><?php echo $this->lang->line('form_status'); ?>:</td>
             				<td>
-            					<select name = 'status' disabled>
+            					<select disabled>
             					<?php if($client['status'] || set_value('status')){?>
-            						<option selected='selected' value="1">Enabled</option>
-            						<option value="0">Disabled</option>
+            						<option selected="selected" value="1">Enabled</option>
             					<?php }else{?>
-                                    <option value="1">Enabled</option>
-            						<option selected='selected' value="0">Disabled</option>
+            						<option selected="selected" value="0">Disabled</option>
             					<?php }?>
             					</select>
             				</td>
             			</tr-->
 			            <tr>
 				            <td><?php echo $this->lang->line('form_date_added'); ?>:</td>
-				            <td><?php echo date('d M Y', $client['date_added']->sec); ?></td>
+				            <td><?php echo date('d M Y', $client['date_added']); ?></td>
 			            </tr>
 			            <tr>
 				            <td><?php echo $this->lang->line('form_plan_name'); ?>:</td>

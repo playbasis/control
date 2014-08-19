@@ -66,9 +66,12 @@ class Account extends MY_Controller
 	    if (!array_key_exists('price', $plan)) {
 		    $plan['price'] = DEFAULT_PLAN_PRICE;
 	    }
+	    $this->session->set_userdata('plan', $plan);
 	    $trial_days = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
-	    $remaining_days = $this->find_remaining_days_after_trial($client['date_added']->sec, $trial_days);
+	    $remaining_days = $this->find_remaining_days_after_trial($plan_registration['date_modified']->sec, $trial_days);
 	    $this->data['client'] = $client;
+	    $this->data['client']['date_added'] = $client['date_added']->sec;
+	    $this->data['client']['date_modified'] = $client['date_modified']->sec;
 	    $this->data['client']['trial_flag'] = $remaining_days > 0;
 	    $this->data['client']['trial_days'] = $trial_days;
 	    $this->data['client']['trial_remaining_days'] = $remaining_days;
@@ -110,22 +113,19 @@ class Account extends MY_Controller
 		$this->data['order_title'] = $this->lang->line('order_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-		$this->form_validation->set_rules('price', $this->lang->line('form_price'), 'trim|required');
 		$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required');
 		$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
 		$success = false;
 		if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 			$this->data['message'] = null;
 
-			$price = $this->input->post('price');
 			$months = $this->input->post('months');
 			$channel = $this->input->post('channel');
-			if ($price) $price = intval($price);
-			if ($price <= 0) $this->data['message'] = 'Price has to be greater than zero'; // manual validation (> 0)
+			if ($months) $months = intval($months);
+			if ($months <= 0) $this->data['message'] = 'Parameter "months" has to be greater than zero'; // manual validation (> 0)
 
 			if($this->form_validation->run() && $this->data['message'] == null){
 				$ci =& get_instance();
-				$this->session->set_userdata('price', $price);
 				$this->session->set_userdata('months', $months);
 				$this->session->set_userdata('channel', $channel);
 				$this->session->set_userdata('callback', $ci->config->config['server'].'notification');
@@ -163,7 +163,8 @@ class Account extends MY_Controller
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
 		/* clear basket in the session */
-		$this->session->set_userdata('credit', null);
+		$this->session->set_userdata('plan', null);
+		$this->session->set_userdata('months', null);
 		$this->session->set_userdata('channel', null);
 		$this->session->set_userdata('callback', null);
 
