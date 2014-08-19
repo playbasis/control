@@ -67,9 +67,9 @@ function initSocialIsotopes($container) {
 
                 event.stopPropagation();
                 if ( $social.is('#add-social') ) {
-                    savesocial( $social, $addsocial );
+                    saveSocial( $social, $addsocial );
                 } else {
-                    savesocial( $social );
+                    saveSocial( $social );
                 }
 
             } else {
@@ -95,8 +95,13 @@ function initSocialIsotopes($container) {
 function saveSocial(){
     console.log("55555");
 
+    var data = new Array();
     $(".social").each(function(){
-        console.log($(this));
-        console.log($(this).find(".social-name h4").attr("tittle"));
+        var social = new Array();
+        social["name"] = $(this).find(".social-name h4").attr("title");
+        social["key"] = $(this).find(".social-content .social-key input").val();
+        social["secret"] = $(this).find(".social-content .social-key input").val();
+        social["status"] =
+        data.push(social);
     });
 }
