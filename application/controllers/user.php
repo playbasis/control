@@ -634,9 +634,10 @@ class User extends MY_Controller
                             $data['limit_users'] = 1000;
                             $data['date_start'] = date("Y-m-d H:i:s");
 
-                            if($plan_trial_days != null){
-                                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+".$plan_trial_days." day"));
-                            }else{
+                            if($plan_trial_days != null){ // trial package
+	                            // 'date_expire' in playbasis_client_site is used for blocking API after trial period + 1 month
+                                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+".($plan_trial_days + 30)." day"));
+                            }else{ // assume free package here
                                 $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+100 year"));
                             }
 
@@ -665,13 +666,12 @@ class User extends MY_Controller
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
-
                                 exit();
                             }
                             // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
                             // echo "<script>window.location.href = '".site_url()."';</script>";    
                             $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
-                            redirect('login', 'refresh');        
+                            redirect('login', 'refresh');
                         }else{
                             $this->data['fail_email_exists'] = $this->lang->line('text_fail');
 
