@@ -131,12 +131,10 @@
 
 								</div>
 
-								<!--<script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k=6LdUrfASAAAAAEwAUuvXaBIljbwZvql8vBBpvMsK">-->
-								<script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k=6LdRNvgSAAAAADTHwhUa7wyKGIHEbPP9X5wbulfQ">
+								<script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>">
 								</script>
 								<noscript>
-								<iframe src="//www.google.com/recaptcha/api/noscript?k=6LdRNvgSAAAAADTHwhUa7wyKGIHEbPP9X5wbulfQ" height="300" width="500" frameborder="0"></iframe><br>
-								<!--<iframe src="//www.google.com/recaptcha/api/noscript?k=6LdUrfASAAAAAEwAUuvXaBIljbwZvql8vBBpvMsK" height="300" width="500" frameborder="0"></iframe><br>-->
+								<iframe src="//www.google.com/recaptcha/api/noscript?k=<?php echo CAPTCHA_PRIVATE_KEY; ?>" height="300" width="500" frameborder="0"></iframe><br>
 								<textarea name="recaptcha_challenge_field" rows="3" cols="40">
 								</textarea>
 								<input type="hidden" name="recaptcha_response_field"
