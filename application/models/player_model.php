@@ -18,9 +18,17 @@ class Player_model extends MY_Model
 		$this->load->helper('memcache');
 		$this->load->library('mongo_db');
 	}
-	public function createPlayer($data)
+	public function createPlayer($data, $limit)
 	{
-		$this->checkClientUserLimitWarning($data['client_id'], $data['site_id']);
+        try {
+            $this->checkClientUserLimitWarning(
+                $data['client_id'], $data['site_id'], $limit);
+        } catch(Exception $e) {
+            if ($e->getMessage() == "USER_EXCEED")
+                return false;
+            else
+                throw new Exception($e->getMessage());
+        }
 		$this->set_site_mongodb($data['site_id']);
 		$mongoDate = new MongoDate(time());
 		return $this->mongo_db->insert('playbasis_player', array(
@@ -712,12 +720,12 @@ class Player_model extends MY_Model
 		}
 		return $result;
 	}
-	private function checkClientUserLimitWarning($client_id, $site_id)
+	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
 	{
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
             'domain_name',
-			'limit_users',
+			/* 'limit_users', */  // use plan instead
 			'last_send_limit_users'
 		));
 		$this->mongo_db->where(array(
@@ -727,14 +735,14 @@ class Player_model extends MY_Model
 		$result = $this->mongo_db->get('playbasis_client_site');
         assert($result);
 		$result = $result[0];
-		$limit = $result['limit_users'];
         $domain_name_client = $result['domain_name'];
+
 		if(!$limit)
 			return; //client has no user limit
+
 		$last_send = $result['last_send_limit_users']?$result['last_send_limit_users']->sec:null;
 		$next_send = $last_send + (7 * 24 * 60 * 60); //next week from last send
-		if($next_send > time())
-			return; //not time to send yet
+
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id
@@ -742,38 +750,39 @@ class Player_model extends MY_Model
 		$usersCount = $this->mongo_db->count('playbasis_player');
 		if($usersCount > ($limit * 0.95))
 		{
-			$this->mongo_db->select(array('user_id'));
-			$this->mongo_db->where(array(
-                'client_id' => $client_id
-            ));
-			$result = $this->mongo_db->get('user_to_client');
-            $user_id_list=array();
-			foreach ($result as $r)
-                array_push($user_id_list,$r['user_id']);
-			$this->mongo_db->select(array('email'));
-			$this->mongo_db->where_in(
-                'user_id', $user_id_list
-            );
-			$result = $this->mongo_db->get('user');
-            $email_list=array();
-			foreach ($result as $r)
-                array_push($email_list,$r['email']);
+            if (time() > $next_send) {
+                $this->mongo_db->select(array('user_id'));
+                $this->mongo_db->where(array(
+                    'client_id' => $client_id
+                ));
+                $result = $this->mongo_db->get('user_to_client');
+                $user_id_list=array();
+                foreach ($result as $r)
+                    array_push($user_id_list,$r['user_id']);
+                $this->mongo_db->select(array('email'));
+                $this->mongo_db->where_in(
+                    'user_id', $user_id_list
+                );
+                $result = $this->mongo_db->get('user');
+                $email_list=array();
+                foreach ($result as $r)
+                    array_push($email_list,$r['email']);
 
-            //$this->load->library('email');
-            $this->load->library('parser');
-			$data = array(
-				'user_left' => ($limit-$usersCount),
-				'user_count' => $usersCount,
-				'user_limit' => $limit,
-                'domain_name_client' => $domain_name_client,
-			);
-            $config['mailtype'] = 'html';
-            $config['charset'] = 'utf-8';
-            $email = $email_list;
-            $subject = "Playbasis user limit alert";
-            $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
+                //$this->load->library('email');
+                $this->load->library('parser');
+                $data = array(
+                    'user_left' => ($limit-$usersCount),
+                    'user_count' => $usersCount,
+                    'user_limit' => $limit,
+                    'domain_name_client' => $domain_name_client,
+                );
+                $config['mailtype'] = 'html';
+                $config['charset'] = 'utf-8';
+                $email = $email_list;
+                $subject = "Playbasis user limit alert";
+                $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
-			//email client to upgrade account
+                //email client to upgrade account
             /*$this->email->initialize($config);
             $this->email->clear();
             $this->email->from('info@playbasis.com', 'Playbasis');
@@ -784,26 +793,32 @@ class Player_model extends MY_Model
             $this->email->message($htmlMessage);
             $this->email->send();*/
 
-            $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
-            $this->amazon_ses->to('cscteam@playbasis.com','devteam@playbasis.com');
-            $this->amazon_ses->subject($subject);
-            $this->amazon_ses->message($htmlMessage);
-            $this->amazon_ses->send();
+                $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+                $this->amazon_ses->to('cscteam@playbasis.com','devteam@playbasis.com');
+                $this->amazon_ses->subject($subject);
+                $this->amazon_ses->message($htmlMessage);
+                $this->amazon_ses->send();
 
-            $this->updateLastAlertLimitUser($client_id, $site_id);
+                $this->updateLastAlertLimitUser($client_id, $site_id);
+            }
+
+            if ($usersCount >= $limit)
+                throw new Exception("USER_EXCEED");
 		}
 	}
 	private function updateLastAlertLimitUser($client_id, $site_id)
     {
-		$mongoDate = new MongoDate(time());
+		$mongoDate = new MongoDate();
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'_id' => $site_id
 		));
-		$this->mongo_db->update('playbasis_client_site', array(
-			'last_send_limit_users' => $mongoDate
-		));
+        $this->mongo_db->where(array(
+			"client_id" => $client_id,
+			"_id" => $site_id))->set(array(
+                "last_send_limit_users" => $mongoDate
+            ))->update("playbasis_client_site");
     }
 
     public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit){
@@ -1410,5 +1425,6 @@ class Player_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_quest_to_player');
         return $result ? $result[0] : array();
     }
+
 }
 ?>

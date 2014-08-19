@@ -313,8 +313,10 @@ class Player extends REST2_Controller
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
+
 		if($pb_player_id)
 			$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
+
 		$playerInfo = array(
 			'email' => $this->input->post('email'),
 			'image' => $this->input->post('image') ? $this->input->post('image') : "https://www.pbapp.net/images/default_profile.jpg",
@@ -351,7 +353,24 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
-		$pb_player_id = $this->player_model->createPlayer(array_merge($this->validToken, $playerInfo));
+
+        // get plan_id
+        $plan = $this->client_model->getPlanIDfromClientSite(
+            $this->validToken["client_id"],
+            $this->validToken["site_id"]);
+        try {
+            $player_limit = $this->client_model->getPlanLimitById(
+                $this->validToken["site_id"],
+                $plan["plan_id"],
+                "others",
+                "player");
+        } catch(Exception $e) {
+			$this->response($this->error->setError('INTERNAL_ERROR'), 200);
+        }
+
+		$pb_player_id = $this->player_model->createPlayer(
+            array_merge($this->validToken, $playerInfo), $player_limit);
+
 		/* track action=register automatically after creating a new player */
 		$action_name = 'register';
 		$action = $this->client_model->getAction(array(
@@ -369,7 +388,10 @@ class Player extends REST2_Controller
 				'url'          => null,
 			));
 		}
-		$this->response($this->resp->setRespond(), 200);
+        if ($pb_player_id)
+            $this->response($this->resp->setRespond(), 200);
+        else
+			$this->response($this->error->setError('LIMIT_EXCEED'), 200);
 	}
 	public function update_post($player_id = '')
 	{
