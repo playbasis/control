@@ -28,14 +28,15 @@
 			            <tr>
 				            <td><?php echo $this->lang->line('form_channel'); ?>:</td>
 				            <td>
-					            <select name = 'channel' disabled>
-						            <option selected='selected' value="paypal">PayPal</option>
+					            <select name="channel" disabled>
+						            <option selected="selected" value="paypal">PayPal</option>
 					            </select>
 				            </td>
 			            </tr>
 			            <tr>
+				            <?php $plan = $this->session->userdata('plan'); ?>
 				            <td><?php echo $this->lang->line('form_price'); ?> (USD):</td>
-				            <td><input type="text" value="<?php echo $this->session->userdata('price'); ?>" disabled /></td>
+				            <td><input type="text" value="<?php echo $plan['price']; ?>" disabled /></td>
 			            </tr>
 			            <tr>
 				            <td><?php echo $this->lang->line('form_months'); ?></td>
@@ -52,7 +53,7 @@
 			            <script async="async" src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=pechpras-facilitator@playbasis.com"
 			                    data-button="subscribe"
 			                    data-name="Playbasis Platform Subscription"
-			                    data-amount="<?php echo $this->session->userdata('price'); ?>"
+			                    data-amount="<?php echo $plan['price']; ?>"
 			                    data-currency="USD"
 			                    data-recurrence="<?php echo $this->session->userdata('months'); ?>"
 			                    data-period="M"

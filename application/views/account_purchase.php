@@ -28,9 +28,9 @@
 			            <tr>
 				            <td><span class="required">*</span> <?php echo $this->lang->line('form_package'); ?>:</td>
 				            <td>
-					            <select name="price">
-						            <option value="29">Starter ($29)</option>
-						            <option selected="selected" value="99">Standard ($99)</option>
+					            <?php $plan = $this->session->userdata('plan'); ?>
+					            <select disabled>
+						            <option selected="selected"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option>
 					            </select>
 				            </td>
 			            </tr>
