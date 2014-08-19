@@ -20,16 +20,24 @@
 <div class="tab-content">
 <div class="tab-social">
 
-    <h3><?php echo $this->lang->line('text_social_login_widget'); ?></h3>
+    <h3>Social Login<?php echo $this->lang->line('text_social_login_widget'); ?></h3>
 
     <div class="row">
+
+        <div class="span11">
+            <div class="controls">
+                Manage Social :
+                <a href="javascript:void(0);" onclick="saveSocial()" class="btn btn-primary">Save</a>
+            </div>
+        </div>
+
         <div class="span11">
             <form class="form-horizontal">
                 <div id="social-panel">
 
                     <!-- start -->
                     <div class="social-container social-blue">
-                        <div class="social">
+                        <div class="social" id="social-facebook">
 
                             <div class="social-header social-box-header">
                                 <i class="fa fa-facebook"></i>
@@ -82,7 +90,7 @@
 
                     <!-- start -->
                     <div class="social-container social-azure">
-                        <div class="social">
+                        <div class="social" id="social-twitter">
 
                             <div class="social-header social-box-header">
                                 <i class="fa fa-twitter"></i>
@@ -135,7 +143,7 @@
 
                     <!-- start -->
                     <div class="social-container social-scarlet">
-                        <div class="social">
+                        <div class="social" id="social-google-plus">
 
                             <div class="social-header social-box-header">
                                 <i class="fa fa-google-plus"></i>
@@ -173,9 +181,9 @@
                                     <button class="btn social-controls-cancel" type="button">Cancel</button>
                                 </div>
 
-                                <div class="social-status enabled">
+                                <div class="social-status disabled">
                                     <div class="social-status-toggle">
-                                        <span>enabled</span>
+                                        <span>disabled</span>
                                     </div>
                                 </div>
 
@@ -188,7 +196,7 @@
 
                     <!-- start -->
                     <div class="social-container social-cesocialan">
-                        <div class="social">
+                        <div class="social" id="social-linkedin">
 
                             <div class="social-header social-box-header">
                                 <i class="fa fa-linkedin-square"></i>
@@ -226,9 +234,9 @@
                                     <button class="btn social-controls-cancel" type="button">Cancel</button>
                                 </div>
 
-                                <div class="social-status enabled">
+                                <div class="social-status disabled">
                                     <div class="social-status-toggle">
-                                        <span>enabled</span>
+                                        <span>disabled</span>
                                     </div>
                                 </div>
 
@@ -241,7 +249,7 @@
 
                     <!-- start -->
                     <div class="social-container social-persian-blue">
-                        <div class="social">
+                        <div class="social" id="social-instagram">
 
                             <div class="social-header social-box-header">
                                 <i class="fa fa-instagram"></i>
@@ -279,9 +287,9 @@
                                     <button class="btn social-controls-cancel" type="button">Cancel</button>
                                 </div>
 
-                                <div class="social-status enabled">
+                                <div class="social-status disabled">
                                     <div class="social-status-toggle">
-                                        <span>enabled</span>
+                                        <span>disabled</span>
                                     </div>
                                 </div>
 

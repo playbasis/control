@@ -73,5 +73,9 @@ class Widget extends MY_Controller
         $this->data['main'] = 'widget_social_login';
         $this->render_page('template');
     }
+
+    public function social_manage(){
+
+    }
 }
 ?>
