@@ -57,5 +57,21 @@ class Widget extends MY_Controller
         $this->data['points_data'] = $points_data;
         $this->render_page('widget_preview');
     }
+
+    public function social_login(){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
+
+        $this->data['site_data'] = $site_data;
+//        $this->render_page('widget_social_login');
+        $this->data['main'] = 'widget_social_login';
+        $this->render_page('template');
+    }
 }
 ?>

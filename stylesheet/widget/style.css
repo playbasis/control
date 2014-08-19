@@ -1,0 +1,1100 @@
+a
+#social-masonry {
+    overflow: hidden;
+}
+
+.widget-page .tab-social {
+    padding: 30px;
+    background: #FFF;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+/* Isotope Styling
+===================================*/
+
+/**** Isotope Filtering ****/
+
+.isotope-item {
+    z-index: 2;
+}
+
+.isotope-hidden.isotope-item {
+    pointer-events: none;
+    z-index: 1;
+}
+
+/**** Isotope CSS3 transitions ****/
+
+.isotope,
+.isotope .isotope-item {
+    -webkit-transition-duration: 0.4s;
+    -moz-transition-duration: 0.4s;
+    -ms-transition-duration: 0.4s;
+    -o-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.isotope {
+    -webkit-transition-property: height, width;
+    -moz-transition-property: height, width;
+    -ms-transition-property: height, width;
+    -o-transition-property: height, width;
+    transition-property: height, width;
+}
+
+.isotope .isotope-item {
+    -webkit-transition-property: -webkit-transform, opacity;
+    -moz-transition-property:    -moz-transform, opacity;
+    -ms-transition-property:     -ms-transform, opacity;
+    -o-transition-property:      -o-transform, opacity;
+    transition-property:         transform, opacity;
+}
+
+/**** disabling Isotope CSS3 transitions ****/
+
+.isotope.no-transition,
+.isotope.no-transition .isotope-item,
+.isotope .isotope-item.no-transition {
+    -webkit-transition-duration: 0s;
+    -moz-transition-duration: 0s;
+    -ms-transition-duration: 0s;
+    -o-transition-duration: 0s;
+    transition-duration: 0s;
+}
+
+/* End: Isotope CSS3 transitions */
+
+
+/* Reusable code for all the colorful boxes
+=============================================*/
+.social-box {
+    float: left;
+    width: 110px;
+    height: 110px;
+    cursor: pointer;
+    overflow: hidden;
+    margin-right: 20px;
+    text-align: center;
+    border: #ddd solid 1px;
+    background-color: #f2f2f2;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-transition: border-color 0.3s ease-in-out;
+    -moz-transition: border-color 0.3s ease-in-out;
+    -ms-transition: border-color 0.3s ease-in-out;
+    -o-transition: border-color 0.3s ease-in-out;
+    transition: border-color 0.3s ease-in-out;
+}
+.social-box:hover {
+    background-color: #fff;
+}
+.social-box-header {
+    width: 100%;
+    height: 76px;
+    color: #fff;
+    border-bottom: #eee solid 1px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    -webkit-transition: background-color 0.3s ease-in-out;
+    -moz-transition: background-color 0.3s ease-in-out;
+    -ms-transition: background-color 0.3s ease-in-out;
+    -o-transition: background-color 0.3s ease-in-out;
+    transition: background-color 0.3s ease-in-out;
+}
+.social-box-header > i {
+    display: block;
+    font-size: 36px;
+    padding-top: 16px;
+    line-height: normal;
+}
+.social-box-footer {
+    color: #666;
+    padding-top: 7px;
+    font-weight: bold;
+    line-height: 16px;
+}
+.social-box-footer > span {
+    display: block;
+    text-transform: capitalize;
+    -webkit-transition: color 0.3s ease-in-out;
+    -moz-transition: color 0.3s ease-in-out;
+    -ms-transition: color 0.3s ease-in-out;
+    -o-transition: color 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out;
+}
+
+
+/* social-box - special cases
+=============================================*/
+
+/* text highlight - gets some color down below */
+.social-box-footer > span.social-box-highlight {
+    font-size: 1.125em;
+}
+
+/* for boxes with two lines of text */
+.social-box.social-box-extra .social-box-header {
+    height: 69px;
+}
+.social-box.social-box-extra .social-box-footer {
+    padding-top: 4px;
+}
+
+
+/* social-box colors
+=============================================*/
+
+/* blue - social box default ( O: 019CC7 ) */
+.social-box:hover {
+    border-color: #2fabe9;
+}
+.social-name > h4,
+.social-box-header,
+.social-box:hover .social-box-header {
+    background-color: #2fabe9;
+}
+.social-input-well > a,
+span.social-box-highlight,
+.social-box:hover span.social-box-highlight {
+    color: #2fabe9;
+}
+
+/* azure */
+.social-azure .social-box:hover {
+    border-color: #2fabe9;
+}
+.social-azure .social-name > h4,
+.social-azure .social-box-header,
+.social-azure .social-box:hover .social-box-header {
+    background-color: #2fabe9;
+}
+.social-azure .social-input-well > a,
+.social-azure .social-title > i,
+.social-azure .social-description > i,
+.social-azure span.social-box-highlight,
+.social-azure .social-box:hover span.social-box-highlight {
+    color: #2fabe9;
+}
+.social-azure .social-title > input:hover,
+.social-azure .social-description > textarea:hover {
+    border-left: #2fabe9 solid 2px !important;
+}
+
+/* cerulean */
+.social-cerulean .social-box:hover {
+    border-color: #0274b3;
+}
+.social-cerulean .social-name > h4,
+.social-cerulean .social-box-header,
+.social-cerulean .social-box:hover .social-box-header {
+    background-color: #0274b3;
+}
+.social-cerulean .social-input-well > a,
+.social-cerulean .social-title > i,
+.social-cerulean .social-description > i,
+.social-cerulean span.social-box-highlight,
+.social-cerulean .social-box:hover span.social-box-highlight {
+    color: #0274b3;
+}
+.social-cerulean .social-title > input:hover,
+.social-cerulean .social-description > textarea:hover {
+    border-left: #0274b3 solid 2px !important;
+}
+
+/* blue */
+.social-blue .social-box:hover {
+    border-color: #3b579d;
+}
+.social-blue .social-name > h4,
+.social-blue .social-box-header,
+.social-blue .social-box:hover .social-box-header {
+    background-color: #3b579d;
+}
+.social-blue .social-input-well > a,
+.social-blue .social-title > i,
+.social-blue .social-description > i,
+.social-blue span.social-box-highlight,
+.social-blue .social-box:hover span.social-box-highlight {
+    color: #3b579d;
+}
+.social-blue .social-title > input:hover,
+.social-blue .social-description > textarea:hover {
+    border-left: #3b579d solid 2px !important;
+}
+
+/* persian blue */
+.social-persian-blue .social-box:hover {
+     border-color: #39648D;
+ }
+.social-persian-blue .social-name > h4,
+.social-persian-blue .social-box-header,
+.social-persian-blue .social-box:hover .social-box-header {
+    background-color: #39648D;
+}
+.social-persian-blue .social-input-well > a,
+.social-persian-blue .social-title > i,
+.social-persian-blue .social-description > i,
+.social-persian-blue span.social-box-highlight,
+.social-persian-blue .social-box:hover span.social-box-highlight {
+    color: #39648D;
+}
+.social-persian-blue .social-title > input:hover,
+.social-persian-blue .social-description > textarea:hover {
+    border-left: #39648D solid 2px !important;
+}
+
+/* scarlet */
+.social-scarlet .social-box:hover {
+    border-color: #c95f45;
+}
+.social-scarlet .social-name > h4,
+.social-scarlet .social-box-header,
+.social-scarlet .social-box:hover .social-box-header {
+    background-color: #c95f45;
+}
+.social-scarlet .social-input-well > a,
+.social-scarlet .social-title > i,
+.social-scarlet .social-description > i,
+.social-scarlet span.social-box-highlight,
+.social-scarlet .social-box:hover span.social-box-highlight {
+    color: #c95f45;
+}
+.social-scarlet .social-title > input:hover,
+.social-scarlet .social-description > textarea:hover {
+    border-left: #c95f45 solid 2px !important;
+}
+
+/* orange */
+.social-orange .social-box:hover {
+    border-color: #fa5833;
+}
+.social-orange .social-name > h4,
+.social-orange .social-box-header,
+.social-orange .social-box:hover .social-box-header {
+    background-color: #fa5833;
+}
+.social-orange .social-input-well > a,
+.social-orange .social-title > i,
+.social-orange .social-description > i,
+.social-orange span.social-box-highlight,
+.social-orange .social-box:hover span.social-box-highlight {
+    color: #fa5833;
+}
+.social-orange .social-title > input:hover,
+.social-orange .social-description > textarea:hover {
+    border-left: #fa5833 solid 2px !important;
+}
+
+/* yellow ( previously lightorange ) */
+.social-yellow .social-box:hover {
+    border-color: #f4a70c;
+}
+.social-yellow .social-name > h4,
+.social-yellow .social-box-header,
+.social-yellow .social-box:hover .social-box-header {
+    background-color: #f4a70c;
+}
+.social-yellow .social-input-well > a,
+.social-yellow .social-title > i,
+.social-yellow .social-description > i,
+.social-yellow span.social-box-highlight,
+.social-yellow .social-box:hover span.social-box-highlight {
+    color: #f4a70c;
+}
+.social-yellow .social-title > input:hover,
+.social-yellow .social-description > textarea:hover {
+    border-left: #f4a70c solid 2px !important;
+}
+
+/* green */
+.social-green .social-box:hover {
+    border-color: #109648;
+}
+.social-green .social-name > h4,
+.social-green .social-box-header,
+.social-green .social-box:hover .social-box-header {
+    background-color: #109648;
+}
+.social-green .social-input-well > a,
+.social-green .social-title > i,
+.social-green .social-description > i,
+.social-green span.social-box-highlight,
+.social-green .social-box:hover span.social-box-highlight {
+    color: #109648;
+}
+.social-green .social-title > input:hover,
+.social-green .social-description > textarea:hover {
+    border-left: #109648 solid 2px !important;
+}
+
+/* purple */
+.social-purple .social-box:hover {
+    border-color: #9440ED;
+}
+.social-purple .social-name > h4,
+.social-purple .social-box-header,
+.social-purple .social-box:hover .social-box-header {
+    background-color: #9440ED;
+}
+.social-purple .social-input-well > a,
+.social-purple .social-title > i,
+.social-purple .social-description > i,
+.social-purple span.social-box-highlight,
+.social-purple .social-box:hover span.social-box-highlight {
+    color: #9440ED;
+}
+.social-purple .social-title > input:hover,
+.social-purple .social-description > textarea:hover {
+    border-left: #9440ED solid 2px !important;
+}
+
+/* pink */
+.social-pink .social-box:hover {
+    border-color: #e42b75;
+}
+.social-pink .social-name > h4,
+.social-pink .social-box-header,
+.social-pink .social-box:hover .social-box-header {
+    background-color: #e42b75;
+}
+.social-pink .social-input-well > a,
+.social-pink .social-title > i,
+.social-pink .social-description > i,
+.social-pink span.social-box-highlight,
+.social-pink .social-box:hover span.social-box-highlight {
+    color: #e42b75;
+}
+.social-pink .social-title > input:hover,
+.social-pink .social-description > textarea:hover {
+    border-left: #e42b75 solid 2px !important;
+}
+
+
+/* social Containers
+===================================*/
+.social-container {
+    float: left;
+    margin: 9px;
+    width: 162px;
+    height: 202px;
+    display: block;
+    cursor: pointer;
+    /*    -webkit-transition: all 0.4s ease-in-out;
+           -moz-transition: all 0.4s ease-in-out;
+            -ms-transition: all 0.4s ease-in-out;
+             -o-transition: all 0.4s ease-in-out;
+                transition: all 0.4s ease-in-out;*/
+}
+.social-container.large {
+    width: 522px;
+    height: 642px;
+    cursor: auto;
+}
+
+.social {
+    width: 160px;
+    height: 200px;
+    border: #ddd solid 1px;
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -ms-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+.large .social {
+    width: 520px;
+    height: 640px;
+}
+/* TODO: Stop hacking */
+.social input,
+.social textarea {
+    outline: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+/* Placeholder for javascript animations */
+/*.social-tmp {
+	width: 0;
+	height: 202px;
+	margin: 9px 0;
+	border: none;
+	background: none;
+	float: left;
+    -webkit-transition: width 0.4s ease-in-out;
+       -moz-transition: width 0.4s ease-in-out;
+        -ms-transition: width 0.4s ease-in-out;
+         -o-transition: width 0.4s ease-in-out;
+            transition: width 0.4s ease-in-out;
+}*/
+
+
+/* Add social
+===================================*/
+.add-social {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    color: #666;
+    cursor: pointer;
+    text-align: center;
+    border: #ddd solid 1px;
+    background-color: #f5f5f5;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -ms-transition: all 0.4s ease-in-out;
+    -o-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+.add-social:hover {
+    color: #eee;
+    background-color: #666;
+}
+.large .add-social {
+    opacity: 0;
+}
+.add-social > i {
+    display: block;
+    font-size: 72px;
+    padding: 36px 0;
+}
+.add-social > span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+/* social Header
+===================================*/
+.social-header {
+    height: 120px;
+    text-align: center;
+    /*border-color: #eee;*/
+    /*border-width: 0;*/
+    /*border-style: solid;*/
+}
+.social-header > i {
+    font-size: 48px;
+    padding-top: 26px;
+}
+
+
+/* social Minimize
+===================================*/
+.social-minimize {
+    display: none;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #ccc;
+    opacity: 0.6;
+    background: url(../../image/close.svg) top right no-repeat;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.large .social-minimize {
+    display: block;
+}
+.large .social-minimize:hover {
+    color: #fff;
+    opacity: 1;
+}
+.social-minimize span {
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 14px;
+    text-shadow: 0 -1px rgb(0,0,0);
+    text-shadow: 0 -1px rgba(0,0,0,0.6);
+    position: absolute;
+    top: 3px;
+    right: 4px;
+}
+
+/* social Name
+===================================*/
+.social-name {
+    width: 100%;
+    position: absolute;
+    top: 109px;
+    text-align: center;
+    z-index: 1;
+}
+.large .social-name {
+    display: none;
+}
+.social-name > h4 {
+    margin: 0 5px;
+    padding: 0 7px;
+    max-width: 134px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 10px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: #fff;
+    border: #fff solid 1px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+
+/* social Content
+===================================*/
+.social-content {
+    opacity: 0;
+    width: 480px;
+    padding: 20px;
+    margin-left: -10px;
+    -webkit-transition: all 0.1s ease-out;
+    -moz-transition: all 0.1s ease-out;
+    -ms-transition: all 0.1s ease-out;
+    -o-transition: all 0.1s ease-out;
+    transition: all 0.1s ease-out;
+}
+.large .social-content {
+    opacity: 1;
+    margin-left: 0;
+}
+
+.social-title,
+.social-description {
+    font-size: 12px;
+    position: relative;
+}
+
+.social-title > input,
+.social-description > textarea {
+    width: 480px;
+    padding: 2px 6px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    height: auto;
+    border: none;
+    color: #333333;
+    line-height: 18px;
+    /*outline: none;*/
+    /*box-shadow: none;*/
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+.social-title.error > input {
+    background-color: #f6e6e6;
+}
+.social-title > input:hover,
+.social-description > textarea:hover {
+    background-color: #f6f6f6;
+    border-left: #666 solid 2px !important;
+}
+.social-title.error > input:hover {
+    background-color: #f2e2e2;
+}
+.social-title > i,
+.social-description > i {
+    display: none;
+    color: #666;
+    position: absolute;
+    top: 0;
+    left: -18px;
+}
+.social-title > i {
+    top: -6px;
+}
+.social-title:hover > i,
+.social-description:hover > i {
+    display: block;
+}
+
+.social-title > input::-webkit-input-placeholder {
+    color: #99a;
+    padding: 2px 0;
+}
+.social-title > input:-moz-placeholder { /* Firefox 18- */
+    color: #99a;
+    padding: 2px 0;
+}
+.social-title > input::-moz-placeholder {  /* Firefox 19+ */
+    color: #99a;
+    padding: 2px 0;
+}
+.social-title > input:-ms-input-placeholder {
+    color: #99a;
+    padding: 2px 0;
+}
+
+.social-title > input:focus,
+.social-description > textarea:focus {
+    color: #000;
+    background-color: #f6f6f6;
+    /*outline: #ccc dotted 2px;*/
+    border: #ccc dotted 2px;
+}
+.social-title.error > input:focus {
+    background-color: #f6e6e6;
+    outline: #ebb dotted 2px;
+}
+
+.social-title > input {
+    font-size: 18px;
+    font-weight: bold;
+    margin: -6px 0 1px -6px;
+}
+
+.social-description > textarea {
+    height: 56px;
+    color: #666666;
+    font-size: 12px;
+    margin: 0 0 3px -6px;
+    resize: none;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+
+/* social Templates
+===================================*/
+.social-templates {
+    margin: 9px 0 0;
+    color: #666;
+}
+.social-templates > h4 {
+    font-size: 14px;
+    margin: 0 0 10px;
+}
+.social-templates > div {
+    float: left;
+}
+
+.social-template {
+    float: none;
+    position: relative;
+}
+.social-template .social-template-provider {
+    background-color: #999;
+}
+.social-template .social-template-provider > i {
+    font-size: 30px;
+    padding: 12px 0 2px;
+}
+.social-template .social-template-reward {
+}
+.social-template .social-template-reward span.social-template-reward-quantity {
+    color: #999;
+}
+
+.social-templates-low .social-template {
+    width: 118px;
+    margin: 0 10px 10px 0;
+}
+
+.social-templates-medium .social-template {
+    width: 148px;
+    height: 171px;
+    font-size: 14px;
+    margin: 0 10px 10px 0;
+}
+.social-templates-medium .social-template-provider {
+    height: 99px;
+}
+.social-templates-medium .social-template-provider > i {
+    font-size: 48px;
+    padding: 16px 0 2px;
+}
+.social-templates-medium .social-template-reward {
+    padding-top: 12px;
+}
+.social-templates-medium .social-template-reward-quantity {
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.social-templates-high .social-template {
+    width: 188px;
+    height: 354px;
+    font-size: 18px;
+    margin: 0 0 10px;
+}
+.social-templates-high .social-template-provider {
+    height: 219px;
+}
+.social-templates-high .social-template-provider > i {
+    font-size: 72px;
+    padding: 54px 0 2px;
+}
+.social-templates-high .social-template-reward {
+    padding-top: 32px;
+}
+.social-templates-high .social-template-reward-quantity {
+    font-size: 24px;
+    line-height: 36px;
+}
+
+
+/* social Action
+===================================*/
+.social-actions {
+    width: 100%;
+    float: left;
+    position: relative;
+    /*margin: 5px 0;*/
+    margin: 0;
+    /*margin: 35px 0 10px;*/
+    /*background: #fcc;*/
+}
+.social-actions h4 {
+    margin: 0 0 9px;
+    font-size: 16px;
+    line-height: 18px;
+}
+
+.social-action-conditions {
+    height: 152px;
+    overflow: hidden;
+}
+
+
+/* social Input Fields
+===================================*/
+.social-input {
+    margin: 0 0 10px;
+    position: relative;
+}
+.social-input > label {
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    color: #333;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: bold;
+}
+.social-input.active > label {
+    color: #444;
+}
+.social-input > input,
+.social-input > textarea {
+    margin: 0;
+    width: 410px;
+    height: 25px;
+    outline: none;
+    font-size: 12px;
+    background: #fff;
+    border: #ccc solid 1px;
+    padding: 2px 10px 2px 58px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.social-input > input:focus,
+.social-input > textarea:focus {
+    color: #333;
+    border: #999 solid 1px !important;
+}
+.social-input > input.action-url {
+    width: 240px;
+    padding-left: 96px;
+}
+.social-input > input.action-counter {
+    width: 260px;
+    padding-left: 76px;
+}
+.social-input > div {
+    display: none;
+    margin-top: -3px;
+    padding: 13px 10px 10px;
+    font-size: 12px;
+    line-height: 18px;
+    height: 18px;
+    color: #333;
+    /*color: #525c66;*/
+    background: #f2f2f2;
+    border: #ccc solid 1px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+.social-input > div.social-input-error {
+    color: #322;
+    background: #f2d2d2;
+    border: #caa solid 1px;
+}
+.social-input > div > input {
+    margin: 0;
+}
+.social-input > div > label {
+    display: inline-block;
+    font-size: 12px;
+    margin: 0;
+}
+
+.toggle-social-action-date-restrictions button {
+    width: 348px;
+    height: 30px;
+}
+
+.social-input-well {
+    float: left;
+    width: 468px;
+    /*height: 30px;*/
+    margin: 10px 0 0;
+    padding: 3px 5px 1px;
+}
+.social-input-small {
+    display: inline-block;
+}
+.social-input-small > label {
+    color: #333;
+    font-size: 12px;
+    display: inline-block;
+}
+.social-input-small > input {
+    width: 66px;
+    height: 12px;
+    padding: 4px;
+    font-size: 11px;
+    line-height: 12px;
+    margin: 0;
+    border: #ccc solid 1px;
+    outline: none;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.social-input-small > input:focus {
+    border: #666 solid 1px !important;
+}
+.social-date-toggle {
+    margin: 0 5px;
+    display: inline-block;
+}
+.social-input-well > a {
+    float: right;
+    font-size: 18px;
+    line-height: 25px;
+}
+.social-input-well > a:hover {
+    color: #27ae60;
+    /*color: #bd312c;*/
+    text-decoration: none;
+}
+
+.social-action-date-restrictions.social-input-well {
+    display: none;
+    position: absolute;
+    top: 139px;
+}
+.social-reward-editor.social-input-well {
+    display: none;
+}
+.social-reward-editor.social-input-well .social-input-small > input {
+    width: 134px;
+}
+
+
+/* social Reward
+===================================*/
+.social-rewards {
+    width: 100%;
+    float: left;
+    /*margin: 10px 0 5px;*/
+    margin: 10px 0 0;
+}
+.social-rewards h4 {
+    margin: 0 0 9px;
+    font-size: 16px;
+}
+
+.add-social-button {
+    float: left;
+    width: 110px;
+    height: 110px;
+    color: #666;
+    cursor: pointer;
+    text-align: center;
+    margin-right: 20px;
+    border: #ddd solid 1px;
+    background-color: #eee;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.add-social-button:hover {
+    color: #eee;
+    background-color: #666;
+}
+.add-social-button > i {
+    display: block;
+    font-size: 48px;
+    padding: 16px 0;
+}
+.add-social-button > span {
+    font-weight: bold;
+}
+
+
+/* social Tag Editor
+===================================*/
+.tag-editor {
+    float: left;
+    margin: 5px 0 0;
+}
+
+
+/* social Footer
+===================================*/
+.social-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    text-align: center;
+    border-width: 0;
+    border-style: solid;
+    border-color: #bbbbc3;
+    background-color: #f5f5f5;
+    -webkit-transition: height 0.4s ease-in-out;
+    -moz-transition: height 0.4s ease-in-out;
+    -ms-transition: height 0.4s ease-in-out;
+    -o-transition: height 0.4s ease-in-out;
+    transition: height 0.4s ease-in-out;
+}
+.large .social-footer {
+    height: 40px;
+    border-width: 1px 0 0;
+}
+.social-controls {
+    float: left;
+    display: none;
+    margin: 0 10px;
+    line-height: 39px;
+}
+.large .social-controls {
+    display: block;
+}
+.social-controls > button {
+    font-size: 12px;
+}
+
+
+/* social Status Toggle
+===================================*/
+
+/* Toggle Background */
+.social-status {
+    display: block;
+    width: 90px;
+    height: 30px;
+    position: absolute;
+    right: 35px;
+    bottom: 18px;
+    cursor: pointer;
+    background-color: #27ae60;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+.large .social-status {
+    right: 5px;
+    bottom: 5px;
+}
+.social-status.enabled {
+    background-color: #27ae60;
+}
+.social-status.disabled {
+    background-color: #d1d2d4;
+}
+
+/* Toggle Button */
+.social-status-toggle {
+    display: block;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: 3px;
+    margin: 3px 0;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 24px;
+    background: #d1d2d4;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.enabled .social-status-toggle {
+    right: 3px;
+    color: #fff;
+    background: #d1d2d4;
+}
+.disabled .social-status-toggle {
+    right: 62px;
+    color: #7f8c8d;
+    background: #7f8c8d;
+}
+
+/* Toggle Text */
+.social-status-toggle span {
+    margin: 0 0 0 -82px;
+    text-transform: capitalize;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.enabled .social-status-toggle span {
+    margin: 0 0 0 -82px;
+}
+.disabled .social-status-toggle span {
+    margin: 0 -82px 0 0;
+}
+
+
+/* Custom styles for new social
+===================================*/
+#add-social .social-header {
+    color: #999;
+    background: #f2f2f2;
+}
+#add-social .social-description,
+#add-social .social-templates {
+    opacity: 0;
+    display: none;
+}
+#add-social .social-content {
+    opacity: 0;
+    margin-left: -10px;
+}

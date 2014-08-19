@@ -106,25 +106,6 @@ function initRuleIsotopes($container) {
 
             template = Handlebars.templates['rule'];
 
-            // TODO: Stop storing colors and icons in divs
-            // newRule = [{
-            //     'addRule' : true,
-            //     'color' : $(this).parent().attr('class'),
-            //     'name' : $rule.find('#add-rule-title').val(),
-            //     'description' : $rule.find('#add-rule-description').val(),
-            //     'action' : {
-            //         'icon' : $(this).find('.rule-template-action > i').attr('class'),
-            //         'title' : $(this).find('.rule-template-action > span').html()
-            //     },
-            //     'rewards' : [
-            //         {
-            //             'icon' : 'icon-heart',
-            //             'title' : $(this).find('.rule-template-reward-type').html(),
-            //             'quantity' : $(this).find('.rule-template-reward-quantity').html()
-            //         }
-            //     ]
-            // }];
-
             action_name = $(this).find('.rule-template-action > span').html().toLowerCase();
             $.each( $.parseJSON(jsonString_Action), function(i,v) {
                 if ( v.name == action_name ) {

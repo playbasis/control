@@ -8,6 +8,7 @@
         <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
         <ul class="nav nav-tabs">
+      <li> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login'));?></li>
 	  <li class="active"><a href="#widget-leaderboard"  data-toggle="tab"><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
 	  <li><a href="#widget-livefeed" data-toggle="tab"><?php echo $this->lang->line('column_livefeed'); ?></a></li>
 	  <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
@@ -15,6 +16,70 @@
 	</ul>
 
 	<div class="tab-content">
+        <div class="tab-pane" id="widget-social-login">
+
+            <h3><?php echo $this->lang->line('text_social_login_widget'); ?></h3>
+
+            <div class="row">
+                <div class="span5">
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
+                            <div class="controls">
+                                <div class="input-prepend">
+                                    <span class="colorSelectorHolder add-on"></span>
+                                    <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
+                            <div class="controls">
+                                <select class="wg-displaypoint" >
+                                    <option value="point">Point</option>
+                                    <option value="exp">EXP</option>
+                                    <?php
+                                    foreach($points_data as $p){
+                                        ?>
+                                        <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" ></label>
+                            <div class="controls">
+                                <a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="span11">
+                    <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=profile" width="100%" height="280" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div><!-- .tab-pane -->
+
+
 		<div class="tab-pane active" id="widget-leaderboard">
 			
 			<h3><?php echo $this->lang->line('text_leaderboard_widget'); ?></h3>
@@ -66,12 +131,12 @@
 				</form>
 
 		        	</div>
-		        	<div class="span7">
-		        		<iframe id="iframe-leaderboard" src="<?php echo base_url();?>index.php/widget/preview?type=leaderboard" width="100%" height="400" frameborder="0"></iframe>
-		        	</div>
-		        	</div>
-	        	</div><!-- .tab-pane -->
-	        	<div class="tab-pane" id="widget-livefeed">
+                <div class="span7">
+                    <iframe id="iframe-leaderboard" src="<?php echo base_url();?>index.php/widget/preview?type=leaderboard" width="100%" height="400" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div><!-- .tab-pane -->
+        <div class="tab-pane" id="widget-livefeed">
 			
 			<h3><?php echo $this->lang->line('text_livefeed_widget'); ?></h3>
 			
@@ -110,130 +175,130 @@
 					
 				</form>
 
-		        	</div>
-		        	<div class="span7">
-		        		<iframe id="iframe-livefeed" src="<?php echo base_url();?>index.php/widget/preview?type=livefeed" width="100%" height="500" frameborder="0"></iframe>
-		        	</div>
-		        	</div>
-	        	</div><!-- .tab-pane -->
-	        	<div class="tab-pane" id="widget-profile">
+                </div>
+                <div class="span7">
+                    <iframe id="iframe-livefeed" src="<?php echo base_url();?>index.php/widget/preview?type=livefeed" width="100%" height="500" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div><!-- .tab-pane -->
+        <div class="tab-pane" id="widget-profile">
 
             <h3><?php echo $this->lang->line('text_profile_widget'); ?></h3>
 			
 			<div class="row">
-		        	<div class="span6 offset3">
-				<form class="form-horizontal">
-					<div class="control-group">
-						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
-						<div class="controls">
-							<input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-						<div class="controls">
-							<div class="input-prepend">
-							  <span class="colorSelectorHolder add-on"></span>
-							  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-							</div>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
-						<div class="controls">
-							<select class="wg-displaypoint" >
-							  <option value="point">Point</option>
-							  <option value="exp">EXP</option>
-                                <?php
-                                foreach($points_data as $p){
-                                ?>
-                                    <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
-                                <?php
-                                }
-                                ?>
-							</select>
-						</div>
-					</div>
-                    <div class="control-group">
-                        <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
-                        <div class="controls">
-                            <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                <div class="span6 offset3">
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                            </div>
                         </div>
-                    </div>
 
-					<div class="control-group">
-						<label class="control-label" ></label>
-						<div class="controls">
-							<a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
-						</div>
-					</div>
-					
-				</form>
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
+                            <div class="controls">
+                                <div class="input-prepend">
+                                  <span class="colorSelectorHolder add-on"></span>
+                                  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
+                            <div class="controls">
+                                <select class="wg-displaypoint" >
+                                  <option value="point">Point</option>
+                                  <option value="exp">EXP</option>
+                                    <?php
+                                    foreach($points_data as $p){
+                                    ?>
+                                        <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                            </div>
+                        </div>
 
-		        	</div>
-		        	<div class="span11">
-		        		<iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=profile" width="100%" height="280" frameborder="0"></iframe>
-		        	</div>
-		        	</div>
-	        	</div><!-- .tab-pane -->
-	        	<div class="tab-pane" id="widget-userbar">
+                        <div class="control-group">
+                            <label class="control-label" ></label>
+                            <div class="controls">
+                                <a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="span11">
+                    <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=profile" width="100%" height="280" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div><!-- .tab-pane -->
+        <div class="tab-pane" id="widget-userbar">
 
             <h3><?php echo $this->lang->line('text_userbar_widget'); ?></h3>
 			
 			<div class="row">
-		        	<div class="span6 offset3">
-				<form class="form-horizontal">
-					
-					<div class="control-group">
-						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-						<div class="controls">
-							<div class="input-prepend">
-							  <span class="colorSelectorHolder add-on"></span>
-							  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-							</div>
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
-						<div class="controls">
-							<select class="wg-displaypoint" >
-							  <option value="point">Point</option>
-							  <option value="exp">EXP</option>
-                                <?php
-                                foreach($points_data as $p){
-                                ?>
-                                    <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
-                                <?php
-                                }
-                                ?>
-							</select>
-						</div>
-					</div>
-                    <div class="control-group">
-                        <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
-                        <div class="controls">
-                            <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                <div class="span6 offset3">
+                    <form class="form-horizontal">
+
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
+                            <div class="controls">
+                                <div class="input-prepend">
+                                  <span class="colorSelectorHolder add-on"></span>
+                                  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="control-group">
+                            <label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
+                            <div class="controls">
+                                <select class="wg-displaypoint" >
+                                  <option value="point">Point</option>
+                                  <option value="exp">EXP</option>
+                                    <?php
+                                    foreach($points_data as $p){
+                                    ?>
+                                        <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                            </div>
+                        </div>
 
-					<div class="control-group">
-						<label class="control-label" ></label>
-						<div class="controls">
-							<a href="javascript:void(0);" onclick="reloadUserbar()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
-						</div>
-					</div>
-					
-				</form>
+                        <div class="control-group">
+                            <label class="control-label" ></label>
+                            <div class="controls">
+                                <a href="javascript:void(0);" onclick="reloadUserbar()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                            </div>
+                        </div>
 
-		        	</div>
-		        	<div class="span11">
-		        		<iframe id="iframe-userbar" src="<?php echo base_url();?>index.php/widget/preview?type=userbar" width="100%" height="280" frameborder="0"></iframe>
-		        	</div>
-		        	</div>
-	        	</div><!-- .tab-pane -->
+                    </form>
+
+                </div>
+                <div class="span11">
+                    <iframe id="iframe-userbar" src="<?php echo base_url();?>index.php/widget/preview?type=userbar" width="100%" height="280" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div><!-- .tab-pane -->
 	        </div>
         </div><!-- .content -->
     </div><!-- .box -->

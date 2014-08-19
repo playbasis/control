@@ -29,6 +29,7 @@ $lang['column_leaderboard']            			= 'Leaderboard';
 $lang['column_livefeed']          				= 'Livefeed';
 $lang['column_profile']      				    = 'Profile';
 $lang['column_userbar']          				= 'Userbar';
+$lang['column_social_login']          			= 'Social Login';
 
 //Form fields
 $lang['form_width']							    ='Width';
