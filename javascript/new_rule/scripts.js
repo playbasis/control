@@ -269,8 +269,8 @@ $(function(){
         icons = $.parseJSON(jsonConfig_icons),
         colors = {};
 
-    // console.log(jsonConfig_icons);
-    // console.log(jsonString_Action);
+    console.log(jsonConfig_icons);
+    console.log(jsonString_Action);
 
     colors[1] = "rule-purple";
     colors[2] = "rule-orange";
@@ -280,11 +280,20 @@ $(function(){
     colors[9] = "rule-pink";
 
     Handlebars.registerHelper('actionIcon', function(action_id) {
-        var name = action_list[action_id].name;
+        try {
+            var name = action_list[action_id].icon;
+        }catch(err){
+            var name = "star";
+        }
+
         return icons[name];
     });
     Handlebars.registerHelper('actionName', function(action_id) {
-        var name = action_list[action_id].name;
+        try {
+            var name = action_list[action_id].name;
+        }catch(err){
+            var name = "star";
+        }
         return name;
     });
     Handlebars.registerHelper('actionColor', function(action_id) {

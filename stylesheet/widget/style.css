@@ -15,6 +15,15 @@ a
 /* Isotope Styling
 ===================================*/
 
+/* ---- isotope ---- */
+
+/* clear fix */
+.isotope:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
 /**** Isotope Filtering ****/
 
 .isotope-item {
@@ -227,8 +236,8 @@ span.social-box-highlight,
 
 /* persian blue */
 .social-persian-blue .social-box:hover {
-     border-color: #39648D;
- }
+    border-color: #39648D;
+}
 .social-persian-blue .social-name > h4,
 .social-persian-blue .social-box-header,
 .social-persian-blue .social-box:hover .social-box-header {

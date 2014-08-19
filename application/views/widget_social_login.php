@@ -25,26 +25,63 @@
     <div class="row">
         <div class="span5">
             <form class="form-horizontal">
+                <div class="social-panel">
 
-                <div id="add-social" class="social-container">
-                    <div class="social">
+                    <!-- start -->
+                    <div class="social-container social-blue">
+                        <div class="social">
 
-                        <div class="add-social">
-                            <i class="icon-plus"></i>
-                            <span>Add Social</span>
-                        </div>
+                            <div class="social-header social-box-header">
+                                <i class="fa fa-facebook"></i>
+                            </div>
 
-                        <div class="social-header social-box-header">
-                            <i class="icon-plus"></i>
-                        </div>
+                            <div class="social-name">
+                                <h4 title="Facebook">Facebook</h4>
+                            </div>
 
-                        <div class="social-minimize">
-                            <span title="Minimize Social">X</span>
+                            <div class="social-minimize">
+                                <span title="Minimize social">X</span>
+                            </div>
+
+
+                            <div class="social-content">
+
+                                <div class="social-key">
+                                    <input type="text" name="key" placeholder="api key" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                                <div class="social-secret">
+                                    <input type="text" name="secret" placeholder="api secret" value="">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="social-footer">
+
+                                <div class="social-controls">
+                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
+                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
+                                </div>
+
+                                <div class="social-status enabled">
+                                    <div class="social-status-toggle">
+                                        <span>enabled</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
-                </div>
-                <div class="social-panel">
-                    <div class="social-blue">
+                    <!-- end -->
+
+
+                    <div class="social-blue social-container">
                         <div class="social-template social-box social-box-extra">
                             <div class="social-template-provider social-box-header">
                                 <i class="icon-bookmark-empty"></i>
@@ -56,7 +93,7 @@
                         </div>
                     </div>
 
-                    <div class="social-azure">
+                    <div class="social-azure social-container">
                         <div class="social-template social-box social-box-extra">
                             <div class="social-template-provider social-box-header">
                                 <i class="icon-bookmark-empty"></i>
@@ -68,7 +105,7 @@
                         </div>
                     </div>
 
-                    <div class="social-scarlet">
+                    <div class="social-scarlet social-container">
                         <div class="social-template social-box social-box-extra">
                             <div class="social-template-provider social-box-header">
                                 <i class="icon-bookmark-empty"></i>
@@ -80,7 +117,7 @@
                         </div>
                     </div>
 
-                    <div class="social-cerulean">
+                    <div class="social-cesocialan social-container">
                         <div class="social-template social-box social-box-extra">
                             <div class="social-template-provider social-box-header">
                                 <i class="icon-bookmark-empty"></i>
@@ -92,7 +129,7 @@
                         </div>
                     </div>
 
-                    <div class="social-persian-blue">
+                    <div class="social-persian-blue social-container">
                         <div class="social-template social-box social-box-extra">
                             <div class="social-template-provider social-box-header">
                                 <i class="icon-bookmark-empty"></i>
@@ -127,24 +164,9 @@
 </div><!-- #content .span10 -->
 
 
-
+<script type="text/javascript" src="<?php echo base_url();?>javascript/widget/social.js"></script>
 <script>
 $(document).ready(function(){
-
-    var $container = $('.social-panel').isotope({
-        itemSelector: '.element-item',
-        layoutMode: 'fitRows',
-        getSortData: {
-            name: '.name',
-            symbol: '.symbol',
-            number: '.number parseInt',
-            category: '[data-category]',
-            weight: function( itemElem ) {
-                var weight = $( itemElem ).find('.weight').text();
-                return parseFloat( weight.replace( /[\(\)]/g, '') );
-            }
-        }
-    });
 
     $('form').submit(function(e){
         e.preventDefault();

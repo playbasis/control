@@ -54,6 +54,8 @@ class Widget extends MY_Controller
         $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
 
         $this->data['site_data'] = $site_data;
+        var_dump($client_id);
+        var_dump($site_id);
         $this->data['points_data'] = $points_data;
         $this->render_page('widget_preview');
     }
