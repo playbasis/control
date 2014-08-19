@@ -401,7 +401,7 @@ class Plan extends MY_Controller
         }
 
         // default limit others has to have
-        // insight, quest, mission, goods and user
+        // insight, quest, mission, goods, trial, player and user
         $default_limit_others = array(
             "insight" => null,
             "quest" => null,
