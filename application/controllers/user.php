@@ -15,9 +15,6 @@ class User extends MY_Controller
         $this->load->model('Client_model');
         $this->load->model('Plan_model');
         $this->load->model('Domain_model');
-        if(!$this->User_model->isLogged()){
-            redirect('/login', 'refresh');
-        }
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
