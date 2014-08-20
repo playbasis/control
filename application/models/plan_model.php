@@ -73,25 +73,12 @@ class Plan_model extends MY_Model
 
         foreach($plans as $key => $plan){
             $planId = $plan['_id'];
-            $count = 1;
             $this->mongo_db->where('plan_id', new MongoId($planId));
-            $permissions = $this->mongo_db->get('playbasis_permission');
-            $planLimit = !empty($plan['limit_num_client'])?$plan['limit_num_client']:null;
-            if(!empty($planLimit)){
-                foreach ($permissions as $permission) {
-                    $clientId = $permission['client_id'];
-                    $this->mongo_db->where('client_id', new MongoId($clientId));
-                    $client = $this->mongo_db->get('playbasis_client_site');
-                    if (!empty($client)){
-                        $theClient = $client[0];
-                        if($theClient['date_expire'] > new MongoDate()){
-                            $count ++;
-                        }
-                    }
-                }    
-                if($planLimit < $count){
-                    unset($plans[$key]);
-                }
+            $number_of_subscribers = $this->mongo_db->count('playbasis_permission');
+            $planLimit = !empty($plan['limit_num_client']) ? $plan['limit_num_client'] : null;
+            // check if the plan has reached the maximum limit #clients that can subscribe to this plan
+            if ($planLimit && $number_of_subscribers >= $planLimit) {
+                unset($plans[$key]); // if true, then the plan is not available
             }
         }
         return $plans;

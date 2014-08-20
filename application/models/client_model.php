@@ -138,12 +138,6 @@ class Client_model extends MY_Model
                 $this->mongo_db->where('_id',  new MongoID($domain_value['site_id']));
                 $this->mongo_db->set('status', (bool)$domain_value['status']);
                 $this->mongo_db->set('limit_users', $domain_value['limit_users']);
-                if($domain_value['domain_start_date']){
-                    $this->mongo_db->set('date_start', new MongoDate(strtotime($domain_value['domain_start_date'])));
-                }
-                if($domain_value['domain_expire_date']){
-                    $this->mongo_db->set('date_expire', new MongoDate(strtotime($domain_value['domain_expire_date'])));
-                }
                 $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
                 $this->mongo_db->update('playbasis_client_site');
 

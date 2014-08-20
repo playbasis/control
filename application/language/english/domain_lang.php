@@ -18,8 +18,8 @@ $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure yo
 $lang['text_male']								= 'Male';
 $lang['text_female']							= 'Female';
 
-// Token
-$lang['text_reset_token']						= 'Reset Secret';
+// API Secret
+$lang['text_reset_secret']						= 'Reset';
 
 // Tab
 $lang['tab_token']								= 'Access Token';
@@ -34,8 +34,8 @@ $lang['column_quantity']          				= 'Domains';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_action']          				= 'Action';
-$lang['column_date_start']          	        = 'Date Start';
-$lang['column_date_expire']          	        = 'Date Expire';
+$lang['column_key']          	        = 'Key';
+$lang['column_secret']          	        = 'Secret';
 
 $lang['column_tab_global']						= 'Global';
 $lang['column_tab_site']						= 'Stie';
@@ -70,8 +70,6 @@ $lang['entry_domain_name']						= 'Domain';
 $lang['entry_site_name']						= 'Site';
 $lang['entry_key']								= 'API Keys:';
 $lang['entry_secret']							= 'API Secret:';
-$lang['entry_start_date']						= 'Start Date';
-$lang['entry_expire_date']						= 'Expire Date';
 $lang['entry_plan']								= 'Plan';
 
 // Button

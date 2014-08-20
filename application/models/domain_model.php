@@ -219,8 +219,6 @@ class Domain_model extends MY_Model
             'site_name' => $data['site_name']|'' ,
             'api_key'=> '',
             'api_secret' => '',
-            'date_start' => null,
-            'date_expire' => null,
             'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => true,
             'deleted' => false,
@@ -231,16 +229,6 @@ class Domain_model extends MY_Model
         );
         if(isset($data['limit_users']) && $data['limit_users']){
             $data_insert['limit_users'] = $data['limit_users'];
-        }
-
-        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
-            $date_start_another = strtotime($data['date_start']);
-            $date_expire_another = strtotime($data['date_expire']);
-
-            if($date_start_another < $date_expire_another){
-                $data_insert['date_start'] = new MongoDate($date_start_another);
-                $data_insert['date_expire'] = new MongoDate($date_expire_another);
-            }
         }
 
         $c = $this->mongo_db->insert('playbasis_client_site', $data_insert);

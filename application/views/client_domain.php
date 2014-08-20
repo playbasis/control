@@ -8,8 +8,6 @@
     <tr>
         <td class="left" style="width:10%;"><?php echo $this->lang->line('column_domain_name'); ?></td>
         <td class="left" style="width:10%;"><?php echo $this->lang->line('column_domain_limit_users'); ?></td>
-        <td class="left" style="width:15%"><?php echo $this->lang->line('column_domain_date_start'); ?></td>
-        <td class="left" style="width:15%;"><?php echo $this->lang->line('column_domain_date_expire'); ?></td>
         <td class="left" style="width:10%"><?php echo $this->lang->line('column_domain_plan'); ?></td>
         <td class="right" style="width:10%"><?php echo $this->lang->line('column_domain_status'); ?></td>
         <td style="width:10%;"></td>
@@ -26,12 +24,6 @@
                 </td>
                 <td class="left">
                     <input type="text" name="domain_value[<?php echo $domain_row; ?>][limit_users]" value="<?php echo $domain['limit_users']; ?>" size="50" />
-                </td>
-                <td class="left">
-                    <input type="text" class="date" name="domain_value[<?php echo $domain_row; ?>][domain_start_date]" value="<?php if (strtotime(datetimeMongotoReadable($domain['date_start']))) { ?><?php echo date('Y-m-d', strtotime(datetimeMongotoReadable($domain['date_start']))); ?><?php } else { ?>-<?php } ?>" size="50" />
-                </td>
-                <td class="left">
-                    <input type="text" class="date" name="domain_value[<?php echo $domain_row; ?>][domain_expire_date]" value="<?php if (strtotime(datetimeMongotoReadable($domain['date_expire']))) { ?><?php echo date('Y-m-d', strtotime(datetimeMongotoReadable($domain['date_expire']))); ?><?php } else { ?>-<?php } ?>" size="50" />
                 </td>
                 <td class="left">
                     <select name="domain_value[<?php echo $domain_row; ?>][plan_id]">

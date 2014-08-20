@@ -73,8 +73,6 @@ $lang['entry_domain_name']						= 'Domain';
 $lang['entry_site_name']						= 'Site Name';
 $lang['entry_key']								= 'API Keys';
 $lang['entry_secret']							= 'API Secret';
-$lang['entry_start_date']						= 'Start Date';
-$lang['entry_expire_date']						= 'Expire Date';
 $lang['limit_users']						    = 'Limit Users';
 $lang['entry_plan']								= 'Plan Setting';
 
@@ -92,8 +90,6 @@ $lang['column_domain_name'] 			= 'Domain';
 $lang['column_domain_plan'] 			= 'Plan Setting';
 $lang['column_domain_status'] 			= 'Status';
 $lang['column_domain_modified'] 		= 'Date Modified.';
-$lang['column_domain_date_start']      = 'Start Date';
-$lang['column_domain_date_expire']     = 'Expire Date';
 $lang['column_domain_limit_users']     = 'Limit Users';
 
 // User

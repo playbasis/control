@@ -626,20 +626,11 @@ class User extends MY_Controller
                             $user_info = $this->User_model->getUserInfo($user_id);
 
                             $client_id = $this->Client_model->insertClient();
-                            $plan_trial_days = $this->Plan_model->getPlanTrialDays($chosenPlan);
 
                             $data = $this->input->post();
                             $data['client_id'] = $client_id;
                             $data['user_id'] =  $user_info['_id'];
                             $data['limit_users'] = 1000;
-                            $data['date_start'] = date("Y-m-d H:i:s");
-
-                            if($plan_trial_days != null){ // trial package
-	                            // 'date_expire' in playbasis_client_site is used for blocking API after trial period + 1 month
-                                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+".($plan_trial_days + 30)." day"));
-                            }else{ // assume free package here
-                                $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+100 year"));
-                            }
 
                             $this->User_model->addUserToClient($data);
 

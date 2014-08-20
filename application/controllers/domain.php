@@ -112,8 +112,6 @@ class Domain extends MY_Controller
                     'site_name' => $result['site_name'],
                     'keys' => $result['api_key'],
                     'secret' => $result['api_secret'],
-                    'date_start' => $result['date_start'],
-                    'date_expire' => $result['date_expire'],
                     'status' => $result['status'],
                     'date_added' => $result['date_added'],
                     'date_modified' => $result['date_modified']
@@ -217,8 +215,6 @@ class Domain extends MY_Controller
                     $d_data['site_name'] = $this->input->post('domain_site_name');
                     $d_data['user_id'] =  $this->User_model->getId();
                     $d_data['limit_users'] = 1000;
-                    $d_data['date_start'] = date("Y-m-d H:i:s");
-                    $d_data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
 
                     $site_id = $this->Domain_model->addDomain($d_data);
 

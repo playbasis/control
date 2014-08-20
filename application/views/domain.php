@@ -28,8 +28,8 @@
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_start'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_expire'); ?></td>
+                        <td class="left" style="width:100px;"><?php echo $this->lang->line('column_key'); ?></td>
+                        <td class="left" style="width:300px;"><?php echo $this->lang->line('column_secret'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
                     </thead>
@@ -45,24 +45,13 @@
                                 <?php } ?>
                             </td>
                             <td class="left">
-                                <?php echo $domain['domain_name']; ?> [ <?php echo anchor('domain', $this->lang->line('text_reset_token'), array('onclick' => "confirmation('".$domain['site_id']."'); return false;")); ?> ]
-                                <!--<?php //echo $domain['domain_name']; ?> [ <?php //echo anchor('domain', $this->lang->line('text_reset_token'), array('onclick' => "resetSecret('".$domain['site_id']."');return false;")); ?> ]-->
-                                <br /><span class="help">Keys:</span> <?php echo $domain['keys']; ?>
-                                <br /><span class="help">Secret:</span> <?php echo $domain['secret']; ?>
+                                <?php echo $domain['domain_name']; ?>
                             </td>
-                            <td class="right">
-                                <?php if ($domain['date_start']) { ?>
-                                <?php echo datetimeMongotoReadable($domain['date_start']);?>
-                                <?php } else { ?>
-                                -
-                                <?php } ?>
+                            <td class="left">
+                                <?php echo $domain['keys']; ?>
                             </td>
-                            <td class="right">
-                                <?php if ($domain['date_expire']) { ?>
-                                <?php echo datetimeMongotoReadable($domain['date_expire']);?>
-                                <?php } else { ?>
-                                -
-                                <?php } ?>
+                            <td class="left">
+                                <?php echo $domain['secret']; ?> [ <?php echo anchor('domain', $this->lang->line('text_reset_secret'), array('onclick' => "confirmation('".$domain['site_id']."'); return false;")); ?> ]
                             </td>
                             <td class="right">
                                 <?php if ($domain['status']==1) { ?>
