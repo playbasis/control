@@ -244,8 +244,8 @@ class Engine extends Quest
             //get action id by action name
             $actionName = $this->input->post('action');
             $actionId = $this->client_model->getActionId(array(
-                'client_id' => new MongoId($validToken['client_id']),
-                'site_id' => new MongoId($validToken['site_id']),
+                'client_id' => $validToken['client_id'],
+                'site_id' => $validToken['site_id'],
                 'action_name' => $actionName
             ));
             if(!$actionId)

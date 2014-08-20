@@ -23,13 +23,13 @@ class Quest extends REST2_Controller
     public function QuestProcess($pb_player_id, $validToken, $test_id=NULL){
         $this->load->helper('vsort');
 
-        try {
-            $validToken["client_id"] = new MongoId($validToken["client_id"]);
-            $validToken["site_id"] = new MongoID($validToken["site_id"]);
-        } catch(MongoException $e) {
-            $validToken["client_id"] = NULL;
-            $validToken["site_id"] = NULL;
-        }
+//        try {
+//            $validToken["client_id"] = new MongoId($validToken["client_id"]);
+//            $validToken["site_id"] = new MongoID($validToken["site_id"]);
+//        } catch(MongoException $e) {
+//            $validToken["client_id"] = NULL;
+//            $validToken["site_id"] = NULL;
+//        }
         $client_id = $validToken["client_id"];
         $site_id = $validToken["site_id"];
         $domain_name = $validToken['domain_name'];
