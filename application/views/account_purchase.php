@@ -1,7 +1,7 @@
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
-        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $subscribe_title; ?></h1>
+        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $channel_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_purchase'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'account'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
@@ -46,10 +46,8 @@
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
             				<td>
-            					<select name="months">
-						            <option value="6">6 Months</option>
+            					<select name="months" readonly>
 						            <option selected="selected" value="12">12 Months</option>
-						            <option value="24">24 Months</option>
             					</select>
             				</td>
             			</tr>

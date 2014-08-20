@@ -92,7 +92,7 @@ class Account extends MY_Controller
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
 		$this->data['title'] = $this->lang->line('title');
-		$this->data['subscribe_title'] = $this->lang->line('subscribe_title');
+		$this->data['channel_title'] = $this->lang->line('channel_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
 		$plan = $this->session->userdata('plan');

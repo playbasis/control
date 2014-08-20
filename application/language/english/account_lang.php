@@ -1,7 +1,7 @@
 <?php
 // Heading
 $lang['heading_title']          				= 'Account Details';
-$lang['subscribe_title']          				= 'To Subscribe';
+$lang['channel_title']          				= 'Select Payment Channel';
 $lang['payment_title']          				= 'Payment Channel';
 $lang['order_title']          				= 'Order Details';
 $lang['wait_title']          				= 'Congratulations!';
