@@ -257,13 +257,13 @@ class Engine extends Quest
                 'action_id' => $actionId,
                 'action_name' => $actionName
             ));
-            if (!isset($input["test"]))
+            if (!$test)
                 $input["test"] = false;
 
             $apiResult = $this->processRule($input, $validToken, $fbData, $twData);
         }
         //Quest Process
-        if (!isset($input["test"]))
+        if (!$test)
             $apiResult = array_merge(
                 $apiResult,
                 $this->QuestProcess($pb_player_id, $validToken));
