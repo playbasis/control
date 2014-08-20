@@ -162,8 +162,7 @@ class  MY_Controller  extends  CI_Controller  {
                 // var_dump($this->data['domain_all']);
 
                 $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
-                //var_dump($features);
-
+                /* var_dump($features); */
                 
                 foreach ($features as $value) {
                     if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
@@ -185,7 +184,7 @@ class  MY_Controller  extends  CI_Controller  {
                 //     );
                 // }
             }else{
-                /*if($this->data['client_id']){
+                if($this->data['client_id']){
                     $this->data['check_domain_exists'] = false;
                 }else{
                     $features = $this->Feature_model->getFeatures();    
@@ -197,7 +196,7 @@ class  MY_Controller  extends  CI_Controller  {
                             'link' =>$value['link']
                         );
                     }
-                }*/
+                }
 
                 // super admin
                 
