@@ -243,19 +243,30 @@ class Engine extends Quest
 
             //get action id by action name
             $actionName = $this->input->post('action');
-            $actionId = $this->client_model->getActionId(array(
+//            $actionId = $this->client_model->getActionId(array(
+//                'client_id' => $validToken['client_id'],
+//                'site_id' => $validToken['site_id'],
+//                'action_name' => $actionName
+//            ));
+//            if(!$actionId)
+//                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+
+            $action = $this->client_model->getAction(array(
                 'client_id' => $validToken['client_id'],
                 'site_id' => $validToken['site_id'],
                 'action_name' => $actionName
             ));
-            if(!$actionId)
+            if(!$action)
                 $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+            $actionId = $action['action_id'];
+            $actionIcon = $action['icon'];
 
             $postData = $this->input->post();
             $input = array_merge($postData, $validToken, array(
                 'pb_player_id' => $pb_player_id,
                 'action_id' => $actionId,
-                'action_name' => $actionName
+                'action_name' => $actionName,
+                'action_icon' => $actionIcon
             ));
             if (!$test)
                 $input["test"] = false;
