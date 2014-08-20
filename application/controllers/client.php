@@ -57,6 +57,8 @@ class Client extends MY_Controller
         $this->data['form'] = 'client/insert';
 
         $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('date_expire', $this->lang->line('entry_date_expire'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('entry_email'), 'trim|required|valid_email');
@@ -88,9 +90,11 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/update/'.$client_id;
 
+        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('date_expire', $this->lang->line('entry_date_expire'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerClient($client_id)) {
@@ -363,6 +367,22 @@ class Client extends MY_Controller
             $this->data['company'] = $client_info['company'];
         } else {
             $this->data['company'] = '';
+        }
+
+        if ($this->input->post('date_start')) {
+            $this->data['date_start'] = date("Y-m-d", strtotime($this->input->post('date_start')));
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['date_start'] = date("Y-m-d", $client_info['date_start']->sec);
+        } else {
+            $this->data['date_start'] = '';
+        }
+
+        if ($this->input->post('date_expire')) {
+            $this->data['date_expire'] = date("Y-m-d", strtotime($this->input->post('date_expire')));
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['date_expire'] = date("Y-m-d", $client_info['date_expire']->sec);
+        } else {
+            $this->data['date_expire'] = '';
         }
 
         if ($this->input->post('image')) {

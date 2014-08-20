@@ -62,6 +62,8 @@ $lang['entry_facebook']							= 'Facebook';
 $lang['entry_twitter']							= 'Twitter';
 $lang['entry_google']							= 'Google+';
 $lang['entry_company_name']						= 'Client Name';
+$lang['entry_date_start']						= 'Date Start';
+$lang['entry_date_expire']						= 'Date End';
 
 $lang['entry_username']						= 'Username:';
 $lang['entry_password']						= 'Password';

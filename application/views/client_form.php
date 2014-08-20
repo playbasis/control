@@ -48,6 +48,14 @@
                             <td><input type="text" name="company" value="<?php echo $company; ?>" size="50" class="tooltips" data-placement="right" title="Please provide the company name in full (example: Playbasis Pte. Ltd.)"/></td>
                         </tr>
                         <tr>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_date_start'); ?>:</td>
+                            <td><input type="text" name="date_start" value="<?php echo $date_start; ?>" size="50" class="date" /></td>
+                        </tr>
+                        <tr>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_date_expire'); ?>:</td>
+                            <td><input type="text" name="date_expire" value="<?php echo $date_expire; ?>" size="50" class="date" /></td>
+                        </tr>
+                        <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_firstname'); ?>:</td>
                             <td><input type="text" name="first_name" value="<?php echo $first_name; ?>" size="50" class="tooltips" data-placement="right" title="Firstname of main contact person of the company"/></td>
                         </tr>

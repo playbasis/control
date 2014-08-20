@@ -102,6 +102,8 @@ class Client_model extends MY_Model
             'email' => isset($data['email'])?$data['email'] : '' ,
             'status' => (bool)$data['status'],
             'deleted' => false,
+            'date_start' => new MongoDate(strtotime($data['date_start'])),
+            'date_expire' => new MongoDate(strtotime($data['date_expire'])),
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
         );
@@ -117,12 +119,14 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id',  new MongoID($client_id));
+        $this->mongo_db->set('company', isset($data['company'])?$data['company'] : '');
         $this->mongo_db->set('first_name', $data['first_name']);
         $this->mongo_db->set('last_name', $data['last_name']);
         $this->mongo_db->set('mobile', $data['mobile']);
         $this->mongo_db->set('email', $data['email']);
-        $this->mongo_db->set('company', isset($data['company'])?$data['company'] : '');
         $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
+        $this->mongo_db->set('date_expire', new MongoDate(strtotime($data['date_expire'])));
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
         if (isset($data['image'])) {
