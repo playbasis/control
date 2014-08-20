@@ -66,11 +66,7 @@ function initSocialIsotopes($container) {
             } else if ( $(this).hasClass('social-controls-save') ) {
 
                 event.stopPropagation();
-                if ( $social.is('#add-social') ) {
-                    saveSocial( $social, $addsocial );
-                } else {
-                    saveSocial( $social );
-                }
+                saveSocial();
 
             } else {
 
@@ -93,15 +89,35 @@ function initSocialIsotopes($container) {
 }
 
 function saveSocial(){
-    console.log("55555");
 
-    var data = new Array();
+    var data = [];
     $(".social").each(function(){
         var social = new Array();
-        social["name"] = $(this).find(".social-name h4").attr("title");
+        social["name"] = $(this).find(".social-name h4").attr("title").toLowerCase();
         social["key"] = $(this).find(".social-content .social-key input").val();
         social["secret"] = $(this).find(".social-content .social-key input").val();
-        social["status"] =
+        social["status"] = $(this).find(".social-status").hasClass("enabled");
         data.push(social);
+    });
+
+    $.ajax({
+        url: baseUrlPath+"widget/social_manage",
+        type: "POST",
+        data: data,
+        dataType: 'json',
+        cache: false,
+        beforeSend: function() {
+            $(".ajax-loading").remove();
+            $(".messages").remove();
+            $("#top-header").prepend('<div class="ajax-loading"><span class="text-ajax-loading">Loading...</span></div>');
+        },
+        error: function() {
+            $(".ajax-loading").remove();
+            $(".content").prepend('<div class="content messages half-width"><div class="error">Connection to server lost, Save again</div></div>');
+        },
+        success: function(res) {
+            $(".ajax-loading").remove();
+            $(".content").prepend('<div class="content messages half-width"><div class="success">You have successfully updated Social widget!</div></div>');
+        }
     });
 }

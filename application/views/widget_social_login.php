@@ -34,39 +34,77 @@
         <div class="span11">
             <form class="form-horizontal">
                 <div id="social-panel">
-
+                <?php
+                $social_system = array(
+                    "facebook" => array(
+                        "color" => "social-blue",
+                        "icon" => "fa-facebook",
+                        "key" => "",
+                        "secret" => "",
+                        "status" => "enabled"
+                    ),
+                    "twitter" => array(
+                        "color" => "social-azure",
+                        "icon" => "fa-twitter",
+                        "key" => "",
+                        "secret" => "",
+                        "status" => "enabled"
+                    ),
+                    "google-plus" => array(
+                        "color" => "social-scarlet",
+                        "icon" => "fa-google-plus",
+                        "key" => "",
+                        "secret" => "",
+                        "status" => "disabled"
+                    ),
+                    "linkedin" => array(
+                        "color" => "social-cesocialan",
+                        "icon" => "fa-linkedin",
+                        "key" => "",
+                        "secret" => "",
+                        "status" => "disabled"
+                    ),
+                    "instagram" => array(
+                        "color" => "social-persian-blue",
+                        "icon" => "fa-instagram",
+                        "key" => "",
+                        "secret" => "",
+                        "status" => "disabled"
+                    ),
+                );
+                ?>
+                <?php
+                foreach($social_system as $k=>$s){
+                ?>
                     <!-- start -->
-                    <div class="social-container social-blue">
-                        <div class="social" id="social-facebook">
+                    <div class="social-container <?php echo $s["color"]; ?>">
+                        <div class="social" id="social-<?php echo $k; ?>">
 
                             <div class="social-header social-box-header">
-                                <i class="fa fa-facebook"></i>
+                                <i class="fa <?php echo $s["icon"]; ?>"></i>
                             </div>
 
                             <div class="social-name">
-                                <h4 title="Facebook">Facebook</h4>
+                                <h4 title="<?php echo $k; ?>"><?php echo $k; ?></h4>
                             </div>
 
                             <div class="social-minimize">
                                 <span title="Minimize social">X</span>
                             </div>
 
-
                             <div class="social-content">
 
                                 <div class="social-key">
-                                    <input type="text" name="key" placeholder="api key" value="">
+                                    <input type="text" name="key" placeholder="api key" value="<?php echo $s["key"]; ?>">
                                     <i class="icon-pencil"></i>
                                 </div>
 
                                 <div class="social-secret">
-                                    <input type="text" name="secret" placeholder="api secret" value="">
+                                    <input type="text" name="secret" placeholder="api secret" value="<?php echo $s["secret"]; ?>">
                                     <i class="icon-pencil"></i>
                                 </div>
 
                             </div>
-
-
 
                             <div class="social-footer">
 
@@ -75,237 +113,26 @@
                                     <button class="btn social-controls-cancel" type="button">Cancel</button>
                                 </div>
 
-                                <div class="social-status enabled">
+                                <div class="social-status <?php echo $s["status"]; ?>">
                                     <div class="social-status-toggle">
-                                        <span>enabled</span>
+                                        <span><?php echo $s["status"]; ?></span>
                                     </div>
                                 </div>
 
                             </div>
 
-
                         </div>
                     </div>
                     <!-- end -->
-
-                    <!-- start -->
-                    <div class="social-container social-azure">
-                        <div class="social" id="social-twitter">
-
-                            <div class="social-header social-box-header">
-                                <i class="fa fa-twitter"></i>
-                            </div>
-
-                            <div class="social-name">
-                                <h4 title="Twitter">Twitter</h4>
-                            </div>
-
-                            <div class="social-minimize">
-                                <span title="Minimize social">X</span>
-                            </div>
-
-
-                            <div class="social-content">
-
-                                <div class="social-key">
-                                    <input type="text" name="key" placeholder="api key" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                                <div class="social-secret">
-                                    <input type="text" name="secret" placeholder="api secret" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                            </div>
-
-
-
-                            <div class="social-footer">
-
-                                <div class="social-controls">
-                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
-                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
-                                </div>
-
-                                <div class="social-status enabled">
-                                    <div class="social-status-toggle">
-                                        <span>enabled</span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <!-- end -->
-
-                    <!-- start -->
-                    <div class="social-container social-scarlet">
-                        <div class="social" id="social-google-plus">
-
-                            <div class="social-header social-box-header">
-                                <i class="fa fa-google-plus"></i>
-                            </div>
-
-                            <div class="social-name">
-                                <h4 title="Google Plus">Google Plus</h4>
-                            </div>
-
-                            <div class="social-minimize">
-                                <span title="Minimize social">X</span>
-                            </div>
-
-
-                            <div class="social-content">
-
-                                <div class="social-key">
-                                    <input type="text" name="key" placeholder="api key" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                                <div class="social-secret">
-                                    <input type="text" name="secret" placeholder="api secret" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                            </div>
-
-
-
-                            <div class="social-footer">
-
-                                <div class="social-controls">
-                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
-                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
-                                </div>
-
-                                <div class="social-status disabled">
-                                    <div class="social-status-toggle">
-                                        <span>disabled</span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <!-- end -->
-
-                    <!-- start -->
-                    <div class="social-container social-cesocialan">
-                        <div class="social" id="social-linkedin">
-
-                            <div class="social-header social-box-header">
-                                <i class="fa fa-linkedin-square"></i>
-                            </div>
-
-                            <div class="social-name">
-                                <h4 title="Linkedin">Linkedin</h4>
-                            </div>
-
-                            <div class="social-minimize">
-                                <span title="Minimize social">X</span>
-                            </div>
-
-
-                            <div class="social-content">
-
-                                <div class="social-key">
-                                    <input type="text" name="key" placeholder="api key" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                                <div class="social-secret">
-                                    <input type="text" name="secret" placeholder="api secret" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                            </div>
-
-
-
-                            <div class="social-footer">
-
-                                <div class="social-controls">
-                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
-                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
-                                </div>
-
-                                <div class="social-status disabled">
-                                    <div class="social-status-toggle">
-                                        <span>disabled</span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <!-- end -->
-
-                    <!-- start -->
-                    <div class="social-container social-persian-blue">
-                        <div class="social" id="social-instagram">
-
-                            <div class="social-header social-box-header">
-                                <i class="fa fa-instagram"></i>
-                            </div>
-
-                            <div class="social-name">
-                                <h4 title="Instagram">Instagram</h4>
-                            </div>
-
-                            <div class="social-minimize">
-                                <span title="Minimize social">X</span>
-                            </div>
-
-
-                            <div class="social-content">
-
-                                <div class="social-key">
-                                    <input type="text" name="key" placeholder="api key" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                                <div class="social-secret">
-                                    <input type="text" name="secret" placeholder="api secret" value="">
-                                    <i class="icon-pencil"></i>
-                                </div>
-
-                            </div>
-
-
-
-                            <div class="social-footer">
-
-                                <div class="social-controls">
-                                    <button class="btn btn-primary social-controls-save" type="submit">Save</button>
-                                    <button class="btn social-controls-cancel" type="button">Cancel</button>
-                                </div>
-
-                                <div class="social-status disabled">
-                                    <div class="social-status-toggle">
-                                        <span>disabled</span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <!-- end -->
-
+                <?php
+                }
+                ?>
                 </div>
 
                 <div class="control-group">
                     <label class="control-label" ></label>
                     <div class="controls">
-                        <a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                        <a href="javascript:void(0);" onclick="reloadSocial()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
                         <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                     </div>
                 </div>
