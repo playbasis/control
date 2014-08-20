@@ -604,6 +604,30 @@ class Client_model extends MY_Model
         return $result ? $result[0]['plan_id'] : null;
     }
 
+    /*
+     * Get Client date_start and date_expire
+     * this is monthly billing date
+     * @param client_id string
+     * @return array of date_start and date_expire
+     */
+    public function getClientStartEndDate($client_id)
+    {
+        $this->mongo_db->select(array("date_start", "date_expire"));
+        $this->mongo_db->where(array("_id" => new MongoID($client_id)));
+        $result = $this->mongo_db->get("playbasis_client");
+
+        if ($result) {
+            $result = $result[0];
+            if (!isset($result["date_start"]))
+                $result["date_start"] = null;
+            if (!isset($result["date_expire"]))
+                $result["date_expire"] = null;
+            return $result;
+        } else {
+            return array("date_start" => null, "date_expire" => null);
+        }
+    }
+
     /**
      * Return Permission limitation by Plan ID
      * in particular type and field
@@ -655,13 +679,16 @@ class Client_model extends MY_Model
 
         $this->set_site_mongodb($site_id);
 
-        // Sync current bill usage with Client bill
-        // TODO If not sync, Sync date and Reset usage
+        // Get Client billing date
+        $clientDate = $this->getClientStartEndDate($client_id);
 
         // Get current bill usage
         $this->mongo_db->select(
             array(
+                "_id",
                 "plan_id",
+                "date_start",
+                "date_expire",
                 "usage.". $type. ".". $field)
         );
         $this->mongo_db->where(array(
@@ -675,13 +702,19 @@ class Client_model extends MY_Model
             $res = $res[0];
             $result["plan_id"] = $res["plan_id"];
 
-            // check this limitation on this client-site
-            if (isset($res[$type]) &&
-                isset($res[$type][$field]))
+            // Sync current bill usage with Client bill
+            try {
+                $this->syncPermissionDate($clientDate, $res);
+                // check this limitation on this client-site
+                if (isset($res[$type]) && isset($res[$type][$field]))
                     $result["value"] = $res[$type][$field];
-
-            else // this limitation is not found in database
-                $result["value"] = 0;
+                else // this limitation is not found in database
+                    $result["value"] = 0;
+            } catch (Exception $e) {
+                $msg = $e->getMessage();
+                if ($msg == "NOEXPIRE" || $msg == "NOTSYNC")
+                    $result["value"] = 0;
+            }
 
             return $result;
         }
@@ -713,14 +746,26 @@ class Client_model extends MY_Model
 
     /*
      * Sync Permission billing date with Client billing date
-     * @param string @client_id
-     * @param string @site_id
-     * @param datetime @start_date
-     * @param datetime @end_date
+     * @param array @clientDate
+     * @param array @permissionDate
+     * @throw NOTSYNC
      */
-    private function syncPermissionDate($client_id, $site_id)
+    private function syncPermissionDate($clientDate, $permissionDate)
     {
-        // TODO
+        // Not has Date no limitation
+        if (!$clientDate["date_start"] || !$clientDate["date_expire"])
+            throw new Exception("NOEXPIRE");
+
+        // Date is not sync
+        if (($clientDate["date_start"] != $permissionDate["date_start"]) ||
+            ($clientDate["date_expire"] != $permissionDate["date_expire"])) {
+                $this->mongo_db->where(array("_id" => $permissionDate["_id"]));
+                $this->mongo_db->set(array(
+                    "date_start" => $clientDate["date_start"],
+                    "date_expire" => $clientDate["date_expire"]));
+                $this->mongo_db->update("playbasis_permission");
+                throw new Exception("NOTSYNC");
+            }
     }
 
     /*
