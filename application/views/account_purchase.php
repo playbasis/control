@@ -23,6 +23,7 @@
             <?php }?>
             <?php $attributes = array('id' => 'form');?>
             <?php echo form_open($form, $attributes);?>
+            	<input type="hidden" name="months" value="12" />
             	<div id="tab-general">
             		<table class="form">
 			            <tr>
@@ -46,9 +47,7 @@
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
             				<td>
-            					<select name="months" readonly>
-						            <option selected="selected" value="12">12 Months</option>
-            					</select>
+            					12
             				</td>
             			</tr>
             			<tr>
