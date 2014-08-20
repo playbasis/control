@@ -58,7 +58,7 @@ class Node_stream extends MY_Model
 				)
 			),
 			'verb' => $data['action_name'],
-			'verb_icon' => isset($data['action_icon'])? $data['action_icon'] : 'fa-icon-star',
+			'verb_icon' => isset($data['action_icon'])? $data['action_icon'] : 'fa-star',
 			'object' => array(
 				'message' => $data['message']
 			),

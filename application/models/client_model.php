@@ -29,7 +29,7 @@ class Client_model extends MY_Model
         assert(isset($clientData['site_id']));
         assert(isset($clientData['action_name']));
         $this->set_site_mongodb($clientData['site_id']);
-        $this->mongo_db->select(array('action_id'));
+        $this->mongo_db->select(array('action_id', 'icon'));
         $this->mongo_db->where(array(
             'client_id' => $clientData['client_id'],
             'site_id' => $clientData['site_id'],
