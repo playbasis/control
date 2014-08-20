@@ -13,7 +13,7 @@ class Plan_model extends MY_Model
 
     public function getPlanById($plan_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('_id',  $plan_id);
+        $this->mongo_db->where('_id', $plan_id);
         $results = $this->mongo_db->get("playbasis_plan");
         return $results ? $results[0] : null;
     }
@@ -68,7 +68,7 @@ class Plan_model extends MY_Model
     }
 
     public function getAvailablePlans(){
-        $this->set_site_mongodb($this->session->userdata('site_id'));        
+        $this->set_site_mongodb($this->session->userdata('site_id'));
         $plans = $this->mongo_db->get("playbasis_plan");
 
         foreach($plans as $key => $plan){
@@ -633,5 +633,13 @@ class Plan_model extends MY_Model
         else
             return array();
     }
+
+	public function listActivePlans() {
+		$this->set_site_mongodb($this->session->userdata('site_id'));
+		$this->mongo_db->where('active', true);
+		$this->mongo_db->order_by(array('price' => 1));
+		$results = $this->mongo_db->get("playbasis_plan");
+		return $results;
+	}
 }
 ?>

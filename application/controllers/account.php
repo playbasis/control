@@ -80,7 +80,6 @@ class Account extends MY_Controller
 	    $this->data['plan']['registration_date_modified'] = $plan_registration['date_modified']->sec;
 	    $this->data['main'] = 'account';
 	    $this->data['form'] = 'account/subscribe';
-	    $this->session->set_userdata('price', $this->data['plan']['price']);
 	    $this->load->vars($this->data);
 	    $this->render_page('template');
     }
@@ -96,6 +95,11 @@ class Account extends MY_Controller
 		$this->data['subscribe_title'] = $this->lang->line('subscribe_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
+		$plan = $this->session->userdata('plan');
+		$free_flag = ($plan['price'] == 0);
+		if ($free_flag) {
+			$this->data['plans'] = $this->Plan_model->listActivePlans();
+		}
 		$this->data['main'] = 'account_purchase';
 		$this->data['form'] = 'account/purchase';
 		$this->load->vars($this->data);
@@ -113,12 +117,14 @@ class Account extends MY_Controller
 		$this->data['order_title'] = $this->lang->line('order_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
+		$this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
 		$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required');
 		$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
 		$success = false;
 		if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 			$this->data['message'] = null;
 
+			$plan_id = $this->input->post('plan');
 			$months = $this->input->post('months');
 			$channel = $this->input->post('channel');
 			if ($months) $months = intval($months);
@@ -126,13 +132,19 @@ class Account extends MY_Controller
 
 			if($this->form_validation->run() && $this->data['message'] == null){
 				$ci =& get_instance();
-				$this->session->set_userdata('months', $months);
-				$this->session->set_userdata('channel', $channel);
-				$this->session->set_userdata('callback', $ci->config->config['server'].'notification');
+				$selected_plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
+				if (!array_key_exists('price', $selected_plan)) {
+					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
+				}
+				$this->data['params'] = array(
+					'plan_id' => $selected_plan['_id'],
+					'price' => $selected_plan['price'],
+					'months' => $months,
+					'callback' => $ci->config->config['server'].'notification',
+				);
 				switch ($channel) {
 					case 'paypal':
 						$this->data['main'] = 'account_purchase_paypal';
-						$this->data['form'] = 'account/purchase';
 						$success = true;
 						break;
 					default:
@@ -164,9 +176,6 @@ class Account extends MY_Controller
 
 		/* clear basket in the session */
 		$this->session->set_userdata('plan', null);
-		$this->session->set_userdata('months', null);
-		$this->session->set_userdata('channel', null);
-		$this->session->set_userdata('callback', null);
 
 		$this->data['main'] = 'account_purchase_paypal_done';
 		$this->load->vars($this->data);
