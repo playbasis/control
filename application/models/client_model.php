@@ -100,7 +100,6 @@ class Client_model extends MY_Model
             'last_name' => isset($data['last_name'])?$data['last_name'] : '' ,
             'mobile' => isset($data['mobile'])?$data['mobile'] : '' ,
             'email' => isset($data['email'])?$data['email'] : '' ,
-            'company' => isset($data['company'])?$data['company'] : '' ,
             'status' => (bool)$data['status'],
             'deleted' => false,
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
