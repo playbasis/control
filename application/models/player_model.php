@@ -794,7 +794,7 @@ class Player_model extends MY_Model
             $this->email->send();*/
 
                 $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
-                $this->amazon_ses->to('cscteam@playbasis.com','devteam@playbasis.com');
+                $this->amazon_ses->to('cscteam@playbasis.com,devteam@playbasis.com');
                 $this->amazon_ses->subject($subject);
                 $this->amazon_ses->message($htmlMessage);
                 $this->amazon_ses->send();
