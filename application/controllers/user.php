@@ -622,38 +622,36 @@ class User extends MY_Controller
                         $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
                         $this->data['temp_fields'] = $this->input->post();
                     }else{
-                        if($user_id = $this->User_model->insertUser()){
+                        if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                             $user_info = $this->User_model->getUserInfo($user_id);
 
-                            $client_id = $this->Client_model->insertClient();
+                            $plan = $this->Plan_model->getPlanByName($chosenPlan);
+                            $plan_id = $plan['_id'];
+
+                            $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
 
                             $data = $this->input->post();
                             $data['client_id'] = $client_id;
                             $data['user_id'] =  $user_info['_id'];
-                            $data['limit_users'] = 1000;
+                            $data['limit_users'] = array_key_exists('limit_others', $plan) && array_key_exists('player', $plan['limit_others']) ? $plan['limit_others']['player'] : DEFAULT_LIMIT_NUM_PLAYERS;
 
-                            $this->User_model->addUserToClient($data);
+                            $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
 
-                            $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
-
-                            // $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
-
-                            //Chosen plan either plan1 or plan2 or plan3 or plan4
-                            $plan_id = $this->Plan_model->getPlanID($chosenPlan);
+                            $site_id = $this->Domain_model->addDomain($data); // [4] then insert a new domain into "playbasis_client_site"
 
                             $another_data['domain_value'] = array(
-                                    'site_id' =>$site_id,
+                                    'site_id' => $site_id,
                                     'plan_id' => $plan_id,
-                                    'status' =>true
-                                );
+                                    'status' => true
+                            );
 
-                            $this->Client_model->editClientPlan($client_id, $another_data);
+                            $this->Client_model->editClientPlan($client_id, $another_data); // [5] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
 
                             $data = array();
                             $data['client_id'] = $client_id;
                             $data['plan_id'] = $plan_id;
                             $data['site_id'] = $site_id;
-                            $this->Permission_model->addPlanToPermission($data);
+                            $this->Permission_model->addPlanToPermission($data); // [6] finally, bind the client to the selected plan
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
