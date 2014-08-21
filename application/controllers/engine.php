@@ -274,8 +274,10 @@ class Engine extends Quest
             $apiResult = $this->processRule($input, $validToken, $fbData, $twData);
         }
         //Quest Process
-        if (!$test)
-            $apiResult = array_merge($apiResult, $this->QuestProcess($pb_player_id, $validToken));
+        if (!$test){
+            $apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+            $apiResult = array_merge($apiResult, $apiQuestResult);
+        }
 
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
