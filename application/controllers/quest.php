@@ -242,7 +242,7 @@ class Quest extends REST2_Controller
                         array_push($questEvent, $event);
                     }
                 }else if($c["condition_type"] == "LEVEL_START"){
-                    if($c["condition_value"] > $player['level']){
+                    if((int)$c["condition_value"] > (int)$player['level']){
                         $event = array(
                             'event_type' => 'LEVEL_IS_LOWER',
                             'message' => 'Your level is under satisfied'
@@ -250,7 +250,7 @@ class Quest extends REST2_Controller
                         array_push($questEvent, $event);
                     }
                 }else if($c["condition_type"] == "LEVEL_END"){
-                    if($c["condition_value"] < $player['level']){
+                    if((int)$c["condition_value"] < (int)$player['level']){
                         $event = array(
                             'event_type' => 'LEVEL_IS_HIGHER',
                             'message' => 'Your level is abrove satisfied'
@@ -265,7 +265,7 @@ class Quest extends REST2_Controller
                     }else{
                         $point = 0;
                     }
-                    if($c["condition_value"] > $point){
+                    if((int)$c["condition_value"] > (int)$point){
                         $event = array(
                             'event_type' => 'POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -281,7 +281,7 @@ class Quest extends REST2_Controller
                     }else{
                         $custom_point = 0;
                     }
-                    if($c["condition_value"] > $custom_point){
+                    if((int)$c["condition_value"] > (int)$custom_point){
                         $event = array(
                             'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -295,7 +295,7 @@ class Quest extends REST2_Controller
                     }else{
                         $badge = 0;
                     }
-                    if($badge < $c["condition_value"]){
+                    if((int)$badge < (int)$c["condition_value"]){
                         $event = array(
                             'event_type' => 'BADGE_NOT_ENOUGH',
                             'message' => 'user badge not enough',
@@ -374,7 +374,7 @@ class Quest extends REST2_Controller
                     }else{
                         $point = 0;
                     }
-                    if($c["completion_value"] > $point){
+                    if((int)$c["completion_value"] > (int)$point){
                         $event = array(
                             'event_type' => 'POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -395,7 +395,7 @@ class Quest extends REST2_Controller
                     }else{
                         $custom_point = 0;
                     }
-                    if($c["completion_value"] > $custom_point){
+                    if((int)$c["completion_value"] > (int)$custom_point){
                         $event = array(
                             'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -414,7 +414,7 @@ class Quest extends REST2_Controller
                     }else{
                         $badge = 0;
                     }
-                    if($badge < $c["completion_value"]){
+                    if((int)$badge < (int)$c["completion_value"]){
                         $event = array(
                             'event_type' => 'BADGE_NOT_ENOUGH',
                             'message' => 'user badge not enough',
