@@ -26,7 +26,7 @@ class Account extends MY_Controller
     /*
         playbasis_client - store client's subscription status
         playbasis_permission - store the current plan of a client
-        playbasis_plan - store plan details and plan price (note: plans with active flags will show in 1st page of playbasis.com)
+        playbasis_plan - store plan details and plan price (note: also 'display' flags, which is to determine whether to feature the plan in sign-up page of playbasis.com)
         playbasis_payment_log - store payment transactions (due to their subscription plan)
         playbasis_notification_log - store all PayPal IPN messages
         playbasis_payment_channel - store all available payment channels
@@ -94,7 +94,7 @@ class Account extends MY_Controller
 		$plan = $this->session->userdata('plan');
 		$free_flag = ($plan['price'] <= 0);
 		if ($free_flag) {
-			$this->data['plans'] = $this->Plan_model->listActivePlans();
+			$this->data['plans'] = $this->Plan_model->listDisplayPlans();
 		}
 		$this->data['main'] = 'account_purchase';
 		$this->data['form'] = 'account/purchase';
@@ -114,7 +114,7 @@ class Account extends MY_Controller
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
 		$this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
-		$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required');
+		$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required|numeric');
 		$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
 		$success = false;
 		if ($_SERVER['REQUEST_METHOD'] === 'POST'){

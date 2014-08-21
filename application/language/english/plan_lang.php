@@ -14,6 +14,8 @@ $lang['text_clear']             				= 'Clear Image';
 $lang['text_criteria']          				= 'Domain View';
 $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
 $lang['text_no_clients']			           	= 'There are no clients using this Plan Setting';
+$lang['text_displayed']			           	= 'Yes';
+$lang['text_not_displayed']			           	= 'No';
 
 
 // Tab
@@ -37,6 +39,9 @@ $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_limit']            				= 'Limit';
 $lang['column_action']          				= 'Action';
 $lang['column_description']						= 'Description';
+$lang['column_trial']						= 'Trial (Days)';
+$lang['column_price']						= 'Price';
+$lang['column_display']						= 'Display';
 $lang['column_plan_name']						= 'Plan Name';		
 $lang['column_clients']							= 'Current Clients';				
 
@@ -44,6 +49,8 @@ $lang['column_clients']							= 'Current Clients';
 // Entry
 $lang['entry_name']           					= 'Plan Setting Name';
 $lang['entry_description']           			= 'Description';
+$lang['entry_price']           			= 'Price';
+$lang['entry_display']           			= 'Display';
 $lang['entry_image']           					= 'Image';
 $lang['entry_sort_order']           			= 'Sort Order';
 $lang['entry_status']           				= 'Status';

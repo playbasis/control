@@ -301,6 +301,8 @@ class Plan_model extends MY_Model
         $dinsert = array(
             'name' => $data['name']|'' ,
             'description' => $data['description']|'',
+            'price' => intval($data['price']),
+            'display' => (bool)$data['display'],
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'status' => (bool)$data['status'],
@@ -354,6 +356,8 @@ class Plan_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($plan_id));
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('price', intval($data['price']));
+        $this->mongo_db->set('display', (bool)$data['display']);
         $this->mongo_db->set('limit_num_client', !empty($data['limit_num_client'])?new MongoInt32($data['limit_num_client']):null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
@@ -629,9 +633,9 @@ class Plan_model extends MY_Model
             return array();
     }
 
-	public function listActivePlans() {
+	public function listDisplayPlans() {
 		$this->set_site_mongodb($this->session->userdata('site_id'));
-		$this->mongo_db->where('active', true);
+		$this->mongo_db->where('display', true);
 		$this->mongo_db->order_by(array('price' => 1));
 		$results = $this->mongo_db->get("playbasis_plan");
 		return $results;
