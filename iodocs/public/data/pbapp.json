@@ -1072,6 +1072,29 @@
                     ]
                 },
                 {
+                    "MethodName": "Join All Quests",
+                    "Synopsis": "Player join all available quests.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quest/joinAll",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Cancel Quest",
                     "Synopsis": "Player cancel quest.",
                     "HTTPMethod": "POST",
