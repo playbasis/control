@@ -14,8 +14,6 @@ $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';
 $lang['text_clear']             				= 'Clear Image';
 $lang['text_criteria']          				= 'Domain View';
-$lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
-$lang['text_no_clients']			           	= 'There are no clients using this Plan Setting';
 
 
 // Tab
@@ -39,18 +37,6 @@ $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_limit']            				= 'Limit';
 $lang['column_action']          				= 'Action';
 $lang['column_description']						= 'Description';
-$lang['column_plan_name']						= 'Plan Name';		
-$lang['column_clients']							= 'Current Clients';				
-
-
-// Entry
-$lang['entry_name']           					= 'Plan Setting Name';
-$lang['entry_description']           			= 'Description';
-$lang['entry_image']           					= 'Image';
-$lang['entry_sort_order']           			= 'Sort Order';
-$lang['entry_status']           				= 'Status';
-$lang['entry_reward']           				= 'Reward data';
-$lang['entry_limit_num_clients']				= 'Client Limit';
 
 // Button
 $lang['button_subscribe']         = 'Subscribe';
@@ -82,5 +68,4 @@ $lang['error_access']       				= 'Warning: You do not have permission to access
 $lang['error_name']             				= 'Category Name must be between 2 and 32 characters!';
 $lang['error_required']						= 'Warning: Please check required field!!';
 $lang['error_user']							= 'Error: Username not availble!!!';
-$lang['error_plan_client_inuse']							= 'have client use this plan.';
 ?>
