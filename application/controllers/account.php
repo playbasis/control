@@ -55,6 +55,8 @@ class Account extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['main'] = 'account';
+        $this->data['form'] = 'account/subscribe';
 
 	    $client = $this->Client_model->getClientById($this->User_model->getClientId());
 	    $plan_registration = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
@@ -65,6 +67,7 @@ class Account extends MY_Controller
 	    $this->session->set_userdata('plan', $plan);
 	    $trial_days = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
 	    $remaining_days = $this->find_remaining_days_after_trial($plan_registration['date_modified']->sec, $trial_days);
+
 	    $this->data['client'] = $client;
 	    $this->data['client']['date_added'] = $client['date_added']->sec;
 	    $this->data['client']['date_modified'] = $client['date_modified']->sec;
@@ -74,8 +77,7 @@ class Account extends MY_Controller
 	    $this->data['plan'] = $plan;
 	    $this->data['plan']['registration_date_added'] = $plan_registration['date_added']->sec;
 	    $this->data['plan']['registration_date_modified'] = $plan_registration['date_modified']->sec;
-	    $this->data['main'] = 'account';
-	    $this->data['form'] = 'account/subscribe';
+
 	    $this->load->vars($this->data);
 	    $this->render_page('template');
     }
@@ -90,14 +92,16 @@ class Account extends MY_Controller
 		$this->data['title'] = $this->lang->line('title');
 		$this->data['channel_title'] = $this->lang->line('channel_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+		$this->data['main'] = 'account_purchase';
+		$this->data['form'] = 'account/purchase';
 
 		$plan = $this->session->userdata('plan');
 		$free_flag = ($plan['price'] <= 0);
+
 		if ($free_flag) {
 			$this->data['plans'] = $this->Plan_model->listDisplayPlans();
 		}
-		$this->data['main'] = 'account_purchase';
-		$this->data['form'] = 'account/purchase';
+
 		$this->load->vars($this->data);
 		$this->render_page('template');
 	}
@@ -169,11 +173,11 @@ class Account extends MY_Controller
 		$this->data['title'] = $this->lang->line('title');
 		$this->data['wait_title'] = $this->lang->line('wait_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+		$this->data['main'] = 'account_purchase_paypal_done';
 
 		/* clear basket in the session */
 		$this->session->set_userdata('plan', null);
 
-		$this->data['main'] = 'account_purchase_paypal_done';
 		$this->load->vars($this->data);
 		$this->render_page('template');
 	}
