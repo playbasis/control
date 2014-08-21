@@ -223,11 +223,11 @@ class Domain extends MY_Controller
                         $this->load->model('Permission_model');
                         $this->load->model('Client_model');
 
-                        $plan_registration = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+                        $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
 
                         $another_data['domain_value'] = array(
                             'site_id' => $site_id,
-                            'plan_id' => $plan_registration['plan_id'],
+                            'plan_id' => $plan_subscription['plan_id'],
                             'status' => true
                         );
 
