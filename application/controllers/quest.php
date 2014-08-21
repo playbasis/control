@@ -882,6 +882,43 @@ class Quest extends REST2_Controller
 
     }
 
+    public function joinAll_post(){
+        // check user exists
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            "cl_player_id" => $this->input->post("player_id")
+        )));
+        if (!$pb_player_id)
+            $this->response($this->error->setError("USER_NOT_EXIST"), 200);
+
+        $data = $this->validToken;
+
+        // get all available quests related to clients
+        $resp["quests"] = array();
+        $quests = $this->quest_model->getQuests($data);
+        foreach ($quests as $quest => $value) {
+            // condition failed
+            if ($this->checkConditionQuest($quests[$quest], $pb_player_id, $this->validToken))
+                continue;
+            else {
+                $quests[$quest]["quest_id"] = $quests[$quest]["_id"];
+                unset($quests[$quest]["_id"]);
+                array_push($resp["quests"], $quests[$quest]);
+            }
+        }
+
+        $data = array(
+            "client_id" => $this->validToken["client_id"],
+            "site_id" => $this->validToken["site_id"],
+            "pb_player_id" => $pb_player_id
+        );
+
+        foreach($resp["quests"] as $quest){
+            $this->quest_model->joinQuest(array_merge($data, $quest));
+        }
+
+        $this->response($this->resp->setRespond(array("join_all" => "finish")), 200);
+    }
+
     /**
      * Client cancel particular quest
      * @param string $quest_id

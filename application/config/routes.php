@@ -150,6 +150,7 @@ $route['Quest/'.ANY_STRING.'/cancel'] = 'quest/cancel/$1';
 $route['Quest/available'] = 'quest/available';
 $route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
+$route['Quest/joinAll'] = 'quest/joinAll';
 
 //email API
 $route['Email/send'] = 'email/send';
