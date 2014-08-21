@@ -665,6 +665,7 @@ class Client_model extends MY_Model
      * Return usage of service from client-site
      * in particular type and field
      * e.g. notifications email
+     * If Client doesn't has Billing cyle return 0
      * @param client_id string
      * @param site_id string
      * @param type notifications | requests
@@ -748,21 +749,23 @@ class Client_model extends MY_Model
      * Sync Permission billing date with Client billing date
      * @param array @clientDate
      * @param array @permissionDate
-     * @throw NOTSYNC
+     * @throw NOTSYNC | NOEXPIRE
      */
     private function syncPermissionDate($clientDate, $permissionDate)
     {
         // Not has Date no limitation
-        if (!$clientDate["date_start"] || !$clientDate["date_expire"])
             throw new Exception("NOEXPIRE");
 
         // Date is not sync
         if (($clientDate["date_start"] != $permissionDate["date_start"]) ||
             ($clientDate["date_expire"] != $permissionDate["date_expire"])) {
                 $this->mongo_db->where(array("_id" => $permissionDate["_id"]));
+
+                // Update date & Reset usage
                 $this->mongo_db->set(array(
                     "date_start" => $clientDate["date_start"],
                     "date_expire" => $clientDate["date_expire"]));
+                $this->mongo_db->unset_field("usage");
                 $this->mongo_db->update("playbasis_permission");
                 throw new Exception("NOTSYNC");
             }
@@ -818,13 +821,13 @@ class Client_model extends MY_Model
 
     /*
      * Check & Update permission usage
+     * Always update if limit is not exceed
      * @param string $client_id
      * @param string $site_id
      * @param (notifications | requests) $type
      * @particular string $field
      */
     public function permissionProcess($client_id, $site_id, $type, $field) {
-        // TODO
         // get current usage
         $usage = $this->getPermissionUsage(
             $client_id, $site_id, $type, $field);
