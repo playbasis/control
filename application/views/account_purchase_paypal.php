@@ -2,7 +2,7 @@
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
-        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $order_title; ?></h1>
+        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="location = baseUrlPath+'account'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div><!-- .buttons -->
@@ -27,7 +27,7 @@
 				            <td><?php echo $this->lang->line('form_channel'); ?>:</td>
 				            <td>
 					            <select name="channel" disabled>
-						            <option selected="selected" value="paypal">PayPal</option>
+						            <option selected="selected" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>"><?php echo $this->lang->line('text_paypal'); ?></option>
 					            </select>
 				            </td>
 			            </tr>
@@ -68,15 +68,32 @@
 </div><!-- #content .span10 -->
 <script type="text/javascript"><!--
 	$(document).ready(function(){
+		/* enable recurring payment */
 		$('<input>').attr({
 			type: 'hidden',
-			name: 'src', // enable recurring payments
+			name: 'src', // enable flag
 			value: 1
 		}).appendTo('form');
 		$('<input>').attr({
 			type: 'hidden',
 			name: 'srt', // recurring times (require 'src' = 1)
 			value: <?php echo $params['months']; ?>
+		}).appendTo('form');
+		/* enable trial period */
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'a1', // price
+			value: 0
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'p1', // duration
+			value: <?php echo $params['trial_days']; ?> <!-- allowed value: 1-90 -->
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 't1', // unit of duration
+			value: 'D'
 		}).appendTo('form');
 	});
 //--></script>

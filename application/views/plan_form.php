@@ -54,7 +54,23 @@
                         <!-- <td><input type="text" name="description" value="<?php //echo $description; ?>" size="50" /></td> -->
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('entry_status'); ?>:</td>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_price'); ?>:</td>
+                        <td><input type="text" name="price" value="<?php echo $price; ?>" size="50" /></td>
+                    </tr>
+                    <tr>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_display'); ?>:</td>
+                        <td><select name="display">
+                            <?php if ($display) { ?>
+                            <option value="1" selected="selected"><?php echo $this->lang->line('text_displayed'); ?></option>
+                            <option value="0"><?php echo $this->lang->line('text_not_displayed'); ?></option>
+                            <?php } else { ?>
+                            <option value="1"><?php echo $this->lang->line('text_displayed'); ?></option>
+                            <option value="0" selected="selected"><?php echo $this->lang->line('text_not_displayed'); ?></option>
+                            <?php } ?>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_status'); ?>:</td>
                         <td><select name="status">
                             <?php if ($status) { ?>
                             <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
