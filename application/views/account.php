@@ -56,17 +56,27 @@
 				            <td><?php echo $client['email']; ?></td>
 			            </tr>
 			            <tr>
+				            <td><?php echo $this->lang->line('text_date_added'); ?>:</td>
+				            <td><?php echo date('d M Y', $client['date_added']); ?></td>
+			            </tr>
+			            <tr>
 				            <td><?php echo $this->lang->line('text_valid'); ?>:</td>
 				            <td>
 				                <select disabled>
 				                    <option selected="selected"><?php echo $client['valid'] ? $this->lang->line('text_enabled') : $this->lang->line('text_disabled'); ?></option>
 				                </select>
-				                (<?php echo ($client['date_start'] ? date('d M Y', $client['date_start']) : $this->lang->line('text_not_available')).' - '.($client['date_expire'] ? date('d M Y', $client['date_expire']) : $this->lang->line('text_not_available')); ?>)
 				            </td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('text_date_added'); ?>:</td>
-				            <td><?php echo date('d M Y', $client['date_added']); ?></td>
+				            <td><?php echo $this->lang->line('text_valid_api'); ?>:</td>
+				            <td>
+					            <?php $start = ($client['date_start'] ? date('d M Y', $client['date_start']) : ''); ?>
+					            <?php $end = ($client['date_expire'] ? date('d M Y', $client['date_expire']) : ''); ?>
+					            <?php if ($start && $end) echo $start.' - '.$end; ?>
+					            <?php if (!$start && $end) echo 'Until '.$end; ?>
+					            <?php if ($start && !$end) echo 'From '.$start; ?>
+					            <?php if (!$start && !$end) echo $this->lang->line('text_unlimited'); ?>
+				            </td>
 			            </tr>
 			            <?php if ($plan['paid_flag']) { ?>
 			            <tr>
@@ -90,12 +100,14 @@
 				            <td><?php echo $client['date_billing'] ? date('d M Y', $client['date_billing']) : $this->lang->line('text_not_available'); ?></td>
 			            </tr>
 				            <?php $days_used = $plan['trial_total_days'] - $client['trial_remaining_days']; ?>
+				            <?php if ($days_used < 0) $days_used = 0; ?>
+				            <?php if ($days_used > $plan['trial_total_days']) $days_used = $plan['trial_total_days']; ?>
 			            <tr>
 				            <td><?php echo $this->lang->line('text_trial'); ?>:</td>
 				            <?php if (!$client['date_billing']) { ?>
 				            <td><?php echo $this->lang->line('text_trial_not_begin'); ?></td>
 				            <?php } else { ?>
-				            <td><?php echo $client['trial_remaining_days'] >= 0 ? $this->lang->line('text_trial_not_end') : $this->lang->line('text_trial_end'); ?> <?php echo '('.$days_used.'/'.$plan['trial_total_days'].')'; ?></td>
+				            <td><?php echo $client['trial_remaining_days'] >= 0 ? $this->lang->line('text_yes') : $this->lang->line('text_no'); ?> <?php echo '('.$days_used.'/'.$plan['trial_total_days'].')'; ?></td>
 				            <?php } ?>
 			            </tr>
 				            <?php if ($client['date_billing'] && $client['trial_remaining_days'] >= 0) { ?>

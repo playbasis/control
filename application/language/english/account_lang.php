@@ -10,6 +10,8 @@ $lang['text_name']						= 'Name';
 $lang['text_company']						= 'Company';
 $lang['text_email']						= 'E-mail';
 $lang['text_valid']						= 'Status (According to Payment)';
+$lang['text_valid_api']						= 'Allowed API Usage';
+$lang['text_unlimited']						= 'Unlimited';
 $lang['text_enabled']						= 'Enabled';
 $lang['text_disabled']						= 'Disabled';
 $lang['text_date_added']						= 'Creation Date';
@@ -19,11 +21,11 @@ $lang['text_plan_subscription_date']						= 'Plan Subscription Date';
 $lang['text_billing_date']						= 'Plan Billing Date';
 $lang['text_trial']						= 'Trial Period';
 $lang['text_trial_not_begin']						= 'Not Begin';
-$lang['text_trial_end']						= 'Yes';
-$lang['text_trial_not_end']						= 'No';
 $lang['text_trial_total_days']						= 'Total Allowed Trial Days';
 $lang['text_trial_remaining_days']						= 'Remaining Days In Trial Period';
 $lang['text_paypal']						= 'PayPal';
+$lang['text_yes']						= 'Yes';
+$lang['text_no']						= 'No';
 $lang['text_not_available']						= 'N/A';
 
 
