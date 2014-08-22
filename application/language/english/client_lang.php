@@ -33,6 +33,7 @@ $lang['tab_user'] 								= 'Users';
 $lang['column_image']							= 'Logo';
 // $lang['column_name']            				= 'Name';
 $lang['column_company_name']					= 'Client Name';
+$lang['column_plan_name']					= 'Plan Name';
 $lang['column_domain']          				= 'Domains';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';

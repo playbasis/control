@@ -48,14 +48,6 @@
                             <td><input type="text" name="company" value="<?php echo $company; ?>" size="50" class="tooltips" data-placement="right" title="Please provide the company name in full (example: Playbasis Pte. Ltd.)"/></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_date_start'); ?>:</td>
-                            <td><input type="text" name="date_start" value="<?php echo $date_start; ?>" size="50" class="date" /></td>
-                        </tr>
-                        <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_date_expire'); ?>:</td>
-                            <td><input type="text" name="date_expire" value="<?php echo $date_expire; ?>" size="50" class="date" /></td>
-                        </tr>
-                        <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_firstname'); ?>:</td>
                             <td><input type="text" name="first_name" value="<?php echo $first_name; ?>" size="50" class="tooltips" data-placement="right" title="Firstname of main contact person of the company"/></td>
                         </tr>
@@ -70,6 +62,31 @@
                         <tr>
                             <td><?php echo $this->lang->line('entry_mobile'); ?>:</td>
                             <td><input type="text" name="mobile" value="<?php echo $mobile; ?>" size="50" /></td>
+                        </tr>
+                        <tr>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_plan'); ?>:</td>
+                            <td>
+                                <select name="plan_id">
+                                    <option value=""><?php echo $this->lang->line('text_select'); ?></option>
+                                    <?php if ($plan_data) { ?>
+                                        <?php foreach ($plan_data as $each) { ?>
+                                            <?php if ($plan_id==$each['_id']) { ?>
+                                    <option value="<?php echo $each['_id']; ?>" selected="selected"><?php echo $each['name']; ?></option>
+                                            <?php } else { ?>
+                                    <option value="<?php echo $each['_id']; ?>"><?php echo $each['name']; ?></option>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_date_start'); ?>:</td>
+                            <td><input type="text" name="date_start" value="<?php echo $date_start; ?>" size="50" class="date tooltips" data-placement="right" title="Set start date for allowing API usage" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_date_expire'); ?>:</td>
+                            <td><input type="text" name="date_expire" value="<?php echo $date_expire; ?>" size="50" class="date tooltips" data-placement="right" title="Set end date for allowing API usage" /></td>
                         </tr>
                     </table>
                 </div>
@@ -179,7 +196,7 @@
                             <td><span class="required">*</span> <?php echo $this->lang->line('limit_users'); ?>:</td>
                             <td><input type="text" name="limit_users" value="" size="50" class="tooltips" data-placement="right" title="Number of users that the client can create"/></td>
                         </tr>
-                        <tr>
+                        <!--tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_plan'); ?>:</td>
                             <td>
                                 <select name="domain_plan_id">
@@ -191,7 +208,7 @@
                                     <?php } ?>
                                 </select>
                             </td>
-                        </tr>
+                        </tr-->
                         <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td>
