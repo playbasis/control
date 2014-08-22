@@ -120,7 +120,7 @@ class Service_model extends MY_Model
 
             $quest['date_added'] = datetimeMongotoReadable($quest['date_added']);
             $quest['player'] = isset($player[0])?$player[0]:null;
-            $quest['message'] = $quest['player']['username']. ' earned '. $quest['reward_value'].' '.$quest['reward_name'].'s';
+            $quest['message'] = 'earned '. $quest['reward_value'].' '.$quest['reward_name'];
             if(($quest['mission_id'] != null)){
                 $quest['action_icon'] = 'fa-trophy';
                 $quest['action_name'] = 'mission_reward';
