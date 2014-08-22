@@ -988,13 +988,18 @@ class Quest extends MY_Controller
             array("client_id" => strval($client_id),
                 "site_id" => strval($site_id),
                 "quest_id" => strval($quest_id)));
-        $obj_result = json_decode($raw_result);
 
-        // if success, assume that this quest ok
-        if ($obj_result->success)
-            $this->output->set_output(json_encode(array("success" => true)));
-        else
+        try {
+            $obj_result = json_decode($raw_result);
+
+            // if success, assume that this quest ok
+            if ($obj_result->success)
+                $this->output->set_output(json_encode(array("success" => true)));
+            else
+                $this->output->set_output(json_encode(array("success" => false)));
+        } catch(Exception $e) {
             $this->output->set_output(json_encode(array("success" => false)));
+        }
     }
 
     private function curl($url, $data) {
