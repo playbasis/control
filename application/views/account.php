@@ -3,9 +3,11 @@
         <div class="heading">
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-	                <?php $free_flag = ($plan['price'] == 0); ?>
-	                <?php if ($free_flag) { ?> You are in a free package, please <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_subscribe'); ?></button><?php } ?>
-                    <?php if (!$free_flag && $client['trial_flag']) { ?> You are in a trial period, please <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_subscribe'); ?></button><?php } ?>
+	                <?php if ($plan['free_flag']) { ?> You are in a free package, please <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_subscribe'); ?></button><?php } ?>
+	                <?php if ($plan['paid_flag'] && !$client['date_billing']) { ?> Before start using our service, please <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_update_payment_detail'); ?></button><?php } ?>
+	                <?php if ($client['date_billing'] /* TODO: check that current plan is not the maximum paid plan by price */) { ?><a href="<?php echo base_url();?>account/upgrade_plan" class="btn btn-primary"><?php echo $this->lang->line('button_upgrade'); ?></a><?php } ?>
+	                <?php if ($client['date_billing'] /* TODO: check that current plan is not the minimum paid plan by price */) { ?><a href="<?php echo base_url();?>account/downgrade_plan" class="btn btn-primary"><?php echo $this->lang->line('button_downgrade'); ?></a><?php } ?>
+	                <?php if ($client['date_billing'] && time() < $client['date_billing']) { ?><a href="<?php echo base_url();?>account/cancel_subscription" class="btn btn-primary"><?php echo $this->lang->line('button_cancel_subscription'); ?></a><?php } ?><!-- can cancel within a trial period without penalty -->
 	            <br>
 	            <!--
 	            // if free (plan-price-0), offer them a choice to +upgrade<br>
@@ -42,57 +44,67 @@
             	<div id="tab-general">
             		<table class="form">
 			            <tr>
-				            <td><?php echo $this->lang->line('form_name'); ?>:</td>
+				            <td><?php echo $this->lang->line('text_name'); ?>:</td>
 				            <td><?php echo $client['first_name'].' '.$client['last_name']; ?></td>
 			            </tr>
-            			<tr>
-            				<td><?php echo $this->lang->line('form_company'); ?>:</td>
-            				<td><?php echo $client['company']; ?></td>
-            			</tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_email'); ?>:</td>
+				            <td><?php echo $this->lang->line('text_company'); ?>:</td>
+				            <td><?php echo $client['company']; ?></td>
+			            </tr>
+			            <tr>
+				            <td><?php echo $this->lang->line('text_email'); ?>:</td>
 				            <td><?php echo $client['email']; ?></td>
 			            </tr>
-            			<!--tr>
-            				<td><?php echo $this->lang->line('form_status'); ?>:</td>
-            				<td>
-            					<select disabled>
-            					<?php if($client['status'] || set_value('status')){?>
-            						<option selected="selected" value="1">Enabled</option>
-            					<?php }else{?>
-            						<option selected="selected" value="0">Disabled</option>
-            					<?php }?>
-            					</select>
-            				</td>
-            			</tr-->
 			            <tr>
-				            <td><?php echo $this->lang->line('form_date_added'); ?>:</td>
-				            <td><?php echo date('d M Y', $client['date_added']); ?></td>
+				            <td><?php echo $this->lang->line('text_valid'); ?>:</td>
+				            <td>
+				                <select disabled>
+				                    <option selected="selected"><?php echo $client['valid'] ? $this->lang->line('text_enabled') : $this->lang->line('text_disabled'); ?></option>
+				                </select>
+				                (<?php echo ($client['date_start'] ? date('d M Y', $client['date_start']) : $this->lang->line('text_not_available')).' - '.($client['date_expire'] ? date('d M Y', $client['date_expire']) : $this->lang->line('text_not_available')); ?>)
+				            </td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_plan_name'); ?>:</td>
+				            <td><?php echo $this->lang->line('text_date_added'); ?>:</td>
+				            <td><?php echo date('d M Y', $client['date_added']); ?></td>
+			            </tr>
+			            <?php if ($plan['paid_flag']) { ?>
+			            <tr>
+				            <td>&nbsp;</td>
+				            <td>&nbsp;</td>
+			            </tr>
+			            <tr>
+				            <td><?php echo $this->lang->line('text_plan_name'); ?>:</td>
 				            <td><?php echo $plan['name']; ?></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_plan_price'); ?>:</td>
+				            <td><?php echo $this->lang->line('text_plan_price'); ?>:</td>
 				            <td><?php echo $plan['price']; ?></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_plan_registration'); ?>:</td>
-				            <td><?php echo date('d M Y', $plan['registration_date_modified']); ?></td>
+				            <td><?php echo $this->lang->line('text_plan_subscription_date'); ?>:</td>
+				            <td><?php echo date('d M Y', $plan['date_modified']); ?></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_trial_flag'); ?>:</td>
-				            <td><?php echo $client['trial_flag'] ? 'TRUE' : 'FALSE'; ?></td>
+				            <td><?php echo $this->lang->line('text_billing_date'); ?>:</td>
+				            <td><?php echo $client['date_billing'] ? date('d M Y', $client['date_billing']) : $this->lang->line('text_not_available'); ?></td>
 			            </tr>
+				            <?php $days_used = $plan['trial_total_days'] - $client['trial_remaining_days']; ?>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_trial_days'); ?>:</td>
-				            <td><?php echo $client['trial_days']; ?></td>
+				            <td><?php echo $this->lang->line('text_trial'); ?>:</td>
+				            <?php if (!$client['date_billing']) { ?>
+				            <td><?php echo $this->lang->line('text_trial_not_begin'); ?></td>
+				            <?php } else { ?>
+				            <td><?php echo $client['trial_remaining_days'] >= 0 ? $this->lang->line('text_trial_not_end') : $this->lang->line('text_trial_end'); ?> <?php echo '('.$days_used.'/'.$plan['trial_total_days'].')'; ?></td>
+				            <?php } ?>
 			            </tr>
+				            <?php if ($client['date_billing'] && $client['trial_remaining_days'] >= 0) { ?>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_trial_remaining_days'); ?>:</td>
+				            <td><?php echo $this->lang->line('text_trial_remaining_days'); ?>:</td>
 				            <td><?php echo $client['trial_remaining_days']; ?></td>
 			            </tr>
+				            <?php } ?>
+			            <?php } ?>
             		</table>
             	</div>
             <?php echo form_close();?>

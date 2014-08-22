@@ -1,7 +1,7 @@
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
-        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $channel_title; ?></h1>
+        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_purchase'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'account'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
@@ -23,7 +23,6 @@
             <?php }?>
             <?php $attributes = array('id' => 'form');?>
             <?php echo form_open($form, $attributes);?>
-            	<input type="hidden" name="months" value="12" />
             	<div id="tab-general">
             		<table class="form">
 			            <tr>
@@ -47,14 +46,16 @@
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
             				<td>
-            					12
+					            <select name="months" readonly>
+						            <option selected="selected"><?php echo MONTHS_PER_PLAN; ?></option>
+					            </select>
             				</td>
             			</tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_channel'); ?>:</td>
             				<td>
 					            <select name="channel">
-						            <option selected="selected" value="paypal">PayPal</option>
+						            <option selected="selected" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>"><?php echo $this->lang->line('text_paypal'); ?></option>
 					            </select>
             				</td>
             			</tr>

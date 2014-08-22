@@ -20,8 +20,7 @@ class  MY_Controller  extends  CI_Controller  {
 
         $lang = get_lang($this->session, $this->config);
 
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-
+        if (!array_key_exists('heading_title', $this->data)) $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_affiliate'] = $this->lang->line('text_affiliate');
         $this->data['text_attribute'] = $this->lang->line('text_attribute');
         $this->data['text_attribute_group'] = $this->lang->line('text_attribute_group');
