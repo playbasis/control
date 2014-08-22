@@ -1,10 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
-
-define('DEFAULT_PLAN_PRICE', 0); // default is free package
-define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
-
 class Account extends MY_Controller
 {
     public function __construct()
@@ -96,7 +92,7 @@ class Account extends MY_Controller
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 
 		$plan = $this->session->userdata('plan');
-		$free_flag = ($plan['price'] == 0);
+		$free_flag = ($plan['price'] <= 0);
 		if ($free_flag) {
 			$this->data['plans'] = $this->Plan_model->listActivePlans();
 		}

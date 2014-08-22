@@ -412,27 +412,38 @@ class Client_model extends MY_Model
         }
     }
 
-    public function insertClient(){
+    public function insertClient($data, $plan){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $data = $this->input->post();
+        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+        $price = ($plan && array_key_exists('price', $plan) ? $plan['price'] : DEFAULT_PLAN_PRICE);
+        $free_flag = ($price <= 0);
+
+        if ($free_flag) { // free package
+            $date_start = $d;
+            $date_expire = new MongoDate(strtotime("+".FOREVER." year")); // client with free package has no expiration date
+        } else { // trial package
+            $date_start = new MongoDate(strtotime("+".FOREVER." year")); // client with trial package CANNOT start using our API right away after registration; instead, they have to put payment detail first
+            $date_expire = $date_start;
+        }
 
         $data_insert_client = array(
-            'first_name'=>$data['firstname'],
-            'last_name'=>$data['lastname'],
-            'mobile'=>'',
-            'email'=>$data['email'],
-            'company'=>$data['company_name'],
-            'image'=>isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
-            'status'=>true,
-            'deleted'=>false,
-            'date_added'=> new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-            'date_modified'=>''
+            'first_name' => $data['firstname'],
+            'last_name' => $data['lastname'],
+            'mobile' => '',
+            'email' => $data['email'],
+            'company' => $data['company_name'],
+            'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => true,
+            'deleted' => false,
+            'date_start' => $date_start,
+            'date_expire' => $date_expire,
+            'date_added' => $d,
+            'date_modified' => $d
         );
 
-        $this->mongo_db->insert('playbasis_client', $data_insert_client);
-
-        return $data_inserted_client_id = $data_insert_client['_id'];
+        return $this->mongo_db->insert('playbasis_client', $data_insert_client); // return record['_id'] if insert successfully, otherwise false
     }
 
     public function editClientPlan($client_id, $data){

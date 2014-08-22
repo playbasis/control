@@ -223,12 +223,12 @@ class Domain extends MY_Controller
                         $this->load->model('Permission_model');
                         $this->load->model('Client_model');
 
-                        $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+                        $plan_registration = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
 
                         $another_data['domain_value'] = array(
-                            'site_id' =>$site_id,
-                            'plan_id' => $plan_id,
-                            'status' =>true
+                            'site_id' => $site_id,
+                            'plan_id' => $plan_registration['plan_id'],
+                            'status' => true
                         );
 
                         $this->Client_model->editClientPlan($client_id, $another_data);
