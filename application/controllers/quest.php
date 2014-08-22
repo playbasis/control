@@ -23,13 +23,6 @@ class Quest extends REST2_Controller
     public function QuestProcess($pb_player_id, $validToken, $test_id=NULL){
         $this->load->helper('vsort');
 
-//        try {
-//            $validToken["client_id"] = new MongoId($validToken["client_id"]);
-//            $validToken["site_id"] = new MongoID($validToken["site_id"]);
-//        } catch(MongoException $e) {
-//            $validToken["client_id"] = NULL;
-//            $validToken["site_id"] = NULL;
-//        }
         $client_id = $validToken["client_id"];
         $site_id = $validToken["site_id"];
         $domain_name = $validToken['domain_name'];
@@ -249,7 +242,7 @@ class Quest extends REST2_Controller
                         array_push($questEvent, $event);
                     }
                 }else if($c["condition_type"] == "LEVEL_START"){
-                    if($c["condition_value"] > $player['level']){
+                    if((int)$c["condition_value"] > (int)$player['level']){
                         $event = array(
                             'event_type' => 'LEVEL_IS_LOWER',
                             'message' => 'Your level is under satisfied'
@@ -257,7 +250,7 @@ class Quest extends REST2_Controller
                         array_push($questEvent, $event);
                     }
                 }else if($c["condition_type"] == "LEVEL_END"){
-                    if($c["condition_value"] < $player['level']){
+                    if((int)$c["condition_value"] < (int)$player['level']){
                         $event = array(
                             'event_type' => 'LEVEL_IS_HIGHER',
                             'message' => 'Your level is abrove satisfied'
@@ -272,7 +265,7 @@ class Quest extends REST2_Controller
                     }else{
                         $point = 0;
                     }
-                    if($c["condition_value"] > $point){
+                    if((int)$c["condition_value"] > (int)$point){
                         $event = array(
                             'event_type' => 'POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -288,7 +281,7 @@ class Quest extends REST2_Controller
                     }else{
                         $custom_point = 0;
                     }
-                    if($c["condition_value"] > $custom_point){
+                    if((int)$c["condition_value"] > (int)$custom_point){
                         $event = array(
                             'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -302,7 +295,7 @@ class Quest extends REST2_Controller
                     }else{
                         $badge = 0;
                     }
-                    if($badge < $c["condition_value"]){
+                    if((int)$badge < (int)$c["condition_value"]){
                         $event = array(
                             'event_type' => 'BADGE_NOT_ENOUGH',
                             'message' => 'user badge not enough',
@@ -381,7 +374,7 @@ class Quest extends REST2_Controller
                     }else{
                         $point = 0;
                     }
-                    if($c["completion_value"] > $point){
+                    if((int)$c["completion_value"] > (int)$point){
                         $event = array(
                             'event_type' => 'POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -402,7 +395,7 @@ class Quest extends REST2_Controller
                     }else{
                         $custom_point = 0;
                     }
-                    if($c["completion_value"] > $custom_point){
+                    if((int)$c["completion_value"] > (int)$custom_point){
                         $event = array(
                             'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
                             'message' => 'Your point not enough',
@@ -421,7 +414,7 @@ class Quest extends REST2_Controller
                     }else{
                         $badge = 0;
                     }
-                    if($badge < $c["completion_value"]){
+                    if((int)$badge < (int)$c["completion_value"]){
                         $event = array(
                             'event_type' => 'BADGE_NOT_ENOUGH',
                             'message' => 'user badge not enough',
@@ -539,8 +532,8 @@ class Quest extends REST2_Controller
 
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
-                    'action_name' => 'mission_reward',
-                    'action_icon' => 'fa-icon-trophy',
+                    'action_name' => isset($sub_events["mission_id"])?'mission_reward':'quest_reward',
+                    'action_icon' => 'fa-trophy',
                     'message' => $eventMessage,
                     'badge' => $event['reward_data']
                 )), $validToken['domain_name'], $validToken['site_id']);
@@ -558,8 +551,8 @@ class Quest extends REST2_Controller
                         $eventMessage = $this->levelup($lv, $sub_events, $update_config);
                         //publish to node stream
                         $this->node->publish(array_merge($update_config, array(
-                            'action_name' => 'mission_reward',
-                            'action_icon' => 'fa-icon-trophy',
+                            'action_name' => isset($sub_events["mission_id"])?'mission_reward':'quest_reward',
+                            'action_icon' => 'fa-trophy',
                             'message' => $eventMessage,
                             'level' => $lv
                         )), $validToken['domain_name'], $validToken['site_id']);
@@ -599,8 +592,8 @@ class Quest extends REST2_Controller
 
                 //publish to node stream
                 $this->node->publish(array_merge($update_config, array(
-                    'action_name' => 'mission_reward',
-                    'action_icon' => 'fa-icon-trophy',
+                    'action_name' => isset($sub_events["mission_id"])?'mission_reward':'quest_reward',
+                    'action_icon' => 'fa-trophy',
                     'message' => $eventMessage,
                     'amount' => $r["reward_value"],
                     'point' => $reward_type_name
@@ -887,6 +880,43 @@ class Quest extends REST2_Controller
         $this->response($this->resp->setRespond(
             (isset($condition_quest) && $condition_quest) ? $condition_quest : array('events' => array('event_type' => 'QUEST_JOIN', 'quest_id' => $quest_id.""))), 200);
 
+    }
+
+    public function joinAll_post(){
+        // check user exists
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            "cl_player_id" => $this->input->post("player_id")
+        )));
+        if (!$pb_player_id)
+            $this->response($this->error->setError("USER_NOT_EXIST"), 200);
+
+        $data = $this->validToken;
+
+        // get all available quests related to clients
+        $resp["quests"] = array();
+        $quests = $this->quest_model->getQuests($data);
+        foreach ($quests as $quest => $value) {
+            // condition failed
+            if ($this->checkConditionQuest($quests[$quest], $pb_player_id, $this->validToken))
+                continue;
+            else {
+                $quests[$quest]["quest_id"] = $quests[$quest]["_id"];
+                unset($quests[$quest]["_id"]);
+                array_push($resp["quests"], $quests[$quest]);
+            }
+        }
+
+        $data = array(
+            "client_id" => $this->validToken["client_id"],
+            "site_id" => $this->validToken["site_id"],
+            "pb_player_id" => $pb_player_id
+        );
+
+        foreach($resp["quests"] as $quest){
+            $this->quest_model->joinQuest(array_merge($data, $quest));
+        }
+
+        $this->response($this->resp->setRespond(array("join_all" => "finish")), 200);
     }
 
     /**
