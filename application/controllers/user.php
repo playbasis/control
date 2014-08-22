@@ -214,12 +214,14 @@ class User extends MY_Controller
 
             $client_id = $this->User_model->getClientId();
             $site_id = $this->User_model->getSiteId();
+            $plan = $this->Plan_model->getPlanIDfromClientSite(
+                $client_id, $site_id);
 
             if($this->form_validation->run()){
                 // get Plan limit_others.user
                 try {
-                    $user_limit = $this->Plan_model->getPermissionUsage(
-                        $client_id, $site_id, "others", "user");
+                    $user_limit = $this->Plan_model->getPlanLimitById(
+                        $plan["plan_id"], "others", "user");
                     if (!isset($user_limit["value"]) || !$user_limit["value"])
                         $user_limit["value"] = 3;  // default
                 } catch(Exception $e) {

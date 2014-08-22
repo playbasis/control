@@ -8,6 +8,8 @@ class Domain extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('Client_model');
+        $this->load->model('Plan_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -201,6 +203,23 @@ class Domain extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
+                $client_id = $this->User_model->getClientId();
+                $plan = $this->Plan_model->getPlanIDfromClientSite($client_id);
+
+                // get Plan limit_others.domain
+                $limit = $this->Plan_model->getPlanLimitById(
+                    $plan["plan_id"], "others", "domain");
+                if (!isset($limit["value"]) || !$limit["value"])
+                    $limit["value"] = 3; // default
+
+                // Get current client site
+                $usage = $this->Client_model->getSitesByClientId($client_id);
+
+                // compare
+                if (sizeof($usage) >= $limit["value"]) {
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_domain"));
+                    redirect("domain/");
+                }
 
                 $c_data = array('domain_name' => $this->input->post('domain_domain_name'));
 
@@ -208,7 +227,6 @@ class Domain extends MY_Controller
 
                 if(!$domain){
 
-                    $client_id = $this->User_model->getClientId();
                     $d_data = array();
                     $d_data['client_id'] = $client_id;
                     $d_data['domain_name'] = $this->input->post('domain_domain_name');

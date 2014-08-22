@@ -492,19 +492,17 @@ class Plan_model extends MY_Model
      * Return Permission limitation by Plan ID
      * in particular type and field
      * e.g. notifications email
-     * @param site_id string
      * @param plan_id string
      * @param type notifications | requests | others
      * @param field string
      * @return integer | array | null
      */
-    public function getPlanLimitById($site_id, $plan_id, $type, $field)
+    public function getPlanLimitById($plan_id, $type, $field)
     {
         // wrong type
         if ($type != "notifications" && $type != "requests" && $type != "others")
-            throw new Exception("getPermissionUsage wrong type");
+            throw new Exception("WRONG_TYPE");
 
-        $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
             '_id' => $plan_id,
         ));
@@ -538,54 +536,6 @@ class Plan_model extends MY_Model
     }
 
     /**
-     * Return usage of service from client-site
-     * in particular type and field
-     * e.g. notifications email
-     * @param client_id string
-     * @param site_id string
-     * @param type notifications | requests | others
-     * @param field string
-     * @return array('plan_id' => string, 'value' => integer) | null
-     */
-    public function getPermissionUsage($client_id, $site_id, $type, $field)
-    {
-        // wrong type
-        if ($type != "notifications" && $type != "requests" && $type != "others")
-            throw new Exception("getPermissionUsage wrong type");
-
-        $year_month = date("Ym");
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(
-            array('plan_id', $type.'.'.$year_month.'.'.$field)
-        );
-        $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id
-        ));
-        $res = $this->mongo_db->get('playbasis_permission');
-        if ($res) {
-            // check this limitation on this client-site
-            $res = $res[0];
-            if (isset($res[$type]) &&
-                isset($res[$type][$year_month]) &&
-                isset($res[$type][$year_month][$field])) {
-                    return array(
-                        'plan_id' => $res['plan_id'],
-                        'value' => $res[$type][$year_month][$field]
-                    );
-                } else { // this limitation is not found in database
-                    return array(
-                        'plan_id' => $res['plan_id'],
-                        'value' => 0
-                    );
-                }
-        }
-        else { // client-site is not found
-            throw new Exception("getPermissionUsage client-site not found");
-        }
-    }
-
-    /**
      * Update Permission service usage
      * in particular type and field
      * e.g. notifications email
@@ -608,25 +558,27 @@ class Plan_model extends MY_Model
 
     /*
      * Get Plan ID from ClientSite
+     * If site_id is not given use first client_id plan
+     * It should be the same plan among site_ids
      * @param string client_id
      * @param string site_id
      * @return array
      */
-    public function getPlanIDfromClientSite($client_id, $site_id)
+    public function getPlanIDfromClientSite($client_id, $site_id=NULL)
     {
         $this->set_site_mongodb($site_id);
 
         $select = array("plan_id");
-        $criteria = array(
-            "client_id" => $client_id,
-            "site_id" => $site_id);
+        $criteria = array("client_id" => $client_id);
+        if ($site_id)
+            $criteria["site_id"] = $site_id;
 
         $this->mongo_db->select($select);
         $result = $this->mongo_db->get_where("playbasis_permission", $criteria);
         if ($result)
             return $result[0];
         else
-            return array();
+            return array("plan_id" => NULL);
     }
 
 	public function listActivePlans() {

@@ -59,12 +59,7 @@ class Goods extends MY_Controller
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
 
         // Get Limit
-        $limit = $this->Plan_model->getPlanLimitById(
-            $site_id,
-            $plan_id,
-            'others',
-            'goods'
-        );
+        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
 
         if ($limit && $usage >= $limit) {
             $this->data['message'] = $this->lang->line('error_limit');

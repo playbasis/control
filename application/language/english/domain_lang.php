@@ -85,6 +85,7 @@ $lang['column_domain_name'] 			= 'Domain';
 $lang['column_domain_plan'] 			= 'Package';
 $lang['column_domain_status'] 			= 'Status';
 $lang['column_domain_modified'] 		= 'Date Modified.';
+$lang["text_fail_limit_domain"]         = "Sorry, you have reach domain limit";
 
 // User
 $lang['column_title']					= 'Title';

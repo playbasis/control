@@ -379,8 +379,7 @@ class Plan extends MY_Controller
             $this->data['reward_data'] = array();
         }
 
-        // default limit noti has to have
-        // sms, email and push
+        // default limit noti must has these fields
         $default_limit_noti = array(
             "sms" => null,
             "email" => null,
@@ -400,16 +399,16 @@ class Plan extends MY_Controller
             $this->data['limit_noti'] = $default_limit_noti;
         }
 
-        // default limit others has to have
-        // insight, quest, mission, goods, trial, player and user
+        // default limit others must has these fields
         $default_limit_others = array(
-            "insight" => null,
-            "quest" => null,
-            "mission" => null,
+            "domain" => null,
             "goods" => null,
-            "user" => null,
+            "insight" => null,
+            "mission" => null,
             "player" => null,
-            "trial" => null);
+            "quest" => null,
+            "trial" => null,
+            "user" => null);
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
