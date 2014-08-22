@@ -70,12 +70,16 @@
 			            <tr>
 				            <td><?php echo $this->lang->line('text_valid_api'); ?>:</td>
 				            <td>
-					            <?php $start = ($client['date_start'] ? date('d M Y', $client['date_start']) : ''); ?>
-					            <?php $end = ($client['date_expire'] ? date('d M Y', $client['date_expire']) : ''); ?>
-					            <?php if ($start && $end) echo $start.' - '.$end; ?>
-					            <?php if (!$start && $end) echo 'Until '.$end; ?>
-					            <?php if ($start && !$end) echo 'From '.$start; ?>
-					            <?php if (!$start && !$end) echo $this->lang->line('text_unlimited'); ?>
+				            <?php if ($client['valid']) { ?>
+				                <?php $start = ($client['date_start'] ? date('d M Y', $client['date_start']) : ''); ?>
+				                <?php $end = ($client['date_expire'] ? date('d M Y', $client['date_expire']) : ''); ?>
+				                <?php if ($start && $end) echo $start.' - '.$end; ?>
+				                <?php if (!$start && $end) echo 'Until '.$end; ?>
+				                <?php if ($start && !$end) echo 'From '.$start; ?>
+				                <?php if (!$start && !$end) echo $this->lang->line('text_unlimited'); ?>
+				            <?php } else { ?>
+				                <?php echo $this->lang->line('text_not_available'); ?>
+				            <?php } ?>
 				            </td>
 			            </tr>
 			            <?php if ($plan['paid_flag']) { ?>
@@ -105,7 +109,7 @@
 			            <tr>
 				            <td><?php echo $this->lang->line('text_trial'); ?>:</td>
 				            <?php if (!$client['date_billing']) { ?>
-				            <td><?php echo $this->lang->line('text_trial_not_begin'); ?></td>
+				            <td><?php echo $this->lang->line('text_trial_not_begin'); ?> <?php echo '('.$plan['trial_total_days'].' days)'; ?></td>
 				            <?php } else { ?>
 				            <td><?php echo $client['trial_remaining_days'] >= 0 ? $this->lang->line('text_yes') : $this->lang->line('text_no'); ?> <?php echo '('.$days_used.'/'.$plan['trial_total_days'].')'; ?></td>
 				            <?php } ?>
