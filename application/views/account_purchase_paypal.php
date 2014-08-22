@@ -4,7 +4,7 @@
         <div class="heading">
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="location = baseUrlPath+'account'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+                <button class="btn btn-info" onclick="location = baseUrlPath+'account/subscribe'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div><!-- .buttons -->
         </div><!-- .heading -->
         <div class="content">
