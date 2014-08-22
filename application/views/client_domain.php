@@ -8,7 +8,7 @@
     <tr>
         <td class="left" style="width:10%;"><?php echo $this->lang->line('column_domain_name'); ?></td>
         <td class="left" style="width:10%;"><?php echo $this->lang->line('column_domain_limit_users'); ?></td>
-        <td class="left" style="width:10%"><?php echo $this->lang->line('column_domain_plan'); ?></td>
+        <!--td class="left" style="width:10%"><?php echo $this->lang->line('column_domain_plan'); ?></td-->
         <td class="right" style="width:10%"><?php echo $this->lang->line('column_domain_status'); ?></td>
         <td style="width:10%;"></td>
     </tr>
@@ -24,20 +24,6 @@
                 </td>
                 <td class="left">
                     <input type="text" name="domain_value[<?php echo $domain_row; ?>][limit_users]" value="<?php echo $domain['limit_users']; ?>" size="50" />
-                </td>
-                <td class="left">
-                    <select name="domain_value[<?php echo $domain_row; ?>][plan_id]">
-                        <!-- <option value="0" selected="selected"><?php //echo $this->lang->line('text_select'); ?></option> -->
-                        <?php if ($plan_data) { ?>
-                            <?php foreach ($plan_data as $plan) { ?>
-                                <?php if ($domain['plan_id']==$plan['_id']) { ?>
-                                    <option value="<?php echo $plan['_id']; ?>" selected="selected"><?php echo $plan['name']; ?></option>
-                                <?php } else { ?>
-                                    <option value="<?php echo $plan['_id']; ?>"><?php echo $plan['name']; ?></option>
-                                <?php } ?>
-                            <?php } ?>
-                        <?php } ?>
-                    </select>
                 </td>
                 <td class="right"><select name="domain_value[<?php echo $domain_row; ?>][status]">
                         <?php if ($domain['status']==1) { ?>
