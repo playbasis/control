@@ -139,10 +139,12 @@ class Service_model extends MY_Model
                 return $v1 - $v2;
             });
 
+            $result = array_values(array_filter($result));
             //End add quest mission logs
             return $result;
         }
 
+        $event_log = array_values(array_filter($event_log));
         // Comment out this because we use the $result krub
          return $event_log;
     }
