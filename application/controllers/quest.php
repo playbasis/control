@@ -860,8 +860,7 @@ class Quest extends REST2_Controller
 
         // not join yet, let check condition
         if (!$player_quest) {
-            $condition_quest = $this->checkConditionQuest(
-                $quest, $pb_player_id, $this->validToken);
+            $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken);
             // condition passed
             if (!$condition_quest)
                 $this->quest_model->joinQuest(array_merge($data, $quest));
@@ -900,13 +899,13 @@ class Quest extends REST2_Controller
         $resp["quests"] = array();
         $quests = $this->quest_model->getQuests($data);
 
-        foreach ($quests as $quest => $value) {
+        foreach ($quests as $index => $quest) {
 
             $data = array(
                 "client_id" => $this->validToken["client_id"],
                 "site_id" => $this->validToken["site_id"],
                 "pb_player_id" => $pb_player_id,
-                "quest_id" => $quests[$quest]["_id"]
+                "quest_id" => $quests[$index]["_id"]
             );
 
             // check quest_to_client
@@ -914,8 +913,7 @@ class Quest extends REST2_Controller
 
             // not join yet, let check condition
             if (!$player_quest) {
-                $condition_quest = $this->checkConditionQuest(
-                    $quest, $pb_player_id, $this->validToken);
+                $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken);
                 // condition passed
                 if (!$condition_quest)
                     $this->quest_model->joinQuest(array_merge($data, $quest));
