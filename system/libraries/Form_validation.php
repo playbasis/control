@@ -1419,6 +1419,27 @@ class CI_Form_validation {
         }          
          
         return true;
+    }
+
+    /**
+	 * This validates the url without the http or http in front.
+	 * If http does not exists, it will add to the given URL
+	 * 
+	 * @access public
+	 * @param string $url
+	 * @return boolean
+     */
+    function url_exists_without_http($url){
+		$pattern = "|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i";
+		if(!preg_match($pattern, $url)){
+			$url = 'http://'.$url;	
+		}
+	    $url_data = parse_url($url); // scheme, host, port, path, query
+	    if(!@fsockopen($url_data['host'], isset($url_data['port']) ? $url_data['port'] : 80)){
+	        return false;
+	    }          
+	     
+	    return true;
     }  
 }
 // END Form Validation Class
