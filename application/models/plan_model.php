@@ -478,9 +478,12 @@ class Plan_model extends MY_Model
     }
 
     public function getDisplayedPlans(){
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('display', true);
-        return $this->mongo_db->get('playbasis_plan');
+        $ret = array();
+        $plans = $this->listDisplayPlans();
+        if ($plans) foreach ($plans as $plan) {
+            array_push($ret, $plan['name']);
+        }
+        return $ret;
     }
 
     public function checkPlanExistsByName($plan_name){
