@@ -50,6 +50,9 @@ define('DEFAULT_LIMIT_NUM_PLAYERS', 1000); // default limit number of player for
 define('MONTHS_PER_PLAN', 12); // number of months per plan
 define('MAX_ALLOWED_TRIAL_DAYS', 90); // this is limited by PayPal
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
+define('PAYPAL_MERCHANT_ID', 'pechpras-facilitator@playbasis.com');
+define('PAYPAL_ENV', 'sandbox');
+define('PRODUCT_NAME', 'Playbasis API Subscription');
 define('FOREVER', 100); // number of years our system used for representing an unlimited value (for example, free package has no "date_expire")
 
 /* End of file constants.php */

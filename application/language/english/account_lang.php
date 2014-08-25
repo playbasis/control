@@ -4,6 +4,7 @@ $lang['account_title']          				= 'Account Details';
 $lang['channel_title']          				= 'Select Your Payment Channel';
 $lang['order_title']          				= 'Order Details';
 $lang['congrat_title']          				= 'Congratulations!';
+$lang['cancel_title']          				= 'Cancel Subscription';
 
 // Text
 $lang['text_name']						= 'Name';
@@ -36,6 +37,8 @@ $lang['button_update_payment_detail']         = 'Set Up Subscription';
 $lang['button_upgrade']						= 'Upgrade';
 $lang['button_downgrade']						= 'Downgrade';
 $lang['button_cancel_subscription']						= 'Cancel Subscription';
+$lang['button_confirm']						= 'Confirm';
+$lang['button_close']						= 'Close';
 
 
 // Form
