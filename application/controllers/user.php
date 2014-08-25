@@ -645,13 +645,13 @@ class User extends MY_Controller
                                     'status' => true
                             );
 
-                            $this->Client_model->editClientPlan($client_id, $another_data); // [5] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
-
                             $data = array();
                             $data['client_id'] = $client_id;
                             $data['plan_id'] = $plan_id;
                             $data['site_id'] = $site_id;
-                            $this->Permission_model->addPlanToPermission($data); // [6] finally, bind the client to the selected plan
+                            $this->Permission_model->addPlanToPermission($data); // [5] finally, bind the client to the selected plan
+
+                            $this->Client_model->editClientPlan($client_id, $another_data); // [6] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
