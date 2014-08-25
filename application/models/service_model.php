@@ -29,6 +29,12 @@ class Service_model extends MY_Model
             $this->mongo_db->where_gt('value', 0);
         }
 
+        if($show_quest){
+            $this->mongo_db->where_ne('quest_id', null);
+        }else{
+            $this->mongo_db->where('quest_id', null);
+        }
+
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
         $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id'));
@@ -94,57 +100,7 @@ class Service_model extends MY_Model
             unset($event['item_id']);
         }
 
-        if($show_quest){
-            //Add quest mission logs to the live feed
-            $this->mongo_db->where('site_id', $site_id);
-            $this->mongo_db->limit((int)$limit);
-            $this->mongo_db->offset((int)$offset);
-            $this->mongo_db->select(array('reward_name', 'date_added', 'reward_value','pb_player_id', 'mission_id'));
-            $this->mongo_db->select(array(), array('_id'));
-            $quest_logs = $this->mongo_db->get('playbasis_quest_reward_log');
-
-            foreach($quest_logs as &$quest){
-
-                $this->mongo_db->where('site_id', $site_id);
-                $this->mongo_db->where('_id', $quest['pb_player_id']);
-                $this->mongo_db->select(array(
-                    'cl_player_id',
-                    'username',
-                    'first_name',
-                    'last_name',
-                    'gender',
-                    'image',
-                    'exp',
-                    'level'));
-                $this->mongo_db->select(array(), array('_id'));
-                $player = $this->mongo_db->get('playbasis_player');
-
-                $quest['date_added'] = datetimeMongotoReadable($quest['date_added']);
-                $quest['player'] = isset($player[0])?$player[0]:null;
-                $quest['message'] = 'earned '. $quest['reward_value'].' '.$quest['reward_name'];
-                if(($quest['mission_id'] != null)){
-                    $quest['action_icon'] = 'fa-trophy';
-                    $quest['action_name'] = 'mission_reward';
-                }else{
-                    $quest['action_icon'] = 'fa-trophy';
-                    $quest['action_name'] = 'quest_reward';
-                }
-            }
-
-            $result = array_merge($event_log, $quest_logs);
-
-            usort($result, function($a1, $a2) {
-                $v1 = strtotime($a1['date_added']);
-                $v2 = strtotime($a2['date_added']);
-                return $v1 - $v2;
-            });
-
-            //End add quest mission logs
-            return $result;
-        }
-
-        // Comment out this because we use the $result krub
-         return $event_log;
+        return $event_log;
     }
 
     private function getActionNameAndStringFilter($action_log_id){
