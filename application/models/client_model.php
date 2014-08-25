@@ -458,8 +458,7 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['domain_value'])) {
-            $plan_subscription = $this->getPlanByClientId(new MongoID($client_id));
-
+            $plan_subscription = $this->getPlanByClientId($client_id);
             $data_filter = array(
                 'client_id' => $client_id,
                 'site_id' => $data['domain_value']['site_id'],
