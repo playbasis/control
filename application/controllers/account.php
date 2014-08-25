@@ -130,6 +130,42 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
+	public function cancel_subscription() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['heading_title'] = $this->lang->line('cancel_title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+			$this->data['message'] = null;
+
+			$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
+			$channel = $this->input->post('channel');
+
+			if($this->form_validation->run() && $this->data['message'] == null){
+				switch ($channel) {
+					case PAYMENT_CHANNEL_PAYPAL:
+						$this->data['main'] = 'account_cancel_subscription_paypal';
+						break;
+					default:
+						$this->data['message'] = 'Invalid payment channel';
+						break;
+				}
+			}
+		} else {
+			$this->data['main'] = 'account_cancel_subscription';
+			$this->data['form'] = 'account/cancel_subscription';
+		}
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
 	public function purchase() {
 
 		if(!$this->validateAccess()){
