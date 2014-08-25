@@ -8,11 +8,12 @@ class Client extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('Client_model');
+        $this->load->model('Permission_model');
+
         // if(!$this->User_model->isLogged()){
         //     redirect('/login', 'refresh');
         // }
-
-        $this->load->model('Client_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -60,6 +61,7 @@ class Client extends MY_Controller
         $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[3]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('email', $this->lang->line('entry_email'), 'trim|required|valid_email');
+        $this->form_validation->set_rules('plan_id', $this->lang->line('entry_plan'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -70,7 +72,14 @@ class Client extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
+
                 $clent_id = $this->Client_model->addClient($this->input->post());
+
+                $this->Permission_model->addPlanToPermission(array(
+                    'client_id' => $clent_id,
+                    'plan_id' => new MongoID($this->input->post('plan_id')),
+                    'site_id' => null,
+                ));
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
@@ -88,10 +97,11 @@ class Client extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'client/update/'.$client_id;
 
+        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('first_name', $this->lang->line('entry_firstname'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('last_name', $this->lang->line('entry_lastname'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('company', $this->lang->line('entry_company_name'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|required|valid_email');
+        $this->form_validation->set_rules('plan_id', $this->lang->line('entry_plan'), 'trim|required|min_length[1]|max_length[255]|xss_clean');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST') && $this->checkOwnerClient($client_id)) {
 
@@ -114,6 +124,7 @@ class Client extends MY_Controller
                         $this->User_model->disableUser($user_id);
                     }    
                 }
+
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
 
                 redirect('/client', 'refresh');
@@ -169,10 +180,9 @@ class Client extends MY_Controller
 
         $this->load->model('Domain_model');
         $this->load->model('Image_model');
+        $this->load->model('Plan_model');
 
         $this->load->library('pagination');
-
-        $this->load->model('Permission_model');
 
         $parameter_url = "?t=".rand();
 
@@ -218,7 +228,11 @@ class Client extends MY_Controller
         $results_client = $this->Client_model->getClients($data);
 
         if ($results_client) {
+
             foreach ($results_client as $result) {
+
+                $plan_subscription = $this->Client_model->getPlanByClientId($result['_id']);
+                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
 
                 $data_client = array("client_id" => $result['_id'], 'site_id'=>$site_id);
                 $domain_total = $this->Domain_model->getTotalDomainsByClientId($data_client);
@@ -248,6 +262,7 @@ class Client extends MY_Controller
                     'company'=> $result['company'],
                     'first_name' => $result['first_name'],
                     'last_name' => $result['last_name'],
+                    'plan_name' => $plan['name'],
                     'image' => $image,
                     'quantity' => $domain_total,
                     'status' => $result['status'],
@@ -357,12 +372,29 @@ class Client extends MY_Controller
             $this->data['email'] = '';
         }
 
-        if ($this->input->post('company')) {
-            $this->data['company'] = $this->input->post('company');
+        if ($this->input->post('plan_id')) {
+            $this->data['plan_id'] = $this->input->post('plan_id');
         } elseif (isset($client_id) && ($client_id != 0)) {
-            $this->data['company'] = $client_info['company'];
+            $plan_subscription = $this->Client_model->getPlanByClientId($client_info['_id']);
+            $this->data['plan_id'] = $plan_subscription['plan_id'];
         } else {
-            $this->data['company'] = '';
+            $this->data['plan_id'] = '';
+        }
+
+        if ($this->input->post('date_start')) {
+            $this->data['date_start'] = date("Y-m-d", strtotime($this->input->post('date_start')));
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['date_start'] = array_key_exists('date_start', $client_info) && $client_info['date_start'] ? date("Y-m-d", $client_info['date_start']->sec) : null;
+        } else {
+            $this->data['date_start'] = '';
+        }
+
+        if ($this->input->post('date_expire')) {
+            $this->data['date_expire'] = date("Y-m-d", strtotime($this->input->post('date_expire')));
+        } elseif (isset($client_id) && ($client_id != 0)) {
+            $this->data['date_expire'] = array_key_exists('date_expire', $client_info) && $client_info['date_expire'] ? date("Y-m-d", $client_info['date_expire']->sec) : null;
+        } else {
+            $this->data['date_expire'] = '';
         }
 
         if ($this->input->post('image')) {
@@ -507,7 +539,6 @@ class Client extends MY_Controller
         // $per_page = 10;
 
         $this->load->model('Domain_model');
-        $this->load->model('Permission_model');
         $this->load->model('Plan_model');
 
         // $this->load->library('pagination');
@@ -540,8 +571,6 @@ class Client extends MY_Controller
                     'site_name' => $result['site_name'],
                     'keys' => $result['api_key'],
                     'secret' => $result['api_secret'],
-                    'date_start' => $result['date_start'],
-                    'date_expire' => $result['date_expire'],
                     'limit_users' => $result['limit_users'],
                     'status' => $result['status'],
                     'date_added' => $result['date_added'],
@@ -581,7 +610,6 @@ class Client extends MY_Controller
         // $per_page = 10;
 
         $this->load->model('Domain_model');
-        $this->load->model('Permission_model');
         $this->load->model('Plan_model');
 
         // $this->load->library('pagination');

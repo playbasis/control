@@ -63,6 +63,31 @@
                             <td><?php echo $this->lang->line('entry_mobile'); ?>:</td>
                             <td><input type="text" name="mobile" value="<?php echo $mobile; ?>" size="50" /></td>
                         </tr>
+                        <tr>
+                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_plan'); ?>:</td>
+                            <td>
+                                <select name="plan_id">
+                                    <option value=""><?php echo $this->lang->line('text_select'); ?></option>
+                                    <?php if ($plan_data) { ?>
+                                        <?php foreach ($plan_data as $each) { ?>
+                                            <?php if ($plan_id==$each['_id']) { ?>
+                                    <option value="<?php echo $each['_id']; ?>" selected="selected"><?php echo $each['name']; ?></option>
+                                            <?php } else { ?>
+                                    <option value="<?php echo $each['_id']; ?>"><?php echo $each['name']; ?></option>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_date_start'); ?>:</td>
+                            <td><input type="text" name="date_start" value="<?php echo $date_start; ?>" size="50" class="date tooltips" data-placement="right" title="Set start date for allowing API usage" /></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_date_expire'); ?>:</td>
+                            <td><input type="text" name="date_expire" value="<?php echo $date_expire; ?>" size="50" class="date tooltips" data-placement="right" title="Set end date for allowing API usage" /></td>
+                        </tr>
                     </table>
                 </div>
                 <div id="tab-data">
@@ -168,18 +193,10 @@
                             <td><input type="text" name="domain_site_name" value="" size="50" class="tooltips" data-placement="right" title="Client's site name (example: Playbasis)"/></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_start_date'); ?>:</td>
-                            <td><input type="text" class="date" name="domain_start_date" value="" size="50" /></td>
-                        </tr>
-                        <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_expire_date'); ?>:</td>
-                            <td><input type="text" class="date" name="domain_expire_date" value="" size="50" /></td>
-                        </tr>
-                        <tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('limit_users'); ?>:</td>
                             <td><input type="text" name="limit_users" value="" size="50" class="tooltips" data-placement="right" title="Number of users that the client can create"/></td>
                         </tr>
-                        <tr>
+                        <!--tr>
                             <td><span class="required">*</span> <?php echo $this->lang->line('entry_plan'); ?>:</td>
                             <td>
                                 <select name="domain_plan_id">
@@ -191,7 +208,7 @@
                                     <?php } ?>
                                 </select>
                             </td>
-                        </tr>
+                        </tr-->
                         <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td>
@@ -225,27 +242,17 @@
 function addNewDomain() {
     var domain_name = $('input[name=domain_name]').val();
     var site_name = $('input[name=domain_site_name]').val();
-    var date_start = $('input[name=domain_start_date]').val();
-    var date_expire = $('input[name=domain_expire_date]').val();
     var limit_users = $('input[name=limit_users]').val();
     var status = $('select[name=domain_status]').val();
     var plan_id = $('select[name=domain_plan_id]').val();
 
-    var date_start_another = new Date(date_start);
-    var date_expire_another = new Date(date_expire);
-
     $('#notification').html("").removeClass('warning').hide();
-
-    if(date_start_another >= date_expire_another){
-        $('#notification').html("<?php echo $this->lang->line('entry_start_date');?> cannot be after the <?php echo $this->lang->line('entry_expire_date');?> ").addClass('warning').show();
-        return false;
-    }
 
     $.ajax({
         url: baseUrlPath+'domain/insert_ajax',
         type: 'POST',
         dataType: 'json',
-        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'date_start' : date_start, 'date_expire' : date_expire, 'limit_users' : limit_users, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
+        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'limit_users' : limit_users, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
         success: function(json) {
             var notification = $('#notification');
 

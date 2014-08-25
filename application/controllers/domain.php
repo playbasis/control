@@ -8,6 +8,9 @@ class Domain extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('Client_model');
+        $this->load->model('Plan_model');
+
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -101,19 +104,14 @@ class Domain extends MY_Controller
         if ($results_site) {
             foreach ($results_site as $result) {
 
-                $plan_id = $this->Permission_model->getPermissionBySiteId($result['_id']);
-
                 $this->data['domain_list'][] = array(
                     'selected'    => is_array($this->input->post('selected')) && in_array($result['_id'], $this->input->post('selected')),
                     'site_id' => $result['_id'],
                     'client_id' => $result['client_id'],
-                    'plan_id' => $plan_id,
                     'domain_name' => $result['domain_name'],
                     'site_name' => $result['site_name'],
                     'keys' => $result['api_key'],
                     'secret' => $result['api_secret'],
-                    'date_start' => $result['date_start'],
-                    'date_expire' => $result['date_expire'],
                     'status' => $result['status'],
                     'date_added' => $result['date_added'],
                     'date_modified' => $result['date_modified']
@@ -203,6 +201,22 @@ class Domain extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
+                $client_id = $this->User_model->getClientId();
+                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+
+                // get Plan limit_others.domain
+                $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
+                if (!isset($limit["value"]) || !$limit["value"])
+                    $limit["value"] = 3; // default
+
+                // Get current client site
+                $usage = $this->Client_model->getSitesByClientId($client_id);
+
+                // compare
+                if (sizeof($usage) >= $limit["value"]) {
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_domain"));
+                    redirect("domain/");
+                }
 
                 $c_data = array('domain_name' => $this->input->post('domain_domain_name'));
 
@@ -210,15 +224,12 @@ class Domain extends MY_Controller
 
                 if(!$domain){
 
-                    $client_id = $this->User_model->getClientId();
                     $d_data = array();
                     $d_data['client_id'] = $client_id;
                     $d_data['domain_name'] = $this->input->post('domain_domain_name');
                     $d_data['site_name'] = $this->input->post('domain_site_name');
                     $d_data['user_id'] =  $this->User_model->getId();
                     $d_data['limit_users'] = 1000;
-                    $d_data['date_start'] = date("Y-m-d H:i:s");
-                    $d_data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 year"));
 
                     $site_id = $this->Domain_model->addDomain($d_data);
 
@@ -227,12 +238,12 @@ class Domain extends MY_Controller
                         $this->load->model('Permission_model');
                         $this->load->model('Client_model');
 
-                        $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
+                        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
                         $another_data['domain_value'] = array(
-                            'site_id' =>$site_id,
-                            'plan_id' => $plan_id,
-                            'status' =>true
+                            'site_id' => $site_id,
+                            'plan_id' => $plan_subscription['plan_id'],
+                            'status' => true
                         );
 
                         $this->Client_model->editClientPlan($client_id, $another_data);
@@ -302,7 +313,6 @@ class Domain extends MY_Controller
         $this->form_validation->set_rules('domain_name', $this->lang->line('entry_domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('site_name', $this->lang->line('entry_site_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('limit_users', $this->lang->line('limit_users'), 'trim|xss_clean|check_space|numeric');
-        $this->form_validation->set_rules('plan_id', $this->lang->line('plan_id'), 'required');
 
         $json = array();
 
@@ -332,9 +342,11 @@ class Domain extends MY_Controller
                     if ($site_id) {
                         $this->load->model('Permission_model');
 
+                        $plan_subscription = $this->Client_model->getPlanByClientId(new MongoID($this->input->post('client_id')));
+
                         $data = array();
                         $data['client_id'] = $this->input->post('client_id');
-                        $data['plan_id'] = $this->input->post('plan_id');
+                        $data['plan_id'] = $plan_subscription['plan_id']->{'$id'};
                         $data['site_id'] = $site_id;
                         $this->Permission_model->addPlanToPermission($data);
                     }

@@ -43,5 +43,14 @@ define('S3_IMAGE', 'http://images.pbapp.net/');
 define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');
 //define('DIR_IMAGE', './control/image/');
 
+define('DEFAULT_PLAN_PRICE', 0); // default is free package
+define('DEFAULT_PLAN_DISPLAY', false); // default is to not display the plan
+define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
+define('DEFAULT_LIMIT_NUM_PLAYERS', 1000); // default limit number of player for a plan
+define('MONTHS_PER_PLAN', 12); // number of months per plan
+define('MAX_ALLOWED_TRIAL_DAYS', 90); // this is limited by PayPal
+define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
+define('FOREVER', 100); // number of years our system used for representing an unlimited value (for example, free package has no "date_expire")
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

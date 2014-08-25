@@ -33,6 +33,7 @@ $lang['tab_user'] 								= 'Users';
 $lang['column_image']							= 'Logo';
 // $lang['column_name']            				= 'Name';
 $lang['column_company_name']					= 'Client Name';
+$lang['column_plan_name']					= 'Plan Name';
 $lang['column_domain']          				= 'Domains';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
@@ -62,6 +63,8 @@ $lang['entry_facebook']							= 'Facebook';
 $lang['entry_twitter']							= 'Twitter';
 $lang['entry_google']							= 'Google+';
 $lang['entry_company_name']						= 'Client Name';
+$lang['entry_date_start']						= 'Date Start';
+$lang['entry_date_expire']						= 'Date End';
 
 $lang['entry_username']						= 'Username:';
 $lang['entry_password']						= 'Password';
@@ -73,8 +76,6 @@ $lang['entry_domain_name']						= 'Domain';
 $lang['entry_site_name']						= 'Site Name';
 $lang['entry_key']								= 'API Keys';
 $lang['entry_secret']							= 'API Secret';
-$lang['entry_start_date']						= 'Start Date';
-$lang['entry_expire_date']						= 'Expire Date';
 $lang['limit_users']						    = 'Limit Users';
 $lang['entry_plan']								= 'Plan Setting';
 
@@ -92,8 +93,6 @@ $lang['column_domain_name'] 			= 'Domain';
 $lang['column_domain_plan'] 			= 'Plan Setting';
 $lang['column_domain_status'] 			= 'Status';
 $lang['column_domain_modified'] 		= 'Date Modified.';
-$lang['column_domain_date_start']      = 'Start Date';
-$lang['column_domain_date_expire']     = 'Expire Date';
 $lang['column_domain_limit_users']     = 'Limit Users';
 
 // User
