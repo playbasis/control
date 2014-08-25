@@ -29,9 +29,7 @@ class Service_model extends MY_Model
             $this->mongo_db->where_gt('value', 0);
         }
 
-        if($show_quest){
-            $this->mongo_db->where_ne('quest_id', null);
-        }else{
+        if(!$show_quest){
             $this->mongo_db->where('quest_id', null);
         }
 
