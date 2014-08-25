@@ -42,15 +42,15 @@
 			            </tr>
 			            <tr>
 				            <td><?php echo $this->lang->line('form_product'); ?>:</td>
-				            <td><input type="text" value="Playbasis Platform Subscription" disabled /></td>
+				            <td><input type="text" value="<?php echo PRODUCT_NAME; ?>" disabled /></td>
 			            </tr>
 			            <tr>
 				            <td><?php echo $this->lang->line('form_billing_date'); ?>:</td>
 				            <td><input type="text" value="<?php echo date('d M Y'); ?>" disabled /></td>
 			            </tr>
-			            <script src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=pechpras-facilitator@playbasis.com"
+			            <script src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=<?php echo PAYPAL_MERCHANT_ID; ?>"
 			                    data-button="subscribe"
-			                    data-name="Playbasis Platform Subscription"
+			                    data-name="<?php echo PRODUCT_NAME; ?>"
 			                    data-amount="<?php echo $params['price']; ?>"
 			                    data-currency="USD"
 			                    data-recurrence="1"
@@ -59,7 +59,7 @@
 			                    data-cancel_return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/subscribe"
 			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_completed"
 			                    data-callback="<?php echo $params['callback']; ?>"
-			                    data-env="sandbox"
+			                    data-env="<?php echo PAYPAL_ENV; ?>"
 				        ></script>
             		</table>
             	</div>
@@ -78,6 +78,11 @@
 			type: 'hidden',
 			name: 'srt', // recurring times (require 'src' = 1)
 			value: <?php echo $params['months']; ?>
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'sra', // enable PayPal to reattempt failed recurring payments
+			value: 1
 		}).appendTo('form');
 		/* enable trial period */
 		$('<input>').attr({
