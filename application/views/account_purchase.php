@@ -23,14 +23,18 @@
             <?php }?>
             <?php $attributes = array('id' => 'form');?>
             <?php echo form_open($form, $attributes);?>
+            	<?php $plan = $this->session->userdata('plan'); ?>
+            	<?php $free_flag = ($plan['price'] <= 0); ?>
+            	<input type="hidden" name="months" value="<?php echo MONTHS_PER_PLAN; ?>" />
+            	<?php if (!$free_flag) { ?>
+            	<input type="hidden" name="plan" value="<?php echo $plan['_id']->{'$id'}; ?>" />
+            	<?php } ?>
             	<div id="tab-general">
             		<table class="form">
 			            <tr>
 				            <td><span class="required">*</span> <?php echo $this->lang->line('form_package'); ?>:</td>
 				            <td>
-					            <?php $plan = $this->session->userdata('plan'); ?>
-					            <?php $free_flag = ($plan['price'] == 0); ?>
-					            <select name="plan" <?php if (!$free_flag) echo "readonly"; ?>>
+					            <select <?php if ($free_flag) echo 'name="plan"'; else echo "disabled"; ?>>
 						            <?php if ($free_flag) { ?>
 							            <?php if ($plans) foreach ($plans as $plan) { ?>
 								            <?php if (array_key_exists('price', $plan) && $plan['price'] > 0) { ?>
@@ -46,7 +50,7 @@
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
             				<td>
-					            <select name="months" readonly>
+					            <select disabled>
 						            <option selected="selected"><?php echo MONTHS_PER_PLAN; ?></option>
 					            </select>
             				</td>

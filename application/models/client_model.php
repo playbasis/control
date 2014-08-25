@@ -102,8 +102,8 @@ class Client_model extends MY_Model
             'email' => isset($data['email'])?$data['email'] : '' ,
             'status' => (bool)$data['status'],
             'deleted' => false,
-            'date_start' => new MongoDate(strtotime($data['date_start'])),
-            'date_expire' => new MongoDate(strtotime($data['date_expire'])),
+            'date_start' => $data['date_start'] ? new MongoDate(strtotime($data['date_start'])) : null,
+            'date_expire' => $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null,
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
         );
@@ -125,15 +125,23 @@ class Client_model extends MY_Model
         $this->mongo_db->set('mobile', $data['mobile']);
         $this->mongo_db->set('email', $data['email']);
         $this->mongo_db->set('status', (bool)$data['status']);
-        $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
-        $this->mongo_db->set('date_expire', new MongoDate(strtotime($data['date_expire'])));
+        $this->mongo_db->set('date_start', $data['date_start'] ? new MongoDate(strtotime($data['date_start'])) : null);
+        $this->mongo_db->set('date_expire', $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-
         if (isset($data['image'])) {
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
         }
 
         $this->mongo_db->update('playbasis_client');
+
+        /* update plan */
+        $data_filter = array(
+            'client_id' => $client_id,
+            'site_id' => null,
+            'plan_id' => $data['plan_id']
+        );
+
+        $this->addPlanToPermission($data_filter);
 
         if (isset($data['domain_value'])) {
             foreach ($data['domain_value'] as $domain_value) {
@@ -147,7 +155,7 @@ class Client_model extends MY_Model
                 $data_filter = array(
                     'client_id' => $client_id,
                     'site_id' => $domain_value['site_id'],
-                    'plan_id' => $domain_value['plan_id'],
+                    'plan_id' => $data['plan_id'],
                     'status' => (bool)$domain_value['status'],
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
@@ -450,10 +458,12 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['domain_value'])) {
+            $plan_subscription = $this->getPlanByClientId(new MongoID($client_id));
+
             $data_filter = array(
                 'client_id' => $client_id,
                 'site_id' => $data['domain_value']['site_id'],
-                'plan_id' => $data['domain_value']['plan_id'],
+                'plan_id' => $plan_subscription['plan_id']->{'$id'},
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
             );
@@ -503,6 +513,7 @@ class Client_model extends MY_Model
     public function getPlanByClientId($client_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
         $results = $this->mongo_db->get('playbasis_permission');
         return $results ? $results[0] : null;
     }

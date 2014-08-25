@@ -73,8 +73,15 @@ class Plan_model extends MY_Model
 
         foreach($plans as $key => $plan){
             $planId = $plan['_id'];
+            $this->mongo_db->select(array('client_id'));
             $this->mongo_db->where('plan_id', new MongoId($planId));
-            $number_of_subscribers = $this->mongo_db->count('playbasis_permission');
+            $subscribers = array();
+            $records = $this->mongo_db->get('playbasis_permission');
+            // one "client_id" can have several "site_id"s within the same "plan_id", so we do the manual count
+            if ($records) foreach ($records as $record) {
+                $subscribers[$record['client_id']->{'$id'}] = true;
+            }
+            $number_of_subscribers = count($subscribers);
             $planLimit = !empty($plan['limit_num_client']) ? $plan['limit_num_client'] : null;
             // check if the plan has reached the maximum limit #clients that can subscribe to this plan
             if ($planLimit && $number_of_subscribers >= $planLimit) {
