@@ -47,7 +47,7 @@ $lang['form_months']						= 'Number of Months';
 $lang['form_channel']						= 'Payment Channel';
 $lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';
-$lang['form_billing_date']						= 'Effective Billing Date';
+$lang['form_effective_date']						= 'Effective Date';
 
 
 // Error 

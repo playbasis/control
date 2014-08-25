@@ -45,7 +45,7 @@
 				            <td><input type="text" value="<?php echo PRODUCT_NAME; ?>" disabled /></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_billing_date'); ?>:</td>
+				            <td><?php echo $this->lang->line('form_effective_date'); ?>:</td>
 				            <td><input type="text" value="<?php echo date('d M Y'); ?>" disabled /></td>
 			            </tr>
 			            <script src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=<?php echo PAYPAL_MERCHANT_ID; ?>"
@@ -81,7 +81,7 @@
 		}).appendTo('form');
 		$('<input>').attr({
 			type: 'hidden',
-			name: 'sra', // enable PayPal to reattempt failed recurring payments
+			name: 'sra', // reattempt on failure
 			value: 1
 		}).appendTo('form');
 		/* enable trial period */
@@ -99,6 +99,12 @@
 			type: 'hidden',
 			name: 't1', // unit of duration
 			value: 'D'
+		}).appendTo('form');
+		/* enable upgrade/downgrade */
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'modify', // modification behavior
+			value: 1
 		}).appendTo('form');
 	});
 //--></script>
