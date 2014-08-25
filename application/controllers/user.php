@@ -213,15 +213,12 @@ class User extends MY_Controller
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             $client_id = $this->User_model->getClientId();
-            $site_id = $this->User_model->getSiteId();
-            $plan = $this->Plan_model->getPlanIDfromClientSite(
-                $client_id, $site_id);
+            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
             if($this->form_validation->run()){
                 // get Plan limit_others.user
                 try {
-                    $user_limit = $this->Plan_model->getPlanLimitById(
-                        $plan["plan_id"], "others", "user");
+                    $user_limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "user");
                     if (!isset($user_limit["value"]) || !$user_limit["value"])
                         $user_limit["value"] = 3;  // default
                 } catch(Exception $e) {
@@ -562,9 +559,9 @@ class User extends MY_Controller
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
         $this->data['form'] = 'user/register?plan';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
-        $this->data['availablePlans'] = $this->Plan_model->getAvailableStaticPlans();
+        $this->data['availablePlans'] = $this->Plan_model->getDisplayedPlans();
 
-        //Set rules for form regsitration
+        //Set rules for form registration
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');

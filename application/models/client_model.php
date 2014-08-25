@@ -514,6 +514,7 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_permission');
         return $results ? $results[0] : null;
     }
