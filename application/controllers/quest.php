@@ -860,8 +860,7 @@ class Quest extends REST2_Controller
 
         // not join yet, let check condition
         if (!$player_quest) {
-            $condition_quest = $this->checkConditionQuest(
-                $quest, $pb_player_id, $this->validToken);
+            $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken);
             // condition passed
             if (!$condition_quest)
                 $this->quest_model->joinQuest(array_merge($data, $quest));
@@ -899,25 +898,33 @@ class Quest extends REST2_Controller
         // get all available quests related to clients
         $resp["quests"] = array();
         $quests = $this->quest_model->getQuests($data);
-        foreach ($quests as $quest => $value) {
-            // condition failed
-            if ($this->checkConditionQuest($quests[$quest], $pb_player_id, $this->validToken))
-                continue;
-            else {
-                $quests[$quest]["quest_id"] = $quests[$quest]["_id"];
-                unset($quests[$quest]["_id"]);
-                array_push($resp["quests"], $quests[$quest]);
+
+        foreach ($quests as $index => $quest) {
+
+            $data = array(
+                "client_id" => $this->validToken["client_id"],
+                "site_id" => $this->validToken["site_id"],
+                "pb_player_id" => $pb_player_id,
+                "quest_id" => $quests[$index]["_id"]
+            );
+
+            // check quest_to_client
+            $player_quest = $this->quest_model->getPlayerQuest($data);
+
+            // not join yet, let check condition
+            if (!$player_quest) {
+                $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken);
+                // condition passed
+                if (!$condition_quest)
+                    $this->quest_model->joinQuest(array_merge($data, $quest));
+
+            } else {
+                // already join, let check quest_to_client status
+                if ($player_quest["status"] == "unjoin") {
+                    // unjoin, let him join again
+                    $this->quest_model->updateQuestStatus($data, "join");
+                }
             }
-        }
-
-        $data = array(
-            "client_id" => $this->validToken["client_id"],
-            "site_id" => $this->validToken["site_id"],
-            "pb_player_id" => $pb_player_id
-        );
-
-        foreach($resp["quests"] as $quest){
-            $this->quest_model->joinQuest(array_merge($data, $quest));
         }
 
         $this->response($this->resp->setRespond(array("join_all" => "finish")), 200);
