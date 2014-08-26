@@ -4,7 +4,7 @@
         	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
 	                <?php if ($plan['free_flag']) { ?> You are in a free package, please <a href="<?php echo current_url();?>/subscribe" class="btn btn-primary"><?php echo $this->lang->line('button_subscribe'); ?></a><?php } ?>
-	                <?php if ($plan['paid_flag'] && !$client['date_billing']) { ?> Before start using our service, please <a href="<?php echo current_url();?>/subscribe" class="btn btn-primary"><?php echo $this->lang->line('button_set_up_subscription'); ?></a><?php } ?>
+	                <?php if ($plan['paid_flag'] && !$client['date_billing']) { ?> Before start using our service, please <a href="<?php echo current_url();?>/subscribe" class="btn btn-primary"><?php echo $this->lang->line('button_setup_payment_detail'); ?></a><?php } ?>
 	                <?php if ($client['date_billing'] /* TODO: check that current plan is not the maximum paid plan by price */) { ?><a href="<?php echo current_url();?>/upgrade" class="btn btn-primary"><?php echo $this->lang->line('button_upgrade'); ?></a><?php } ?>
 	                <?php if ($client['date_billing'] /* TODO: check that current plan is not the minimum paid plan by price */) { ?><a href="<?php echo current_url();?>/downgrade" class="btn btn-primary"><?php echo $this->lang->line('button_downgrade'); ?></a><?php } ?>
 	                <?php if ($client['date_billing'] && time() < $client['date_billing']) { ?><a href="<?php echo current_url();?>/cancel_subscription" class="btn btn-primary"><?php echo $this->lang->line('button_cancel_subscription'); ?></a><?php } ?><!-- can cancel within a trial period without penalty -->
