@@ -33,7 +33,7 @@ $lang['text_not_available']						= 'N/A';
 // Button
 $lang['button_subscribe']         = 'Subscribe';
 $lang['button_purchase']         = 'Purchase';
-$lang['button_update_payment_detail']         = 'Set Up Subscription';
+$lang['button_setup_payment_detail']         = 'Set Up Subscription';
 $lang['button_upgrade']						= 'Upgrade';
 $lang['button_downgrade']						= 'Downgrade';
 $lang['button_cancel_subscription']						= 'Cancel Subscription';
