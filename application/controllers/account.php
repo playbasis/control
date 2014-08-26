@@ -178,6 +178,79 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
+	public function upgrade() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		$success = false;
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->data['message'] = null;
+
+			$this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
+			$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required|numeric');
+			$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
+			$plan_id = $this->input->post('plan');
+			$months = $this->input->post('months');
+			$channel = $this->input->post('channel');
+			if ($months) $months = intval($months);
+			if ($months <= 0) $this->data['message'] = 'Parameter "months" has to be greater than zero'; // manual validation (> 0)
+			if (!$this->check_valid_payment_channel($channel)) $this->data['message'] = 'Invalid payment channel';
+
+			if($this->form_validation->run() && $this->data['message'] == null){
+				$ci =& get_instance();
+
+				$selected_plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
+				if (!array_key_exists('price', $selected_plan)) {
+					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
+				}
+
+				// TODO: (1) upgrade during trial, (2) upgrade after trial
+
+				/* find number of trial days */
+				$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+
+				/* because we want to bill after usage, we have to adjust trial period to +1 month */
+				$date_today = time();
+				$date_trial_end = strtotime("+".$days_total." day", $date_today);
+				$date_after_first_month = strtotime("+1 month", $date_trial_end);
+				$days = $this->find_diff_in_days($date_today, $date_after_first_month);
+
+				/* set the parameters for PayPal */
+				$this->data['params'] = array(
+					'plan_id' => $selected_plan['_id'],
+					'price' => $selected_plan['price'],
+					'months' => $months,
+					'trial_days' => $days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $days,
+					'callback' => $ci->config->config['server'].'notification',
+				);
+
+				$success = true;
+			}
+
+			$this->data['heading_title'] = $this->lang->line('order_title');
+			$this->data['main'] = 'account_purchase_paypal';
+		}
+		if (!$success) {
+			$plan = $this->session->userdata('plan');
+
+			// TODO: display only plan with higher price
+			$this->data['plans'] = $this->Plan_model->listDisplayPlans();
+
+			$this->data['heading_title'] = $this->lang->line('channel_title');
+			$this->data['main'] = 'account_purchase';
+			$this->data['form'] = 'account/upgrade';
+		}
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
 	public function cancel_subscription() {
 
 		if(!$this->validateAccess()){
