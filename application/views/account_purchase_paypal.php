@@ -104,7 +104,7 @@
 		$('<input>').attr({
 			type: 'hidden',
 			name: 'modify', // modification behavior
-			value: 1
+			value: <?php echo $params['modify']; ?>
 		}).appendTo('form');
 	});
 //--></script>

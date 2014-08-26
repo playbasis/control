@@ -21,6 +21,8 @@ class Account extends MY_Controller
 		$lang = get_lang($this->session, $this->config);
 		$this->lang->load($lang['name'], $lang['folder']);
 		$this->lang->load("account", $lang['folder']);
+
+		$this->purchase = array('subscribe', 'upgrade', 'downgrade');
 	}
 
 	/*
@@ -106,79 +108,18 @@ class Account extends MY_Controller
 	}
 
 	public function subscribe() {
-
-		if(!$this->validateAccess()){
-			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-		}
-
-		$this->data['meta_description'] = $this->lang->line('meta_description');
-		$this->data['title'] = $this->lang->line('title');
-		$this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-		$success = false;
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$this->data['message'] = null;
-
-			$this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
-			$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required|numeric');
-			$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
-			$plan_id = $this->input->post('plan');
-			$months = $this->input->post('months');
-			$channel = $this->input->post('channel');
-			if ($months) $months = intval($months);
-			if ($months <= 0) $this->data['message'] = 'Parameter "months" has to be greater than zero'; // manual validation (> 0)
-			if (!$this->check_valid_payment_channel($channel)) $this->data['message'] = 'Invalid payment channel';
-
-			if($this->form_validation->run() && $this->data['message'] == null){
-				$ci =& get_instance();
-
-				$selected_plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
-				if (!array_key_exists('price', $selected_plan)) {
-					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
-				}
-
-				/* find number of trial days */
-				$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
-
-				/* because we want to bill after usage, we have to adjust trial period to +1 month */
-				$date_today = time();
-				$date_trial_end = strtotime("+".$days_total." day", $date_today);
-				$date_after_first_month = strtotime("+1 month", $date_trial_end);
-				$days = $this->find_diff_in_days($date_today, $date_after_first_month);
-
-				/* set the parameters for PayPal */
-				$this->data['params'] = array(
-					'plan_id' => $selected_plan['_id'],
-					'price' => $selected_plan['price'],
-					'months' => $months,
-					'trial_days' => $days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $days,
-					'callback' => $ci->config->config['server'].'notification',
-				);
-
-				$success = true;
-			}
-
-			$this->data['heading_title'] = $this->lang->line('order_title');
-			$this->data['main'] = 'account_purchase_paypal';
-		}
-		if (!$success) {
-			$plan = $this->session->userdata('plan');
-			$free_flag = ($plan['price'] <= 0);
-
-			if ($free_flag) {
-				$this->data['plans'] = $this->Plan_model->listDisplayPlans();
-			}
-
-			$this->data['heading_title'] = $this->lang->line('channel_title');
-			$this->data['main'] = 'account_purchase';
-			$this->data['form'] = 'account/subscribe';
-		}
-
-		$this->load->vars($this->data);
-		$this->render_page('template');
+		$this->purchase(PURCHASE_SUBSCRIBE);
 	}
 
 	public function upgrade() {
+		$this->purchase(PURCHASE_UPGRADE);
+	}
+
+	public function downgrade() {
+		$this->purchase(PURCHASE_DOWNGRADE);
+	}
+
+	private function purchase($mode) {
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -187,6 +128,8 @@ class Account extends MY_Controller
 		$this->data['meta_description'] = $this->lang->line('meta_description');
 		$this->data['title'] = $this->lang->line('title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		$client = $this->Client_model->getClientById($this->User_model->getClientId());
 
 		$success = false;
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -210,24 +153,43 @@ class Account extends MY_Controller
 					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
 				}
 
-				// TODO: (1) upgrade during trial, (2) upgrade after trial
+				$trial_days = 0;
+				$modify = PAYPAL_MODIFY_EITHER_NEW_SUBSCRIPTION_OR_MODIFY;
+				switch ($mode) {
+				case PURCHASE_SUBSCRIBE:
+					/* find number of trial days */
+					$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+					$date_today = time();
+					$date_trial_end = strtotime("+".$days_total." day", $date_today);
+					$date_after_first_month = strtotime("+1 month", $date_trial_end); /* because we want to bill after usage, we have to adjust trial period to +1 month */
+					$trial_days = $this->find_diff_in_days($date_today, $date_after_first_month);
 
-				/* find number of trial days */
-				$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+					/* allow subscribers to sign up for new subscriptions only */
+					$modify = PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY;
+					break;
+				case PURCHASE_UPGRADE:
+				case PURCHASE_DOWNGRADE:
+					/* find number of trial days */
+					$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
+					$days_remaining = $this->find_diff_in_days(time(), $date_billing);
+					$trial_days = $days_remaining >= 0 ? $days_remaining : 0;
 
-				/* because we want to bill after usage, we have to adjust trial period to +1 month */
-				$date_today = time();
-				$date_trial_end = strtotime("+".$days_total." day", $date_today);
-				$date_after_first_month = strtotime("+1 month", $date_trial_end);
-				$days = $this->find_diff_in_days($date_today, $date_after_first_month);
+					/* allow subscribers to modify their current subscriptions only */
+					$modify = PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY;
+					break;
+				default:
+					log_message('error', 'Invalid mode = '.$mode);
+					break;
+				}
 
 				/* set the parameters for PayPal */
 				$this->data['params'] = array(
 					'plan_id' => $selected_plan['_id'],
 					'price' => $selected_plan['price'],
 					'months' => $months,
-					'trial_days' => $days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $days,
+					'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
 					'callback' => $ci->config->config['server'].'notification',
+					'modify' => $modify,
 				);
 
 				$success = true;
@@ -237,14 +199,24 @@ class Account extends MY_Controller
 			$this->data['main'] = 'account_purchase_paypal';
 		}
 		if (!$success) {
-			$plan = $this->session->userdata('plan');
-
-			// TODO: display only plan with higher price
+			$this->data['mode'] = $mode;
 			$this->data['plans'] = $this->Plan_model->listDisplayPlans();
-
+			switch ($mode) {
+			case PURCHASE_UPGRADE:
+			case PURCHASE_DOWNGRADE:
+				$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
+				$date_billing_end = strtotime("+".(MONTHS_PER_PLAN+1)." month", $date_billing); /* because we want to bill after usage, we have to adjust period to +1 month */
+				$months = $this->find_diff_in_months(time(), $date_billing_end); /* calculate remaining months */
+				$this->data['months'] = ($months >= 0 ? $months : 0); // TODO: when months < 0, we should redirect user to a page to extend (basically sign up a new subscription)
+				break;
+			case PURCHASE_SUBSCRIBE:
+			default:
+				$this->data['months'] = MONTHS_PER_PLAN;
+				break;
+			}
 			$this->data['heading_title'] = $this->lang->line('channel_title');
 			$this->data['main'] = 'account_purchase';
-			$this->data['form'] = 'account/upgrade';
+			$this->data['form'] = 'account/'.$this->purchase[$mode];
 		}
 
 		$this->load->vars($this->data);
@@ -303,11 +275,19 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
+	private function find_diff_in_months($from, $to) {
+		return intval($this->find_diff_in_fmt($from, $to, '%r%m'));
+	}
+
 	private function find_diff_in_days($from, $to) {
+		return intval($this->find_diff_in_fmt($from, $to, '%r%a'));
+	}
+
+	private function find_diff_in_fmt($from, $to, $fmt) {
 		$_from = new DateTime(date("Y-m-d", $from));
 		$_to = new DateTime(date("Y-m-d", $to));
 		$interval = $_from->diff($_to);
-		return intval($interval->format('%R%a'));
+		return $interval->format($fmt);
 	}
 
 	private function check_valid_payment($client) {
