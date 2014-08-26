@@ -85,6 +85,7 @@
 			value: 1
 		}).appendTo('form');
 		/* enable trial period */
+		<?php if ($params['trial_days'] > 0) { ?>
 		$('<input>').attr({
 			type: 'hidden',
 			name: 'a1', // price
@@ -100,6 +101,7 @@
 			name: 't1', // unit of duration
 			value: 'D'
 		}).appendTo('form');
+		<?php } ?>
 		/* enable upgrade/downgrade */
 		$('<input>').attr({
 			type: 'hidden',
