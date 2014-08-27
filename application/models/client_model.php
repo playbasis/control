@@ -342,10 +342,7 @@ class Client_model extends MY_Model
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        // $this->mongo_db->where('is_custom', false );
-
-        $data = array('is_custom'=>false, 'is_custom'=>null);
-        $this->mongo_db->or_where($data);
+        $this->mongo_db->where('is_custom', false );
         $this->mongo_db->delete_all("playbasis_action_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
@@ -372,7 +369,8 @@ class Client_model extends MY_Model
                         'sort_order' => $action_data['sort_order'],
                         'status' =>  (bool)$action_data['status'],
                         'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                        'is_custom' => false,
                     );
 
                     $this->mongo_db->insert('playbasis_action_to_client', $insert_data);    
