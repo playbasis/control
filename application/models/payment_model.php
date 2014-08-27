@@ -17,8 +17,7 @@ class Payment_model extends MY_Model
 		$client = $clients ? $clients[0] : null;
 
 		/* find details of the subscribed plan of the client */
-		$result = $this->getClientById($client_id);
-		$myplan_id = $result ? $result['plan_id'] : null;
+		$myplan_id = $this->getPlanIdByClientId($client_id);
 		$myplan = $myplan_id ? $this->getPlanById($myplan_id) : null;
 
 		/* process PayPal IPN message differently according to 'txn_type' */
@@ -64,7 +63,12 @@ class Payment_model extends MY_Model
 		return true;
 	}
 
-	private function getClientById($client_id) {
+	private function getPlanIdByClientId($client_id) {
+		$permission = $this->getLatestPermissionByClientId($client_id);
+		return $permission ? $permission['plan_id'] : null;
+	}
+
+	private function getLatestPermissionByClientId($client_id) {
 		$this->mongo_db->where('client_id', $client_id);
 		$this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
 		$this->mongo_db->limit(1);
@@ -72,10 +76,35 @@ class Payment_model extends MY_Model
 		return $results ? $results[0] : null;
 	}
 
+	private function getById($id, $collection) {
+		$this->mongo_db->where(array('_id' => $id));
+		$results = $this->mongo_db->get($collection);
+		return $results ? $results[0] : null;
+	}
+
 	private function getPlanById($plan_id) {
-		$this->mongo_db->where(array('_id' => $plan_id));
-		$plans = $this->mongo_db->get('playbasis_plan');
-		return $plans ? $plans[0] : null;
+		return $this->getById($plan_id, 'playbasis_plan');
+	}
+
+	private function getSytemRewardById($reward_id) {
+		return $this->getById($reward_id, 'playbasis_reward');
+	}
+
+	private function getSytemFeatureById($feature_id) {
+		return $this->getById($feature_id, 'playbasis_feature');
+	}
+
+	private function getSytemActionById($action_id) {
+		return $this->getById($action_id, 'playbasis_action');
+	}
+
+	private function getSytemJigsawById($jigsaw_id) {
+		return $this->getById($jigsaw_id, 'playbasis_jigsaw');
+	}
+
+	private function listSitesByClientId($client_id) {
+		$this->mongo_db->where(array('client_id' => $client_id));
+		return $this->mongo_db->get('playbasis_client_site');
 	}
 
 	private function setDateBilling($client_id, $plan, $subscriber_id) {
@@ -106,27 +135,160 @@ class Payment_model extends MY_Model
 	}
 
 	private function changePlan($client_id, $from_plan_id, $to_plan_id) {
+		/* get detail of the destination plan */
+		$plan = $to_plan_id ? $this->getPlanById($to_plan_id) : null;
+		if (!$plan) return;
+
 		/* associate all client's sites to a new plan */
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'plan_id' => $from_plan_id,
 		));
-		$this->mongo_db->set('plan_id', $to_plan_id);
+		$this->mongo_db->set('plan_id', $plan['_id']);
 		$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 		$this->mongo_db->update('playbasis_permission');
 
-		/* populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client */
-		/*$data_filter = array(
-			'client_id' => $client_id,
-			'site_id' => null,
-			'plan_id' => $plan_subscription['plan_id']->{'$id'},
-			'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-			'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
-		);
-		$this->copyRewardToClient($data_filter);
-		$this->copyFeaturedToClient($data_filter);
-		$this->copyActionToClient($data_filter);
-		$this->copyJigsawToClient($data_filter);*/
+		/* loop over all sites of the clients */
+		$sites = $this->listSitesByClientId($client_id);
+		if ($sites) foreach ($sites as $site) {
+			$site_id = $site['_id'];
+
+			/* populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client */
+			$this->copyRewardToClient($client_id, $site_id, $plan);
+			$this->copyFeaturedToClient($client_id, $site_id, $plan);
+			$this->copyActionToClient($client_id, $site_id, $plan);
+			$this->copyJigsawToClient($client_id, $site_id, $plan);
+		}
+	}
+
+	private function copyRewardToClient($client_id, $site_id, $plan) {
+		$d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+		$this->mongo_db->where('client_id', $client_id);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('is_custom', false);
+		$this->mongo_db->delete_all("playbasis_reward_to_client");
+
+		if (isset($plan['reward_to_plan'])) {
+			foreach ($plan['reward_to_plan'] as $reward) {
+				$limit = empty($reward['limit']) ? null : (int)$reward['limit'];
+
+				$reward_data = $this->getSytemRewardById($reward['reward_id']);
+
+				$this->mongo_db->insert('playbasis_reward_to_client', array(
+					'reward_id' => new MongoID($reward['reward_id']),
+					'client_id' => $client_id,
+					'site_id' => $site_id,
+					'group' => $reward_data['group'],
+					'name' => $reward_data['name'],
+					'description' => $reward_data['description'],
+					'init_dataset' => $reward_data['init_dataset'],
+					'limit' => $limit,
+					'sort_order' => $reward_data['sort_order'],
+					'status' => (bool)$reward_data['status'],
+					'date_modified' => $d,
+					'date_added' => $d,
+					'is_custom' => false,
+				));
+			}
+		}
+	}
+
+	private function copyFeaturedToClient($client_id, $site_id, $plan) {
+		$d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+		$this->mongo_db->where('client_id', $client_id);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->delete_all("playbasis_feature_to_client");
+
+		if (isset($plan['feature_to_plan'])) {
+			foreach ($plan['feature_to_plan'] as $feature_id) {
+
+				$feature_data = $this->getSytemFeatureById($feature_id);
+
+				$this->mongo_db->insert('playbasis_feature_to_client', array(
+					'feature_id' => new MongoID($feature_id),
+					'client_id' => $client_id,
+					'site_id' => $site_id,
+					'name' => $feature_data['name'],
+					'description' => $feature_data['description'],
+					'link' => $feature_data['link'],
+					'icon' => $feature_data['icon'],
+					'sort_order' => $feature_data['sort_order'],
+					'status' => (bool)$feature_data['status'],
+					'date_modified' => $d,
+					'date_added' => $d,
+				));
+			}
+		}
+	}
+
+	private function copyActionToClient($client_id, $site_id, $plan) {
+		$d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+		$this->mongo_db->where('client_id', $client_id);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('is_custom', false);
+		$this->mongo_db->delete_all("playbasis_action_to_client");
+
+		if (isset($plan['action_to_plan'])) {
+			foreach ($plan['action_to_plan'] as $action_id) {
+				$this->mongo_db->where('client_id', $client_id);
+				$this->mongo_db->where('site_id', $site_id);
+				$this->mongo_db->where('action_id', $action_id);
+				$allClients = $this->mongo_db->get('playbasis_action_to_client');
+
+				if (!$allClients) {
+					$action_data = $this->getSytemActionById($action_id);
+
+					$this->mongo_db->insert('playbasis_action_to_client', array(
+						'action_id' => new MongoID($action_id),
+						'client_id' => $client_id,
+						'site_id' => $site_id,
+						'name' => $action_data['name'],
+						'description' => $action_data['description'],
+						'icon' => $action_data['icon'],
+						'color' => $action_data['color'],
+						'init_dataset' => $action_data['init_dataset'],
+						'sort_order' => $action_data['sort_order'],
+						'status' => (bool)$action_data['status'],
+						'date_modified' => $d,
+						'date_added' => $d,
+						'is_custom' => false,
+					));
+				}
+			}
+		}
+	}
+
+	private function copyJigsawToClient($client_id, $site_id, $plan) {
+		$d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+		$this->mongo_db->where('client_id', $client_id);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->delete_all("playbasis_game_jigsaw_to_client");
+
+		if (isset($plan['jigsaw_to_plan'])) {
+			foreach ($plan['jigsaw_to_plan'] as $jigsaw_id) {
+
+				$jigsaw_data = $this->getSytemJigsawById($jigsaw_id);
+
+				$this->mongo_db->insert('playbasis_game_jigsaw_to_client', array(
+					'jigsaw_id' => new MongoID($jigsaw_id),
+					'client_id' => $client_id,
+					'site_id' => $site_id,
+					'name' => $jigsaw_data['name'],
+					'description' => $jigsaw_data['description'],
+					'category' => $jigsaw_data['category'],
+					'class_path' => $jigsaw_data['class_path'],
+					'init_dataset' => $jigsaw_data['init_dataset'],
+					'sort_order' => $jigsaw_data['sort_order'],
+					'status' => (bool)$jigsaw_data['status'],
+					'date_modified' => $d,
+					'date_added' => $d,
+				));
+			}
+		}
 	}
 
 	private function hasAlreadyProcessed($txn_id) {
