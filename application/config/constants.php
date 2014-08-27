@@ -39,8 +39,17 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
 define('PAYPAL_ENV', 'sandbox');
+define('PAYPAL_IPN_VERIFIED', 'VERIFIED');
+define('PAYPAL_IPN_INVALID', 'INVALID');
 define('PAYPAL_TXN_TYPE_SUBSCR_SIGNUP', 'subscr_signup');
 define('PAYPAL_TXN_TYPE_SUBSCR_PAYMENT', 'subscr_payment');
+define('PAYPAL_PAYMENT_STATUS_COMPLETED', 'Completed'); // Money has been successfully sent to the recipient
+define('PAYPAL_PAYMENT_STATUS_CANCELED', 'Canceled'); // The sender canceled this payment
+define('PAYPAL_PAYMENT_STATUS_DENIED', 'Denied'); // The recipient chose not to accept this payment
+define('PAYPAL_PAYMENT_STATUS_HELD', 'Held'); // Money is being temporarily held. The sender may be disputing this payment, or the payment may be under review by PayPal
+define('PAYPAL_PAYMENT_STATUS_PENDING', 'Pending'); // This payment is being processed. Allow up to 4 days for it to complete
+define('PAYPAL_PAYMENT_STATUS_RETURNED', 'Returned'); // Money was returned to the sender because the payment was unclaimed for 30 days
+define('PAYPAL_PAYMENT_STATUS_UNCLAIMED', 'Unclaimed'); // The recipient hasn't yet accepted this payment
 define('GRACE_PERIOD_IN_DAYS', 5);
 
 /* End of file constants.php */
