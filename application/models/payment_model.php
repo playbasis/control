@@ -19,11 +19,17 @@ class Payment_model extends MY_Model
 		/* find details of the subscribed plan of the client */
 		$myplan_id = $this->getPlanIdByClientId($client_id);
 		$myplan = $myplan_id ? $this->getPlanById($myplan_id) : null;
+		if (!array_key_exists('price', $myplan)) {
+			$myplan['price'] = DEFAULT_PLAN_PRICE;
+		}
 
 		/* process PayPal IPN message differently according to 'txn_type' */
 		switch ($POST['txn_type']) {
 		case PAYPAL_TXN_TYPE_SUBSCR_SIGNUP:
-			$this->setDateBilling($client, $myplan, $POST['subscr_id']);
+			$this->setDateBilling($client_id, $myplan, $POST['subscr_id']);
+			if ($myplan['price'] <= 0) { // change the plan if current plan is free
+				$this->changePlan($client_id, $myplan_id, $plan_id);
+			}
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
 			break;
