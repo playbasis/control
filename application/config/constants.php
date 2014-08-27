@@ -36,6 +36,12 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
+define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
+define('PAYPAL_ENV', 'sandbox');
+define('PAYPAL_TXN_TYPE_SUBSCR_SIGNUP', 'subscr_signup');
+define('PAYPAL_TXN_TYPE_SUBSCR_PAYMENT', 'subscr_payment');
+define('GRACE_PERIOD_IN_DAYS', 5);
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

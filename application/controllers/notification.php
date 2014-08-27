@@ -83,7 +83,7 @@ class Notification extends REST2_Controller
 
 			// Step 2: POST IPN data back to PayPal to validate
 
-			$ch = curl_init('https://www.sandbox.paypal.com/cgi-bin/webscr');
+			$ch = curl_init('https://www.'.(PAYPAL_ENV == 'sandbox' ? PAYPAL_ENV.'.' : '').'paypal.com/cgi-bin/webscr');
 			curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
@@ -113,30 +113,16 @@ class Notification extends REST2_Controller
 				// check that payment_amount/payment_currency are correct
 				// process the notification
 
-				// assign posted variables to local variables
-				$item_name = $_POST['item_name'];
-				$item_number = $_POST['item_number'];
-				$payment_status = $_POST['payment_status'];
-				$payment_amount = $_POST['mc_gross'];
-				$payment_currency = $_POST['mc_currency'];
-				$txn_id = $_POST['txn_id'];
-				$receiver_email = $_POST['receiver_email'];
-				$payer_email = $_POST['payer_email'];
 				$custom = $_POST['custom'];
+				$pieces = explode(',', $custom);
+				$client_id = new MongoId($pieces[0]);
+				$plan_id = new MongoId($pieces[1]);
 
-				// IPN message values depend upon the type of notification sent.
-				// To loop through the &_POST array and print the NV pairs to the screen:
-				foreach($_POST as $key => $value) {
-					echo $key." = ". $value."<br>";
-				}
-
-				$this->payment_model->add_credit_event(new MongoId($custom), $payment_amount, 'paypal', $payment_status);
+				$this->payment_model->processVerifiedIPN(PAYMENT_CHANNEL_PAYPAL, $client_id, $plan_id, $_POST);
 				log_message('debug', 'IPN: '.print_r($_POST, true));
-				log_message('debug', 'payment_status: '.$payment_status);
 				$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
-				// TODO: in case of payment status != 'Completed', we should send email to the client to let them know
 			} else if (strcmp($res, "INVALID") == 0) {
-				// IPN invalid, log for manual investigation
+				// IPN invalid, log for further investigation
 				log_message('error', 'Invalid PayPal IPN message, response: '.$res);
 				$this->response($this->error->setError('INVALID_PAYPAL_IPN', $res), 200);
 			}
