@@ -72,9 +72,8 @@ class Plan_model extends MY_Model
         $plans = $this->mongo_db->get("playbasis_plan");
 
         foreach($plans as $key => $plan){
-            $planId = $plan['_id'];
             $this->mongo_db->select(array('client_id'));
-            $this->mongo_db->where('plan_id', new MongoId($planId));
+            $this->mongo_db->where('plan_id', $plan['_id']);
             $subscribers = array();
             $records = $this->mongo_db->get('playbasis_permission');
             // one "client_id" can have several "site_id"s within the same "plan_id", so we do the manual count
@@ -478,10 +477,14 @@ class Plan_model extends MY_Model
         return $results && isset($results[0]['limit_others']['trial']) ? $results[0]['limit_others']['trial'] : null;
     }
 
-    public function getAvailableStaticPlans(){
-        return array('PLAN1', 'PLAN2', 'PLAN3', 'PLAN4');
+    public function getDisplayedPlans(){
+        $ret = array();
+        $plans = $this->listDisplayPlans();
+        if ($plans) foreach ($plans as $plan) {
+            array_push($ret, $plan['name']);
+        }
+        return $ret;
     }
-
 
     public function checkPlanExistsByName($plan_name){
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -565,31 +568,6 @@ class Plan_model extends MY_Model
         ));
         $this->mongo_db->inc($type.'.'.$year_month.'.'.$field, $inc);
         $this->mongo_db->update('playbasis_permission');
-    }
-
-    /*
-     * Get Plan ID from ClientSite
-     * If site_id is not given use first client_id plan
-     * It should be the same plan among site_ids
-     * @param string client_id
-     * @param string site_id
-     * @return array
-     */
-    public function getPlanIDfromClientSite($client_id, $site_id=NULL)
-    {
-        $this->set_site_mongodb($site_id);
-
-        $select = array("plan_id");
-        $criteria = array("client_id" => $client_id);
-        if ($site_id)
-            $criteria["site_id"] = $site_id;
-
-        $this->mongo_db->select($select);
-        $result = $this->mongo_db->get_where("playbasis_permission", $criteria);
-        if ($result)
-            return $result[0];
-        else
-            return array("plan_id" => NULL);
     }
 
 	public function listDisplayPlans() {

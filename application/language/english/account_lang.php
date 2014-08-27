@@ -4,6 +4,7 @@ $lang['account_title']          				= 'Account Details';
 $lang['channel_title']          				= 'Select Your Payment Channel';
 $lang['order_title']          				= 'Order Details';
 $lang['congrat_title']          				= 'Congratulations!';
+$lang['cancel_title']          				= 'Cancel Subscription';
 
 // Text
 $lang['text_name']						= 'Name';
@@ -32,10 +33,12 @@ $lang['text_not_available']						= 'N/A';
 // Button
 $lang['button_subscribe']         = 'Subscribe';
 $lang['button_purchase']         = 'Purchase';
-$lang['button_update_payment_detail']         = 'Set Up Subscription';
+$lang['button_setup_payment_detail']         = 'Set Up Subscription';
 $lang['button_upgrade']						= 'Upgrade';
 $lang['button_downgrade']						= 'Downgrade';
 $lang['button_cancel_subscription']						= 'Cancel Subscription';
+$lang['button_confirm']						= 'Confirm';
+$lang['button_close']						= 'Close';
 
 
 // Form
@@ -44,7 +47,7 @@ $lang['form_months']						= 'Number of Months';
 $lang['form_channel']						= 'Payment Channel';
 $lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';
-$lang['form_billing_date']						= 'Effective Billing Date';
+$lang['form_effective_date']						= 'Effective Date';
 
 
 // Error 

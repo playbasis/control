@@ -10,6 +10,7 @@ class Domain extends MY_Controller
         $this->load->model('User_model');
         $this->load->model('Client_model');
         $this->load->model('Plan_model');
+
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -201,11 +202,10 @@ class Domain extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
                 $client_id = $this->User_model->getClientId();
-                $plan = $this->Plan_model->getPlanIDfromClientSite($client_id);
+                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
                 // get Plan limit_others.domain
-                $limit = $this->Plan_model->getPlanLimitById(
-                    $plan["plan_id"], "others", "domain");
+                $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
                 if (!isset($limit["value"]) || !$limit["value"])
                     $limit["value"] = 3; // default
 

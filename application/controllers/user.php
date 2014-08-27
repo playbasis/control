@@ -213,15 +213,12 @@ class User extends MY_Controller
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             $client_id = $this->User_model->getClientId();
-            $site_id = $this->User_model->getSiteId();
-            $plan = $this->Plan_model->getPlanIDfromClientSite(
-                $client_id, $site_id);
+            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
             if($this->form_validation->run()){
                 // get Plan limit_others.user
                 try {
-                    $user_limit = $this->Plan_model->getPlanLimitById(
-                        $plan["plan_id"], "others", "user");
+                    $user_limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "user");
                     if (!isset($user_limit["value"]) || !$user_limit["value"])
                         $user_limit["value"] = 3;  // default
                 } catch(Exception $e) {
@@ -562,16 +559,17 @@ class User extends MY_Controller
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
         $this->data['form'] = 'user/register?plan';
         $this->data['user_groups'] = $this->User_model->getUserGroups();
-        $this->data['availablePlans'] = $this->Plan_model->getAvailableStaticPlans();
+        $this->data['availablePlans'] = $this->Plan_model->getDisplayedPlans();
 
-        //Set rules for form regsitration
+        //Set rules for form registration
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
         $this->form_validation->set_rules('company_name', $this->lang->line('form_company_name'), 'trim|required|max_length[100]|xss_clean');
-        $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
+        // $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
+        $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|url_exists_without_http');
         $this->form_validation->set_rules('site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
         
         //ReCaptcha stuff
@@ -647,13 +645,13 @@ class User extends MY_Controller
                                     'status' => true
                             );
 
-                            $this->Client_model->editClientPlan($client_id, $another_data); // [5] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
-
                             $data = array();
                             $data['client_id'] = $client_id;
                             $data['plan_id'] = $plan_id;
                             $data['site_id'] = $site_id;
-                            $this->Permission_model->addPlanToPermission($data); // [6] finally, bind the client to the selected plan
+                            $this->Permission_model->addPlanToPermission($data); // [5] finally, bind the client to the selected plan
+
+                            $this->Client_model->editClientPlan($client_id, $another_data); // [6] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
@@ -852,10 +850,13 @@ class User extends MY_Controller
                     'confirm_password' =>$this->input->post('password_confirm'),
                     'edit_account'=>true,
                 );
-                if($this->input->post('image') != ""){
+                if($this->input->post('image') != "no_image.jpg"){
                     $data['image'] =$this->input->post('image');
                 }
-                if($this->input->post('password') != '' && $this->input->post('image') != '' && $this->form_validation->run()){
+                if($this->input->post('image') == ''){
+                    $data['image'] = '';
+                }
+                if($this->form_validation->run()){
                     $this->User_model->editUser($user_id, $data);
                 }
             }
