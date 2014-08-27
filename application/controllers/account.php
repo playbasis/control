@@ -34,19 +34,6 @@ class Account extends MY_Controller
 		playbasis_payment_channel - store all available payment channels
 	*/
 
-	/*
-		The most common payment statuses (https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=xpt/Help/popup/StatusTypes)
-
-		Canceled: The sender canceled this payment.
-		Completed (referring to a bank withdrawal): Money is being transferred to your bank account. Allow up to 7 days for this transfer to complete.
-		Completed (referring to a payment): Money has been successfully sent to the recipient.
-		Denied: The recipient chose not to accept this payment.
-		Held: Money is being temporarily held. The sender may be disputing this payment, or the payment may be under review by PayPal.
-		Pending: This payment is being processed. Allow up to 4 days for it to complete.
-		Returned: Money was returned to the sender because the payment was unclaimed for 30 days.
-		Unclaimed: The recipient hasn't yet accepted this payment.
-	*/
-
 	public function index() {
 
 		if(!$this->validateAccess()){
@@ -75,8 +62,8 @@ class Account extends MY_Controller
 		/* find details of the client */
 		$client = $this->Client_model->getClientById($this->User_model->getClientId());
 		// "date_start" and "date_expire" will be set when we receive payment confirmation in each month
-		// So if whenever payment fails, the two fields would not be updated, which results in block API usage.
-		// In addition, "date_expire" will include additional days for grace period.
+		// So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
+		// In addition, "date_expire" will include extra days to cover grace period.
 		$date_start = array_key_exists('date_start', $client) ? $client['date_start']->sec : null;
 		$date_expire = array_key_exists('date_expire', $client) ? $client['date_expire']->sec : null;
 		// Whenever we set "date_billing", it means that the client has already set up subscription.
@@ -138,7 +125,7 @@ class Account extends MY_Controller
 			$this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
 			$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required|numeric');
 			$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
-			$plan_id = $this->input->post('plan');
+			$plan_id = new MongoId($this->input->post('plan'));
 			$months = $this->input->post('months');
 			$channel = $this->input->post('channel');
 			if ($months) $months = intval($months);
@@ -148,34 +135,40 @@ class Account extends MY_Controller
 			if($this->form_validation->run() && $this->data['message'] == null){
 				$ci =& get_instance();
 
-				$selected_plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
+				$selected_plan = $this->Plan_model->getPlanById($plan_id);
 				if (!array_key_exists('price', $selected_plan)) {
 					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
 				}
 
+				$date_today = time();
 				$trial_days = 0;
-				$modify = PAYPAL_MODIFY_EITHER_NEW_SUBSCRIPTION_OR_MODIFY;
+				$trial2_days = 0;
+				$trial2_price = $selected_plan['price'];
+				$modify = false;
 				switch ($mode) {
 				case PURCHASE_SUBSCRIBE:
-					/* find number of trial days */
 					$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
-					$date_today = time();
 					$date_trial_end = strtotime("+".$days_total." day", $date_today);
 					$date_after_first_month = strtotime("+1 month", $date_trial_end); /* because we want to bill after usage, we have to adjust trial period to +1 month */
 					$trial_days = $this->find_diff_in_days($date_today, $date_after_first_month);
-
-					/* allow subscribers to sign up for new subscriptions only */
-					$modify = PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY;
+					$modify = false;
 					break;
 				case PURCHASE_UPGRADE:
 				case PURCHASE_DOWNGRADE:
-					/* find number of trial days */
 					$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
-					$days_remaining = $this->find_diff_in_days(time(), $date_billing);
+					$days_remaining = $this->find_diff_in_days($date_today, $date_billing);
 					$trial_days = $days_remaining >= 0 ? $days_remaining : 0;
-
-					/* allow subscribers to modify their current subscriptions only */
-					$modify = PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY;
+					/* because we bill after usage, we have to make use of 2nd trial to bill the old price for the remaining days of current cycle */
+					if ($days_remaining <= 0) { // we are in the actual billing, not the trial period
+						$trial2_days = $this->find_diff_in_days($date_today, $this->find_next_billing_date_of($date_billing, $date_today));
+						$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+						$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+						if (!array_key_exists('price', $plan)) {
+							$plan['price'] = DEFAULT_PLAN_PRICE;
+						}
+						$trial2_price = $plan['price']; // price for second trial period is the current plan price
+					}
+					$modify = true;
 					break;
 				default:
 					log_message('error', 'Invalid mode = '.$mode);
@@ -188,6 +181,8 @@ class Account extends MY_Controller
 					'price' => $selected_plan['price'],
 					'months' => $months,
 					'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
+					'trial2_days' => $trial2_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial2_days,
+					'trial2_price' => $trial2_price,
 					'callback' => $ci->config->config['server'].'notification',
 					'modify' => $modify,
 				);
@@ -273,6 +268,14 @@ class Account extends MY_Controller
 
 		$this->load->vars($this->data);
 		$this->render_page('template');
+	}
+
+	private function find_next_billing_date_of($date_billing, $date_as_of) {
+		$current = $date_billing;
+		while ($current < $date_as_of) {
+			$current = strtotime("+1 month", $current);
+		}
+		return $current;
 	}
 
 	private function find_diff_in_months($from, $to) {
