@@ -102,11 +102,28 @@
 			value: 'D'
 		}).appendTo('form');
 		<?php } ?>
+		<?php if ($params['trial2_days'] > 0) { ?>
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'a2', // price
+			value: <?php echo $params['trial2_price']; ?>
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'p2', // duration
+			value: <?php echo $params['trial2_days']; ?> <!-- allowed value: 1-90 -->
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 't2', // unit of duration
+			value: 'D'
+		}).appendTo('form');
+		<?php } ?>
 		/* enable upgrade/downgrade */
 		$('<input>').attr({
 			type: 'hidden',
 			name: 'modify', // modification behavior
-			value: <?php echo $params['modify']; ?>
+			value: <?php echo $params['modify'] ? PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY : PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY; ?>
 		}).appendTo('form');
 	});
 //--></script>
