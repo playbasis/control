@@ -25,14 +25,18 @@ class Payment_model extends MY_Model
 		case PAYPAL_TXN_TYPE_SUBSCR_SIGNUP:
 			$this->setDateBilling($client, $myplan, $POST['subscr_id']);
 			break;
+		case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
+			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_PAYMENT:
 			/* check if we already process this 'txn_id' */
 			if (!$this->hasAlreadyProcessed($POST['txn_id'])) { // skip possible duplicate IPN messages
+				$amount = intval($POST['mc_gross']);
+
 				/* insert into payment log */
 				$this->insertPaymentLog($client_id, $plan_id, array(
 					'channel' => PAYMENT_CHANNEL_PAYPAL,
 					'status' => $POST['payment_status'],
-					'amount' => $POST['mc_gross'],
+					'amount' => $amount,
 					'currency' => $POST['mc_currency'],
 					'txn_id' => $POST['txn_id'],
 					'ipn_track_id' => $POST['ipn_track_id'],
@@ -48,7 +52,8 @@ class Payment_model extends MY_Model
 					$this->setDateStartAndDateExpire($client_id, GRACE_PERIOD_IN_DAYS);
 
 					/* check if the plan has been changed */
-					if ($myplan_id != $plan_id) {
+					if ($myplan_id != $plan_id && $amount == $myplan['price']) {
+						/* enable new plan immediately after we charge for the old price */
 						$this->changePlan($client_id, $myplan_id, $plan_id);
 						log_message('info', 'Client '.$client_id.' has changed the plan from '.$myplan_id.' to '.$plan_id);
 					}

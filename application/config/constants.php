@@ -41,8 +41,13 @@ define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
 define('PAYPAL_ENV', 'sandbox');
 define('PAYPAL_IPN_VERIFIED', 'VERIFIED');
 define('PAYPAL_IPN_INVALID', 'INVALID');
+/* https://www.paypal.com/cgi-bin/webscr?cmd=p/acc/ipn-subscriptions-outside */
 define('PAYPAL_TXN_TYPE_SUBSCR_SIGNUP', 'subscr_signup');
+define('PAYPAL_TXN_TYPE_SUBSCR_CANCEL', 'subscr_cancel');
+define('PAYPAL_TXN_TYPE_SUBSCR_MODIFY', 'subscr_modify');
+define('PAYPAL_TXN_TYPE_SUBSCR_FAILED', 'subscr_failed');
 define('PAYPAL_TXN_TYPE_SUBSCR_PAYMENT', 'subscr_payment');
+define('PAYPAL_TXN_TYPE_SUBSCR_EOT', 'subscr_eot');
 /* https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=xpt/Help/popup/StatusTypes */
 define('PAYPAL_PAYMENT_STATUS_COMPLETED', 'Completed'); // Money has been successfully sent to the recipient
 define('PAYPAL_PAYMENT_STATUS_CANCELED', 'Canceled'); // The sender canceled this payment
