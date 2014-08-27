@@ -34,19 +34,6 @@ class Account extends MY_Controller
 		playbasis_payment_channel - store all available payment channels
 	*/
 
-	/*
-		The most common payment statuses (https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=xpt/Help/popup/StatusTypes)
-
-		Canceled: The sender canceled this payment.
-		Completed (referring to a bank withdrawal): Money is being transferred to your bank account. Allow up to 7 days for this transfer to complete.
-		Completed (referring to a payment): Money has been successfully sent to the recipient.
-		Denied: The recipient chose not to accept this payment.
-		Held: Money is being temporarily held. The sender may be disputing this payment, or the payment may be under review by PayPal.
-		Pending: This payment is being processed. Allow up to 4 days for it to complete.
-		Returned: Money was returned to the sender because the payment was unclaimed for 30 days.
-		Unclaimed: The recipient hasn't yet accepted this payment.
-	*/
-
 	public function index() {
 
 		if(!$this->validateAccess()){
@@ -75,8 +62,8 @@ class Account extends MY_Controller
 		/* find details of the client */
 		$client = $this->Client_model->getClientById($this->User_model->getClientId());
 		// "date_start" and "date_expire" will be set when we receive payment confirmation in each month
-		// So if whenever payment fails, the two fields would not be updated, which results in block API usage.
-		// In addition, "date_expire" will include additional days for grace period.
+		// So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
+		// In addition, "date_expire" will include extra days to cover grace period.
 		$date_start = array_key_exists('date_start', $client) ? $client['date_start']->sec : null;
 		$date_expire = array_key_exists('date_expire', $client) ? $client['date_expire']->sec : null;
 		// Whenever we set "date_billing", it means that the client has already set up subscription.
@@ -176,6 +163,9 @@ class Account extends MY_Controller
 
 					/* allow subscribers to modify their current subscriptions only */
 					$modify = PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY;
+
+					/* save selected plan_id into 'next_plan_id', not change plan until we receive IPN for confirmation */
+					// TODO:
 					break;
 				default:
 					log_message('error', 'Invalid mode = '.$mode);
