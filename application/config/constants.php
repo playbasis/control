@@ -43,6 +43,7 @@ define('PAYPAL_IPN_VERIFIED', 'VERIFIED');
 define('PAYPAL_IPN_INVALID', 'INVALID');
 define('PAYPAL_TXN_TYPE_SUBSCR_SIGNUP', 'subscr_signup');
 define('PAYPAL_TXN_TYPE_SUBSCR_PAYMENT', 'subscr_payment');
+/* https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=xpt/Help/popup/StatusTypes */
 define('PAYPAL_PAYMENT_STATUS_COMPLETED', 'Completed'); // Money has been successfully sent to the recipient
 define('PAYPAL_PAYMENT_STATUS_CANCELED', 'Canceled'); // The sender canceled this payment
 define('PAYPAL_PAYMENT_STATUS_DENIED', 'Denied'); // The recipient chose not to accept this payment
