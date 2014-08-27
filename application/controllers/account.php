@@ -158,14 +158,16 @@ class Account extends MY_Controller
 					$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
 					$days_remaining = $this->find_diff_in_days($date_today, $date_billing);
 					$trial_days = $days_remaining >= 0 ? $days_remaining : 0;
-					/* because we bill after usage, we have to make use of second trial to bill the old price for the remaining days of current cycle */
-					$trial2_days = $this->find_diff_in_days($date_today, $this->find_next_billing_date_of($date_billing, $date_today));
-					$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-					$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-					if (!array_key_exists('price', $plan)) {
-						$plan['price'] = DEFAULT_PLAN_PRICE;
+					/* because we bill after usage, we have to make use of 2nd trial to bill the old price for the remaining days of current cycle */
+					if ($days_remaining <= 0) { // we are in the actual billing, not the trial period
+						$trial2_days = $this->find_diff_in_days($date_today, $this->find_next_billing_date_of($date_billing, $date_today));
+						$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+						$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+						if (!array_key_exists('price', $plan)) {
+							$plan['price'] = DEFAULT_PLAN_PRICE;
+						}
+						$trial2_price = $plan['price']; // price for second trial period is the current plan price
 					}
-					$trial2_price = $plan['price']; // price for second trial period is the current plan price
 					$modify = true;
 					break;
 				default:
