@@ -295,7 +295,7 @@ class Account extends MY_Controller
 
 	private function check_valid_payment($client) {
 		$date_start = array_key_exists('date_start', $client) ? $client['date_start']->sec : null;
-		$date_expire = array_key_exists('date_expire', $client) ? $client['date_expired']->sec : null;
+		$date_expire = array_key_exists('date_expire', $client) ? $client['date_expire']->sec : null;
 		$t = time();
 		return ($date_start ? $date_start <= $t : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET) && ($date_expire ? $t <= $date_expire : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET);
 	}
