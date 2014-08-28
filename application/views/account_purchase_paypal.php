@@ -37,10 +37,6 @@
 				            <td><input type="text" value="<?php echo $params['price']; ?>" disabled /></td>
 			            </tr>
 			            <tr>
-				            <td><?php echo $this->lang->line('form_months'); ?></td>
-				            <td><input type="text" value="<?php echo $params['months']; ?>" disabled /></td>
-			            </tr>
-			            <tr>
 				            <td><?php echo $this->lang->line('form_product'); ?>:</td>
 				            <td><input type="text" value="<?php echo PRODUCT_NAME; ?>" disabled /></td>
 			            </tr>
@@ -71,13 +67,8 @@
 		/* enable recurring payment */
 		$('<input>').attr({
 			type: 'hidden',
-			name: 'src', // enable flag
+			name: 'src', // enable flag, and, if enable, keep recurring until subscribers cancel their subscriptions
 			value: 1
-		}).appendTo('form');
-		$('<input>').attr({
-			type: 'hidden',
-			name: 'srt', // recurring times (require 'src' = 1)
-			value: <?php echo $params['months']; ?>
 		}).appendTo('form');
 		$('<input>').attr({
 			type: 'hidden',

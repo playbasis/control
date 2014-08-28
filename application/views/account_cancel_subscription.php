@@ -36,14 +36,6 @@
 				            </td>
 			            </tr>
             			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
-            				<td>
-					            <select disabled>
-						            <option selected="selected"><?php echo MONTHS_PER_PLAN; ?></option>
-					            </select>
-            				</td>
-            			</tr>
-            			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_channel'); ?>:</td>
             				<td>
 					            <select disabled>

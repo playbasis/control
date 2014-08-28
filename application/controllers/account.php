@@ -123,13 +123,9 @@ class Account extends MY_Controller
 			$this->data['message'] = null;
 
 			$this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
-			$this->form_validation->set_rules('months', $this->lang->line('form_months'), 'trim|required|numeric');
 			$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
 			$plan_id = new MongoId($this->input->post('plan'));
-			$months = $this->input->post('months');
 			$channel = $this->input->post('channel');
-			if ($months) $months = intval($months);
-			if ($months <= 0) $this->data['message'] = 'Parameter "months" has to be greater than zero'; // manual validation (> 0)
 			if (!$this->check_valid_payment_channel($channel)) $this->data['message'] = 'Invalid payment channel';
 
 			if($this->form_validation->run() && $this->data['message'] == null){
@@ -179,7 +175,6 @@ class Account extends MY_Controller
 				$this->data['params'] = array(
 					'plan_id' => $selected_plan['_id'],
 					'price' => $selected_plan['price'],
-					'months' => $months,
 					'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
 					'trial2_days' => $trial2_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial2_days,
 					'trial2_price' => $trial2_price,
@@ -196,19 +191,6 @@ class Account extends MY_Controller
 		if (!$success) {
 			$this->data['mode'] = $mode;
 			$this->data['plans'] = $this->Plan_model->listDisplayPlans();
-			switch ($mode) {
-			case PURCHASE_UPGRADE:
-			case PURCHASE_DOWNGRADE:
-				$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
-				$date_billing_end = strtotime("+".(MONTHS_PER_PLAN+1)." month", $date_billing); /* because we want to bill after usage, we have to adjust period to +1 month */
-				$months = $this->find_diff_in_months(time(), $date_billing_end); /* calculate remaining months */
-				$this->data['months'] = ($months >= 0 ? $months : 0); // TODO: when months < 0, we should redirect user to a page to extend (basically sign up a new subscription)
-				break;
-			case PURCHASE_SUBSCRIBE:
-			default:
-				$this->data['months'] = MONTHS_PER_PLAN;
-				break;
-			}
 			$this->data['heading_title'] = $this->lang->line('channel_title');
 			$this->data['main'] = 'account_purchase';
 			$this->data['form'] = 'account/'.$this->purchase[$mode];

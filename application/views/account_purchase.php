@@ -27,7 +27,6 @@
             	<?php $free_flag = ($myplan['price'] <= 0); ?>
             	<?php $upgrade_downgrade_flag = in_array($mode, array(PURCHASE_UPGRADE, PURCHASE_DOWNGRADE)); ?>
             	<?php $allow_plan_selection_flag = ($free_flag || $upgrade_downgrade_flag); ?>
-            	<input type="hidden" name="months" value="<?php echo $months; ?>" />
             	<?php if (!$allow_plan_selection_flag) { ?>
             	<input type="hidden" name="plan" value="<?php echo $myplan['_id']->{'$id'}; ?>" />
             	<?php } ?>
@@ -68,14 +67,6 @@
 					            </select>
 				            </td>
 			            </tr>
-            			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
-            				<td>
-					            <select disabled>
-						            <option selected="selected"><?php echo $months; ?></option>
-					            </select>
-            				</td>
-            			</tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_channel'); ?>:</td>
             				<td>
