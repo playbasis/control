@@ -366,14 +366,19 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $badge = $this->mongo_db->get("playbasis_badge_to_client");
         if ($badge) {
+            $this->mongo_db->where('_id',  new MongoID($badge_id));
             $badge = $badge[0];
             if (!$this->isSameBadge($badge, $data)) {
                 if (isset($badge["is_template"]) && $badge["is_template"]) {
                     $new_badge = $this->addBadge($data);
-                    $this->mongo_db->where('_id',  new MongoID($badge_id));
                     $this->mongo_db->set("badge_id", $new_badge);
                     $this->mongo_db->unset_field("is_template");
+                    if ($badge["name"] == $data["name"])
+                        $this->mongo_db->set("name", "Cloned from ". $data["name"]);
+                } else {
+                    $this->mongo_db->set("name", $data["name"]);
                 }
+
                 $this->mongo_db->set('client_id', new MongoID($data['client_id']));
                 $this->mongo_db->set('site_id', new MongoID($data['site_id']));
                 $this->mongo_db->set('stackable', (int)$data['stackable']);
@@ -381,7 +386,6 @@ class Badge_model extends MY_Model
                 $this->mongo_db->set('quantity', (int)$data['quantity']);
                 $this->mongo_db->set('status', (bool)$data['status']);
                 $this->mongo_db->set('sort_order', (int)$data['sort_order']);
-                $this->mongo_db->set('name', $data['name']);
                 $this->mongo_db->set('description', $data['description']);
                 $this->mongo_db->set('hint', $data['hint']);
                 $this->mongo_db->set('language_id', (int)1);
@@ -603,6 +607,7 @@ class Badge_model extends MY_Model
             foreach($new_badges as $badge) {
                 $badge["badge_id"] = $badge["_id"];
                 $badge["is_template"] = true;
+                $badge["status"] = false;
                 $badge["client_id"] = $client_id;
                 $badge["site_id"] = $site_id;
 
@@ -638,7 +643,8 @@ class Badge_model extends MY_Model
                 $badge1["hint"] == $badge2["hint"] &&
                 $badge1["claim"] == $badge2["claim"] &&
                 $badge1["redeem"] == $badge2["redeem"] &&
-                $badge1["image"] == $badge2["image"]);
+                $badge1["image"] == $badge2["image"] &&
+                $badge1["status"] == (bool)$badge2["status"]);
     }
 
 }

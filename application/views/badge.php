@@ -44,7 +44,7 @@
                         <tbody>
                             <?php if (isset($badges)) { ?>
                             <?php foreach ($badges as $badge) { ?>
-                            <tr>
+                            <tr <?php if (isset($badge["is_template"]) && $badge["is_template"]) {?> class="badge_template" <?php } ?>>
                                 <td style="text-align: center;">
                                 <?php if (!$client_id){?>
                                     <?php if ($badge['selected']) { ?>

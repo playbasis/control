@@ -609,3 +609,9 @@ table.form > tbody > tr > td {
 .goods-panel input.blue {
     border-color: #2fabe9 !important;
 }
+
+.badge_template > td:nth-child(3):after {
+    font-style : italic;
+    color: red;
+    content    : "   (Template)";
+}

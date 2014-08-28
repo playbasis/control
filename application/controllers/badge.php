@@ -377,7 +377,8 @@ class Badge extends MY_Controller
                             'image' => $image,
                             'sort_order'  => $badge_info['sort_order'],
                             'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                            'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null
+                            'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null,
+                            "is_template" => isset($badge_info["is_template"]) ? $badge_info["is_template"] : false
                             );
                         }
                     }
