@@ -43,7 +43,6 @@ $lang['button_close']						= 'Close';
 
 // Form
 $lang['form_package']						= 'Package';
-$lang['form_months']						= 'Number of Months';
 $lang['form_channel']						= 'Payment Channel';
 $lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';

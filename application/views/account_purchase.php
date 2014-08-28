@@ -27,7 +27,6 @@
             	<?php $free_flag = ($myplan['price'] <= 0); ?>
             	<?php $upgrade_downgrade_flag = in_array($mode, array(PURCHASE_UPGRADE, PURCHASE_DOWNGRADE)); ?>
             	<?php $allow_plan_selection_flag = ($free_flag || $upgrade_downgrade_flag); ?>
-            	<input type="hidden" name="months" value="<?php echo $months; ?>" />
             	<?php if (!$allow_plan_selection_flag) { ?>
             	<input type="hidden" name="plan" value="<?php echo $myplan['_id']->{'$id'}; ?>" />
             	<?php } ?>
@@ -38,23 +37,27 @@
 				            <td>
 					            <select <?php if ($allow_plan_selection_flag) echo 'name="plan"'; else echo "disabled"; ?>>
 						            <?php if ($allow_plan_selection_flag) { ?>
+							        <option value=""></option> <!-- default case when there is no available plan from the setting in database -->
 						                      <?php if ($plans) foreach ($plans as $plan) {
-						                          if (array_key_exists('price', $plan) && $plan['price'] > 0) { // we display only plans with price > 0 (also discard plans without price)
-						                              switch ($mode) {
-						                              case PURCHASE_UPGRADE:
-						                                  if ($plan['price'] >= $myplan['price']) {
+						                          if (!array_key_exists('price', $plan)) {
+						                              $plan['price'] = DEFAULT_PLAN_PRICE;
+						                          }
+						                          switch ($mode) {
+						                          case PURCHASE_UPGRADE:
+						                              if ($plan['price'] > 0 && $plan['price'] > $myplan['price']) {
 						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
-						                                  }
-						                                  break;
-						                              case PURCHASE_DOWNGRADE:
-						                                  if ($plan['price'] <= $myplan['price']) {
-						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
-						                                  }
-						                                  break;
-						                              default:
-						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
-						                                  break;
 						                              }
+						                              break;
+						                          case PURCHASE_DOWNGRADE:
+						                              if ($plan['price'] > 0 && $plan['price'] < $myplan['price']) {
+						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
+						                              }
+						                              break;
+						                          default:
+						                              if ($plan['price'] > 0) {
+						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
+						                              }
+						                              break;
 						                          }
 						                      }
 						            ?>
@@ -64,14 +67,6 @@
 					            </select>
 				            </td>
 			            </tr>
-            			<tr>
-            				<td><span class="required">*</span> <?php echo $this->lang->line('form_months'); ?>:</td>
-            				<td>
-					            <select disabled>
-						            <option selected="selected"><?php echo $months; ?></option>
-					            </select>
-            				</td>
-            			</tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_channel'); ?>:</td>
             				<td>
