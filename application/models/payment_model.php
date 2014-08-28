@@ -59,7 +59,7 @@ class Payment_model extends MY_Model
 				switch ($POST['payment_status']) {
 				case PAYPAL_PAYMENT_STATUS_COMPLETED:
 					/* adjust billing period, 'date_start' and 'date_expire', to allow client to use our API */
-					$this->setDateStartAndDateExpire($client_id, GRACE_PERIOD_IN_DAYS);
+					$this->setDateStartAndDateExpire($client_id);
 
 					/* check if the plan has been changed */
 					if ($myplan_id != $plan_id && $amount == $myplan['price']) {
@@ -70,6 +70,14 @@ class Payment_model extends MY_Model
 					break;
 				}
 			}
+			break;
+		case PAYPAL_TXN_TYPE_SUBSCR_FAILED:
+			/* As we rely on PayPal to do reattempt for us if the payment has failed.
+			Eventually, PayPal will send 'subscr_cancel' after few reattempts within 3 days.
+			So we will not block the usage when we receive 'subscr_failed'.
+
+			/* send email to the user notifying the failure of payment with reason */
+			// TODO:
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_CANCEL:
 			/* remove "date_billing" */
@@ -169,12 +177,11 @@ class Payment_model extends MY_Model
 		$this->mongo_db->update('playbasis_client');
 	}
 
-	private function setDateStartAndDateExpire($client_id, $grace_period_in_days) {
+	private function setDateStartAndDateExpire($client_id) {
 		$d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 		$today = time();
 		$date_start = $today;
-		$date_end = strtotime("+1 month", $date_start);
-		$date_expire = strtotime("+".$grace_period_in_days." day", $date_end);
+		$date_expire = strtotime("+1 month", $date_start);
 		$this->mongo_db->where(array('_id' => $client_id));
 		$this->mongo_db->set('date_start', new MongoDate($date_start));
 		$this->mongo_db->set('date_expire', new MongoDate($date_expire));

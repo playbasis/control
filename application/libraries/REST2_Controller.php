@@ -27,8 +27,9 @@ abstract class REST2_Controller extends REST_Controller
 		/* 0.1 Load libraries */
 		$this->load->model('rest_model');
 		$this->load->model('auth_model');
-        $this->load->model('client_model');
+		$this->load->model('client_model');
 		$this->load->model('tool/error', 'error');
+
 		/* 0.2 Adjust $this->request->body */
 		if (!empty($this->request->body)) {
 			if (is_array($this->request->body) && count(count($this->request->body) == 1) && array_key_exists(0, $this->request->body)) {
@@ -41,6 +42,7 @@ abstract class REST2_Controller extends REST_Controller
 				}
 			}
 		}
+
 		/* 1.1 Log request */
 		$token = $this->input->post('token'); // token: POST
 		$api_key = $this->input->get('api_key'); // api_key: GET/POST
@@ -70,16 +72,29 @@ abstract class REST2_Controller extends REST_Controller
 
         /* 1.2 Client-Site Limit Requests */
         if (!$this->client_id || !$this->site_id) {
-            return;
+            return; // return early if not found client_id or site_id
         }
 
+        /* 1.3 Check valid payment */
+        $d = time();
+        $clientDate = $this->client_model->getClientStartEndDate($this->client_id);
+        $flag = true; // default is assumed to be free, which is allowed to use API
+        if ($clientDate['date_start']) {
+            $flag = $d >= $clientDate['date_start']->sec;
+        }
+        if ($clientDate['date_expire']) {
+            $date_expire = strtotime("+".GRACE_PERIOD_IN_DAYS." day", $clientDate['date_expire']->sec);
+            $flag = $flag && ($d <= $date_expire);
+        }
+        if (!$flag) $this->response($this->error->setError("ACCESS_DENIED"), 200);
+
+        /* 1.4 'requests' permission checking */
         $url = strtolower(preg_replace(
             "/(\w+)\/.*/", '${1}',
-            $this->uri->uri_string));
+            $this->uri->uri_string()));
         if (substr($url, 0, 1) != "/") {
             $url = "/".$url;
         }
-
         try {
             $this->client_model->permissionProcess(
                 $this->client_id,
