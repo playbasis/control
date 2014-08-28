@@ -5,24 +5,13 @@
             <div class="buttons">
 	                <?php if ($plan['free_flag']) { ?> You are in a free package, please <a href="<?php echo current_url();?>/subscribe" class="btn btn-primary"><?php echo $this->lang->line('button_subscribe'); ?></a><?php } ?>
 	                <?php if ($plan['paid_flag'] && !$client['date_billing']) { ?> Before start using our service, please <a href="<?php echo current_url();?>/subscribe" class="btn btn-primary"><?php echo $this->lang->line('button_setup_payment_detail'); ?></a><?php } ?>
-	                <?php if ($client['date_billing'] /* TODO: check that current plan is not the maximum paid plan by price */) { ?><a href="<?php echo current_url();?>/upgrade" class="btn btn-primary"><?php echo $this->lang->line('button_upgrade'); ?></a><?php } ?>
-	                <?php if ($client['date_billing'] /* TODO: check that current plan is not the minimum paid plan by price */) { ?><a href="<?php echo current_url();?>/downgrade" class="btn btn-primary"><?php echo $this->lang->line('button_downgrade'); ?></a><?php } ?>
-	                <?php if ($client['date_billing'] && time() < $client['date_billing']) { ?><a href="<?php echo current_url();?>/cancel_subscription" class="btn btn-primary"><?php echo $this->lang->line('button_cancel_subscription'); ?></a><?php } ?><!-- can cancel within a trial period without penalty -->
+	                <?php if ($client['date_billing']) { ?>
+	                Please stay with your current plan for at least 6 months before
+	                <a href="<?php echo current_url();?>/upgrade" class="btn btn-primary"><?php echo $this->lang->line('button_upgrade'); ?></a>
+	                <a href="<?php echo current_url();?>/downgrade" class="btn btn-primary"><?php echo $this->lang->line('button_downgrade'); ?></a>
+	                <a href="<?php echo current_url();?>/cancel_subscription" class="btn btn-primary"><?php echo $this->lang->line('button_cancel_subscription'); ?></a>
+	                <?php } ?>
 	            <br>
-	            <!--
-	            // if free (plan-price-0), offer them a choice to +upgrade<br>
-	            // if trial period has not ended, offer them a choice to quickly +subscribe now<br>
-	            // if trial period has ended (+email-bill-0), and does not subscribe yet, daily alert them that they have only 5 days for registration before we really block API +subscribe +email-reminder-to-subscribe<br>
-	            // if trial period has ended (+email-bill-0), and does not subscribe yet, and it has passed 5-day grace period, warning them that we already block API, please ASAP +subscribe<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, and it is not at the billing date yet, offer +upgrade-choice<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, and it is near billing date, offer +upgrade-choice +email-invoice<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, and it is at billing date, and payment fail (+email, +email-Playbasis), daily alert them that they have only 5 days for fixing before we really block API +fix-fail-payment +email-reminder-to-fix<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, and it is at billing date, and payment fail (+email, +email-Playbasis), and it has passed 5-day grace period, warning them that we already block API (+email), please ASAP +fix-fail-payment<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, payment success (+email-congrat, +email-Playbasis), offer +upgrade-choice<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, and the contract is about to expire, alert them to +extend +email-warning<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, and the contract has expired (+email), daily alert them that they have only 5 days for registration before we really block API +subscribe +email-reminder-to-subscribe<br>
-	            // if trial period has ended (+email-bill-0), has subscribed, and the contract has expired (+email), and it has passed 5-day grace period, warning them that we already block API, please ASAP +subscribe<br>
-	            -->
             </div><!-- .buttons -->
         </div><!-- .heading -->
         <div class="content">
