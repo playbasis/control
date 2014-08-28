@@ -12,21 +12,25 @@ class Payment_model extends MY_Model
 	    $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		/* find details of the client */
-		$this->mongo_db->where(array('_id' => $client_id));
-		$clients = $this->mongo_db->get('playbasis_client');
-		$client = $clients ? $clients[0] : null;
+		$client = $this->getClientById($client_id);
 
-		/* find details of the subscribed plan of the client */
+		/* find details of the current plan of the client */
 		$myplan_id = $this->getPlanIdByClientId($client_id);
 		$myplan = $myplan_id ? $this->getPlanById($myplan_id) : null;
 		if (!array_key_exists('price', $myplan)) {
 			$myplan['price'] = DEFAULT_PLAN_PRICE;
 		}
 
+		/* find details of the subscribed plan of the client */
+		$plan = $this->getPlanById($plan_id);
+		if (!array_key_exists('price', $plan)) {
+			$plan['price'] = DEFAULT_PLAN_PRICE;
+		}
+
 		/* process PayPal IPN message differently according to 'txn_type' */
 		switch ($POST['txn_type']) {
 		case PAYPAL_TXN_TYPE_SUBSCR_SIGNUP:
-			$this->setDateBilling($client_id, $myplan, $POST['subscr_id']);
+			$this->setDateBilling($client_id, $plan, $POST['subscr_id']);
 			if ($myplan['price'] <= 0) { // change the plan if current plan is free
 				$this->changePlan($client_id, $myplan_id, $plan_id);
 			}
@@ -91,6 +95,10 @@ class Payment_model extends MY_Model
 		$this->mongo_db->where(array('_id' => $id));
 		$results = $this->mongo_db->get($collection);
 		return $results ? $results[0] : null;
+	}
+
+	private function getClientById($client_id) {
+		return $this->getById($client_id, 'playbasis_client');
 	}
 
 	private function getPlanById($plan_id) {
