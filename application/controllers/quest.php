@@ -610,6 +610,12 @@ class Quest extends REST2_Controller
     }
 
     private function trackQuest($player_id, $validToken, $data_reward, $quest_id, $mission_id=null){
+        if($data_reward['reward_type'] == 'CUSTOM_POINT'){
+            $reward_type = 'point';
+        }else{
+            $reward_type = strtolower($data_reward['reward_type']);
+        }
+        $eventMessage = $this->utility->getEventMessage($reward_type,$data_reward['reward_value'],$data_reward['reward_name'],$data_reward['reward_name']);
         $data = array(
             'pb_player_id'	=> $player_id,
             'client_id'		=> $validToken['client_id'],
@@ -620,6 +626,7 @@ class Quest extends REST2_Controller
             'reward_id'	    => $data_reward['reward_id'],
             'reward_name'	=> $data_reward['reward_name'],
             'reward_value'	=> $data_reward['reward_value'],
+            'message'       => $eventMessage
         );
         $this->tracker_model->trackQuest($data);
     }
