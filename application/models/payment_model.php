@@ -71,11 +71,32 @@ class Payment_model extends MY_Model
 				}
 			}
 			break;
+		case PAYPAL_TXN_TYPE_SUBSCR_CANCEL:
+			/* remove "date_billing" */
+			$this->unsetDateBilling($client_id);
+
+			/* remove "date_start" and "date_expire" */
+			$this->unsetDateStartAndDateExpire($client_id);
+
+			/* change the client's plan to be a free plan */
+			$free_plan = $this->findFreePlan();
+			$this->changePlan($client_id, $myplan_id, $free_plan['_id']);
+			log_message('info', 'Client '.$client_id.' has canceled the subscription and has been changed to free plan');
+			break;
 		default:
 			log_message('error', 'Unsupported PayPal txn_type: '.$POST['txn_type']);
 			return false;
 		}
 		return true;
+	}
+
+	private function findFreePlan() {
+		$this->mongo_db->where('display', true);
+		$plans = $this->mongo_db->get("playbasis_plan");
+		if ($plans) foreach ($plans as $plan) {
+			if (!array_key_exists('price', $plan) || $plan['price'] == 0) return $plan;
+		}
+		return null;
 	}
 
 	private function getPlanIdByClientId($client_id) {
@@ -140,6 +161,14 @@ class Payment_model extends MY_Model
 		$this->mongo_db->update('playbasis_client');
 	}
 
+	private function unsetDateBilling($client_id) {
+		/* update billing in client's record */
+		$this->mongo_db->where(array('_id' => $client_id));
+		$this->mongo_db->unset_field(array('subscr_id', 'date_billing'));
+		$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+		$this->mongo_db->update('playbasis_client');
+	}
+
 	private function setDateStartAndDateExpire($client_id, $grace_period_in_days) {
 		$d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
 		$today = time();
@@ -150,6 +179,13 @@ class Payment_model extends MY_Model
 		$this->mongo_db->set('date_start', new MongoDate($date_start));
 		$this->mongo_db->set('date_expire', new MongoDate($date_expire));
 		$this->mongo_db->set('date_modified', $d);
+		$this->mongo_db->update('playbasis_client');
+	}
+
+	private function unsetDateStartAndDateExpire($client_id) {
+		$this->mongo_db->where(array('_id' => $client_id));
+		$this->mongo_db->unset_field(array('date_start', 'date_expire'));
+		$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 		$this->mongo_db->update('playbasis_client');
 	}
 
