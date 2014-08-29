@@ -3409,16 +3409,6 @@
                         </con:settings>
                         <con:endpoint>${#Project#service_endpoint}</con:endpoint>
                         <con:request />
-                        <con:assertion type="XPath Match" name="XPath Match">
-                            <con:configuration>
-                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/delete';
-                                    //ns1:Response/ns1:error_code</path>
-                                <content>${#Project#error_code_success}</content>
-                                <allowWildcards>false</allowWildcards>
-                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
-                                <ignoreComments>false</ignoreComments>
-                            </con:configuration>
-                        </con:assertion>
                         <con:credentials>
                             <con:authType>Global HTTP Settings</con:authType>
                         </con:credentials>
