@@ -31,6 +31,7 @@ class Payment_model extends MY_Model
 		switch ($POST['txn_type']) {
 		case PAYPAL_TXN_TYPE_SUBSCR_SIGNUP:
 			$this->setDateBilling($client_id, $plan, $POST['subscr_id']);
+			$this->setDateStartAndDateExpire($client_id); // we have to put this because if the chosen plan has trial period, then we will not receive IPN payment
 			if ($myplan['price'] <= 0) { // change the plan if current plan is free
 				$this->changePlan($client_id, $myplan_id, $plan_id);
 			}
@@ -199,22 +200,18 @@ class Payment_model extends MY_Model
 	private function changePlan($client_id, $from_plan_id, $to_plan_id) {
 		/* get detail of the destination plan */
 		$plan = $to_plan_id ? $this->getPlanById($to_plan_id) : null;
-		if (!$plan) return;
+		if (!$plan) return; // early return if we cannot find the chosen plan
 
 		/* associate all client's sites to a new plan */
-		$this->mongo_db->where(array(
-			'client_id' => $client_id,
-		));
+		$this->mongo_db->where(array('client_id' => $client_id));
 		$this->mongo_db->set('plan_id', $plan['_id']);
 		$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-		$this->mongo_db->update('playbasis_permission');
+		$this->mongo_db->update_all('playbasis_permission');
 
-		/* loop over all sites of the clients */
-		$sites = $this->listSitesByClientId($client_id);
+		/* populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client */
+		$sites = $this->listSitesByClientId($client_id); // loop over all sites of the clients
 		if ($sites) foreach ($sites as $site) {
 			$site_id = $site['_id'];
-
-			/* populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client */
 			$this->copyRewardToClient($client_id, $site_id, $plan);
 			$this->copyFeaturedToClient($client_id, $site_id, $plan);
 			$this->copyActionToClient($client_id, $site_id, $plan);
