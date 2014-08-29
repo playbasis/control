@@ -204,7 +204,6 @@ class Payment_model extends MY_Model
 		/* associate all client's sites to a new plan */
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
-			'plan_id' => $from_plan_id,
 		));
 		$this->mongo_db->set('plan_id', $plan['_id']);
 		$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
