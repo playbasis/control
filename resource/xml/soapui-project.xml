@@ -3386,6 +3386,51 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
+            <con:testStep type="transfer" name="Property Transfer 1">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
+                    <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
+                        <con:name>token</con:name>
+                        <con:sourceType>ResponseAsXml</con:sourceType>
+                        <con:sourceStep>POST /Auth - Get token</con:sourceStep>
+                        <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Auth';
+                            //ns1:Response/ns1:response/ns1:token</con:sourcePath>
+                        <con:targetType>token</con:targetType>
+                        <con:targetStep>POST /:cl_player_id2/delete - Initialization</con:targetStep>
+                    </con:transfers>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="restrequest" name="POST /:cl_player_id2/delete - Initialization">
+                <con:settings />
+                <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}/delete" methodName="POST" xsi:type="con:RestRequestStep">
+                    <con:restRequest name="POST /:cl_player_id2/delete - Initialization" mediaType="application/x-www-form-urlencoded" postQueryString="true">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/&gt;</con:setting>
+                        </con:settings>
+                        <con:endpoint>${#Project#service_endpoint}</con:endpoint>
+                        <con:request />
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace ns1='${#Project#service_endpoint}/Player/${#Project#cl_player_id2}/delete';
+                                    //ns1:Response/ns1:error_code</path>
+                                <content>${#Project#error_code_success}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:credentials>
+                            <con:authType>Global HTTP Settings</con:authType>
+                        </con:credentials>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT" />
+                        <con:jmsPropertyConfig />
+                        <con:parameters />
+                        <con:parameterOrder>
+                            <con:entry>token</con:entry>
+                        </con:parameterOrder>
+                    </con:restRequest>
+                </con:config>
+            </con:testStep>
             <con:testStep type="restrequest" name="GET /:cl_player_id2 - Info about not existing player">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" resourcePath="/Player/${#Project#cl_player_id2}" methodName="GET" xsi:type="con:RestRequestStep">
@@ -3419,7 +3464,7 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 1">
+            <con:testStep type="transfer" name="Property Transfer 2">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -3510,7 +3555,7 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 2">
+            <con:testStep type="transfer" name="Property Transfer 3">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -3613,7 +3658,7 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 3">
+            <con:testStep type="transfer" name="Property Transfer 4">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -3658,7 +3703,7 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 4">
+            <con:testStep type="transfer" name="Property Transfer 5">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -3703,7 +3748,7 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 5">
+            <con:testStep type="transfer" name="Property Transfer 6">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -3784,7 +3829,7 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 6">
+            <con:testStep type="transfer" name="Property Transfer 7">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -3829,7 +3874,7 @@
                     </con:restRequest>
                 </con:config>
             </con:testStep>
-            <con:testStep type="transfer" name="Property Transfer 7">
+            <con:testStep type="transfer" name="Property Transfer 8">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="con:PropertyTransfersStep">
                     <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" useXQuery="false" entitize="false" transferChildNodes="false">
@@ -3946,7 +3991,7 @@
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
                                 <path>declare namespace ns1='${#Project#service_endpoint}/Quest';
-//ns1:Response/ns1:error_code</path>
+                                    //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -3971,7 +4016,7 @@
                         <con:name>quest_id</con:name>
                         <con:type>XPATH</con:type>
                         <con:expression>declare namespace ns1='${#Project#service_endpoint}/Quest';
-not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:expression>
+                            not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:expression>
                         <con:targetStep>Goto Skip</con:targetStep>
                     </con:condition>
                 </con:config>
@@ -3984,7 +4029,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
                         <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
-//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
                         <con:targetType>quest_id</con:targetType>
                         <con:targetStep>GET /Quest/:quest_id - Info about quest=:quest_id</con:targetStep>
                     </con:transfers>
@@ -4033,7 +4078,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
                         <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
-//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
                         <con:targetType>quest_id</con:targetType>
                         <con:targetStep>GET /Quest/:quest_id/mission/:mission_id - Info about mission=:mission_id</con:targetStep>
                     </con:transfers>
@@ -4042,7 +4087,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
                         <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
-//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:missions/ns1:e[1]/ns1:mission_id</con:sourcePath>
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:missions/ns1:e[1]/ns1:mission_id</con:sourcePath>
                         <con:targetType>mission_id</con:targetType>
                         <con:targetStep>GET /Quest/:quest_id/mission/:mission_id - Info about mission=:mission_id</con:targetStep>
                     </con:transfers>
@@ -4061,7 +4106,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
                                 <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/mission/${mission_id}';
-//ns1:Response/ns1:error_code</path>
+                                    //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -4119,7 +4164,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:sourceType>ResponseAsXml</con:sourceType>
                         <con:sourceStep>GET /Quest - List info of all quests</con:sourceStep>
                         <con:sourcePath>declare namespace ns1='${#Project#service_endpoint}/Quest';
-//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
+                            //ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id</con:sourcePath>
                         <con:targetType>quest_id</con:targetType>
                         <con:targetStep>GET /Quest/:quest_id/available - Test available :quest_id for player</con:targetStep>
                     </con:transfers>
@@ -4138,7 +4183,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
                                 <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
-//ns1:Response/ns1:error_code</path>
+                                    //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -4148,7 +4193,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:assertion type="XPath Match" name="XPath Match 1">
                             <con:configuration>
                                 <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
-//ns1:Response/ns1:response/ns1:event_status</path>
+                                    //ns1:Response/ns1:response/ns1:event_status</path>
                                 <content>true</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -4389,7 +4434,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                     <delay>1</delay>
                 </con:config>
             </con:testStep>
-            <con:testStep type="restrequest" name="GET /Quest/available - List available quests for player">
+            <con:testStep type="restrequest" name="GET /Quest/available - List available quests for player 1">
                 <con:settings />
                 <con:config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="API" methodName="GET" resourcePath="/Quest/available" xsi:type="con:RestRequestStep">
                     <con:restRequest name="GET /Quest/available - List available quests for player" mediaType="application/json">
@@ -4447,7 +4492,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:assertion type="XPath Match" name="XPath Match">
                             <con:configuration>
                                 <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
-//ns1:Response/ns1:error_code</path>
+                                    //ns1:Response/ns1:error_code</path>
                                 <content>${#Project#error_code_success}</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -4457,7 +4502,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
                         <con:assertion type="XPath Match" name="XPath Match 1">
                             <con:configuration>
                                 <path>declare namespace ns1='${#Project#service_endpoint}/Quest/${quest_id}/available';
-//ns1:Response/ns1:response/ns1:event_status</path>
+                                    //ns1:Response/ns1:response/ns1:event_status</path>
                                 <content>false</content>
                                 <allowWildcards>false</allowWildcards>
                                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
@@ -4484,7 +4529,7 @@ not(exists(//ns1:Response/ns1:response/ns1:quests/ns1:e[1]/ns1:quest_id))</con:e
     <con:properties>
         <con:property>
             <con:name>service_endpoint</con:name>
-            <con:value>http://admin-api.pbapp.net</con:value>
+            <con:value>http://localhost/api</con:value>
         </con:property>
         <con:property>
             <con:name>api_key</con:name>
