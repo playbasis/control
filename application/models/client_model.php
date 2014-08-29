@@ -460,7 +460,8 @@ class Client_model extends MY_Model
             $data_filter = array(
                 'client_id' => $client_id,
                 'site_id' => $data['domain_value']['site_id'],
-                'plan_id' => $plan_subscription['plan_id']->{'$id'},
+//                'plan_id' => $plan_subscription['plan_id']->{'$id'},
+                'plan_id' => $data['domain_value']['plan_id'],
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
             );

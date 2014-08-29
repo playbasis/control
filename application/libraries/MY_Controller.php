@@ -161,7 +161,7 @@ class  MY_Controller  extends  CI_Controller  {
                 // var_dump($this->data['domain_all']);
 
                 $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
-                /* var_dump($features); */
+//                var_dump($features);
                 
                 foreach ($features as $value) {
                     if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
