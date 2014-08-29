@@ -172,7 +172,7 @@ class Payment_model extends MY_Model
 	private function unsetDateBilling($client_id) {
 		/* update billing in client's record */
 		$this->mongo_db->where(array('_id' => $client_id));
-		$this->mongo_db->unset_field(array('subscr_id', 'date_billing'));
+		$this->mongo_db->unset_field(array('subscr_id', 'date_billing')); // "plan_id" will not be removed for now
 		$this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 		$this->mongo_db->update('playbasis_client');
 	}
