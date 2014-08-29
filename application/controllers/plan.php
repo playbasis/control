@@ -135,7 +135,7 @@ class Plan extends MY_Controller
                         'site_id'=>$client['site_id'],
                     );
 
-                    $this->Client_model->editClientPlan($client['client_id'], $plan_id, $data);
+                    $this->Client_model->editClientPlan($client['client_id'], new MongoID($plan_id), $data);
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/plan', 'refresh');
