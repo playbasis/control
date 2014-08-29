@@ -242,11 +242,10 @@ class Domain extends MY_Controller
 
                         $another_data['domain_value'] = array(
                             'site_id' => $site_id,
-                            'plan_id' => $plan_subscription['plan_id'],
                             'status' => true
                         );
 
-                        $this->Client_model->editClientPlan($client_id, $another_data);
+                        $this->Client_model->editClientPlan($client_id, $plan_subscription['plan_id'], $another_data);
                     }
 
                     $this->session->data['success'] = $this->lang->line('text_success');
