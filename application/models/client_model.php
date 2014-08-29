@@ -452,16 +452,14 @@ class Client_model extends MY_Model
         return $this->mongo_db->insert('playbasis_client', $data_insert_client); // return record['_id'] if insert successfully, otherwise false
     }
 
-    public function editClientPlan($client_id, $data){
+    public function editClientPlan($client_id, $plan_id, $data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['domain_value'])) {
-            $plan_subscription = $this->getPlanByClientId($client_id);
             $data_filter = array(
                 'client_id' => $client_id,
                 'site_id' => $data['domain_value']['site_id'],
-//                'plan_id' => $plan_subscription['plan_id']->{'$id'},
-                'plan_id' => $data['domain_value']['plan_id'],
+                'plan_id' => $plan_id->{'$id'},
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
             );
@@ -475,7 +473,6 @@ class Client_model extends MY_Model
             $this->copyFeaturedToClient($data_filter);
             $this->copyActionToClient($data_filter);
             $this->copyJigsawToClient($data_filter);
-
         }
     }
 

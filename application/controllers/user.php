@@ -639,19 +639,18 @@ class User extends MY_Controller
 
                             $site_id = $this->Domain_model->addDomain($data); // [4] then insert a new domain into "playbasis_client_site"
 
-                            $another_data['domain_value'] = array(
-                                    'site_id' => $site_id,
-                                    'plan_id' => $plan_id,
-                                    'status' => true
-                            );
-
                             $data = array();
                             $data['client_id'] = $client_id;
                             $data['plan_id'] = $plan_id;
                             $data['site_id'] = $site_id;
                             $this->Permission_model->addPlanToPermission($data); // [5] finally, bind the client to the selected plan
 
-                            $this->Client_model->editClientPlan($client_id, $another_data); // [6] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
+                            $another_data['domain_value'] = array(
+                                'site_id' => $site_id,
+                                'status' => true
+                            );
+
+                            $this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));

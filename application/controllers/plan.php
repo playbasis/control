@@ -133,10 +133,9 @@ class Plan extends MY_Controller
 
                     $data['domain_value'] = array(
                         'site_id'=>$client['site_id'],
-                        'plan_id'=>$client['plan_id'],
                     );
 
-                    $this->Client_model->editClientPlan($client['client_id'], $data);
+                    $this->Client_model->editClientPlan($client['client_id'], $plan_id, $data);
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/plan', 'refresh');
