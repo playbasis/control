@@ -124,14 +124,13 @@ class Account extends MY_Controller
 
 			$this->form_validation->set_rules('plan', $this->lang->line('form_package'), 'trim|required');
 			$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
-			$plan_id = new MongoId($this->input->post('plan'));
 			$channel = $this->input->post('channel');
 			if (!$this->check_valid_payment_channel($channel)) $this->data['message'] = 'Invalid payment channel';
 
 			if($this->form_validation->run() && $this->data['message'] == null){
 				$ci =& get_instance();
 
-				$selected_plan = $this->Plan_model->getPlanById($plan_id);
+				$selected_plan = $this->Plan_model->getPlanById(new MongoId($this->input->post('plan')));
 				if (!array_key_exists('price', $selected_plan)) {
 					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
 				}
