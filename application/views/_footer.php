@@ -130,21 +130,25 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
-        $( "a, button, li, span, input").not(".btn-not-login").live("click", function(e) {
-            $.ajax({
-                url: "<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>user/checksession",
-                cache: false,
-                dataType: "json"
-            }).done(function(res) {
-                if(res.status != "login"){
-                    $('.custom_blackdrop').remove();
-                    $('#loginModal').modal({
-                        backdrop: 'static',
-                        keyboard: false}
-                    );
-                    //$('#loginModal').modal('show');
-                }
-            });
+        $( "a, button, li, span, input").live("click", function(e) {
+
+            if(!$(this).hasClass('btn-not-login')){
+
+                $.ajax({
+                    url: "<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>user/checksession",
+                    cache: false,
+                    dataType: "json"
+                }).done(function(res) {
+                    if(res.status != "login"){
+                        $('.custom_blackdrop').remove();
+                        $('#loginModal').modal({
+                                backdrop: 'static',
+                                keyboard: false}
+                        );
+                        //$('#loginModal').modal('show');
+                    }
+                });
+            }
         });
     });
 </script>

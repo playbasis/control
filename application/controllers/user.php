@@ -596,7 +596,7 @@ class User extends MY_Controller
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
-            if($this->input->post('format') == 'json'){
+            if($this->input->post('format') == 'json' || $this->input->post('version') == 'new'){
                 $_POST['password'] = 'playbasis';
                 $_POST['password_confirm'] = 'playbasis';
                 $_POST['site_name'] = $_POST['domain_name'];
