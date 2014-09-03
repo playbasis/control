@@ -1,10 +1,12 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+define('EMAIL_FROM', 'info@playbasis.com');
 class Payment_model extends MY_Model
 {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->model('tool/utility', 'utility');
 		$this->load->library('mongo_db');
 	}
 
@@ -13,6 +15,7 @@ class Payment_model extends MY_Model
 
 		/* find details of the client */
 		$client = $this->getClientById($client_id);
+$client['email'] = 'pechpras@playbasis.com';
 
 		/* find details of the current plan of the client */
 		$myplan_id = $this->getPlanIdByClientId($client_id);
@@ -28,15 +31,18 @@ class Payment_model extends MY_Model
 		}
 
 		/* process PayPal IPN message differently according to 'txn_type' */
+		log_message('info', 'IPN PayPal txn_type: '.$POST['txn_type']);
 		switch ($POST['txn_type']) {
 		case PAYPAL_TXN_TYPE_SUBSCR_SIGNUP:
 			$this->setDateBilling($client_id, $plan, $POST['subscr_id']);
 			$this->setDateStartAndDateExpire($client_id); // we have to put this because if the chosen plan has trial period, then we will not receive IPN payment
 			if ($myplan['price'] <= 0) { // change the plan if current plan is free
-				$this->changePlan($client_id, $myplan_id, $plan_id);
+				$this->changePlan($client, $myplan_id, $plan_id);
 			}
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Sign-Up', 'Congratulations for signing up');
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Plan Change Acknowledgement', 'Your request for plan change is received and your new plan be effective during next billing cycle');
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_PAYMENT:
 			/* check if we already process this 'txn_id' */
@@ -57,24 +63,23 @@ class Payment_model extends MY_Model
 				switch ($POST['payment_status']) {
 				case PAYPAL_PAYMENT_STATUS_COMPLETED:
 					log_message('info', 'Client '.$client_id.' has paid successfully');
-					// TODO: email
 					/* check the amount that client has paid with the plan */
 					$valid = true;
 					if ($myplan_id == $plan_id) { /* plan has not changed */
 						if ($amount != $plan['price']) { /* for security, we have to check payment amount */
-							// TODO: email
 							log_message('error', 'Client '.$client_id.' has paid incorrect amount '.$amount.', should be '.$plan['price']);
+							$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect');
 							$valid = false;
 						}
 					} else { /* plan has changed */
 						/* we make use of second trial period to handle the chang of plan */
 						if ($amount != $myplan['price']) { /* this would need further investigation as client did not pay for the old (current) plan */
-							// TODO: email
 							log_message('error', 'Client '.$client_id.' has changed the plan, but the payment amount is incorrect '.$amount.' to '.$myplan['price']);
+							$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect');
 							$valid = false;
 						} else { /* we charge for the old price */
 							/* now the new plan can be effective immediately, with new price for next billing cycle */
-							$this->changePlan($client_id, $myplan_id, $plan_id);
+							$this->changePlan($client, $myplan_id, $plan_id);
 							log_message('info', 'Client '.$client_id.' has changed the plan from '.$myplan_id.' to '.$plan_id);
 						}
 					}
@@ -82,11 +87,12 @@ class Payment_model extends MY_Model
 					if ($valid) {
 						log_message('info', 'Client '.$client_id.' has been set billing period ("date_start" and "date_expire")');
 						$this->setDateStartAndDateExpire($client_id);
+						$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Successful Payment', 'Your payment is successful');
 					}
 					break;
 				default:
 					log_message('error', 'Client '.$client_id.' has paid, but the payment status from IPN is '.$POST['payment_status']);
-					// TODO: email
+					$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your PayPal Payment is Not Completed', 'Your PayPal payment status is not completed');
 					break;
 				}
 			}
@@ -97,7 +103,7 @@ class Payment_model extends MY_Model
 			So we will not block the usage when we receive 'subscr_failed'.
 
 			/* send email to the user notifying the failure of payment with reason */
-			// TODO:
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Problem with Your PayPal Payment', 'There is an error in processing your PayPal payment');
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_CANCEL:
 			/* remove "date_billing" */
@@ -106,9 +112,11 @@ class Payment_model extends MY_Model
 			/* remove "date_start" and "date_expire" */
 			$this->unsetDateStartAndDateExpire($client_id);
 
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Cancellation', 'Your subscription cancellation is successful');
+
 			/* change the client's plan to be a free plan */
 			$free_plan = $this->findFreePlan();
-			$this->changePlan($client_id, $myplan_id, $free_plan['_id']);
+			$this->changePlan($client, $myplan_id, $free_plan['_id']);
 			log_message('info', 'Client '.$client_id.' has canceled the subscription and has been changed to free plan');
 			break;
 		default:
@@ -216,7 +224,9 @@ class Payment_model extends MY_Model
 		$this->mongo_db->update('playbasis_client');
 	}
 
-	private function changePlan($client_id, $from_plan_id, $to_plan_id) {
+	private function changePlan($client, $from_plan_id, $to_plan_id) {
+		$client_id = $client['_id'];
+
 		/* get detail of the destination plan */
 		$plan = $to_plan_id ? $this->getPlanById($to_plan_id) : null;
 		if (!$plan) return; // early return if we cannot find the chosen plan
@@ -236,6 +246,8 @@ class Payment_model extends MY_Model
 			$this->copyActionToClient($client_id, $site_id, $plan);
 			$this->copyJigsawToClient($client_id, $site_id, $plan);
 		}
+
+		$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your Plan is Effective', 'Your current now has been changed to '.$to_plan_id);
 	}
 
 	private function copyRewardToClient($client_id, $site_id, $plan) {
