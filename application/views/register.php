@@ -119,15 +119,10 @@
 								<br/>
 								<div class="input-append">
 									<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
-									<button class="btn btn-not-login" type="button" onclick="javascript:Recaptcha.reload()"><span class="icon-refresh"></span></button>
-<!-- 									<button class="btn" type="button" onclick="javascript:Recaptcha.switch_type('audio')"><span class="icon-volume-up"></span></button>
-									<button class="btn" type="button" onclick="javascript:Recaptcha.switch_type('image')"><span class="icon-font"></span></button> -->
+									<button class="btn btn-not-login" onclick="javascript:Recaptcha.reload()">
+                                        <span class="icon-refresh btn-not-login"></span>
+                                    </button>
 								</div>
-								
-
-								<!-- <div><a href="javascript:Recaptcha.reload()">Get another CAPTCHA</a></div> -->
-								<!-- <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')">Get an audio CAPTCHA</a></div> -->
-								<!-- <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')">Get an image CAPTCHA</a></div> -->
 
 								</div>
 

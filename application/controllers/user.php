@@ -557,7 +557,7 @@ class User extends MY_Controller
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
-        $this->data['form'] = 'user/register?plan';
+        $this->data['form'] = 'user/register?plan='.$this->input->get('plan');
         $this->data['user_groups'] = $this->User_model->getUserGroups();
         $this->data['availablePlans'] = $this->Plan_model->getDisplayedPlans();
 

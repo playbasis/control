@@ -130,7 +130,7 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
-        $( "a, button, li, span, input").not('.btn-not-login').live("click", function(e) {
+        $( "a, button, li, span, input").not(".btn-not-login").live("click", function(e) {
             $.ajax({
                 url: "<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>user/checksession",
                 cache: false,
