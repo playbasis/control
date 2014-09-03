@@ -49,7 +49,7 @@ define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
 define('DEFAULT_LIMIT_NUM_PLAYERS', 1000); // default limit number of player for a plan
 define('MAX_ALLOWED_TRIAL_DAYS', 90); // this is limited by PayPal
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
-define('PAYPAL_MERCHANT_ID', 'pechpras-facilitator@playbasis.com');
+define('PAYPAL_MERCHANT_ID', 'MKF42MVS5ZNPY');
 define('PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY', 0);
 define('PAYPAL_MODIFY_EITHER_NEW_SUBSCRIPTION_OR_MODIFY', 1);
 define('PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY', 2);
