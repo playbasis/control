@@ -44,36 +44,8 @@
 				            <td><?php echo $this->lang->line('form_effective_date'); ?>:</td>
 				            <td><input type="text" value="<?php echo date('d M Y'); ?>" disabled /></td>
 			            </tr>
-			            <form method="post" action="https://www.<?php echo PAYPAL_ENV == 'sandbox' ? PAYPAL_ENV.'.' : '' ?>paypal.com/cgi-bin/webscr" class="paypal-button" target="_top">
-				            <div class="hide" id="errorBox"></div>
-				            <input type="hidden" name="button" value="subscribe">
-				            <input type="hidden" name="item_name" value="<?php echo PRODUCT_NAME; ?>">
-				            <input type="hidden" name="currency_code" value="USD">
-				            <input type="hidden" name="a3" value="<?php echo $params['price']; ?>">
-				            <input type="hidden" name="p3" value="1">
-				            <input type="hidden" name="t3" value="M">
-				            <input type="hidden" name="custom" value="<?php echo $this->session->userdata('client_id')->{'$id'}.','.$params['plan_id']->{'$id'}; ?>">
-				            <input type="hidden" name="cancel_return" value="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/subscribe">
-				            <input type="hidden" name="return" value="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_completed">
-				            <input type="hidden" name="notify_url" value="<?php echo $params['callback']; ?>">
-				            <input type="hidden" name="cmd" value="_xclick-subscriptions">
-				            <input type="hidden" name="business" value="<?php echo PAYPAL_MERCHANT_ID; ?>">
-				            <input type="hidden" name="bn" value="JavaScriptButton_subscribe">
-				            <button type="submit" class="paypal-button large">Subscribe</button>
-				            <input type="hidden" name="src" value="1">
-				            <input type="hidden" name="sra" value="1">
-				            <?php if ($params['trial_days'] > 0) { ?>
-				            <input type="hidden" name="a1" value="0">
-				            <input type="hidden" name="p1" value="<?php echo $params['trial_days']; ?>">
-				            <input type="hidden" name="t1" value="D">
-				            <?php } ?>
-				            <?php if ($params['trial2_days'] > 0) { ?>
-				            <input type="hidden" name="a2" value="<?php echo $params['trial2_price']; ?>">
-				            <input type="hidden" name="p2" value="<?php echo $params['trial2_days']; ?>">
-				            <input type="hidden" name="t2" value="D">
-				            <?php } ?>
-				            <input type="hidden" name="modify" value="<?php echo $params['modify'] ? PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY : PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY; ?>">
-			            </form>
+			            <tr>
+				            <td>
 			            <script src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=<?php echo PAYPAL_MERCHANT_ID; ?>"
 			                    data-button="subscribe"
 			                    data-name="<?php echo PRODUCT_NAME; ?>"
@@ -87,8 +59,67 @@
 			                    data-callback="<?php echo $params['callback']; ?>"
 			                    data-env="<?php echo PAYPAL_ENV; ?>"
 			            ></script>
+				            </td>
+				            <td>&nbsp;</td>
+			            </tr>
             		</table>
             	</div>
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
+<script type="text/javascript"><!--
+	$(document).ready(function(){
+		/* enable recurring payment */
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'src', // enable flag, and, if enable, keep recurring until subscribers cancel their subscriptions
+			value: 1
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'sra', // reattempt on failure
+			value: 1
+		}).appendTo('form');
+		/* enable trial period */
+		<?php if ($params['trial_days'] > 0) { ?>
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'a1', // price
+			value: 0
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'p1', // duration
+			value: <?php echo $params['trial_days']; ?> <!-- allowed value: 1-90 -->
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 't1', // unit of duration
+			value: 'D'
+		}).appendTo('form');
+		<?php } ?>
+		<?php if ($params['trial2_days'] > 0) { ?>
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'a2', // price
+			value: <?php echo $params['trial2_price']; ?>
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'p2', // duration
+			value: <?php echo $params['trial2_days']; ?> <!-- allowed value: 1-90 -->
+		}).appendTo('form');
+		$('<input>').attr({
+			type: 'hidden',
+			name: 't2', // unit of duration
+			value: 'D'
+		}).appendTo('form');
+		<?php } ?>
+		/* enable upgrade/downgrade */
+		$('<input>').attr({
+			type: 'hidden',
+			name: 'modify', // modification behavior
+			value: <?php echo $params['modify'] ? PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY : PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY; ?>
+		}).appendTo('form');
+	});
+//--></script>
