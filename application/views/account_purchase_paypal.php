@@ -44,6 +44,8 @@
 				            <td><?php echo $this->lang->line('form_effective_date'); ?>:</td>
 				            <td><input type="text" value="<?php echo date('d M Y'); ?>" disabled /></td>
 			            </tr>
+			            <tr>
+				            <td>
 			            <script src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=<?php echo PAYPAL_MERCHANT_ID; ?>"
 			                    data-button="subscribe"
 			                    data-name="<?php echo PRODUCT_NAME; ?>"
@@ -56,7 +58,10 @@
 			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_completed"
 			                    data-callback="<?php echo $params['callback']; ?>"
 			                    data-env="<?php echo PAYPAL_ENV; ?>"
-				        ></script>
+			            ></script>
+				            </td>
+				            <td>&nbsp;</td>
+			            </tr>
             		</table>
             	</div>
         </div><!-- .content -->
