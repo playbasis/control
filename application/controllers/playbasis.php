@@ -1,17 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
-class Playbasis extends CI_Controller
+require APPPATH . '/libraries/REST2_Controller.php';
+class Playbasis extends REST2_Controller
 {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('client_model');
-		$this->load->model('player_model');
-		$this->load->model('action_model');
-		$this->load->model('badge_model');
-		$this->load->model('reward_model');
-		$this->load->model('goods_model');
+		$this->load->model('plan_model');
+		$this->load->model('tool/error', 'error');
+		$this->load->model('tool/respond', 'resp');
 	}
 	public function test()
 	{
@@ -24,6 +21,15 @@ class Playbasis extends CI_Controller
 	public function login()
 	{
 		$this->load->view('playbasis/login');
+	}
+	public function plans_get() {
+		$plans = $this->plan_model->listDisplayPlans(array('site_id' => 0));
+		if (is_array($plans)) foreach ($plans as &$plan) {
+			$plan['_id'] = $plan['_id']->{'$id'};
+			$plan['date_added'] = $plan['date_added']->sec;
+			$plan['date_modified'] = $plan['date_modified']->sec;
+		}
+		$this->response($this->resp->setRespond($plans), 200);
 	}
 	/*
     public function memtest()
