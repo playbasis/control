@@ -15,7 +15,7 @@ class Payment_model extends MY_Model
 
 		/* find details of the client */
 		$client = $this->getClientById($client_id);
-$client['email'] = 'pechpras@playbasis.com';
+$client['email'] = array('pechpras@playbasis.com','pascal@playbasis.com');
 
 		/* find details of the current plan of the client */
 		$myplan_id = $this->getPlanIdByClientId($client_id);
@@ -39,12 +39,12 @@ $client['email'] = 'pechpras@playbasis.com';
 			if ($myplan['price'] <= 0) { // change the plan if current plan is free
 				$this->changePlan($client, $myplan_id, $plan_id);
 			}
-			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Sign-Up', 'Congratulations for signing up');
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Sign-Up', 'Congratulations for signing up ['.$client_id.']');
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
-			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Plan Change Acknowledgement', 'Your request for plan change is received and your new plan be effective during next billing cycle');
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Plan Change Acknowledgement', 'Your request for plan change is received and your new plan be effective during next billing cycle ['.$client_id.']');
 			break;
-		case PAYPAL_TXN_TYPE_SUBSCR_PAYMENT:
+		case PAYPAL_TXN_TYPE_SUBSCR_PAYMNT:
 			/* check if we already process this 'txn_id' */
 			if (!$this->hasAlreadyProcessed($POST['txn_id'])) { // skip possible duplicate IPN messages
 				$amount = intval($POST['mc_gross']);
@@ -68,14 +68,14 @@ $client['email'] = 'pechpras@playbasis.com';
 					if ($myplan_id == $plan_id) { /* plan has not changed */
 						if ($amount != $plan['price']) { /* for security, we have to check payment amount */
 							log_message('error', 'Client '.$client_id.' has paid incorrect amount '.$amount.', should be '.$plan['price']);
-							$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect');
+							$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (1) ['.$client_id.']');
 							$valid = false;
 						}
 					} else { /* plan has changed */
 						/* we make use of second trial period to handle the chang of plan */
 						if ($amount != $myplan['price']) { /* this would need further investigation as client did not pay for the old (current) plan */
 							log_message('error', 'Client '.$client_id.' has changed the plan, but the payment amount is incorrect '.$amount.' to '.$myplan['price']);
-							$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect');
+							$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (2) ['.$client_id.']');
 							$valid = false;
 						} else { /* we charge for the old price */
 							/* now the new plan can be effective immediately, with new price for next billing cycle */
@@ -87,12 +87,12 @@ $client['email'] = 'pechpras@playbasis.com';
 					if ($valid) {
 						log_message('info', 'Client '.$client_id.' has been set billing period ("date_start" and "date_expire")');
 						$this->setDateStartAndDateExpire($client_id);
-						$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Successful Payment', 'Your payment is successful');
+						$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Successful Payment', 'Your payment is successful ['.$client_id.']');
 					}
 					break;
 				default:
 					log_message('error', 'Client '.$client_id.' has paid, but the payment status from IPN is '.$POST['payment_status']);
-					$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your PayPal Payment is Not Completed', 'Your PayPal payment status is not completed');
+					$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your PayPal Payment is Not Completed', 'Your PayPal payment status is not completed ['.$client_id.']');
 					break;
 				}
 			}
@@ -103,7 +103,7 @@ $client['email'] = 'pechpras@playbasis.com';
 			So we will not block the usage when we receive 'subscr_failed'.
 
 			/* send email to the user notifying the failure of payment with reason */
-			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Problem with Your PayPal Payment', 'There is an error in processing your PayPal payment');
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] PayPal Payment Failure', 'There is an error in processing your PayPal payment (#'.$POST['retry_at'].') ['.$client_id.']');
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_CANCEL:
 			/* remove "date_billing" */
@@ -112,7 +112,7 @@ $client['email'] = 'pechpras@playbasis.com';
 			/* remove "date_start" and "date_expire" */
 			$this->unsetDateStartAndDateExpire($client_id);
 
-			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Cancellation', 'Your subscription cancellation is successful');
+			$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Cancellation', 'Your subscription cancellation is successful ['.$client_id.']');
 
 			/* change the client's plan to be a free plan */
 			$free_plan = $this->findFreePlan();
@@ -247,7 +247,7 @@ $client['email'] = 'pechpras@playbasis.com';
 			$this->copyJigsawToClient($client_id, $site_id, $plan);
 		}
 
-		$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your Plan is Effective', 'Your current now has been changed to '.$to_plan_id);
+		$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your Plan is Effective', 'Your current plan just has been changed from '.$from_plan_id.' to '.$to_plan_id.' ['.$client_id.']');
 	}
 
 	private function copyRewardToClient($client_id, $site_id, $plan) {
