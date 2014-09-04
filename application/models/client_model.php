@@ -899,9 +899,23 @@ class Client_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function listClientsWithDateBilling($site_id=0) {
+        return $this->listClientsUsingExistsDateBilling(true);
+    }
+
     public function listClientsWithoutDateBilling($site_id=0) {
+        return $this->listClientsUsingExistsDateBilling(false);
+    }
+
+    private function listClientsUsingExistsDateBilling($exist, $site_id=0) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->where('date_billing', array('$exists' => false));
+        $this->mongo_db->where('date_billing', array('$exists' => $exist));
+        return $this->mongo_db->get('playbasis_client');
+    }
+
+    public function listExpiredClients($d, $site_id=0) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('date_expire', array('$exists' => true, '$lt' => new MongoDate($d)));
         return $this->mongo_db->get('playbasis_client');
     }
 }
