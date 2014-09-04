@@ -633,7 +633,7 @@ class Client_model extends MY_Model
         $this->mongo_db->select(array("date_start"));
         $this->mongo_db->where(array("_id" => new MongoID($client_id)));
         $result = $this->mongo_db->get("playbasis_client");
-        if (!$result || !isset($result[0]['date_start'])) return null;
+        if (!$result || !isset($result[0]['date_start'])) return array("date_start" => null, "date_expire" => null);
         $init_date_start = $result[0]['date_start']->sec;
         $init_date_expire = strtotime("+1 m", $init_date_start);
         $curr = $init_date_expire;
