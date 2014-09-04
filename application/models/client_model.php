@@ -641,7 +641,7 @@ class Client_model extends MY_Model
         while ($curr < $today) {
             $curr = strtotime("+1 m", $curr);
         }
-        return array('date_start' => strtotime("-1 m", $curr), 'date_expire' => $curr);
+        return array('date_start' => new MongoDate(strtotime("-1 m", $curr)), 'date_expire' => new MongoDate($curr));
     }
 
     /**
