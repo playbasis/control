@@ -205,5 +205,12 @@ class Service_model extends MY_Model
             'date_modified' => $mongoDate
         ));
     }*/
+
+	public function listActiveClientsUsingAPI($days, $site_id=0) {
+		$this->set_site_mongodb($site_id);
+		$d = strtotime("-".$days." day");
+		$this->mongo_db->where_gt('date_added', new MongoDate($d));
+		return $this->mongo_db->distinct('client_id', 'playbasis_web_service_log');
+	}
 }
 ?>

@@ -898,5 +898,11 @@ class Client_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_permission');
         return $results ? $results[0] : null;
     }
+
+    public function listClientsWithoutDateBilling($site_id=0) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('date_billing', array('$exists' => false));
+        return $this->mongo_db->get('playbasis_client');
+    }
 }
 ?>
