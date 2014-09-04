@@ -66,7 +66,7 @@ class Utility extends CI_Model
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($from, $to, $subject, $message, $message_alt=null, $attachments=array()) {
 		log_message('debug', 'from = '.$from);
-		log_message('debug', 'to = '.implode(',', $to));
+		log_message('debug', 'to = '.(is_array($to) ? implode(',', $to) : $to));
 		log_message('debug', 'subject = '.$subject);
 		log_message('debug', 'message = '.$message);
 		log_message('debug', 'message_alt = '.$message_alt);

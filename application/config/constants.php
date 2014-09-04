@@ -61,8 +61,9 @@ define('GRACE_PERIOD_IN_DAYS', 5);
 
 define('EMAIL_TYPE_USER', 'user');
 define('EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS', 'notifyInactiveClients');
-define('EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE', 'notifyNearLimitUsage');
 define('EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS', 'notifyFreeActiveClientsToSubscribe');
+define('EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE', 'notifyNearLimitUsage');
+define('EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION', 'remindClientsToSetupSubscription');
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
