@@ -147,5 +147,27 @@ class Service_model extends MY_Model
 		$result = $this->mongo_db->get('playbasis_web_service_log');
 		return $result ? $result[0]['date_added'] : null;
 	}
+
+    public function resetPlayerPoints($site_id, $reward_id){
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->set('value', 0);
+        $this->mongo_db->set('claimed', 0);
+        $this->mongo_db->set('redeemed', 0);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('reward_id', $reward_id);
+        $reward = $this->mongo_db->update('playbasis_reward_to_player');
+    }
+
+    public function resetPlayerBadge($site_id, $badge_id){
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->set('value', 0);
+        $this->mongo_db->set('claimed', 0);
+        $this->mongo_db->set('redeemed', 0);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('badge_id', $badge_id);
+        $reward = $this->mongo_db->update('playbasis_reward_to_player');
+    }
 }
 ?>

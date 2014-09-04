@@ -219,4 +219,30 @@ class Service extends REST2_Controller
         $res['domain_name'] = $data_token['domain_name'];
         $this->response($this->resp->setRespond($res), 200);
     }
+
+    public function reset_point_post()
+    {
+        $reward_name = $this->input->post('point_name');
+
+        $reward = array(
+            'site_id' => $this->site_id,
+            'client_id' => $this->client_id,
+            'reward_name' => $reward_name
+        );
+
+        if($reward){
+            $reward_id = $this->point_model->findPoint($reward);
+        }else{
+            $reward_id = null;
+        }
+
+        $player_point = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $validToken['site_id']);
+        if(isset($player_point[0]['value'])){
+            $player_point = $player_point[0]['value'];
+        }else{
+            $player_point = 0;
+        }
+
+        $this->response($this->resp->setRespond($respondThis), 200);
+    }
 }
