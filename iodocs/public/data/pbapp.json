@@ -1274,6 +1274,29 @@
                             "Description": "number of results to return"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Reset Point",
+                    "Synopsis": "Reset point of all players",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/reset_point",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "point_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the point-based reward to query"
+                        }
+                    ]
                 }
             ]
         }
