@@ -628,6 +628,22 @@ class Client_model extends MY_Model
         }
     }
 
+    public function getFreeClientStartEndDate($client_id)
+    {
+        $this->mongo_db->select(array("date_start"));
+        $this->mongo_db->where(array("_id" => new MongoID($client_id)));
+        $result = $this->mongo_db->get("playbasis_client");
+        if (!$result) return null;
+        $init_date_start = $result[0]['date_start']->sec;
+        $init_date_expire = strtotime("+1 m", $init_date_start);
+        $curr = $init_date_expire;
+        $today = time();
+        while ($curr < $today) {
+            $curr = strtotime("+1 m", $curr);
+        }
+        return array('date_start' => strtotime("-1 m", $curr), 'date_expire' => $curr);
+    }
+
     /**
      * Return Permission limitation by Plan ID
      * in particular type and field
@@ -638,7 +654,7 @@ class Client_model extends MY_Model
      * @param field string
      * @return integer | null
      */
-    public function getPlanLimitById($site_id, $plan_id, $type, $field)
+    public function getPlanLimitById($site_id, $plan_id, $type, $field=null)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
@@ -648,11 +664,13 @@ class Client_model extends MY_Model
         if ($res) {
             $res = $res[0];
             $limit = 'limit_'.$type;
-            if (isset($res[$limit]) &&
-                isset($res[$limit][$field])) {
-                    return $res[$limit][$field];
+            if (isset($res[$limit])) {
+                if ($field) {
+                    return isset($res[$limit][$field]) ? $res[$limit][$field] : null;
+                } else {
+                    return $res[$limit];
                 }
-            else { // this plan does not set this limitation
+            } else { // this plan does not set this limitation
                 return null;
             }
         }
@@ -672,16 +690,13 @@ class Client_model extends MY_Model
      * @param field string
      * @return array('plan_id' => string, 'value' => integer) | null
      */
-    private function getPermissionUsage($client_id, $site_id, $type, $field)
+    private function getPermissionUsage($client_id, $site_id, $type, $field, $clientDate)
     {
         // wrong type
         if ($type != "notifications" && $type != "requests")
             throw new Exception("WRONG_TYPE");
 
         $this->set_site_mongodb($site_id);
-
-        // Get Client billing date
-        $clientDate = $this->getClientStartEndDate($client_id);
 
         // Get current bill usage
         $this->mongo_db->select(
@@ -829,13 +844,20 @@ class Client_model extends MY_Model
      * @particular string $field
      */
     public function permissionProcess($client_id, $site_id, $type, $field) {
+        // get "date_start" && "date_expire" of client for permission processing
+        $myplan_id = $this->plan_model->getPlanIdByClientId($client_id);
+        $myplan = $this->plan_model->getPlanById($myplan_id);
+        if (!array_key_exists('price', $myplan)) {
+            $myplan['price'] = DEFAULT_PLAN_PRICE;
+        }
+        $free_flag = $myplan['price'] <= 0;
+        $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
+
         // get current usage
-        $usage = $this->getPermissionUsage(
-            $client_id, $site_id, $type, $field);
+        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
 
         // get limit by plan
-        $limit = $this->getPlanLimitById(
-            $site_id, $usage["plan_id"], $type, $field);
+        $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
 
         // compare
         if ($limit && $usage["value"] >= $limit) {
@@ -846,11 +868,18 @@ class Client_model extends MY_Model
         }
     }
 
-	public function listAllActiveClients($site_id=0) {
-		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array("_id"));
-		$this->mongo_db->where(array('status' => true));
-		return $this->mongo_db->get('playbasis_client');
-	}
+    public function listAllActiveClients($site_id=0) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where(array('status' => true));
+        return $this->mongo_db->get('playbasis_client');
+    }
+
+    public function listAllActivesSites($site_id=0) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('client_id', '_id'));
+        $this->mongo_db->where(array('status' => true, 'deleted' => false));
+        return $this->mongo_db->get('playbasis_client_site');
+    }
 }
 ?>

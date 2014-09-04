@@ -77,10 +77,12 @@ class Email_model extends MY_Model
 		return $this->mongo_db->insert('playbasis_email_log', $data);
 	}
 
-	public function findLatestSent($client_id, $type, $site_id=0) {
+	public function findLatestSent($type, $client_id, $site_id=null, $site_id=0) {
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('date_added'));
-		$this->mongo_db->where(array('client_id' => $client_id, 'type' => $type));
+		$where = array('client_id' => $client_id, 'type' => $type);
+		if ($site_id) $wherep['site_id'] = $site_id;
+		$this->mongo_db->where($where);
 		$this->mongo_db->order_by(array('date_added' => 'DESC'));
 		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_email_log');
