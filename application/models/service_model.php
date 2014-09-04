@@ -148,7 +148,7 @@ class Service_model extends MY_Model
 		return $result ? $result[0]['date_added'] : null;
 	}
 
-    public function resetPlayerPoints($site_id, $reward_id){
+    public function resetPlayerPoints($site_id, $client_id, $reward_id, $reward_name){
         $this->set_site_mongodb($site_id);
 
         $this->mongo_db->set('value', 0);
@@ -157,9 +157,27 @@ class Service_model extends MY_Model
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('reward_id', $reward_id);
         $reward = $this->mongo_db->update('playbasis_reward_to_player');
+
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_event_log', array(
+            'pb_player_id'	=> null,
+            'client_id'		=> $client_id,
+            'site_id'		=> $site_id,
+            'event_type'	=> "RESET",
+            'action_log_id' => null,
+            'message'		=> null,
+            'reward_id'		=> $reward_id,
+            'reward_name'	=> $reward_name,
+            'item_id'		=> null,
+            'value'			=> null,
+            'objective_id'	=> null,
+            'objective_name'=> null,
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ));
     }
 
-    public function resetPlayerBadge($site_id, $badge_id){
+    /*public function resetPlayerBadge($site_id, $client_id, $reward_id, $reward_name, $badge_id){
         $this->set_site_mongodb($site_id);
 
         $this->mongo_db->set('value', 0);
@@ -168,6 +186,24 @@ class Service_model extends MY_Model
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('badge_id', $badge_id);
         $reward = $this->mongo_db->update('playbasis_reward_to_player');
-    }
+
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_event_log', array(
+            'pb_player_id'	=> null,
+            'client_id'		=> $client_id,
+            'site_id'		=> $site_id,
+            'event_type'	=> "RESET",
+            'action_log_id' => null,
+            'message'		=> null,
+            'reward_id'		=> $reward_id,
+            'reward_name'	=> $reward_name,
+            'item_id'		=> $badge_id,
+            'value'			=> null,
+            'objective_id'	=> null,
+            'objective_name'=> null,
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ));
+    }*/
 }
 ?>

@@ -236,13 +236,12 @@ class Service extends REST2_Controller
             $reward_id = null;
         }
 
-        $player_point = $this->player_model->getPlayerPoint($pb_player_id, $reward_id, $validToken['site_id']);
-        if(isset($player_point[0]['value'])){
-            $player_point = $player_point[0]['value'];
+        if($reward_id){
+            $this->service_model->resetPlayerPoints($this->site_id, $this->client_id, $reward_id, $reward_name);
         }else{
-            $player_point = 0;
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
         }
 
-        $this->response($this->resp->setRespond($respondThis), 200);
+        $this->response($this->resp->setRespond(array("reset" => true)), 200);
     }
 }
