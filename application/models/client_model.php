@@ -845,8 +845,8 @@ class Client_model extends MY_Model
      */
     public function permissionProcess($client_id, $site_id, $type, $field) {
         // get "date_start" && "date_expire" of client for permission processing
-        $myplan_id = $this->plan_model->getPlanIdByClientId($client_id);
-        $myplan = $this->plan_model->getPlanById($myplan_id);
+        $myplan_id = $this->getPlanIdByClientId($client_id);
+        $myplan = $this->getPlanById($myplan_id);
         if (!array_key_exists('price', $myplan)) {
             $myplan['price'] = DEFAULT_PLAN_PRICE;
         }
@@ -880,6 +880,23 @@ class Client_model extends MY_Model
         $this->mongo_db->select(array('client_id', '_id'));
         $this->mongo_db->where(array('status' => true, 'deleted' => false));
         return $this->mongo_db->get('playbasis_client_site');
+    }
+
+    public function getPlanById($plan_id) {
+        return $this->getById($plan_id, 'playbasis_plan');
+    }
+
+    public function getPlanIdByClientId($client_id) {
+        $permission = $this->getLatestPermissionByClientId($client_id);
+        return $permission ? $permission['plan_id'] : null;
+    }
+
+    public function getLatestPermissionByClientId($client_id) {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_permission');
+        return $results ? $results[0] : null;
     }
 }
 ?>
