@@ -754,6 +754,7 @@ class Client_model extends MY_Model
     private function syncPermissionDate($clientDate, $permissionDate)
     {
         // Not has Date no limitation
+        if ((!array_key_exists('date_start', $clientDate) || !$clientDate["date_start"]) && (!array_key_exists('date_expire', $clientDate) || !$clientDate["date_expire"]))
             throw new Exception("NOEXPIRE");
 
         // Date is not sync
