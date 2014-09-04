@@ -174,14 +174,13 @@ $email = 'pechpras@playbasis.com';
 
 			if ($paid_flag && $trial_days > 0) { // we proceed only if the plan has been set with trial days > 0
 				/* check that it has passed the end of trial period */
-				$client_id = $client['_id'];
 				$date_billing = $client['date_billing']->sec;
 				$date_billing_1m = strtotime("+1 m", $date_billing);
 				$today = time();
 
 				if ($today >= $date_billing && $today < $date_billing_1m) {
 					$email = $client['email'];
-					$email = 'pechpras@playbasis.com';
+$email = 'pechpras@playbasis.com';
 					$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD, $client_id);
 					/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
 					if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
@@ -198,8 +197,36 @@ $email = 'pechpras@playbasis.com';
 		}
 	}
 
-	public function notifyClientsEndOfGracePeriod() {
+	public function notifyClientsShutdownAPI() {
 		// time() >= date_expire + 5 days, but no greater than 1 month
+		$today = time();
+		$today_with_grace_period = strtotime("+".GRACE_PERIOD_IN_DAYS." day", $today);
+		$clients = $this->client_model->listExpiredClients($today_with_grace_period);
+		if ($clients) foreach ($clients as $client) {
+
+			$client_id = $client['_id'];
+
+			/* check that it has passed the end of trial period */
+			$date_expire = $client['date_expire']->sec;
+			$date_expire_1m = strtotime("+1 m", $date_expire);
+			$today = time();
+
+			if ($today >= $date_expire && $today < $date_expire_1m) {
+				$email = $client['email'];
+$email = 'pechpras@playbasis.com';
+				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id);
+				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
+				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
+					/* email */
+					$from = EMAIL_FROM;
+					$to = $email;
+					$subject = '[Playbasis] Alert! Shutdown Your Access to Our API';
+					$message = 'This is to let you know that your access to our API has been shut down ['.$client_id.']';
+					$response = $this->utility->email($from, $to, $subject, $message);
+					$this->email_model->log(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id, null, $response, $from, $to, $subject, $message);
+				}
+			}
+		}
 	}
 }
 ?>
