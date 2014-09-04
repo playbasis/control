@@ -19,7 +19,7 @@ class Email_model extends MY_Model
 		return $emails;
 	}
 
-	public function isEmailInBlackList($site_id, $emails)
+	public function isEmailInBlackList($emails, $site_id=0)
 	{
 		$blackList = $this->listBlackListEmails($site_id);
 		$banned = array();
@@ -56,11 +56,12 @@ class Email_model extends MY_Model
 		return $this->mongo_db->delete('playbasis_email_blacklist');
 	}
 
-	public function log($client_id, $site_id, $response, $from, $to, $subject, $message, $message_alt=null, $attachments=array())
+	public function log($type, $client_id, $site_id, $response, $from, $to, $subject, $message, $message_alt=null, $attachments=array())
 	{
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$data = array(
+			'type' => $type,
 			'client_id' => $client_id,
 			'site_id' => $site_id,
 			'from' => $from,
@@ -74,6 +75,15 @@ class Email_model extends MY_Model
 		$data['date_added'] = $mongoDate;
 		$data['date_modified'] = $mongoDate;
 		return $this->mongo_db->insert('playbasis_email_log', $data);
+	}
+
+	public function findLatestSent($client_id, $type, $site_id=0) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array("date_added"));
+		$this->mongo_db->where(array('client_id' => $client_id, 'type' => $type));
+		$this->mongo_db->order_by(array('date_added' => 'DESC'));
+		$this->mongo_db->limit(1);
+		return $this->mongo_db->get('playbasis_email_log');
 	}
 }
 ?>

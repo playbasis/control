@@ -46,7 +46,7 @@ class Email extends REST2_Controller
 		$message = $this->input->post('message');
 		if ($message == false) $message = ''; // $message is optional
 		/* check to see if emails are not black list */
-		$res = $this->email_model->isEmailInBlackList($this->site_id, $to);
+		$res = $this->email_model->isEmailInBlackList($to, $this->site_id);
 		$_to = array();
 		foreach ($res as $i => $banned) {
 			if ($banned) continue;
@@ -55,7 +55,7 @@ class Email extends REST2_Controller
 		if (count($_to) > 0) {
 			/* send the email */
 			$response = $this->utility->email($from, $_to, $subject, $message);
-			$this->email_model->log($this->client_id, $this->site_id, $response, $from, $to, $subject, $message);
+			$this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $to, $subject, $message);
 			/* check response from Amazon SES API */
 			if ($response != false) {
 				$this->response($this->resp->setRespond($response), 200);
@@ -77,7 +77,7 @@ class Email extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$email = $this->input->post('email');
 		/* main */
-		$banned = $this->email_model->isEmailInBlackList($this->site_id, $email);
+		$banned = $this->email_model->isEmailInBlackList($email, $this->site_id);
 		$this->response($this->resp->setRespond($banned), 200);
 	}
 
@@ -89,7 +89,7 @@ class Email extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$email = $this->input->post('email');
 		/* main */
-		if ($this->email_model->isEmailInBlackList($this->site_id, $email)) {
+		if ($this->email_model->isEmailInBlackList($email, $this->site_id)) {
 			$this->response($this->error->setError('EMAIL_ALREADY_IN_BLACKLIST', $email), 200);
 		}
 		$this->email_model->addIntoBlackList($this->site_id, $email, 'API');
@@ -104,7 +104,7 @@ class Email extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$email = $this->input->post('email');
 		/* main */
-		if (!$this->email_model->isEmailInBlackList($this->site_id, $email)) {
+		if (!$this->email_model->isEmailInBlackList($email, $this->site_id)) {
 			$this->response($this->error->setError('EMAIL_NOT_IN_BLACKLIST', $email), 200);
 		}
 		$this->email_model->removeFromBlackList($this->site_id, $email);

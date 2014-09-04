@@ -90,5 +90,16 @@ class Utility extends CI_Model
 		$mpdf->WriteHTML($html);
 		return $output ? $mpdf->Output('', 'S') : null;
 	}
+
+	public function find_diff_in_days($from, $to) {
+		return intval($this->find_diff_in_fmt($from, $to, '%r%a'));
+	}
+
+	public function find_diff_in_fmt($from, $to, $fmt) {
+		$_from = new DateTime(date("Y-m-d", $from));
+		$_to = new DateTime(date("Y-m-d", $to));
+		$interval = $_from->diff($_to);
+		return $interval->format($fmt);
+	}
 }
 ?>

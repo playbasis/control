@@ -59,5 +59,8 @@ define('PAYPAL_PAYMENT_STATUS_RETURNED', 'Returned'); // Money was returned to t
 define('PAYPAL_PAYMENT_STATUS_UNCLAIMED', 'Unclaimed'); // The recipient hasn't yet accepted this payment
 define('GRACE_PERIOD_IN_DAYS', 5);
 
+define('EMAIL_TYPE_USER', 'user');
+define('EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS', 'notifyInactiveClients');
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

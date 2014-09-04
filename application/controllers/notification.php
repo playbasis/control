@@ -183,7 +183,7 @@ class Notification extends REST2_Controller
 	{
 		foreach ($bounce['bouncedRecipients'] as $each) {
 			$email = $each['emailAddress'];
-			if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
+			if ($this->email_model->isEmailInBlackList($email, $this->site_id)) continue;
 			$this->email_model->addIntoBlackList($this->site_id, $email, 'Bounce', $bounce['bounceType'], $bounce['bounceSubType'], $bounce['feedbackId']);
 		}
 	}
@@ -192,7 +192,7 @@ class Notification extends REST2_Controller
 	{
 		foreach ($complaint['complainedRecipients'] as $each) {
 			$email = $each['emailAddress'];
-			if ($this->email_model->isEmailInBlackList($this->site_id, $email)) continue;
+			if ($this->email_model->isEmailInBlackList($email, $this->site_id)) continue;
 			$this->email_model->addIntoBlackList($this->site_id, $email, 'Complaint', $complaint['userAgent'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
 		}
 	}

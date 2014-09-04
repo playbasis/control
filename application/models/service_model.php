@@ -137,5 +137,14 @@ class Service_model extends MY_Model
 
         return $returnThis;
     }
+
+	public function findLatestAPIactivity($client_id, $site_id=0) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array("date_added"));
+		$this->mongo_db->where(array('client_id' => $client_id));
+		$this->mongo_db->order_by(array('date_added' => 'DESC'));
+		$this->mongo_db->limit(1);
+		return $this->mongo_db->get('playbasis_web_service_log');
+	}
 }
 ?>
