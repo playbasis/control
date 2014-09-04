@@ -147,5 +147,12 @@ class Service_model extends MY_Model
 		$result = $this->mongo_db->get('playbasis_web_service_log');
 		return $result ? $result[0]['date_added'] : null;
 	}
+
+	public function listActiveClientsUsingAPI($days, $site_id=0) {
+		$this->set_site_mongodb($site_id);
+		$d = strtotime("-".$days." day");
+		$this->mongo_db->where_gt('date_added', new MongoDate($d));
+		return $this->mongo_db->distinct('client_id', 'playbasis_web_service_log');
+	}
 }
 ?>

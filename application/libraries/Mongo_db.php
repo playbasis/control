@@ -935,7 +935,66 @@ class Mongo_db
 			
 		return $documents;
 	}
-	
+
+	/**
+	 * Distinct.
+	 *
+	 * Return the found documents
+	 *
+	 * <code>
+	 * $this->mongo_db->distinct('field', 'foo');
+	 * </code>
+	 *
+	 * @param string $field    Name of the field for distinction
+	 * @param string $collection    Name of the collection
+	 * @param bool   $return_cursor Return the native document cursor
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function distinct($field, $collection = '', $return_cursor = FALSE)
+	{
+		if (empty($field))
+		{
+			$this->_show_error('In order to retrieve documents from MongoDB, a field name must be passed', 500);
+		}
+
+		if (empty($collection))
+		{
+			$this->_show_error('In order to retrieve documents from MongoDB, a collection name must be passed', 500);
+		}
+
+		$cursor = $this->_dbhandle
+			->{$collection}
+			->distinct($field, $this->wheres);
+
+		// Clear
+		$this->_clear($collection, 'distinct');
+
+		// Return the raw cursor if wanted
+		if ($return_cursor === TRUE)
+		{
+			return $cursor;
+		}
+
+		$documents = array();
+
+		if (is_array($cursor)) foreach ($cursor as $each)
+		{
+			try
+			{
+				$documents[] = $each;
+			}
+
+			catch (MongoCursorException $exception)
+			{
+				$this->_show_error($exception->getMessage(), 500);
+			}
+		}
+
+		return $documents;
+	}
+
 	/**
 	* Count.
 	*
