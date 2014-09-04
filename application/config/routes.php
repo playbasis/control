@@ -139,6 +139,7 @@ $route['Player/mau_per_month'] = 'player/mauMonth';
 
 //service API
 $route['Service/recent_point'] = 'service/recent_point';
+$route['Service/reset_point'] = 'service/reset_point';
 
 //Quest
 //$route['quest/testquest'] = 'quest/testQuest';
