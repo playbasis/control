@@ -23,7 +23,8 @@
                       <?php if(in_array($chosenPlan, $availablePlans)){ ?>
                           <input type = 'hidden' value = '<?php echo $chosenPlan; ?>' name = 'plan'/>
                       <?php }else{ ?>
-                          <?php echo "STOP, WHAT ARE YOU DOING?"; ?>
+                          <?php //echo "STOP, WHAT ARE YOU DOING?"; ?>
+                          <?php  header( 'Location: http://www.playbasis.com/plans.html' ) ;  ?>
                           <?php exit(); ?>
                       <?php } ?>
 			        <form class="validate" role="form" action="" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="" novalidate>
@@ -60,6 +61,7 @@
 			            </div>
 
 			            <div class="form-group offset2 span8">
+			            <!--
 			                <script type="text/javascript"> 
 			                    var RecaptchaOptions = {
 			                        theme : 'custom',
@@ -80,7 +82,6 @@
 			                        <input class="form-control btn-not-login" type="text" id="recaptcha_response_field" name="recaptcha_response_field" style="color:black;" placeholder="Enter what you see"/>
 			                        <input type="hidden" name="recaptcha_response_field" value="manual_challenge"><button class="btn btn-not-login recaptcha-reload-btn" onclick="javascript:Recaptcha.reload()"><i class="icon-refresh"></i></button>
 			                    </div>
-
 			                </div>
 
 			                <script type="text/javascript"
@@ -90,13 +91,43 @@
 			                    <iframe src="//www.google.com/recaptcha/api/noscript?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>"
 			                    height="300" width="500" frameborder="0"></iframe><br>
 			                    <textarea name="recaptcha_challenge_field" class="btn-not-login" rows="3" cols="40"></textarea>
+			                </noscript>-->
+
+			                <script type="text/javascript"> 
+			                    var RecaptchaOptions = {
+			                        theme : 'custom',
+			                        custom_theme_widget: 'recaptcha_widget'
+			                    };
+			                </script>
+			                <div id="recaptcha_widget" style="display:none;">
+
+			                    <div id="recaptcha_image" style="margin:0 auto"></div>
+			                    <button class="btn btn-not-login" type="button" onclick="javascript:Recaptcha.reload()" id="captcha_button"><span class="fa fa-refresh btn-not-login"></span></button>
+			                    <div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
+			                    <span class="recaptcha_only_if_image btn-not-login"></span>
+			                    <span class="recaptcha_only_if_audio btn-not-login"></span>
+			                    <br/>
+			                    <div class="input-append">
+			                        <input class="form-control btn-not-login" type="text" id="recaptcha_response_field" name="recaptcha_response_field" style="color:black;" placeholder="Enter what you see"/>
+			                    </div>
+
+			                </div>
+
+			                <script type="text/javascript"
+			                src="//www.google.com/recaptcha/api/challenge?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>">
+			                </script>
+			                <noscript>
+			                    <iframe src="//www.google.com/recaptcha/api/noscript?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>"
+			                    height="300" width="500" frameborder="0"></iframe><br>
+			                    <textarea name="recaptcha_challenge_field" rows="3" cols="40" class="btn-not-login"></textarea>
+			                    <input type="hidden" name="recaptcha_response_field"  value="manual_challenge" class="btn-not-login">
 			                </noscript>
 
 			            </div>
 
 			            <div class="form-group span12">
-                        <input type = 'hidden' value = 'new' name = 'version'/>
-                        <input type = 'hidden' value = '<?php echo $chosenPlan; ?>' name = 'plan'/>
+                        		<input type = 'hidden' value = 'new' name = 'version'/>
+                        		<input type = 'hidden' value = '<?php echo $chosenPlan; ?>' name = 'plan'/>
 						<button type="submit" class="btn btn-primary offset4 span4 btn-not-login">Sign Up</button>
 					</div>
 
