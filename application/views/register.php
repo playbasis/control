@@ -16,7 +16,7 @@
 				
 			      <div class="offset2 span8 well">
 			      <div class="span12 signup-header">
-					<h3><strong><?php echo $plan['name']; ?> : (<?php echo $plan['price'] <= 0 ? 'FREE' : '$'.$plan['price']; ?>)</strong> You can cancel or upgrade at any time.</h3>
+					<h3><strong><?php echo $plan['name']; ?> : ( <?php echo $plan['price'] <= 0 ? 'FREE' : '$'.$plan['price'].' /month'; ?> )</strong> You can cancel or upgrade at any time.</h3>
 					<a href="<?php echo PLAYBASIS; ?>/plans.html" class="btn btn-primary pull-right">Change Plan</a>
 				</div>
 			        <form class="validate" role="form" action="" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="" novalidate>
@@ -154,7 +154,7 @@ $.validate({
             cache: false,
             crossDomain:true,
             beforeSend: function( data ) {
-                $("#message").html('<p class="text-center">Sending : <img alt="loading" src="images/loading.gif" /></p>');
+                $("#message").html('<p class="text-center">Sending : <img alt="loading" src="image/register/loading.gif" /></p>');
                 $("button.btn-primary").attr('disabled', 'disabled');
             },
             error: function() {
