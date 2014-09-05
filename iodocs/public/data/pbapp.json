@@ -1278,7 +1278,7 @@
                 {
                     "MethodName": "Reset Point",
                     "Synopsis": "Reset point of all players",
-                    "HTTPMethod": "GET",
+                    "HTTPMethod": "POST",
                     "URI": "/Service/reset_point",
                     "RequiresOAuth": "N",
                     "parameters": [
