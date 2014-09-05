@@ -13,7 +13,7 @@
 				
 			      <div class="offset2 span8 well">
 			      <div class="span12 signup-header">
-					<h3><strong><?php echo $plan['name']; ?> : ( <?php echo $plan['price'] <= 0 ? 'FREE' : '$'.$plan['price'].' /month'; ?> )</strong> You can cancel or upgrade at any time.</h3>
+					<h3><strong><?php echo $plan['name']; ?> : ( <?php echo $plan['price'] <= 0 ? 'FREE' : '$'.$plan['price'].' /'; ?> )</strong> You can cancel or upgrade at any time.</h3>
 					<a href="<?php echo PLAYBASIS; ?>/plans.html" class="btn btn-primary pull-right">Change Plan</a>
 				</div>
 			        <form class="validate" role="form" action="" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="" novalidate>
@@ -111,7 +111,7 @@
 
 			            </div>
 			            <div class="form-group span12 text-center">
-			            	<small>By clicking on "Sign Up" below, you agree to the <a href="<?php echo PLAYBASIS; ?>/about/privacy" target="_blank">Terms of Service</a> and the <a href="<?php echo PLAYBASIS; ?>/about/terms-of-service" target="_blank">Privacy Policy</a></small>
+			            	<small>By clicking on "Sign Up" below, you agree to the <a href="<?php echo PLAYBASIS; ?>/privacy.html" target="_blank">Terms of Service</a> and the <a href="<?php echo PLAYBASIS; ?>/terms-of-service.html" target="_blank">Privacy Policy</a></small>
 			            </div>
 			            <div class="form-group span12">
                         		<input type = 'hidden' value = 'new' name = 'version'/>
