@@ -568,6 +568,7 @@ class User extends MY_Controller
                 $plan['price'] = DEFAULT_PLAN_PRICE;
             }
         } catch (Exception $e) {
+            header('Location: http://www.playbasis.com/plans.html');
             echo 'Invalid plan: '.$e->getMessage();
             exit();
         }

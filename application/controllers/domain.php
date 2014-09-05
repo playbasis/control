@@ -206,14 +206,14 @@ class Domain extends MY_Controller
 
                 // get Plan limit_others.domain
                 $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
-                if (!isset($limit["value"]) || !$limit["value"])
-                    $limit["value"] = 3; // default
+                if ($limit == null) $limit = DEFAULT_LIMIT_DOMAIN; // TODO: review this statement, do we really need to do this
 
                 // Get current client site
                 $usage = $this->Client_model->getSitesByClientId($client_id);
+                $usage_conut = $usage ? count($usage) : 0;
 
                 // compare
-                if (sizeof($usage) >= $limit["value"]) {
+                if ($limit != null && $usage_conut >= $limit) { // limit = null, means unlimited
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_domain"));
                     redirect("domain/");
                 }
