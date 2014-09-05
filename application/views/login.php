@@ -20,8 +20,8 @@
                 </div>
                 <?php
             }
-            $udata = array('name' => 'username', 'id' => 'username','value' => set_value('username'));
-            $pdata = array('name' => 'password', 'id' => 'password');
+            $udata = array('name' => 'username', 'id' => 'username','value' => set_value('username'), 'class'=>'btn-not-login');
+            $pdata = array('name' => 'password', 'id' => 'password', 'class'=>'btn-not-login');
 
             $attributes = array('id' => 'form');
             echo form_open('login',$attributes);
