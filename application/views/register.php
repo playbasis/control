@@ -6,9 +6,6 @@
 			<div class="container page" data-page="signup">
 				<div class="text-center">
 					<img class="register-hero-img" src="<?php echo base_url(); ?>image/register/hero-img.png">
-					<p class="lead">
-				        	Join our developer program create an account and start to use gamification.
-				        </p>
 				</div>
 			</div>
 
