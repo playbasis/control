@@ -1,8 +1,15 @@
+<?php $hostPlaybasis = 'http://www.playbasis.com'; ?>
+
+<pre>
+	<?php var_dump($availablePlans); ?>
+</pre>
+
 <div id="content" class="signup-page-wrapper">
-	
+
 		<div class="signup-page">
 			<div class="container page" data-page="signup">
 				<div class="text-center">
+					<img class="register-hero-img" src="<?php echo base_url(); ?>image/register/hero-img.png">
 					<p class="lead">
 				        	Join our developer program create an account and start to use gamification.
 				        </p>
@@ -10,9 +17,14 @@
 			</div>
 
 			<div class="row-fluid">
+				
 			      <div class="offset2 span8 well">
+			      <div class="span12 signup-header">
+					<h3><strong>TODO: NAME : (TODO: price:)</strong>You can cancel or upgrade at  any time.</h3>
+					<a href="<?php echo $hostPlaybasis; ?>/plans.html" class="btn btn-primary pull-right">Change Plan</a>
+				</div>
                       <?php
-                      $chosenPlan = null;;
+                      $chosenPlan = null;
                       if(isset($_GET['plan'])){
                           $chosenPlan = $_GET['plan'];
                       }
@@ -23,8 +35,7 @@
                       <?php if(in_array($chosenPlan, $availablePlans)){ ?>
                           <input type = 'hidden' value = '<?php echo $chosenPlan; ?>' name = 'plan'/>
                       <?php }else{ ?>
-                          <?php //echo "STOP, WHAT ARE YOU DOING?"; ?>
-                          <?php  header( 'Location: http://www.playbasis.com/plans.html' ) ;  ?>
+                          <?php  header( 'Location: '.$hostPlaybasis.'/plans.html' ) ;  ?>
                           <?php exit(); ?>
                       <?php } ?>
 			        <form class="validate" role="form" action="" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="" novalidate>
@@ -102,15 +113,16 @@
 			                <div id="recaptcha_widget" style="display:none;">
 
 			                    <div id="recaptcha_image" style="margin:0 auto"></div>
-			                    <button class="btn btn-not-login" type="button" onclick="javascript:Recaptcha.reload()" id="captcha_button"><span class="fa fa-refresh btn-not-login"></span></button>
+			                    
 			                    <div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
 			                    <span class="recaptcha_only_if_image btn-not-login"></span>
 			                    <span class="recaptcha_only_if_audio btn-not-login"></span>
 			                    <br/>
-			                    <div class="input-append">
+			                    <div class="form-recaptcha-wrapper">
 			                        <input class="form-control btn-not-login" type="text" id="recaptcha_response_field" name="recaptcha_response_field" style="color:black;" placeholder="Enter what you see"/>
-			                    </div>
 
+			                        <button class="btn btn-not-login recaptcha-reload-btn" type="button" onclick="javascript:Recaptcha.reload()" id="captcha_button"><span class="fa fa-refresh btn-not-login"></span></button>
+			                    </div>
 			                </div>
 
 			                <script type="text/javascript"
@@ -124,10 +136,11 @@
 			                </noscript>
 
 			            </div>
-
+			            <div class="form-group span12 text-center">
+			            	<small>By clicking on "Sign Up" below, you agree to the <a href="<?php echo $hostPlaybasis ?>/about/privacy" target="_blank">Terms of Service</a> and the <a href="<?php echo $hostPlaybasis ?>/about/terms-of-service" target="_blank">Privacy Policy</a></small>
+			            </div>
 			            <div class="form-group span12">
                         		<input type = 'hidden' value = 'new' name = 'version'/>
-                        		<input type = 'hidden' value = '<?php echo $chosenPlan; ?>' name = 'plan'/>
 						<button type="submit" class="btn btn-primary offset4 span4 btn-not-login">Sign Up</button>
 					</div>
 
@@ -158,7 +171,54 @@ $.validate({
         $("#message").html('<p class="has-warning text-center lead">Error connecting to server.</p>');
     },
     onSuccess: function() {
+    	/*var data = $form.serializeArray();
+        data.push({name: 'internal', value: 'playbasis'});
+        console.log(data);*/
 
+        var data = $form.serialize()+"&format=json";
+
+        /*$.post(
+            "<?php echo $config['url_pbapp_register'] ?>",
+            data,
+            function(data) {
+                console.log(data);
+                if (data.response == 'success') {
+                    $form.replaceWith('<p class="has-success text-center lead">Thank you for registering! Please check your email to activate your account.</p>');
+                } else {
+                    $('#captcha_button').click();
+                    $("#message").html('<p class="has-error text-center lead">'+data+'</p>');
+                }
+            },
+            "json"
+        );*/
+
+        $.ajax({
+            url: "https://devv2.pbapp.net/register",// TODO: prodiction URL
+            type: "POST",
+            data: data,
+            dataType: 'json',
+            cache: false,
+            crossDomain:true,
+            beforeSend: function( data ) {
+                $("#message").html('<p class="text-center">Sending : <img alt="loading" src="images/loading.gif" /></p>');
+                $("button.btn-primary").attr('disabled', 'disabled');
+            },
+            error: function() {
+                $("#message").html('<p class="has-warning text-center lead">Error connecting to server.</p>');
+                $("button.btn-primary").removeAttr("disabled");
+            },
+            success: function(data) {
+                if (data.response == 'success') {
+                    $form.replaceWith('<p class="has-success text-center lead">Thank you for registering! Please check your email to activate your account.</p>');
+                } else {
+                    $('#captcha_button').click();
+                    $("#message").html('<p class="has-error text-center lead">'+data+'</p>');
+                    $("button.btn-primary").removeAttr("disabled");
+                }
+            }
+        });
+
+        return false; // Will stop the submission of the form
         
     }
 

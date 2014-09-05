@@ -130,10 +130,14 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
+        
         $( "a, button, li, span, input").live("click", function(e) {
-
-            if(!$(this).hasClass('btn-not-login')){
-
+            
+            var $registerPage = $('div.signup-page-wrapper');
+            if($registerPage.length > 0){
+                return;
+            }
+            if(!$(this).hasClass('btn-not-login')) {
                 $.ajax({
                     url: "<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>user/checksession",
                     cache: false,

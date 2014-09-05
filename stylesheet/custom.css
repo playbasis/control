@@ -234,9 +234,11 @@
 	border: 0;
 }
 .signup-page input.form-control{
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	display: block;
 	width: 100%;
-	height: 34px;
+	height: 45px;
 	padding: 6px 12px;
 	font-size: 14px;
 	line-height: 1.428571429;
@@ -265,7 +267,7 @@
 	box-shadow: inset 0 1px 3px rgba(0,0,0,.05),0 1px 0 rgba(255,255,255,.1);
 }
 .signup-page .form-control-feedback{
-	top: 2px;
+	top: 9px;
 	right: 0;
 	position: absolute;
 	display: block;
@@ -319,8 +321,11 @@
 .signup-page #recaptcha_response_field{
 	float: left;
 }
+.form-recaptcha-wrapper{
+	position: relative;
+}
 .signup-page .recaptcha-reload-btn{
-	height: 34px;
+	height: 45px;
 	margin-left: -38px;
 	margin-bottom: 5px;
 	z-index: 100;
@@ -329,4 +334,26 @@
 	right: 0;
 	background: transparent;
 	border: none;
+}
+.register-hero-img{
+	max-width: 585px;
+	width: 100%;
+}
+.signup-header{
+	margin-bottom: 20px;
+}
+
+.signup-header h3{
+	font-weight: normal;
+	font-size: 14px;
+	color: #009FAF;
+	float: left;
+}
+.signup-header h3 strong{
+	font-size: 22px;
+	color:#fff;
+	margin-right: 10px;
+}
+.signup-page .btn-primary{
+	line-height: 30px;	
 }
