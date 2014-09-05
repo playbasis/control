@@ -175,10 +175,9 @@ $email = 'pechpras@playbasis.com';
 			if ($paid_flag && $trial_days > 0) { // we proceed only if the plan has been set with trial days > 0
 				/* check that it has passed the end of trial period */
 				$date_billing = $client['date_billing']->sec;
-				$date_billing_1m = strtotime("+1 m", $date_billing);
 				$today = time();
 
-				if ($today >= $date_billing && $today < $date_billing_1m) {
+				if ($today >= $date_billing && $this->utility->find_diff_in_days($date_billing, $today) == 1) {
 					$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 					$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD, $client_id);
@@ -198,20 +197,16 @@ $email = 'pechpras@playbasis.com';
 	}
 
 	public function notifyClientsShutdownAPI() {
-		// time() >= date_expire + 5 days, but no greater than 1 month
 		$today = time();
-		$today_with_grace_period = strtotime("+".GRACE_PERIOD_IN_DAYS." day", $today);
-		$clients = $this->client_model->listExpiredClients($today_with_grace_period);
+		$clients = $this->client_model->listExpiredClients($today);
 		if ($clients) foreach ($clients as $client) {
 
 			$client_id = $client['_id'];
 
 			/* check that it has passed the end of trial period */
 			$date_expire = $client['date_expire']->sec;
-			$date_expire_1m = strtotime("+1 m", $date_expire);
-			$today = time();
 
-			if ($today >= $date_expire && $today < $date_expire_1m) {
+			if ($today >= $date_expire && $this->utility->find_diff_in_days($date_expire, $today) == GRACE_PERIOD_IN_DAYS+1) {
 				$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id);
