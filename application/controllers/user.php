@@ -625,7 +625,7 @@ class User extends MY_Controller
                         if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                             $user_info = $this->User_model->getUserInfo($user_id);
 
-                            $plan = $this->Plan_model->getPlanByName($chosenPlan);
+                            $plan = $this->Plan_model->getPlanById(new MongoId($chosenPlan));
                             $plan_id = $plan['_id'];
 
                             $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"

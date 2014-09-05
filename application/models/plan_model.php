@@ -481,7 +481,7 @@ class Plan_model extends MY_Model
         $ret = array();
         $plans = $this->listDisplayPlans();
         if ($plans) foreach ($plans as $plan) {
-            array_push($ret, $plan['name']);
+            array_push($ret, $plan['_id']->{'$id'});
         }
         return $ret;
     }
