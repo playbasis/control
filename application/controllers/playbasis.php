@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/REST2_Controller.php';
+define('PLAN_ID_FOR_CALL_US', '5409409daf6072480f0001ae');
 class Playbasis extends REST2_Controller
 {
 	public function __construct()
@@ -24,12 +25,23 @@ class Playbasis extends REST2_Controller
 	}
 	public function plans_get() {
 		$plans = $this->plan_model->listDisplayPlans(array('site_id' => 0));
+		$plan_call_us = $this->plan_model->getPlanById(new MongoId(PLAN_ID_FOR_CALL_US));
+		if (is_array($plans)) {
+			if ($plan_call_us) array_push($plans, $plan_call_us);
+		} else {
+			if ($plan_call_us) $plans = array($plan_call_us);
+		}
 		if (is_array($plans)) foreach ($plans as &$plan) {
 			$plan['_id'] = $plan['_id']->{'$id'};
 			$plan['price'] = array_key_exists('price', $plan) ? intval($plan['price']) : DEFAULT_PLAN_PRICE;
 			$plan['free_flag'] = $plan['price'] <= 0;
+			$plan['custom_flag'] = ($plan['_id'] == PLAN_ID_FOR_CALL_US);
 			$plan['date_added'] = $plan['date_added']->sec;
 			$plan['date_modified'] = $plan['date_modified']->sec;
+			if (array_key_exists('limit_requests', $plan)) foreach ($plan['limit_requests'] as $key => $value) {
+				$plan['limit_requests'][str_replace('/','',$key)] = $value;
+				unset($plan['limit_requests'][$key]);
+			}
 		}
 		$this->response($this->resp->setRespond($plans), 200);
 	}
