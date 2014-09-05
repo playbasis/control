@@ -441,7 +441,9 @@ class Badge_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($badge_id));
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
         $this->mongo_db->update('playbasis_badge');
 
         // $this->mongo_db->where('badge_id',  new MongoID($badge_id));
@@ -454,6 +456,7 @@ class Badge_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($badge_id));
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
         $this->mongo_db->update('playbasis_badge_to_client');
 
     }
