@@ -42,22 +42,13 @@
                     </tr>
                     <tr>
                         <td><?php echo $this->lang->line('entry_username'); ?>:<br />
-                            <?php
-                            echo form_input($udata);
-                            ?>
+                            <?php echo form_input($udata); ?>
                             <br />
                             <br />
                             <?php echo $this->lang->line('entry_password'); ?>:<br />
-                            <?php
-                            echo form_password($pdata);
-                            ?>
-                            
+                            <?php echo form_password($pdata); ?>
                             <br/>
-                            <?php
-                            echo anchor('register', $this->lang->line('text_register'), array('class' => 'btn-not-login'));
-                            echo "<br/>";
-                            echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login'));
-                            ?>
+                            <?php echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login')); ?>
                         </td>
                     </tr>
                     <tr>
@@ -85,6 +76,3 @@ $('#form input').keydown(function(e) {
     }
 });
 //--></script>
-
-
-
