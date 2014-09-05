@@ -546,8 +546,6 @@ class User extends MY_Controller
         redirect('/', 'refresh');
     }
 
-
-
     public function register(){
 
         $this->load->model('Image_model');
@@ -559,7 +557,22 @@ class User extends MY_Controller
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
         $this->data['form'] = 'user/register?plan='.$this->input->get('plan');
         $this->data['user_groups'] = $this->User_model->getUserGroups();
-        $this->data['availablePlans'] = $this->Plan_model->getDisplayedPlans();
+
+        $plan_id = null;
+        $plan = null;
+        try {
+            $plan_id = new MongoId($this->input->get('plan'));
+            $plan = $this->Plan_model->getPlanById($plan_id);
+            if (!$plan) throw new Exception('Cannot find plan '.$plan_id);
+            if (!array_key_exists('price', $plan)) {
+                $plan['price'] = DEFAULT_PLAN_PRICE;
+            }
+        } catch (Exception $e) {
+            echo 'Invalid plan: '.$e->getMessage();
+            exit();
+        }
+
+        $this->data['plan'] = $plan;
 
         //Set rules for form registration
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
@@ -578,20 +591,6 @@ class User extends MY_Controller
         $this->data['recaptcha'] = recaptcha_get_html($publicKey);
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-            if (isset($_POST['plan'])){
-                $chosenPlan = $this->input->post('plan');
-
-                $availablePlans = $this->data['availablePlans'];
-
-                if (!in_array($chosenPlan, $availablePlans)){
-                    echo 'Plan is not available!';
-                    exit();
-                }
-            }else{
-                echo 'Please dont provide empty plan';
-                exit();
-            }
 
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
@@ -624,9 +623,6 @@ class User extends MY_Controller
                     }else{
                         if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                             $user_info = $this->User_model->getUserInfo($user_id);
-
-                            $plan = $this->Plan_model->getPlanById(new MongoId($chosenPlan));
-                            $plan_id = $plan['_id'];
 
                             $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
 

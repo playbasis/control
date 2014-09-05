@@ -1,8 +1,4 @@
-<?php $hostPlaybasis = 'http://www.playbasis.com'; ?>
-
-<pre>
-	<?php var_dump($availablePlans); ?>
-</pre>
+<?php define('PLAYBASIS', 'http://www.playbasis.com'); ?>
 
 <div id="content" class="signup-page-wrapper">
 
@@ -20,24 +16,9 @@
 				
 			      <div class="offset2 span8 well">
 			      <div class="span12 signup-header">
-					<h3><strong>TODO: NAME : (TODO: price:)</strong>You can cancel or upgrade at  any time.</h3>
-					<a href="<?php echo $hostPlaybasis; ?>/plans.html" class="btn btn-primary pull-right">Change Plan</a>
+					<h3><strong><?php echo $plan['name']; ?> : (<?php echo $plan['price'] <= 0 ? 'FREE' : '$'.$plan['price']; ?>)</strong> You can cancel or upgrade at any time.</h3>
+					<a href="<?php echo PLAYBASIS; ?>/plans.html" class="btn btn-primary pull-right">Change Plan</a>
 				</div>
-                      <?php
-                      $chosenPlan = null;
-                      if(isset($_GET['plan'])){
-                          $chosenPlan = $_GET['plan'];
-                      }
-                      if(isset($temp_fields['plan'])){
-                          $chosenPlan = $temp_fields['plan'];
-                      }
-                      ?>
-                      <?php if(in_array($chosenPlan, $availablePlans)){ ?>
-                          <input type = 'hidden' value = '<?php echo $chosenPlan; ?>' name = 'plan'/>
-                      <?php }else{ ?>
-                          <?php  header( 'Location: '.$hostPlaybasis.'/plans.html' ) ;  ?>
-                          <?php exit(); ?>
-                      <?php } ?>
 			        <form class="validate" role="form" action="" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="" novalidate>
 			      	<div id="message"></div>
 
@@ -95,9 +76,7 @@
 			                    </div>
 			                </div>
 
-			                <script type="text/javascript"
-			                src="//www.google.com/recaptcha/api/challenge?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>">
-			                </script>
+			                <script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>"></script>
 			                <noscript>
 			                    <iframe src="//www.google.com/recaptcha/api/noscript?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>"
 			                    height="300" width="500" frameborder="0"></iframe><br>
@@ -125,9 +104,7 @@
 			                    </div>
 			                </div>
 
-			                <script type="text/javascript"
-			                src="//www.google.com/recaptcha/api/challenge?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>">
-			                </script>
+			                <script type="text/javascript" src="//www.google.com/recaptcha/api/challenge?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>"></script>
 			                <noscript>
 			                    <iframe src="//www.google.com/recaptcha/api/noscript?k=<?php echo CAPTCHA_PUBLIC_KEY; ?>"
 			                    height="300" width="500" frameborder="0"></iframe><br>
@@ -137,7 +114,7 @@
 
 			            </div>
 			            <div class="form-group span12 text-center">
-			            	<small>By clicking on "Sign Up" below, you agree to the <a href="<?php echo $hostPlaybasis ?>/about/privacy" target="_blank">Terms of Service</a> and the <a href="<?php echo $hostPlaybasis ?>/about/terms-of-service" target="_blank">Privacy Policy</a></small>
+			            	<small>By clicking on "Sign Up" below, you agree to the <a href="<?php echo PLAYBASIS; ?>/about/privacy" target="_blank">Terms of Service</a> and the <a href="<?php echo PLAYBASIS; ?>/about/terms-of-service" target="_blank">Privacy Policy</a></small>
 			            </div>
 			            <div class="form-group span12">
                         		<input type = 'hidden' value = 'new' name = 'version'/>
@@ -149,14 +126,6 @@
 		</div>
 	</div><!-- signup-page -->
 </div><!-- signup-page-wrapper -->
-
-
-
-
-
-
-
-
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.1.47/jquery.form-validator.min.js"></script>
 
@@ -177,23 +146,8 @@ $.validate({
 
         var data = $form.serialize()+"&format=json";
 
-        /*$.post(
-            "<?php echo $config['url_pbapp_register'] ?>",
-            data,
-            function(data) {
-                console.log(data);
-                if (data.response == 'success') {
-                    $form.replaceWith('<p class="has-success text-center lead">Thank you for registering! Please check your email to activate your account.</p>');
-                } else {
-                    $('#captcha_button').click();
-                    $("#message").html('<p class="has-error text-center lead">'+data+'</p>');
-                }
-            },
-            "json"
-        );*/
-
         $.ajax({
-            url: "https://devv2.pbapp.net/register",// TODO: prodiction URL
+            url: "<?php echo current_url(); ?>?plan=<?php echo $_GET['plan']; ?>",
             type: "POST",
             data: data,
             dataType: 'json',
@@ -219,11 +173,8 @@ $.validate({
         });
 
         return false; // Will stop the submission of the form
-        
     }
 
 });
 
 </script>
-
-
