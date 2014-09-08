@@ -37,35 +37,65 @@ class Email extends REST2_Controller
         }
 
 		/* process parameters */
-		$required = $this->input->checkParam(array('from', 'to', 'subject'));
+		$required = $this->input->checkParam(array('from', 'subject'));
 		if ($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$required_to = $this->input->checkParam(array('to'));
+		$required_bcc = $this->input->checkParam(array('bcc'));
+		if ($required && $required_bcc)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required_to), 200);
 		$from = $this->input->post('from');
-		$to = explode(',', $this->input->post('to'));
+		$to = $this->input->post('to') ? explode(',', $this->input->post('to')) : array();
+		$cc = $this->input->post('cc') ? explode(',', $this->input->post('cc')) : array();
+		$bcc = $this->input->post('bcc') ? explode(',', $this->input->post('bcc')) : array();
 		$subject = $this->input->post('subject');
 		$message = $this->input->post('message');
 		if ($message == false) $message = ''; // $message is optional
 		/* check to see if emails are not black list */
-		$res = $this->email_model->isEmailInBlackList($to, $this->site_id);
-		$_to = array();
+		$_to = $this->filter_email_out($to, $this->site_id);
+		$_cc = $this->filter_email_out($cc, $this->site_id);
+		$_bcc = $this->filter_email_out($bcc, $this->site_id);
+		if (!empty($to)) { // 'to-cc' mode
+			if (count($_to) > 0 || count($_cc) > 0) {
+				/* send the email */
+				$response = $this->utility->email_with_cc($from, $_to, $_cc, $subject, $message);
+				$this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $_to, $subject, $message, null, array(), $_cc);
+				/* check response from Amazon SES API */
+				if ($response != false) {
+					$this->response($this->resp->setRespond($response), 200);
+				} else {
+					$this->response($this->error->setError('CANNOT_SEND_EMAIL', implode(',', array_merge($_to, $_cc))), 200);
+				}
+			} else {
+				/* no email to send, return error */
+				$this->response($this->error->setError('ALL_EMAILS_IN_BLACKLIST', implode(',', array_merge($to, $cc))), 200);
+			}
+		} else { // 'bcc' mode
+			if (count($_bcc) > 0) {
+				/* send the email */
+				$response = $this->utility->email_bcc($from, $_bcc, $subject, $message);
+				$this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, null, $subject, $message, null, array(), null, $_bcc);
+				/* check response from Amazon SES API */
+				if ($response != false) {
+					$this->response($this->resp->setRespond($response), 200);
+				} else {
+					$this->response($this->error->setError('CANNOT_SEND_EMAIL', implode(',', $_bcc)), 200);
+				}
+			} else {
+				/* no email to send, return error */
+				$this->response($this->error->setError('ALL_EMAILS_IN_BLACKLIST', $bcc), 200);
+			}
+		}
+	}
+
+	private function filter_email_out($emails) {
+		$res = $this->email_model->isEmailInBlackList($emails, $this->site_id);
+		$_email = array();
 		foreach ($res as $i => $banned) {
 			if ($banned) continue;
-			$_to[] = $to[$i];
+			$_email[] = $emails[$i];
 		}
-		if (count($_to) > 0) {
-			/* send the email */
-			$response = $this->utility->email($from, $_to, $subject, $message);
-			$this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $to, $subject, $message);
-			/* check response from Amazon SES API */
-			if ($response != false) {
-				$this->response($this->resp->setRespond($response), 200);
-			} else {
-				$this->response($this->error->setError('CANNOT_SEND_EMAIL', implode(',', $_to)), 200);
-			}
-		} else {
-			/* no email to send, return error */
-			$this->response($this->error->setError('ALL_EMAILS_IN_BLACKLIST', $this->input->post('to')), 200);
-		}
+		return $_email;
 	}
 
 	/* return TRUE if email is banned, FALSE otherwise */

@@ -56,7 +56,7 @@ class Email_model extends MY_Model
 		return $this->mongo_db->delete('playbasis_email_blacklist');
 	}
 
-	public function log($type, $client_id, $site_id, $response, $from, $to, $subject, $message, $message_alt=null, $attachments=array())
+	public function log($type, $client_id, $site_id, $response, $from, $to, $subject, $message, $message_alt=null, $attachments=array(), $cc=null, $bcc=null)
 	{
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
@@ -66,6 +66,8 @@ class Email_model extends MY_Model
 			'site_id' => $site_id,
 			'from' => $from,
 			'to' => $to,
+			'cc' => $cc,
+			'bcc' => $bcc,
 			'subject' => $subject,
 			'message' => $message,
 			'response' => $response,

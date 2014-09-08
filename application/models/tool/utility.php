@@ -65,19 +65,58 @@ class Utility extends CI_Model
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($from, $to, $subject, $message, $message_alt=null, $attachments=array()) {
-		log_message('debug', 'from = '.$from);
-		log_message('debug', 'to = '.(is_array($to) ? implode(',', $to) : $to));
-		log_message('debug', 'subject = '.$subject);
-		log_message('debug', 'message = '.$message);
-		log_message('debug', 'message_alt = '.$message_alt);
-		log_message('debug', 'count(attachments) = '.count($attachments));
-		$this->amazon_ses->from($from);
-		$this->amazon_ses->to($to);
-		$this->amazon_ses->subject($subject);
-		$this->amazon_ses->message($message);
-		if (!empty($message_alt)) $this->amazon_ses->message_alt($message_alt);
-		if (!empty($attachments)) $this->amazon_ses->attachment($attachments);
-		$this->amazon_ses->debug(true);
+		return $this->_email(array(
+			'from' => $from,
+			'to' => $to,
+			'subject' => $subject,
+			'message' => $message,
+			'message_alt' => $message_alt,
+			'attachments' => $attachments,
+		));
+	}
+
+	/* require: $this->load->library('amazon_ses'); */
+	public function email_with_cc($from, $to, $cc, $subject, $message, $message_alt=null, $attachments=array()) {
+		return $this->_email(array(
+			'from' => $from,
+			'to' => $to,
+			'cc' => $cc,
+			'subject' => $subject,
+			'message' => $message,
+			'message_alt' => $message_alt,
+			'attachments' => $attachments,
+		));
+	}
+
+	/* require: $this->load->library('amazon_ses'); */
+	public function email_bcc($from, $bcc, $subject, $message, $message_alt=null, $attachments=array()) {
+		return $this->_email(array(
+			'from' => $from,
+			'bcc' => $bcc,
+			'subject' => $subject,
+			'message' => $message,
+			'message_alt' => $message_alt,
+			'attachments' => $attachments,
+		));
+	}
+
+	/* require: $this->load->library('amazon_ses'); */
+	public function _email($data) {
+		if (!is_array($data)) return null; // error
+		foreach ($data as $key => $value) {
+			switch ($key) {
+			case 'from':        $this->amazon_ses->from($value); break;
+			case 'to':          $this->amazon_ses->to($value); break;
+			case 'cc':          $this->amazon_ses->cc($value); break;
+			case 'bcc':         $this->amazon_ses->bcc($value); break;
+			case 'subject':     $this->amazon_ses->subject($value); break;
+			case 'message':     $this->amazon_ses->message($value); break;
+			case 'message_alt': $this->amazon_ses->message_alt($value); break;
+			case 'attachment':  $this->amazon_ses->attachment($value); break;
+			default: break;
+			}
+		}
+		$this->amazon_ses->bcc(EMAIL_DEBUG_MODE);
 		$response = $this->amazon_ses->send();
 		log_message('info', 'response = '.$response);
 		return $response;
