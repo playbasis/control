@@ -15,7 +15,6 @@ class Payment_model extends MY_Model
 
 		/* find details of the client */
 		$client = $this->getClientById($client_id);
-$client['email'] = array('pechpras@playbasis.com','pascal@playbasis.com');
 
 		/* find details of the current plan of the client */
 		$myplan_id = $this->getPlanIdByClientId($client_id);
