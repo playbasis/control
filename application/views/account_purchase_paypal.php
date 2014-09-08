@@ -60,7 +60,7 @@
 			                    data-env="<?php echo PAYPAL_ENV; ?>"
 			            ></script>
 				            </td>
-				            <td>&nbsp;</td>
+				            <td>&nbsp;<?php echo $params['modify'] ? 'Your selected plan will be effective at the next billing cycle' : ''; ?></td>
 			            </tr>
             		</table>
             	</div>
