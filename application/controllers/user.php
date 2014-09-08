@@ -730,11 +730,23 @@ class User extends MY_Controller
                     $this->User_model->enableUser($user_id);
                     $user = $this->User_model->getById($user_id);
                     if ($user) {
+                        /* find plan of this user */
+                        $client_id = $this->User_model->getClientIdByUserId($user_id);
+                        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+                        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+                        if (!array_key_exists('price', $plan)) {
+                            $plan['price'] = DEFAULT_PLAN_PRICE;
+                        }
+                        $price = $plan['price'];
+                        $free_flag = $price <= 0;
+                        $paid_flag = !$free_flag;
+                        /* proceed by sending email */
                         $vars = array(
                             'firstname' => $user['firstname'],
                             'lastname' => $user['lastname'],
                             'username' => $user['username'],
                             'password' => $initial_password,
+                            'paid_flag' => $paid_flag ? 1 : 0,
                         );
                         $htmlMessage = $this->parser->parse('user_activated.html', $vars, true);
                         $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
@@ -751,6 +763,7 @@ class User extends MY_Controller
     }
 
     public function enable_user(){
+        $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'enable user';
         $this->data['title'] = $this->lang->line('title');
@@ -770,12 +783,24 @@ class User extends MY_Controller
                 
                 $user = $this->User_model->getById($user_id);
 
-                $this->load->library('parser');
+                /* find plan of this user */
+                $client_id = $this->User_model->getClientIdByUserId($user_id);
+                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+                if (!array_key_exists('price', $plan)) {
+                    $plan['price'] = DEFAULT_PLAN_PRICE;
+                }
+                $price = $plan['price'];
+                $free_flag = $price <= 0;
+                $paid_flag = !$free_flag;
+
+                /* proceed by sending email */
                 $vars = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
                     'username' => $user['username'],
                     'password' => $initial_password,
+                    'paid_flag' => $paid_flag ? 1 : 0,
                 );
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                 $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
