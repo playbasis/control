@@ -206,7 +206,6 @@ class Domain extends MY_Controller
 
                 // get Plan limit_others.domain
                 $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
-                if ($limit == null) $limit = DEFAULT_LIMIT_DOMAINS; // TODO: review this statement, do we really need to do this
 
                 // Get current client site
                 $usage = $this->Client_model->getSitesByClientId($client_id);
