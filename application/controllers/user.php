@@ -217,9 +217,9 @@ class User extends MY_Controller
 
             if($this->form_validation->run()){
                 // get Plan limit_others.user
+                $user_limit = null;
                 try {
                     $user_limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "user");
-                    if ($user_limit == null) $user_limit = DEFAULT_LIMIT_USERS; // TODO: review this statement, do we really need to do this
                 } catch(Exception $e) {
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
                     redirect("user/");
