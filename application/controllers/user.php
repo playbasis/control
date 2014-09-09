@@ -219,8 +219,7 @@ class User extends MY_Controller
                 // get Plan limit_others.user
                 try {
                     $user_limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "user");
-                    if (!isset($user_limit["value"]) || !$user_limit["value"])
-                        $user_limit["value"] = 3;  // default
+                    if ($user_limit == null) $user_limit = DEFAULT_LIMIT_USERS; // TODO: review this statement, do we really need to do this
                 } catch(Exception $e) {
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
                     redirect("user/");
@@ -231,7 +230,7 @@ class User extends MY_Controller
                     array("client_id" => $client_id));
 
                 // compute
-                if ($user_usage >= $user_limit["value"]) {
+                if ($user_limit != null && $user_usage >= $user_limit) {
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_user"));
                     redirect("user/");
                 }
@@ -630,8 +629,6 @@ class User extends MY_Controller
                             $data = $this->input->post();
                             $data['client_id'] = $client_id;
                             $data['user_id'] =  $user_info['_id'];
-                            $data['limit_users'] = array_key_exists('limit_others', $plan) && array_key_exists('player', $plan['limit_others']) ? $plan['limit_others']['player'] : DEFAULT_LIMIT_NUM_PLAYERS;
-
                             $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
 
                             $site_id = $this->Domain_model->addDomain($data); // [4] then insert a new domain into "playbasis_client_site"
@@ -640,14 +637,14 @@ class User extends MY_Controller
                             $data['client_id'] = $client_id;
                             $data['plan_id'] = $plan_id;
                             $data['site_id'] = $site_id;
-                            $this->Permission_model->addPlanToPermission($data); // [5] finally, bind the client to the selected plan
+                            $this->Permission_model->addPlanToPermission($data); // [5] bind the client to the selected plan "playbasis_permission"
 
                             $another_data['domain_value'] = array(
                                 'site_id' => $site_id,
                                 'status' => true
                             );
 
-                            $this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] then populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
+                            $this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] finally, populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));

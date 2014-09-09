@@ -206,7 +206,7 @@ class Domain extends MY_Controller
 
                 // get Plan limit_others.domain
                 $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "domain");
-                if ($limit == null) $limit = DEFAULT_LIMIT_DOMAIN; // TODO: review this statement, do we really need to do this
+                if ($limit == null) $limit = DEFAULT_LIMIT_DOMAINS; // TODO: review this statement, do we really need to do this
 
                 // Get current client site
                 $usage = $this->Client_model->getSitesByClientId($client_id);
@@ -229,7 +229,6 @@ class Domain extends MY_Controller
                     $d_data['domain_name'] = $this->input->post('domain_domain_name');
                     $d_data['site_name'] = $this->input->post('domain_site_name');
                     $d_data['user_id'] =  $this->User_model->getId();
-                    $d_data['limit_users'] = 1000;
 
                     $site_id = $this->Domain_model->addDomain($d_data);
 
@@ -311,7 +310,6 @@ class Domain extends MY_Controller
 
         $this->form_validation->set_rules('domain_name', $this->lang->line('entry_domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
         $this->form_validation->set_rules('site_name', $this->lang->line('entry_site_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('limit_users', $this->lang->line('limit_users'), 'trim|xss_clean|check_space|numeric');
 
         $json = array();
 

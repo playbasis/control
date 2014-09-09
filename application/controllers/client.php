@@ -571,7 +571,6 @@ class Client extends MY_Controller
                     'site_name' => $result['site_name'],
                     'keys' => $result['api_key'],
                     'secret' => $result['api_secret'],
-                    'limit_users' => $result['limit_users'],
                     'status' => $result['status'],
                     'date_added' => $result['date_added'],
                     'date_modified' => $result['date_modified']

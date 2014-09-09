@@ -46,8 +46,8 @@ define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');
 define('DEFAULT_PLAN_PRICE', 0); // default is free package
 define('DEFAULT_PLAN_DISPLAY', false); // default is to not display the plan
 define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
-define('DEFAULT_LIMIT_NUM_PLAYERS', 1000); // default limit number of player for a plan
-define('DEFAULT_LIMIT_DOMAIN', 3); // default limit number of domains
+define('DEFAULT_LIMIT_DOMAINS', 3); // default limit number of domains
+define('DEFAULT_LIMIT_USERS', 3); // default limit number of users
 define('MAX_ALLOWED_TRIAL_DAYS', 90); // this is limited by PayPal
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
 define('PAYPAL_MERCHANT_ID', 'CEUXV2RH33E92');

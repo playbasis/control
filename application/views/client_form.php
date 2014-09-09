@@ -193,23 +193,6 @@
                             <td><input type="text" name="domain_site_name" value="" size="50" class="tooltips" data-placement="right" title="Client's site name (example: Playbasis)"/></td>
                         </tr>
                         <tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('limit_users'); ?>:</td>
-                            <td><input type="text" name="limit_users" value="" size="50" class="tooltips" data-placement="right" title="Number of users that the client can create"/></td>
-                        </tr>
-                        <!--tr>
-                            <td><span class="required">*</span> <?php echo $this->lang->line('entry_plan'); ?>:</td>
-                            <td>
-                                <select name="domain_plan_id">
-                                    <option value="" selected="selected"><?php echo $this->lang->line('text_select'); ?></option>
-                                    <?php if ($plan_data) { ?>
-                                    <?php foreach ($plan_data as $plan) { ?>
-                                        <option value="<?php echo $plan['_id']; ?>"><?php echo $plan['name']; ?></option>
-                                        <?php } ?>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr-->
-                        <tr>
                             <td><?php echo $this->lang->line('entry_status'); ?>:</td>
                             <td>
                                 <select name="domain_status">
@@ -242,9 +225,7 @@
 function addNewDomain() {
     var domain_name = $('input[name=domain_name]').val();
     var site_name = $('input[name=domain_site_name]').val();
-    var limit_users = $('input[name=limit_users]').val();
     var status = $('select[name=domain_status]').val();
-    var plan_id = $('select[name=domain_plan_id]').val();
 
     $('#notification').html("").removeClass('warning').hide();
 
@@ -252,7 +233,7 @@ function addNewDomain() {
         url: baseUrlPath+'domain/insert_ajax',
         type: 'POST',
         dataType: 'json',
-        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'limit_users' : limit_users, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
+        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'status' : status, 'client_id' : '<?php echo $list_client_id; ?>'}),
         success: function(json) {
             var notification = $('#notification');
 
@@ -273,7 +254,6 @@ function addNewDomain() {
     });
 
     return false;
-
 }
 
 //--></script>
@@ -318,7 +298,6 @@ function addNewUser() {
     });
 
     return false;
-
 }
 
 //--></script>
@@ -369,7 +348,6 @@ function resetToken(site_id) {
     });
 
     return false;
-
 }
 
 //--></script>

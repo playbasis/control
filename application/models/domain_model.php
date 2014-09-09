@@ -222,14 +222,10 @@ class Domain_model extends MY_Model
             'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
             'status' => true,
             'deleted' => false,
-            'limit_users' => null,
             'last_send_limit_users' => null,
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
         );
-        if(isset($data['limit_users']) && $data['limit_users']){
-            $data_insert['limit_users'] = $data['limit_users'];
-        }
 
         $c = $this->mongo_db->insert('playbasis_client_site', $data_insert);
 

@@ -22,9 +22,6 @@
                     <br /><span class="help">Keys:</span> <?php echo $domain['keys']; ?>
                     <br /><span class="help">Secret:</span> <?php echo $domain['secret']; ?>
                 </td>
-                <td class="left">
-                    <input type="text" name="domain_value[<?php echo $domain_row; ?>][limit_users]" value="<?php echo $domain['limit_users']; ?>" size="50" />
-                </td>
                 <td class="right"><select name="domain_value[<?php echo $domain_row; ?>][status]">
                         <?php if ($domain['status']==1) { ?>
                             <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>

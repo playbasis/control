@@ -148,7 +148,6 @@ class Client_model extends MY_Model
 
                 $this->mongo_db->where('_id',  new MongoID($domain_value['site_id']));
                 $this->mongo_db->set('status', (bool)$domain_value['status']);
-                $this->mongo_db->set('limit_users', $domain_value['limit_users']);
                 $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
                 $this->mongo_db->update('playbasis_client_site');
 
@@ -426,9 +425,10 @@ class Client_model extends MY_Model
         $price = ($plan && array_key_exists('price', $plan) ? $plan['price'] : DEFAULT_PLAN_PRICE);
         $free_flag = ($price <= 0);
 
-        if ($free_flag) { // free package
+        if ($free_flag) { // free package, focus mainly on "date_start" when API is calculating usage
             $date_start = $d;
             $date_expire = new MongoDate(strtotime("+".FOREVER." year")); // client with free package has no expiration date
+            //$date_expire = null; // client with free package has no expiration date
         } else { // trial package
             $date_start = new MongoDate(strtotime("+".FOREVER." year")); // client with trial package CANNOT start using our API right away after registration; instead, they have to put payment detail first
             $date_expire = $date_start;
