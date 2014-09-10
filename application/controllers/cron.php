@@ -33,7 +33,8 @@ class Cron extends CI_Controller
 					$to = $email;
 					$subject = '[Playbasis] Notify Inactive Clients';
 					$message = 'You are currently not using our API ['.$client_id.']';
-					$response = $this->utility->email($from, $to, $subject, $message);
+					//$response = $this->utility->email($from, $to, $subject, $message);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
 					$this->email_model->log(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id, null, $response, $from, $to, $subject, $message);
 				}
 			}
@@ -66,7 +67,8 @@ class Cron extends CI_Controller
 					$to = $email;
 					$subject = '[Playbasis] Notify Free Active Clients to Subscribe';
 					$message = 'Enjoy using our Playbasis API? Please take a look into our subscription plan ['.$client_id.']';
-					$response = $this->utility->email($from, $to, $subject, $message);
+					//$response = $this->utility->email($from, $to, $subject, $message);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
 					$this->email_model->log(EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS, $client_id, null, $response, $from, $to, $subject, $message);
 				}
 			}
@@ -110,7 +112,8 @@ class Cron extends CI_Controller
 								$to = $email;
 								$subject = '[Playbasis] Notify Near Limit Usage';
 								$message = 'Your API usage for "'.$type.'.'.$field.'" is approaching the limit ['.$client_id.']'.' ['.$site_id.']';
-								$response = $this->utility->email($from, $to, $subject, $message);
+								//$response = $this->utility->email($from, $to, $subject, $message);
+								$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
 								$this->email_model->log(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id, $response, $from, $to, $subject, $message);
 							}
 						}
@@ -148,7 +151,8 @@ class Cron extends CI_Controller
 					$to = $email;
 					$subject = '[Playbasis] Reminder to Finish Setting Up Subscription';
 					$message = 'You have to finish setting up the subscription before you can really start using our API ['.$client_id.']. Your plan ID ['.$myplan_id.']';
-					$response = $this->utility->email($from, $to, $subject, $message);
+					//$response = $this->utility->email($from, $to, $subject, $message);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
 					$this->email_model->log(EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION, $client_id, null, $response, $from, $to, $subject, $message);
 				}
 			}
@@ -187,7 +191,8 @@ class Cron extends CI_Controller
 						$to = $email;
 						$subject = '[Playbasis] Remind End of Trial Period';
 						$message = 'This is to let you know that your trial period has ended ['.$client_id.']. Your plan ID ['.$myplan_id.']';
-						$response = $this->utility->email($from, $to, $subject, $message);
+						//$response = $this->utility->email($from, $to, $subject, $message);
+						$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
 						$this->email_model->log(EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD, $client_id, null, $response, $from, $to, $subject, $message);
 					}
 				}
@@ -215,7 +220,8 @@ class Cron extends CI_Controller
 					$to = $email;
 					$subject = '[Playbasis] Alert! Shutdown Your Access to Our API';
 					$message = 'This is to let you know that your access to our API has been shut down ['.$client_id.']';
-					$response = $this->utility->email($from, $to, $subject, $message);
+					//$response = $this->utility->email($from, $to, $subject, $message);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
 					$this->email_model->log(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id, null, $response, $from, $to, $subject, $message);
 				}
 			}
