@@ -90,32 +90,36 @@ class Cron extends CI_Controller
 			}
 			$free_flag = $myplan['price'] <= 0;
 
-			/* get the value of limit imposed by the plan */
-			$type = 'requests';
-			$limit = $this->client_model->getPlanLimitById($site_id, $myplan_id, $type);
-			if ($limit) {
-				$clientDate = ($free_flag ? $this->client_model->getFreeClientStartEndDate($client_id) : $this->client_model->getClientStartEndDate($client_id));
-				foreach ($limit as $field => $usage_limit) {
-					/* find current usage for the field */
-					$usage = $this->client_model->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
+			/* check "limit_requests", "limit_notifications" specified by the plan */
+			foreach (array('requests', 'notifications') as $type) {
+				$limit = $this->client_model->getPlanLimitById($site_id, $myplan_id, $type);
+				if ($limit) {
+					$clientDate = ($free_flag ? $this->client_model->getFreeClientStartEndDate($client_id) : $this->client_model->getClientStartEndDate($client_id));
+					foreach ($limit as $field => $usage_limit) {
+						/* find current usage for the field */
+						$usage = $this->client_model->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
 
-					/* check usage */
-					if ($usage < $usage_limit && $usage >= PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT*$usage_limit) { // this will not send if the client has already go over the limit
-						$email = $client['email'];
-						$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id);
-						/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
-						if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
-							/* email */
-							$from = EMAIL_FROM;
-							$to = $email;
-							$subject = '[Playbasis] Notify Near Limit Usage';
-							$message = 'Your API usage for "'.$type.'.'.$field.'" is approaching the limit ['.$client_id.']'.' ['.$site_id.']';
-							$response = $this->utility->email($from, $to, $subject, $message);
-							$this->email_model->log(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id, $response, $from, $to, $subject, $message);
+						/* check usage */
+						if ($usage < $usage_limit && $usage >= PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT*$usage_limit) { // this will not send if the client has already go over the limit
+							$email = $client['email'];
+							$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id);
+							/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
+							if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
+								/* email */
+								$from = EMAIL_FROM;
+								$to = $email;
+								$subject = '[Playbasis] Notify Near Limit Usage';
+								$message = 'Your API usage for "'.$type.'.'.$field.'" is approaching the limit ['.$client_id.']'.' ['.$site_id.']';
+								$response = $this->utility->email($from, $to, $subject, $message);
+								$this->email_model->log(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id, $response, $from, $to, $subject, $message);
+							}
 						}
 					}
 				}
 			}
+
+			/* check "limit_others" */
+			// TODO:
 		}
 	}
 
