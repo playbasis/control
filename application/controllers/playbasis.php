@@ -8,21 +8,11 @@ class Playbasis extends REST2_Controller
 	{
 		parent::__construct();
 		$this->load->model('plan_model');
+		$this->load->model('payment_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/respond', 'resp');
 	}
-	public function test()
-	{
-		$this->load->view('playbasis/apitest');
-	}
-	public function fb()
-	{
-		$this->load->view('playbasis/fb');
-	}
-	public function login()
-	{
-		$this->load->view('playbasis/login');
-	}
+
 	public function plans_get() {
 		$plans = $this->plan_model->listDisplayPlans(array('site_id' => 0));
 		$plan_call_us = $this->plan_model->getPlanById(new MongoId(PLAN_ID_FOR_CALL_US));
@@ -31,6 +21,7 @@ class Playbasis extends REST2_Controller
 		} else {
 			if ($plan_call_us) $plans = array($plan_call_us);
 		}
+		$cache = array();
 		if (is_array($plans)) foreach ($plans as &$plan) {
 			$plan['_id'] = $plan['_id']->{'$id'};
 			$plan['price'] = array_key_exists('price', $plan) ? intval($plan['price']) : DEFAULT_PLAN_PRICE;
@@ -38,6 +29,19 @@ class Playbasis extends REST2_Controller
 			$plan['custom_flag'] = ($plan['_id'] == PLAN_ID_FOR_CALL_US);
 			$plan['date_added'] = $plan['date_added']->sec;
 			$plan['date_modified'] = $plan['date_modified']->sec;
+			if (array_key_exists('feature_to_plan', $plan)) foreach ($plan['feature_to_plan'] as $i => $feature_id) {
+				$plan['feature_to_plan'][$i] = $this->getSytemFeatureById($feature_id, $cache, 'name');
+			}
+			if (array_key_exists('action_to_plan', $plan)) foreach ($plan['action_to_plan'] as $i => $action_id) {
+				$plan['action_to_plan'][$i] = $this->getSytemActionById($action_id, $cache, 'name');
+			}
+			if (array_key_exists('reward_to_plan', $plan)) foreach ($plan['reward_to_plan'] as $i => $reward) {
+				$plan['reward_to_plan'][$i]['name'] = $this->getSytemRewardById($reward['reward_id'], $cache, 'name');
+				unset($plan['reward_to_plan'][$i]['reward_id']);
+			}
+			if (array_key_exists('jigsaw_to_plan', $plan)) foreach ($plan['jigsaw_to_plan'] as $i => $jigsaw_id) {
+				$plan['jigsaw_to_plan'][$i] = $this->getSytemJigsawById($jigsaw_id, $cache, 'name');;
+			}
 			if (array_key_exists('limit_requests', $plan)) foreach ($plan['limit_requests'] as $key => $value) {
 				$plan['limit_requests'][str_replace('/','',$key)] = $value;
 				unset($plan['limit_requests'][$key]);
@@ -45,6 +49,58 @@ class Playbasis extends REST2_Controller
 		}
 		$this->response($this->resp->setRespond($plans), 200);
 	}
+
+	private function getSytemFeatureById($feature_id, $cache, $field) {
+		$key = $feature_id->{'$id'};
+		if (!array_key_exists($key, $cache)) {
+			$value = $this->payment_model->getSytemFeatureById($feature_id);
+			$cache[$key] = $value;
+		}
+		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+	}
+
+	private function getSytemActionById($action_id, $cache, $field) {
+		$key = $action_id->{'$id'};
+		if (!array_key_exists($key, $cache)) {
+			$value = $this->payment_model->getSytemActionById($action_id);
+			$cache[$key] = $value;
+		}
+		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+	}
+
+	private function getSytemRewardById($reward_id, $cache, $field) {
+		$key = $reward_id->{'$id'};
+		if (!array_key_exists($key, $cache)) {
+			$value = $this->payment_model->getSytemRewardById($reward_id);
+			$cache[$key] = $value;
+		}
+		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+	}
+
+	private function getSytemJigsawById($jigsaw_id, $cache, $field) {
+		$key = $jigsaw_id->{'$id'};
+		if (!array_key_exists($key, $cache)) {
+			$value = $this->payment_model->getSytemJigsawById($jigsaw_id);
+			$cache[$key] = $value;
+		}
+		return $cache[$key] && array_key_exists($field, $cache[$key]) ? $cache[$key][$field] : null;
+	}
+
+	public function test()
+	{
+		$this->load->view('playbasis/apitest');
+	}
+
+	public function fb()
+	{
+		$this->load->view('playbasis/fb');
+	}
+
+	public function login()
+	{
+		$this->load->view('playbasis/login');
+	}
+
 	/*
     public function memtest()
     {

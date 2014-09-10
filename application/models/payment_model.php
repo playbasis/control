@@ -125,7 +125,7 @@ class Payment_model extends MY_Model
 		return true;
 	}
 
-	private function findFreePlan() {
+	public function findFreePlan() {
 		$this->mongo_db->where('display', true);
 		$plans = $this->mongo_db->get("playbasis_plan");
 		if ($plans) foreach ($plans as $plan) {
@@ -134,12 +134,12 @@ class Payment_model extends MY_Model
 		return null;
 	}
 
-	private function getPlanIdByClientId($client_id) {
+	public function getPlanIdByClientId($client_id) {
 		$permission = $this->getLatestPermissionByClientId($client_id);
 		return $permission ? $permission['plan_id'] : null;
 	}
 
-	private function getLatestPermissionByClientId($client_id) {
+	public function getLatestPermissionByClientId($client_id) {
 		$this->mongo_db->where('client_id', $client_id);
 		$this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
 		$this->mongo_db->limit(1);
@@ -153,31 +153,31 @@ class Payment_model extends MY_Model
 		return $results ? $results[0] : null;
 	}
 
-	private function getClientById($client_id) {
+	public function getClientById($client_id) {
 		return $this->getById($client_id, 'playbasis_client');
 	}
 
-	private function getPlanById($plan_id) {
+	public function getPlanById($plan_id) {
 		return $this->getById($plan_id, 'playbasis_plan');
 	}
 
-	private function getSytemRewardById($reward_id) {
+	public function getSytemRewardById($reward_id) {
 		return $this->getById($reward_id, 'playbasis_reward');
 	}
 
-	private function getSytemFeatureById($feature_id) {
+	public function getSytemFeatureById($feature_id) {
 		return $this->getById($feature_id, 'playbasis_feature');
 	}
 
-	private function getSytemActionById($action_id) {
+	public function getSytemActionById($action_id) {
 		return $this->getById($action_id, 'playbasis_action');
 	}
 
-	private function getSytemJigsawById($jigsaw_id) {
+	public function getSytemJigsawById($jigsaw_id) {
 		return $this->getById($jigsaw_id, 'playbasis_jigsaw');
 	}
 
-	private function listSitesByClientId($client_id) {
+	public function listSitesByClientId($client_id) {
 		$this->mongo_db->where(array('client_id' => $client_id));
 		return $this->mongo_db->get('playbasis_client_site');
 	}
