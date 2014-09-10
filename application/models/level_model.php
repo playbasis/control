@@ -484,7 +484,7 @@ class Level_model extends MY_Model
             filter_var($site_id, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
         $this->set_site_mongodb($this->session->userdata("site_id"));
-        if ($client_id) {
+        if ($client_id && $site_id) {
             $this->mongo_db->where("client_id",  new MongoID($client_id));
             $this->mongo_db->where("site_id",  new MongoID($site_id));
             return $this->mongo_db->delete_all('playbasis_client_exp_table');
@@ -576,14 +576,16 @@ class Level_model extends MY_Model
         if (filter_var($client_id, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($site_id, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
+
         // count number of level documents
         $this->set_site_mongodb($this->session->userdata("site_id"));
-        $this->mongo_db->where("client_id", new MongoID($client_id));
-        $this->mongo_db->where("site_id", new MongoID($site_id));
-        if ($client_id)
+        if ($client_id && $site_id) {
+            $this->mongo_db->where("client_id", new MongoID($client_id));
+            $this->mongo_db->where("site_id", new MongoID($site_id));
             return $this->mongo_db->count("playbasis_client_exp_table");
-        else
+        } else {
             return $this->mongo_db->count("playbasis_exp_table");
+        }
     }
 
     private function datetimeMongotoReadable($dateTimeMongo)

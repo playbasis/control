@@ -131,7 +131,6 @@ class Quest extends MY_Controller
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
         $lmts = $this->Plan_model->getPlanLimitById(
-            $site_id,
             $plan_id,
             'others',
             array('quest', 'mission')
@@ -841,12 +840,7 @@ class Quest extends MY_Controller
 
         // Get Limit
         $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $lmts = $this->Plan_model->getPlanLimitById(
-            $site_id,
-            $plan_id,
-            'others',
-            'mission'
-        );
+        $lmts = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'mission');
 
         $this->data['message'] = array();
         if (isset($lmts['mission']) && $missions >= $lmts['mission']) {
@@ -994,13 +988,18 @@ class Quest extends MY_Controller
             array("client_id" => strval($client_id),
                 "site_id" => strval($site_id),
                 "quest_id" => strval($quest_id)));
-        $obj_result = json_decode($raw_result);
 
-        // if success, assume that this quest ok
-        if ($obj_result->success)
-            $this->output->set_output(json_encode(array("success" => true)));
-        else
+        try {
+            $obj_result = json_decode($raw_result);
+
+            // if success, assume that this quest ok
+            if ($obj_result->success)
+                $this->output->set_output(json_encode(array("success" => true)));
+            else
+                $this->output->set_output(json_encode(array("success" => false)));
+        } catch(Exception $e) {
             $this->output->set_output(json_encode(array("success" => false)));
+        }
     }
 
     private function curl($url, $data) {

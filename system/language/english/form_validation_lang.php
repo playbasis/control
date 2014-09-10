@@ -26,6 +26,7 @@ $lang['greater_than']		= "The %s field must contain a number greater than %s.";
 $lang['check_space']		= "The %s field must not contain spaces.";
 $lang['valid_url_format']	= "The %s you entered is not correctly formatted, make sure to include http(s)://";
 $lang['url_exists']			= "The %s you entered is not accessible.";
+$lang['url_exists_without_http']	= "The %s you entered is not accessible.";
 
 /* End of file form_validation_lang.php */
 /* Location: ./system/language/english/form_validation_lang.php */

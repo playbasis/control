@@ -34,6 +34,9 @@
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left"><?php echo $this->lang->line('column_plan_name'); ?></td>
                         <td class="left"><?php echo $this->lang->line('column_description'); ?></td>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_trial'); ?></td>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_price'); ?></td>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_display'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
@@ -49,6 +52,9 @@
                                 <?php } ?></td>
                             <td class="left"><?php echo $plan['name']; ?></td>
                             <td class="left"><?php echo $plan['description']; ?></td>
+	                        <td class="right"><?php echo $plan['trial']; ?></td>
+	                        <td class="right"><?php echo $plan['price']; ?></td>
+	                        <td class="right"><?php echo ($plan['display']==0)? $this->lang->line('text_not_displayed') : $this->lang->line('text_displayed'); ?></td>
                             <td class="right"><?php echo ($plan['status']==0)? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
                             <td class="right">
                                 [ <?php echo anchor('plan/update/'.$plan['plan_id'], 'Edit'); ?> ]

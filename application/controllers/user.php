@@ -189,6 +189,11 @@ class User extends MY_Controller
 
     }
 
+    /*
+     * Add Other user to use the same Client-Site
+     * Each Client-Site has limit according to plan
+     * ** Compatible-purpose ** default is 3
+     */
     public function insert(){
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -207,14 +212,31 @@ class User extends MY_Controller
         $this->form_validation->set_rules('user_group', "", '');
         $this->form_validation->set_rules('status', "", '');
 
-
-
-
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             $client_id = $this->User_model->getClientId();
+            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
             if($this->form_validation->run()){
+                // get Plan limit_others.user
+                $user_limit = null;
+                try {
+                    $user_limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "user");
+                } catch(Exception $e) {
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_internal"));
+                    redirect("user/");
+                }
+
+                // get current user usage from this client
+                $user_usage = $this->User_model->getTotalUserByClientId(
+                    array("client_id" => $client_id));
+
+                // compute
+                if ($user_limit != null && $user_usage >= $user_limit) {
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_user"));
+                    redirect("user/");
+                }
+
                 $user_id = $this->User_model->insertUser();
 
                 if($user_id){
@@ -525,8 +547,6 @@ class User extends MY_Controller
         redirect('/', 'refresh');
     }
 
-
-
     public function register(){
 
         $this->load->model('Image_model');
@@ -536,17 +556,35 @@ class User extends MY_Controller
         $this->data['main'] = 'register';
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title_register'] = $this->lang->line('heading_title_register');
-        $this->data['form'] = 'user/register';
+        $this->data['form'] = 'user/register?plan='.$this->input->get('plan');
         $this->data['user_groups'] = $this->User_model->getUserGroups();
 
-        //Set rules for form regsitration
+        $plan_id = null;
+        $plan = null;
+        try {
+            $plan_id = new MongoId($this->input->get('plan'));
+            $plan = $this->Plan_model->getPlanById($plan_id);
+            if (!$plan) throw new Exception('Cannot find plan '.$plan_id);
+            if (!array_key_exists('price', $plan)) {
+                $plan['price'] = DEFAULT_PLAN_PRICE;
+            }
+        } catch (Exception $e) {
+            header('Location: http://www.playbasis.com/plans.html');
+            echo 'Invalid plan: '.$e->getMessage();
+            exit();
+        }
+
+        $this->data['plan'] = $plan;
+
+        //Set rules for form registration
         $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
         $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
         $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
         $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
         $this->form_validation->set_rules('company_name', $this->lang->line('form_company_name'), 'trim|required|max_length[100]|xss_clean');
-        $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
+        // $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
+        $this->form_validation->set_rules('domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|url_exists_without_http');
         $this->form_validation->set_rules('site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
         
         //ReCaptcha stuff
@@ -554,20 +592,12 @@ class User extends MY_Controller
         $publicKey = CAPTCHA_PUBLIC_KEY;
         $this->data['recaptcha'] = recaptcha_get_html($publicKey);
 
-
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-            // if (isset($this->input->get('plan')){
-            //     $chosenPlan = $this->input->get('plan');
-            //     if ($chosenPlan != 'plan1' || $chosenPlan != 'plan2' || $chosenPlan != 'plan3'){
-            //         echo "then leave";
-            //     }    
-            // }
 
             //ReCaptcha stuff
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
-            if($this->input->post('format') == 'json'){
+            if($this->input->post('format') == 'json' || $this->input->post('version') == 'new'){
                 $_POST['password'] = 'playbasis';
                 $_POST['password_confirm'] = 'playbasis';
                 $_POST['site_name'] = $_POST['domain_name'];
@@ -584,7 +614,6 @@ class User extends MY_Controller
 
                 // if($user_id){
                 if(!$domain){    
-                    // if(!$domain){
                     if (isset($resp) && !$resp->is_valid) {
                     // What happens when the CAPTCHA was entered incorrectly
                         if($this->input->post('format') == 'json'){
@@ -594,49 +623,39 @@ class User extends MY_Controller
                         $this->data['incorrect_captcha'] = $this->lang->line('text_incorrect_captcha');
                         $this->data['temp_fields'] = $this->input->post();
                     }else{
-                        if($user_id = $this->User_model->insertUser()){
+                        if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                             $user_info = $this->User_model->getUserInfo($user_id);
 
-                            $client_id = $this->Client_model->insertClient();
+                            $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
 
                             $data = $this->input->post();
                             $data['client_id'] = $client_id;
                             $data['user_id'] =  $user_info['_id'];
-                            $data['limit_users'] = 1000;
-                            $data['date_start'] = date("Y-m-d H:i:s");
-//                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+1 month"));
-                            $data['date_expire'] = date("Y-m-d H:i:s", strtotime("+100 year"));
+                            $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
 
-                            $this->User_model->addUserToClient($data);
-
-                            $site_id = $this->Domain_model->addDomain($data); //returns an array of client_site
-
-                            $plan_id = $this->Plan_model->getPlanID("BetaTest");//returns plan id
-                            // $plan_id = $this->Plan_model->getPlanID($chosenPlan);
-
-                            $another_data['domain_value'] = array(
-                                    'site_id' =>$site_id,
-                                    'plan_id' => $plan_id,
-                                    'status' =>true
-                                );
-
-                            $this->Client_model->editClientPlan($client_id, $another_data);
+                            $site_id = $this->Domain_model->addDomain($data); // [4] then insert a new domain into "playbasis_client_site"
 
                             $data = array();
                             $data['client_id'] = $client_id;
                             $data['plan_id'] = $plan_id;
                             $data['site_id'] = $site_id;
-                            $this->Permission_model->addPlanToPermission($data);
+                            $this->Permission_model->addPlanToPermission($data); // [5] bind the client to the selected plan "playbasis_permission"
+
+                            $another_data['domain_value'] = array(
+                                'site_id' => $site_id,
+                                'status' => true
+                            );
+
+                            $this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] finally, populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
 
                             if($this->input->post('format') == 'json'){
                                 echo json_encode(array("response"=>"success"));
-
                                 exit();
                             }
                             // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
                             // echo "<script>window.location.href = '".site_url()."';</script>";    
                             $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
-                            redirect('login', 'refresh');        
+                            redirect('login', 'refresh');
                         }else{
                             $this->data['fail_email_exists'] = $this->lang->line('text_fail');
 
@@ -710,11 +729,23 @@ class User extends MY_Controller
                     $this->User_model->enableUser($user_id);
                     $user = $this->User_model->getById($user_id);
                     if ($user) {
+                        /* find plan of this user */
+                        $client_id = $this->User_model->getClientIdByUserId($user_id);
+                        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+                        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+                        if (!array_key_exists('price', $plan)) {
+                            $plan['price'] = DEFAULT_PLAN_PRICE;
+                        }
+                        $price = $plan['price'];
+                        $free_flag = $price <= 0;
+                        $paid_flag = !$free_flag;
+                        /* proceed by sending email */
                         $vars = array(
                             'firstname' => $user['firstname'],
                             'lastname' => $user['lastname'],
                             'username' => $user['username'],
                             'password' => $initial_password,
+                            'paid_flag' => $paid_flag ? 1 : 0,
                         );
                         $htmlMessage = $this->parser->parse('user_activated.html', $vars, true);
                         $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
@@ -731,6 +762,7 @@ class User extends MY_Controller
     }
 
     public function enable_user(){
+        $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'enable user';
         $this->data['title'] = $this->lang->line('title');
@@ -750,12 +782,24 @@ class User extends MY_Controller
                 
                 $user = $this->User_model->getById($user_id);
 
-                $this->load->library('parser');
+                /* find plan of this user */
+                $client_id = $this->User_model->getClientIdByUserId($user_id);
+                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+                if (!array_key_exists('price', $plan)) {
+                    $plan['price'] = DEFAULT_PLAN_PRICE;
+                }
+                $price = $plan['price'];
+                $free_flag = $price <= 0;
+                $paid_flag = !$free_flag;
+
+                /* proceed by sending email */
                 $vars = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
                     'username' => $user['username'],
                     'password' => $initial_password,
+                    'paid_flag' => $paid_flag ? 1 : 0,
                 );
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                 $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
@@ -825,8 +869,13 @@ class User extends MY_Controller
                     'password'=>$this->input->post('password'),
                     'confirm_password' =>$this->input->post('password_confirm'),
                     'edit_account'=>true,
-                    'image' =>$this->input->post('image'),
                 );
+                if($this->input->post('image') != "no_image.jpg"){
+                    $data['image'] =$this->input->post('image');
+                }
+                if($this->input->post('image') == ''){
+                    $data['image'] = '';
+                }
                 if($this->form_validation->run()){
                     $this->User_model->editUser($user_id, $data);
                 }

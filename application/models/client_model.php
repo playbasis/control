@@ -100,9 +100,10 @@ class Client_model extends MY_Model
             'last_name' => isset($data['last_name'])?$data['last_name'] : '' ,
             'mobile' => isset($data['mobile'])?$data['mobile'] : '' ,
             'email' => isset($data['email'])?$data['email'] : '' ,
-            'company' => isset($data['company'])?$data['company'] : '' ,
             'status' => (bool)$data['status'],
             'deleted' => false,
+            'date_start' => $data['date_start'] ? new MongoDate(strtotime($data['date_start'])) : null,
+            'date_expire' => $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null,
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
         );
@@ -118,39 +119,42 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id',  new MongoID($client_id));
+        $this->mongo_db->set('company', isset($data['company'])?$data['company'] : '');
         $this->mongo_db->set('first_name', $data['first_name']);
         $this->mongo_db->set('last_name', $data['last_name']);
         $this->mongo_db->set('mobile', $data['mobile']);
         $this->mongo_db->set('email', $data['email']);
-        $this->mongo_db->set('company', isset($data['company'])?$data['company'] : '');
         $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('date_start', $data['date_start'] ? new MongoDate(strtotime($data['date_start'])) : null);
+        $this->mongo_db->set('date_expire', $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-
         if (isset($data['image'])) {
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
         }
 
         $this->mongo_db->update('playbasis_client');
 
+        /* update plan */
+        $data_filter = array(
+            'client_id' => $client_id,
+            'site_id' => null,
+            'plan_id' => $data['plan_id']
+        );
+
+        $this->addPlanToPermission($data_filter);
+
         if (isset($data['domain_value'])) {
             foreach ($data['domain_value'] as $domain_value) {
 
                 $this->mongo_db->where('_id',  new MongoID($domain_value['site_id']));
                 $this->mongo_db->set('status', (bool)$domain_value['status']);
-                $this->mongo_db->set('limit_users', $domain_value['limit_users']);
-                if($domain_value['domain_start_date']){
-                    $this->mongo_db->set('date_start', new MongoDate(strtotime($domain_value['domain_start_date'])));
-                }
-                if($domain_value['domain_expire_date']){
-                    $this->mongo_db->set('date_expire', new MongoDate(strtotime($domain_value['domain_expire_date'])));
-                }
                 $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
                 $this->mongo_db->update('playbasis_client_site');
 
                 $data_filter = array(
                     'client_id' => $client_id,
                     'site_id' => $domain_value['site_id'],
-                    'plan_id' => $domain_value['plan_id'],
+                    'plan_id' => $data['plan_id'],
                     'status' => (bool)$domain_value['status'],
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
@@ -342,10 +346,7 @@ class Client_model extends MY_Model
 
         $this->mongo_db->where('client_id', new MongoID($data_filter['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data_filter['site_id']));
-        // $this->mongo_db->where('is_custom', false );
-
-        $data = array('is_custom'=>false, 'is_custom'=>null);
-        $this->mongo_db->or_where($data);
+        $this->mongo_db->where('is_custom', false);
         $this->mongo_db->delete_all("playbasis_action_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
@@ -372,7 +373,8 @@ class Client_model extends MY_Model
                         'sort_order' => $action_data['sort_order'],
                         'status' =>  (bool)$action_data['status'],
                         'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                        'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                        'is_custom' => false,
                     );
 
                     $this->mongo_db->insert('playbasis_action_to_client', $insert_data);    
@@ -415,37 +417,49 @@ class Client_model extends MY_Model
         }
     }
 
-    public function insertClient(){
+    public function insertClient($data, $plan){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $data = $this->input->post();
+        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+
+        $price = ($plan && array_key_exists('price', $plan) ? $plan['price'] : DEFAULT_PLAN_PRICE);
+        $free_flag = ($price <= 0);
+
+        if ($free_flag) { // free package, focus mainly on "date_start" when API is calculating usage
+            $date_start = $d;
+            $date_expire = new MongoDate(strtotime("+".FOREVER." year")); // client with free package has no expiration date
+            //$date_expire = null; // client with free package has no expiration date
+        } else { // trial package
+            $date_start = new MongoDate(strtotime("+".FOREVER." year")); // client with trial package CANNOT start using our API right away after registration; instead, they have to put payment detail first
+            $date_expire = $date_start;
+        }
 
         $data_insert_client = array(
-            'first_name'=>$data['firstname'],
-            'last_name'=>$data['lastname'],
-            'mobile'=>'',
-            'email'=>$data['email'],
-            'company'=>$data['company_name'],
-            'image'=>isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
-            'status'=>true,
-            'deleted'=>false,
-            'date_added'=> new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-            'date_modified'=>''
+            'first_name' => $data['firstname'],
+            'last_name' => $data['lastname'],
+            'mobile' => '',
+            'email' => $data['email'],
+            'company' => $data['company_name'],
+            'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => true,
+            'deleted' => false,
+            'date_start' => $date_start,
+            'date_expire' => $date_expire,
+            'date_added' => $d,
+            'date_modified' => $d
         );
 
-        $this->mongo_db->insert('playbasis_client', $data_insert_client);
-
-        return $data_inserted_client_id = $data_insert_client['_id'];
+        return $this->mongo_db->insert('playbasis_client', $data_insert_client); // return record['_id'] if insert successfully, otherwise false
     }
 
-    public function editClientPlan($client_id, $data){
+    public function editClientPlan($client_id, $plan_id, $data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['domain_value'])) {
             $data_filter = array(
                 'client_id' => $client_id,
                 'site_id' => $data['domain_value']['site_id'],
-                'plan_id' => $data['domain_value']['plan_id'],
+                'plan_id' => $plan_id->{'$id'},
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
             );
@@ -459,7 +473,6 @@ class Client_model extends MY_Model
             $this->copyFeaturedToClient($data_filter);
             $this->copyActionToClient($data_filter);
             $this->copyJigsawToClient($data_filter);
-
         }
     }
 
@@ -495,6 +508,8 @@ class Client_model extends MY_Model
     public function getPlanByClientId($client_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_permission');
         return $results ? $results[0] : null;
     }

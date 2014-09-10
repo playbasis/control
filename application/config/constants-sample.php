@@ -43,5 +43,21 @@ define('S3_IMAGE', 'http://images.pbapp.net/');
 define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');
 //define('DIR_IMAGE', './control/image/');
 
+define('DEFAULT_PLAN_PRICE', 0); // default is free package
+define('DEFAULT_PLAN_DISPLAY', false); // default is to not display the plan
+define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
+define('MAX_ALLOWED_TRIAL_DAYS', 90); // this is limited by PayPal
+define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
+define('PAYPAL_MERCHANT_ID', 'CEUXV2RH33E92');
+define('PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY', 0);
+define('PAYPAL_MODIFY_EITHER_NEW_SUBSCRIPTION_OR_MODIFY', 1);
+define('PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY', 2);
+define('PAYPAL_ENV', '');
+define('PRODUCT_NAME', 'Playbasis API Subscription');
+define('PURCHASE_SUBSCRIBE', 0);
+define('PURCHASE_UPGRADE', 1);
+define('PURCHASE_DOWNGRADE', 2);
+define('FOREVER', 100); // number of years our system used for representing an unlimited value (for example, free package has no "date_expire")
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

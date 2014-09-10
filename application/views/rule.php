@@ -172,7 +172,8 @@
                     <div class="btn-group">
                         <button type="button"
                                 class="btn btn-info dropdown-toggle"
-                                data-toggle="dropdown">Template
+                                data-toggle="dropdown">
+                            <?php echo $this->lang->line("button_template"); ?>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
                         <?php foreach($ruleTemplate as $key => $value): ?>

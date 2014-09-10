@@ -54,7 +54,23 @@
                         <!-- <td><input type="text" name="description" value="<?php //echo $description; ?>" size="50" /></td> -->
                     </tr>
                     <tr>
-                        <td><?php echo $this->lang->line('entry_status'); ?>:</td>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_price'); ?>:</td>
+                        <td><input type="text" name="price" value="<?php echo $price; ?>" size="50" /></td>
+                    </tr>
+                    <tr>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_display'); ?>:</td>
+                        <td><select name="display">
+                            <?php if ($display) { ?>
+                            <option value="1" selected="selected"><?php echo $this->lang->line('text_displayed'); ?></option>
+                            <option value="0"><?php echo $this->lang->line('text_not_displayed'); ?></option>
+                            <?php } else { ?>
+                            <option value="1"><?php echo $this->lang->line('text_displayed'); ?></option>
+                            <option value="0" selected="selected"><?php echo $this->lang->line('text_not_displayed'); ?></option>
+                            <?php } ?>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_status'); ?>:</td>
                         <td><select name="status">
                             <?php if ($status) { ?>
                             <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
@@ -384,79 +400,6 @@
     </div>
 </div>
 </div>
-
-<script type="text/javascript"><!--
-
-function addNewDomain() {
-    var domain_name = $('input[name=domain_name]').val();
-    var site_name = $('input[name=domain_site_name]').val();
-    var date_start = $('input[name=domain_start_date]').val();
-    var date_expire = $('input[name=domain_expire_date]').val();
-    var status = $('select[name=domain_status]').val();
-    var plan_id = $('select[name=domain_plan_id]').val();
-
-    $.ajax({
-        url: 'index.php?route=client/client/adddomain&token=<?php echo $token; ?>',
-        type: 'POST',
-        dataType: 'json',
-        data: ({'domain_name' : domain_name, 'site_name' : site_name, 'date_start' : date_start, 'date_expire' : date_expire, 'plan_id' : plan_id, 'status' : status, 'client_id' : '<?php echo $client_id; ?>'}),
-        success: function(json) {
-            var notification = $('#notification');
-
-            if (json['error']) {
-                $('#notification').html(json['error']).addClass('warning').show();
-            } else {
-
-                $('#notification').html(json['success']).addClass('success').show();
-                $('#domains').load('index.php?route=client/client/domain&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
-
-            }
-        }
-
-    });
-
-    return false;
-
-}
-
-//--></script>
-
-<script type="text/javascript"><!--
-
-function addNewUser() {
-    var first_name = $('input[name=user_firstname]').val();
-    var last_name = $('input[name=user_lastname]').val();
-    var email = $('input[name=user_email]').val();
-    var username = $('input[name=user_username]').val();
-    var password = $('input[name=user_password]').val();
-    var user_group_id = $('select[name=user_group]').val();
-    var status = $('select[name=user_status]').val();
-
-    $.ajax({
-        url: 'index.php?route=client/client/adduser&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>',
-        type: 'POST',
-        dataType: 'json',
-        data: ({'first_name' : first_name, 'last_name' : last_name, 'email' : email, 'username' : username, 'password' : password, 'user_group_id' : user_group_id, 'status' : status}),
-        success: function(json) {
-            var notification = $('#notification');
-
-            if (json['error']) {
-                $('#notification').html(json['error']).addClass('warning').show();
-            } else {
-
-                $('#notification').html(json['success']).addClass('success').show();
-                $('#users').load('index.php?route=client/client/users&token=<?php echo $token; ?>&client_id=<?php echo $client_id; ?>');
-
-            }
-        }
-
-    });
-
-    return false;
-
-}
-
-//--></script>
 
 <script type="text/javascript"><!--
 $('#users .pagination a').live('click', function() {

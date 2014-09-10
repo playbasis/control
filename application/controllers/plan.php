@@ -57,9 +57,11 @@ class Plan extends MY_Controller
         $this->data['form'] = 'plan/insert';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('description', $this->lang->line('column_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('description', $this->lang->line('entry_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('price', $this->lang->line('entry_price'), 'trim|required|numeric');
+        $this->form_validation->set_rules('display', $this->lang->line('entry_display'), 'trim|required');
+        $this->form_validation->set_rules('status', $this->lang->line('entry_status'), 'trim|required');
         $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'), 'numeric');
-
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
 
@@ -102,8 +104,11 @@ class Plan extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'plan/update/'.$plan_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('description', $this->lang->line('column_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('description', $this->lang->line('entry_description'), 'trim|min_length[2]|max_length[1000]|xss_clean');
+        $this->form_validation->set_rules('price', $this->lang->line('entry_price'), 'trim|required|numeric');
+        $this->form_validation->set_rules('display', $this->lang->line('entry_display'), 'trim|required');
+        $this->form_validation->set_rules('status', $this->lang->line('entry_status'), 'trim|required');
         $this->form_validation->set_rules('limit_num_client', $this->lang->line('entry_limit_num_clients'), 'trim|numeric');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
@@ -128,10 +133,9 @@ class Plan extends MY_Controller
 
                     $data['domain_value'] = array(
                         'site_id'=>$client['site_id'],
-                        'plan_id'=>$client['plan_id'],
                     );
 
-                    $this->Client_model->editClientPlan($client['client_id'], $data);
+                    $this->Client_model->editClientPlan($client['client_id'], new MongoID($plan_id), $data);
                 }
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                 redirect('/plan', 'refresh');
@@ -237,6 +241,9 @@ class Plan extends MY_Controller
                     'plan_id' => $result['_id'],
                     'name' => $result['name'],
                     'description' => $result['description'],
+                    'trial' => array_key_exists('limit_others', $result) && array_key_exists('trial', $result['limit_others']) ? $result['limit_others']['trial'] : DEFAULT_TRIAL_DAYS,
+                    'price' => array_key_exists('price', $result) ? $result['price'] : DEFAULT_PLAN_PRICE,
+                    'display' => array_key_exists('display', $result) ? $result['display'] : DEFAULT_PLAN_DISPLAY,
                     'status' => $result['status'],
                     'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
                 );
@@ -327,6 +334,22 @@ class Plan extends MY_Controller
             $this->data['description'] = '';
         }
 
+        if ($this->input->post('price')) {
+            $this->data['price'] = htmlentities($this->input->post('price'));
+        } elseif (!empty($plan_info)) {
+            $this->data['price'] = htmlentities(array_key_exists('price', $plan_info) ? $plan_info['price'] : DEFAULT_PLAN_PRICE);
+        } else {
+            $this->data['price'] = '';
+        }
+
+        if ($this->input->post('display')) {
+            $this->data['display'] = htmlentities($this->input->post('display'));
+        } elseif (!empty($plan_info)) {
+            $this->data['display'] = htmlentities(array_key_exists('display', $plan_info) ? $plan_info['display'] : DEFAULT_PLAN_DISPLAY);
+        } else {
+            $this->data['display'] = DEFAULT_PLAN_DISPLAY;
+        }
+
         if ($this->input->post('limit_num_client')){
             $this->data['limit_num_client'] = $this->input->post('limit_num_client');
         }elseif(!empty($plan_info)){
@@ -379,29 +402,47 @@ class Plan extends MY_Controller
             $this->data['reward_data'] = array();
         }
 
+        // default limit noti must has these fields
+        $default_limit_noti = array(
+            "sms" => null,
+            "email" => null,
+            "push" => null
+        );
         if ($this->input->post('limit_noti')) {
             $this->data['limit_noti'] = $this->input->post('limit_noti');
         } elseif (!empty($plan_info) && isset($plan_info['limit_notifications'])){
             $this->data['limit_noti'] = $plan_info["limit_notifications"];
-        } else {
-            $this->data['limit_noti'] = array(
-                'sms' => null,
-                'email' => null,
-                'push' => null
+            // merge with default, prevent missing fields
+            $this->data["limit_noti"] = array_merge(
+                $default_limit_noti,
+                $this->data["limit_noti"]
             );
+        } else {
+            // Client don't have this field in DB, use default
+            $this->data['limit_noti'] = $default_limit_noti;
         }
 
+        // default limit others must has these fields
+        $default_limit_others = array(
+            "domain" => null,
+            "goods" => null,
+            "insight" => null,
+            "mission" => null,
+            "player" => null,
+            "quest" => null,
+            "trial" => null,
+            "user" => null);
         if ($this->input->post('limit_others')) {
             $this->data['limit_others'] = $this->input->post('limit_others');
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
             $this->data['limit_others'] = $plan_info["limit_others"];
+            // merge with default, prevent missing fields
+            $this->data["limit_others"] = array_merge(
+                $default_limit_others,
+                $this->data["limit_others"]);
         } else {
-            $this->data['limit_others'] = array(
-                'insight' => null,
-                'quest' => null,
-                'mission' => null,
-                'goods' => null
-            );
+            // Client don't have this field in DB, use default
+            $this->data["limit_others"] = $default_limit_others;
         }
 
         if ($this->input->post('limit_req')) {

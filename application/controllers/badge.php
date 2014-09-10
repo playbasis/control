@@ -81,6 +81,12 @@ class Badge extends MY_Controller
 
                 if($this->form_validation->run() && $this->data['message'] == null){
 
+                    if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+                        $this->Badge_model->addBadge($badge_data, true);
+                        $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                        redirect('/badge', 'refresh');
+                    }
+
                     if($this->User_model->getClientId()){
 
                         $badge_id = $this->Badge_model->addBadge($badge_data);
@@ -241,6 +247,7 @@ class Badge extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Image_model');
 
+        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
@@ -254,9 +261,9 @@ class Badge extends MY_Controller
             $data['start'] = $offset;
             $data['sort'] = 'sort_order';
 
-            $results = $this->Badge_model->getBadges($data);
+            $results = $this->Badge_model->getBadges($data, true);
 
-            $badge_total = $this->Badge_model->getTotalBadges($data);
+            $badge_total = $this->Badge_model->getTotalBadges($data, true);
 
             foreach ($results as $result) {
 
@@ -311,12 +318,18 @@ class Badge extends MY_Controller
                     // 'sponsor' => $result['sponsor']
                 );
             }
-        }else{
+        }else{  // Client Account
             $this->load->model('Reward_model');
+
+            // get all client badges id
+            $client_badges = $this->Badge_model->getAllBadgeIdByClientId($client_id);
+            // sync template
+            $this->Badge_model->syncTemplate($client_badges, $client_id, $site_id);
 
             $badge_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
 
             $badges = $this->Badge_model->getBadgeBySiteId($badge_data);
+
 
             $reward_limit_data = $this->Reward_model->getBadgeRewardBySiteId($site_id);
 
@@ -364,7 +377,8 @@ class Badge extends MY_Controller
                             'image' => $image,
                             'sort_order'  => $badge_info['sort_order'],
                             'selected' => ($this->input->post('selected') && in_array($badge_info['_id'], $this->input->post('selected'))),
-                            'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null
+                            'sponsor' => isset($badge_info['sponsor'])?$badge_info['sponsor']:null,
+                            "is_template" => isset($badge_info["is_template"]) ? $badge_info["is_template"] : false
                             );
                         }
                     }

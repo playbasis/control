@@ -334,6 +334,14 @@ class User_model extends MY_Model
         return $user_data;
     }
 
+    public function getClientIdByUserId($user_id){
+        $this->set_site_mongodb($this->site_id);
+        $this->mongo_db->where('user_id', $user_id);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get("user_to_client");
+        return $result ? $result[0]['client_id'] : null;
+    }
+
     public function getUserGroups(){
         $this->set_site_mongodb($this->site_id);
 

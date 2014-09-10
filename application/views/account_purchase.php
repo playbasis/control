@@ -1,7 +1,7 @@
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
-        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $payment_title; ?></h1>
+        	<h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_purchase'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'account'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
@@ -23,31 +23,55 @@
             <?php }?>
             <?php $attributes = array('id' => 'form');?>
             <?php echo form_open($form, $attributes);?>
+            	<?php $myplan = $this->session->userdata('plan'); ?>
+            	<?php $free_flag = ($myplan['price'] <= 0); ?>
+            	<?php $upgrade_downgrade_flag = in_array($mode, array(PURCHASE_UPGRADE, PURCHASE_DOWNGRADE)); ?>
+            	<?php $allow_plan_selection_flag = ($free_flag || $upgrade_downgrade_flag); ?>
+            	<?php if (!$allow_plan_selection_flag) { ?>
+            	<input type="hidden" name="plan" value="<?php echo $myplan['_id']->{'$id'}; ?>" />
+            	<?php } ?>
             	<div id="tab-general">
             		<table class="form">
-            			<tr>
-            				<td><?php echo $this->lang->line('form_months'); ?>:</td>
-            				<td>
-            					<select name = 'month' onchange="calculate(this.value, <?php echo $this->session->userdata('price') ?>); return true;">
-						            <option selected='selected' value="">N/A</option>
-						            <option value="1">1 Month</option>
-						            <option value="2">2 Months</option>
-						            <option value="3">3 Months</option>
-						            <option value="6">6 Months</option>
-						            <option value="12">12 Months</option>
-						            <option value="24">24 Months</option>
-            					</select>
-            				</td>
-            			</tr>
 			            <tr>
-				            <td><span class="required">*</span> <?php echo $this->lang->line('form_credit_to_add'); ?> (USD):</td>
-				            <td><input type="text" name="credit" onchange="$('[name=month]').val('')" /></td>
+				            <td><span class="required">*</span> <?php echo $this->lang->line('form_package'); ?>:</td>
+				            <td>
+					            <select <?php if ($allow_plan_selection_flag) echo 'name="plan"'; else echo "disabled"; ?>>
+						            <?php if ($allow_plan_selection_flag) { ?>
+							        <option value=""></option> <!-- default case when there is no available plan from the setting in database -->
+						                      <?php if ($plans) foreach ($plans as $plan) {
+						                          if (!array_key_exists('price', $plan)) {
+						                              $plan['price'] = DEFAULT_PLAN_PRICE;
+						                          }
+						                          switch ($mode) {
+						                          case PURCHASE_UPGRADE:
+						                              if ($plan['price'] > 0 && $plan['price'] > $myplan['price']) {
+						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
+						                              }
+						                              break;
+						                          case PURCHASE_DOWNGRADE:
+						                              if ($plan['price'] > 0 && $plan['price'] < $myplan['price']) {
+						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
+						                              }
+						                              break;
+						                          default:
+						                              if ($plan['price'] > 0) {
+						            ?><option value="<?php echo $plan['_id']->{'$id'}; ?>"><?php echo $plan['name'].' ($'.$plan['price'].')'; ?></option><?php
+						                              }
+						                              break;
+						                          }
+						                      }
+						            ?>
+						            <?php } else { ?>
+						            <option selected="selected" value="<?php echo $myplan['_id']->{'$id'}; ?>"><?php echo $myplan['name'].' ($'.$myplan['price'].')'; ?></option>
+						            <?php } ?>
+					            </select>
+				            </td>
 			            </tr>
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_channel'); ?>:</td>
             				<td>
-					            <select name = 'channel'>
-						            <option selected='selected' value="paypal">PayPal</option>
+					            <select name="channel">
+						            <option selected="selected" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>"><?php echo $this->lang->line('text_paypal'); ?></option>
 					            </select>
             				</td>
             			</tr>
@@ -57,8 +81,3 @@
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
-<script type="text/javascript">
-function calculate(val, price) {
-	$('[name=credit]').val(val*price)
-}
-</script>

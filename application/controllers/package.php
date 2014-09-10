@@ -3,8 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 class Package extends MY_Controller
 {
-
-
 	public function __construct()
     {
         parent::__construct();
@@ -12,6 +10,8 @@ class Package extends MY_Controller
         $this->load->model('Package_model');
         $this->load->model('Reward_model');
         $this->load->model('Player_model');
+        $this->load->model('Client_model');
+        $this->load->model('Plan_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -21,11 +21,12 @@ class Package extends MY_Controller
     }
 
     public function index(){
-    	$client_id = $this->User_model->getClientId();
+        $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-    	$currentPlan = $this->Package_model->getCurrentPlan($client_id, $site_id)[0];
-    	$currentLimitPlayers = $this->Package_model->getLimitPlayers($client_id, $site_id)[0];
+        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+        $currentPlan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+        $currentLimitPlayers = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "player");
         $num_users = $this->Player_model->getTotalPlayers($site_id, $client_id);
 
         $rewards = array();
@@ -42,11 +43,9 @@ class Package extends MY_Controller
     	$this->data['main'] = 'package';
     	$this->load->vars($this->data);
     	$this->render_page('template');
-
     }
 
     public function plans(){
-
         $allPlans = $this->Package_model->getAllPlans();
 
         $this->data['allPlans'] = $allPlans;
@@ -59,8 +58,6 @@ class Package extends MY_Controller
     public function billings(){
         $this->data['main'] = 'package_billing';
         $this->load->vars($this->data);
-        $this->render_page('template');        
+        $this->render_page('template');
     }
-
-
 }

@@ -57,7 +57,7 @@
                         <td><?php echo $this->lang->line('form_image_profile'); ?>:</td>
                         <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" class="thumbprofile" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                             <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
-                            <br /><a onclick="image_upload_profile('image', 'thumbprofile');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('.thumbprofile').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
+                            <br /><a onclick="image_upload_profile('image', 'thumbprofile');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('.thumbprofile').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', ' ');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                     </tr>
 	        	</table>
 	        <?php echo form_close();?>
