@@ -10,6 +10,7 @@ define('SITE_ID_MTD', '52ea1ec18d8c897807000077');
 define('SITE_ID_PLAYBOY', '52ea1eff8d8c89642100006d');
 define('SITE_ID_TRUE', '52ea1ebd8d8c89001a00004e');
 define('SITE_ID_BURUFLY', '52ea1eac8d8c89401c0000e7');
+define('SITE_ID_ASSOPOKER', '53a9422f988040355a8b45d3');
 
 define('CANNOT_VIEW_EMAIL', 'CANNOT_VIEW_EMAIL');
 define('NUMBER_OF_PLAYERS', 20);
@@ -58,6 +59,7 @@ class Report extends REST2_Controller
 		    SITE_ID_PLAYBOY => false,
 		    SITE_ID_TRUE => false,
 		    SITE_ID_BURUFLY => false,
+		    SITE_ID_ASSOPOKER => true,
 	    );
 	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
 	    $conf = array(
