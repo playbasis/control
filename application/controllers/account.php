@@ -46,6 +46,14 @@ class Account extends MY_Controller
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 		$this->data['main'] = 'account';
 
+		/* check that current logged in user is normal user (not super admin) */
+		if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+		    $this->data['main'] = 'account_admin';
+		    $this->load->vars($this->data);
+		    $this->render_page('template');
+		    return;
+		}
+
 		/* find details of the subscribed plan of the client */
 		$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
 		$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
@@ -286,7 +294,11 @@ class Account extends MY_Controller
 	}
 
 	private function validateAccess(){
-		return true;
+		if ($this->User_model->hasPermission('access', 'account')) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>
