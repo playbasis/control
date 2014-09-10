@@ -90,20 +90,20 @@ function initSocialIsotopes($container) {
 
 function saveSocial(){
 
-    var data = [];
+    var data = new Array();
     $(".social").each(function(){
-        var social = new Array();
-        social["name"] = $(this).find(".social-name h4").attr("title").toLowerCase();
-        social["key"] = $(this).find(".social-content .social-key input").val();
-        social["secret"] = $(this).find(".social-content .social-key input").val();
-        social["status"] = $(this).find(".social-status").hasClass("enabled");
+        var social = new Object();
+        social.name = $(this).find(".social-name h4").attr("title").toLowerCase();
+        social.key = $(this).find(".social-content .social-key input").val();
+        social.secret = $(this).find(".social-content .social-key input").val();
+        social.status = $(this).find(".social-status").hasClass("enabled");
         data.push(social);
     });
 
     $.ajax({
         url: baseUrlPath+"widget/social_manage",
         type: "POST",
-        data: data,
+        data: {'socials' : data},
         dataType: 'json',
         cache: false,
         beforeSend: function() {

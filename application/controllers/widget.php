@@ -14,6 +14,7 @@ class Widget extends MY_Controller
         $this->load->model('User_model');
         $this->load->model('Domain_model');
         $this->load->model('Custompoints_model');
+        $this->load->model('Widget_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -75,8 +76,25 @@ class Widget extends MY_Controller
     }
 
     public function social_manage(){
-        $data = $this->input->post();
-        var_dump($data);
+        $data = $this->input->post('socials');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        if($data){
+            foreach($data as $d){
+                $s_data = array(
+                    'client_id'=>$client_id,
+                    'site_id'=>$site_id,
+                    'name'=>utf8_strtolower($d['name']),
+                    'key'=>trim($d['key']),
+                    'secret'=>trim($d['secret']),
+                    'status'=>(bool)$d['status'],
+                );
+                $this->Widget_model->updateWidgetSocials($s_data);
+            }
+        }
+        $this->output->set_output(json_encode(array('status' => 'success')));
     }
 }
 ?>
