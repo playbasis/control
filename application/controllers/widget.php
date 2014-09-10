@@ -69,13 +69,14 @@ class Widget extends MY_Controller
         $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
 
         $this->data['site_data'] = $site_data;
-//        $this->render_page('widget_social_login');
+
         $this->data['main'] = 'widget_social_login';
         $this->render_page('template');
     }
 
     public function social_manage(){
-
+        $data = $this->input->post();
+        var_dump($data);
     }
 }
 ?>
