@@ -59,7 +59,7 @@ class Report extends REST2_Controller
 		    SITE_ID_PLAYBOY => false,
 		    SITE_ID_TRUE => false,
 		    SITE_ID_BURUFLY => false,
-		    SITE_ID_ASSOPOKER => true,
+		    SITE_ID_ASSOPOKER => false,
 	    );
 	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
 	    $conf = array(
