@@ -76,8 +76,8 @@ class Client extends MY_Controller
                 $clent_id = $this->Client_model->addClient($this->input->post());
 
                 $this->Permission_model->addPlanToPermission(array(
-                    'client_id' => $clent_id,
-                    'plan_id' => new MongoID($this->input->post('plan_id')),
+                    'client_id' => $clent_id->{'$id'},
+                    'plan_id' => $this->input->post('plan_id'),
                     'site_id' => null,
                 ));
 

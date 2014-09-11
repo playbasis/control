@@ -340,11 +340,11 @@ class Domain extends MY_Controller
 
                         $plan_subscription = $this->Client_model->getPlanByClientId(new MongoID($this->input->post('client_id')));
 
-                        $data = array();
-                        $data['client_id'] = $this->input->post('client_id');
-                        $data['plan_id'] = $plan_subscription['plan_id']->{'$id'};
-                        $data['site_id'] = $site_id;
-                        $this->Permission_model->addPlanToPermission($data);
+                        $this->Permission_model->addPlanToPermission(array(
+                            'client_id' => $this->input->post('client_id'),
+                            'plan_id' => $plan_subscription['plan_id']->{'$id'},
+                            'site_id' => $site_id->{'$id'},
+                        ));
                     }
 
                     $this->session->data['success'] = $this->lang->line('text_success');
