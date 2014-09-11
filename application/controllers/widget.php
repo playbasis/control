@@ -69,6 +69,20 @@ class Widget extends MY_Controller
 
         $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
 
+        $w_data = array(
+            'client_id'=>$client_id,
+            'site_id'=>$site_id,
+        );
+        $sw_data = $this->Widget_model->getWidgetSocialsSite($w_data);
+        $sw_ready = array();
+        foreach($sw_data as $sw){
+            $sw_prepare = array();
+            $sw_prepare['key'] = $sw['key'];
+            $sw_prepare['secret'] = $sw['secret'];
+            $sw_prepare['status'] = $sw['status'];
+            $sw_ready[$sw['provider']] = $sw_prepare;
+        }
+        $this->data['social_widget'] = $sw_ready;
         $this->data['site_data'] = $site_data;
 
         $this->data['main'] = 'widget_social_login';
@@ -86,10 +100,10 @@ class Widget extends MY_Controller
                 $s_data = array(
                     'client_id'=>$client_id,
                     'site_id'=>$site_id,
-                    'name'=>utf8_strtolower($d['name']),
-                    'key'=>trim($d['key']),
-                    'secret'=>trim($d['secret']),
-                    'status'=>(bool)$d['status'],
+                    'provider'=>$d['name'],
+                    'key'=>$d['key'],
+                    'secret'=>$d['secret'],
+                    'status'=>$d['status'],
                 );
                 $this->Widget_model->updateWidgetSocials($s_data);
             }

@@ -10,7 +10,7 @@
 <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
 <ul class="nav nav-tabs">
-    <li class="active"><a href="<?php echo base_url();?>widget/social_login"><?php echo $this->lang->line('column_social_login'); ?></a></li>
+    <li class="active"> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login')); ?></li>
     <li> <?php echo anchor('widget#widget-leaderboard', $this->lang->line('column_leaderboard'));?></li>
     <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
     <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
@@ -39,37 +39,37 @@
                     "facebook" => array(
                         "color" => "social-blue",
                         "icon" => "fa-facebook",
-                        "key" => "",
-                        "secret" => "",
-                        "status" => "enabled"
+                        "key" => $social_widget&&$social_widget['facebook']['key']?$social_widget['facebook']['key']:"",
+                        "secret" => $social_widget&&$social_widget['facebook']['secret']?$social_widget['facebook']['secret']:"",
+                        "status" => $social_widget&&$social_widget['facebook']['status']?($social_widget['facebook']['status']?"enabled":"disabled"):"enabled"
                     ),
                     "twitter" => array(
                         "color" => "social-azure",
                         "icon" => "fa-twitter",
-                        "key" => "",
-                        "secret" => "",
-                        "status" => "enabled"
+                        "key" => $social_widget&&$social_widget['twitter']['key']?$social_widget['twitter']['key']:"",
+                        "secret" => $social_widget&&$social_widget['twitter']['secret']?$social_widget['twitter']['secret']:"",
+                        "status" => $social_widget&&$social_widget['twitter']['status']?($social_widget['twitter']['status']?"enabled":"disabled"):"disabled"
                     ),
                     "google-plus" => array(
                         "color" => "social-scarlet",
                         "icon" => "fa-google-plus",
-                        "key" => "",
-                        "secret" => "",
-                        "status" => "disabled"
+                        "key" => $social_widget&&$social_widget['google-plus']['key']?$social_widget['google-plus']['key']:"",
+                        "secret" => $social_widget&&$social_widget['google-plus']['secret']?$social_widget['google-plus']['secret']:"",
+                        "status" => $social_widget&&$social_widget['google-plus']['status']?($social_widget['google-plus']['status']?"enabled":"disabled"):"disabled"
                     ),
                     "linkedin" => array(
                         "color" => "social-cesocialan",
                         "icon" => "fa-linkedin",
-                        "key" => "",
-                        "secret" => "",
-                        "status" => "disabled"
+                        "key" => $social_widget&&$social_widget['linkedin']['key']?$social_widget['linkedin']['key']:"",
+                        "secret" => $social_widget&&$social_widget['linkedin']['secret']?$social_widget['linkedin']['secret']:"",
+                        "status" => $social_widget&&$social_widget['linkedin']['status']?($social_widget['linkedin']['status']?"enabled":"disabled"):"disabled"
                     ),
                     "instagram" => array(
                         "color" => "social-persian-blue",
                         "icon" => "fa-instagram",
-                        "key" => "",
-                        "secret" => "",
-                        "status" => "disabled"
+                        "key" => $social_widget&&$social_widget['instagram']['key']?$social_widget['instagram']['key']:"",
+                        "secret" => $social_widget&&$social_widget['instagram']['secret']?$social_widget['instagram']['secret']:"",
+                        "status" => $social_widget&&$social_widget['instagram']['status']?($social_widget['instagram']['status']?"enabled":"disabled"):"disabled"
                     ),
                 );
                 ?>

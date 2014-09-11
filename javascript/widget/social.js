@@ -95,7 +95,7 @@ function saveSocial(){
         var social = new Object();
         social.name = $(this).find(".social-name h4").attr("title").toLowerCase();
         social.key = $(this).find(".social-content .social-key input").val();
-        social.secret = $(this).find(".social-content .social-key input").val();
+        social.secret = $(this).find(".social-content .social-secret input").val();
         social.status = $(this).find(".social-status").hasClass("enabled");
         data.push(social);
     });
