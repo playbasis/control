@@ -100,10 +100,12 @@ function saveSocial(){
         data.push(social);
     });
 
+    var sCallback = $("#social-callback").val();
+
     $.ajax({
         url: baseUrlPath+"widget/social_manage",
         type: "POST",
-        data: {'socials' : data},
+        data: {'socials' : data, 'socials_callback' : sCallback},
         dataType: 'json',
         cache: false,
         beforeSend: function() {

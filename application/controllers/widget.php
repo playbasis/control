@@ -75,14 +75,18 @@ class Widget extends MY_Controller
         );
         $sw_data = $this->Widget_model->getWidgetSocialsSite($w_data);
         $sw_ready = array();
+
+        $callback = '';
         foreach($sw_data as $sw){
             $sw_prepare = array();
             $sw_prepare['key'] = $sw['key'];
             $sw_prepare['secret'] = $sw['secret'];
             $sw_prepare['status'] = $sw['status'];
+            $callback = $sw['callback'] && $sw['callback'] != '' ? $sw['callback'] : $callback;
             $sw_ready[$sw['provider']] = $sw_prepare;
         }
         $this->data['social_widget'] = $sw_ready;
+        $this->data['callback'] = $callback;
         $this->data['site_data'] = $site_data;
 
         $this->data['main'] = 'widget_social_login';
@@ -91,6 +95,7 @@ class Widget extends MY_Controller
 
     public function social_manage(){
         $data = $this->input->post('socials');
+        $data_callback = $this->input->post('socials_callback');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -104,6 +109,7 @@ class Widget extends MY_Controller
                     'key'=>$d['key'],
                     'secret'=>$d['secret'],
                     'status'=>$d['status'],
+                    'callback'=>$data_callback
                 );
                 $this->Widget_model->updateWidgetSocials($s_data);
             }

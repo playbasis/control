@@ -63,6 +63,10 @@ class Widget_model extends MY_Model
                 $this->mongo_db->set('status', $data['status'] === 'true'? true: false);
             }
 
+            if(isset($data['callback']) && !is_null($data['callback'])){
+                $this->mongo_db->set('callback', trim($data['callback']));
+            }
+
             return $this->mongo_db->update('playbasis_socials');
         }else{
             $data_insert = array(
@@ -71,6 +75,7 @@ class Widget_model extends MY_Model
                 'provider'=>utf8_strtolower($data['provider']),
                 'key'=>trim($data['key']),
                 'secret'=>trim($data['secret']),
+                'callback'=>trim($data['callback']),
                 'status'=>$data['status'] === 'true'? true: false
             );
 

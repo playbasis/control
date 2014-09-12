@@ -26,8 +26,8 @@
 
         <div class="span11">
             <div class="controls">
-                Manage Social :
-                <a href="javascript:void(0);" onclick="saveSocial()" class="btn btn-primary">Save</a>
+                Manage Social : <input type="text" id="social-callback" name="callback" placeholder="callback" value="<?php echo $callback? $callback : ''; ?>">
+                <a href="javascript:void(0);" onclick="saveSocial()" class="btn btn-primary">Save All</a>
             </div>
         </div>
 
