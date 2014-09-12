@@ -49,6 +49,9 @@ var ruleTableMan = {
           statusColumn = $('<td>').appendTo(row),
           actionColumn = $('<td>').addClass('center').appendTo(row);
 
+      // error sign
+      if(this.error != undefined && this.error != '') $('<span>').addClass('red').html(' ' + this.error).appendTo(ruleColumn);
+
       // tags section
       if(this.tags !== undefined && this.tags !== '')
       $.each(this.tags.split(','), function() {

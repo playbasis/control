@@ -53,44 +53,10 @@ dataMan = {
   loadPrerender_jigsawConfig: function(){},
   loadPrerender_jigsawBadges: function(){},
   loadRulesTable:function() {
-    $.ajax({
-      url: urlConfig.URL_getRules(),
-      data: 'ts='+(new Date()).getMilliseconds(),
-      type:'GET',
-      dataType:'json',
-      beforeSend:function(){
-        progressDialog.show('Fetching rules ...');
-      },
-      success:function(data){
-          ruleTableMan.reRenderTable(data);
-          ruleTable_PaginationMan.newOperatePagination();
-          ruleTable_SearchMan.newOperateFilterSearch(jsonString_RulesList);
-          
-          /* 
-           *  bad cast methods 
-           *  should use cascade binding that you
-           *  see in the rule_editor_table.js for cascade binding methods 
-           *  call this every time when loadRulesTable made dupplicate binding
-           *  should be refactor in the future
-           *  now I fix by unbinding before each bind for the hotfix
-           *  9 apr 2013 - Piya refactor
-           */ 
-          ruleTableRow_statusMan.operateSlideBtn();
-
-          dialogMsg = 'Rules Table load successful';
-      },
-      error:function(){
-        dialogMsg = 'Cannot load rule from server,\n Please try again later';
-        return false;
-      },
-      complete:function(){
-        notificationManagerJS.showAlertDialog('loadtable', dialogMsg);
-        progressDialog.hide();
-      }
-    });
+      ruleTableMan.reRenderTable(jsonString_RulesList);
+      ruleTable_PaginationMan.newOperatePagination();
+      ruleTable_SearchMan.newOperateFilterSearch(jsonString_RulesList);
   },
-
-
 
   loadForEdit:function(){
     $.ajax({

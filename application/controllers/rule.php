@@ -64,17 +64,19 @@ class Rule extends MY_Controller
         $this->data['ruleList'] = json_encode(array());
 
         if($s_clientId){
-            $this->data['actionList'] = json_encode(
-                $this->Rule_model->getActionGigsawList($site_id, $client_id)
-            );
-            $this->data['conditionList'] = json_encode(
-                $this->Rule_model->getConditionGigsawList($site_id, $client_id)
-            );
-            $this->data['rewardList'] = json_encode(
-                $this->Rule_model->getRewardGigsawList($site_id, $client_id)
-            );
+            $actionList = $this->Rule_model->getActionGigsawList($site_id, $client_id);
+            $conditionList = $this->Rule_model->getConditionGigsawList($site_id, $client_id);
+            $rewardList = $this->Rule_model->getRewardGigsawList($site_id, $client_id);
+
+            $this->data['actionList'] = json_encode($actionList);
+            $this->data['conditionList'] = json_encode($conditionList);
+            $this->data['rewardList'] = json_encode($rewardList);
             $this->data['ruleList'] = json_encode(
-                $this->Rule_model->getRulesByCombinationId($site_id, $client_id)
+                $this->Rule_model->getRulesByCombinationId($site_id, $client_id, array(
+                    'actionList' => $this->makeListOfId($actionList, 'specific_id'),
+                    'conditionList' => $this->makeListOfId($conditionList, 'id'),
+                    'rewardList' => $this->makeListOfId($rewardList, 'specific_id'),
+                ))
             );
         }
 
@@ -98,9 +100,9 @@ class Rule extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('rule');
     }
 
+    /* TODO: unused, to be removed */
     public function jsonGetRules(){
         $adminGroup = $this->User_model->getAdminGroupID();
         $userGroup = $this->User_model->getUserGroupId();
@@ -253,7 +255,6 @@ class Rule extends MY_Controller
             $json['badges'] = $badges;
 
             $this->output->set_output(json_encode($json));
-
         }
     }
 
@@ -283,7 +284,6 @@ class Rule extends MY_Controller
         }else{
             $this->jsonErrorResponse();
         }
-
     }
 
     function jsonErrorResponse(){
@@ -294,6 +294,15 @@ class Rule extends MY_Controller
                 'msg'=>'Error , invalid request format or missing parameter'
             )
         );
+    }
+
+    private function makeListOfId($arr, $field) {
+        if (!$arr || !is_array($arr)) return null;
+        $ret = array();
+        foreach ($arr as $each) {
+            $ret[] = $each[$field];
+        }
+        return $ret;
     }
 
     private function validateAccess(){
