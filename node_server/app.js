@@ -1,3 +1,4 @@
+require('newrelic');
 
 var REDIS_SERVER_PORT = 6379;
 var REDIS_SERVER_ADDRESS = '127.0.0.1';//'46.137.248.96';
@@ -17,15 +18,15 @@ var express = require('express')
 	, io = require('socket.io')
 	, redis = require('redis')
 	//, mysql = require('mysql')
-	, fs = require('fs');
+	//, fs = require('fs');
 
-var options = {
-	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-	requestCert: true,
-	rejectUnauthorized: false
-};
+//var options = {
+//	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+//	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+//	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+//	requestCert: true,
+//	rejectUnauthorized: false
+//};
 
 //special parser for the activity feed
 function feedParser(req, res, next){
@@ -65,8 +66,8 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-var server = https.createServer(options, app);
-//var server = http.createServer(app);
+//var server = https.createServer(options, app);
+var server = http.createServer(app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
@@ -85,6 +86,7 @@ var dbReady = false;
 var mongoose = require('mongoose');
 
 var ClientSite;
+var NodeLog;
 db = mongoose.createConnection('dbv2.pbapp.net', 'core', 27017, { user: 'admin', pass: 'mongodbpasswordplaybasis', auth: { authSource: "admin" } });
 //db = mongoose.createConnection('localhost', 'core', 27017);
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -107,6 +109,15 @@ db.once('open', function callback(){
         status: Boolean
     });
     ClientSite = db.model('playbasis_client_site', schemaKey, 'playbasis_client_site');
+
+    var schemaLog = mongoose.Schema({
+        app_node: String,
+        growth: String,
+        reason: String,
+        start: Date,
+        end: Date
+    });
+    NodeLog = db.model('node_memwatch_log', schemaLog, 'node_memwatch_log');
 
     dbReady = true;
     console.log('db connected!');
@@ -217,4 +228,11 @@ app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 	if(req.body)
 		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);
+});
+
+var memwatch = require('memwatch');
+memwatch.on('leak', function(info) {
+    var app_node = {"app_node":"node_server"}
+    var node_data = info.concat(app_node);
+    NodeLog.insert(node_data);
 });
