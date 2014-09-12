@@ -486,27 +486,30 @@ class Rule_model extends MY_Model
         $conditionList = $params['conditionList'];
         $rewardList = $params['rewardList'];
         $error = array();
-	    if (is_array($jigsaw_set)) foreach ($jigsaw_set as $each) {
-		    switch ($each['category']) {
-		    case 'ACTION':
-				if ($actionList) {
-					if (!in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid';
-				}
-			    break;
-		    case 'CONDITION':
-			    if ($conditionList) {
-				    if (!in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition ['.$each['description'].'] is invalid';
-			    }
-			    break;
-		    case 'REWARD':
-			    if ($rewardList) {
-				    if (!in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid';
-			    }
-			    break;
-		    default:
-			    break;
-		    }
-	    }
+        if (is_array($jigsaw_set)) foreach ($jigsaw_set as $each) {
+            switch ($each['category']) {
+            case 'ACTION':
+                if ($actionList) {
+                    if (empty($each['config']['action_id'])) $error[] = '[action_id] is missing from configuration';
+                    else if (!in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid';
+                }
+                break;
+            case 'CONDITION':
+                if ($conditionList) {
+                    if (empty($each['config']['condition_id'])) $error[] = '[condition_id] is missing from configuration';
+                    else if (!in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition ['.$each['description'].'] is invalid';
+                }
+                break;
+            case 'REWARD':
+                if ($rewardList) {
+                    if (empty($each['specific_id'])) $error[] = '[specific_id] is missing from configuration';
+                    else if (!in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid';
+                }
+                break;
+            default:
+                break;
+            }
+        }
         return implode(', ', $error);
     }
 
