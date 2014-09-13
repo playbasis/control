@@ -1,3 +1,4 @@
+require('newrelic');
 ///<reference path='typescript-node-definitions-master/node.d.ts'/>
 
 var fs = require('fs');
