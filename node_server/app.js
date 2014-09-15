@@ -18,15 +18,15 @@ var express = require('express')
 	, io = require('socket.io')
 	, redis = require('redis')
 	//, mysql = require('mysql')
-	//, fs = require('fs');
+	, fs = require('fs');
 
-//var options = {
-//	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
-//	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
-//	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
-//	requestCert: true,
-//	rejectUnauthorized: false
-//};
+var options = {
+	key:  fs.readFileSync('/usr/bin/ssl/pbapp.net.key'),
+	cert: fs.readFileSync('/usr/bin/ssl/pbapp.net.crt'),
+	ca:   fs.readFileSync('/usr/bin/ssl/gd_bundle.crt'),
+	requestCert: true,
+	rejectUnauthorized: false
+};
 
 //special parser for the activity feed
 function feedParser(req, res, next){
@@ -66,8 +66,8 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-//var server = https.createServer(options, app);
-var server = http.createServer(app);
+var server = https.createServer(options, app);
+//var server = http.createServer(app);
 io = io.listen(server);
 server.listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
