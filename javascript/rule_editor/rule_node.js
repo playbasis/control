@@ -206,15 +206,15 @@ Node.prototype.getJSON = function() {
         switch(parentContext.category){
             case "ACTION" :
                 output.action_id = parentContext.specificId;
-                output.action_name = parentContext.jigsawName;
+                output.action_name = escape(parentContext.jigsawName);
                 ;break;
 
             case "CONDITION" :
-                output.condition_id = parentContext.specificId;;
+                output.condition_id = parentContext.specificId;
                 ;break;
 
             case "REWARD" :
-                output.reward_id = parentContext.specificId;
+                output.reward_id = escape(parentContext.specificId);
                 ;break;
 
         }//-->
