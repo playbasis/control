@@ -8,7 +8,7 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name : ['Google'],
+  app_name : ['Instagram'],
   /**
    * Your New Relic license key.
    */
