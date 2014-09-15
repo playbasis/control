@@ -229,3 +229,17 @@ app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);
 });
+
+/* memory leak detection */
+
+var memwatch = require('memwatch');
+
+// 'leak' event
+memwatch.on('leak', function(info) {
+    console.log(info);
+});
+
+// after 'gc' event, this should be baselnie
+memwatch.on('stats', function(stats) {
+    console.log(stats);
+});
