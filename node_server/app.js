@@ -229,10 +229,3 @@ app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);
 });
-
-var memwatch = require('memwatch');
-memwatch.on('leak', function(info) {
-    var app_node = {"app_node":"node_server"}
-    var node_data = info.concat(app_node);
-    NodeLog.insert(node_data);
-});
