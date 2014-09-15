@@ -25,6 +25,7 @@ class Cron extends CI_Controller
 			/* check status */
 			if (!$latest_activity || $this->utility->find_diff_in_days($latest_activity->sec, time()) >= DAYS_TO_BECOME_INACTIVE) {
 				$email = $client['email'];
+$email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id);
 				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
 				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
@@ -59,6 +60,7 @@ class Cron extends CI_Controller
 
 			if ($free_flag) {
 				$email = $client['email'];
+$email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS, $client_id);
 				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
 				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
@@ -104,6 +106,7 @@ class Cron extends CI_Controller
 						/* check usage */
 						if ($usage < $usage_limit && $usage >= PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT*$usage_limit) { // this will not send if the client has already go over the limit
 							$email = $client['email'];
+$email = 'pechpras@playbasis.com';
 							$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id);
 							/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
 							if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
@@ -120,9 +123,6 @@ class Cron extends CI_Controller
 					}
 				}
 			}
-
-			/* check "limit_others" */
-			// TODO:
 		}
 	}
 
@@ -143,6 +143,7 @@ class Cron extends CI_Controller
 
 			if ($paid_flag) {
 				$email = $client['email'];
+$email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION, $client_id);
 				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
 				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
@@ -183,6 +184,7 @@ class Cron extends CI_Controller
 
 				if ($today >= $date_billing && $this->utility->find_diff_in_days($date_billing, $today) == 1) {
 					$email = $client['email'];
+$email = 'pechpras@playbasis.com';
 					$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD, $client_id);
 					/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
 					if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
@@ -212,6 +214,7 @@ class Cron extends CI_Controller
 
 			if ($today >= $date_expire && $this->utility->find_diff_in_days($date_expire, $today) == GRACE_PERIOD_IN_DAYS+1) {
 				$email = $client['email'];
+$email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id);
 				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
 				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
