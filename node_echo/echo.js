@@ -72,3 +72,17 @@ app.post('/facebook', function(req, res){
     });
     res.send(200);
 });
+
+/* memory leak detection */
+
+var memwatch = require('memwatch');
+
+// 'leak' event
+memwatch.on('leak', function(info) {
+    console.log(info);
+});
+
+// after 'gc' event, this should be baselnie
+memwatch.on('stats', function(stats) {
+    console.log(stats);
+});

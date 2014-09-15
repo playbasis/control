@@ -199,3 +199,17 @@ app.post('/facebook', function(req, res){
 io.sockets.on('connection', function(socket){
     socket.emit('newtweet', {'time': dateObj.getTime()});
 });
+
+/* memory leak detection */
+
+var memwatch = require('memwatch');
+
+// 'leak' event
+memwatch.on('leak', function(info) {
+    console.log(info);
+});
+
+// after 'gc' event, this should be baselnie
+memwatch.on('stats', function(stats) {
+    console.log(stats);
+});
