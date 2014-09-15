@@ -216,6 +216,34 @@ io.sockets.on('connection', function(socket){
 			console.log('new client subscribed at: ' + channel);
 		});
 	});
+
+    socket.on('unsubscribe', function(data) {
+        if(!data || !data.channel)
+            return;
+        verifyChannel(data.channel, function(err, channel){
+            if(err){
+                console.log(err);
+                return;
+            }
+            host = CHANNEL_PREFIX + channel;
+            socket.leave(host);
+        });
+    })
+});
+
+io.sockets.on('disconnection', function(socket){
+    socket.on('unsubscribe', function(data) {
+        if(!data || !data.channel)
+            return;
+        verifyChannel(data.channel, function(err, channel){
+            if(err){
+                console.log(err);
+                return;
+            }
+            host = CHANNEL_PREFIX + channel;
+            socket.leave(host);
+        });
+    })
 });
 
 var auth = express.basicAuth(function(user, pass){
