@@ -30,7 +30,7 @@ var options = {
 
 //special parser for the activity feed
 function feedParser(req, res, next){
-    console.log('feedParser!');
+    //console.log('feedParser!');
 	if(req.originalUrl.substr(0, METHOD_PUBLISH_FEED.length).toLowerCase() != METHOD_PUBLISH_FEED)
 		return next();
 	var data = '';
@@ -120,9 +120,9 @@ db.once('open', function callback(){
     NodeLog = db.model('node_memwatch_log', schemaLog, 'node_memwatch_log');
 
     dbReady = true;
-    console.log('db connected!');
+    //console.log('db connected!');
 });
-console.log('connecting to db...');
+//console.log('connecting to db...');
 
 var redisSubClients = Object(); //an object holding redis clients that subscribed to a channel
 var redisPubClient = redis.createClient(); //redis client for publishing feeds
@@ -207,7 +207,7 @@ io.sockets.on('connection', function(socket){
             } else {
                 var diff = hd.end();
 
-                console.dir(diff);
+                console.log(diff.change.details);
 
                 hd = null;
             }
