@@ -231,21 +231,6 @@ io.sockets.on('connection', function(socket){
     })
 });
 
-io.sockets.on('disconnection', function(socket){
-    socket.on('unsubscribe', function(data) {
-        if(!data || !data.channel)
-            return;
-        verifyChannel(data.channel, function(err, channel){
-            if(err){
-                console.log(err);
-                return;
-            }
-            host = CHANNEL_PREFIX + channel;
-            socket.leave(host);
-        });
-    })
-});
-
 var auth = express.basicAuth(function(user, pass){
 	return user === 'planes' && pass === 'capetorment852456';
 });
@@ -260,7 +245,7 @@ app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 
 /* memory leak detection */
 
-var memwatch = require('memwatch');
+/*var memwatch = require('memwatch');
 
 // 'leak' event
 memwatch.on('leak', function(info) {
@@ -270,4 +255,4 @@ memwatch.on('leak', function(info) {
 // after 'gc' event, this should be baselnie
 memwatch.on('stats', function(stats) {
     console.log(stats);
-});
+});*/

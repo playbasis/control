@@ -186,17 +186,3 @@ setInterval(pollAllGooglePlusActivities, 15000);
 io.sockets.on('connection', function(socket){
 	socket.emit('activity', {'time': dateObj.getTime()});
 });
-
-/* memory leak detection */
-
-var memwatch = require('memwatch');
-
-// 'leak' event
-memwatch.on('leak', function(info) {
-    console.log(info);
-});
-
-// after 'gc' event, this should be baselnie
-memwatch.on('stats', function(stats) {
-    console.log(stats);
-});

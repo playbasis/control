@@ -69,17 +69,3 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
   		});
 	});
 });
-
-/* memory leak detection */
-
-var memwatch = require('memwatch');
-
-// 'leak' event
-memwatch.on('leak', function(info) {
-    console.log(info);
-});
-
-// after 'gc' event, this should be baselnie
-memwatch.on('stats', function(stats) {
-    console.log(stats);
-});
