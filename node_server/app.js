@@ -194,10 +194,23 @@ function verifyChannel(channel, callback)
         }
     });
 }
-
+var co
 io.sockets.on('connection', function(socket){
+    var c = 0;
+    var hd = null;
 	socket.on('subscribe', function(data){
-        var hd = new memwatch.HeapDiff();
+        c++;
+        if(c%10==0){
+            if (hd == null) {
+                hd = new memwatch.HeapDiff();
+            } else {
+                var diff = hd.end();
+
+                console.dir(diff);
+
+                hd = null;
+            }
+        }
 
         if(!data || !data.channel)
 			return;
@@ -218,9 +231,6 @@ io.sockets.on('connection', function(socket){
 			//console.log('new client subscribed at: ' + channel);
 		});
 
-        var diff = hd.end();
-
-        console.log(diff);
     });
 
     socket.on('unsubscribe', function(data) {
