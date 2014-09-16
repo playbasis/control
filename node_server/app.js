@@ -194,12 +194,13 @@ function verifyChannel(channel, callback)
         }
     });
 }
-var co
+var c = 0;
+var hd = null;
+
 io.sockets.on('connection', function(socket){
-    var c = 0;
-    var hd = null;
 	socket.on('subscribe', function(data){
         c++;
+        console.log(c);
         if(c%10==0){
             if (hd == null) {
                 hd = new memwatch.HeapDiff();
