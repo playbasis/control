@@ -1029,19 +1029,20 @@ class Quest extends MY_Controller
 				case 'DATETIME_END':
 				case 'LEVEL_START':
 				case 'LEVEL_END':
+					/* nothing to check */
 					break;
 				case 'QUEST':
-					if (empty($condition['condition_id'])) $error[] = '[QUEST_CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing from configuration';
-					else if (!$questList || !in_array($condition['condition_id']->{'$id'}, $questList)) $error[] = '[QUEST_CONDITION] "quest" condition ['.$condition['condition_data']['quest_name'].'] is invalid';
+					if (empty($condition['condition_id'])) $error[] = '[CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing';
+					else if (!$questList || !in_array($condition['condition_id']->{'$id'}, $questList)) $error[] = '[CONDITION] '.$condition['condition_type'].' ['.$condition['condition_data']['quest_name'].'] is invalid';
 					break;
 				case 'POINT':
 				case 'CUSTOM_POINT':
-					if (empty($condition['condition_id'])) $error[] = '[QUEST_CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing from configuration';
-					else if (!$rewardList || !in_array($condition['condition_id']->{'$id'}, $rewardList)) $error[] = '[QUEST_CONDITION] "point/custompoint" condition ['.$condition['condition_data']['name'].'] is invalid';
+					if (empty($condition['condition_id'])) $error[] = '[CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($condition['condition_id']->{'$id'}, $rewardList)) $error[] = '[CONDITION] '.$condition['condition_type'].' ['.$condition['condition_data']['name'].'] is invalid';
 					break;
 				case 'BADGE':
-					if (empty($condition['condition_id'])) $error[] = '[QUEST_CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing from configuration';
-					else if (!$badgeList || !in_array($condition['condition_id']->{'$id'}, $badgeList)) $error[] = '[QUEST_CONDITION] "badge" condition ['.$condition['condition_data']['name'].'] is invalid';
+					if (empty($condition['condition_id'])) $error[] = '[CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($condition['condition_id']->{'$id'}, $badgeList)) $error[] = '[CONDITION] '.$condition['condition_type'].' ['.$condition['condition_data']['name'].'] is invalid';
 					break;
 				default:
 					break;
@@ -1053,51 +1054,51 @@ class Quest extends MY_Controller
 				case 'EXP':
 				case 'POINT':
 				case 'CUSTOM_POINT':
-					if (empty($reward['reward_id'])) $error[] = '[QUEST_REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing from configuration';
-					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[QUEST_REWARD] reward ['.$reward['reward_data']['name'].'] is invalid';
+					if (empty($reward['reward_id'])) $error[] = '[REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
 					break;
 				case 'BADGE':
-					if (empty($reward['reward_id'])) $error[] = '[QUEST_REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing from configuration';
-					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[QUEST_REWARD] "badge" reward ['.$reward['reward_data']['name'].'] is invalid';
+					if (empty($reward['reward_id'])) $error[] = '[REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
 					break;
 				default:
 					break;
 			}
 		}
 		/* check missions */
-		if (array_key_exists('missions', $quest) && is_array($quest['missions'])) foreach ($quest['missions'] as $mission) {
+		if (array_key_exists('missions', $quest) && is_array($quest['missions'])) foreach ($quest['missions'] as $i => $mission) {
 			/* check missions's completion */
-			if (array_key_exists('completion', $mission) && is_array($mission['completion'])) foreach ($mission['completion'] as $completion) {
+			if (array_key_exists('completion', $mission) && is_array($mission['completion'])) foreach ($mission['completion'] as $j => $completion) {
 				switch ($completion['completion_type']) {
 				case 'ACTION':
-					if (empty($completion['completion_id'])) $error[] = '[MISSION_COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing from configuration';
-					else if (!$actionList || !in_array($completion['completion_id']->{'$id'}, $actionList)) $error[] = '[MISSION_COMPLETION] "action" completion ['.$completion['completion_data']['name'].'] is invalid';
+					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
+					else if (!$actionList || !in_array($completion['completion_id']->{'$id'}, $actionList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
 					break;
 				case 'POINT':
 				case 'CUSTOM_POINT':
-					if (empty($completion['completion_id'])) $error[] = '[MISSION_COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing from configuration';
-					else if (!$rewardList || !in_array($completion['completion_id']->{'$id'}, $rewardList)) $error[] = '[MISSION_COMPLETION] "point/custompoint" completion ['.$completion['completion_data']['name'].'] is invalid';
+					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($completion['completion_id']->{'$id'}, $rewardList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
 					break;
 				case 'BADGE':
-					if (empty($completion['completion_id'])) $error[] = '[MISSION_COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing from configuration';
-					else if (!$badgeList || !in_array($completion['completion_id']->{'$id'}, $badgeList)) $error[] = '[MISSION_COMPLETION] "badge" completion ['.$completion['completion_data']['name'].'] is invalid';
+					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($completion['completion_id']->{'$id'}, $badgeList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
 					break;
 				default:
 					break;
 				}
 			}
 			/* check missions's rewards */
-			if (array_key_exists('rewards', $mission) && is_array($mission['rewards'])) foreach ($mission['rewards'] as $reward) {
+			if (array_key_exists('rewards', $mission) && is_array($mission['rewards'])) foreach ($mission['rewards'] as $j => $reward) {
 				switch ($reward['reward_type']) {
 				case 'EXP':
 				case 'POINT':
 				case 'CUSTOM_POINT':
-					if (empty($reward['reward_id'])) $error[] = '[MISSION_REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing from configuration';
-					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[MISSION_REWARD] reward ['.$reward['reward_data']['name'].'] is invalid';
+					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
 					break;
 				case 'BADGE':
-					if (empty($reward['reward_id'])) $error[] = '[MISSION_REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing from configuration';
-					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[MISSION_REWARD] reward ['.$reward['reward_data']['name'].'] is invalid';
+					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
 					break;
 				default:
 					break;

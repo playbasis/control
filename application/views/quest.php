@@ -52,7 +52,7 @@
                                         <input type="checkbox" name="selected[]" value="<?php echo $quest['_id']; ?>" />
                                         <?php } ?></td>
                                     <td class="left"><img src="<?php echo $quest['image']; ?>" alt="" id="quest_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" /></td>
-                                    <td class="right"><?php echo $quest['quest_name']; ?> <span class="red"><?php echo $quest['error']; ?></span></td>
+                                    <td class="right"><?php echo $quest['quest_name']; ?> <?php if (!empty($quest['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $quest['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
                                     <td class="right"><?php echo ($quest['status'])?'Active':'Inactive';?></td>
                                     <td class="right"><?php echo $quest['sort_order'];?></td>
                                     <td class="right">
@@ -222,4 +222,10 @@ $(".quest_play").click(function() {
     function clear_filter(){
         window.location.replace(baseUrlPath+'quest');
     }
+</script>
+
+<script>
+$(document).ready(function() {
+	$('.error-icon').tooltip();
+});
 </script>
