@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 define('EMAIL_FROM', 'info@playbasis.com');
-define('DAYS_TO_BECOME_INACTIVE', 15);
+define('DAYS_TO_BECOME_INACTIVE', 30);
 define('DAYS_TO_SEND_ANOTHER_EMAIL', 7);
 define('PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT', 0.9);
 define('RECENT_DAYS_SENDING_API_TO_BE_CONSIDERED_ACTIVE', 7);
