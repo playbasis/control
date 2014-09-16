@@ -197,7 +197,9 @@ function verifyChannel(channel, callback)
 
 io.sockets.on('connection', function(socket){
 	socket.on('subscribe', function(data){
-		if(!data || !data.channel)
+        var hd = new memwatch.HeapDiff();
+
+        if(!data || !data.channel)
 			return;
 		verifyChannel(data.channel, function(err, channel){
 			if(err){
@@ -215,7 +217,11 @@ io.sockets.on('connection', function(socket){
 			socket.join(host);
 			//console.log('new client subscribed at: ' + channel);
 		});
-	});
+
+        var diff = hd.end();
+
+        console.log(diff);
+    });
 
     socket.on('unsubscribe', function(data) {
         if(!data || !data.channel)
