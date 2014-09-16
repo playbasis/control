@@ -183,10 +183,10 @@ function verifyChannel(channel, callback)
             callback(err);
             return;
         }
-        console.log(channel);
+        //console.log(channel);
         //console.log(data);
         if(data && data.domain_name){
-            console.log('domain valid: ' + data.domain_name);
+            //console.log('domain valid: ' + data.domain_name);
             callback(null, channel);
         }else{
             callback('channel does not exist', channel);
@@ -213,10 +213,25 @@ io.sockets.on('connection', function(socket){
 				});
 			}
 			socket.join(host);
-			console.log('new client subscribed at: ' + channel);
+			//console.log('new client subscribed at: ' + channel);
 		});
 	});
 
+    socket.on('unsubscribe', function(data) {
+        if(!data || !data.channel)
+            return;
+        verifyChannel(data.channel, function(err, channel){
+            if(err){
+                console.log(err);
+                return;
+            }
+            host = CHANNEL_PREFIX + channel;
+            socket.leave(host);
+        });
+    })
+});
+
+io.sockets.on('disconnection', function(socket){
     socket.on('unsubscribe', function(data) {
         if(!data || !data.channel)
             return;
@@ -245,7 +260,7 @@ app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 
 /* memory leak detection */
 
-/*var memwatch = require('memwatch');
+var memwatch = require('memwatch');
 
 // 'leak' event
 memwatch.on('leak', function(info) {
@@ -255,4 +270,4 @@ memwatch.on('leak', function(info) {
 // after 'gc' event, this should be baselnie
 memwatch.on('stats', function(stats) {
     console.log(stats);
-});*/
+});
