@@ -65,33 +65,22 @@ class Payment_model extends MY_Model
 				case PAYPAL_PAYMENT_STATUS_COMPLETED:
 					log_message('info', 'Client '.$client_id.' has paid successfully');
 					/* check the amount that client has paid with the plan */
-					$valid = true;
-					if ($myplan_id == $plan_id) { /* plan has not changed */
-						if ($amount != $plan['price']) { /* for security, we have to check payment amount */
-							log_message('error', 'Client '.$client_id.' has paid incorrect amount '.$amount.', should be '.$plan['price']);
-							//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (1) ['.$client_id.']');
-							$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (1) ['.$client_id.']');
-							$valid = false;
-						}
-					} else { /* plan has changed */
-						/* we make use of second trial period to handle the chang of plan */
-						if ($amount != $myplan['price']) { /* this would need further investigation as client did not pay for the old (current) plan */
-							log_message('error', 'Client '.$client_id.' has changed the plan, but the payment amount is incorrect '.$amount.' to '.$myplan['price']);
-							//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (2) ['.$client_id.']');
-							$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (2) ['.$client_id.']');
-							$valid = false;
-						} else { /* we charge for the old price */
-							/* now the new plan can be effective immediately, with new price for next billing cycle */
-							$this->changePlan($client, $myplan_id, $plan_id);
-							log_message('info', 'Client '.$client_id.' has changed the plan from '.$myplan_id.' to '.$plan_id);
-						}
-					}
-					/* adjust billing period, 'date_start' and 'date_expire', to allow client to use our API */
-					if ($valid) {
+					if ($amount != $plan['price']) { /* for security, we have to check payment amount */
+						log_message('error', 'Client '.$client_id.' has paid incorrect amount '.$amount.', should be '.$plan['price']);
+						//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (1) ['.$client_id.']');
+						$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect ['.$client_id.']');
+					} else {
+						/* adjust billing period, 'date_start' and 'date_expire', allowing client to use our API */
 						log_message('info', 'Client '.$client_id.' has been set billing period ("date_start" and "date_expire")');
 						$this->setDateStartAndDateExpire($client_id);
 						//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Successful Payment', 'Your payment is successful ['.$client_id.']');
 						$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Successful Payment', 'Your payment is successful ['.$client_id.']');
+
+						/* detecting plan has been changed */
+						if ($myplan_id != $plan_id) {
+							$this->changePlan($client, $myplan_id, $plan_id);
+							log_message('info', 'Client '.$client_id.' has changed the plan from '.$myplan_id.' to '.$plan_id);
+						}
 					}
 					break;
 				default:
