@@ -117,9 +117,9 @@ function getFacebookPostData(page_id, post_id, type){
                     object_id: post_id,
                     type: type,
                     message: data.message,
-                    created_time: data.created_time,
+                    created_time: data.created_time
                 });
-                console.log('saving entry...');
+                //console.log('saving entry...');
                 entry.save(function(err){
                     if(err){
                         console.log(err);
@@ -154,9 +154,9 @@ function getFacebookLikeData(page_id, sender_id, parent_id){
                     name: data.name,
                     object_id: parent_id,
                     type: 'like',
-                    message: '',
+                    message: ''
                 });
-                console.log('saving entry...');
+                //console.log('saving entry...');
                 entry.save(function(err){
                     if(err){
                         console.log(err);
@@ -174,6 +174,9 @@ function getFacebookLikeData(page_id, sender_id, parent_id){
 
 app.post('/facebook', function(req, res){
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
+    var hd = new memwatch.HeapDiff();
+
     for(x in req.body.entry){
         var entry = req.body.entry[x]
         for(y in entry.changes){
@@ -194,8 +197,26 @@ app.post('/facebook', function(req, res){
             }
         }
     }
+
+    var diff = hd.end();
+
+    console.log(diff.change.details);
 });
 
 io.sockets.on('connection', function(socket){
     socket.emit('newtweet', {'time': dateObj.getTime()});
+});
+
+/* memory leak detection */
+
+var memwatch = require('memwatch');
+
+// 'leak' event
+memwatch.on('leak', function(info) {
+    console.log(info);
+});
+
+// after 'gc' event, this should be baselnie
+memwatch.on('stats', function(stats) {
+    console.log(stats);
 });

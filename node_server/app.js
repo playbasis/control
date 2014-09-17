@@ -194,24 +194,9 @@ function verifyChannel(channel, callback)
         }
     });
 }
-var c = 0;
-var hd = null;
 
 io.sockets.on('connection', function(socket){
 	socket.on('subscribe', function(data){
-        c++;
-        console.log(c);
-        if(c%10==0){
-            if (hd == null) {
-                hd = new memwatch.HeapDiff();
-            } else {
-                var diff = hd.end();
-
-                console.log(diff.change.details);
-
-                hd = null;
-            }
-        }
 
         if(!data || !data.channel)
 			return;
@@ -273,18 +258,4 @@ app.post(METHOD_PUBLISH_FEED + '/:channel', auth, function(req, res){
 	if(req.body)
 		redisPubClient.publish(CHANNEL_PREFIX + req.params.channel, req.body);
 	res.send(200);
-});
-
-/* memory leak detection */
-
-var memwatch = require('memwatch');
-
-// 'leak' event
-memwatch.on('leak', function(info) {
-    console.log(info);
-});
-
-// after 'gc' event, this should be baselnie
-memwatch.on('stats', function(stats) {
-    console.log(stats);
 });
