@@ -352,7 +352,6 @@ class Report extends MY_Controller
         }
     }
     public function getActionsToDownload(){
-
         $this->load->helper('php-excel');
         
         if ($this->input->get('date_start')) {
@@ -407,7 +406,5 @@ class Report extends MY_Controller
         $xls->generateXML ( "output_name" );
 
     }
-
-
 }
 ?>
