@@ -55,7 +55,7 @@ class Player_model extends MY_Model
 			'date_modified' => $mongoDate
 		));
 	}
-	public function readPlayer($id, $site_id, $fields)
+	public function readPlayer($id, $site_id, $fields=null)
 	{
         if(!$id)
             return array();
