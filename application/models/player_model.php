@@ -40,7 +40,8 @@ class Player_model extends MY_Model
 			'username' => $data['username'],
 			'exp'			=> intval(0),
 			'level'			=> intval(1),
-			'status'		=> true,			
+			'status'		=> true,
+			'phone_number'  => (isset($data['phone_number']))	 ? $data['phone_number']	: null,
 			'first_name'	=> (isset($data['first_name']))	 ? $data['first_name']	: $data['username'],
 			'last_name'		=> (isset($data['last_name']))	 ? $data['last_name']	: null,
 			'nickname'		=> (isset($data['nickname']))	 ? $data['nickname']	: null,
@@ -54,7 +55,7 @@ class Player_model extends MY_Model
 			'date_modified' => $mongoDate
 		));
 	}
-	public function readPlayer($id, $site_id, $fields)
+	public function readPlayer($id, $site_id, $fields=null)
 	{
         if(!$id)
             return array();

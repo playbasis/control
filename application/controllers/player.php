@@ -68,7 +68,8 @@ class Player extends REST2_Controller
 			'last_name',
 			'gender',
 			'image',
-            'email',
+			'email',
+			'phone_number',
 			'exp',
 			'level',
 			'date_added',
@@ -167,7 +168,8 @@ class Player extends REST2_Controller
 			'last_name',
 			'gender',
 			'image',
-            'email',
+			'email',
+			'phone_number',
 			'exp',
 			'level',
 			'date_added',
@@ -259,7 +261,8 @@ class Player extends REST2_Controller
 			'last_name',
 			'gender',
 			'image',
-            'email',
+			'email',
+			'phone_number',
 			'exp',
 			'level',
 			'date_added',
@@ -332,6 +335,9 @@ class Player extends REST2_Controller
 		$nickName = $this->input->post('nickname');
 		if($nickName)
 			$playerInfo['nickname'] = $nickName;
+		$phoneNumber = $this->input->post('phone_number');
+		if($phoneNumber)
+			$playerInfo['phone_number'] = $phoneNumber;
 		$facebookId = $this->input->post('facebook_id');
 		if($facebookId)
 			$playerInfo['facebook_id'] = $facebookId;
@@ -430,6 +436,9 @@ class Player extends REST2_Controller
 		$nickName = $this->input->post('nickname');
 		if($nickName)
 			$playerInfo['nickname'] = $nickName;
+		$phoneNumber = $this->input->post('phone_number');
+		if($phoneNumber)
+			$playerInfo['phone_number'] = $phoneNumber;
 		$facebookId = $this->input->post('facebook_id');
 		if($facebookId)
 			$playerInfo['facebook_id'] = $facebookId;

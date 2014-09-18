@@ -198,6 +198,13 @@
 							"Description": "url to the player profile image"
 						},
 						{
+							"Name": "phone_number",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "+66xxyyyzzzz"
+						},
+						{
 							"Name": "facebook_id",
 							"Required": "N",
 							"Default": "",

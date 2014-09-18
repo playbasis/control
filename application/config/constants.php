@@ -70,5 +70,8 @@ define('EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD', 'remindClientsEndOfTrialPeriod')
 define('EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD', 'notifyClientsShutdownAPI');
 define('EMAIL_BCC_PLAYBASIS_EMAIL', 'pascal@playbasis.com');
 
+define('SMS_FROM', '+66805920816');
+define('SMS_TYPE_REDEEM_GOODS', 'redeemGoods');
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
