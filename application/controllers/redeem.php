@@ -9,6 +9,7 @@ class Redeem extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('goods_model');
         $this->load->model('player_model');
+        $this->load->model('sms_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -185,8 +186,11 @@ class Redeem extends REST2_Controller
             $goodsData = $this->goods_model->getGoods(array_merge($validToken, array(
                 'goods_id' => new MongoId($goods['goods_id']))));
 
-            if(!$goodsData)
-                return;
+            if(!$goodsData) {
+                log_message('error', 'Cannot find goods using goods_id = '.$goods['goods_id']);
+                return false;
+            }
+
             $event = array(
                 'event_type' => 'GOODS_RECEIVED',
                 'goods_data' => $goodsData,
@@ -195,8 +199,7 @@ class Redeem extends REST2_Controller
 
             array_push($redeemResult['events'], $event);
 
-            $eventMessage = $this->utility->getEventMessage('goods', '', '', '', '', '', $goodsData['name']);
-
+	        // log event - goods
             $validToken = array_merge($validToken, array(
                 'pb_player_id' => $pb_player_id,
                 // 'goods_id' => $goodsData['goods_id'],
@@ -207,14 +210,32 @@ class Redeem extends REST2_Controller
                 'action_name' => 'redeem_goods',
                 'action_icon' => 'fa-icon-shopping-cart',
             ));
-            //log event - goods
             $this->tracker_model->trackGoods($validToken);
-            //publish to node stream
+
+            // send SMS
+            $this->load->library('twilio');
+            $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+            if ($player) {
+                if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
+                    $message = 'You have successfully redeemed '.$goodsData['name'];
+                    $response = $this->twilio->sms(SMS_FROM, $player['phone_number'], $message);
+                    if ($response->IsError) {
+                        log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
+                    }
+                    $this->sms_model->log($validToken['site_id'], SMS_TYPE_REDEEM_GOODS, SMS_FROM, $player['phone_number'], $message, $response);
+                }
+            } else {
+                log_message('error', 'Cannot find player using _id = '.$pb_player_id);
+            }
+
+            // publish to node stream
+            $eventMessage = $this->utility->getEventMessage('goods', '', '', '', '', '', $goodsData['name']);
             $this->node->publish(array_merge($validToken, array(
                 'message' => $eventMessage,
                 'goods' => $event['goods_data']
             )), $validToken['domain_name'], $validToken['site_id']);
-            //publish to facebook notification
+
+            // publish to facebook notification
 //            if($fbData)
 //                $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
         }
@@ -241,24 +262,8 @@ class Redeem extends REST2_Controller
 
     private function checkGoodsAmount($goods, $amount)
     {
-        /*
-        if(isset($goods['quantity']) && $goods['quantity']){
-            if((int)$goods['quantity'] >= (int)$amount)
-                return true;
-        }
-        return false;
-        */
-
-        // NEW -->
-        if(isset($goods['quantity']) && !is_null($goods['quantity'])){
-            if((int)$goods['quantity'] >= (int)$amount)
-                return true;
-        }elseif(is_null($goods['quantity'])){
-            return true;
-        }else{
-            return false;
-        }
-        // END NEW -->
+        if (!isset($goods['quantity']) || is_null($goods['quantity'])) return true;
+        return (int)$goods['quantity'] >= (int)$amount;
     }
 
     private function getRedeemGoods($pb_player_id, $goods, $amount, $validToken){
