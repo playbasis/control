@@ -44,7 +44,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 	stream.on('data', function(data){
 
-		console.log('---------- tweet tweet ----------');
+		//console.log('---------- tweet tweet ----------');
 		//console.log(data.user.name);
 		//console.log(data.user.screen_name);
 		//console.log(data.user.id_str);
@@ -62,7 +62,7 @@ twit.stream('statuses/filter', {'track': TRACKING}, function(stream){
 			},
 			text: data.text
 		};
-		console.log(obj);
+		//console.log(obj);
 
 		request.post({ url: engineUrl, json: obj }, function (error, response, body) {
     		console.log(body);
