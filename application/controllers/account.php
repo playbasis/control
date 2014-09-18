@@ -143,6 +143,7 @@ class Account extends MY_Controller
 					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
 				}
 
+				$plan_free_flag = $selected_plan['price'] <= 0;
 				$date_today = time();
 				$trial_days = 0;
 				$modify = false;
@@ -150,7 +151,7 @@ class Account extends MY_Controller
 				case PURCHASE_SUBSCRIBE:
 					$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
 					$date_trial_end = strtotime("+".$days_total." day", $date_today);
-					$trial_days = $this->find_diff_in_days($date_today, $date_trial_end);
+					$trial_days = $plan_free_flag ? 0 : $this->find_diff_in_days($date_today, $date_trial_end); // free account would not get trial days when they decide to subscribe
 					break;
 				case PURCHASE_UPGRADE:
 				case PURCHASE_DOWNGRADE:
