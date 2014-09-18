@@ -10,12 +10,14 @@ class Sms_model extends MY_Model
 		$this->load->library('mongo_db');
 	}
 
-	public function log($site_id, $type, $from, $to, $message, $response)
+	public function log($client_id, $site_id, $type, $from, $to, $message, $response)
 	{
 		$mongoDate = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		return $this->mongo_db->insert('playbasis_sms_log', array(
 			'type' => $type,
+			'client_id' => $client_id,
+			'site_id' => $site_id,
 			'from' => $from,
 			'to' => $to,
 			'message' => $message,

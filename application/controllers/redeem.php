@@ -222,7 +222,7 @@ class Redeem extends REST2_Controller
                     if ($response->IsError) {
                         log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
                     }
-                    $this->sms_model->log($validToken['site_id'], SMS_TYPE_REDEEM_GOODS, SMS_FROM, $player['phone_number'], $message, $response);
+                    $this->sms_model->log($validToken['client_id'], $validToken['site_id'], SMS_TYPE_REDEEM_GOODS, SMS_FROM, $player['phone_number'], $message, $response);
                 }
             } else {
                 log_message('error', 'Cannot find player using _id = '.$pb_player_id);
