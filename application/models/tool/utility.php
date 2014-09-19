@@ -65,39 +65,159 @@ class Utility extends CI_Model
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($from, $to, $subject, $message, $message_alt=null, $attachments=array()) {
-		return $this->_email(array(
-			'from' => $from,
-			'to' => $to,
-			'subject' => $subject,
-			'message' => $message,
-			'message_alt' => $message_alt,
-			'attachments' => $attachments,
-		));
+        if(count($to) > 20){
+            $email_prepare = array();
+            $emai_small_set = array();
+            foreach($to as $e){
+                if(count($emai_small_set) > 19){
+                    $email_prepare[] = $emai_small_set;
+                    $emai_small_set = array();
+                }
+                $emai_small_set[] = $e;
+            }
+
+            $message_response = array();
+
+            foreach($email_prepare as $email_small){
+                $message_response[] = $this->_email(array(
+                    'from' => $from,
+                    'to' => $email_small,
+                    'subject' => $subject,
+                    'message' => $message,
+                    'message_alt' => $message_alt,
+                    'attachments' => $attachments,
+                ));
+            }
+
+            return $message_response;
+        }else{
+            return $this->_email(array(
+                'from' => $from,
+                'to' => $to,
+                'subject' => $subject,
+                'message' => $message,
+                'message_alt' => $message_alt,
+                'attachments' => $attachments,
+            ));
+        }
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email_with_cc($from, $to, $cc, $subject, $message, $message_alt=null, $attachments=array()) {
-		return $this->_email(array(
-			'from' => $from,
-			'to' => $to,
-			'cc' => $cc,
-			'subject' => $subject,
-			'message' => $message,
-			'message_alt' => $message_alt,
-			'attachments' => $attachments,
-		));
+        if(count($to) > 20 || count($cc) > 20){
+            $email_prepare_to = array();
+            $emai_small_set_to = array();
+            foreach($to as $e){
+                if(count($emai_small_set_to) > 19){
+                    $email_prepare_to[] = $emai_small_set_to;
+                    $emai_small_set_to = array();
+                }
+                $emai_small_set_to[] = $e;
+            }
+
+            $email_prepare_cc = array();
+            $emai_small_set_cc = array();
+            foreach($cc as $e){
+                if(count($emai_small_set_cc) > 19){
+                    $email_prepare_cc[] = $emai_small_set_cc;
+                    $emai_small_set_cc = array();
+                }
+                $emai_small_set_cc[] = $e;
+            }
+
+            $message_response = array();
+
+            if(count($email_prepare_to) > count($email_prepare_cc)){
+                $i = 0;
+                foreach($email_prepare_to as $email_small){
+                    $email_data = array(
+                        'from' => $from,
+                        'to' => $email_small,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'message_alt' => $message_alt,
+                        'attachments' => $attachments,
+                    );
+
+                    if(isset($email_prepare_cc[$i])){
+                        $email_data['cc'] = $email_prepare_cc[$i];
+                    }
+
+                    $message_response[] = $this->_email($email_data);
+                    $i++;
+                }
+            }else{
+                $i = 0;
+                foreach($email_prepare_cc as $email_small){
+                    $email_data = array(
+                        'from' => $from,
+                        'cc' => $email_small,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'message_alt' => $message_alt,
+                        'attachments' => $attachments,
+                    );
+
+                    if(isset($email_prepare_to[$i])){
+                        $email_data['to'] = $email_prepare_to[$i];
+                    }
+
+                    $message_response[] = $this->_email($email_data);
+                    $i++;
+                }
+            }
+
+            return $message_response;
+        }else{
+            return $this->_email(array(
+                'from' => $from,
+                'to' => $to,
+                'cc' => $cc,
+                'subject' => $subject,
+                'message' => $message,
+                'message_alt' => $message_alt,
+                'attachments' => $attachments,
+            ));
+        }
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email_bcc($from, $bcc, $subject, $message, $message_alt=null, $attachments=array()) {
-		return $this->_email(array(
-			'from' => $from,
-			'bcc' => $bcc,
-			'subject' => $subject,
-			'message' => $message,
-			'message_alt' => $message_alt,
-			'attachments' => $attachments,
-		));
+        if(count($bcc) > 20){
+            $email_prepare = array();
+            $emai_small_set = array();
+            foreach($bcc as $e){
+                if(count($emai_small_set) > 19){
+                    $email_prepare[] = $emai_small_set;
+                    $emai_small_set = array();
+                }
+                $emai_small_set[] = $e;
+            }
+
+            $message_response = array();
+
+            foreach($email_prepare as $email_small){
+                $message_response[] = $this->_email(array(
+                    'from' => $from,
+                    'bcc' => $email_small,
+                    'subject' => $subject,
+                    'message' => $message,
+                    'message_alt' => $message_alt,
+                    'attachments' => $attachments,
+                ));
+            }
+
+            return $message_response;
+        }else{
+            return $this->_email(array(
+                'from' => $from,
+                'bcc' => $bcc,
+                'subject' => $subject,
+                'message' => $message,
+                'message_alt' => $message_alt,
+                'attachments' => $attachments,
+            ));
+        }
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
