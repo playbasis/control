@@ -49,6 +49,14 @@ var ruleTableMan = {
           statusColumn = $('<td>').appendTo(row),
           actionColumn = $('<td>').addClass('center').appendTo(row);
 
+      // error sign
+      if(this.error != undefined && this.error != ''){
+        var errorHtml = ' <a herf="javascript:void(0)" class="error-icon" title="'+this.error+'" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a>';
+        $('<span>').addClass('red').html(errorHtml).appendTo(ruleColumn);
+        $('.error-icon').tooltip();
+
+      }
+
       // tags section
       if(this.tags !== undefined && this.tags !== '')
       $.each(this.tags.split(','), function() {

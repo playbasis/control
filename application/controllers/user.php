@@ -635,11 +635,11 @@ class User extends MY_Controller
 
                             $site_id = $this->Domain_model->addDomain($data); // [4] then insert a new domain into "playbasis_client_site"
 
-                            $data = array();
-                            $data['client_id'] = $client_id;
-                            $data['plan_id'] = $plan_id;
-                            $data['site_id'] = $site_id;
-                            $this->Permission_model->addPlanToPermission($data); // [5] bind the client to the selected plan "playbasis_permission"
+                            $this->Permission_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                                'client_id' => $client_id->{'$id'},
+                                'plan_id' => $plan_id->{'$id'},
+                                'site_id' => $site_id->{'$id'},
+                            ));
 
                             $another_data['domain_value'] = array(
                                 'site_id' => $site_id,

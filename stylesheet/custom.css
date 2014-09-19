@@ -357,3 +357,10 @@
 .signup-page .btn-primary{
 	line-height: 30px;	
 }
+
+.error-icon{
+	color: #f23f3f;
+}
+.error-icon:hover{
+	color: #f23f3f;	
+}

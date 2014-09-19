@@ -312,7 +312,6 @@ class Plan_model extends MY_Model
             'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
             'status' => (bool)$data['status'],
-            // 'sort_order' => (int)$data['sort_order']|1
             'sort_order' => $sort_order
         );
         if (isset($data['limit_num_client']) && !empty($data['limit_num_client'])){
@@ -347,8 +346,8 @@ class Plan_model extends MY_Model
             foreach ($data['reward_data'] as $reward_value => $value) {
                 $arr_val = array(
                     'reward_id' => new MongoId($value['reward_id']),
-                    'limit' => (isset($value['limit']) && $value['limit'] != '')? new MongoInt32($value['limit']) : null
-                ) ;
+                    'limit' => (isset($value['limit']) && $value['limit'] !== '') ? new MongoInt32($value['limit']) : null
+                );
                 array_push($reward, $arr_val);
             }
             $dinsert['reward_to_plan'] = $reward;
@@ -364,7 +363,7 @@ class Plan_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('price', intval($data['price']));
         $this->mongo_db->set('display', (bool)$data['display']);
-        $this->mongo_db->set('limit_num_client', !empty($data['limit_num_client'])?new MongoInt32($data['limit_num_client']):null);
+        $this->mongo_db->set('limit_num_client', !empty($data['limit_num_client']) ? new MongoInt32($data['limit_num_client']) : null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
@@ -412,14 +411,14 @@ class Plan_model extends MY_Model
         if (isset($data['limit_noti'])) {
             $limit_noti = array();
             foreach ($data['limit_noti'] as $key => $value) {
-                $limit_noti[$key] = intval($value['limit']);
+                $limit_noti[$key] = ($value['limit'] != null && $value['limit'] !== '' ? intval($value['limit']) : null);
             }
             $this->mongo_db->set('limit_notifications', $limit_noti);
         }
         if (isset($data['limit_others'])) {
             $limit_others = array();
             foreach ($data['limit_others'] as $key => $value) {
-                $limit_others[$key] = intval($value['limit']);
+                $limit_others[$key] = ($value['limit'] != null && $value['limit'] !== '' ? intval($value['limit']) : null);
             }
             $this->mongo_db->set('limit_others', $limit_others);
         }
@@ -435,7 +434,7 @@ class Plan_model extends MY_Model
                 if (substr($item['field'], 0, 1) != "/") {
                     $item['field'] = "/".$item['field'];
                 }
-                $limit_req[$item['field']] = intval($item['limit']);
+                $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
             }
             $this->mongo_db->set('limit_requests', $limit_req);
         }

@@ -18,6 +18,8 @@ class Quest extends MY_Controller
 
         $this->load->model('Quest_model');
         $this->load->model('Plan_model');
+        $this->load->model('Badge_model');
+        $this->load->model('Rule_model');
         $this->load->model('Permission_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -75,6 +77,11 @@ class Quest extends MY_Controller
 
         if($client_id){
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
+            /* query required variables for validation of quest & mission */
+	        $questList = $this->makeListOfId($this->data['quests'], '_id');
+            $actionList = $this->makeListOfId($this->Rule_model->getActionGigsawList($site_id, $client_id), 'specific_id');
+            $rewardList = $this->makeListOfId($this->Rule_model->getRewardGigsawList($site_id, $client_id), 'specific_id');
+            $badgeList = $this->makeListOfId($this->Badge_model->getBadgeBySiteId(array('site_id' => $site_id->{'$id'})), 'badge_id');
 
             foreach($this->data['quests'] as &$quest){
 //                $quest['image'] = $this->Image_model->resize($quest['image'], 100, 100);
@@ -86,6 +93,13 @@ class Quest extends MY_Controller
                 }else{
                     $quest['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
                 }
+                /* check error in setting of quest & mission */
+                $quest['error'] = $this->checkQuestError($quest, array(
+                    'questList' => $questList,
+                    'actionList' => $actionList,
+                    'rewardList' => $rewardList,
+                    'badgeList' => $badgeList,
+                ));
             }
 
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
@@ -1000,6 +1014,107 @@ class Quest extends MY_Controller
         } catch(Exception $e) {
             $this->output->set_output(json_encode(array("success" => false)));
         }
+    }
+
+	private function checkQuestError($quest, $params) {
+		$questList = $params['questList'];
+		$actionList = $params['actionList'];
+		$rewardList = $params['rewardList'];
+		$badgeList = $params['badgeList'];
+		$error = array();
+		/* check condition of the quest */
+		if (array_key_exists('condition', $quest) && is_array($quest['condition'])) foreach ($quest['condition'] as $condition) {
+			switch ($condition['condition_type']) {
+				case 'DATETIME_START':
+				case 'DATETIME_END':
+				case 'LEVEL_START':
+				case 'LEVEL_END':
+					/* nothing to check */
+					break;
+				case 'QUEST':
+					if (empty($condition['condition_id'])) $error[] = '[CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing';
+					else if (!$questList || !in_array($condition['condition_id']->{'$id'}, $questList)) $error[] = '[CONDITION] '.$condition['condition_type'].' ['.$condition['condition_data']['quest_name'].'] is invalid';
+					break;
+				case 'POINT':
+				case 'CUSTOM_POINT':
+					if (empty($condition['condition_id'])) $error[] = '[CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($condition['condition_id']->{'$id'}, $rewardList)) $error[] = '[CONDITION] '.$condition['condition_type'].' ['.$condition['condition_data']['name'].'] is invalid';
+					break;
+				case 'BADGE':
+					if (empty($condition['condition_id'])) $error[] = '[CONDITION] [condition_id] for '.$condition['condition_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($condition['condition_id']->{'$id'}, $badgeList)) $error[] = '[CONDITION] '.$condition['condition_type'].' ['.$condition['condition_data']['name'].'] is invalid';
+					break;
+				default:
+					break;
+			}
+		}
+		/* check rewards of the quest */
+		if (array_key_exists('rewards', $quest) && is_array($quest['rewards'])) foreach ($quest['rewards'] as $reward) {
+			switch ($reward['reward_type']) {
+				case 'EXP':
+				case 'POINT':
+				case 'CUSTOM_POINT':
+					if (empty($reward['reward_id'])) $error[] = '[REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
+					break;
+				case 'BADGE':
+					if (empty($reward['reward_id'])) $error[] = '[REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
+					break;
+				default:
+					break;
+			}
+		}
+		/* check missions */
+		if (array_key_exists('missions', $quest) && is_array($quest['missions'])) foreach ($quest['missions'] as $i => $mission) {
+			/* check missions's completion */
+			if (array_key_exists('completion', $mission) && is_array($mission['completion'])) foreach ($mission['completion'] as $j => $completion) {
+				switch ($completion['completion_type']) {
+				case 'ACTION':
+					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
+					else if (!$actionList || !in_array($completion['completion_id']->{'$id'}, $actionList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
+					break;
+				case 'POINT':
+				case 'CUSTOM_POINT':
+					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($completion['completion_id']->{'$id'}, $rewardList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
+					break;
+				case 'BADGE':
+					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($completion['completion_id']->{'$id'}, $badgeList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
+					break;
+				default:
+					break;
+				}
+			}
+			/* check missions's rewards */
+			if (array_key_exists('rewards', $mission) && is_array($mission['rewards'])) foreach ($mission['rewards'] as $j => $reward) {
+				switch ($reward['reward_type']) {
+				case 'EXP':
+				case 'POINT':
+				case 'CUSTOM_POINT':
+					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
+					break;
+				case 'BADGE':
+					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
+					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		return implode(', ', $error);
+	}
+
+    private function makeListOfId($arr, $field) {
+        if (!$arr || !is_array($arr)) return null;
+        $ret = array();
+        foreach ($arr as $each) {
+            $ret[] = $each instanceof MongoID ? $each[$field]->{'$id'} : $each[$field];
+        }
+        return $ret;
     }
 
     private function curl($url, $data) {

@@ -46,6 +46,14 @@ class Account extends MY_Controller
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 		$this->data['main'] = 'account';
 
+		/* check that current logged in user is normal user (not super admin) */
+		if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+		    $this->data['main'] = 'account_admin';
+		    $this->load->vars($this->data);
+		    $this->render_page('template');
+		    return;
+		}
+
 		/* find details of the subscribed plan of the client */
 		$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
 		$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
@@ -135,34 +143,21 @@ class Account extends MY_Controller
 					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
 				}
 
+				$plan_free_flag = $selected_plan['price'] <= 0;
 				$date_today = time();
 				$trial_days = 0;
-				$trial2_days = 0;
-				$trial2_price = $selected_plan['price'];
 				$modify = false;
 				switch ($mode) {
 				case PURCHASE_SUBSCRIBE:
 					$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
 					$date_trial_end = strtotime("+".$days_total." day", $date_today);
-					$date_after_first_month = strtotime("+1 month", $date_trial_end); /* because we want to bill after usage, we have to adjust trial period to +1 month */
-					$trial_days = $this->find_diff_in_days($date_today, $date_after_first_month);
-					$modify = false;
+					$trial_days = $plan_free_flag ? 0 : $this->find_diff_in_days($date_today, $date_trial_end); // free account would not get trial days when they decide to subscribe
 					break;
 				case PURCHASE_UPGRADE:
 				case PURCHASE_DOWNGRADE:
 					$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
 					$days_remaining = $this->find_diff_in_days($date_today, $date_billing);
 					$trial_days = $days_remaining >= 0 ? $days_remaining : 0;
-					/* because we bill after usage, we have to make use of 2nd trial to bill the old price for the remaining days of current cycle */
-					if ($days_remaining <= 0) { // we are in the actual billing, not the trial period
-						$trial2_days = $this->find_diff_in_days($date_today, $this->find_next_billing_date_of($date_billing, $date_today));
-						$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-						$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-						if (!array_key_exists('price', $plan)) {
-							$plan['price'] = DEFAULT_PLAN_PRICE;
-						}
-						$trial2_price = $plan['price']; // price for second trial period is the current plan price
-					}
 					$modify = true;
 					break;
 				default:
@@ -175,8 +170,6 @@ class Account extends MY_Controller
 					'plan_id' => $selected_plan['_id'],
 					'price' => $selected_plan['price'],
 					'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
-					'trial2_days' => $trial2_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial2_days,
-					'trial2_price' => $trial2_price,
 					'callback' => $ci->config->config['server'].'notification',
 					'modify' => $modify,
 				);
@@ -286,7 +279,11 @@ class Account extends MY_Controller
 	}
 
 	private function validateAccess(){
-		return true;
+		if ($this->User_model->hasPermission('access', 'account')) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

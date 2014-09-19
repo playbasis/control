@@ -56,13 +56,11 @@ class Rule_model extends MY_Model
                 $output = $results;
             }
 
-
         }catch(Exception $e){
             //Exception stuff
         }
 
         return $output;
-
     }
 
     public function getConditionGigsawList($siteId,$clientId){
@@ -111,13 +109,11 @@ class Rule_model extends MY_Model
                 $output = $results;
             }
 
-
         }catch(Exception $e){
             //Exception stuff
         }
 
         return $output;
-
     }
 
     public function getRewardGigsawList($siteId,$clientId){
@@ -204,17 +200,13 @@ class Rule_model extends MY_Model
                 }
 
                 $output = $ds;
-
-
             }
-
 
         }catch(Exception $e){
             //Exception stuff
         }
 
         return $output;
-
     }
 
     function saveRule($input){
@@ -407,7 +399,7 @@ class Rule_model extends MY_Model
 
     }
 
-    public function getRulesByCombinationId($siteId, $clientId){
+    public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'conditionList' => null, 'rewardList' => null)) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $output = array(
@@ -433,6 +425,7 @@ class Rule_model extends MY_Model
             'description',
             'tags',
             'active_status',
+            'jigsaw_set',
             'date_added',
             'date_modified'
         ));
@@ -457,6 +450,8 @@ class Rule_model extends MY_Model
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
+                    $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
+                    unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
                         if($k2 == "date_added"){
                             $value[$k2] = substr($this->datetimeMongotoReadable($value[$k2]) , 0 ,-8);
@@ -486,7 +481,33 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    private function vsort (&$array, $key) {
+    private function checkRuleError($jigsaw_set, $params) {
+        $actionList = $params['actionList'];
+        $conditionList = $params['conditionList'];
+        $rewardList = $params['rewardList'];
+        $error = array();
+        if (is_array($jigsaw_set)) foreach ($jigsaw_set as $each) {
+            switch ($each['category']) {
+            case 'ACTION':
+                if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing';
+                else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid';
+                break;
+            case 'CONDITION':
+                if (empty($each['config']['condition_id'])) $error[] = '[condition_id] for '.$each['description'].' is missing';
+                else if (!$conditionList || !in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition ['.$each['description'].'] is invalid';
+                break;
+            case 'REWARD':
+                if (empty($each['specific_id'])) $error[] = '[reward_id] for '.$each['config']['reward_name'].' is missing';
+                else if (!$rewardList || !in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid';
+                break;
+            default:
+                break;
+            }
+        }
+        return implode(', ', $error);
+    }
+
+    private function vsort(&$array, $key) {
         $res=array();
         $sort=array();
         reset($array);
