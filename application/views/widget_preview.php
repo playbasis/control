@@ -72,6 +72,13 @@
     </div>
 <?php endif; ?>
 
+
+<?php if($typeWidget == 'login'): ?>
+    <div style="width:<?php echo $width; ?>px;margin:40px auto;">
+        <div class="pb-login" ></div>
+    </div>
+<?php endif; ?>
+
 <!--Widget Code Starts-->
 <!-- <div class="pb-gaminotification" data-pb-position="top-right"></div> -->
 <!--Widget Code Ends-->

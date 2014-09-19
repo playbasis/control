@@ -81,6 +81,7 @@ class Widget extends MY_Controller
             $sw_prepare = array();
             $sw_prepare['key'] = $sw['key'];
             $sw_prepare['secret'] = $sw['secret'];
+            $sw_prepare['sort_order'] = $sw['sort_order'];
             $sw_prepare['status'] = $sw['status'];
             $callback = $sw['callback'] && $sw['callback'] != '' ? $sw['callback'] : $callback;
             $sw_ready[$sw['provider']] = $sw_prepare;
@@ -108,6 +109,7 @@ class Widget extends MY_Controller
                     'provider'=>$d['name'],
                     'key'=>$d['key'],
                     'secret'=>$d['secret'],
+                    'sort_order'=>$d['sort_order'],
                     'status'=>$d['status'],
                     'callback'=>$data_callback
                 );

@@ -39,37 +39,42 @@
                     "facebook" => array(
                         "color" => "social-blue",
                         "icon" => "fa-facebook",
-                        "key" => $social_widget&&$social_widget['facebook']['key']?$social_widget['facebook']['key']:"",
-                        "secret" => $social_widget&&$social_widget['facebook']['secret']?$social_widget['facebook']['secret']:"",
-                        "status" => $social_widget&&$social_widget['facebook']['status']?($social_widget['facebook']['status']?"enabled":"disabled"):"enabled"
+                        "key" => $social_widget&&isset($social_widget['facebook']['key'])?$social_widget['facebook']['key']:"",
+                        "secret" => $social_widget&&isset($social_widget['facebook']['secret'])?$social_widget['facebook']['secret']:"",
+                        "sort_order" => $social_widget&&isset($social_widget['facebook']['sort_order'])?$social_widget['facebook']['sort_order']:"0",
+                        "status" => $social_widget&&isset($social_widget['facebook']['status'])?($social_widget['facebook']['status']?"enabled":"disabled"):"enabled"
                     ),
                     "twitter" => array(
                         "color" => "social-azure",
                         "icon" => "fa-twitter",
-                        "key" => $social_widget&&$social_widget['twitter']['key']?$social_widget['twitter']['key']:"",
-                        "secret" => $social_widget&&$social_widget['twitter']['secret']?$social_widget['twitter']['secret']:"",
-                        "status" => $social_widget&&$social_widget['twitter']['status']?($social_widget['twitter']['status']?"enabled":"disabled"):"disabled"
+                        "key" => $social_widget&&isset($social_widget['twitter']['key'])?$social_widget['twitter']['key']:"",
+                        "secret" => $social_widget&&isset($social_widget['twitter']['secret'])?$social_widget['twitter']['secret']:"",
+                        "sort_order" => $social_widget&&isset($social_widget['twitter']['sort_order'])?$social_widget['twitter']['sort_order']:"0",
+                        "status" => $social_widget&&isset($social_widget['twitter']['status'])?($social_widget['twitter']['status']?"enabled":"disabled"):"disabled"
                     ),
                     "google-plus" => array(
                         "color" => "social-scarlet",
                         "icon" => "fa-google-plus",
-                        "key" => $social_widget&&$social_widget['google-plus']['key']?$social_widget['google-plus']['key']:"",
-                        "secret" => $social_widget&&$social_widget['google-plus']['secret']?$social_widget['google-plus']['secret']:"",
-                        "status" => $social_widget&&$social_widget['google-plus']['status']?($social_widget['google-plus']['status']?"enabled":"disabled"):"disabled"
+                        "key" => $social_widget&&isset($social_widget['google-plus']['key'])?$social_widget['google-plus']['key']:"",
+                        "secret" => $social_widget&&isset($social_widget['google-plus']['secret'])?$social_widget['google-plus']['secret']:"",
+                        "sort_order" => $social_widget&&isset($social_widget['google-plus']['sort_order'])?$social_widget['google-plus']['sort_order']:"0",
+                        "status" => $social_widget&&isset($social_widget['google-plus']['status'])?($social_widget['google-plus']['status']?"enabled":"disabled"):"disabled"
                     ),
                     "linkedin" => array(
                         "color" => "social-cesocialan",
                         "icon" => "fa-linkedin",
-                        "key" => $social_widget&&$social_widget['linkedin']['key']?$social_widget['linkedin']['key']:"",
-                        "secret" => $social_widget&&$social_widget['linkedin']['secret']?$social_widget['linkedin']['secret']:"",
-                        "status" => $social_widget&&$social_widget['linkedin']['status']?($social_widget['linkedin']['status']?"enabled":"disabled"):"disabled"
+                        "key" => $social_widget&&isset($social_widget['linkedin']['key'])?$social_widget['linkedin']['key']:"",
+                        "secret" => $social_widget&&isset($social_widget['linkedin']['secret'])?$social_widget['linkedin']['secret']:"",
+                        "sort_order" => $social_widget&&isset($social_widget['linkedin']['sort_order'])?$social_widget['linkedin']['sort_order']:"0",
+                        "status" => $social_widget&&isset($social_widget['linkedin']['status'])?($social_widget['linkedin']['status']?"enabled":"disabled"):"disabled"
                     ),
                     "instagram" => array(
                         "color" => "social-persian-blue",
                         "icon" => "fa-instagram",
-                        "key" => $social_widget&&$social_widget['instagram']['key']?$social_widget['instagram']['key']:"",
-                        "secret" => $social_widget&&$social_widget['instagram']['secret']?$social_widget['instagram']['secret']:"",
-                        "status" => $social_widget&&$social_widget['instagram']['status']?($social_widget['instagram']['status']?"enabled":"disabled"):"disabled"
+                        "key" => $social_widget&&isset($social_widget['instagram']['key'])?$social_widget['instagram']['key']:"",
+                        "secret" => $social_widget&&isset($social_widget['instagram']['secret'])?$social_widget['instagram']['secret']:"",
+                        "sort_order" => $social_widget&&isset($social_widget['instagram']['sort_order'])?$social_widget['instagram']['sort_order']:"0",
+                        "status" => $social_widget&&isset($social_widget['instagram']['status'])?($social_widget['instagram']['status']?"enabled":"disabled"):"disabled"
                     ),
                 );
                 ?>
@@ -101,6 +106,11 @@
 
                                 <div class="social-secret">
                                     <input type="text" name="secret" placeholder="api secret" value="<?php echo $s["secret"]; ?>">
+                                    <i class="icon-pencil"></i>
+                                </div>
+
+                                <div class="social-sort_order">
+                                    <input type="number" name="sort_order" placeholder="sort order" value="<?php echo $s["sort_order"]; ?>">
                                     <i class="icon-pencil"></i>
                                 </div>
 
@@ -141,7 +151,7 @@
 
         </div>
         <div class="span11">
-            <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=profile" width="100%" height="280" frameborder="0"></iframe>
+            <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=login" width="100%" height="280" frameborder="0"></iframe>
         </div>
     </div>
 </div><!-- .tab-pane -->

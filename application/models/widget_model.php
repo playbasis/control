@@ -59,6 +59,10 @@ class Widget_model extends MY_Model
                 $this->mongo_db->set('secret', trim($data['secret']));
             }
 
+            if(isset($data['sort_order']) && !is_null($data['sort_order'])){
+                $this->mongo_db->set('sort_order', trim($data['sort_order']));
+            }
+
             if(isset($data['status']) && !is_null($data['status'])){
                 $this->mongo_db->set('status', $data['status'] === 'true'? true: false);
             }
@@ -74,6 +78,7 @@ class Widget_model extends MY_Model
                 'site_id'=>new MongoID($data['site_id']),
                 'provider'=>utf8_strtolower($data['provider']),
                 'key'=>trim($data['key']),
+                'secret'=>trim($data['secret']),
                 'secret'=>trim($data['secret']),
                 'callback'=>trim($data['callback']),
                 'status'=>$data['status'] === 'true'? true: false

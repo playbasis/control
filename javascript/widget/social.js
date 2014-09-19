@@ -85,7 +85,11 @@ function initSocialIsotopes($container) {
             $inputs.removeClass('active').find('.social-input-help').slideUp(200);
             $(this).addClass('active').find('.social-input-help').slideDown(200);
 
-        });
+    });
+
+    $(".social-sort_order input").live('keyup', function(){
+        $(this).val($(this).val().replace(/[^0-9]/g,''));
+    });
 }
 
 function saveSocial(){
@@ -96,6 +100,7 @@ function saveSocial(){
         social.name = $(this).find(".social-name h4").attr("title").toLowerCase();
         social.key = $(this).find(".social-content .social-key input").val();
         social.secret = $(this).find(".social-content .social-secret input").val();
+        social.sort_order = $(this).find(".social-content .social-sort_order input").val();
         social.status = $(this).find(".social-status").hasClass("enabled");
         data.push(social);
     });
