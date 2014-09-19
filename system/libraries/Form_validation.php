@@ -1440,7 +1440,7 @@ class CI_Form_validation {
 	    }          
 	     
 	    return true;
-    }  
+    }
 }
 // END Form Validation Class
 
