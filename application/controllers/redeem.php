@@ -43,52 +43,122 @@ class Redeem extends REST2_Controller
             'goods_id' => new MongoId($goods_id)
         )));
 
-        // if(!$goods)
-        //     $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+        $amount = $this->input->post('amount') ? (int)$this->input->post('amount') : 1;
 
-        if(!$goods){
-            $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
-        }else{
-            $per_user = $goods['per_user'];
-
-//            $get_player_goods = $this->player_model->getGoods(new MongoId($pb_player_id), $validToken['site_id']);
-            $get_player_goods = $this->player_model->getGoodsByGoodsId(new MongoId($pb_player_id), $validToken['site_id'], new MongoId($goods_id));
-
-
-            if($goods['per_user'] != null){
-
-                if ($get_player_goods['amount']>=$per_user){
-                    $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
-                    return;
-                }
+        $redeemResult = null;
+        try {
+            $redeemResult = $this->redeem($validToken['site_id'], $pb_player_id, $goods, $amount, $validToken);
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            switch ($msg) {
+            case 'GOODS_NOT_FOUND':
+                $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+                break;
+            case 'OVER_LIMIT_REDEEM':
+                $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
+                break;
             }
-
-            $amount = 1;
-            if($this->input->post('amount') && $this->input->post('amount') > 0)
-                $amount = (int)$this->input->post('amount');
-
-            $pb_player_id = new MongoId($pb_player_id);
-            $redeemResult = $this->processRedeem($pb_player_id, $goods, $amount, $validToken);
-
-            $this->benchmark->mark('goods_redeem_end');
-            $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
-            $this->response($this->resp->setRespond($redeemResult), 200);
         }
+
+        $this->benchmark->mark('goods_redeem_end');
+        $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
+        $this->response($this->resp->setRespond($redeemResult), 200);
     }
 
-    private function processRedeem($pb_player_id, $goods, $amount, $validToken)
+    public function goodsGroup_get()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'group'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        //get playbasis player id from client player id
+        $cl_player_id = $this->input->get('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $group = $this->input->get('group');
+
+        $amount = $this->input->get('amount') ? (int)$this->input->get('amount') : 1;
+
+        $n = $this->goods_model->countGoodsByGroup($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
+
+        $this->response($this->resp->setRespond($n), 200);
+    }
+
+    public function goodsGroup_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'group'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        //get playbasis player id from client player id
+        $cl_player_id = $this->input->post('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $group = $this->input->post('group');
+
+        $amount = $this->input->post('amount') ? (int)$this->input->post('amount') : 1;
+
+        $goodsList = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
+        if ($goodsList) {
+            shuffle($goodsList); // randomize the order in $goodList
+            foreach ($goodsList as $goods) {
+                log_message('debug', 'random = '.$goods['goods_id']);
+                /* actual redemption */
+                try {
+                    $redeemResult = $this->redeem($validToken['site_id'], $pb_player_id, $goods, $amount, $validToken, false);
+                    $this->response($this->resp->setRespond($redeemResult), 200);
+                } catch (Exception $e) {
+                    if ($e->getMessage() == 'OVER_LIMIT_REDEEM') continue; // this goods_id has been assigned to this player too often!, try next one
+                    else if ($e->getMessage() == 'GOODS_NOT_ENOUGH') continue; // there may be a collision, try next one
+                    else
+                        $this->response($this->error->setError(
+                            "INTERNAL_ERROR", array()), 200);
+                }
+            }
+        }
+        $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+    }
+
+    private function redeem($site_id, $pb_player_id, $goods, $amount, $validToken, $validate=true) {
+        if (!$goods) throw new Exception('GOODS_NOT_FOUND');
+
+        if ($goods['per_user'] != null) {
+            $get_player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $site_id, $goods['goods_id']);
+            if ($get_player_goods['amount'] >= $goods['per_user']){
+                throw new Exception('OVER_LIMIT_REDEEM');
+            }
+        }
+
+        return $this->processRedeem($pb_player_id, $goods, $amount, $validToken, $validate);
+    }
+
+    private function processRedeem($pb_player_id, $goods, $amount, $validToken, $validate=true)
     {
         $redeemResult = array(
             'events' => array()
         );
-        if(!$this->checkGoodsTime($goods)){
+        if($validate && !$this->checkGoodsTime($goods)){
             $event = array(
                 'event_type' => 'GOODS_NOT_AVAILABLE',
                 'message' => 'goods not available on now'
             );
             array_push($redeemResult['events'], $event);
         }
-        if(!$this->checkGoodsAmount($goods, $amount)){
+        if($validate && !$this->checkGoodsAmount($goods, $amount)){
             $event = array(
                 'event_type' => 'GOODS_NOT_ENOUGH',
                 'message' => 'goods not enough for redeem'
@@ -96,7 +166,7 @@ class Redeem extends REST2_Controller
             array_push($redeemResult['events'], $event);
         }
 
-        if(isset($goods['redeem']['point']["point_value"]) && ($goods['redeem']['point']["point_value"] > 0)){
+        if($validate && isset($goods['redeem']['point']["point_value"]) && ($goods['redeem']['point']["point_value"] > 0)){
             $input = array_merge($validToken, array(
                 'reward_name' => "point"
             ));
@@ -120,7 +190,7 @@ class Redeem extends REST2_Controller
 
         }
 
-        if(isset($goods['redeem']['badge'])){
+        if($validate && isset($goods['redeem']['badge'])){
             $player_badges = $this->player_model->getBadge($pb_player_id, $validToken['site_id']);
 
             $badge_redeem_check = count($goods['redeem']['badge']);
@@ -152,7 +222,7 @@ class Redeem extends REST2_Controller
             }
         }
 
-        if(isset($goods['redeem']['custom'])){
+        if($validate && isset($goods['redeem']['custom'])){
 
             $custom_redeem_check = count($goods['redeem']['custom']);
             $custom_can_redeem = 0;
@@ -181,15 +251,16 @@ class Redeem extends REST2_Controller
         }
 
         if(!(isset($redeemResult['events']) && count($redeemResult['events']) > 0)){
-            $this->getRedeemGoods($pb_player_id, $goods, $amount, $validToken);
-
+            /* re-fetch the goods given goods_id */
             $goodsData = $this->goods_model->getGoods(array_merge($validToken, array(
-                'goods_id' => new MongoId($goods['goods_id']))));
-
+                'goods_id' => new MongoId($goods['goods_id'])))
+            );
             if(!$goodsData) {
                 log_message('error', 'Cannot find goods using goods_id = '.$goods['goods_id']);
                 return false;
             }
+
+            $this->getRedeemGoods($pb_player_id, $goodsData, $amount, $validToken);
 
             $event = array(
                 'event_type' => 'GOODS_RECEIVED',
@@ -236,8 +307,8 @@ class Redeem extends REST2_Controller
             )), $validToken['domain_name'], $validToken['site_id']);
 
             // publish to facebook notification
-//            if($fbData)
-//                $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
+            //if($fbData)
+            //    $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
         }
 
         return $redeemResult;
