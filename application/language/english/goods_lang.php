@@ -7,11 +7,15 @@ $lang['text_success']           		= 'You have successfully created a goods!';
 $lang['text_success_delete']           			= 'You have successfully deleted goods(s)!';
 $lang['text_success_update']           	= 'You have successfully updated a goods!';
 $lang['text_default']           		= 'Default';
+$lang['text_file_manager']     		= 'File Manager';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
 $lang['text_reach_limit_goods']			= 'You have reached the limit of creating goods, please contact Playbasis';
 $lang['text_no_results']				= 'You do not have any goods created';
+
+// Button
+$lang['button_import']           = 'Import';
 
 // Tab
 $lang['tab_colection']					= 'Collection';
@@ -29,7 +33,9 @@ $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
 
 // Entry
+$lang['entry_group']             		= 'Group';
 $lang['entry_name']             		= 'Name';
+$lang['entry_file']             		= 'CSV File To Import';
 $lang['entry_for_client']             	= 'Client';
 $lang['entry_description']				= 'Description';
 $lang['entry_hint']						= 'Hint';
@@ -64,4 +70,5 @@ $lang['error_access']			= 'Warning: You do not have permission to access this pa
 $lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
 $lang['error_limit']            = 'You have reached goods limit.';
 $lang['error_redeem']           = 'Please provide point or badge.';
+$lang['error_file']           = 'Please provide a file to import.';
 ?>

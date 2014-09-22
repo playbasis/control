@@ -51,7 +51,140 @@ class Goods extends MY_Controller
 
     }
 
+    public function import() {
+
+        // Get Usage
+        $site_id = $this->User_model->getSiteId();
+        $usage = $this->Goods_model->getTotalGoodsBySiteId(
+            array('site_id' => $site_id));
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+
+        // Get Limit
+        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
+
+        if ($limit && $usage >= $limit) {
+            $this->data['message'] = $this->lang->line('error_limit');
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'goods/import';
+
+        $this->form_validation->set_rules('name', $this->lang->line('entry_group'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('reward_point', $this->lang->line('entry_point'), 'is_numeric|trim|xss_clean|greater_than[-1]|less_than[2147483647]');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($limit && $usage >= $limit) {
+                $this->data['message'] = $this->lang->line('error_limit');
+            }
+
+            if (empty($_FILES) || !isset($_FILES['file']['tmp_name'])) {
+                $this->data['message'] = $this->lang->line('error_file');
+            }
+
+            $point_empty = true;
+            $badge_empty = true;
+            $custom_empty = true;
+            $redeem = array();
+
+            if($this->input->post('reward_point') != '' || (int)$this->input->post('reward_point') != 0){
+                $point_empty = false;
+                $redeem['point'] = array('point_value'=>(int)$this->input->post('reward_point'));
+            }
+
+            if($this->input->post('reward_badge')){
+                foreach($this->input->post('reward_badge') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $badge_empty = false;
+                        $redeem['badge'][$rbk] = (int)$rb;
+                    }
+                }
+            }
+
+            if($this->input->post('reward_reward')){
+                foreach($this->input->post('reward_reward') as $rbk => $rb){
+                    if($rb != '' || $rb != 0){
+                        $custom_empty = false;
+                        $redeem['custom'][$rbk] = (int)$rb;
+                    }
+                }
+            }
+
+            if($point_empty && $badge_empty && $custom_empty){
+                $this->data['message'] = $this->lang->line('error_redeem');
+            }
+
+            if($this->form_validation->run() && $this->data['message'] == null){
+
+                if($this->User_model->getClientId()){
+
+                    $handle = fopen($_FILES['file']['tmp_name'], "r");
+                    if ($handle) {
+                        $this->addGoods($handle, $this->input->post(), $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
+                    } else {
+                        log_message('error', 'Cannot open file = '.$_FILES['file']['tmp_name']);
+                    }
+                    fclose($handle);
+
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+
+                    redirect('/goods', 'refresh');
+                }else{
+
+                    $this->load->model('Client_model');
+                    $goods_data = $this->input->post();
+
+                    if(isset($goods_data['admin_client_id']) && $goods_data['admin_client_id'] != 'all_clients'){
+
+                        $clients_sites = $this->Client_model->getSitesByClientId($goods_data['admin_client_id']);
+                        $list_site_id = array();
+                        foreach ($clients_sites as $client){
+                            array_push($list_site_id, $client['_id']);
+                        }
+
+                        $handle = fopen($_FILES['file']['tmp_name'], "r");
+                        if ($handle) {
+                            $this->addGoods($handle, $this->input->post(), $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
+                        } else {
+                            log_message('error', 'Cannot open file = '.$_FILES['file']['tmp_name']);
+                        }
+                        fclose($handle);
+
+                    }else{
+                        $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
+                        $hash_client_id = array();
+                        $list_site_id = array();
+                        foreach($all_sites_clients as $site){
+                            $hash_client_id[$site['client_id']] = true;
+                            array_push($list_site_id, $site['_id']);
+                        }
+
+                        $handle = fopen($_FILES['file']['tmp_name'], "r");
+                        if ($handle) {
+                            $this->addGoods($handle, $this->input->post(), $redeem, array_keys($hash_client_id), array($list_site_id));
+                        } else {
+                            log_message('error', 'Cannot open file = '.$_FILES['file']['tmp_name']);
+                        }
+                        fclose($handle);
+                    }
+                    redirect('/goods', 'refresh');
+                }
+            }
+        }
+        $this->getForm(null, true);
+    }
+
     public function insert() {
+
         // Get Usage
         $site_id = $this->User_model->getSiteId();
         $usage = $this->Goods_model->getTotalGoodsBySiteId(
@@ -596,7 +729,7 @@ class Goods extends MY_Controller
         $this->render_page('goods_ajax');
     }
 
-    private function getForm($goods_id=null) {
+    private function getForm($goods_id=null, $import=false) {
 
         $this->load->model('Image_model');
         $this->load->model('Badge_model');
@@ -779,7 +912,7 @@ class Goods extends MY_Controller
             }
         }
 
-        $this->data['main'] = 'goods_form';
+        $this->data['main'] = !$import ? 'goods_form' : 'goods_import';
 
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -898,4 +1031,53 @@ class Goods extends MY_Controller
         }
     }
 
+    private function addGoods($handle, $data, $redeem, $list_client_id, $list_site_id) {
+        $list = array();
+
+        /* build template */
+        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        $template = array(
+            'description' => $data['description']|'',
+            'quantity' => (isset($data['quantity']) && !empty($data['quantity'])) ? (int)$data['quantity'] : null,
+            'per_user' => (isset($data['per_user']) && !empty($data['per_user'])) ? (int)$data['per_user'] : null,
+            'image'=> isset($data['image']) ? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => (bool)$data['status'],
+            'deleted' => false,
+            'sponsor' => isset($data['sponsor']) ? $data['sponsor'] : false,
+            'sort_order' => (int)$data['sort_order']|1,
+            'language_id' => 1,
+            'redeem' => $redeem,
+            'date_start' => null,
+            'date_expire' => null,
+            'date_added' => $d,
+            'date_modified' => $d,
+        );
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+            if($date_start_another < $date_expire_another){
+                $template['date_start'] = new MongoDate($date_start_another);
+                $template['date_expire'] = new MongoDate($date_expire_another);
+            }
+        }
+
+        /* loop insert into playbasis_goods */
+        while (($line = fgets($handle)) !== false) {
+            $each = array_merge($template, array('name' => $line));
+            $goods_id = $this->Goods_model->addGoods($each);
+            foreach ($list_client_id as $client_id) {
+                foreach ($list_site_id as $site_id) {
+                    array_push($list, array_merge($each, array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'goods_id' => $goods_id,
+                        'group' => $data['name'],
+                    )));
+                }
+            }
+        }
+
+        /* bulk insert into playbasis_goods_to_client */
+        return $this->Goods_model->addGoodsToClient_bulk($list);
+    }
 }
