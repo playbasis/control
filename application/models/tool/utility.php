@@ -65,11 +65,11 @@ class Utility extends CI_Model
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($from, $to, $subject, $message, $message_alt=null, $attachments=array()) {
-        if(count($to) > 20){
+        if(count($to) > 10){
             $email_prepare = array();
             $emai_small_set = array();
             foreach($to as $e){
-                if(count($emai_small_set) > 19){
+                if(count($emai_small_set) > 9){
                     $email_prepare[] = $emai_small_set;
                     $emai_small_set = array();
                 }
@@ -87,6 +87,7 @@ class Utility extends CI_Model
                     'message_alt' => $message_alt,
                     'attachments' => $attachments,
                 ));
+                sleep(1);
             }
 
             return $message_response;
@@ -104,11 +105,11 @@ class Utility extends CI_Model
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email_with_cc($from, $to, $cc, $subject, $message, $message_alt=null, $attachments=array()) {
-        if(count($to) > 20 || count($cc) > 20){
+        if(count($to) > 10 || count($cc) > 10){
             $email_prepare_to = array();
             $emai_small_set_to = array();
             foreach($to as $e){
-                if(count($emai_small_set_to) > 19){
+                if(count($emai_small_set_to) > 9){
                     $email_prepare_to[] = $emai_small_set_to;
                     $emai_small_set_to = array();
                 }
@@ -118,7 +119,7 @@ class Utility extends CI_Model
             $email_prepare_cc = array();
             $emai_small_set_cc = array();
             foreach($cc as $e){
-                if(count($emai_small_set_cc) > 19){
+                if(count($emai_small_set_cc) > 9){
                     $email_prepare_cc[] = $emai_small_set_cc;
                     $emai_small_set_cc = array();
                 }
@@ -145,6 +146,7 @@ class Utility extends CI_Model
 
                     $message_response[] = $this->_email($email_data);
                     $i++;
+                    sleep(1);
                 }
             }else{
                 $i = 0;
@@ -164,6 +166,7 @@ class Utility extends CI_Model
 
                     $message_response[] = $this->_email($email_data);
                     $i++;
+                    sleep(1);
                 }
             }
 
@@ -183,11 +186,11 @@ class Utility extends CI_Model
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email_bcc($from, $bcc, $subject, $message, $message_alt=null, $attachments=array()) {
-        if(count($bcc) > 20){
+        if(count($bcc) > 10){
             $email_prepare = array();
             $emai_small_set = array();
             foreach($bcc as $e){
-                if(count($emai_small_set) > 19){
+                if(count($emai_small_set) > 9){
                     $email_prepare[] = $emai_small_set;
                     $emai_small_set = array();
                 }
@@ -205,6 +208,7 @@ class Utility extends CI_Model
                     'message_alt' => $message_alt,
                     'attachments' => $attachments,
                 ));
+                sleep(1);
             }
 
             return $message_response;
@@ -236,7 +240,8 @@ class Utility extends CI_Model
 			default: break;
 			}
 		}
-		$this->amazon_ses->bcc(EMAIL_DEBUG_MODE);
+//		$this->amazon_ses->bcc(EMAIL_DEBUG_MODE);
+		$this->amazon_ses->debug(true);
 		$response = $this->amazon_ses->send();
 		log_message('info', 'response = '.$response);
 		return $response;
