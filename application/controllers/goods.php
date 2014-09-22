@@ -426,160 +426,18 @@ class Goods extends MY_Controller
     }
 
     private function getList($offset) {
-
-        $per_page = 10;
-
-        $this->load->library('pagination');
-
-        $config['base_url'] = site_url('goods/page');
-
-        $this->load->model('Image_model');
-
-        $site_id = $this->User_model->getSiteId();
-
-        $setting_group_id = $this->User_model->getAdminGroupID();
-
-        $this->data['goods_list'] = array();
-        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
-        $slot_total = 0;
-        $this->data['slots'] = $slot_total;
-
-        if ($this->User_model->getUserGroupId() == $setting_group_id) {
-            $data['limit'] = $per_page;
-            $data['start'] = $offset;
-            $data['sort'] = 'sort_order';
-
-            $results = $this->Goods_model->getGoodsList($data);
-
-            $goods_total = $this->Goods_model->getTotalGoods($data);
-
-            foreach ($results as $result) {
-
-                if (isset($result['image'])){
-                    $info = pathinfo($result['image']);
-                    if(isset($info['extension'])){
-                        $extension = $info['extension'];
-                        $new_image = 'cache/' . utf8_substr($result['image'], 0, utf8_strrpos($result['image'], '.')).'-50x50.'.$extension;
-                        $image = S3_IMAGE.$new_image;
-                    }else{
-                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
-                    }
-                }else{
-                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
-                }
-                /*if ($result['image'] && (S3_IMAGE . $result['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $result['image'] != 'HTTP/1.0 403 Forbidden')) {
-                    $image = $this->Image_model->resize($result['image'], 50, 50);
-                } else {
-                    $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }*/
-                $goodsIsPublic = $this->checkGoodsIsPublic($result['_id']);
-                $this->data['goods_list'][] = array(
-                    'goods_id' => $result['_id'],
-                    'name' => $result['name'],
-                    'quantity' => $result['quantity'],
-                    'per_user' => $result['per_user'],
-                    'status' => $result['status'],
-                    'image' => $image,
-                    'sort_order'  => $result['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($result['_id'], $this->input->post('selected'))),
-                    'is_public'=>$goodsIsPublic
-                );
-            }
-        }else{
-            $goods_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
-
-            $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
-
-            $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
-
-            $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
-
-            foreach ($goods_list as $goods) {
-
-                if (isset($goods['image'])){
-                    $info = pathinfo($goods['image']);
-                    if(isset($info['extension'])){
-                        $extension = $info['extension'];
-                        $new_image = 'cache/' . utf8_substr($goods['image'], 0, utf8_strrpos($goods['image'], '.')).'-50x50.'.$extension;
-                        $image = S3_IMAGE.$new_image;
-                    }else{
-                        $image = S3_IMAGE."cache/no_image-50x50.jpg";
-                    }
-                }else{
-                    $image = S3_IMAGE."cache/no_image-50x50.jpg";
-                }
-
-                /*if ($goods['image'] && (S3_IMAGE . $goods['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods['image'] != 'HTTP/1.0 403 Forbidden')) {
-                    $image = $this->Image_model->resize($goods['image'], 50, 50);
-                }
-                else {
-                    $image = $this->Image_model->resize('no_image.jpg', 50, 50);
-                }*/
-
-                if(!$goods['deleted']){
-                    $this->data['goods_list'][] = array(
-                        'goods_id' => $goods['_id'],
-                        'name' => $goods['name'],
-                        'quantity' => $goods['quantity'],
-                        'per_user' => $goods['per_user'],
-                        'status' => $goods['status'],
-                        'image' => $image,
-                        'sort_order'  => $goods['sort_order'],
-                        'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
-                        'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null
-                    );
-                }
-            }
-        }
-
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
-        } else {
-            $this->data['error_warning'] = '';
-        }
-
-        if (isset($this->session->data['success'])) {
-            $this->data['success'] = $this->session->data['success'];
-
-            unset($this->session->data['success']);
-        } else {
-            $this->data['success'] = '';
-        }
-
-        $config['total_rows'] = $goods_total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
-
-        $config['next_link'] = 'Next';
-        $config['next_tag_open'] = "<li class='page_index_nav next'>";
-        $config['next_tag_close'] = "</li>";
-
-        $config['prev_link'] = 'Prev';
-        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
-        $config['prev_tag_close'] = "</li>";
-
-        $config['num_tag_open'] = '<li class="page_index_number">';
-        $config['num_tag_close'] = '</li>';
-
-        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
-        $config['cur_tag_close'] = '</a></li>';
-
-        $this->pagination->initialize($config);
-
-        $this->data['pagination_links'] = $this->pagination->create_links();
-
-        $this->data['main'] = 'goods';
-        $this->data['setting_group_id'] = $setting_group_id;
-
+        $this->_getList($offset);
         $this->load->vars($this->data);
         $this->render_page('template');
     }
 
     public function getListForAjax($offset) {
+        $this->_getList($offset);
+        $this->load->vars($this->data);
+        $this->render_page('goods_ajax');
+    }
 
-        $per_page = 10;
+    private function _getList($offset, $per_page=10) {
 
         $this->load->library('pagination');
 
@@ -724,9 +582,6 @@ class Goods extends MY_Controller
 
         $this->data['main'] = 'goods';
         $this->data['setting_group_id'] = $setting_group_id;
-
-        $this->load->vars($this->data);
-        $this->render_page('goods_ajax');
     }
 
     private function getForm($goods_id=null, $import=false) {
