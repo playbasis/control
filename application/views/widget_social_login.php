@@ -26,7 +26,8 @@
 
         <div class="span11">
             <div class="controls">
-                Manage Social : <input type="text" id="social-callback" name="callback" placeholder="callback" value="<?php echo $callback? $callback : ''; ?>">
+                <h3>Manage Social</h3>
+                <label>CallBackURL :<input type="text" id="social-callback" name="callback" placeholder="callback" value="<?php echo $callback? $callback : ''; ?>"></label>
                 <a href="javascript:void(0);" onclick="saveSocial()" class="btn btn-primary">Save All</a>
             </div>
         </div>
@@ -151,7 +152,7 @@
 
         </div>
         <div class="span11">
-            <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=login" width="100%" height="280" frameborder="0"></iframe>
+            <iframe id="iframe-login" src="<?php echo base_url();?>index.php/widget/preview?type=login" width="100%" height="280" frameborder="0"></iframe>
         </div>
     </div>
 </div><!-- .tab-pane -->
@@ -197,6 +198,15 @@ function getColor(val){
     var color = val.replace(/#/g, '');
     return color;
 }
+function reloadSocial(){
+    var url = '<?php echo base_url();?>index.php/widget/preview?type=login';
+    var codeElement = '&lt;div class="pb-login" ';
+    var codeHeader = codeHeaderTemplate;
+    codeElement += '&gt;&lt;/div&gt;';
+    $('#iframe-login').attr('src',url);
+    $('#getcode-modal .code-element').html(codeElement);
+    $('#getcode-modal .code-header').html(codeHeader);
+}
 
 </script>
 
@@ -211,14 +221,13 @@ function getColor(val){
 &lt;script&gt;
 window.PBAsyncInit = function(){
     PB.init({
-        api_key:'<?php echo $site_data["api_key"]; ?>',
-        theme_color :'#52b398'
+        api_key:'<?php echo $site_data["api_key"]; ?>'
     });
 };(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://widget.pbapp.net/playbasis/en/all.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","playbasis-js"));&lt;/script&gt;
 	            </pre>
         <p>Place the code for your widget wherever you want the widget to appear on your page.</p>
 	            <pre class="prettyprint code-element">
-&lt;div class="pb-leaderboard"  data-pb-width="360" data-pb-rankBy="point" &gt;&lt;/div&gt;
+&lt;div class="pb-login" &gt;&lt;/div&gt;
 	            </pre>
     </div>
 </div>
