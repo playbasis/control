@@ -186,7 +186,7 @@ class Utility extends CI_Model
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email_bcc($from, $bcc, $subject, $message, $message_alt=null, $attachments=array()) {
-        if(count($bcc) > 10){
+        /*if(count($bcc) > 10){
             $email_prepare = array();
             $emai_small_set = array();
             foreach($bcc as $e){
@@ -221,7 +221,21 @@ class Utility extends CI_Model
                 'message_alt' => $message_alt,
                 'attachments' => $attachments,
             ));
+        }*/
+
+        $message_response = array();
+        foreach($bcc as $e){
+            $message_response[] =  $this->_email(array(
+                'from' => $from,
+                'bcc' => $e,
+                'subject' => $subject,
+                'message' => $message,
+                'message_alt' => $message_alt,
+                'attachments' => $attachments,
+            ));
+            sleep(1);
         }
+        return $message_response;
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
