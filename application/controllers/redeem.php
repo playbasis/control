@@ -51,12 +51,12 @@ class Redeem extends REST2_Controller
         } catch (Exception $e) {
             $msg = $e->getMessage();
             switch ($msg) {
-            case 'GOODS_NOT_FOUND':
-                $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
-                break;
-            case 'OVER_LIMIT_REDEEM':
-                $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
-                break;
+                case 'GOODS_NOT_FOUND':
+                    $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+                    break;
+                case 'OVER_LIMIT_REDEEM':
+                    $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
+                    break;
             }
         }
 
@@ -253,7 +253,7 @@ class Redeem extends REST2_Controller
         if(!(isset($redeemResult['events']) && count($redeemResult['events']) > 0)){
             /* re-fetch the goods given goods_id */
             $goodsData = $this->goods_model->getGoods(array_merge($validToken, array(
-                'goods_id' => new MongoId($goods['goods_id'])))
+                    'goods_id' => new MongoId($goods['goods_id'])))
             );
             if(!$goodsData) {
                 log_message('error', 'Cannot find goods using goods_id = '.$goods['goods_id']);
@@ -270,7 +270,7 @@ class Redeem extends REST2_Controller
 
             array_push($redeemResult['events'], $event);
 
-	        // log event - goods
+            // log event - goods
             $validToken = array_merge($validToken, array(
                 'pb_player_id' => $pb_player_id,
                 // 'goods_id' => $goodsData['goods_id'],
@@ -284,7 +284,10 @@ class Redeem extends REST2_Controller
             $this->tracker_model->trackGoods($validToken);
 
             // send SMS
-            $this->load->library('twilio');
+            $this->config->load("twilio",TRUE);
+            $config = $this->config->item('twilio');
+            $this->load->library('twilio', $config);
+
             $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
             if ($player) {
                 if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
