@@ -61,8 +61,13 @@ class Engine extends Quest
 			}
 			else
 			{
+                $actionName = $this->client_model->getActionName(array(
+                    'client_id' => $validToken['client_id'],
+                    'site_id' => $validToken['site_id'],
+                    'action_id' => new MongoId($jigsawSet[0]['config']['action_id'])
+                ));
 				$actionConfig[$actionId] = array(
-					'name' => $jigsawSet[0]['config']['action_name'],
+					'name' => $actionName,
 					'config' => array(
 						array(
 							'url' => $actionInput['url'],
