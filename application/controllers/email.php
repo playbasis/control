@@ -46,19 +46,17 @@ class Email extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', $required_to), 200);
 		$from = $this->input->post('from');
 		$to = $this->input->post('to') ? explode(',', $this->input->post('to')) : array();
-		$cc = $this->input->post('cc') ? explode(',', $this->input->post('cc')) : array();
 		$bcc = $this->input->post('bcc') ? explode(',', $this->input->post('bcc')) : array();
 		$subject = $this->input->post('subject');
 		$message = $this->input->post('message');
 		if ($message == false) $message = ''; // $message is optional
 		/* check to see if emails are not black list */
 		$_to = $this->filter_email_out($to, $this->site_id);
-		$_cc = $this->filter_email_out($cc, $this->site_id);
 		$_bcc = $this->filter_email_out($bcc, $this->site_id);
 		if (!empty($to)) { // 'to-cc' mode
-			if (count($_to) > 0 || count($_cc) > 0) {
+			if (count($_to) > 0) {
 				/* send the email */
-				$response = $this->utility->email_with_cc($from, $_to, $_cc, $subject, $message);
+				$response = $this->utility->email($from, $_to, $subject, $message);
 				$this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $_to, $subject, $message, null, array(), $_cc);
 				/* check response from Amazon SES API */
 				if ($response != false) {
