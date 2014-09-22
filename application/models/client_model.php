@@ -515,8 +515,7 @@ class Client_model extends MY_Model
         	$remainingQuantity = null;
         	// $quantity = $goodsInfo['quantity'];
         }elseif($remainingQuantity < 0){
-            $remainingQuantity = 0;
-            $quantity = $goodsInfo['quantity'];
+	        throw new Exception('GOODS_NOT_ENOUGH');
         }
         // END NEW -->
         $this->mongo_db->set('quantity', $remainingQuantity);

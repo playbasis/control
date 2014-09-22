@@ -1172,6 +1172,80 @@
                             "Description": "amount of the goods to give to player"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Goods Group Available",
+                    "Synopsis": "Find number of available Goods given group.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Redeem/goodsGroup",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "api_key",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "api key issued by Playbasis"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "group",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods group"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to redeem"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Redeem Goods Group",
+                    "Synopsis": "Redeem Goods given group.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/goodsGroup",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "group",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods group"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to redeem"
+                        }
+                    ]
                 }
             ]
         },
