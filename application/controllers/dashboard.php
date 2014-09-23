@@ -135,6 +135,15 @@ class Dashboard extends MY_Controller
             $this->User_model->updateSiteId($this->input->get('site_id'));
         }
 
+        /* check to see if 'dashboard' menu is enabled */
+        $this->load->model('Feature_model');
+        $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
+        $is_default_enabled = $this->is_default_enabled($features);
+        if (!$is_default_enabled) {
+            $second_default = $this->find_second_default($features);
+            if ($second_default) redirect('/'.$second_default, 'refresh'); /* if it isn't, then we select second menu for the user */
+        }
+
         $this->load->model('User_model');
         $this->load->model('Domain_model');
         $this->load->model('Statistic_model');
@@ -235,6 +244,22 @@ class Dashboard extends MY_Controller
     public function liveFeed() {
 
         $this->load->view('live_feed');
+    }
+
+    private function is_default_enabled($features) {
+        if (!$features) return false;
+        if (is_array($features)) foreach ($features as $feature) {
+            if (array_key_exists('link', $feature) && $feature['link'] == '/') return true;
+        }
+        return false;
+    }
+
+    private function find_second_default($features) {
+        if (!$features) return null;
+        if (is_array($features)) foreach ($features as $feature) {
+            if (array_key_exists('link', $feature) && $feature['link'] != '/') return $feature['link'];
+        }
+        return null;
     }
 
     private function getAge($birthdate) {
