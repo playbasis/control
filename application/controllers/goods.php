@@ -496,12 +496,16 @@ class Goods extends MY_Controller
                 );
             }
         }else{
-
-            $goods_data = array('site_id'=> $site_id, 'limit'=> $per_page, 'start' =>$offset, 'sort'=>'sort_order');
-
-            $goods_list = $this->Goods_model->getGoodsBySiteId($goods_data);
-
-            $goods_total = $this->Goods_model->getTotalGoodsBySiteId($goods_data);
+            $groups = $this->Goods_model->getGroup($this->session->userdata('site_id'));
+            $ids = array();
+            $group_name = array();
+            foreach ($groups as $group => $_ids) {
+                $_id = array_shift($_ids); // skip first one
+                $group_name[$_id->{'$id'}] = $group;
+                $ids = array_merge($ids, $_ids);
+            }
+            $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id, 'sort' => 'sort_order', '$nin' => $ids));
+            $goods_list = $this->Goods_model->getGoodsBySiteId(array('site_id' => $site_id, 'limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order', '$nin' => $ids));
 
             $this->data['no_image'] = S3_IMAGE."cache/no_image-50x50.jpg";
 
@@ -526,19 +530,18 @@ class Goods extends MY_Controller
                     $image = $this->Image_model->resize('no_image.jpg', 50, 50);
                 }*/
 
-                if(!$goods['deleted']){
-                    $this->data['goods_list'][] = array(
-                        'goods_id' => $goods['_id'],
-                        'name' => $goods['name'],
-                        'quantity' => $goods['quantity'],
-                        'per_user' => $goods['per_user'],
-                        'status' => $goods['status'],
-                        'image' => $image,
-                        'sort_order'  => $goods['sort_order'],
-                        'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
-                        'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null
-                    );
-                }
+                $_id = $goods['_id']->{'$id'};
+                $this->data['goods_list'][] = array(
+                    'goods_id' => $goods['_id'],
+                    'name' => array_key_exists($_id, $group_name) ? $group_name[$_id] : $goods['name'],
+                    'quantity' => $goods['quantity'],
+                    'per_user' => $goods['per_user'],
+                    'status' => $goods['status'],
+                    'image' => $image,
+                    'sort_order'  => $goods['sort_order'],
+                    'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
+                    'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null
+                );
             }
         }
 

@@ -141,6 +141,7 @@ class Goods_model extends MY_Model
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        if (array_key_exists('$nin', $data)) $this->mongo_db->where_not_in('_id', $data['$nin']);
         $results = $this->mongo_db->get("playbasis_goods_to_client");
 
         return $results;
@@ -158,10 +159,29 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        if (array_key_exists('$nin', $data)) $this->mongo_db->where_not_in('_id', $data['$nin']);
         $total = $this->mongo_db->count("playbasis_goods_to_client");
 
         return $total;
+    }
+
+    public function getGroup($site_id) {
+        $this->mongo_db->select(array('group'));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_exists('group', true);
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
+        $groups = array();
+        if ($results) foreach ($results as $result) {
+            $name = $result['group'];
+            if (array_key_exists($name, $groups)) {
+                $groups[$name][] = $result['_id'];
+            } else {
+                $groups[$name] = array($result['_id']);
+            }
+        }
+        return $groups;
     }
 
     public function getCommonGoods(){
