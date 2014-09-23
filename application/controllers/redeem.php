@@ -339,6 +339,8 @@ class Redeem extends REST2_Controller
             // publish to node stream
             $eventMessage = $this->utility->getEventMessage('goods', '', '', '', '', '', $goodsData['name']);
             $this->node->publish(array_merge($validToken, array(
+                'action_name' => 'redeem_goods',
+                'action_icon' => 'fa-gift',
                 'message' => $eventMessage,
                 'goods' => $event['goods_data']
             )), $validToken['domain_name'], $validToken['site_id']);
