@@ -183,6 +183,7 @@ class Payment_model extends MY_Model
 	private function setDateBilling($client_id, $plan, $subscriber_id) {
 		/* find number of trial days */
 		$trial_days = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+		if ($trial_days == null) $trial_days = 0;
 		/* set billing date */
 		$date_billing = strtotime("+".$trial_days." day", time());
 		/* update billing in client's record */
