@@ -63,6 +63,7 @@ class Account extends MY_Controller
 		$price = $plan['price'];
 		$this->session->set_userdata('plan', $plan);
 		$plan_days_total = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+		if ($plan_days_total == null) $plan_days_total = 0;
 		$plan_free_flag = $price <= 0;
 		$plan_paid_flag = !$plan_free_flag;
 		$plan_trial_flag = $plan_paid_flag && $plan_days_total > 0;
