@@ -17,6 +17,15 @@
                 <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
                 <a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a>
                 <a href="#tab-redeem"><?php echo $this->lang->line('tab_redeem'); ?></a>
+                <?php
+                $user_plan = $this->User_model->getPlan();
+
+                if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
+                ?>
+                    <a href="#tab-sms"><?php echo $this->lang->line('tab_sms'); ?></a>
+                <?php
+                }
+                ?>
             </div>
             <?php
             if(validation_errors() || isset($message)) {
@@ -44,7 +53,7 @@
                                 <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" />
                                 </td>
                             </tr>
-                            <tr>    
+                            <tr>
                                 <?php if(!$client_id && !$name){?>
                                     <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
                                     <td>
@@ -219,6 +228,46 @@
                         </tr>
                     </table>
                 </div>
+            <?php
+            $user_plan = $this->User_model->getPlan();
+
+            if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
+            ?>
+                <div id="tab-sms">
+                    <table class="form">
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_send_sms'); ?></td>
+                            <td><select name="send_sms">
+                                    <?php if ($send_sms) { ?>
+                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } else { ?>
+                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } ?>
+                                </select></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_sms_from'); ?>:</td>
+                            <td><input type="text" name="sms_from" value="<?php echo isset($sms_from) ? $sms_from : set_value('sms_from'); ?>"/></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_sms_message'); ?>:</td>
+                            <td>
+                                <textarea  maxlength="100" rows="4" name="sms_message" id="sms_message"><?php echo isset($sms_message) ? $sms_message : set_value('sms_message'); ?></textarea><br>
+                                <p>
+                                    <span>You can use some variable in sms message.</span><br>
+                                    <span>{{username}} is a username of player</span><br>
+                                    <span>{{goods_name}} is a name of goods</span><br>
+                                    <span>{{goods_group}} is a group name of goods</span><br>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            <?php
+            }
+            ?>
             <?php
             echo form_close();
             ?>

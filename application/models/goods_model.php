@@ -279,6 +279,20 @@ class Goods_model extends MY_Model
             'date_expire' => null,
         );
 
+        if(isset($data['send_sms'])){
+            $data_insert['send_sms'] = (bool)$data['send_sms'];
+        }else{
+            $data_insert['send_sms'] = false;
+        }
+
+        if(isset($data['sms_from']) && $data['sms_from']){
+            $data_insert['sms_from'] = $data['sms_from'];
+        }
+
+        if(isset($data['sms_message']) && $data['sms_message']){
+            $data_insert['sms_message'] = $data['sms_message'];
+        }
+
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
             $date_start_another = strtotime($data['date_start']);
             $date_expire_another = strtotime($data['date_expire']);
@@ -361,6 +375,20 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         }else{
             $this->mongo_db->set('sponsor', false);
+        }
+
+        if(isset($data['send_sms'])){
+            $this->mongo_db->set('send_sms', (bool)$data['send_sms']);
+        }else{
+            $this->mongo_db->set('send_sms', false);
+        }
+
+        if(isset($data['sms_from']) && $data['sms_from']){
+            $this->mongo_db->set('sms_from', $data['sms_from']);
+        }
+
+        if(isset($data['sms_message']) && $data['sms_message']){
+            $this->mongo_db->set('sms_message', $data['sms_message']);
         }
 
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
