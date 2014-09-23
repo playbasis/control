@@ -35,16 +35,21 @@
                 <?php
             }
             $attributes = array('id' => 'form');
-            echo form_open($form ,$attributes);
+            echo form_open_multipart($form ,$attributes);
             ?>
                 <div id="tab-general">
                         <table class="form">
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?>:</td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line('entry_group'); ?>:</td>
                                 <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" />
                                 </td>
                             </tr>
-                            <tr>    
+	                        <tr>
+		                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_file'); ?>:</td>
+		                        <td><input type="file" name="file" size="100" />
+                                </td>
+	                        </tr>
+                            <tr>
                                 <?php if(!$client_id && !$name){?>
                                     <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
                                     <td>
@@ -84,21 +89,6 @@
                                 </td>
                             </tr>
                         </table>
-
-                        <?php if (isset($members)) { ?>
-                        <table class="form">
-                            <tr>
-		                        <td><?php echo $this->lang->line('entry_system_id'); ?></td>
-		                        <td><?php echo $this->lang->line('entry_name'); ?></td>
-                            </tr>
-                            <?php if (is_array($members)) foreach ($members as $member) { ?>
-                            <tr>
-                                <td><?php echo $member['goods_id']->{'$id'}; ?></td>
-                                <td><?php echo $member['name']; ?></td>
-                            </tr>
-                            <?php } ?>
-                        </table>
-                        <?php } ?>
 
                 </div>
                 <div id="tab-data">

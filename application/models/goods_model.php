@@ -141,6 +141,7 @@ class Goods_model extends MY_Model
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        if (array_key_exists('$nin', $data)) $this->mongo_db->where_not_in('_id', $data['$nin']);
         $results = $this->mongo_db->get("playbasis_goods_to_client");
 
         return $results;
@@ -158,10 +159,37 @@ class Goods_model extends MY_Model
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
         $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        if (array_key_exists('$nin', $data)) $this->mongo_db->where_not_in('_id', $data['$nin']);
         $total = $this->mongo_db->count("playbasis_goods_to_client");
 
         return $total;
+    }
+
+    public function getGroups($site_id) {
+        $this->mongo_db->select(array('group'));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_exists('group', true);
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
+        $groups = array();
+        if ($results) foreach ($results as $result) {
+            $name = $result['group'];
+            if (array_key_exists($name, $groups)) {
+                $groups[$name][] = $result['_id'];
+            } else {
+                $groups[$name] = array($result['_id']);
+            }
+        }
+        return $groups;
+    }
+
+    public function getGroupsByName($site_id, $group) {
+        $this->mongo_db->select(array('name', 'goods_id'));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('group', $group);
+        return $this->mongo_db->get("playbasis_goods_to_client");
     }
 
     public function getCommonGoods(){
@@ -264,6 +292,11 @@ class Goods_model extends MY_Model
         $this->mongo_db->insert('playbasis_goods_to_client', $data_insert);
     }
 
+    public function addGoodsToClient_bulk($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        return $this->mongo_db->batch_insert('playbasis_goods_to_client', $data);
+    }
+
     public function editGoods($goods_id, $data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -305,7 +338,6 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
             $this->mongo_db->update('playbasis_goods');
         }
-
     }
 
     public function editGoodsToClient($goods_id, $data) {
@@ -344,14 +376,52 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('date_expire', null);
         }
 
-        $this->mongo_db->update('playbasis_goods_to_client');
-
         if (isset($data['image'])) {
-            $this->mongo_db->where('_id', new MongoID($goods_id));
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
-            $this->mongo_db->update('playbasis_goods_to_client');
         }
 
+        $this->mongo_db->update('playbasis_goods_to_client');
+    }
+
+    public function editGoodsGroupToClient($group, $data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('quantity', (isset($data['quantity']) && !empty($data['quantity']))?(int)$data['quantity']:null);
+        $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user']))?(int)$data['per_user']:null);
+        $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->set('group', $data['name']);
+        $this->mongo_db->set('description', $data['description']);
+        $this->mongo_db->set('language_id', (int)1);
+        $this->mongo_db->set('redeem', $data['redeem']);
+        if(isset($data['sponsor'])){
+            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
+        }else{
+            $this->mongo_db->set('sponsor', false);
+        }
+
+        if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
+            $date_start_another = strtotime($data['date_start']);
+            $date_expire_another = strtotime($data['date_expire']);
+
+            if($date_start_another < $date_expire_another){
+                $this->mongo_db->set('date_start', new MongoDate($date_start_another));
+                $this->mongo_db->set('date_expire', new MongoDate($date_expire_another));
+            }
+        }else{
+            $this->mongo_db->set('date_start', null);
+            $this->mongo_db->set('date_expire', null);
+        }
+
+        if (isset($data['image'])) {
+            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+        }
+
+        $this->mongo_db->update_all('playbasis_goods_to_client');
     }
 
     public function editGoodsToClientFromAdmin($goods_id, $data) {
@@ -393,7 +463,6 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
             $this->mongo_db->update_all('playbasis_goods_to_client');
         }
-
     }
 
     public function deleteGoods($goods_id) {
@@ -410,7 +479,16 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('_id',  new MongoID($goods_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update('playbasis_goods_to_client');
+    }
 
+    public function deleteGoodsGroupClient($group, $client_id, $site_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update_all('playbasis_goods_to_client');
     }
 
     public function deleteGoodsClientFromAdmin($goods_id) {
@@ -419,7 +497,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update_all('playbasis_goods_to_client');
-
     }
 
     public function increaseOrderByOne($goods_id){
@@ -435,7 +512,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($goods_id));
         $this->mongo_db->set('sort_order', $newOrder);
         $this->mongo_db->update('playbasis_goods');
-
     }
 
     public function decreaseOrderByOne($goods_id){
@@ -453,7 +529,6 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('sort_order', $newOrder);
             $this->mongo_db->update('playbasis_goods');
         }
-        
     }
 
     public function increaseOrderByOneClient($goods_id){
@@ -469,7 +544,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('_id', new MongoID($goods_id));
         $this->mongo_db->set('sort_order', $newOrder);
         $this->mongo_db->update('playbasis_goods_to_client');
-
     }
 
     public function decreaseOrderByOneClient($goods_id){
@@ -487,7 +561,6 @@ class Goods_model extends MY_Model
             $this->mongo_db->set('sort_order', $newOrder);
             $this->mongo_db->update('playbasis_goods_to_client');
         }
-        
     }
 
     public function checkGoodsIsSponsor($goods_id){
