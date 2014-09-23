@@ -124,6 +124,7 @@ class Redeem extends REST2_Controller
                 } catch (Exception $e) {
                     if ($e->getMessage() == 'OVER_LIMIT_REDEEM') continue; // this goods_id has been assigned to this player too often!, try next one
                     else if ($e->getMessage() == 'GOODS_NOT_ENOUGH') continue; // there may be a collision, try next one
+                    else if ($e->getMessage() == 'GOODS_NOT_FOUND') continue; // this should not happen, but if this is the case, then try next one
                     else
                         $this->response($this->error->setError(
                             "INTERNAL_ERROR", array()), 200);

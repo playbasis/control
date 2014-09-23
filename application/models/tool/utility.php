@@ -65,7 +65,20 @@ class Utility extends CI_Model
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($from, $to, $subject, $message, $message_alt=null, $attachments=array()) {
-        if(count($to) > 10){
+        $message_response = array();
+        foreach($to as $email){
+            $message_response[] = $this->_email(array(
+                'from' => $from,
+                'to' => $email,
+                'subject' => $subject,
+                'message' => $message,
+                'message_alt' => $message_alt,
+                'attachments' => $attachments,
+            ));
+            sleep(1);
+        }
+        return $message_response;
+        /*if(count($to) > 10){
             $email_prepare = array();
             $emai_small_set = array();
             foreach($to as $e){
@@ -100,7 +113,7 @@ class Utility extends CI_Model
                 'message_alt' => $message_alt,
                 'attachments' => $attachments,
             ));
-        }
+        }*/
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
