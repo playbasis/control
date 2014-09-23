@@ -201,6 +201,11 @@ class Quest extends MY_Controller
                             if($key == 'missions'){
                                 $data[$key][$i]['mission_number'] = $i + 1;
                             }
+
+                            // clean if value is null
+                            if(isset($v['reward_value']) && ($v['reward_value'] == null || $v['reward_value'] == '')){
+                                unset($data[$key][$i]);
+                            }
                             $i++;
                         }
                     }
@@ -242,6 +247,11 @@ class Quest extends MY_Controller
                                             $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
                                         }
                                         $data[$key][$im][$k][$i] = $voo;
+
+                                        // clean if value is null
+                                        if(isset($voo['reward_value']) && ($voo['reward_value'] == null || $voo['reward_value'] == '')){
+                                            unset($data[$key][$im][$k][$i]);
+                                        }
                                         $i++;
                                     }
                                 }
@@ -908,6 +918,11 @@ class Quest extends MY_Controller
                             if($key == 'missions'){
                                 $data[$key][$i]['mission_number'] = $i + 1;
                             }
+
+                            // clean if value is null
+                            if(isset($v['reward_value']) && ($v['reward_value'] == null || $v['reward_value'] == '')){
+                                unset($data[$key][$i]);
+                            }
                             $i++;
                         }
                     }
@@ -955,6 +970,11 @@ class Quest extends MY_Controller
                                             $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
                                         }
                                         $data[$key][$im][$k][$i] = $voo;
+
+                                        // clean if value is null
+                                        if(isset($voo['reward_value']) && ($voo['reward_value'] == null || $voo['reward_value'] == '')){
+                                            unset($data[$key][$im][$k][$i]);
+                                        }
                                         $i++;
                                     }
                                 }
