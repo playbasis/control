@@ -57,16 +57,16 @@ class Email extends REST2_Controller
 			if (count($_to) > 0) {
 				/* send the email */
 				$response = $this->utility->email($from, $_to, $subject, $message);
-				$this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $_to, $subject, $message, null, array(), $_cc);
+				$this->email_model->log(EMAIL_TYPE_USER, $this->client_id, $this->site_id, $response, $from, $_to, $subject, $message);
 				/* check response from Amazon SES API */
 				if ($response != false) {
 					$this->response($this->resp->setRespond($response), 200);
 				} else {
-					$this->response($this->error->setError('CANNOT_SEND_EMAIL', implode(',', array_merge($_to, $_cc))), 200);
+					$this->response($this->error->setError('CANNOT_SEND_EMAIL', implode(',', $_to)), 200);
 				}
 			} else {
 				/* no email to send, return error */
-				$this->response($this->error->setError('ALL_EMAILS_IN_BLACKLIST', implode(',', array_merge($to, $cc))), 200);
+				$this->response($this->error->setError('ALL_EMAILS_IN_BLACKLIST', implode(',', $to)), 200);
 			}
 		} else { // 'bcc' mode
 			if (count($_bcc) > 0) {
