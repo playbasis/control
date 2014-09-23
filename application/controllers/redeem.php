@@ -289,12 +289,27 @@ class Redeem extends REST2_Controller
             $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
             if ($player) {
                 if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
-                    $message = 'You have successfully redeemed '.$goodsData['name'];
-                    $response = $this->twilio->sms(SMS_FROM, $player['phone_number'], $message);
-                    if ($response->IsError) {
-                        log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
+                    $access = false;
+                    /* check permission to send email in this bill cycle */
+                    try {
+                        $this->client_model->permissionProcess(
+                            $this->client_id,
+                            $this->site_id,
+                            "notifications",
+                            "sms"
+                        );
+                        $access = true;
+                    } catch(Exception $e) {
+                        log_message('error', 'Error = '.$e->getMessage());
                     }
-                    $this->sms_model->log($validToken['client_id'], $validToken['site_id'], SMS_TYPE_REDEEM_GOODS, SMS_FROM, $player['phone_number'], $message, $response);
+                    if ($access) {
+                        $message = 'You have successfully redeemed '.$goodsData['name'];
+                        $response = $this->twilio->sms(SMS_FROM, $player['phone_number'], $message);
+                        if ($response->IsError) {
+                            log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
+                        }
+                        $this->sms_model->log($validToken['client_id'], $validToken['site_id'], SMS_TYPE_REDEEM_GOODS, SMS_FROM, $player['phone_number'], $message, $response);
+                    }
                 }
             } else {
                 log_message('error', 'Cannot find player using _id = '.$pb_player_id);
