@@ -19,7 +19,7 @@ class Utility extends CI_Model
 		case 'objective':
 			return 'completed an objective "'.$objectiveName.'"';
         case 'goods':
-            return "redeem $goodsName goods";
+            return "redeem $goodsName";
 		default:
 			return 'did a thing';
 		}
