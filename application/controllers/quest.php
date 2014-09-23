@@ -969,7 +969,7 @@ class Quest extends MY_Controller
                 $data['mission_order'] = (isset($data['mission_order']))?true:false;
 
                 if($this->Quest_model->editQuestToClient($quest_id, $data)){
-                    //redirect('/quest', 'refresh');
+                    redirect('/quest', 'refresh');
                 }else{
                     echo "Did not update";
                 }
