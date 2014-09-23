@@ -464,16 +464,14 @@ class Client_model extends MY_Model
             $data_filter = array(
                 'client_id' => $client_id,
                 'site_id' => $data['domain_value']['site_id'],
-                'plan_id' => $plan_id->{'$id'},
-                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+                'plan_id' => $plan_id->{'$id'}
             );
 
             if(isset($data['domain_value']['status'])){
                 $data_filter['status'] = $data['domain_value']['status'];
             }
 
-//                $this->addPlanToPermission($data_filter);
+//            $this->addPlanToPermission($data_filter);
             $this->copyRewardToClient($data_filter);
             $this->copyFeaturedToClient($data_filter);
             $this->copyActionToClient($data_filter);

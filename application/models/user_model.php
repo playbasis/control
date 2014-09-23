@@ -706,11 +706,13 @@ class User_model extends MY_Model
         $this->set_site_mongodb($this->site_id);
 
         $this->mongo_db->where('client_id', new MongoID($this->client_id));
-        $this->mongo_db->where('site_id', new MongoID($this->site_id));
+        $this->mongo_db->order_by(array('date_modified' => -1)); // ensure we use only latest record, assumed to be the current chosen plan
+        $this->mongo_db->limit(1);
         $permission = $this->mongo_db->get('playbasis_permission');
 
         $permission = $permission?$permission[0]:array();
 
+        $plan = array();
         if($permission){
             $this->mongo_db->where('_id', new MongoID($permission['plan_id']));
             $plan = $this->mongo_db->get('playbasis_plan');

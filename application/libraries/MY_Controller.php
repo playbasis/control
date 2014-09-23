@@ -175,7 +175,7 @@ class  MY_Controller  extends  CI_Controller  {
                 }
                 $user_plan = $this->User_model->getPlan();
 
-                if(is_null($user_plan['limit_notifications']['sms'])){
+                if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
                     $this->data['features'][] = array(
                         'feature_id' => new MongoId(),
                         'name' => 'Sms',

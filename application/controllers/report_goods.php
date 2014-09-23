@@ -233,7 +233,7 @@ class Report_goods extends MY_Controller{
 	}
 
 	private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'report/action')) {
+        if ($this->User_model->hasPermission('access', 'report')) {
             return true;
         } else {
             return false;

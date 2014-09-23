@@ -874,7 +874,7 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             $data = $this->input->post();
-            $new_missions = sizeof($data['missions']);
+            $new_missions = isset($data['missions'])?sizeof($data['missions']):0;
             $all_missions = ($missions - $this_missions) + $new_missions;
 
             if (isset($lmts['mission'])
@@ -969,7 +969,7 @@ class Quest extends MY_Controller
                 $data['mission_order'] = (isset($data['mission_order']))?true:false;
 
                 if($this->Quest_model->editQuestToClient($quest_id, $data)){
-                    redirect('/quest', 'refresh');
+                    //redirect('/quest', 'refresh');
                 }else{
                     echo "Did not update";
                 }
