@@ -72,14 +72,14 @@ class Account extends MY_Controller
 		// "date_start" and "date_expire" will be set when we receive payment confirmation in each month
 		// So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
 		// In addition, "date_expire" will include extra days to cover grace period.
-		$date_start = array_key_exists('date_start', $client) ? $client['date_start']->sec : null;
-		$date_expire = array_key_exists('date_expire', $client) ? $client['date_expire']->sec : null;
+		$date_start = array_key_exists('date_start', $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
+		$date_expire = array_key_exists('date_expire', $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
 		// Whenever we set "date_billing", it means that the client has already set up subscription.
 		// The date will be immediately after the trial period (if exits),
 		// of which the date is the first day of the client in billing period of the plan.
 		// After the billing period has ended, "date_billing" is unset from client's record,
 		// so the client has to extend the subscription before contract expires.
-		$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
+		$date_billing = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
 		$days_remaining = $this->find_diff_in_days(time(), $date_billing);
 
 		$this->data['client'] = $client;
@@ -155,7 +155,7 @@ class Account extends MY_Controller
 					break;
 				case PURCHASE_UPGRADE:
 				case PURCHASE_DOWNGRADE:
-					$date_billing = array_key_exists('date_billing', $client) ? $client['date_billing']->sec : null;
+					$date_billing = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
 					$days_remaining = $this->find_diff_in_days($date_today, $date_billing);
 					$trial_days = $days_remaining >= 0 ? $days_remaining : 0;
 					$modify = true;
@@ -268,8 +268,8 @@ class Account extends MY_Controller
 	}
 
 	private function check_valid_payment($client) {
-		$date_start = array_key_exists('date_start', $client) ? $client['date_start']->sec : null;
-		$date_expire = array_key_exists('date_expire', $client) ? $client['date_expire']->sec : null;
+		$date_start = array_key_exists('date_start', $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
+		$date_expire = array_key_exists('date_expire', $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
 		$t = time();
 		return ($date_start ? $date_start <= $t : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET) && ($date_expire ? $t <= $date_expire : DEFAULT_VALID_STATUS_IF_DATE_IS_NOT_SET);
 	}
