@@ -173,6 +173,16 @@ class  MY_Controller  extends  CI_Controller  {
                         );
                     }                        
                 }
+                $user_plan = $this->User_model->getPlan();
+
+                if(is_null($user_plan['limit_notifications']['sms'])){
+                    $this->data['features'][] = array(
+                        'feature_id' => new MongoId(),
+                        'name' => 'Sms',
+                        'icon' => 'fa-mail-forward',
+                        'link' => 'sms'
+                    );
+                }
 
                 // foreach ($features as $value) {
                 //     $this->data['features'][] = array(
@@ -195,6 +205,13 @@ class  MY_Controller  extends  CI_Controller  {
                             'link' =>$value['link']
                         );
                     }
+
+                    $this->data['features'][] = array(
+                        'feature_id' => new MongoId(),
+                        'name' => 'Sms',
+                        'icon' => 'fa-mail-forward',
+                        'link' => 'sms'
+                    );
                 }
 
                 // super admin

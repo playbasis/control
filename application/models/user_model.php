@@ -564,7 +564,7 @@ class User_model extends MY_Model
         $this->set_site_mongodb($this->site_id);
 
         if($this->checkSiteId($site_id) > 0){
-            $this->site_id = $site_id;
+            $this->site_id = new MongoId($site_id);
             $this->session->set_userdata('site_id',$this->site_id );
         }
 
@@ -702,5 +702,23 @@ class User_model extends MY_Model
         return $this->getAdminGroupID() == $this->getUserGroupId();
     }
 
+    public function getPlan(){
+        $this->set_site_mongodb($this->site_id);
+
+        $this->mongo_db->where('client_id', new MongoID($this->client_id));
+        $this->mongo_db->where('site_id', new MongoID($this->site_id));
+        $permission = $this->mongo_db->get('playbasis_permission');
+
+        $permission = $permission?$permission[0]:array();
+
+        if($permission){
+            $this->mongo_db->where('_id', new MongoID($permission['plan_id']));
+            $plan = $this->mongo_db->get('playbasis_plan');
+        }
+
+        $plan = $plan?$plan[0]:array();
+
+        return $plan;
+    }
 }
 ?>
