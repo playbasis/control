@@ -8,9 +8,10 @@ class Payment_model extends MY_Model
 		parent::__construct();
 		$this->load->model('tool/utility', 'utility');
 		$this->load->library('mongo_db');
+		$this->load->library('parser');
 	}
 
-	public function processVerifiedIPN($client_id, $plan_id, $POST) {
+	public function processVerifiedIPN($client_id, $plan_id, $POST, $log_id) {
 	    $this->set_site_mongodb($this->session->userdata('site_id'));
 
 		/* find details of the client */
@@ -38,12 +39,12 @@ class Payment_model extends MY_Model
 			if ($myplan['price'] <= 0) { // change the plan if current plan is free
 				$this->changePlan($client, $myplan_id, $plan_id);
 			}
-			//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Sign-Up', 'Congratulations for signing up ['.$client_id.']');
-			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Sign-Up', 'Congratulations for signing up ['.$client_id.']');
+			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'Your registration with Playbasis is confirmed and complete.<br>Thank you for subscribing the plan '.$plan['name'].'.<br>We are looking forward to hearing from you soon.<br><br><b>Payment Detail</b><br>Your payment reference number: '.$log_id->{'$id'}.'<br>Your payment has been set up on '.date('l, F d, Y', time()).'<br>Payment channel: PayPal<br>Monthly payment price: '.$plan['price'].' USD<br>Payment status: Confirmed'), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Registration Confirmation', $html);
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
-			//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Plan Change Acknowledgement', 'Your request for plan change is received and your new plan be effective during next billing cycle ['.$client_id.']');
-			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Plan Change Acknowledgement', 'Your request for plan change is received and your new plan be effective during next billing cycle ['.$client_id.']');
+			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'At your request, we will change your Playbasis subscription plan to '.$plan['name'].'.<br>The billing for your new subscription will take effect on '.$POST['subscr_effective'].'.<br>Below are the details of the order you have placed with us:<br><table><tr><td>&nbsp;</td><td>Old Plan</td><td>New Plan</td></tr> <tr><td>Client ID</td><td>'.$client_id.'</td><td>'.$client_id.'</td></tr> <tr><td>Subscription plan</td><td>'.$myplan['name'].'</td><td>'.$plan['name'].'</td></tr> <tr><td>Monthly price</td><td>'.$myplan['price'].'</td><td>'.$plan['price'].'</td></tr> </table><br>We are looking forward to hearing from you soon.'), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Request to Change Your Subscription Plan', $html);
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_PAYMNT:
 			/* check if we already process this 'txn_id' */
@@ -67,14 +68,14 @@ class Payment_model extends MY_Model
 					/* check the amount that client has paid with the plan */
 					if ($amount != $plan['price']) { /* for security, we have to check payment amount */
 						log_message('error', 'Client '.$client_id.' has paid incorrect amount '.$amount.', should be '.$plan['price']);
-						//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect (1) ['.$client_id.']');
-						$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Incorrect Paid Amount', 'Your payment amount is incorrect ['.$client_id.']');
+						$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'The payment is successful, but the payment amount ('.$amount.' USD) is incorrect.<br>Please contact us for further investigation.'), true);
+						$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Unable to Process Your Playbasis Payment', $html);
 					} else {
 						/* adjust billing period, 'date_start' and 'date_expire', allowing client to use our API */
 						log_message('info', 'Client '.$client_id.' has been set billing period ("date_start" and "date_expire")');
 						$this->setDateStartAndDateExpire($client_id);
-						//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Successful Payment', 'Your payment is successful ['.$client_id.']');
-						$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Successful Payment', 'Your payment is successful ['.$client_id.']');
+						$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'This is to confirm your successful payment to Playbasis.<br>Here are the details of your transaction:<br>Merchant: Playbasis<br>Transaction ID: '.$log_id->{'$id'}.'<br>Transaction date and time: '.$POST['payment_date'].'<br>Plan: '.$plan['name'].'<br>Payment amount: '.$plan['price'].' USD'), true);
+						$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Receipt for Your Payment to Playbasis', $html);
 
 						/* detecting plan has been changed */
 						if ($myplan_id != $plan_id) {
@@ -85,8 +86,8 @@ class Payment_model extends MY_Model
 					break;
 				default:
 					log_message('error', 'Client '.$client_id.' has paid, but the payment status from IPN is '.$POST['payment_status']);
-					//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your PayPal Payment is Not Completed', 'Your PayPal payment status is not completed ['.$client_id.']');
-					$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Your PayPal Payment is Not Completed', 'Your PayPal payment status is not completed ['.$client_id.']');
+					$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We were unable to process the subscription plan payment '.$plan['name'].' of '.$plan['price'].' USD for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. PayPal informed us the payment is not completed.<br><br>What should you do now?<br>Please check the payment setting in your PayPal account and try to resolve the problem.<br><br>What about your account?<br>We\'ll keep your account active for now. However, five days after the initial payment failure we\'ll automatically downgrade your account to the Free plan. You\'ll be able to upgrade later with a valid payment without losing any of your settings.'), true);
+					$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Unable to Process Your Playbasis Payment', $html);
 					break;
 				}
 			}
@@ -97,8 +98,8 @@ class Payment_model extends MY_Model
 			So we will not block the usage when we receive 'subscr_failed'.
 
 			/* send email to the user notifying the failure of payment with reason */
-			//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] PayPal Payment Failure', 'There is an error in processing your PayPal payment (#'.$POST['retry_at'].') ['.$client_id.']');
-			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] PayPal Payment Failure', 'There is an error in processing your PayPal payment (#'.$POST['retry_at'].') ['.$client_id.']');
+			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We were unable to process the subscription plan payment '.$plan['name'].' of '.$plan['price'].' USD for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. PayPal informed us the payment has been declined '.$POST['retry_at'].' times without giving a specific reason.<br><br>What should you do now?<br>Please check the payment setting in your PayPal account and try to resolve the problem.<br><br>What about your account?<br>We\'ll keep your account active for now. However, five days after the initial payment failure we\'ll automatically downgrade your account to the Free plan. You\'ll be able to upgrade later with a valid payment without losing any of your settings.'), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Unable to Process Your Playbasis Payment', $html);
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_CANCEL:
 			/* remove "date_billing" */
@@ -107,8 +108,8 @@ class Payment_model extends MY_Model
 			/* remove "date_start" and "date_expire" */
 			$this->unsetDateStartAndDateExpire($client_id);
 
-			//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Subscription Cancellation', 'Your subscription cancellation is successful ['.$client_id.']');
-			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Cancellation', 'Your subscription cancellation is successful ['.$client_id.']');
+			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'Per your request, we successfully cancelled your subscription plan payment '.$plan['name'].' of '.$plan['price'].' USD for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. It has been downgraded to the Free plan.<br><br>What should you do now?<br>Please watch our pricing page and choose a new plan that better match with your need.<br><br>What about your account?<br>We\'ll keep your account active with the Free plan for now. You\'ll be able to upgrade it later with a new plan without losing any of your settings.'), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Plan Cancellation', $html);
 
 			/* change the client's plan to be a free plan */
 			$free_plan = $this->findFreePlan();
@@ -227,6 +228,9 @@ class Payment_model extends MY_Model
 		$plan = $to_plan_id ? $this->getPlanById($to_plan_id) : null;
 		if (!$plan) return; // early return if we cannot find the chosen plan
 
+		/* get detail of the destination plan */
+		$myplan = $from_plan_id ? $this->getPlanById($from_plan_id) : null;
+
 		/* associate all client's sites to a new plan */
 		$this->mongo_db->where(array('client_id' => $client_id));
 		$this->mongo_db->set('plan_id', $plan['_id']);
@@ -243,8 +247,8 @@ class Payment_model extends MY_Model
 			$this->copyJigsawToClient($client_id, $site_id, $plan);
 		}
 
-		//$this->utility->email(EMAIL_FROM, $client['email'], '[Playbasis] Your Plan is Effective', 'Your current plan just has been changed from '.$from_plan_id.' to '.$to_plan_id.' ['.$client_id.']');
-		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Your Plan is Effective', 'Your current plan just has been changed from '.$from_plan_id.' to '.$to_plan_id.' ['.$client_id.']');
+		$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We have changed your Playbasis subscription plan to '.$plan['name'].'.<br>Below are the details of the order you have placed with us:<br><table><tr><td>&nbsp;</td><td>Old Plan</td><td>New Plan</td></tr> <tr><td>Client ID</td><td>'.$client_id.'</td><td>'.$client_id.'</td></tr> <tr><td>Subscription plan</td><td>'.$myplan['name'].'</td><td>'.$plan['name'].'</td></tr> <tr><td>Monthly price</td><td>'.$myplan['price'].'</td><td>'.$plan['price'].'</td></tr> </table><br>We are looking forward to hearing from you soon.'), true);
+		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Your Subscription Plan has been Changed', $html);
 	}
 
 	private function copyRewardToClient($client_id, $site_id, $plan) {

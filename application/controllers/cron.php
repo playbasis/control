@@ -15,6 +15,7 @@ class Cron extends CI_Controller
 		$this->load->model('plan_model');
 		$this->load->model('service_model');
 		$this->load->model('tool/utility', 'utility');
+		$this->load->library('parser');
 	}
 
 	public function notifyInactiveClients() {
@@ -32,11 +33,10 @@ $email = 'pechpras@playbasis.com';
 					/* email */
 					$from = EMAIL_FROM;
 					$to = $email;
-					$subject = '[Playbasis] Notify Inactive Clients';
-					$message = 'You are currently not using our API ['.$client_id.']';
-					//$response = $this->utility->email($from, $to, $subject, $message);
-					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
-					$this->email_model->log(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id, null, $response, $from, $to, $subject, $message);
+					$subject = '[Playbasis] Playbasis Wants to Hear from You';
+					$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'It has been a while since you subscribed our gamification services. Thousands of people are enjoying gamification with Playbasis every day. Here are a few ideas that you can implement on your web sit using gamification and improve the level of your customers\' engagement your business needs.<br><br>- Reward your users when they like, comment or read something on your page.<br>-Give your users a badge to reward them when they complete several actions you want them to do.<br>- Build a quest to ask your users to achieve a goal.<br><br>The more gamification you propose to your users, the easier it is to engage and let them want to hear from you.'), true);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
+					$this->email_model->log(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id, null, $response, $from, $to, $subject, $html);
 				}
 			}
 		}
@@ -67,11 +67,10 @@ $email = 'pechpras@playbasis.com';
 					/* email */
 					$from = EMAIL_FROM;
 					$to = $email;
-					$subject = '[Playbasis] Notify Free Active Clients to Subscribe';
-					$message = 'Enjoy using our Playbasis API? Please take a look into our subscription plan ['.$client_id.']';
-					//$response = $this->utility->email($from, $to, $subject, $message);
-					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
-					$this->email_model->log(EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS, $client_id, null, $response, $from, $to, $subject, $message);
+					$subject = '[Playbasis] Enjoy using Playbasis - Keep it Going';
+					$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We hope you have enjoyed using Playbasis so far. You may want to select a plan that offers you more features and options to go further and engage your users even better.<br><br>Check out the <a href="http://playbasis.com/plans.html">pricing page</a> to see our plans and options and pick up the one that match with your number of users and your need.<br><br>If you have any questions about our plans or features, please contact us at support@playbasis.com.'), true);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
+					$this->email_model->log(EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS, $client_id, null, $response, $from, $to, $subject, $html);
 				}
 			}
 		}
@@ -113,11 +112,10 @@ $email = 'pechpras@playbasis.com';
 								/* email */
 								$from = EMAIL_FROM;
 								$to = $email;
-								$subject = '[Playbasis] Notify Near Limit Usage';
-								$message = 'Your API usage for "'.$type.'.'.$field.'" is approaching the limit ['.$client_id.']'.' ['.$site_id.']';
-								//$response = $this->utility->email($from, $to, $subject, $message);
-								$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
-								$this->email_model->log(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id, $response, $from, $to, $subject, $message);
+								$subject = '[Playbasis] Almost Reach the Limit Usage';
+								$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'You almost reach the limit: '.$usage.' of '.$usage_limit.' for the feature '.$type.'/'.$field.'.<br>We may suggest you to subscribe a more advanced plan to extend the limit of this feature in order to better match your need.<br><br>If you have any questions about our plans or features, please contact us at support@playbasis.com.'), true);
+								$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
+								$this->email_model->log(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id, $response, $from, $to, $subject, $html);
 							}
 						}
 					}
@@ -150,11 +148,10 @@ $email = 'pechpras@playbasis.com';
 					/* email */
 					$from = EMAIL_FROM;
 					$to = $email;
-					$subject = '[Playbasis] Reminder to Finish Setting Up Subscription';
-					$message = 'You have to finish setting up the subscription before you can really start using our API ['.$client_id.']. Your plan ID ['.$myplan_id.']';
-					//$response = $this->utility->email($from, $to, $subject, $message);
-					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
-					$this->email_model->log(EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION, $client_id, null, $response, $from, $to, $subject, $message);
+					$subject = '[Playbasis] Get Started with Playbasis';
+					$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'You\'re just a step away from starting using Playbasis gamification services and improve the level of your customers\' engagement. To do this, we need your billing detail in order to activate your API.<br><br>You can update your billing information by logging in to your administration interface and by clicking on the "Account" menu on the left side.<br><br>If you have any questions about our plans or features, please contact us at support@playbasis.com.'), true);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
+					$this->email_model->log(EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION, $client_id, null, $response, $from, $to, $subject, $html);
 				}
 			}
 		}
@@ -191,11 +188,10 @@ $email = 'pechpras@playbasis.com';
 						/* email */
 						$from = EMAIL_FROM;
 						$to = $email;
-						$subject = '[Playbasis] Remind End of Trial Period';
-						$message = 'This is to let you know that your trial period has ended ['.$client_id.']. Your plan ID ['.$myplan_id.']';
-						//$response = $this->utility->email($from, $to, $subject, $message);
-						$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
-						$this->email_model->log(EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD, $client_id, null, $response, $from, $to, $subject, $message);
+						$subject = '[Playbasis] Trial Period Ended';
+						$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'Your trial period has just ended on '.date('l, F d, Y', time()).'<br>You enter now in your regular plan billing period.<br>Your payment date will on be on '.date('l, F d, Y', $date_billing).'.<br><br>If you have any questions about our plans or features, please contact us at support@playbasis.com.'), true);
+						$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
+						$this->email_model->log(EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD, $client_id, null, $response, $from, $to, $subject, $html);
 					}
 				}
 			}
@@ -221,11 +217,10 @@ $email = 'pechpras@playbasis.com';
 					/* email */
 					$from = EMAIL_FROM;
 					$to = $email;
-					$subject = '[Playbasis] Alert! Shutdown Your Access to Our API';
-					$message = 'This is to let you know that your access to our API has been shut down ['.$client_id.']';
-					//$response = $this->utility->email($from, $to, $subject, $message);
-					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $message);
-					$this->email_model->log(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id, null, $response, $from, $to, $subject, $message);
+					$subject = '[Playbasis] Shutdown Your API Access';
+					$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'This is to let you know that your access to our API has been shut down.<br><br>If you have any questions about our plans or features, please contact us at support@playbasis.com.'), true);
+					$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
+					$this->email_model->log(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id, null, $response, $from, $to, $subject, $html);
 				}
 			}
 		}
