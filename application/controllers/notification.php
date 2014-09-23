@@ -30,7 +30,7 @@ class Notification extends REST2_Controller
 		$message = !empty($this->request->body) ? $this->request->body : $_POST;
 		log_message('debug', '_SERVER = '.print_r($_SERVER, true));
 		log_message('debug', 'message = '.print_r($message, true));
-		$this->notification_model->log($this->site_id, $message);
+		$log_id = $this->notification_model->log($this->site_id, $message);
 		if (array_key_exists('HTTP_X_AMZ_SNS_MESSAGE_TYPE', $_SERVER)) { // Amazon SNS: http://docs.aws.amazon.com/sns/latest/dg/json-formats.html#http-header
 			log_message('error', 'type = '.print_r($_SERVER['HTTP_X_AMZ_SNS_MESSAGE_TYPE'], true));
 			switch ($_SERVER['HTTP_X_AMZ_SNS_MESSAGE_TYPE']) {
@@ -113,7 +113,7 @@ class Notification extends REST2_Controller
 				$plan_id = new MongoId($pieces[1]);
 
 				log_message('debug', 'process: _POST = '.print_r($_POST, true));
-				$result = $this->payment_model->processVerifiedIPN($client_id, $plan_id, $_POST);
+				$result = $this->payment_model->processVerifiedIPN($client_id, $plan_id, $_POST, $log_id);
 				log_message('debug', 'process: result = '.$result);
 
 				$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
