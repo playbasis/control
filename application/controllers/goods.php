@@ -368,7 +368,12 @@ class Goods extends MY_Controller
                     if(!$this->Goods_model->checkGoodsIsSponsor($goods_id)){
                         $goods_data['client_id'] = $this->User_model->getClientId();
                         $goods_data['site_id'] = $this->User_model->getSiteId();
-                        $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
+                        $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+                        if ($goods_info && array_key_exists('group', $goods_info)) {
+                            $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
+                        } else {
+                            $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
+                        }
                     }else{
                         redirect('/goods', 'refresh');
                     }
@@ -406,7 +411,12 @@ class Goods extends MY_Controller
 
                     if($this->User_model->getClientId()){
                         if(!$this->Goods_model->checkGoodsIsSponsor($goods_id)){
-                            $this->Goods_model->deleteGoodsClient($goods_id);
+                            $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+                            if ($goods_info && array_key_exists('group', $goods_info)) {
+                                $this->Goods_model->deleteGoodsGroupClient($goods_info['group'], $this->User_model->getClientId(), $this->User_model->getSiteId());
+                            } else {
+                                $this->Goods_model->deleteGoodsClient($goods_id);
+                            }
                         }else{
                             redirect('/goods', 'refresh');
                         }
@@ -496,7 +506,7 @@ class Goods extends MY_Controller
                 );
             }
         }else{
-            $groups = $this->Goods_model->getGroup($this->session->userdata('site_id'));
+            $groups = $this->Goods_model->getGroups($this->session->userdata('site_id'));
             $ids = array();
             $group_name = array();
             foreach ($groups as $group => $_ids) {
@@ -601,10 +611,14 @@ class Goods extends MY_Controller
             }
         }
 
+        if (!empty($goods_info) && array_key_exists('group', $goods_info)) {
+            $this->data['members'] = $this->Goods_model->getGroupsByName($this->User_model->getSiteId(), $goods_info['group']);
+        }
+
         if ($this->input->post('name')) {
             $this->data['name'] = $this->input->post('name');
         } elseif (isset($goods_id) && ($goods_id != 0)) {
-            $this->data['name'] = $goods_info['name'];
+            $this->data['name'] = array_key_exists('group', $goods_info) ? $goods_info['group'] : $goods_info['name'];
         } else {
             $this->data['name'] = '';
         }

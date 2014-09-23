@@ -85,6 +85,21 @@
                             </tr>
                         </table>
 
+                        <?php if (isset($members)) { ?>
+                        <table class="form">
+                            <tr>
+		                        <td><?php echo $this->lang->line('entry_system_id'); ?></td>
+		                        <td><?php echo $this->lang->line('entry_name'); ?></td>
+                            </tr>
+                            <?php if (is_array($members)) foreach ($members as $member) { ?>
+                            <tr>
+                                <td><?php echo $member['goods_id']->{'$id'}; ?></td>
+                                <td><?php echo $member['name']; ?></td>
+                            </tr>
+                            <?php } ?>
+                        </table>
+                        <?php } ?>
+
                 </div>
                 <div id="tab-data">
                     <table class="form">

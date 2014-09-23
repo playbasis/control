@@ -33,6 +33,7 @@ $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
 
 // Entry
+$lang['entry_system_id']             		= 'System Generated ID';
 $lang['entry_group']             		= 'Group';
 $lang['entry_name']             		= 'Name';
 $lang['entry_file']             		= 'CSV File To Import';
