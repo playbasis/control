@@ -523,9 +523,9 @@ class FileManager extends MY_Controller
                     // $json['error'] = $image_height." ".$image_width;
                 }
 
-                if(intval($image_height) != intval($image_width)){
-                    $json['error'] = $this->lang->line('error_square');    
-                }                
+//                if(intval($image_height) != intval($image_width)){
+//                    $json['error'] = $this->lang->line('error_square');
+//                }
 
                 $allowed = array(
                     'image/jpeg',

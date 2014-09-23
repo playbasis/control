@@ -151,6 +151,7 @@
                         );
                         //$('#loginModal').modal('show');
                     }
+
                 });
             }
         });
