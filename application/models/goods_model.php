@@ -72,7 +72,10 @@ class Goods_model extends MY_Model
         //get goods id
         $this->set_site_mongodb($data['site_id']);
         // $this->mongo_db->select(array('goods_id','image','name','description','quantity','redeem','date_start','date_expire','sponsor'));
-        $this->mongo_db->select(array('goods_id','image','name','description','quantity','per_user','redeem','date_start','date_expire','sponsor','sort_order'));
+        $this->mongo_db->select(array('goods_id','image','name','description',
+            'quantity','per_user','redeem','date_start','date_expire','sponsor','sort_order',
+            'send_sms', 'sms_from', 'sms_message'
+        ));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],

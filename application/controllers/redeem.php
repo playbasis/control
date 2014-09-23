@@ -284,39 +284,57 @@ class Redeem extends REST2_Controller
             ));
             $this->tracker_model->trackGoods($validToken);
 
-            // send SMS
-            $this->config->load("twilio",TRUE);
-            $config = $this->config->item('twilio');
-            $this->load->library('twilio', $config);
-
-            $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
-            if ($player) {
-                if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
-                    $access = false;
-                    /* check permission to send email in this bill cycle */
-                    try {
-                        $this->client_model->permissionProcess(
-                            $this->client_id,
-                            $this->site_id,
-                            "notifications",
-                            "sms"
-                        );
-                        $access = true;
-                    } catch(Exception $e) {
-                        log_message('error', 'Error = '.$e->getMessage());
-                    }
-                    if ($access) {
-                        $message = 'You have successfully redeemed '.$goodsData['name'];
-                        $response = $this->twilio->sms(SMS_FROM, $player['phone_number'], $message);
-                        if ($response->IsError) {
-                            log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
+            if(isset($goodsData['send_sms']) && $goodsData['send_sms']){
+                $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+                if ($player) {
+                    if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
+                        $access = false;
+                        /* check permission to send email in this bill cycle */
+                        try {
+                            $this->client_model->permissionProcess(
+                                $this->client_id,
+                                $this->site_id,
+                                "notifications",
+                                "sms"
+                            );
+                            $access = true;
+                        } catch(Exception $e) {
+                            log_message('error', 'Error = '.$e->getMessage());
                         }
-                        $this->sms_model->log($validToken['client_id'], $validToken['site_id'], SMS_TYPE_REDEEM_GOODS, SMS_FROM, $player['phone_number'], $message, $response);
+                        if ($access) {
+
+                            // send SMS
+                            $this->config->load("twilio",TRUE);
+//                        $config = $this->config->item('twilio');
+                            $config = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+                            $config['api_version'] = $this->config->item('twilio')['api_version'];
+                            $this->load->library('twilio', $config);
+
+//                            $message = 'You have successfully redeemed '.$goodsData['name'];
+                            $message = $goodsData['sms_message'];
+                            if(isset($goodsData['name'])){
+                                $message = str_replace('{{goods_name}}', $goodsData['name'], $message);
+                            }
+                            if(isset($goodsData['group'])){
+                                $message = str_replace('{{goods_group}}', $goodsData['group'], $message);
+                            }
+                            if(isset($player['username'])){
+                                $message = str_replace('{{username}}', $player['username'], $message);
+                            }
+
+//                            $response = $this->twilio->sms(SMS_FROM, $player['phone_number'], $message);
+                            $response = $this->twilio->sms($goodsData['sms_from'], $player['phone_number'], $message);
+                            if ($response->IsError) {
+                                log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
+                            }
+                            $this->sms_model->log($validToken['client_id'], $validToken['site_id'], SMS_TYPE_REDEEM_GOODS, $goodsData['sms_from'], $player['phone_number'], $message, $response);
+                        }
                     }
+                } else {
+                    log_message('error', 'Cannot find player using _id = '.$pb_player_id);
                 }
-            } else {
-                log_message('error', 'Cannot find player using _id = '.$pb_player_id);
             }
+
 
             // publish to node stream
             $eventMessage = $this->utility->getEventMessage('goods', '', '', '', '', '', $goodsData['name']);
