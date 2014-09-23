@@ -91,6 +91,7 @@
 				            <td><?php echo $this->lang->line('text_billing_date'); ?>:</td>
 				            <td><?php echo $client['date_billing'] ? date('d M Y', $client['date_billing']) : $this->lang->line('text_not_available'); ?></td>
 			            </tr>
+			            <?php if ($plan['trial_total_days'] > 0) { ?>
 				            <?php $days_used = $plan['trial_total_days'] - $client['trial_remaining_days']; ?>
 				            <?php if ($days_used < 0) $days_used = 0; ?>
 				            <?php if ($days_used > $plan['trial_total_days']) $days_used = $plan['trial_total_days']; ?>
@@ -102,6 +103,7 @@
 				            <td><?php echo $client['trial_remaining_days'] >= 0 ? $this->lang->line('text_yes') : $this->lang->line('text_no'); ?> <?php echo '('.$days_used.'/'.$plan['trial_total_days'].')'; ?></td>
 				            <?php } ?>
 			            </tr>
+			            <?php } ?>
 				            <?php if ($client['date_billing'] && $client['trial_remaining_days'] >= 0) { ?>
 			            <tr>
 				            <td><?php echo $this->lang->line('text_trial_remaining_days'); ?>:</td>
