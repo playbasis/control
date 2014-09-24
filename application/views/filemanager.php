@@ -642,31 +642,35 @@ $(document).ready(function() {
         },
         onComplete: function(file, json) {
 
-            if (json.success) {
-                var tree = $.tree.focused();
+            if(json){
+                if (json.success) {
+                    var tree = $.tree.focused();
 
-                tree.select_branch(tree.selected);
+                    tree.select_branch(tree.selected);
 
-                var client_id = '<?php echo $client_id ?>';
-                var site_id = '<?php echo $site_id ?>';
+                    var client_id = '<?php echo $client_id ?>';
+                    var site_id = '<?php echo $site_id ?>';
 
-                var t = file.split(".");
-                var type = t.pop();
+                    var t = file.split(".");
+                    var type = t.pop();
 
-                var namep = client_id+""+site_id+""+file;
-                file = CryptoJS.MD5(namep).toString();
+                    var namep = client_id+""+site_id+""+file;
+                    file = CryptoJS.MD5(namep).toString();
 
-                // add from double click action
-                parent.$('#<?php echo $field; ?>').attr('value', 'data/'+file+"."+type);
-                parent.$('#dialog').dialog('close');
+                    // add from double click action
+                    parent.$('#<?php echo $field; ?>').attr('value', 'data/'+file+"."+type);
+                    parent.$('#dialog').dialog('close');
 
-                alert(json.success);
-                parent.$('#dialog').remove();
-                console.log('upload success');
-            }
+                    //alert(json.success);
+                    parent.$('#dialog').remove();
+                    console.log('upload success');
+                }
 
-            if (json.error) {
-				alert(json.error);
+                if (json.error) {
+                    alert(json.error);
+                }
+            }else{
+                alert(<?php echo $this->lang->line('error_file_size'); ?>);
             }
 
             $('.loading').remove();
