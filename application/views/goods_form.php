@@ -202,7 +202,7 @@
                                     if($point_list){
                                     ?>
                                         <br>
-                                        <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_rewards'); ?></button>
+                                        <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
                                         <div class="rewards">
                                             <div class="goods-panel">
                                                 <?php
