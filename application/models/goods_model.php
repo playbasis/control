@@ -522,6 +522,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('deleted', false);
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update_all('playbasis_goods_to_client');
     }

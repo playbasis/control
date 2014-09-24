@@ -355,7 +355,7 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
-            $goods_data = $this->input->post();
+            $goods_data = array_merge($this->input->post(), array('quantity' => 1));
             $goods_data['redeem'] = $redeem;
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -366,7 +366,17 @@ class Goods extends MY_Controller
                         $goods_data['site_id'] = $this->User_model->getSiteId();
                         $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
                         if ($goods_info && array_key_exists('group', $goods_info)) {
+
+                            /* update all existing records in the group */
                             $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
+
+                            /* if there is an uploaded file, then import it into the group */
+                            if (!empty($_FILES) && isset($_FILES['file']['tmp_name'])) {
+                                $data = array_merge($this->input->post(), array('quantity' => 1));
+                                $handle = fopen($_FILES['file']['tmp_name'], "r");
+                                $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
+                                fclose($handle);
+                            }
                         } else {
                             $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
                         }
@@ -976,7 +986,7 @@ class Goods extends MY_Controller
             $each = array_merge($template, array('name' => $line));
             $goods_id = $this->Goods_model->addGoods($each);
             $each = array_merge($each, array(
-                'send_sms' => isset($data['send_sms']) ? $data['send_sms'] : false,
+                'send_sms' => isset($data['send_sms']) ? (bool)$data['send_sms'] : false,
                 'sms_from' => isset($data['sms_from']) ? $data['sms_from'] : null,
                 'sms_message' => isset($data['sms_message']) ? $data['sms_message'] : null,
             ));
