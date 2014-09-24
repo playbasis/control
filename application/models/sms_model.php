@@ -26,5 +26,14 @@ class Sms_model extends MY_Model
 			'date_modified' => $mongoDate,
 		));
 	}
+
+    public function getSMSClient($client_id, $site_id){
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where('client_id',  $client_id);
+        $results = $this->mongo_db->get("playbasis_sms");
+
+        return $results ? $results[0] : null;
+    }
 }
 ?>
