@@ -1,6 +1,6 @@
 <?php
 // Heading
-$lang['heading_title']          				= 'Action Report';
+$lang['heading_title']          				= 'Report';
 
 // Text
 $lang['text_success']           				= 'Success: You have modified clients!';
