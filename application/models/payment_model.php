@@ -39,7 +39,7 @@ class Payment_model extends MY_Model
 			if ($myplan['price'] <= 0) { // change the plan if current plan is free
 				$this->changePlan($client, $myplan_id, $plan_id);
 			}
-			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'Your registration with Playbasis is confirmed and complete.<br>Thank you for subscribing the plan '.$plan['name'].'.<br>We are looking forward to hearing from you soon.<br><br><b>Payment Detail</b><br>Your payment reference number: '.$log_id->{'$id'}.'<br>Your payment has been set up on '.date('l, F d, Y', time()).'<br>Payment channel: PayPal<br>Monthly payment price: '.$plan['price'].' USD<br>Payment status: Confirmed'), true);
+			$html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $log_id->{'$id'}, 'date' => date('l, F d, Y', time())), true);
 			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Registration Confirmation', $html);
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
@@ -74,7 +74,7 @@ class Payment_model extends MY_Model
 						/* adjust billing period, 'date_start' and 'date_expire', allowing client to use our API */
 						log_message('info', 'Client '.$client_id.' has been set billing period ("date_start" and "date_expire")');
 						$this->setDateStartAndDateExpire($client_id);
-						$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'This is to confirm your successful payment to Playbasis.<br>Here are the details of your transaction:<br>Merchant: Playbasis<br>Transaction ID: '.$log_id->{'$id'}.'<br>Transaction date and time: '.$POST['payment_date'].'<br>Plan: '.$plan['name'].'<br>Payment amount: '.$plan['price'].' USD'), true);
+						$html = $this->parser->parse('message_pay_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'transaction_id' => $log_id->{'$id'}, 'date' => $POST['payment_date'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price']), true);
 						$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Receipt for Your Payment to Playbasis', $html);
 
 						/* detecting plan has been changed */
@@ -108,7 +108,7 @@ class Payment_model extends MY_Model
 			/* remove "date_start" and "date_expire" */
 			$this->unsetDateStartAndDateExpire($client_id);
 
-			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'Per your request, we successfully cancelled your subscription plan payment '.$plan['name'].' of '.$plan['price'].' USD for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. It has been downgraded to the Free plan.<br><br>What should you do now?<br>Please watch our pricing page and choose a new plan that better match with your need.<br><br>What about your account?<br>We\'ll keep your account active with the Free plan for now. You\'ll be able to upgrade it later with a new plan without losing any of your settings.'), true);
+			$html = $this->parser->parse('message_cancel_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'date' => date('l, F d, Y', time())), true);
 			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Plan Cancellation', $html);
 
 			/* change the client's plan to be a free plan */
@@ -248,7 +248,7 @@ class Payment_model extends MY_Model
 			$this->copyJigsawToClient($client_id, $site_id, $plan);
 		}
 
-		$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We have changed your Playbasis subscription plan to '.$plan['name'].'.<br>Below are the details of the order you have placed with us:<br><table><tr><td>&nbsp;</td><td>Old Plan</td><td>New Plan</td></tr> <tr><td>Client ID</td><td>'.$client_id.'</td><td>'.$client_id.'</td></tr> <tr><td>Subscription plan</td><td>'.$myplan['name'].'</td><td>'.$plan['name'].'</td></tr> <tr><td>Monthly price</td><td>'.$myplan['price'].'</td><td>'.$plan['price'].'</td></tr> </table><br>We are looking forward to hearing from you soon.'), true);
+		$html = $this->parser->parse('message_change_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'client_id' => $client_id, 'old_plan_name' => $myplan['name'], 'new_plan_name' => $plan['name'], 'old_plan_price' => $myplan['price'], 'new_plan_price' => $plan['price']), true);
 		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Your Subscription Plan has been Changed', $html);
 	}
 
