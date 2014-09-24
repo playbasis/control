@@ -76,4 +76,6 @@ $lang['error_name']             = 'Category Name must be between 2 and 32 charac
 $lang['error_limit']            = 'You have reached goods limit.';
 $lang['error_redeem']           = 'Please provide point or badge.';
 $lang['error_file']           = 'Please provide a file to import.';
+$lang['error_upload']           = 'Our system cannot access your uploaded file.';
+$lang['error_group_exists']           = 'Group already exists.';
 ?>

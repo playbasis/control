@@ -167,7 +167,7 @@ class Goods_model extends MY_Model
     }
 
     public function getGroups($site_id) {
-        $this->mongo_db->select(array('group'));
+        $this->mongo_db->select(array('group','quantity'));
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where_exists('group', true);
@@ -176,19 +176,27 @@ class Goods_model extends MY_Model
         if ($results) foreach ($results as $result) {
             $name = $result['group'];
             if (array_key_exists($name, $groups)) {
-                $groups[$name][] = $result['_id'];
+                $groups[$name][] = array('_id' => $result['_id'], 'quantity' => $result['quantity']);
             } else {
-                $groups[$name] = array($result['_id']);
+                $groups[$name] = array(array('_id' => $result['_id'], 'quantity' => $result['quantity']));
             }
         }
         return $groups;
     }
 
-    public function getGroupsByName($site_id, $group) {
+    public function checkExists($site_id, $group) {
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('group', $group);
+        return $this->mongo_db->count("playbasis_goods_to_client") > 0;
+    }
+
+    public function getAvailableGoodsByGroup($site_id, $group) {
         $this->mongo_db->select(array('name', 'goods_id'));
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('group', $group);
+        $this->mongo_db->where_gt('quantity', 0);
         return $this->mongo_db->get("playbasis_goods_to_client");
     }
 
@@ -426,25 +434,10 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
-        if(isset($data['sponsor'])){
-            $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
-        }else{
-            $this->mongo_db->set('sponsor', false);
-        }
-
-        if(isset($data['send_sms'])){
-            $this->mongo_db->set('send_sms', (bool)$data['send_sms']);
-        }else{
-            $this->mongo_db->set('send_sms', false);
-        }
-
-        if(isset($data['sms_from']) && $data['sms_from']){
-            $this->mongo_db->set('sms_from', $data['sms_from']);
-        }
-
-        if(isset($data['sms_message']) && $data['sms_message']){
-            $this->mongo_db->set('sms_message', $data['sms_message']);
-        }
+        $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
+        $this->mongo_db->set('send_sms', isset($data['send_sms']) ? (bool)$data['send_sms'] : false);
+        if (isset($data['sms_from'])) $this->mongo_db->set('sms_from', $data['sms_from']);
+        if (isset($data['sms_message'])) $this->mongo_db->set('sms_message', $data['sms_message']);
 
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
             $date_start_another = strtotime($data['date_start']);
