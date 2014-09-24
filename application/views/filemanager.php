@@ -670,7 +670,7 @@ $(document).ready(function() {
                     alert(json.error);
                 }
             }else{
-                alert(<?php echo $this->lang->line('error_file_size'); ?>);
+                alert('<?php echo $this->lang->line('error_file_size'); ?>');
             }
 
             $('.loading').remove();
