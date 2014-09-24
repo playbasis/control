@@ -301,6 +301,13 @@
 							"Type": "string",
 							"Description": "url to the player profile image"
 						},
+                        {
+                            "Name": "phone_number",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "+66xxyyyzzzz"
+                        },
 						{
 							"Name": "exp",
 							"Required": "N",
