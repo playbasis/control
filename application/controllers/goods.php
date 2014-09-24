@@ -123,20 +123,28 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
+            $handle = fopen($_FILES['file']['tmp_name'], "r");
+            if (!$handle) {
+                $this->data['message'] = $this->lang->line('error_upload');
+            }
+
+            if ($this->User_model->getClientId() && $this->User_model->getSiteId()) {
+                if($this->input->post('name') && $this->Goods_model->checkExists($this->User_model->getSiteId(), $this->input->post('name'))){
+                    $this->data['message'] = $this->lang->line('error_group_exists');
+                }
+            }
+
             if($this->form_validation->run() && $this->data['message'] == null){
+
+                $data = array_merge($this->input->post(), array('quantity' => 1));
 
                 if($this->User_model->getClientId()){
 
-                    $handle = fopen($_FILES['file']['tmp_name'], "r");
-                    if ($handle) {
-                        $this->addGoods($handle, $this->input->post(), $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
-                    } else {
-                        log_message('error', 'Cannot open file = '.$_FILES['file']['tmp_name']);
-                    }
-                    fclose($handle);
+                    $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
+                    fclose($handle);
                     redirect('/goods', 'refresh');
                 }else{
 
@@ -151,14 +159,7 @@ class Goods extends MY_Controller
                             array_push($list_site_id, $client['_id']);
                         }
 
-                        $handle = fopen($_FILES['file']['tmp_name'], "r");
-                        if ($handle) {
-                            $this->addGoods($handle, $this->input->post(), $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
-                        } else {
-                            log_message('error', 'Cannot open file = '.$_FILES['file']['tmp_name']);
-                        }
-                        fclose($handle);
-
+                        $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
                     }else{
                         $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
                         $hash_client_id = array();
@@ -168,14 +169,9 @@ class Goods extends MY_Controller
                             array_push($list_site_id, $site['_id']);
                         }
 
-                        $handle = fopen($_FILES['file']['tmp_name'], "r");
-                        if ($handle) {
-                            $this->addGoods($handle, $this->input->post(), $redeem, array_keys($hash_client_id), array($list_site_id));
-                        } else {
-                            log_message('error', 'Cannot open file = '.$_FILES['file']['tmp_name']);
-                        }
-                        fclose($handle);
+                        $this->addGoods($handle, $data, $redeem, array_keys($hash_client_id), array($list_site_id));
                     }
+                    fclose($handle);
                     redirect('/goods', 'refresh');
                 }
             }
@@ -509,10 +505,20 @@ class Goods extends MY_Controller
             $groups = $this->Goods_model->getGroups($this->session->userdata('site_id'));
             $ids = array();
             $group_name = array();
-            foreach ($groups as $group => $_ids) {
-                $_id = array_shift($_ids); // skip first one
-                $group_name[$_id->{'$id'}] = $group;
-                $ids = array_merge($ids, $_ids);
+            foreach ($groups as $group => $each) {
+                $first = array_shift($each); // skip first one
+                $first_id = $first['_id']->{'$id'};
+                $group_name[$first_id] = array('group' => $group, 'quantity' => $first['quantity']);
+                if ($each) { // process the remaining
+                    while ($next = array_shift($each)) {
+                        array_push($ids, $next['_id']);
+                        if ($next['quantity'] != null) {
+                            $group_name[$first_id]['quantity'] += $next['quantity'];
+                        } else {
+                            $group_name[$first_id]['quantity'] = null;
+                        }
+                    }
+                }
             }
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id, 'sort' => 'sort_order', '$nin' => $ids));
             $goods_list = $this->Goods_model->getGoodsBySiteId(array('site_id' => $site_id, 'limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order', '$nin' => $ids));
@@ -543,8 +549,8 @@ class Goods extends MY_Controller
                 $_id = $goods['_id']->{'$id'};
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
-                    'name' => array_key_exists($_id, $group_name) ? $group_name[$_id] : $goods['name'],
-                    'quantity' => $goods['quantity'],
+                    'name' => array_key_exists($_id, $group_name) ? $group_name[$_id]['group'] : $goods['name'],
+                    'quantity' => array_key_exists($_id, $group_name) ? $group_name[$_id]['quantity'] : $goods['quantity'],
                     'per_user' => $goods['per_user'],
                     'status' => $goods['status'],
                     'image' => $image,
@@ -611,14 +617,20 @@ class Goods extends MY_Controller
             }
         }
 
+        $this->data['is_import'] = $import;
+        $this->data['is_group'] = $import || (!empty($goods_info) && array_key_exists('group', $goods_info));
         if (!empty($goods_info) && array_key_exists('group', $goods_info)) {
-            $this->data['members'] = $this->Goods_model->getGroupsByName($this->User_model->getSiteId(), $goods_info['group']);
+            $this->data['group'] = $goods_info['group'];
+        }
+
+        if (!empty($goods_info) && array_key_exists('group', $goods_info)) {
+            $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($this->User_model->getSiteId(), $goods_info['group']);
         }
 
         if ($this->input->post('name')) {
             $this->data['name'] = $this->input->post('name');
         } elseif (isset($goods_id) && ($goods_id != 0)) {
-            $this->data['name'] = array_key_exists('group', $goods_info) ? $goods_info['group'] : $goods_info['name'];
+            $this->data['name'] = $goods_info['name'];
         } else {
             $this->data['name'] = '';
         }
@@ -810,7 +822,7 @@ class Goods extends MY_Controller
             }
         }
 
-        $this->data['main'] = !$import ? 'goods_form' : 'goods_import';
+        $this->data['main'] = 'goods_form';
 
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -963,6 +975,11 @@ class Goods extends MY_Controller
         while (($line = fgets($handle)) !== false) {
             $each = array_merge($template, array('name' => $line));
             $goods_id = $this->Goods_model->addGoods($each);
+            $each = array_merge($each, array(
+                'send_sms' => isset($data['send_sms']) ? $data['send_sms'] : false,
+                'sms_from' => isset($data['sms_from']) ? $data['sms_from'] : null,
+                'sms_message' => isset($data['sms_message']) ? $data['sms_message'] : null,
+            ));
             foreach ($list_client_id as $client_id) {
                 foreach ($list_site_id as $site_id) {
                     array_push($list, array_merge($each, array(

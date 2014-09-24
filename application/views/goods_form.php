@@ -44,15 +44,20 @@
                 <?php
             }
             $attributes = array('id' => 'form');
-            echo form_open($form ,$attributes);
+            echo form_open_multipart($form ,$attributes);
             ?>
                 <div id="tab-general">
                         <table class="form">
                             <tr>
-                                <td><span class="required">*</span> <?php echo $this->lang->line('entry_name'); ?>:</td>
-                                <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" />
-                                </td>
+                                <td><span class="required">*</span> <?php echo $this->lang->line($is_group ? 'entry_group' : 'entry_name'); ?>:</td>
+                                <td><input type="text" name="name" size="100" value="<?php echo $is_group ? (isset($group) ? $group : set_value('group')) : (isset($name) ? $name : set_value('name')); ?>" /></td>
                             </tr>
+                            <?php if ($client_id && $is_group) { ?>
+                            <tr>
+                                <td><?php if ($is_import) { ?><span class="required">*</span>  <?php } ?><?php echo $this->lang->line('entry_file'); ?>:</td>
+                                <td><input type="file" name="file" size="100" /></td>
+                            </tr>
+                            <?php } ?>
                             <tr>
                                 <?php if(!$client_id && !$name){?>
                                     <td><span class="required">*</span> <?php echo $this->lang->line('entry_for_client'); ?>:</td>
@@ -118,6 +123,7 @@
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
                                 <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
                         </tr>
+                        <?php if (!$is_group) { ?>
                         <tr>
                             <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
                             <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods to be redeemed, if left blank it is unlimited"/></td>
@@ -126,6 +132,7 @@
                             <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
                             <td><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods that a user can redeem, if left blank it is unlimited"/></td>
                         </tr>
+                        <?php } ?>
                         <tr>
                             <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
                             <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>

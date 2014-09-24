@@ -41,13 +41,11 @@
                         <table class="form">
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_group'); ?>:</td>
-                                <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name :  set_value('name'); ?>" />
-                                </td>
+                                <td><input type="text" name="name" size="100" value="<?php echo isset($name) ? $name : set_value('name'); ?>" /></td>
                             </tr>
 	                        <tr>
 		                        <td><span class="required">*</span> <?php echo $this->lang->line('entry_file'); ?>:</td>
-		                        <td><input type="file" name="file" size="100" />
-                                </td>
+		                        <td><input type="file" name="file" size="100" /></td>
 	                        </tr>
                             <tr>
                                 <?php if(!$client_id && !$name){?>
@@ -98,14 +96,6 @@
                             <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
                                 <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
-                            <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods to be redeemed, if left blank it is unlimited"/></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_per_user'); ?>:</td>
-                            <td><input type="text" name="per_user" value="<?php echo isset($per_user) ? $per_user : set_value('per_user'); ?>" size="5" class="tooltips" data-placement="right" title="Number of Goods that a user can redeem, if left blank it is unlimited"/></td>
                         </tr>
                         <tr>
                             <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
