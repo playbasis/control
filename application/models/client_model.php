@@ -789,8 +789,8 @@ class Client_model extends MY_Model
             throw new Exception("NOEXPIRE");
 
         // Date is not sync
-        if (($clientDate["date_start"] != $permissionDate["date_start"]) ||
-            ($clientDate["date_expire"] != $permissionDate["date_expire"])) {
+        if ((!array_key_exists('date_start', $permissionDate) || $clientDate["date_start"] != $permissionDate["date_start"]) ||
+            (!array_key_exists('date_expire', $permissionDate) || $clientDate["date_expire"] != $permissionDate["date_expire"])) {
                 $this->mongo_db->where(array("_id" => $permissionDate["_id"]));
 
                 // Update date & Reset usage
