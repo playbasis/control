@@ -638,10 +638,11 @@ $(document).ready(function() {
             this.submit();
         },
         onSubmit: function(file, extension) {
+            this.disable();
             $('#upload').append('<img src="<?php echo base_url();?>image/loading.gif" class="loading" style="padding-left: 5px;" />');
         },
         onComplete: function(file, json) {
-
+            this.enable();
             if(json){
                 if (json.success) {
                     var tree = $.tree.focused();

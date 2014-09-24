@@ -568,7 +568,7 @@
                                                 
                         return;
                 }
-                
+
                 var doc = iframe.contentDocument ? iframe.contentDocument : window.frames[iframe.id].document;
                 
                 // fixing Opera 9.26,10.00
@@ -586,7 +586,7 @@
                     // to server response approx. after 1 sec
                     return;
                 }
-                
+
                 var response;
                 
                 if (doc.XMLDocument) {
@@ -595,7 +595,7 @@
                 } else if (doc.body){
                     // response is html document or plain text
                     response = doc.body.innerHTML;
-                    
+
                     if (settings.responseType && settings.responseType.toLowerCase() == 'json') {
                         // If the document was sent as 'application/javascript' or
                         // 'text/javascript', then the browser wraps the text in a <pre>
@@ -608,9 +608,13 @@
                         }
 
                         if (response) {
-                            response = eval("(" + response + ")");
+                            try {
+                                response = eval("(" + response + ")");
+                            } catch (e) {
+                                response = {error:'Warning: File too big please keep below 3MB and no more than 1000px height or width!'};
+                            }
                         } else {
-                            response = {};
+                            response = {error:'error'};
                         }
                     }
                 } else {
@@ -657,7 +661,7 @@
             removeClass(self._button, self._settings.hoverClass);
                         
             form.appendChild(this._input);
-                        
+
             form.submit();
 
             // request set, clean up                
