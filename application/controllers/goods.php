@@ -971,7 +971,7 @@ class Goods extends MY_Controller
             list($name, $code) = explode(',', $line);
             $each = array_merge($template, array('name' => $name));
             $goods_id = $this->Goods_model->addGoods($each);
-            $each = array_merge($template, array('code' => $code));
+            $each = array_merge($each, array('code' => $code));
             foreach ($list_client_id as $client_id) {
                 foreach ($list_site_id as $site_id) {
                     array_push($list, array_merge($each, array(

@@ -192,7 +192,7 @@ class Goods_model extends MY_Model
     }
 
     public function getAvailableGoodsByGroup($site_id, $group) {
-        $this->mongo_db->select(array('name', 'goods_id'));
+        $this->mongo_db->select(array('name', 'code', 'goods_id'));
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('group', $group);

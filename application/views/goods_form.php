@@ -76,12 +76,14 @@
                                 <td><?php echo $this->lang->line('entry_description'); ?>:</td>
                                 <td><textarea name="description" id="description"><?php echo isset($description) ? $description : set_value('description'); ?></textarea></td>
                             </tr>
+                            <?php if (!$is_group) { ?>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_code'); ?>:</td>
                                 <td>
                                     <input type="text" name="code" value="<?php echo isset($code) ? $code : set_value('code'); ?>" size="5" class="tooltips" data-placement="right" title="Code for reddem or do something"/>
                                 </td>
                             </tr>
+                            <?php } ?>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                                 <td>
@@ -102,6 +104,7 @@
                             <tr>
                                 <th><?php echo $this->lang->line('entry_system_id'); ?></th>
                                 <th><?php echo $this->lang->line('entry_name'); ?></th>
+                                <th><?php echo $this->lang->line('entry_code'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,6 +112,7 @@
                             <tr>
                                 <td><?php echo $member['goods_id']->{'$id'}; ?></td>
                                 <td><?php echo $member['name']; ?></td>
+                                <td><?php echo $member['code']; ?></td>
                             </tr>
                             <?php } ?>
                         </tbody>
