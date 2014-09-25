@@ -102,6 +102,14 @@ class Error extends CI_Model
             $errorData["message"] = "The user or reward type does not exist";
             $errorData["error_code"] = "0203";
             break;
+        case "USER_ID_INVALID":
+            $errorData["message"] = "cl_player_id format should be 0-9a-zA-Z_-";
+            $errorData["error_code"] = "0204";
+            break;
+        case "USER_PHONE_INVALID":
+            $errorData["message"] = "phone number format should be +[countrycode][number] example. +66861234567";
+            $errorData["error_code"] = "0205";
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';

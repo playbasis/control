@@ -312,6 +312,11 @@ class Player extends REST2_Controller
 			array_push($required, 'player_id');
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+        if(!$this->validClPlayerId($player_id)){
+            $this->response($this->error->setError('USER_ID_INVALID'), 200);
+        }
+
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
@@ -336,8 +341,13 @@ class Player extends REST2_Controller
 		if($nickName)
 			$playerInfo['nickname'] = $nickName;
 		$phoneNumber = $this->input->post('phone_number');
-		if($phoneNumber)
-			$playerInfo['phone_number'] = $phoneNumber;
+		if($phoneNumber){
+            if($this->validTelephonewithCountry($phoneNumber)){
+                $playerInfo['phone_number'] = $phoneNumber;
+            }else{
+                $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
+            }
+        }
 		$facebookId = $this->input->post('facebook_id');
 		if($facebookId)
 			$playerInfo['facebook_id'] = $facebookId;
@@ -405,6 +415,7 @@ class Player extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
+
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
@@ -437,8 +448,13 @@ class Player extends REST2_Controller
 		if($nickName)
 			$playerInfo['nickname'] = $nickName;
 		$phoneNumber = $this->input->post('phone_number');
-		if($phoneNumber)
-			$playerInfo['phone_number'] = $phoneNumber;
+        if($phoneNumber){
+            if($this->validTelephonewithCountry($phoneNumber)){
+                $playerInfo['phone_number'] = $phoneNumber;
+            }else{
+                $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
+            }
+        }
 		$facebookId = $this->input->post('facebook_id');
 		if($facebookId)
 			$playerInfo['facebook_id'] = $facebookId;
@@ -1063,5 +1079,13 @@ class Player extends REST2_Controller
 		print_r($result);
 		echo '</pre>';
 	}
+
+    private function validClPlayerId($cl_player_id){
+        return ( ! preg_match("/^([-a-z0-9_-])+$/i", $cl_player_id)) ? FALSE : TRUE;
+    }
+
+    private function validTelephonewithCountry($number){
+        return ( ! preg_match("/\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d| 2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]| 4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/", $number)) ? FALSE : TRUE ;
+    }
 }
 ?>
