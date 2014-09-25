@@ -365,7 +365,7 @@ class Quest extends MY_Controller
         } elseif (!empty($goods_info)) {
             $this->data['date_start'] = $goods_info['date_start'];
         } else {
-            $this->data['date_start'] = "-";
+            $this->data['date_start'] = "";
         }
 
         if ($this->input->post('date_end')) {
@@ -373,7 +373,7 @@ class Quest extends MY_Controller
         } elseif (!empty($goods_info)) {
             $this->data['date_end'] = $goods_info['date_end'];
         } else {
-            $this->data['date_end'] = "-";
+            $this->data['date_end'] = "";
         }
 
         $this->data['levels'] = $this->Level_model->getLevelsSite($data);
