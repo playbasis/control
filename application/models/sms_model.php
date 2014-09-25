@@ -30,6 +30,7 @@ class Sms_model extends MY_Model
                 $this->mongo_db->set('account_sid', $data['sms-account_sid']);
                 $this->mongo_db->set('auth_token', $data['sms-auth_token']);
                 $this->mongo_db->set('number', $data['sms-number']);
+                $this->mongo_db->set('name', $data['sms-name']);
                 $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
                 $this->mongo_db->update('playbasis_sms');
             }else{
@@ -39,6 +40,7 @@ class Sms_model extends MY_Model
                      'account_sid' => $data['sms-account_sid'],
                      'auth_token' => $data['sms-auth_token'] ,
                      'number' => $data['sms-number'],
+                     'name' => $data['sms-name'],
                      'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                      'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                  ));
@@ -50,6 +52,7 @@ class Sms_model extends MY_Model
                 $this->mongo_db->set('account_sid', $data['sms-account_sid']);
                 $this->mongo_db->set('auth_token', $data['sms-auth_token']);
                 $this->mongo_db->set('number', $data['sms-number']);
+                $this->mongo_db->set('name', $data['sms-name']);
                 $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
                 $this->mongo_db->update('playbasis_sms');
             }else{
@@ -59,6 +62,7 @@ class Sms_model extends MY_Model
                     'account_sid' => $data['sms-account_sid'],
                     'auth_token' => $data['sms-auth_token'] ,
                     'number' => $data['sms-number'],
+                    'name' => $data['sms-name'],
                     'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                     'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
                 ));

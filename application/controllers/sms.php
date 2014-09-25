@@ -40,6 +40,7 @@ class Sms extends MY_Controller
         $this->form_validation->set_rules('sms-account_sid', $this->lang->line('sms-account_sid'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('sms-auth_token', $this->lang->line('sms-auth_token'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('sms-number', $this->lang->line('sms-number'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('sms-name', $this->lang->line('sms-name'), 'trim|required|xss_clean');
 
         $setting_group_id = $this->User_model->getAdminGroupID();
         if($this->User_model->getUserGroupId() != $setting_group_id){

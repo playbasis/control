@@ -656,6 +656,14 @@ class Goods extends MY_Controller
             $this->data['description'] = '';
         }
 
+        if ($this->input->post('code')) {
+            $this->data['code'] = $this->input->post('code');
+        } elseif (!empty($goods_info) && isset($goods_info['code'])) {
+            $this->data['code'] = $goods_info['code'];
+        } else {
+            $this->data['code'] = '';
+        }
+
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
         } elseif (!empty($goods_info)) {

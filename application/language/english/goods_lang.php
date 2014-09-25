@@ -56,9 +56,7 @@ $lang['entry_sponsor']           		= 'Sponsor';
 $lang['entry_start_date']				= 'Start Date';
 $lang['entry_expire_date']				= 'Expire Date';
 $lang['entry_per_user']                    = 'Per User';
-$lang['entry_send_sms']                    = 'Send SMS';
-$lang['entry_sms_from']                    = 'Send From (name)';
-$lang['entry_sms_message']                    = 'SMS message';
+$lang['entry_code']                    = 'Code';
 
 $lang['column_client_image']	        = 'Logo';
 $lang['column_client_name']           	= 'Name';
