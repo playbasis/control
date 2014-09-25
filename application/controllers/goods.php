@@ -775,32 +775,6 @@ class Goods extends MY_Controller
             $this->data['date_expire'] = "-";
         }
 
-        if ($this->input->post('send_sms')) {
-            $this->data['send_sms'] = $this->input->post('send_sms');
-        } elseif (!empty($goods_info) && isset($goods_info['send_sms'])) {
-            $this->data['send_sms'] = $goods_info['send_sms'];
-        } else {
-            $this->data['send_sms'] = 0;
-        }
-
-        if ($this->input->post('sms_from')) {
-            $this->data['sms_from'] = $this->input->post('sms_from');
-        } elseif (!empty($goods_info) && isset($goods_info['sms_from'])) {
-            $this->data['sms_from'] = $goods_info['sms_from'];
-        } else {
-            $this->load->model('Sms_model');
-            $sms_data = $this->Sms_model->getSMSClient($this->User_model->getClientId());
-            $this->data['sms_from'] = isset($sms_data)?$sms_data['number']:'';
-        }
-
-        if ($this->input->post('sms_message')) {
-            $this->data['sms_message'] = $this->input->post('sms_message');
-        } elseif (!empty($goods_info) && isset($goods_info['sms_message'])) {
-            $this->data['sms_message'] = $goods_info['sms_message'];
-        } else {
-            $this->data['sms_message'] = 'sending {{goods_name}} / {{goods_group}} to {{username}}  ';
-        }
-
         if (isset($goods_id)) {
             $this->data['goods_id'] = $goods_id;
         } else {
