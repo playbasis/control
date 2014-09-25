@@ -174,7 +174,7 @@
 							"Required": "Y",
 							"Default": "",
 							"Type": "string",
-							"Description": "player id as used in client's website *** It's available only [A-Za-z0-9]"
+							"Description": "player id as used in client's website *** It's available only [A-Za-z0-9_-]"
 						},
 						{
 							"Name": "username",
