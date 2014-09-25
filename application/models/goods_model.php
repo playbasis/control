@@ -366,7 +366,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
-        $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : null);
+        $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : '');
         if(isset($data['sponsor'])){
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         }else{
