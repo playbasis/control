@@ -281,25 +281,12 @@ class Goods_model extends MY_Model
             'description' => $data['description']|'',
             'language_id' => (int)1,
             'redeem' => $data['redeem'],
+            'code' => $data['code']|'' ,
             'deleted'=>false,
             'sponsor'=>isset($data['sponsor'])?$data['sponsor']:false,
             'date_start' => null,
             'date_expire' => null,
         );
-
-        if(isset($data['send_sms'])){
-            $data_insert['send_sms'] = (bool)$data['send_sms'];
-        }else{
-            $data_insert['send_sms'] = false;
-        }
-
-        if(isset($data['sms_from']) && $data['sms_from']){
-            $data_insert['sms_from'] = $data['sms_from'];
-        }
-
-        if(isset($data['sms_message']) && $data['sms_message']){
-            $data_insert['sms_message'] = $data['sms_message'];
-        }
 
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
             $date_start_another = strtotime($data['date_start']);
@@ -379,24 +366,11 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
+        $this->mongo_db->set('code', $data['code']);
         if(isset($data['sponsor'])){
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         }else{
             $this->mongo_db->set('sponsor', false);
-        }
-
-        if(isset($data['send_sms'])){
-            $this->mongo_db->set('send_sms', (bool)$data['send_sms']);
-        }else{
-            $this->mongo_db->set('send_sms', false);
-        }
-
-        if(isset($data['sms_from']) && $data['sms_from']){
-            $this->mongo_db->set('sms_from', $data['sms_from']);
-        }
-
-        if(isset($data['sms_message']) && $data['sms_message']){
-            $this->mongo_db->set('sms_message', $data['sms_message']);
         }
 
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
