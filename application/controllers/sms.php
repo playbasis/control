@@ -60,7 +60,6 @@ class Redeem extends REST2_Controller
     public function send_post()
     {
         $required = $this->input->checkParam(array(
-            'from',
             'player_id',
             'message',
         ));
@@ -80,7 +79,13 @@ class Redeem extends REST2_Controller
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
-            $from = $this->input->post('from');
+            if($this->input->post('from')){
+                $from = $this->input->post('from');
+            }else{
+                $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+                $from = $sms_data['name'];
+            }
+
             $message = $this->input->post('message');
 
             $this->sendEngine($from, $player['phone_number'], $message);
