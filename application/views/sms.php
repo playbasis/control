@@ -54,6 +54,16 @@
                             <span class="error"><?php echo form_error('sms-number'); ?></span>
                         </td>
                     </tr>
+                    <tr>
+                        <td><span class="required">*</span> From (Company Name) :</td>
+                        <td>
+                            <?php
+                            $numdata = array('name' => 'sms-name','value' => set_value('sms-name')?set_value('sms-name'):(isset($sms['name'])?$sms['name']:''), "placeholder" => 'Company Name', "class"=>"form-control");
+                            echo form_input(array_merge(array('id' => 'sms-name'), $numdata));
+                            ?>
+                            <span class="error"><?php echo form_error('sms-name'); ?></span>
+                        </td>
+                    </tr>
                 </table>
                 <?php
                 echo form_submit(array('class' => 'btn btn-info', 'value' => 'save'));

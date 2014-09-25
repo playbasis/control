@@ -629,7 +629,7 @@ class Level_model extends MY_Model
         $this->mongo_db->where('level', (int)$toInsertLevel);
         $check = $this->mongo_db->get('playbasis_client_exp_table');
 
-        if($toInsertLevel == $currentLevel[0]['level']){    
+        if(isset($currentLevel[0]['level']) && $toInsertLevel == $currentLevel[0]['level']){
             return false;
         }elseif ($check){
             return true;    

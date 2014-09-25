@@ -522,7 +522,21 @@ class Action_model extends MY_Model
 
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
-        return $this->mongo_db->update('playbasis_action_to_client');
+        $update = $this->mongo_db->update('playbasis_action_to_client');
+
+        // update rule engine //
+        $this->mongo_db->where(array('jigsaw_set.specific_id' => $action_id));
+        if(isset($data['name']) && !is_null($data['name'])){
+            $this->mongo_db->set(array('jigsaw_set.$.name' => utf8_strtolower($data['name'])));
+            $this->mongo_db->set(array('jigsaw_set.$.config.action_name' => utf8_strtolower($data['name'])));
+        }
+        if(isset($data['description']) && !is_null($data['description'])){
+            $this->mongo_db->set(array('jigsaw_set.$.description' => utf8_strtolower($data['description'])));
+        }
+        $this->mongo_db->update_all('playbasis_rule');
+        // end update rule engine //
+
+        return $update;
     }
 
     public function checkActionExists($data){

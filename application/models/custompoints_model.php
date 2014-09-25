@@ -95,6 +95,14 @@ class Custompoints_model extends MY_Model
 
 		$update = $this->mongo_db->update('playbasis_reward_to_client');
 
+        // update rule engine //
+        $this->mongo_db->where(array('jigsaw_set.specific_id' => $data['reward_id']));
+        $this->mongo_db->set(array('jigsaw_set.$.name' => $data['name']));
+        $this->mongo_db->set(array('jigsaw_set.$.dataSet.0.value' => $data['name']));
+        $this->mongo_db->set(array('jigsaw_set.$.config.reward_name' => $data['name']));
+        $this->mongo_db->update_all('playbasis_rule');
+        // end update rule engine //
+
 		return $update;
 	}
 

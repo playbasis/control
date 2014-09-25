@@ -61,7 +61,7 @@ class Rule extends MY_Controller
         $this->data['actionList'] = json_encode(array());
         $this->data['conditionList'] = json_encode(array());
         $this->data['rewardList'] = json_encode(array());
-        $this->data['ruleList'] = json_encode(array());
+        //$this->data['ruleList'] = json_encode(array());
 
         if($s_clientId){
             $actionList = $this->Rule_model->getActionGigsawList($site_id, $client_id);
@@ -71,13 +71,13 @@ class Rule extends MY_Controller
             $this->data['actionList'] = json_encode($actionList);
             $this->data['conditionList'] = json_encode($conditionList);
             $this->data['rewardList'] = json_encode($rewardList);
-            $this->data['ruleList'] = json_encode(
+            /*$this->data['ruleList'] = json_encode(
                 $this->Rule_model->getRulesByCombinationId($site_id, $client_id, array(
                     'actionList' => $this->makeListOfId($actionList, 'specific_id'),
                     'conditionList' => $this->makeListOfId($conditionList, 'id'),
                     'rewardList' => $this->makeListOfId($rewardList, 'specific_id'),
                 ))
-            );
+            );*/
         }
 
         $this->data['jsonIcons'] = json_encode($icons);
@@ -114,7 +114,15 @@ class Rule extends MY_Controller
             $s_clientId = $this->User_model->getClientId();
         }
 
-        $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId);
+        $actionList = $this->Rule_model->getActionGigsawList($s_siteId, $s_clientId);
+        $conditionList = $this->Rule_model->getConditionGigsawList($s_siteId, $s_clientId);
+        $rewardList = $this->Rule_model->getRewardGigsawList($s_siteId, $s_clientId);
+
+        $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId, array(
+            'actionList' => $this->makeListOfId($actionList, 'specific_id'),
+            'conditionList' => $this->makeListOfId($conditionList, 'id'),
+            'rewardList' => $this->makeListOfId($rewardList, 'specific_id'),
+        ));
         $this->output->set_output(json_encode($result));
     }
 

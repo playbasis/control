@@ -439,7 +439,7 @@
     var jsonString_Condition= '<?php print_r($conditionList);?>';
     var jsonString_Reward   = '<?php print_r($rewardList);?>';
 
-    var jsonString_RulesList= '<?php print_r($ruleList);?>';
+    //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet        = '<?php echo $requestParams; ?>';
     var jsonConfig_icons   = '<?php echo $jsonIcons; ?>';
     //########### End : Global variable for rule_e.js ##################/
