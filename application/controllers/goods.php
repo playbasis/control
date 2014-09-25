@@ -355,7 +355,10 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_redeem');
             }
 
-            $goods_data = array_merge($this->input->post(), array('quantity' => 1));
+            $goods_data = $this->input->post();
+            if ($this->input->post('quantity') === false) {
+                $goods_data = array_merge($goods_data, array('quantity' => 1));
+            }
             $goods_data['redeem'] = $redeem;
 
             if($this->form_validation->run() && $this->data['message'] == null){
