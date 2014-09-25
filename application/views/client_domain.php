@@ -7,9 +7,7 @@
     <thead>
     <tr>
         <td class="left" style="width:10%;"><?php echo $this->lang->line('column_domain_name'); ?></td>
-        <td class="left" style="width:10%;"><?php echo $this->lang->line('column_domain_limit_users'); ?></td>
-        <!--td class="left" style="width:10%"><?php echo $this->lang->line('column_domain_plan'); ?></td-->
-        <td class="right" style="width:10%"><?php echo $this->lang->line('column_domain_status'); ?></td>
+        <td class="left" style="width:10%;"><?php echo $this->lang->line('column_domain_status'); ?></td>
         <td style="width:10%;"></td>
     </tr>
     </thead>
