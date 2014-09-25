@@ -100,17 +100,21 @@
                         </table>
 
                         <?php if (isset($members)) { ?>
-                        <table class="form">
+                        <table id="members" class="display form" cellspacing="0" width="100%">
+                        <thead>
                             <tr>
-		                        <td><?php echo $this->lang->line('entry_system_id'); ?></td>
-		                        <td><?php echo $this->lang->line('entry_name'); ?></td>
+                                <th><?php echo $this->lang->line('entry_system_id'); ?></th>
+                                <th><?php echo $this->lang->line('entry_name'); ?></th>
                             </tr>
+                        </thead>
+                        <tbody>
                             <?php if (is_array($members)) foreach ($members as $member) { ?>
                             <tr>
                                 <td><?php echo $member['goods_id']->{'$id'}; ?></td>
                                 <td><?php echo $member['name']; ?></td>
                             </tr>
                             <?php } ?>
+                        </tbody>
                         </table>
                         <?php } ?>
 
@@ -339,6 +343,10 @@ $(document).ready(function(){
     $("#point-entry").live('click', function() {$(".point").toggle()});
     $("#badge-entry").live('click', function() {$(".badges").toggle()});
     $("#reward-entry").live('click', function() {$(".rewards").toggle()});
+    $('#members').dataTable({
+        lengthChange: false,
+        searching: false
+    });
 });
 
 //--></script>
