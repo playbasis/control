@@ -59,23 +59,44 @@ class Redeem extends REST2_Controller
 
     public function send_post()
     {
-        $from = $this->input->post('from');
-        $to = $this->input->post('to');
-        $message = $this->input->post('message');
+        $required = $this->input->checkParam(array(
+            'from',
+            'player_id',
+            'message',
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
-        $this->sendEngine($from, $to, $message);
+        $cl_player_id = $this->input->post('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+        if (!$player)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
+            $from = $this->input->post('from');
+            $message = $this->input->post('message');
+
+            $this->sendEngine($from, $player['phone_number'], $message);
+        }else{
+            $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
+        }
+
     }
 
 
     public function send_goods_post()
     {
-        $this->benchmark->mark('goods_redeem_start');
-
-        //Now type support only Goods
-        //item_id it's a type of id goods_id
         $required = $this->input->checkParam(array(
             'player_id',
             'referer_id',
+            'message_before_code'
         ));
         if($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
@@ -96,21 +117,14 @@ class Redeem extends REST2_Controller
         if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
 
             $referer_id = $this->input->post('referer_id');
-
             $redeemData = $this->Redeem_model()->getReferrer($referer_id);
 
-            $message = $redeemData['item']['sms_message'];
-            if(isset($goodsData['name'])){
-                $message = str_replace('{{goods_name}}', $redeemData['item']['name'], $message);
-            }
-            if(isset($goodsData['group'])){
-                $message = str_replace('{{goods_group}}', $redeemData['item']['group'], $message);
-            }
-            if(isset($player['username'])){
-                $message = str_replace('{{username}}', $redeemData['item']['username'], $message);
-            }
+            $message_before_code = $this->input->post('message_before_code');
+            $message = $message_before_code." ".$redeemData['code'];
 
-            $this->sendEngine($redeemData['item']['sms_from'], $player['phone_number'], $message);
+            $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+
+            $this->sendEngine($sms_data['name'], $player['phone_number'], $message);
 
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
