@@ -379,24 +379,11 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('description', $data['description']);
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
+        $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : null);
         if(isset($data['sponsor'])){
             $this->mongo_db->set('sponsor', (bool)$data['sponsor']);
         }else{
             $this->mongo_db->set('sponsor', false);
-        }
-
-        if(isset($data['send_sms'])){
-            $this->mongo_db->set('send_sms', (bool)$data['send_sms']);
-        }else{
-            $this->mongo_db->set('send_sms', false);
-        }
-
-        if(isset($data['sms_from']) && $data['sms_from']){
-            $this->mongo_db->set('sms_from', $data['sms_from']);
-        }
-
-        if(isset($data['sms_message']) && $data['sms_message']){
-            $this->mongo_db->set('sms_message', $data['sms_message']);
         }
 
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
@@ -425,6 +412,7 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : null);
         $this->mongo_db->set('quantity', (isset($data['quantity']) && !empty($data['quantity']))?(int)$data['quantity']:null);
         $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user']))?(int)$data['per_user']:null);
         $this->mongo_db->set('status', (bool)$data['status']);
@@ -435,9 +423,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->set('language_id', (int)1);
         $this->mongo_db->set('redeem', $data['redeem']);
         $this->mongo_db->set('sponsor', isset($data['sponsor']) ? (bool)$data['sponsor'] : false);
-        $this->mongo_db->set('send_sms', isset($data['send_sms']) ? (bool)$data['send_sms'] : false);
-        if (isset($data['sms_from'])) $this->mongo_db->set('sms_from', $data['sms_from']);
-        if (isset($data['sms_message'])) $this->mongo_db->set('sms_message', $data['sms_message']);
 
         if(isset($data['date_start']) && $data['date_start'] && isset($data['date_expire']) && $data['date_expire']){
             $date_start_another = strtotime($data['date_start']);
@@ -463,6 +448,7 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('goods_id',  new MongoID($goods_id));
+        $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : null);
         $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);

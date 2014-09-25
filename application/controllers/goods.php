@@ -201,6 +201,7 @@ class Goods extends MY_Controller
         $this->data['form'] = 'goods/insert';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('code', $this->lang->line('entry_code'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
         $this->form_validation->set_rules('reward_point', $this->lang->line('entry_point'), 'is_numeric|trim|xss_clean|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -656,6 +657,14 @@ class Goods extends MY_Controller
             $this->data['description'] = '';
         }
 
+        if ($this->input->post('code')) {
+            $this->data['code'] = $this->input->post('code');
+        } elseif (isset($goods_id) && ($goods_id != 0)) {
+            $this->data['code'] = $goods_info['code'];
+        } else {
+            $this->data['code'] = '';
+        }
+
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
         } elseif (!empty($goods_info)) {
@@ -765,32 +774,6 @@ class Goods extends MY_Controller
             $this->data['date_expire'] = $goods_info['date_expire'];
         } else {
             $this->data['date_expire'] = "-";
-        }
-
-        if ($this->input->post('send_sms')) {
-            $this->data['send_sms'] = $this->input->post('send_sms');
-        } elseif (!empty($goods_info) && isset($goods_info['send_sms'])) {
-            $this->data['send_sms'] = $goods_info['send_sms'];
-        } else {
-            $this->data['send_sms'] = 0;
-        }
-
-        if ($this->input->post('sms_from')) {
-            $this->data['sms_from'] = $this->input->post('sms_from');
-        } elseif (!empty($goods_info) && isset($goods_info['sms_from'])) {
-            $this->data['sms_from'] = $goods_info['sms_from'];
-        } else {
-            $this->load->model('Sms_model');
-            $sms_data = $this->Sms_model->getSMSClient($this->User_model->getClientId());
-            $this->data['sms_from'] = isset($sms_data)?$sms_data['number']:'';
-        }
-
-        if ($this->input->post('sms_message')) {
-            $this->data['sms_message'] = $this->input->post('sms_message');
-        } elseif (!empty($goods_info) && isset($goods_info['sms_message'])) {
-            $this->data['sms_message'] = $goods_info['sms_message'];
-        } else {
-            $this->data['sms_message'] = 'sending {{goods_name}} / {{goods_group}} to {{username}}  ';
         }
 
         if (isset($goods_id)) {
@@ -986,13 +969,10 @@ class Goods extends MY_Controller
 
         /* loop insert into playbasis_goods */
         while (($line = fgets($handle)) !== false) {
-            $each = array_merge($template, array('name' => $line));
+            list($name, $code) = explode(',', $line);
+            $each = array_merge($template, array('name' => $name));
             $goods_id = $this->Goods_model->addGoods($each);
-            $each = array_merge($each, array(
-                'send_sms' => isset($data['send_sms']) ? (bool)$data['send_sms'] : false,
-                'sms_from' => isset($data['sms_from']) ? $data['sms_from'] : null,
-                'sms_message' => isset($data['sms_message']) ? $data['sms_message'] : null,
-            ));
+            $each = array_merge($template, array('code' => $code));
             foreach ($list_client_id as $client_id) {
                 foreach ($list_site_id as $site_id) {
                     array_push($list, array_merge($each, array(
