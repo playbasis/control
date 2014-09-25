@@ -159,6 +159,10 @@ $route['Email/isBlackList'] = 'email/isBlackList';
 $route['Email/addBlackList'] = 'email/addBlackList';
 $route['Email/removeBlackList'] = 'email/removeBlackList';
 
+//sms API
+$route['Sms/send'] = 'email/send';
+$route['Sms/Goods'] = 'email/send_goods';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';

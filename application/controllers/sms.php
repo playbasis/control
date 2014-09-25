@@ -19,7 +19,7 @@ class Redeem extends REST2_Controller
         $this->load->model('tool/respond', 'resp');
     }
 
-    private function send($from, $to, $message)
+    private function sendEngine($from, $to, $message)
     {
         $this->benchmark->mark('send_start');
 
@@ -55,6 +55,15 @@ class Redeem extends REST2_Controller
             $this->response($this->resp->setRespond(array('to'=>$to, 'from'=>$from, 'message'=>$message, 'processing_time' => $processing_time)), 200);
         }
         $this->response($this->error->setError('LIMIT_EXCEED'), 200);
+    }
+
+    public function send_post()
+    {
+        $from = $this->input->post('from');
+        $to = $this->input->post('to');
+        $message = $this->input->post('message');
+
+        $this->sendEngine($from, $to, $message);
     }
 
 
@@ -101,7 +110,7 @@ class Redeem extends REST2_Controller
                 $message = str_replace('{{username}}', $redeemData['item']['username'], $message);
             }
 
-            $this->send($redeemData['item']['sms_from'], $player['phone_number'], $message);
+            $this->sendEngine($redeemData['item']['sms_from'], $player['phone_number'], $message);
 
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
