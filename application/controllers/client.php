@@ -201,7 +201,7 @@ class Client extends MY_Controller
             $sort = $this->input->get('sort');
             $parameter_url .= "&sort=".$sort;
         } else {
-            $sort = 'domain_name';
+            $sort = 'company';
         }
 
         if ($this->input->get('order')) {

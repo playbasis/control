@@ -404,9 +404,9 @@ class Plan extends MY_Controller
 
         // default limit noti must has these fields
         $default_limit_noti = array(
-            "sms" => null,
-            "email" => null,
-            "push" => null
+            "sms" => 0,
+            "email" => 0,
+            "push" => 0
         );
         if ($this->input->post('limit_noti')) {
             $this->data['limit_noti'] = $this->input->post('limit_noti');

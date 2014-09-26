@@ -46,6 +46,7 @@ class Client_model extends MY_Model
         $sort_data = array(
             'first_name',
             'last_name',
+            'company',
             'status',
             '_id'
         );
