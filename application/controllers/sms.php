@@ -101,8 +101,8 @@ class Redeem extends REST2_Controller
     {
         $required = $this->input->checkParam(array(
             'player_id',
-            'referer_id',
-            'message_before_code'
+            'ref_id',
+            'message'
         ));
         if($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
@@ -122,11 +122,11 @@ class Redeem extends REST2_Controller
 
         if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
 
-            $referer_id = $this->input->post('referer_id');
-            $redeemData = $this->Redeem_model()->getReferrer($referer_id);
+            $ref_id = $this->input->post('ref_id');
+            $redeemData = $this->redeem_model->findByReferenceId('goods', $ref_id);
 
-            $message_before_code = $this->input->post('message_before_code');
-            $message = $message_before_code." ".$redeemData['code'];
+            $message = $this->input->post('message');
+            $message = str_replace('{{code}}', $redeemData['code'], $message);
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
 
