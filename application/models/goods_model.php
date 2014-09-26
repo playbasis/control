@@ -223,6 +223,7 @@ class Goods_model extends MY_Model
 			'deleted' => false,
 			'status' => true
 		));
+		$this->mongo_db->where_gt('quantity', 0);
 		$goodsList = $this->mongo_db->get('playbasis_goods_to_client');
 		return is_array($goodsList) && count($goodsList) > 0 && $this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount) ? $goodsList : array();
 	}
