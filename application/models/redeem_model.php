@@ -10,7 +10,7 @@ class Redeem_model extends MY_Model
         $this->load->helper('memcache');
     }
 
-    public function findByReferenceId($site_id, $refId) {
+    public function findByReferenceId($type, $refId, $site_id=0) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('_id', $refId);
         $results = $this->mongo_db->get('playbasis_redeem_to_player');
