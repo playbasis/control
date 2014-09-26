@@ -22,8 +22,7 @@ class Sms extends REST2_Controller
 
     private function sendEngine($from, $to, $message)
     {
-        $this->benchmark->mark('send_start');
-
+        $access = false;
         try {
             $this->client_model->permissionProcess(
                 $this->client_id,
@@ -37,6 +36,7 @@ class Sms extends REST2_Controller
         }
 
         if ($access) {
+            $this->benchmark->mark('send_start');
             $validToken = $this->validToken;
 
             // send SMS
@@ -93,9 +93,7 @@ class Sms extends REST2_Controller
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
-
     }
-
 
     public function send_goods_post()
     {
@@ -123,7 +121,7 @@ class Sms extends REST2_Controller
         if (array_key_exists('phone_number', $player) && !empty($player['phone_number'])) {
 
             $ref_id = $this->input->post('ref_id');
-            $redeemData = $this->redeem_model->findByReferenceId('goods', $ref_id);
+            $redeemData = $this->redeem_model->findByReferenceId('goods', new MongoId($ref_id));
 
             $message = $this->input->post('message');
             $message = str_replace('{{code}}', $redeemData['code'], $message);
