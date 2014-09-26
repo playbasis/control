@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
-class Redeem extends REST2_Controller
+class Sms extends REST2_Controller
 {
     public function __construct()
     {
@@ -130,7 +130,7 @@ class Redeem extends REST2_Controller
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
 
-            $this->sendEngine($sms_data['name'], $player['phone_number'], $message);
+            $this->sendEngine(isset($sms_data['name'])?$sms_data['name']:$sms_data['number'], $player['phone_number'], $message);
 
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);

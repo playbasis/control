@@ -160,8 +160,8 @@ $route['Email/addBlackList'] = 'email/addBlackList';
 $route['Email/removeBlackList'] = 'email/removeBlackList';
 
 //sms API
-$route['Sms/send'] = 'email/send';
-$route['Sms/Goods'] = 'email/send_goods';
+$route['Sms/send'] = 'sms/send';
+$route['Sms/goods'] = 'sms/send_goods';
 
 //misc
 //$route['test']	= 'playbasis/test';
