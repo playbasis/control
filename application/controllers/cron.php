@@ -4,6 +4,7 @@ define('EMAIL_FROM', 'info@playbasis.com');
 define('DAYS_TO_BECOME_INACTIVE', 30);
 define('DAYS_TO_SEND_ANOTHER_EMAIL', 7);
 define('PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT', 0.9);
+define('ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS', 30);
 define('RECENT_DAYS_SENDING_API_TO_BE_CONSIDERED_ACTIVE', 7);
 class Cron extends CI_Controller
 {
@@ -19,7 +20,9 @@ class Cron extends CI_Controller
 	}
 
 	public function notifyInactiveClients() {
-		$clients = $this->client_model->listAllActiveClients();
+		$today = time();
+		$refDate = strtotime("-".ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS." day", $today);
+		$clients = $this->client_model->listAllActiveClients($refDate);
 		if ($clients) foreach ($clients as $client) {
 			$client_id = $client['_id'];
 			$latest_activity = $this->service_model->findLatestAPIactivity($client_id);
@@ -43,7 +46,14 @@ $email = 'pechpras@playbasis.com';
 	}
 
 	public function notifyFreeActiveClientsToSubscribe() {
-		$results = $this->service_model->listActiveClientsUsingAPI(RECENT_DAYS_SENDING_API_TO_BE_CONSIDERED_ACTIVE);
+		$today = time();
+		$refDate = strtotime("-".ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS." day", $today);
+		$clients = $this->client_model->listAllActiveClients($refDate);
+		$list_client_ids = array();
+		if ($clients) foreach ($clients as $client) {
+			$list_client_ids[] = $client['_id'];
+		}
+		$results = $this->service_model->listActiveClientsUsingAPI(RECENT_DAYS_SENDING_API_TO_BE_CONSIDERED_ACTIVE, $list_client_ids);
 		if ($results) foreach ($results as $client_id) {
 			if (!$client_id) continue;
 

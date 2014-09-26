@@ -884,10 +884,11 @@ class Client_model extends MY_Model
         }
     }
 
-    public function listAllActiveClients($site_id=0) {
+    public function listAllActiveClients($refDate=null, $site_id=0) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->select(array('_id', 'first_name', 'last_name', 'email'));
         $this->mongo_db->where(array('status' => true));
+        if ($refDate) $this->mongo_db->where_lt(array('date_start' => new MongoDate($refDate)));
         return $this->mongo_db->get('playbasis_client');
     }
 
