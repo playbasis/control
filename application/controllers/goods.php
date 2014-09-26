@@ -560,16 +560,18 @@ class Goods extends MY_Controller
                 }*/
 
                 $_id = $goods['_id']->{'$id'};
+                $is_group = array_key_exists($_id, $group_name);
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
-                    'name' => array_key_exists($_id, $group_name) ? $group_name[$_id]['group'] : $goods['name'],
-                    'quantity' => array_key_exists($_id, $group_name) ? $group_name[$_id]['quantity'] : $goods['quantity'],
+                    'name' => $is_group ? $group_name[$_id]['group'] : $goods['name'],
+                    'quantity' => $is_group ? $group_name[$_id]['quantity'] : $goods['quantity'],
                     'per_user' => $goods['per_user'],
                     'status' => $goods['status'],
                     'image' => $image,
                     'sort_order'  => $goods['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
-                    'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null
+                    'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null,
+                    'is_group' => $is_group,
                 );
             }
         }
