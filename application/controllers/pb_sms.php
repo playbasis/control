@@ -20,7 +20,7 @@ class Pb_sms extends REST2_Controller
         $this->load->model('tool/respond', 'resp');
     }
 
-    private function sendEngine($from, $to, $message)
+    private function sendEngine($type, $from, $to, $message)
     {
         $access = false;
         try {
@@ -46,6 +46,7 @@ class Pb_sms extends REST2_Controller
             $this->load->library('twilio', $config);
 
             $response = $this->twilio->sms($from, $to, $message);
+            $this->sms_model->log($validToken['client_id'], $validToken['site_id'], $type, $from, $to, $message, $response);
             if ($response->IsError) {
                 log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
 
@@ -89,7 +90,7 @@ class Pb_sms extends REST2_Controller
 
             $message = $this->input->post('message');
 
-            $this->sendEngine($from, $player['phone_number'], $message);
+            $this->sendEngine('user', $from, $player['phone_number'], $message);
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
@@ -128,7 +129,7 @@ class Pb_sms extends REST2_Controller
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
 
-            $this->sendEngine(isset($sms_data['name'])?$sms_data['name']:$sms_data['number'], $player['phone_number'], $message);
+            $this->sendEngine('goods', isset($sms_data['name'])?$sms_data['name']:$sms_data['number'], $player['phone_number'], $message);
 
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
