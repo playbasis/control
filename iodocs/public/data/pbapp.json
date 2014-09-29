@@ -908,13 +908,6 @@
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
-                            "Name": "api_key",
-                            "Required": "Y",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "api key issued by Playbasis"
-                        },
-                        {
                             "Name": "player_id",
                             "Required": "Y",
                             "Default": "",
