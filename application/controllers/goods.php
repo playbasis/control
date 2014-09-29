@@ -14,24 +14,56 @@ class Goods extends REST2_Controller
 
     public function index_get($goodsId = 0)
     {
-        if($goodsId)
-        {
-            try {
-                $goodsId = new MongoId($goodsId);
-            }catch (MongoException $ex) {
-                $goodsId = null;
+        /* process group */
+        $groups = $this->goods_model->getGroups($this->validToken['site_id']);
+        $ids = array();
+        $group_name = array();
+        foreach ($groups as $group => $each) {
+            $first = array_shift($each); // skip first one
+            $first_id = $first['goods_id']->{'$id'};
+            $group_name[$first_id] = array('group' => $group, 'quantity' => $first['quantity']);
+            if ($each) { // process the remaining
+                while ($next = array_shift($each)) {
+                    array_push($ids, $next['goods_id']);
+                    if ($next['quantity'] != null) {
+                        $group_name[$first_id]['quantity'] += $next['quantity'];
+                    } else {
+                        $group_name[$first_id]['quantity'] = null;
+                    }
+                }
             }
-            //get goods by specific id
-            $badge['goods'] = $this->goods_model->getGoods(array_merge($this->validToken, array(
+        }
+        /* main */
+        if($goodsId) // given specified goods_id
+        {
+            $goods['goods'] = $this->goods_model->getGoods(array_merge($this->validToken, array(
                 'goods_id' => new MongoId($goodsId)
             )));
-            $this->response($this->resp->setRespond($badge), 200);
+            $goods['goods']['is_group'] = array_key_exists('group', $goods['goods']);
+            if ($goods['goods']['is_group']) {
+                $group = $goods['goods']['group'];
+                foreach ($group_name as $each) {
+                    if ($each['group'] == $group) {
+                        $goods['goods']['quantity'] = $each['quantity'];
+                        break;
+                    }
+                }
+            }
+            $this->response($this->resp->setRespond($goods), 200);
         }
-        else
+        else // list all
         {
-            //get all goods relate to clients
-            $badgesList['goods_list'] = $this->goods_model->getAllGoods($this->validToken);
-            $this->response($this->resp->setRespond($badgesList), 200);
+            $goodsList['goods_list'] = $this->goods_model->getAllGoods($this->validToken, $ids);
+            if (is_array($goodsList['goods_list'])) foreach ($goodsList['goods_list'] as &$goods) {
+                $goods_id = $goods['goods_id'];
+                $is_group = array_key_exists($goods_id, $group_name);
+                if ($is_group) {
+                    $goods['is_group'] = $is_group;
+                    $goods['name'] = $group_name[$goods_id]['group'];
+                    $goods['quantity'] = $group_name[$goods_id]['quantity'];
+                }
+            }
+            $this->response($this->resp->setRespond($goodsList), 200);
         }
     }
 }
