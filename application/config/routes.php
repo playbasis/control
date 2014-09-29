@@ -120,6 +120,7 @@ $route['Engine/quest']	= 'engine/quest';
 //redeem API
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
+$route['Redeem/goodsGroup'] = 'redeem/goodsGroup';
 
 // api-carlos
 $route['Action'] = 'action/index';
