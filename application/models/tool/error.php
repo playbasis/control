@@ -39,7 +39,7 @@ class Error extends CI_Model
             }
             break;
         case 'INTERNAL_ERROR':
-            $errorData['message'] = "There is an internal server error: ".$dataArray;
+            $errorData['message'] = "There is an internal server error: ".print_r($dataArray,true);
             $errorData['error_code'] = '0800';
             break;
         case 'CANNOT_SEND_EMAIL':
