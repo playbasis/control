@@ -542,7 +542,14 @@ class Mongo_db
 		$this->wheres[$field]['$nin'] = $in_values;
 		return $this;
 	}
-	
+
+    public function where_exists($field = '', $value = true)
+    {
+        $this->_where_init($field);
+        $this->wheres[$field]['$exists'] = $value;
+        return $this;
+    }
+
 	/**
 	 * where_gt
 	 * 
