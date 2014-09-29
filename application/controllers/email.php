@@ -19,6 +19,7 @@ class Email extends REST2_Controller
 		$this->load->model('email_model');
 		$this->load->model('client_model');
 		$this->load->model('redeem_model');
+		$this->load->model('player_model');
 	}
 
 	public function send_post()
@@ -103,7 +104,7 @@ class Email extends REST2_Controller
         /* variables */
         $email = $player['email'];
         $from = EMAIL_FROM;
-        $to = $email;
+        $to = array($email);
         $subject = $this->input->post('subject');
         $message = $this->input->post('message');
         if ($message == false) $message = ''; // $message is optional
@@ -113,10 +114,8 @@ class Email extends REST2_Controller
     }
 
     private function processEmail($from, $to, $bcc, $subject, $message) {
-        /* check to see if emails are not black list */
-        $_to = $this->filter_email_out($to, $this->site_id);
-        $_bcc = $this->filter_email_out($bcc, $this->site_id);
         if (!empty($to)) { // 'to-cc' mode
+            $_to = $this->filter_email_out($to, $this->site_id);
             if (count($_to) > 0) {
                 /* send the email */
                 $response = $this->utility->email($from, $_to, $subject, $message);
@@ -132,6 +131,7 @@ class Email extends REST2_Controller
                 $this->response($this->error->setError('ALL_EMAILS_IN_BLACKLIST', implode(',', $to)), 200);
             }
         } else { // 'bcc' mode
+            $_bcc = $this->filter_email_out($bcc, $this->site_id);
             if (count($_bcc) > 0) {
                 /* send the email */
                 $response = $this->utility->email_bcc($from, $_bcc, $subject, $message);
