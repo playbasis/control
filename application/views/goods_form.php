@@ -112,7 +112,7 @@
                             <tr>
                                 <td><?php echo $member['goods_id']->{'$id'}; ?></td>
                                 <td><?php echo $member['name']; ?></td>
-                                <td><?php echo $member['code']; ?></td>
+                                <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
                             </tr>
                             <?php } ?>
                         </tbody>
