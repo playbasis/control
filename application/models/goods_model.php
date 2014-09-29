@@ -9,17 +9,17 @@ class Goods_model extends MY_Model
         $this->load->library('memcached_library');
         $this->load->helper('memcache');
     }
-    public function getAllGoods($data)
+    public function getAllGoods($data, $nin=array())
     {
-        //get goods ids
         $this->set_site_mongodb($data['site_id']);
-        $this->mongo_db->select(array('goods_id','image','name','description','quantity','redeem','date_start','date_expire','sponsor','sort_order'));
+        $this->mongo_db->select(array('goods_id','image','name','code','description','quantity','redeem','group','date_start','date_expire','sponsor','sort_order'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             'deleted' => false
         ));
+        if (!empty($nin)) $this->mongo_db->where_not_in('goods_id', $nin);
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
         if($goods){
             foreach($goods as &$g){
@@ -230,6 +230,23 @@ class Goods_model extends MY_Model
 	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount) {
 		return count($this->getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount));
 	}
+    public function getGroups($site_id) {
+        $this->mongo_db->select(array('goods_id','group','quantity'));
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where_exists('group', true);
+        $results = $this->mongo_db->get("playbasis_goods_to_client");
+        $groups = array();
+        if ($results) foreach ($results as $result) {
+            $name = $result['group'];
+            if (array_key_exists($name, $groups)) {
+                $groups[$name][] = array('goods_id' => $result['goods_id'], 'quantity' => $result['quantity']);
+            } else {
+                $groups[$name] = array(array('goods_id' => $result['goods_id'], 'quantity' => $result['quantity']));
+            }
+        }
+        return $groups;
+    }
 	private function checkGoods($client_id, $site_id, $goods, $pb_player_id, $amount)
 	{
 		if (isset($goods['date_start'])) $goods['date_start'] = datetimeMongotoReadable($goods['date_start']);
