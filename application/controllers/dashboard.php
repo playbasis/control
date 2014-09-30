@@ -127,23 +127,35 @@ class Dashboard extends MY_Controller
 
     public function home(){
 
+        /* check to see if 'dashboard' menu is enabled for non-superadmin users */
+        if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+            $this->load->model('Feature_model');
+            if ($this->User_model->getSiteId()) {
+                $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
+                $is_default_enabled = $this->is_default_enabled($features);
+                if (!$is_default_enabled) {
+                    $second_default = $this->find_second_default($features);
+                    if ($second_default) redirect('/'.$second_default, 'refresh'); /* if it isn't, then we select second menu for the user */
+                }
+            } else {
+                $user_plan = $this->User_model->getPlan();
+                if (!empty($user_plan)) {
+                    if (array_key_exists('feature_to_plan', $user_plan)) {
+                        if (is_array($user_plan['feature_to_plan']) && count($user_plan['feature_to_plan']) > 0) {
+                            $value = $this->Feature_model->getFeature($user_plan['feature_to_plan'][0]);
+                            redirect('/'.$value['link'], 'refresh'); /* if it isn't, then we select second menu for the user */
+                        }
+                    }
+                }
+            }
+        }
+
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
         }
 
         if($this->input->get('site_id')){
             $this->User_model->updateSiteId($this->input->get('site_id'));
-        }
-
-        /* check to see if 'dashboard' menu is enabled for non-admin users */
-        if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
-            $this->load->model('Feature_model');
-            $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
-            $is_default_enabled = $this->is_default_enabled($features);
-            if (!$is_default_enabled) {
-                $second_default = $this->find_second_default($features);
-                if ($second_default) redirect('/'.$second_default, 'refresh'); /* if it isn't, then we select second menu for the user */
-            }
         }
 
         $this->load->model('User_model');
