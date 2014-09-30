@@ -307,10 +307,9 @@ class User extends MY_Controller
                 }else{
                     $json['error'] = 'The Email provided already exists';
                 }
-
                 
             }else{
-                $json['error'] = "Please provide the neccessary fields below or check if there are any errors.";
+                $json['error'] = "Please provide the necessary fields below or check if there are any errors.";
             }
         }
 
