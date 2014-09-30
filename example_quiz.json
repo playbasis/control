@@ -1,0 +1,75 @@
+{
+    "quiz_id" : "",
+    "name": "",
+    "img": "",
+    "desc": "",
+    "desc_img": "",
+    "weight": "",
+    "status": "",
+    "grades": [
+        {
+            "grade_start": "",
+            "grade_end": "",
+            "grade": "",
+            "rank": "",
+            "rank_image": ""
+        },
+        {
+            "range_start": "",
+            "rang_end": "",
+            "grade": "",
+            "rank": "",
+            "rank_image": ""
+        }
+    ],
+    "questions": [
+        {
+            "question_id": "",
+            "question": "",
+            "question_image": "",
+            "options": [
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                },
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                }
+
+            ]
+        },
+        {
+            "question_id": "",
+            "question": "",
+            "question_image": "",
+            "options": [
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                },
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                }
+
+            ]
+        }
+    ]
+}
