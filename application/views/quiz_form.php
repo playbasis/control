@@ -229,7 +229,7 @@
                                 </div>
                                 <div class="box-content">
                                     <div class="option-container">
-                                        option  <input type="text" name="quiz[options][0][option]" value = ""><br>
+                                        1. option  <input type="text" name="quiz[options][0][option]" value = ""><br>
                                         option_image  <img src="<?php echo ''; ?>" alt="" id="quiz[grades][0][rank_thumb]" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                                         <input type="hidden" name="quiz[grades][0][rank_image]" value="<?php echo ''; ?>" id="quiz[grades][0][rank_image]" />
                                         <br />
@@ -238,6 +238,18 @@
                                         explanation  <textarea></textarea><br>
                                         score  <input type="text" name="quiz[options][0][score]" value = "">
                                     </div>
+
+                                    <div class="option-container">
+                                        2. option  <input type="text" name="quiz[options][0][option]" value = ""><br>
+                                        option_image  <img src="<?php echo ''; ?>" alt="" id="quiz[grades][0][rank_thumb]" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                        <input type="hidden" name="quiz[grades][0][rank_image]" value="<?php echo ''; ?>" id="quiz[grades][0][rank_image]" />
+                                        <br />
+                                        <a onclick="image_upload('quiz[grades][0][rank_image]', 'quiz[grades][0][rank_thumb]');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                        <a onclick="$('#quiz[grades][0][rank_thumb]').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz[grades][0][rank_image]').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br>
+                                        explanation  <textarea></textarea><br>
+                                        score  <input type="text" name="quiz[options][0][score]" value = "">
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
