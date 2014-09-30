@@ -439,7 +439,6 @@ class Client extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        // $this->data['plan_data'] = $this->Plan_model->getPlans();
         $this->data['plan_data'] = $this->Plan_model->getAvailablePlans();
 
         $this->data['groups'] = $this->User_model->getUserGroups();
