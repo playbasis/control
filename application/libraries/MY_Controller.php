@@ -118,7 +118,6 @@ class  MY_Controller  extends  CI_Controller  {
         $this->data['domain_name'] = '';
         $this->data['check_domain_exists'] = true;
 
-
         $features = array();
 
         if($this->session->userdata('user_id')){
@@ -139,9 +138,7 @@ class  MY_Controller  extends  CI_Controller  {
                 $this->data['thumbprofile'] = '';
             }
 
-
             if($this->data['site_id']){
-
 
                 $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
                 $this->data['domain_name'] = $this->data['domain'];
@@ -171,7 +168,7 @@ class  MY_Controller  extends  CI_Controller  {
                             'icon' => $value['icon'],
                             'link' =>$value['link']
                         );
-                    }                        
+                    }
                 }
                 $user_plan = $this->User_model->getPlan();
 
@@ -194,8 +191,34 @@ class  MY_Controller  extends  CI_Controller  {
                 // }
             }else{
                 if($this->data['client_id']){
-                    $this->data['check_domain_exists'] = false;
+                    // check to see if there is an associated plan, otherwise we output error no domain
+                    $user_plan = $this->User_model->getPlan();
+                    if (!empty($user_plan)) {
+                        if (array_key_exists('feature_to_plan', $user_plan)) foreach ($user_plan['feature_to_plan'] as $feature_id) {
+                            $value = $this->Feature_model->getFeature($feature_id);
+                            if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
+                                $this->data['features'][] = array(
+                                    'feature_id' => $value['_id'],
+                                    'name' => $value['name'],
+                                    'icon' => $value['icon'],
+                                    'link' =>$value['link']
+                                );
+                            }
+                        }
+
+                        if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
+                            $this->data['features'][] = array(
+                                'feature_id' => new MongoId(),
+                                'name' => 'Sms',
+                                'icon' => 'fa-mail-forward',
+                                'link' => 'sms'
+                            );
+                        }
+                    } else {
+                        $this->data['check_domain_exists'] = false;
+                    }
                 }else{
+                    // super admin
                     $features = $this->Feature_model->getFeatures();    
                     foreach ($features as $value) {
                         $this->data['features'][] = array(
@@ -213,9 +236,6 @@ class  MY_Controller  extends  CI_Controller  {
                         'link' => 'sms'
                     );
                 }
-
-                // super admin
-                
                 //var_dump($features);
             }
         }
@@ -227,7 +247,5 @@ class  MY_Controller  extends  CI_Controller  {
             $this->load->vars($this->data);
             $this->load->view('no_domain');
         }
-        
     }
-
 }
