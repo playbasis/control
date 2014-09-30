@@ -25,7 +25,7 @@ class Goods extends REST2_Controller
             if ($each) { // process the remaining
                 while ($next = array_shift($each)) {
                     array_push($ids, $next['goods_id']);
-                    if ($next['quantity'] != null) {
+                    if ($next['quantity'] !== null) {
                         $group_name[$first_id]['quantity'] += $next['quantity'];
                     } else {
                         $group_name[$first_id]['quantity'] = null;
