@@ -550,7 +550,6 @@ class User extends MY_Controller
     public function register(){
 
         $this->load->model('Image_model');
-        $this->load->model('Permission_model');
         
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
@@ -635,7 +634,7 @@ class User extends MY_Controller
 
                             $site_id = $this->Domain_model->addDomain($data); // [4] then insert a new domain into "playbasis_client_site"
 
-                            $this->Permission_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                            $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
                                 'client_id' => $client_id->{'$id'},
                                 'plan_id' => $plan_id->{'$id'},
                                 'site_id' => $site_id->{'$id'},

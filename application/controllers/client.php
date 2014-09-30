@@ -73,17 +73,17 @@ class Client extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
 
-                $clent_id = $this->Client_model->addClient($this->input->post());
+                $client_id = $this->Client_model->addClient($this->input->post());
 
-                $this->Permission_model->addPlanToPermission(array(
-                    'client_id' => $clent_id->{'$id'},
+                $this->Client_model->addPlanToPermission(array(
+                    'client_id' => $client_id->{'$id'},
                     'plan_id' => $this->input->post('plan_id'),
                     'site_id' => null,
                 ));
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                redirect('/client/update/'.$clent_id, 'refresh');
+                redirect('/client/update/'.$client_id, 'refresh');
             }
         }
 

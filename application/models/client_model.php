@@ -205,29 +205,44 @@ class Client_model extends MY_Model
         $this->mongo_db->update('playbasis_client');
     }
 
-    /****start Dupicate with another model but in codeigniter cannot load another model within model ****/
     public function addPlanToPermission($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if ($data['site_id']) {
-            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->delete('playbasis_permission');
-            $data_insert = array(
-                'plan_id' => new MongoID($data['plan_id']),
-                'client_id' => new MongoID($data['client_id']),
-                'site_id' => new MongoID($data['site_id']),
-                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-            );
-            $this->mongo_db->insert('playbasis_permission', $data_insert);
-        } else {
+        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        $data_insert = array(
+            'plan_id' => new MongoID($data['plan_id']),
+            'client_id' => new MongoID($data['client_id']),
+            'site_id' => null,
+            'date_added' => $d,
+            'date_modified' => $d,
+        );
+        if ($data['site_id']) { // apply to only 1 site_id
+            $this->mongo_db->where(array('site_id' => new MongoID($data['site_id'])));
+            $n = $this->mongo_db->count("playbasis_permission");
+            if ($n > 0) {
+                $this->mongo_db->where(array('site_id' => new MongoID($data['site_id'])));
+                $this->mongo_db->set('plan_id', new MongoID($data['plan_id']));
+                $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+                return $this->mongo_db->update('playbasis_permission');
+            } else {
+                $data_insert['site_id'] = new MongoID($data['site_id']);
+                return $this->mongo_db->insert('playbasis_permission', $data_insert);
+            }
+        } else { // no site_id, either (1) insert new client with null site_id, or (2) apply to all site_ids
             $this->mongo_db->where(array('client_id' => new MongoID($data['client_id'])));
-            $this->mongo_db->set('plan_id', new MongoID($data['plan_id']));
-            $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-            $this->mongo_db->update_all('playbasis_permission');
+            $n = $this->mongo_db->count("playbasis_permission");
+            if ($n > 0) {
+                $this->mongo_db->where(array('client_id' => new MongoID($data['client_id'])));
+                $this->mongo_db->set('plan_id', new MongoID($data['plan_id']));
+                $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+                return $this->mongo_db->update_all('playbasis_permission');
+            } else {
+                return $this->mongo_db->insert('playbasis_permission', $data_insert);
+            }
         }
     }
 
+    /****start Dupicate with another model but in codeigniter cannot load another model within model ****/
     public function getPlan($plan_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -458,6 +473,7 @@ class Client_model extends MY_Model
         return $this->mongo_db->insert('playbasis_client', $data_insert_client); // return record['_id'] if insert successfully, otherwise false
     }
 
+    /* this method does not change client's plan, playbasis_permission */
     public function editClientPlan($client_id, $plan_id, $data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -472,7 +488,6 @@ class Client_model extends MY_Model
                 $data_filter['status'] = $data['domain_value']['status'];
             }
 
-//            $this->addPlanToPermission($data_filter);
             $this->copyRewardToClient($data_filter);
             $this->copyFeaturedToClient($data_filter);
             $this->copyActionToClient($data_filter);
