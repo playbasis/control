@@ -309,7 +309,7 @@ class User extends MY_Controller
                 }
                 
             }else{
-                $json['error'] = "Please provide the necessary fields below or check if there are any errors.";
+                $json['error'] = "Please provide the necessary fields below or check if there are any errors: ".$this->data['message'];
             }
         }
 
