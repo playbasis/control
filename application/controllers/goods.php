@@ -374,7 +374,7 @@ class Goods extends MY_Controller
                             $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
 
                             /* if there is an uploaded file, then import it into the group */
-                            if (!empty($_FILES) && isset($_FILES['file']['tmp_name'])) {
+                            if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
                                 $data = array_merge($this->input->post(), array('quantity' => 1));
                                 $handle = fopen($_FILES['file']['tmp_name'], "r");
                                 $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
@@ -525,7 +525,7 @@ class Goods extends MY_Controller
                 if ($each) { // process the remaining
                     while ($next = array_shift($each)) {
                         array_push($ids, $next['_id']);
-                        if ($next['quantity'] != null) {
+                        if ($next['quantity'] !== null) {
                             $group_name[$first_id]['quantity'] += $next['quantity'];
                         } else {
                             $group_name[$first_id]['quantity'] = null;
