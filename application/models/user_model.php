@@ -714,7 +714,7 @@ class User_model extends MY_Model
 
         $plan = array();
         if($permission){
-            $this->mongo_db->where('_id', new MongoID($permission['plan_id']));
+            $this->mongo_db->where('_id', $permission['plan_id']);
             $plan = $this->mongo_db->get('playbasis_plan');
         }
 
