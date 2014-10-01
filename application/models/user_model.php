@@ -458,7 +458,7 @@ class User_model extends MY_Model
                     }
                 }
 
-                if($this->getAdminGroupID()||($this->client_id && $this->site_id)){
+                if($this->getAdminGroupID() || $this->client_id){
                     $this->set_site_mongodb($this->site_id);
 
                     $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
