@@ -191,7 +191,7 @@ class User_model extends MY_Model
                 'url'=> base_url('enable_user/?key='),
             );
 
-            if($insert_password == 'playbasis'){
+            if($insert_password == DEFAULT_PASSWORD){
                 $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
             }else{
                 $htmlMessage = $this->parser->parse('user_activateaccountwithpassword.html', $vars, true);

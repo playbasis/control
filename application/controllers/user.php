@@ -594,8 +594,8 @@ class User extends MY_Controller
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
             if($this->input->post('format') == 'json' || $this->input->post('version') == 'new'){
-                $_POST['password'] = 'playbasis';
-                $_POST['password_confirm'] = 'playbasis';
+                $_POST['password'] = DEFAULT_PASSWORD;
+                $_POST['password_confirm'] = DEFAULT_PASSWORD;
                 $_POST['site_name'] = $_POST['domain_name'];
             }
 
@@ -700,8 +700,8 @@ class User extends MY_Controller
 
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
-            $_POST['password'] = 'playbasis';
-            $_POST['password_confirm'] = 'playbasis';
+            $_POST['password'] = DEFAULT_PASSWORD;
+            $_POST['password_confirm'] = DEFAULT_PASSWORD;
 
             if($this->form_validation->run()){
                 if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
