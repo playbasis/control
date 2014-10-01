@@ -723,6 +723,7 @@ class User extends MY_Controller
                     ));
 
                     $success = true;
+                    $message = $this->lang->line('text_email_sent');
                 }else{
                     $message = $this->lang->line('text_fail');
                 }
