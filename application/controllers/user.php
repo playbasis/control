@@ -818,16 +818,15 @@ class User extends MY_Controller
             if($user != null){
                 $user_id = $user[0]['_id'];
 
+                /* generate initial password */
                 if(dohash('playbasis',$user[0]['salt']) == $user[0]['password']){
                     $initial_password = get_random_password(8,8);
                     $this->User_model->insertNewPassword($user_id, $initial_password);
                 }else{
                     $initial_password = '******';
                 }
-                
-                $user = $this->User_model->getById($user_id);
 
-                /* find plan of this user */
+                /* check free/paid */
                 $client_id = $this->User_model->getClientIdByUserId($user_id);
                 $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
                 $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
@@ -838,7 +837,8 @@ class User extends MY_Controller
                 $free_flag = $price <= 0;
                 $paid_flag = !$free_flag;
 
-                /* proceed by sending email */
+                /* send email */
+                $user = $this->User_model->getById($user_id);
                 $vars = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
@@ -849,9 +849,9 @@ class User extends MY_Controller
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                 $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
 
-                $this->data['username'] = null;
-                $this->data['main'] = 'account_activated';
-                $this->render_page('template');
+                /* force login, so that user doesn't have to type email and password (obtained by email) */
+                $this->User_model->force_login($user_id);
+                redirect('/', 'refresh');
             }else{
                 echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
                 echo "<script>window.location.href = '".site_url()."';</script>";
