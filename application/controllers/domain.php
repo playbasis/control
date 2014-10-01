@@ -210,7 +210,7 @@ class Domain extends MY_Controller
                 $usage_conut = $usage ? count($usage) : 0;
 
                 // compare
-                if ($limit != null && $usage_conut >= $limit) { // limit = null, means unlimited
+                if ($limit !== null && $usage_conut >= $limit) { // limit = null, means unlimited
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_domain"));
                     redirect("domain/");
                 }
