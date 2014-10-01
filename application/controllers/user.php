@@ -232,7 +232,7 @@ class User extends MY_Controller
                     array("client_id" => $client_id));
 
                 // compute
-                if ($user_limit != null && $user_usage >= $user_limit) {
+                if ($user_limit !== null && $user_usage >= $user_limit) {
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_user"));
                     redirect("user/");
                 }
