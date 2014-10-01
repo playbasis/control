@@ -138,7 +138,7 @@ class Redeem extends REST2_Controller
     private function redeem($site_id, $pb_player_id, $goods, $amount, $validToken, $validate=true) {
         if (!$goods) throw new Exception('GOODS_NOT_FOUND');
 
-        if ($goods['per_user'] != null) {
+        if ($goods['per_user'] !== null) {
             $get_player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $site_id, $goods['goods_id']);
             if ($get_player_goods['amount'] >= $goods['per_user']){
                 throw new Exception('OVER_LIMIT_REDEEM');

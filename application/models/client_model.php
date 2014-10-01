@@ -876,7 +876,7 @@ class Client_model extends MY_Model
         $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
 
         // compare
-        if ($limit != null && $usage["value"] >= $limit) {
+        if ($limit !== null && $usage["value"] >= $limit) {
             // no permission to use this service
             throw new Exception("LIMIT_EXCEED");
         } else {  // increase service usage
