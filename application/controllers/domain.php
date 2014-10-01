@@ -231,6 +231,14 @@ class Domain extends MY_Controller
 
                     if ($site_id) {
                         $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+
+                        /* bind plan to client in playbasis_permission */
+                        $this->Client_model->addPlanToPermission(array(
+                            'client_id' => $client_id->{'$id'},
+                            'plan_id' => $plan_subscription['plan_id']->{'$id'},
+                            'site_id' => $site_id->{'$id'},
+                        ));
+
                         $another_data['domain_value'] = array(
                             'site_id' => $site_id,
                             'status' => true
