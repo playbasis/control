@@ -12,6 +12,7 @@ class Account extends MY_Controller
 
 		$this->load->model('User_model');
 		$this->load->model('Client_model');
+		$this->load->model('Domain_model');
 		$this->load->model('Plan_model');
 
 		if(!$this->User_model->isLogged()){
@@ -54,50 +55,59 @@ class Account extends MY_Controller
 		    return;
 		}
 
-		/* find details of the subscribed plan of the client */
-		$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-		$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-		if (!array_key_exists('price', $plan)) {
-			$plan['price'] = DEFAULT_PLAN_PRICE;
+		$site_id = $this->User_model->getSiteId();
+		if (!empty($site_id)) {
+			/* clear session from 'add_site' if applicable */
+			if ($this->session->userdata('site')) $this->session->unset_userdata('site');
+			if ($this->session->userdata('plan_id')) $this->session->unset_userdata('plan_id');
+
+			/* find details of the subscribed plan of the client */
+			$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+			$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+			if (!array_key_exists('price', $plan)) {
+				$plan['price'] = DEFAULT_PLAN_PRICE;
+			}
+			$price = $plan['price'];
+			$this->session->set_userdata('plan', $plan);
+			$plan_days_total = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+			if ($plan_days_total == null) $plan_days_total = 0;
+			$plan_free_flag = $price <= 0;
+			$plan_paid_flag = !$plan_free_flag;
+			$plan_trial_flag = $plan_paid_flag && $plan_days_total > 0;
+
+			/* find details of the client */
+			$client = $this->Client_model->getClientById($this->User_model->getClientId());
+			// "date_start" and "date_expire" will be set when we receive payment confirmation in each month
+			// So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
+			// In addition, "date_expire" will include extra days to cover grace period.
+			$date_start = array_key_exists('date_start', $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
+			$date_expire = array_key_exists('date_expire', $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
+			// Whenever we set "date_billing", it means that the client has already set up subscription.
+			// The date will be immediately after the trial period (if exits),
+			// of which the date is the first day of the client in billing period of the plan.
+			// After the billing period has ended, "date_billing" is unset from client's record,
+			// so the client has to extend the subscription before contract expires.
+			$date_billing = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
+			$days_remaining = $this->find_diff_in_days(time(), $date_billing);
+
+			$this->data['client'] = $client;
+			$this->data['client']['valid'] = ($plan_free_flag || ($date_billing && $this->check_valid_payment($client)));
+			$this->data['client']['trial_remaining_days'] = $days_remaining;
+			$this->data['client']['date_billing'] = $date_billing;
+			$this->data['client']['date_start'] = $date_start;
+			$this->data['client']['date_expire'] = $date_expire;
+			$this->data['client']['date_added'] = $client['date_added']->sec;
+			$this->data['client']['date_modified'] = $client['date_modified']->sec;
+			$this->data['plan'] = $plan;
+			$this->data['plan']['free_flag'] = $plan_free_flag;
+			$this->data['plan']['paid_flag'] = $plan_paid_flag;
+			$this->data['plan']['trial_flag'] = $plan_trial_flag;
+			$this->data['plan']['trial_total_days'] = $plan_days_total;
+			$this->data['plan']['date_added'] = $plan_subscription['date_added']->sec;
+			$this->data['plan']['date_modified'] = $plan_subscription['date_modified']->sec;
+		} else {
+			redirect('/account/add_site', 'refresh');
 		}
-		$price = $plan['price'];
-		$this->session->set_userdata('plan', $plan);
-		$plan_days_total = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
-		if ($plan_days_total == null) $plan_days_total = 0;
-		$plan_free_flag = $price <= 0;
-		$plan_paid_flag = !$plan_free_flag;
-		$plan_trial_flag = $plan_paid_flag && $plan_days_total > 0;
-
-		/* find details of the client */
-		$client = $this->Client_model->getClientById($this->User_model->getClientId());
-		// "date_start" and "date_expire" will be set when we receive payment confirmation in each month
-		// So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
-		// In addition, "date_expire" will include extra days to cover grace period.
-		$date_start = array_key_exists('date_start', $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
-		$date_expire = array_key_exists('date_expire', $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
-		// Whenever we set "date_billing", it means that the client has already set up subscription.
-		// The date will be immediately after the trial period (if exits),
-		// of which the date is the first day of the client in billing period of the plan.
-		// After the billing period has ended, "date_billing" is unset from client's record,
-		// so the client has to extend the subscription before contract expires.
-		$date_billing = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
-		$days_remaining = $this->find_diff_in_days(time(), $date_billing);
-
-		$this->data['client'] = $client;
-		$this->data['client']['valid'] = ($plan_free_flag || ($date_billing && $this->check_valid_payment($client)));
-		$this->data['client']['trial_remaining_days'] = $days_remaining;
-		$this->data['client']['date_billing'] = $date_billing;
-		$this->data['client']['date_start'] = $date_start;
-		$this->data['client']['date_expire'] = $date_expire;
-		$this->data['client']['date_added'] = $client['date_added']->sec;
-		$this->data['client']['date_modified'] = $client['date_modified']->sec;
-		$this->data['plan'] = $plan;
-		$this->data['plan']['free_flag'] = $plan_free_flag;
-		$this->data['plan']['paid_flag'] = $plan_paid_flag;
-		$this->data['plan']['trial_flag'] = $plan_trial_flag;
-		$this->data['plan']['trial_total_days'] = $plan_days_total;
-		$this->data['plan']['date_added'] = $plan_subscription['date_added']->sec;
-		$this->data['plan']['date_modified'] = $plan_subscription['date_modified']->sec;
 
 		$this->load->vars($this->data);
 		$this->render_page('template');
@@ -239,7 +249,127 @@ class Account extends MY_Controller
 		$this->data['main'] = 'account_purchase_paypal_done';
 
 		/* clear basket in the session */
-		$this->session->set_userdata('plan', null);
+		$this->session->unset_userdata('plan');
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
+	public function add_site() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->data['message'] = null;
+
+			$this->form_validation->set_rules('site', $this->lang->line('entry_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|url_exists_without_http');
+			$site = $this->input->post('site');
+			$this->session->set_userdata('site', $site);
+			if (!empty($site) && $this->Domain_model->checkDomainExists(array('domain_name' => $site))) $this->data['message'] = 'This site has already been registered';
+
+			if($this->form_validation->run() && $this->data['message'] == null){
+				redirect('/account/choose_plan', 'refresh');
+			}
+		}
+		if ($this->session->userdata('site')) $this->data['site']  = $this->session->userdata('site');
+		$this->data['heading_title'] = $this->lang->line('add_site_title');
+		$this->data['main'] = 'account_add_site';
+		$this->data['form'] = 'account/add_site';
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
+	public function choose_plan() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		$this->data['plan_data'] = $this->Plan_model->listDisplayPlans();
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->data['message'] = null;
+
+			$this->form_validation->set_rules('plan_id', $this->lang->line('entry_plan'), 'trim|required');
+			$this->session->set_userdata('plan_id', $this->input->post('plan_id'));
+
+			if($this->form_validation->run() && $this->data['message'] == null){
+				redirect('/account/start', 'refresh');
+			}
+		}
+		$this->data['plan_id'] = $this->session->userdata('plan_id') ? $this->session->userdata('plan_id') : null;
+		$this->data['heading_title'] = $this->lang->line('add_site_title');
+		$this->data['main'] = 'account_choose_plan';
+		$this->data['form'] = 'account/choose_plan';
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
+	public function start() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		$this->data['plan_data'] = $this->Plan_model->listDisplayPlans();
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->data['message'] = null;
+
+			$site = $this->session->userdata('site');
+			$plan_id = $this->session->userdata('plan_id');
+			if (empty($site)) $this->data['message'] = 'Invalid site';
+			if (empty($plan_id)) $this->data['message'] = 'Invalid plan';
+
+			if($this->data['message'] == null){
+				$site = $this->session->userdata('site');
+				$plan_id = new MongoId($this->session->userdata('plan_id'));
+				$client_id = $this->User_model->getClientId();
+
+				/* add domain in playbasis_client_site */
+				$site_id = $this->Domain_model->addDomain(array(
+					'client_id' => $this->User_model->getClientId(),
+					'domain_name' => $site,
+					'site_name' => $site
+				));
+
+				/* bind plan to client in playbasis_permission */
+				$this->Client_model->addPlanToPermission(array(
+					'client_id' => $client_id->{'$id'},
+					'plan_id' => $plan_id->{'$id'},
+					'site_id' => $site_id->{'$id'},
+				));
+
+				/* populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client */
+				$another_data['domain_value'] = array(
+					'site_id' => $site_id,
+					'status' => true
+				);
+				$this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] finally, populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
+
+				redirect('/logout', 'refresh'); // logout and re-login to see the change
+			}
+		}
+
+		$this->data['heading_title'] = $this->lang->line('start_title');
+		$this->data['main'] = 'account_start';
+		$this->data['form'] = 'account/start';
 
 		$this->load->vars($this->data);
 		$this->render_page('template');
