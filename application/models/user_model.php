@@ -447,18 +447,7 @@ class User_model extends MY_Model
 
                 if($this->getAdminGroupID() || $this->client_id){
 
-                    $this->mongo_db->select(array('_id'));
-                    $this->mongo_db->where('client_id', new MongoID($this->client_id));
-                    $this->mongo_db->where('status', true);
-                    $this->mongo_db->limit(1);
-                    $Q2 = $this->mongo_db->get('playbasis_client_site');
-
-                    if(count($Q2)>0){
-                        $row2 = $Q2[0];
-                        $this->site_id = $row2['_id'];
-                    }else{
-                        $this->site_id = null;
-                    }
+                    $this->site_id = $this->fetchSiteId($this->client_id);
 
                     $this->set_site_mongodb($this->site_id);
 
@@ -570,6 +559,23 @@ class User_model extends MY_Model
         }
 
         return true;
+    }
+
+    public function fetchSiteId($client_id) {
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
+        $Q2 = $this->mongo_db->get('playbasis_client_site');
+
+        if(count($Q2)>0){
+            $row2 = $Q2[0];
+            $site_id = $row2['_id'];
+        }else{
+            $site_id = null;
+        }
+
+        return $site_id;
     }
 
     private function checkSiteId($site_id){

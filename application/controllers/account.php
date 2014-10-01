@@ -363,7 +363,10 @@ class Account extends MY_Controller
 				);
 				$this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] finally, populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
 
-				redirect('/logout', 'refresh'); // logout and re-login to see the change
+				/* reset site_id, so that we con't have to force the user to log out */
+				$site_id = $this->User_model->fetchSiteId($client_id);
+				$this->User_model->updateSiteId($site_id);
+				redirect('/account', 'refresh');
 			}
 		}
 
