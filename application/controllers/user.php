@@ -547,8 +547,6 @@ class User extends MY_Controller
     }
 
     public function register(){
-
-        $this->load->model('Image_model');
         
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
@@ -687,6 +685,54 @@ class User extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    /* new register flow (without captcha, plan and domain) */
+    public function regis(){
+
+        $success = false;
+        $message = "";
+
+        //Set rules for form registration
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            $_POST['password'] = 'playbasis';
+            $_POST['password_confirm'] = 'playbasis';
+
+            if($this->form_validation->run()){
+                if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
+                    $user_info = $this->User_model->getUserInfo($user_id);
+
+                    $plan = $this->Plan_model->getPlanById(new MongoId(DEFAULT_PLAN));
+
+                    $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
+
+                    $data = $this->input->post();
+                    $data['client_id'] = $client_id;
+                    $data['user_id'] =  $user_info['_id'];
+                    $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
+
+                    $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                        'client_id' => $client_id->{'$id'},
+                        'plan_id' => $plan['_id']->{'$id'},
+                        'site_id' => null,
+                    ));
+
+                    $success = true;
+                }else{
+                    $message = $this->lang->line('text_fail');
+                }
+            }else{
+                $message = strip_tags(validation_errors());
+            }
+        }
+
+        echo json_encode(array("response" => $success ? "success" : "fail", "message" => $message));
+        exit();
     }
 
     public function list_pending_users() {
