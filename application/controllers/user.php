@@ -819,7 +819,7 @@ class User extends MY_Controller
                 $user_id = $user[0]['_id'];
 
                 /* generate initial password */
-                if(dohash('playbasis',$user[0]['salt']) == $user[0]['password']){
+                if(dohash(DEFAULT_PASSWORD,$user[0]['salt']) == $user[0]['password']){
                     $initial_password = get_random_password(8,8);
                     $this->User_model->insertNewPassword($user_id, $initial_password);
                 }else{
