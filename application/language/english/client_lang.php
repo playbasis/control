@@ -32,7 +32,10 @@ $lang['tab_user'] 								= 'Users';
 // Column
 $lang['column_image']							= 'Logo';
 // $lang['column_name']            				= 'Name';
-$lang['column_company_name']					= 'Client Name';
+$lang['column_company_name']					= 'Company Name';
+$lang['column_email']					= 'Email';
+$lang['column_first_name']					= 'First Name';
+$lang['column_last_name']					= 'Last Name';
 $lang['column_plan_name']					= 'Plan Name';
 $lang['column_domain']          				= 'Domains';
 $lang['column_status']          				= 'Status';
