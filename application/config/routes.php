@@ -154,6 +154,11 @@ $route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 $route['Quest/joinAll'] = 'quest/joinAll';
 
+//quiz API
+$route['Quiz/list'] = 'quiz/list';
+$route['Quiz/'.ANY_STRING.'/detail'] = 'quiz/detail/$1';
+$route['Quiz/player/'.ANY_STRING] = 'quiz/recent/$1';
+
 //email API
 $route['Email/send'] = 'email/send';
 $route['Email/isBlackList'] = 'email/isBlackList';
