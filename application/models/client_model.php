@@ -888,7 +888,7 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('_id', 'first_name', 'last_name', 'email'));
         $this->mongo_db->where(array('status' => true));
-        if ($refDate) $this->mongo_db->where_lt(array('date_start' => new MongoDate($refDate)));
+        if ($refDate) $this->mongo_db->where_lt(array('date_added' => new MongoDate($refDate)));
         return $this->mongo_db->get('playbasis_client');
     }
 
