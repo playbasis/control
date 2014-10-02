@@ -201,7 +201,7 @@ class Client extends MY_Controller
             $sort = $this->input->get('sort');
             $parameter_url .= "&sort=".$sort;
         } else {
-            $sort = 'company';
+            $sort = 'first_name';
         }
 
         if ($this->input->get('order')) {
@@ -259,7 +259,8 @@ class Client extends MY_Controller
 
                 $this->data['clients'][] = array(
                     'client_id' => $result['_id'],
-                    'company'=> $result['company'],
+                    'company' => $result['company'],
+                    'email' => $result['email'],
                     'first_name' => $result['first_name'],
                     'last_name' => $result['last_name'],
                     'plan_name' => $plan['name'],
@@ -522,7 +523,7 @@ class Client extends MY_Controller
 
             foreach ($results_client as $result) {
                 $json[] = array(
-                    'company' => html_entity_decode($result['company'], ENT_QUOTES, 'UTF-8'),
+                    'email' => html_entity_decode($result['email'], ENT_QUOTES, 'UTF-8'),
                 );
             }
 

@@ -28,10 +28,13 @@
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <!-- <td class="left" style="width:72px;"><?php //echo $this->lang->line('column_image'); ?></td> -->
-                        <td class="left"><?php echo $this->lang->line('column_company_name'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_plan_name'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_domain'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_first_name'); ?></td>
+                        <td class="right" style="width:70px;"><?php echo $this->lang->line('column_last_name'); ?></td>
+                        <td class="right" style="width:50px;"><?php echo $this->lang->line('column_company_name'); ?></td>
+                        <td class="right" style="width:20px;"><?php echo $this->lang->line('column_email'); ?></td>
+                        <td class="right" style="width:20px;"><?php echo $this->lang->line('column_plan_name'); ?></td>
+                        <td class="right" style="width:30px;"><?php echo $this->lang->line('column_domain'); ?></td>
+                        <td class="right" style="width:20px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:240px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
@@ -39,7 +42,11 @@
                     <tr class="filter">
                         <td></td>
                         <!-- <td></td> -->
-                        <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
+                        <td>Email: <input type="text" name="filter_name" value="" style="width:80%;" /></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td class="right">
@@ -56,7 +63,10 @@
                                 <input type="checkbox" name="selected[]" value="<?php echo $client['client_id']; ?>" />
                                 <?php } ?></td>
                             <!-- <td class="left"><img src="<?php //echo $client['image']; ?>" alt="" id="thumb" /></td> -->
-                            <td class="left"><?php echo ($client['company']) ? $client['company'] : $client['first_name']." ".$client['last_name'] ?></td>
+                            <td class="left"><?php echo $client['first_name']; ?></td>
+                            <td class="right"><?php echo $client['last_name']; ?></td>
+                            <td class="right"><?php echo $client['company']; ?></td>
+                            <td class="right"><?php echo $client['email']; ?></td>
                             <td class="right"><?php echo $client['plan_name']; ?></td>
                             <td class="right"><?php echo $client['quantity']; ?></td>
                             <td class="right"><?php echo ($client['status'])? "Enabled" : "Disabled"; ?></td>
@@ -107,9 +117,9 @@ $('input[name=\'filter_name\']').autocomplete({
             success: function(json) {
                 response($.map(json, function(item) {
                     return {
-                        label: item.company,
+                        label: item.email,
                         value: item.client_id,
-                        name: item.company
+                        name: item.email
                     }
                 }));
             }
