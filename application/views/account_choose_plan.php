@@ -61,8 +61,8 @@
                           <ul class="options">
                             <li><?php echo $plan['limit_others']['player'] ?> Register Users</li>
                             <li><?php echo $plan['limit_others']['user'] ?> Admin Users</li>
-                            <li><?php echo !empty( $plan['limit_requests']['/player'] ) ? $plan['limit_requests']['/player'].' Player Req API/Sec.' : '-' ?> </li>
-                            <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].'Engine Req API/Sec.' : '-' ?> </li>
+                            <li><?php echo !empty( $plan['limit_requests']['/player'] ) ? $plan['limit_requests']['/player'].' Player API Requests' : '-' ?> </li>
+                            <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                           </ul>
                         </li>
                         <li class="button"><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Try it Free</a></li>
@@ -82,8 +82,8 @@
                               <ul class="options">
                                 <li><?php echo $plan['limit_others']['player'] ?> Register Users</li>
                                 <li><?php echo $plan['limit_others']['user'] ?> Admin Users</li>
-                                <li><?php echo !empty( $plan['limit_requests']['/player'] ) ? $plan['limit_requests']['/player'].' Player Req API/Sec.' : '-' ?> </li>
-                            <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].'Engine Req API/Sec.' : '-' ?> </li>
+                                <li><?php echo !empty( $plan['limit_requests']['/player'] ) ? $plan['limit_requests']['/player'].' Player API Requests' : '-' ?> </li>
+                                <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                               </ul>
                             </li>
                             <li class="button"><a href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Start</a></li>
@@ -104,8 +104,8 @@
                         <ul class="options">
                           <li>- Register Users</li>
                           <li>- Admin Users</li>
-                          <li>- Player Req API/Sec.</li>
-                          <li>- Engine Req API/Sec.</li>
+                          <li>- Player API Requests</li>
+                          <li>- Engine API Requests</li>
                         </ul>
                       </li>
                       <li class="button"><a href="mailto:info@playbasis.com">Call us</a></li>

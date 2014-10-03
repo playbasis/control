@@ -41,10 +41,10 @@
                                 }
                             }
                         ?>
-                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo $plan['limit_others']['player'] ?></i> Register Users</li>
-                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo $plan['limit_others']['user'] ?></i> Admin Users</li>
-                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo !isset($plan['limit_requests']['/player']) ? $plan['limit_requests']['/player'] : '-' ?></i> Player Req API/Sec.</li>
-                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo !isset($plan['limit_requests']['/engine']) ? $plan['limit_requests']['/engine'] : '-' ?></i> Engine Req API/Sec.</li>
+                        <li><i class="fa fa-check-circle-o fa-lg"></i> <?php echo $plan['limit_others']['player'] ?> Register Users</li>
+                        <li><i class="fa fa-check-circle-o fa-lg"></i> <?php echo $plan['limit_others']['user'] ?> Admin Users</li>
+                        <?php if (isset($plan['limit_requests']['/player'])) { ?><li><i class="fa fa-check-circle-o fa-lg"></i> <?php echo $plan['limit_requests']['/player'] ?> Player API Requests</li><?php } ?>
+                        <?php if (isset($plan['limit_requests']['/engine'])) { ?><li><i class="fa fa-check-circle-o fa-lg"></i> <?php echo $plan['limit_requests']['/engine'] ?> Engine API Requests</li><?php } ?>
                     </ul>
                 </div>
 
