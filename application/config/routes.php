@@ -161,6 +161,8 @@ $route['Quiz/player/'.ANY_STRING.'/'.ANY_NUMBER] = 'quiz/player_recent/$1/$2';
 $route['Quiz/player/'.ANY_STRING] = 'quiz/player_recent/$1/5';
 $route['Quiz/player/'.ANY_STRING.'/pending/'.ANY_NUMBER] = 'quiz/player_pending/$1/$2';
 $route['Quiz/player/'.ANY_STRING.'/pending'] = 'quiz/player_pending/$1/5';
+$route['Quiz/'.ANY_STRING.'/question'] = 'quiz/question/$1';
+$route['Quiz/'.ANY_STRING.'/answer'] = 'quiz/answer/$1';
 
 //email API
 $route['Email/send'] = 'email/send';

@@ -24,6 +24,20 @@ function convert_MongoId_quiz_id($obj) {
     return $obj;
 }
 
+function convert_MongoId_question_id($obj) {
+    $_id = $obj['question_id'];
+    unset($obj['question_id']);
+    $obj['id'] = $_id->{'$id'};
+    return $obj;
+}
+
+function convert_MongoId_option_id($obj) {
+    $_id = $obj['option_id'];
+    unset($obj['option_id']);
+    $obj['id'] = $_id->{'$id'};
+    return $obj;
+}
+
 class Quiz extends REST2_Controller
 {
     public function __construct()
@@ -65,7 +79,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function detail_get($quiz_id=null)
+    public function detail_get($quiz_id)
     {
         $this->benchmark->mark('start');
 
@@ -159,6 +173,49 @@ class Quiz extends REST2_Controller
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+    }
+
+    public function question_post($quiz_id)
+//public function question_get($quiz_id)
+    {
+        $this->benchmark->mark('start');
+
+        if (empty($quiz_id)) $this->response($this->error->setError('PARAMETER_MISSING', array('quiz_id')), 200);
+        $player_id = $this->input->post('player_id');
+//$player_id = $this->input->get('player_id');
+        if ($player_id === false) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
+        ));
+        if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $quiz = $this->quiz_model->find_by_id($this->client_id, $this->site_id, new MongoId($quiz_id));
+        if ($quiz === null) $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
+
+        $result = $this->quiz_model->find_quiz_by_quiz_and_player($this->client_id, $this->site_id, new MongoId($quiz_id), $pb_player_id);
+        $completed_questions = $result ? $result['questions'] : array();
+        $question = null;
+        foreach ($quiz['questions'] as $q) {
+            if (!in_array($q['question_id'], $completed_questions)) {
+                $question = $q;
+                break;
+            }
+        }
+        if ($question) {
+            $question = convert_MongoId_question_id($question);
+            foreach ($question['options'] as &$option) {
+                $option = convert_MongoId_option_id($option);
+                unset($option['score']);
+                unset($option['explanation']);
+            }
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $question, 'processing_time' => $t)), 200);
     }
 
     private function random_weight($weights) {
