@@ -26,16 +26,25 @@
             
             <fieldset>
 
-              
+
                 <div class="row ">
                     <p>
                     You are just one step away for finalizing your account. <br>Please click the button above to proceed.
                     </p>
                     <ul class="span4 offset4">
-                        <li><i class="fa fa-check-circle-o fa-lg"></i> 5000 Register Users</li>
-                        <li><i class="fa fa-check-circle-o fa-lg"></i> 2 Admin Users</li>
-                        <li><i class="fa fa-check-circle-o fa-lg"></i> 10000 Player Req API/Sec. </li>
-                        <li><i class="fa fa-check-circle-o fa-lg"></i> 100000Engine Req API/Sec.</li>
+                        <?php
+                            $plan = null;
+                            foreach ($plan_data as $p) {
+                                if ($p['_id']->{'$id'} == $plan_id) {
+                                    $plan = $p;
+                                    break;
+                                }
+                            }
+                        ?>
+                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo $plan['limit_others']['player'] ?></i> Register Users</li>
+                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo $plan['limit_others']['user'] ?></i> Admin Users</li>
+                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo !isset($plan['limit_requests']['/player']) ? $plan['limit_requests']['/player'] : '-' ?></i> Player Req API/Sec.</li>
+                        <li><i class="fa fa-check-circle-o fa-lg"><?php echo !isset($plan['limit_requests']['/engine']) ? $plan['limit_requests']['/engine'] : '-' ?></i> Engine Req API/Sec.</li>
                     </ul>
                 </div>
 
@@ -46,7 +55,7 @@
               <button class="btn btn-primary" type="submit">Start</button>
 
             </fieldset>
-            
+
 
         <?php echo form_close(); ?>
     </div><!-- .content -->

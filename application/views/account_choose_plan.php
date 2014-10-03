@@ -47,7 +47,7 @@
                 $n = 0;
                foreach ($plan_data as $key => $plan) {
                   
-                  if($plan['price'] == 0){
+                  if($plan['price'] <= 0){
                     ?>
                     <li class="plan plan-try plan-free plan-left">
                       <ul class="planContainer">
@@ -102,10 +102,10 @@
                       <li class="price"><p>ENTERPRISE</p></li>
                       <li>
                         <ul class="options">
-                          <li>Unlimit Register Users</li>
-                        <li>Unlimit Admin Users</li>
-                        <li>Unlimit Player Req API/Sec.</li>
-                        <li>Unlimit Engine Req API/Sec.</li>
+                          <li>- Register Users</li>
+                          <li>- Admin Users</li>
+                          <li>- Player Req API/Sec.</li>
+                          <li>- Engine Req API/Sec.</li>
                         </ul>
                       </li>
                       <li class="button"><a href="mailto:info@playbasis.com">Call us</a></li>

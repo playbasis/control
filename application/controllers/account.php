@@ -277,6 +277,7 @@ class Account extends MY_Controller
 				redirect('/account/choose_plan', 'refresh');
 			}
 		}
+
 		if ($this->session->userdata('site')) $this->data['site']  = $this->session->userdata('site');
 		$this->data['heading_title'] = $this->lang->line('add_site_title');
 		$this->data['main'] = 'account_add_site';
@@ -308,6 +309,7 @@ class Account extends MY_Controller
 				redirect('/account/start', 'refresh');
 			}
 		}
+
 		$this->data['plan_id'] = $this->session->userdata('plan_id') ? $this->session->userdata('plan_id') : null;
 		$this->data['heading_title'] = $this->lang->line('add_site_title');
 		$this->data['main'] = 'account_choose_plan';
@@ -370,6 +372,7 @@ class Account extends MY_Controller
 			}
 		}
 
+		$this->data['plan_id'] = $this->session->userdata('plan_id') ? $this->session->userdata('plan_id') : null;
 		$this->data['heading_title'] = $this->lang->line('start_title');
 		$this->data['main'] = 'account_start';
 		$this->data['form'] = 'account/start';
