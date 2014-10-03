@@ -16,7 +16,7 @@ class Quiz_model extends MY_Model
         $this->mongo_db->select(array('name','image','description','weight'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('status', true);
+        $this->mongo_db->where(array('status' => true, 'deleted' => false));
         $this->mongo_db->where_lte('date_start', $d);
         $this->mongo_db->where_gt('date_expire', $d);
         if ($nin !== null) $this->mongo_db->where_not_in('_id', $nin);
@@ -76,6 +76,34 @@ class Quiz_model extends MY_Model
     public function find_quiz_done_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
         $results = $this->find_quiz_pending_and_done_by_player($client_id, $site_id, $pb_player_id, $limit);
         return $results['completed'];
+    }
+
+    public function update_player_score($client_id, $site_id, $quiz_id, $pb_player_id, $question_id, $score) {
+        $d = new MongoDate(time());
+        $result = $this->find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id);
+        if ($result) {
+            return $this->mongo_db->insert('playbasis_quiz_to_player', array(
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'quiz_id' => $quiz_id,
+                'pb_player_id' => $pb_player_id,
+                'value' => $score,
+                'questions' => array($question_id),
+                'date_added' => $d,
+                'date_modified' => $d
+            ));
+        } else {
+            $questions = $result['questions'];
+            array_push($questions, $question_id);
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('quiz_id', $quiz_id);
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+            $this->mongo_db->set('questions', $questions);
+            $this->mongo_db->set('value', $score);
+            $this->mongo_db->set('date_modified', $d);
+            return $this->mongo_db->update('playbasis_quiz_to_player');
+        }
     }
 }
 ?>
