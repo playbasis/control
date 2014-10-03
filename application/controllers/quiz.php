@@ -39,7 +39,87 @@ class Quiz extends MY_Controller
         $this->form_validation->set_rules('quiz_description', $this->lang->line('sms-account_sid'), 'trim|required|xss_clean');
 
         if($this->input->post()){
-            $this->data['quiz'] = $this->input->post();
+
+            $data = $this->input->post();
+
+            $quiz = array();
+
+            foreach($data as $key => $value){
+                if($key == "quiz"){
+                    foreach($value as $qkey => $qvalue){
+                        if($qkey == "grades"){
+                            $grades = array();
+
+                            foreach($qvalue as $ggkey => $ggvalue){
+                                $grades['grade_id'] = $ggkey;
+                                foreach($ggvalue as $gggkey => $gggvalue){
+
+                                    if($gggkey == "rewards"){
+
+                                        foreach($gggvalue as $rkey => $rvalue){
+                                            if($rkey == "badge"){
+
+                                                $badge = array();
+
+                                                foreach($rvalue as $bkey => $bvalue){
+                                                    if(!empty($bvalue)){
+                                                        $badge["badge_id"] = $bkey;
+                                                        $badge["badge_value"] = $bvalue;
+                                                    }
+
+                                                }
+
+                                                if($badge){
+                                                    $grades[$gggkey]["rewards"]["badge"] = $badge;
+                                                }
+
+                                            }
+                                            if($rkey == "exp" && !empty($rvalue)){
+                                                $grades[$gggkey]["rewards"]["exp"] = $rvalue;
+                                            }
+                                            if($rkey == "point" && !empty($rvalue)){
+                                                $grades[$gggkey]["rewards"]["point"] = $rvalue;
+                                            }
+                                            if($rkey == "custom"){
+                                                $custom = array();
+
+                                                foreach($rvalue as $bkey => $bvalue){
+                                                    var_dump($bkey);
+                                                    var_dump($bvalue);
+                                                    if(!empty($bvalue)){
+                                                        $custom["custom_id"] = $bkey;
+                                                        $custom["custom_value"] = $bvalue;
+                                                    }
+
+                                                }
+
+                                                if($custom){
+                                                    $grades[$gggkey]["rewards"]["custom"] = $custom;
+                                                }
+
+                                            }
+                                        }
+
+                                    }else{
+                                        $grades[$gggkey] = $gggvalue;
+                                    }
+
+                                }
+                                $quiz["grades"][] = $grades;
+                            }
+
+                        }
+
+                    }
+                }else{
+                    $quiz[$key] = $value;
+                }
+            }
+            echo "<pre>";
+            var_dump($quiz);
+            echo "</pre>";
+            $this->data['quiz'] = $quiz;
+
             if($this->form_validation->run()){
                 var_dump($this->input->post());
                 exit();
