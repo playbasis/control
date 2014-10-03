@@ -31,6 +31,16 @@ class Quiz_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('quiz_id','value','questions'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('quiz_id', $quiz_id);
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $results = $this->mongo_db->get('playbasis_quiz_to_player');
+        return $results ? $results[0] : null;
+    }
+
     public function find_quiz_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('quiz_id','value','questions'));
