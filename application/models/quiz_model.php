@@ -81,7 +81,7 @@ class Quiz_model extends MY_Model
     public function update_player_score($client_id, $site_id, $quiz_id, $pb_player_id, $question_id, $score) {
         $d = new MongoDate(time());
         $result = $this->find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id);
-        if ($result) {
+        if (!$result) {
             return $this->mongo_db->insert('playbasis_quiz_to_player', array(
                 'client_id' => $client_id,
                 'site_id' => $site_id,
