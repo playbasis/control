@@ -119,7 +119,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function recent_get($player_id, $limit)
+    public function player_recent_get($player_id, $limit)
     {
         $this->benchmark->mark('start');
 
@@ -133,6 +133,27 @@ class Quiz extends REST2_Controller
         ));
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
         $result = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
+        $result = array_map('convert_MongoId_quiz_id', $result);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+    }
+
+    public function player_pending_get($player_id, $limit)
+    {
+        $this->benchmark->mark('start');
+
+        if (empty($player_id)) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+
+        $result = null;
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
+        ));
+        if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        $result = $this->quiz_model->find_quiz_pending_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
         $result = array_map('convert_MongoId_quiz_id', $result);
 
         $this->benchmark->mark('end');

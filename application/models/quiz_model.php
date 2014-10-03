@@ -31,14 +31,41 @@ class Quiz_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function find_quiz_done_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
+    public function find_quiz_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('quiz_id','value'));
+        $this->mongo_db->select(array('quiz_id','value','questions'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $this->mongo_db->order_by(array('date_modified' => -1));
         if ($limit > 0) $this->mongo_db->limit($limit);
         return $this->mongo_db->get('playbasis_quiz_to_player');
+    }
+
+    public function find_quiz_pending_and_done_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
+        $output = array('pending' => array(), 'completed' => array());
+        $results = $this->find_quiz_by_player($client_id, $site_id, $pb_player_id, $limit);
+        if (is_array($results)) foreach ($results as $result) {
+            $quiz_id = $result['quiz_id'];
+            $quiz = $this->find_by_id($client_id, $site_id, $quiz_id);
+            $total_questions = count($quiz['questions']);
+            $completed_questions = count($result['questions']);
+            $pending = $completed_questions < $total_questions;
+            $result['total_completed_questions'] = $completed_questions;
+            if ($pending) $result['total_pending_questions'] = $total_questions - $completed_questions;
+            unset($result['questions']);
+            array_push($output[$pending ? 'pending' : 'completed'], $result);
+        }
+        return $output;
+    }
+
+    public function find_quiz_pending_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
+        $results = $this->find_quiz_pending_and_done_by_player($client_id, $site_id, $pb_player_id, $limit);
+        return $results['pending'];
+    }
+
+    public function find_quiz_done_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
+        $results = $this->find_quiz_pending_and_done_by_player($client_id, $site_id, $pb_player_id, $limit);
+        return $results['completed'];
     }
 }
 ?>
