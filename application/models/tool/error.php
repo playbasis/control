@@ -150,6 +150,18 @@ class Error extends CI_Model
             $errorData['message'] = "Quiz not found";
             $errorData['error_code'] = '1001';
             break;
+        case 'QUIZ_QUESTION_NOT_FOUND':
+            $errorData['message'] = "Question not found";
+            $errorData['error_code'] = '1002';
+            break;
+        case 'QUIZ_OPTION_NOT_FOUND':
+            $errorData['message'] = "Option not found";
+            $errorData['error_code'] = '1003';
+            break;
+        case 'QUIZ_QUESTION_ALREADY_COMPLETED':
+            $errorData['message'] = "Question has already been completed by the player";
+            $errorData['error_code'] = '1004';
+            break;
         default:
             $errorData['message'] = "Unknow";
             $errorData['error_code'] = '9999';
