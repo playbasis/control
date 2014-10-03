@@ -146,6 +146,10 @@ class Error extends CI_Model
             $errorData["message"] = "Quest not found";
             $errorData["error_code"] = "0705";
             break;
+        case 'QUIZ_NOT_FOUND':
+            $errorData['message'] = "Quiz not found";
+            $errorData['error_code'] = '1001';
+            break;
         default:
             $errorData['message'] = "Unknow";
             $errorData['error_code'] = '9999';
