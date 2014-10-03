@@ -119,7 +119,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function recent_get($player_id)
+    public function recent_get($player_id, $limit)
     {
         $this->benchmark->mark('start');
 
@@ -132,7 +132,7 @@ class Quiz extends REST2_Controller
             'cl_player_id' => $player_id,
         ));
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-        $result = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id, 5);
+        $result = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
         $result = array_map('convert_MongoId_quiz_id', $result);
 
         $this->benchmark->mark('end');

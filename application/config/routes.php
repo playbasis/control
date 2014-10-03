@@ -157,7 +157,8 @@ $route['Quest/joinAll'] = 'quest/joinAll';
 //quiz API
 $route['Quiz/list'] = 'quiz/list';
 $route['Quiz/'.ANY_STRING.'/detail'] = 'quiz/detail/$1';
-$route['Quiz/player/'.ANY_STRING] = 'quiz/recent/$1';
+$route['Quiz/player/'.ANY_STRING.'/'.ANY_NUMBER] = 'quiz/recent/$1/$2';
+$route['Quiz/player/'.ANY_STRING] = 'quiz/recent/$1/5';
 
 //email API
 $route['Email/send'] = 'email/send';
