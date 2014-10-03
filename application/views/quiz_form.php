@@ -130,6 +130,28 @@
                     <?php
                     if(isset($quiz) && $quiz['grades']){
                         foreach($quiz['grades'] as $grade){
+
+                            $custom_user_set = array();
+                            $badge_user_set = array();
+                            $point_user_set = array();
+                            $exp_user_set = array();
+
+                            if(isset($grade["rewards"])){
+                                foreach($grade["rewards"] as $rk=>$rv){
+                                    if($rk == "custom"){
+                                        $custom_user_set[] = $rv;
+                                    }
+                                    if($rk == "badge"){
+                                        $badge_user_set[] = $rv;
+                                    }
+                                    if($rk == "exp"){
+                                        $exp_user_set = $rv;
+                                    }
+                                    if($rk == "point"){
+                                        $point_user_set = $rv;
+                                    }
+                                }
+                            }
                     ?>
                             <div class="box-content clearfix">
                                 <div class="span6">
@@ -171,11 +193,18 @@
                                             </td>
                                             <td>
                                                 <div class="reward">
+                                                    <button id="exp-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_exp'); ?></button>
+                                                    <div class="exp">
+                                                        <div class="reward-panel">
+                                                            <span class="label label-primary"><?php echo $this->lang->line('entry_exp'); ?></span>
+                                                            <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][exp][exp_value]" size="100" class="orange tooltips" value="<?php echo $exp_user_set? $exp_user_set["exp_value"] : ''; ?>" />
+                                                        </div>
+                                                    </div>
                                                     <button id="point-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
                                                     <div class="point">
                                                         <div class="reward-panel">
                                                             <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
-                                                            <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][point][point_value]" size="100" class="orange tooltips" value="" />
+                                                            <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][point][point_value]" size="100" class="orange tooltips" value="<?php echo $point_user_set ? $point_user_set["point_value"] : ''; ?>" />
                                                         </div>
                                                     </div>
                                                     <div id="badge-panel">
@@ -213,16 +242,15 @@
                                                                         ?>
                                                                         <?php echo $point['name']; ?>
                                                                         <?php
-                                                                        if($grade["rewards"]["custom"]){
-                                                                        ?>
-
-                                                                        <?php
-                                                                        }else{
-                                                                        ?>
-                                                                        <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo $grade['grade_id']; ?>" /><br/>
-                                                                        <?php
+                                                                        $user_c = "";
+                                                                        foreach($custom_user_set as $c){
+                                                                            if($c["custom_id"] == $point['reward_id']){
+                                                                                $user_c = $c["custom_value"];
+                                                                                break;
+                                                                            }
                                                                         }
                                                                         ?>
+                                                                        <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="<?php echo $user_c; ?>" /><br/>
                                                                     <?php
                                                                     }
                                                                     ?>
@@ -428,9 +456,11 @@
 <script type="text/javascript">
 
     $(document).ready(function(){
+        $(".exp").hide();
         $(".point").hide();
         $(".badges").hide();
         $(".rewards").hide();
+        $("#exp-entry").live('click', function() {$(this).parent().find(".exp").toggle()});
         $("#point-entry").live('click', function() {$(this).parent().find(".point").toggle()});
         $("#badge-entry").live('click', function() {$(this).parent().find(".badges").toggle()});
         $("#reward-entry").live('click', function() {$(this).parent().find(".rewards").toggle()});

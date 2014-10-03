@@ -70,31 +70,29 @@ class Quiz extends MY_Controller
                                                 }
 
                                                 if($badge){
-                                                    $grades[$gggkey]["rewards"]["badge"] = $badge;
+                                                    $grades[$gggkey]["badge"] = $badge;
                                                 }
 
                                             }
                                             if($rkey == "exp" && !empty($rvalue)){
-                                                $grades[$gggkey]["rewards"]["exp"] = $rvalue;
+                                                $grades[$gggkey]["exp"] = $rvalue;
                                             }
                                             if($rkey == "point" && !empty($rvalue)){
-                                                $grades[$gggkey]["rewards"]["point"] = $rvalue;
+                                                $grades[$gggkey]["point"] = $rvalue;
                                             }
                                             if($rkey == "custom"){
                                                 $custom = array();
 
-                                                foreach($rvalue as $bkey => $bvalue){
-                                                    var_dump($bkey);
-                                                    var_dump($bvalue);
-                                                    if(!empty($bvalue)){
-                                                        $custom["custom_id"] = $bkey;
-                                                        $custom["custom_value"] = $bvalue;
+                                                foreach($rvalue as $ckey => $cvalue){
+                                                    if(!empty($cvalue)){
+                                                        $custom["custom_id"] = $ckey;
+                                                        $custom["custom_value"] = $cvalue;
                                                     }
 
                                                 }
 
                                                 if($custom){
-                                                    $grades[$gggkey]["rewards"]["custom"] = $custom;
+                                                    $grades[$gggkey]["custom"] = $custom;
                                                 }
 
                                             }
