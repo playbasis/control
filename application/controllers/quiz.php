@@ -35,6 +35,17 @@ class Quiz extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
+        $this->form_validation->set_rules('quiz_name', $this->lang->line('sms-mode'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('quiz_description', $this->lang->line('sms-account_sid'), 'trim|required|xss_clean');
+
+        if($this->input->post()){
+            $this->data['quiz'] = $this->input->post();
+            if($this->form_validation->run()){
+                var_dump($this->input->post());
+                exit();
+            }
+        }
+
         $this->getForm(0);
     }
 
@@ -50,6 +61,8 @@ class Quiz extends MY_Controller
     private function getForm($quiz_id=null) {
 
         $this->load->model('Image_model');
+        $this->load->model('Badge_model');
+        $this->load->model('Reward_model');
 
         if (isset($quiz_id) && ($quiz_id != 0)) {
             if($this->User_model->getClientId()){
@@ -128,71 +141,18 @@ class Quiz extends MY_Controller
             $this->data['status'] = 'true';
         }
 
-        if ($this->input->post('stackable')) {
-            $this->data['stackable'] = $this->input->post('stackable');
-        } elseif (!empty($badge_info)) {
-            $this->data['stackable'] = $badge_info['stackable'];
-        } else {
-            $this->data['stackable'] = 1;
-        }
 
-        if ($this->input->post('substract')) {
-            $this->data['substract'] = $this->input->post('substract');
-        } elseif (!empty($badge_info)) {
-            $this->data['substract'] = $badge_info['substract'];
-        } else {
-            $this->data['substract'] = 1;
-        }
+        $data['client_id'] = $this->User_model->getClientId();
+        $data['site_id'] = $this->User_model->getSiteId();
 
-        if ($this->input->post('claim')) {
-            $this->data['claim'] = $this->input->post('claim');
-        } elseif (!empty($badge_info) && isset($badge_info['claim'])) {
-            $this->data['claim'] = $badge_info['claim'];
-        } else {
-            $this->data['claim'] = 0;
-        }
+        $this->data['badge_list'] = array();
+        $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $data['site_id'] ));
 
-        if ($this->input->post('redeem')) {
-            $this->data['redeem'] = $this->input->post('redeem');
-        } elseif (!empty($badge_info) && isset($badge_info['redeem'])) {
-            $this->data['redeem'] = $badge_info['redeem'];
-        } else {
-            $this->data['redeem'] = 0;
-        }
+        $this->data['point_list'] = array();
+        $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($data['site_id']);
 
-        if ($this->input->post('quantity')) {
-            $this->data['quantity'] = $this->input->post('quantity');
-        } elseif (!empty($badge_info)) {
-            $this->data['quantity'] = $badge_info['quantity'];
-        } else {
-            $this->data['quantity'] = 1;
-        }
-
-        if ($this->input->post('sponsor')) {
-            // echo $this->input->post('sponsor');
-            $this->data['sponsor'] = $this->input->post('sponsor');
-        } elseif (!empty($badge_info)) {
-            $this->data['sponsor'] = isset($badge_info['sponsor'])?$badge_info['sponsor']:null;
-        } else {
-            $this->data['sponsor'] = false;
-        }
-
-        if (isset($badge_id)) {
-            $this->data['badge_id'] = $badge_id;
-        } else {
-            $this->data['badge_id'] = null;
-        }
-
-        if($this->User_model->getClientId()){
-            if($this->data['sponsor']){
-                redirect('badge', 'refresh');
-            }
-        }
-
-        $this->load->model('Client_model');
-        $this->data['to_clients'] = $this->Client_model->getClients(array());
-        $this->data['client_id'] = $this->User_model->getClientId();
-        $this->data['site_id'] = $this->User_model->getSiteId();
+        $this->data['client_id'] = $data['client_id'];
+        $this->data['site_id'] = $data['site_id'];
 
         $this->data['main'] = 'quiz_form';
 

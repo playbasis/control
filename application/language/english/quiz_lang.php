@@ -21,4 +21,9 @@ $lang['tab_info']             		= 'Quiz Info';
 $lang['tab_grade']             		= 'Grading';
 $lang['tab_data']             		= 'Question Data';
 
+$lang['entry_point']           		    = 'Point';
+$lang['entry_badge']           		    = 'Badge';
+$lang['entry_rewards']           		= 'Reward';
+$lang['entry_custom_point']           		= 'Custom Point';
+
 ?>

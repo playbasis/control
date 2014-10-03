@@ -685,14 +685,6 @@ class Goods extends MY_Controller
             $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
         }
 
-        /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($goods_info) && $goods_info['image'] && (S3_IMAGE . $goods_info['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $goods_info['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($goods_info['image'], 100, 100);
-        } else {
-            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }*/
-
         $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
 
         if ($this->input->post('sort_order')) {

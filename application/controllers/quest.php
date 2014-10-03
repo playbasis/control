@@ -352,14 +352,6 @@ class Quest extends MY_Controller
             $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
         }
 
-        /*if ($this->input->post('image') && (S3_IMAGE . $this->input->post('image') != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $this->input->post('image') != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($editQuest) && $editQuest['image'] && (S3_IMAGE . $editQuest['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $editQuest['image'] != 'HTTP/1.0 403 Forbidden')) {
-            $this->data['thumb'] = $this->Image_model->resize($editQuest['image'], 100, 100);
-        } else {
-            $this->data['thumb'] = $this->Image_model->resize('no_image.jpg', 100, 100);
-        }*/
-
         if ($this->input->post('date_start')) {
             $this->data['date_start'] = $this->input->post('date_start');
         } elseif (!empty($goods_info)) {

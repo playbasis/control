@@ -8,18 +8,24 @@
     "status": "",
     "grades": [
         {
-            "grade_start": "",
-            "grade_end": "",
+            "start": "",
+            "end": "",
             "grade": "",
             "rank": "",
-            "rank_image": ""
+            "rank_image": "",
+            "rewards" : {"point":{"point_value":0},
+                "badge":{"badge_id":0},
+                "custom":{"reward_id":0}}
         },
         {
-            "range_start": "",
-            "rang_end": "",
+            "start": "",
+            "end": "",
             "grade": "",
             "rank": "",
-            "rank_image": ""
+            "rank_image": "",
+            "rewards" : {"point":{"point_value":0},
+                "badge":{"badge_id":0},
+                "custom":{"reward_id":0}}
         }
     ],
     "questions": [
