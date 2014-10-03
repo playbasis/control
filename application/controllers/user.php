@@ -730,6 +730,8 @@ class User extends MY_Controller
             }else{
                 $message = strip_tags(validation_errors());
             }
+        } else {
+            $message = "Unsupported HTTP method";
         }
 
         echo json_encode(array("response" => $success ? "success" : "fail", "message" => $message));
