@@ -313,6 +313,9 @@ $option_id = $this->input->get('option_id');
         $rewards = isset($grade["rewards"]) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade["rewards"]) : null;
         unset($grade['rewards']);
 
+        /* publish the reward (if any) */
+        if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $this->validToken['domain_name'], $reward);
+
         /* data */
         $data = array(
             'score' => $score,
@@ -408,6 +411,35 @@ $option_id = $this->input->get('option_id');
             }
         }
         return $events;
+    }
+
+    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $domain_name, $event) {
+        $message = null;
+        switch ($event['event_type']) {
+        case 'LEVEL_UP':
+            $message = array('message' => $this->utility->getEventMessage('level', '', '', '', $event['value']), 'level' => $event['value']);
+            break;
+        case 'REWARD_RECEIVED':
+            switch ($event['reward_type']) {
+            case 'badge':
+                $message = array('message' => $this->utility->getEventMessage('badge', '', '', $event['reward_data']['name']), 'badge' => $event['reward_data']);
+                break;
+            default:
+                $message = array('message' => $this->utility->getEventMessage('point', $event['value'], $event['reward_type']), 'amount' => $event['value'], 'point' => $event['reward_type']);
+                break;
+            }
+            break;
+        }
+        if ($message) {
+            $this->node->publish(array_merge(array(
+                "client_id" => $client_id,
+                "site_id" => $site_id,
+                "pb_player_id" => $pb_player_id,
+                "player_id" => $cl_player_id,
+                'action_name' => 'quiz_reward',
+                'action_icon' => 'fa-trophy',
+            ), $message), $domain_name, $site_id);
+        }
     }
 
     private function random_weight($weights) {
