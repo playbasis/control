@@ -309,7 +309,7 @@ $option_id = $this->input->get('option_id');
             }
         }
 
-        /* check to see if grade has reward associated with it */
+        /* check to see if grade has any reward associated with it */
         $rewards = isset($grade["rewards"]) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade["rewards"]) : null;
         unset($grade['rewards']);
 
@@ -360,12 +360,13 @@ $option_id = $this->input->get('option_id');
                 $name = 'point';
                 $id = $this->reward_model->findByName(array('client_id' => $client_id, 'site_id' => $site_id), $name);
                 $value = $reward['point_value'];
+                $return_data = array();
                 $this->client_model->updateCustomReward($name, $value, array(
                     'client_id' => $client_id,
                     'site_id' => $site_id,
                     'pb_player_id' => $pb_player_id,
                     'player_id' => $cl_player_id
-                ), array());
+                ), $return_data);
                 array_push($events, array(
                     'event_type' => 'REWARD_RECEIVED',
                     'reward_type' => $name,
@@ -392,12 +393,13 @@ $option_id = $this->input->get('option_id');
                     $name = $this->reward_model->getRewardName(array('client_id' => $client_id, 'site_id' => $site_id), $custom['custom_id']);
                     $id = $custom['custom_id'];
                     $value = $custom['custom_value'];
+                    $return_data = array();
                     $this->client_model->updateCustomReward($name, $value, array(
                         'client_id' => $client_id,
                         'site_id' => $site_id,
                         'pb_player_id' => $pb_player_id,
                         'player_id' => $cl_player_id
-                    ), array());
+                    ), $return_data);
                     array_push($events, array(
                         'event_type' => 'REWARD_RECEIVED',
                         'reward_type' => $name,
