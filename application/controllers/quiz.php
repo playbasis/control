@@ -43,8 +43,10 @@ class Quiz extends REST2_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('client_model');
         $this->load->model('player_model');
         $this->load->model('quiz_model');
+        $this->load->model('reward_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -184,8 +186,8 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function question_post($quiz_id)
-//public function question_get($quiz_id)
+    //public function question_post($quiz_id)
+public function question_get($quiz_id)
     {
         $this->benchmark->mark('start');
 
@@ -196,8 +198,8 @@ class Quiz extends REST2_Controller
         if ($quiz === null) $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
 
         /* param "player_id" */
-        $player_id = $this->input->post('player_id');
-//$player_id = $this->input->get('player_id');
+        //$player_id = $this->input->post('player_id');
+$player_id = $this->input->get('player_id');
         if ($player_id === false) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id' => $this->client_id,
@@ -211,7 +213,7 @@ class Quiz extends REST2_Controller
         $question = null;
         foreach ($quiz['questions'] as $q) {
             if (!in_array($q['question_id'], $completed_questions)) {
-                $question = $q;
+                $question = $q; // get the first question in the quiz that the player has not submitted an answer
                 break;
             }
         }
@@ -308,7 +310,8 @@ $option_id = $this->input->get('option_id');
         }
 
         /* check to see if grade has reward associated with it */
-        $rewards = null;
+        $rewards = isset($grade["rewards"]) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade["rewards"]) : null;
+        unset($grade['rewards']);
 
         /* data */
         $data = array(
@@ -324,6 +327,87 @@ $option_id = $this->input->get('option_id');
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $data, 'processing_time' => $t)), 200);
+    }
+
+    private function update_rewards($client_id, $site_id, $pb_player_id, $cl_player_id, $rewards) {
+        $events = array();
+        foreach ($rewards as $type => $reward) {
+            switch ($type) {
+            case 'exp':
+                $value = $reward['exp_value'];
+                // update player's exp
+                $lv = $this->client_model->updateExpAndLevel($value, $pb_player_id, $cl_player_id, array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id
+                ));
+                // if level up
+                if ($lv > 0) {
+                    array_push($events, array(
+                        'event_type' => 'LEVEL_UP',
+                        'value' => $lv
+                    ));
+                }
+                array_push($events, array(
+                    'event_type' => 'REWARD_RECEIVED',
+                    'reward_type' => 'exp',
+                    'value' => $value
+                ));
+                break;
+            case 'point':
+                $name = 'point';
+                $id = $this->reward_model->findByName(array('client_id' => $client_id, 'site_id' => $site_id), $name);
+                $value = $reward['point_value'];
+                $this->client_model->updateCustomReward($name, $value, array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'pb_player_id' => $pb_player_id,
+                    'player_id' => $cl_player_id
+                ), array());
+                array_push($events, array(
+                    'event_type' => 'REWARD_RECEIVED',
+                    'reward_type' => $name,
+                    'value' => $value
+                ));
+                break;
+            case 'badge':
+                if (is_array($reward)) foreach ($reward as $badge) {
+                    $id = $badge['badge_id'];
+                    $value = $badge['badge_value'];
+                    $this->client_model->updateplayerBadge($id, $value, $pb_player_id, $cl_player_id, $client_id, $site_id);
+                    $badgeData = $this->client_model->getBadgeById($id, $site_id);
+                    if (!$badgeData) break;
+                    array_push($events, array(
+                        'event_type' => 'REWARD_RECEIVED',
+                        'reward_type' => 'badge',
+                        'reward_data' => $badgeData,
+                        'value' => $value
+                    ));
+                }
+                break;
+            case 'custom':
+                if (is_array($reward)) foreach ($reward as $custom) {
+                    $name = $this->reward_model->getRewardName(array('client_id' => $client_id, 'site_id' => $site_id), $custom['custom_id']);
+                    $id = $custom['custom_id'];
+                    $value = $custom['custom_value'];
+                    $this->client_model->updateCustomReward($name, $value, array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'pb_player_id' => $pb_player_id,
+                        'player_id' => $cl_player_id
+                    ), array());
+                    array_push($events, array(
+                        'event_type' => 'REWARD_RECEIVED',
+                        'reward_type' => $name,
+                        'value' => $value
+                    ));
+                }
+                break;
+            default:
+                log_message('error', 'Unsupported type = '.$type);
+                break;
+            }
+        }
+        return $events;
     }
 
     private function random_weight($weights) {
