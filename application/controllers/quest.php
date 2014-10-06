@@ -908,7 +908,7 @@ class Quest extends REST2_Controller
 
         foreach ($quests as $index => $quest) {
 
-            $data = array(
+            $data_sub = array(
                 "client_id" => $this->validToken["client_id"],
                 "site_id" => $this->validToken["site_id"],
                 "pb_player_id" => $pb_player_id,
@@ -916,20 +916,20 @@ class Quest extends REST2_Controller
             );
 
             // check quest_to_client
-            $player_quest = $this->quest_model->getPlayerQuest($data);
+            $player_quest = $this->quest_model->getPlayerQuest($data_sub);
 
             // not join yet, let check condition
             if (!$player_quest) {
                 $condition_quest = $this->checkConditionQuest($quest, $pb_player_id, $this->validToken);
                 // condition passed
                 if (!$condition_quest)
-                    $this->quest_model->joinQuest(array_merge($data, $quest));
+                    $this->quest_model->joinQuest(array_merge($data_sub, $quest));
 
             } else {
                 // already join, let check quest_to_client status
                 if ($player_quest["status"] == "unjoin") {
                     // unjoin, let him join again
-                    $this->quest_model->updateQuestStatus($data, "join");
+                    $this->quest_model->updateQuestStatus($data_sub, "join");
                 }
             }
         }
