@@ -75,11 +75,11 @@ class Quest_model extends MY_Model
 
         $this->set_site_mongodb($data["site_id"]);
 
-        log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' before sort : '.var_dump($data["missions"]));
+        log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' before sort : '.print_r($data["missions"], true));
 
         $data["missions"] = vsort($data["missions"], "mission_number");
 
-        log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' after sort : '.var_dump($data["missions"]));
+        log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' after sort : '.print_r($data["missions"], true));
 
         $first = true;
         foreach($data["missions"] as &$m){
@@ -96,7 +96,7 @@ class Quest_model extends MY_Model
             $m["date_modified"] = new MongoDate(time());
         }
 
-        log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' update status : '.var_dump($data["missions"]));
+        log_message('debug', 'MISSION : player = '.$data["pb_player_id"].' quest id = '.$data["quest_id"].' update status : '.print_r($data["missions"], true));
 
         $this->mongo_db->insert("playbasis_quest_to_player", array(
             "client_id" => $data["client_id"],
