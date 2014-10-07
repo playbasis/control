@@ -119,6 +119,7 @@
             <div class="isot-player-points">
 
                 <span><small>points</small> <?php echo $player['points']; ?></span>
+                <span><small>exp</small> <?php echo $player['exp']; ?></span>
 
             </div>
             <!-- End isot-player-points -->
