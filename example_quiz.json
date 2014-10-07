@@ -1,5 +1,5 @@
 {
-    "quiz_id" : "",
+    "_id" : "",
     "name": "",
     "image": "",
     "description": "",
@@ -17,12 +17,12 @@
                 "exp":{"exp_value":0},
                 "point":{"point_value":0},
                 "badge":[
-                    {badge_id:'',badge_value:0},
-                    {badge_id:'',badge_value:0}
+                    {"badge_id":"","badge_value":0},
+                    {"badge_id":"","badge_value":0}
                 ],
                 "custom":[
-                    {custom_id:'',custom_value:0},
-                    {custom_id:'',custom_value:0}
+                    {"custom_id":"","custom_value":0},
+                    {"custom_id":"","custom_value":0}
                 ]
             }
         },
@@ -36,12 +36,12 @@
                 "exp":{"exp_value":0},
                 "point":{"point_value":0},
                 "badge":[
-                    {badge_id:'',badge_value:0},
-                    {badge_id:'',badge_value:0}
+                    {"badge_id":"","badge_value":0},
+                    {"badge_id":"","badge_value":0}
                 ],
                 "custom":[
-                    {custom_id:'',custom_value:0},
-                    {custom_id:'',custom_value:0}
+                    {"custom_id":"","custom_value":0},
+                    {"custom_id":"","custom_value":0}
                 ]
             }
         }
@@ -95,9 +95,9 @@
 
             ]
         }
-    ]
-    "date_added":'',
-    "date_modified":'',
-    "date_start":'',
-    "date_expire":''
+    ],
+    "date_added":"",
+    "date_modified":"",
+    "date_start":"",
+    "date_expire":""
 }

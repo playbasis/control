@@ -16,18 +16,82 @@ class Quiz extends MY_Controller
             redirect('/login', 'refresh');
         }
 
+        $this->load->model('Quiz_model');
+
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("quiz", $lang['folder']);
     }
 
     public function index(){
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
+        $this->getList(0);
+    }
+
+    public function page($offset=0) {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $this->getList($offset);
+    }
+
+    public function getList($offset){
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $this->load->library('pagination');
+
+        $config['per_page'] = 10;
+
+        $filter = array(
+            'limit' => $config['per_page'],
+            'start' => $offset,
+            'client_id'=>$client_id,
+            'site_id'=>$site_id,
+            'sort'=>'sort_order'
+        );
+
+        if(isset($_GET['filter_name'])){
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
+        $config['base_url'] = site_url('quiz/page');
+        $config["uri_segment"] = 3;
+
+        if($client_id){
+            $this->data['quizs'] = $this->Quiz_model->getQuizs($filter);
+
+            $config['total_rows'] = $this->Quiz_model->getTotalQuizs($filter);
+        }
+
+        $choice = $config["total_rows"] / $config["per_page"];
+        $config['num_links'] = round($choice);
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $this->pagination->initialize($config);
+
         $this->data['main'] = 'quiz';
         $this->render_page('template');
+
     }
 
     public function insert(){
@@ -35,11 +99,34 @@ class Quiz extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $this->form_validation->set_rules('quiz_name', $this->lang->line('sms-mode'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('quiz_description', $this->lang->line('sms-account_sid'), 'trim|required|xss_clean');
+        $this->getForm(0);
+    }
+
+    public function edit($quiz_id){
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $this->getForm($quiz_id);
+    }
+
+    private function getForm($quiz_id=null) {
+
+        $this->load->model('Image_model');
+        $this->load->model('Badge_model');
+        $this->load->model('Reward_model');
+
+        $quiz_info = array();
+
+        if (isset($quiz_id) && ($quiz_id != 0)) {
+            if($this->User_model->getClientId()){
+                $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
+            }else{
+                $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
+            }
+        }
 
         if($this->input->post()){
-
             $data = $this->input->post();
 
             $quiz = array();
@@ -48,9 +135,8 @@ class Quiz extends MY_Controller
                 if($key == "quiz"){
                     foreach($value as $qkey => $qvalue){
                         if($qkey == "grades"){
-                            $grades = array();
-
                             foreach($qvalue as $ggkey => $ggvalue){
+                                $grades = array();
                                 $grades['grade_id'] = $ggkey;
                                 foreach($ggvalue as $gggkey => $gggvalue){
 
@@ -63,12 +149,12 @@ class Quiz extends MY_Controller
 
                                                 foreach($rvalue as $bkey => $bvalue){
                                                     if(!empty($bvalue)){
-                                                        $badge["badge_id"] = $bkey;
-                                                        $badge["badge_value"] = $bvalue;
+                                                        $b["badge_id"] = $bkey;
+                                                        $b["badge_value"] = $bvalue;
+
+                                                        $badge[] = $b;
                                                     }
-
                                                 }
-
                                                 if($badge){
                                                     $grades[$gggkey]["badge"] = $badge;
                                                 }
@@ -85,12 +171,12 @@ class Quiz extends MY_Controller
 
                                                 foreach($rvalue as $ckey => $cvalue){
                                                     if(!empty($cvalue)){
-                                                        $custom["custom_id"] = $ckey;
-                                                        $custom["custom_value"] = $cvalue;
+                                                        $c["custom_id"] = $ckey;
+                                                        $c["custom_value"] = $cvalue;
+
+                                                        $custom[] = $c;
                                                     }
-
                                                 }
-
                                                 if($custom){
                                                     $grades[$gggkey]["custom"] = $custom;
                                                 }
@@ -107,176 +193,54 @@ class Quiz extends MY_Controller
                             }
 
                         }else if($qkey == "questions"){
-                            $questions = array();
+                            foreach($qvalue as $qqkey => $qqvalue){
+                                $questions = array();
+                                $questions['question_id'] = $qqkey;
 
-                            foreach($qvalue as $ggkey => $ggvalue){
-                                $grades['grade_id'] = $ggkey;
-                                foreach($ggvalue as $gggkey => $gggvalue){
+                                foreach($qqvalue as $qqqkey => $qqqvalue){
 
-                                    if($gggkey == "rewards"){
+                                    if($qqqkey == "options"){
 
-                                        foreach($gggvalue as $rkey => $rvalue){
-                                            if($rkey == "badge"){
+                                        $options = array();
 
-                                                $badge = array();
+                                        foreach($qqqvalue as $okey => $ovalue){
+                                            $option = $ovalue;
+                                            $option['option_id'] = $okey;
 
-                                                foreach($rvalue as $bkey => $bvalue){
-                                                    if(!empty($bvalue)){
-                                                        $badge["badge_id"] = $bkey;
-                                                        $badge["badge_value"] = $bvalue;
-                                                    }
-
-                                                }
-
-                                                if($badge){
-                                                    $grades[$gggkey]["badge"] = $badge;
-                                                }
-
-                                            }
-                                            if($rkey == "exp" && !empty($rvalue)){
-                                                $grades[$gggkey]["exp"] = $rvalue;
-                                            }
-                                            if($rkey == "point" && !empty($rvalue)){
-                                                $grades[$gggkey]["point"] = $rvalue;
-                                            }
-                                            if($rkey == "custom"){
-                                                $custom = array();
-
-                                                foreach($rvalue as $ckey => $cvalue){
-                                                    if(!empty($cvalue)){
-                                                        $custom["custom_id"] = $ckey;
-                                                        $custom["custom_value"] = $cvalue;
-                                                    }
-
-                                                }
-
-                                                if($custom){
-                                                    $grades[$gggkey]["custom"] = $custom;
-                                                }
-
-                                            }
+                                            $options[] = $option;
                                         }
-
+                                        if($options){
+                                            $questions["options"] = $options;
+                                        }
                                     }else{
-                                        $grades[$gggkey] = $gggvalue;
+                                        $questions[$qqqkey] = $qqqvalue;
                                     }
-
                                 }
-                                $quiz["grades"][] = $grades;
+                                $quiz["questions"][] = $questions;
                             }
                         }
-
                     }
                 }else{
                     $quiz[$key] = $value;
                 }
             }
-            echo "<pre>";
-            var_dump($quiz);
-            echo "</pre>";
-            $this->data['quiz'] = $quiz;
+
+            $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('description', $this->lang->line('description'), 'trim|required|xss_clean');
 
             if($this->form_validation->run()){
-                var_dump($this->input->post());
-                exit();
-            }
-        }
-
-        $this->getForm(0);
-    }
-
-    public function edit(){
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-
-        $this->data['main'] = 'quiz_form';
-        $this->render_page('template');
-    }
-
-    private function getForm($quiz_id=null) {
-
-        $this->load->model('Image_model');
-        $this->load->model('Badge_model');
-        $this->load->model('Reward_model');
-
-        if (isset($quiz_id) && ($quiz_id != 0)) {
-            if($this->User_model->getClientId()){
-                $quiz_info = array();
-            }else{
-                $quiz_info = array();
+                if($quiz_info){
+                    $this->Quiz_model->editQuizToClient($quiz_id, $quiz);
+                }else{
+                    $this->Quiz_model->addQuizToClient($quiz);
+                }
+                redirect('/quiz', 'refresh');
             }
 
+            $quiz_info = array_merge($quiz_info, $quiz);
         }
 
-        if ($this->input->post('quiz_name')) {
-            $this->data['quiz_name'] = $this->input->post('quiz_name');
-        } elseif (!empty($quiz_info)) {
-            $this->data['quiz_name'] = $quiz_info['quiz_name'];
-        } else {
-            $this->data['quiz_name'] = '';
-        }
-
-        if ($this->input->post('quiz_description')) {
-            $this->data['quiz_description'] = htmlentities($this->input->post('quiz_description'));
-        } elseif (!empty($quiz_info)) {
-            $this->data['quiz_description'] = htmlentities($quiz_info['quiz_description']);
-        } else {
-            $this->data['quiz_description'] = '';
-        }
-
-        if ($this->input->post('quiz_image')) {
-            $this->data['quiz_image'] = $this->input->post('quiz_image');
-        } elseif (!empty($quiz_info)) {
-            $this->data['quiz_image'] = $quiz_info['quiz_image'];
-        } else {
-            $this->data['quiz_image'] = 'no_image.jpg';
-        }
-
-        if ($this->data['quiz_image']){
-            $info = pathinfo($this->data['quiz_image']);
-            if(isset($info['extension'])){
-                $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($this->data['quiz_image'], 0, utf8_strrpos($this->data['quiz_image'], '.')).'-100x100.'.$extension;
-                $this->data['quiz_thumb'] = S3_IMAGE.$new_image;
-            }elsE{
-                $this->data['quiz_thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
-            }
-        }else{
-            $this->data['quiz_thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
-        }
-
-        if ($this->input->post('quiz_description_image')) {
-            $this->data['quiz_description_image'] = $this->input->post('quiz_description_image');
-        } elseif (!empty($quiz_info)) {
-            $this->data['quiz_description_image'] = $quiz_info['quiz_description_image'];
-        } else {
-            $this->data['quiz_description_image'] = 'no_image.jpg';
-        }
-
-        if ($this->data['quiz_description_image']){
-            $info = pathinfo($this->data['quiz_description_image']);
-            if(isset($info['extension'])){
-                $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($this->data['quiz_description_image'], 0, utf8_strrpos($this->data['quiz_description_image'], '.')).'-100x100.'.$extension;
-                $this->data['quiz_description_thumb'] = S3_IMAGE.$new_image;
-            }elsE{
-                $this->data['quiz_description_thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
-            }
-        }else{
-            $this->data['quiz_description_thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
-        }
-
-        $this->data['no_image'] = S3_IMAGE."cache/no_image-100x100.jpg";
-
-        if ($this->input->post('status')) {
-            $this->data['status'] = $this->input->post('status');
-        } elseif (!empty($quiz_info)) {
-            $this->data['status'] = $quiz_info['status'];
-        } else {
-            $this->data['status'] = 'true';
-        }
-
+        $this->data['quiz'] = $quiz_info;
 
         $data['client_id'] = $this->User_model->getClientId();
         $data['site_id'] = $this->User_model->getSiteId();
@@ -294,6 +258,41 @@ class Quiz extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    public function delete() {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        if ($this->input->post('selected') && $this->error['warning'] == null) {
+
+            foreach ($this->input->post('selected') as $quiz_id) {
+                $this->Quiz_model->delete($quiz_id);
+            }
+
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+
+            redirect('/quiz', 'refresh');
+        }
+
+        $this->getList(0);
+    }
+
+    private function validateModify() {
+
+        if ($this->User_model->hasPermission('modify', 'quiz')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 ?>

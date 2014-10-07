@@ -27,4 +27,15 @@ $lang['entry_badge']           		    = 'Badge';
 $lang['entry_rewards']           		= 'Reward';
 $lang['entry_custom_point']           		= 'Custom Point';
 
+
+$lang['column_date_added']          			= 'Date Added';
+$lang['column_action']							= 'Action';
+$lang['column_name']							= 'Quiz Name';
+$lang['column_status']							= 'Status';
+$lang['column_order']							= 'Order';
+
+$lang['button_filter']							= 'Filter';
+$lang['button_clear_filter']					= 'Clear filter';
+
+$lang['error_permission']       = 'Warning: You do not have permission to modify quiz!';
 ?>
