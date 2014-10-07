@@ -376,7 +376,7 @@
 .regis-page-wrapper .regis-header{
 	background: #86559c;
 	padding-top: 40px;
-	padding-bottom: 100px;
+	padding-bottom: 140px;
 }
 .regis-page-wrapper h1{
 	font-size: 2.4em;
@@ -450,7 +450,7 @@
 	color: #333;
 	font-weight: 600;
 	line-height: 35px;
-	padding: 6px;
+	padding: 6px 15px;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	background: #fff;
@@ -907,12 +907,29 @@
 
 
 
-
+/* =========== [ Login page ] =========== */
+.regis-login-page .pbf-form .input-center input{
+	width: 70%;
+}
+.regis-login-page .pbf-form a{
+	color: #ccc;
+}
+.regis-login-page .regis-header h1{
+	left: 28%;
+}
+.regis-login-page .regis-content{
+	text-align: center;
+	margin-bottom: 100px;
+}
 
 
 /* ====== [ regis-content ] ======== */
 
-
+@media screen and (max-width: 960px){
+	.regis-login-page .pbf-form .input-center input{
+		width: 100%;
+	}
+}
 @media screen and (max-width: 767px){
 	.regis-page-wrapper h1{
 		position: relative;
@@ -925,5 +942,8 @@
 	.regis-page-wrapper .regis-header{
 		margin-left: -20px;
 		margin-right: -20px;	
+	}
+	.regis-login-page .regis-header h1{
+		left: 0;
 	}
 }
