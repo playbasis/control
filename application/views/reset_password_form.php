@@ -1,11 +1,15 @@
-<div id="content" >
-	<div class = "box" style = "position: relative; max-width: 400px; margin:0 auto;">
-		
-		<div class="heading">
-			<h1><img src="<?php echo base_url('image/user-group.png')?>" alt="" /><?php echo $heading_forgot_password;?></h1>
-		</div><!-- .heading -->
-		<div class="content" >
-			<?php if(validation_errors() || isset($message)) {?>
+
+<div id="content" class="regis-page-wrapper regis-login-page">
+
+
+<div class="row regis-header">
+    <h1>
+            <small>Get started with Gamification today!</small>
+            <?php echo $heading_forgot_password;?>
+    </h1>
+</div>
+    <div class="regis-content span6 offset3">
+      <?php if(validation_errors() || isset($message)) {?>
                 <div class="content messages half-width">
                     <?php echo validation_errors('<div class="warning">','</div>');
 
@@ -17,30 +21,35 @@
                     ?>
                 </div>
             <?php }?>
-			<?php $attributes = array('id' => 'form');?>
+			<?php $attributes = array('id' => 'form', 'class' => 'pbf-form');?>
 			<?php echo form_open_multipart($form, $attributes);?>
-				<div id="pg1">
-					<table class="form">
-						<tr>
-							<td><span class="required">*</span> <?php echo $this->lang->line('form_password');?>: </td>
-							<td><input type = "password" name="password" size="50" value = ""></td>
-						</tr>
-						<tr>
-							<td><span class="required">*</span> <?php echo $this->lang->line('form_confirm_password');?>: </td>
-							<td><input type = "password" name="password_confirm" size="50" value =""></td>
-						</tr>			
-					</table>
-				</div>
-					
-					<p style="float:left"><a href="<?php echo base_url();?>" id="cancel">Cancel</a>
 
-				
-				<p style="float:right">
-                    <a onclick="$('#form').submit();" class="button btn-not-login" id="submit">Change Password</a>
-                </p>
+           
+            <fieldset>
+              
+                <div class="input-center">
+                <input type = "password" name="password" class="btn-not-login" size="50" value = "" placeholder="<?php echo $this->lang->line('form_password');?>">
 
-				
-			<?php echo form_close();?>
-		</div><!-- .content-->
-	</div><!-- .box -->
-</div><!-- #content -->
+                <input type = "password" name="password_confirm" class="btn-not-login" size="50" value ="" placeholder="<?php echo $this->lang->line('form_confirm_password');?>">
+
+
+
+                </div>
+
+
+              <hr>
+
+
+             <a href="<?php echo base_url();?>"  class="btn-not-login" id="cancel">Cancel</a>&nbsp;&nbsp;&nbsp;&nbsp;
+		<button onclick="$('#form').submit();" type="submit" class="button btn-not-login" id="submit">Change Password</button>
+
+            </fieldset>
+            
+
+        <?php echo form_close(); ?>
+    </div><!-- .content -->
+
+    <div class="clearfix"></div>
+  
+
+</div><!-- #content .span10 -->

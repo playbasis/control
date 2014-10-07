@@ -46,7 +46,6 @@
 
               
                 <div class="input-center">
-                    <!-- <input type="text" name="site" value="<?php echo isset($site) ? $site : set_value('site'); ?>" size="10" placeholder="<?php echo $this->lang->line('entry_site'); ?>" /> -->
                     <?php echo form_input($udata); ?>
                     <?php echo form_password($pdata); ?><br>
                     <?php echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login')); ?>
@@ -56,7 +55,6 @@
 
               <hr>
 
-              <!-- <button class="btn btn-primary" type="submit"><?php echo $this->lang->line('button_next'); ?></button> -->
               <button onclick="$('#form').submit();" type="submit" class=" btn-not-login"><?php echo $this->lang->line('button_login'); ?></button>
 
             </fieldset>
