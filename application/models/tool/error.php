@@ -95,7 +95,7 @@ class Error extends CI_Model
             $errorData['error_code'] = '0201';
             break;
         case 'TOO_MANY_USERS':
-            $errorData['message'] = "User registeration limit exceed";
+            $errorData['message'] = "User registration limit exceed";
             $errorData['error_code'] = '0202';
             break;
         case "USER_OR_REWARD_NOT_EXIST":
@@ -109,6 +109,14 @@ class Error extends CI_Model
         case "USER_PHONE_INVALID":
             $errorData["message"] = "phone number format should be +[countrycode][number] example. +66861234567";
             $errorData["error_code"] = "0205";
+            break;
+        case "REWARD_FOR_USER_NOT_EXIST":
+            $errorData["message"] = "The user has no such reward";
+            $errorData["error_code"] = "0206";
+            break;
+        case "REWARD_FOR_USER_NOT_ENOUGH":
+            $errorData["message"] = "The user has not enough reward";
+            $errorData["error_code"] = "0207";
             break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
