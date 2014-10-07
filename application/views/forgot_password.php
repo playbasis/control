@@ -36,7 +36,7 @@
 						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_email');?>: </td>
-							<td><input type = "text" name="email" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['email'];}?>" class="tooltips" data-placement="bottom" title="Email address is used to log into the system"></td>
+							<td><input type = "text" name="email" size="50" value="<?php if(isset($temp_fields)){echo $temp_fields['email'];}?>" class="tooltips btn-not-login" data-placement="bottom" title="Email address is used to log into the system"></td>
 						</tr>
 					</table>
 				</div>
