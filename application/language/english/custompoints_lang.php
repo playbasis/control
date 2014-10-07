@@ -17,4 +17,7 @@ $lang = array(
 	'entry_status'						=> 'Status',
 
 );
+
+
+$lang['error_permission']       = 'Warning: You do not have permission to modify custompoint!';
 ?>

@@ -43,6 +43,6 @@ $lang = array(
     'error_mission_limit'               => 'You have reached Mission Limit.'
 );
 
-
+$lang['error_permission']       = 'Warning: You do not have permission to modify quest!';
 
 

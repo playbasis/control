@@ -1,0 +1,103 @@
+{
+    "_id" : "",
+    "name": "",
+    "image": "",
+    "description": "",
+    "description_image": "",
+    "weight": "",
+    "status": "",
+    "grades": [
+        {
+            "start": "",
+            "end": "",
+            "grade": "",
+            "rank": "",
+            "rank_image": "",
+            "rewards" : {
+                "exp":{"exp_value":0},
+                "point":{"point_value":0},
+                "badge":[
+                    {"badge_id":"","badge_value":0},
+                    {"badge_id":"","badge_value":0}
+                ],
+                "custom":[
+                    {"custom_id":"","custom_value":0},
+                    {"custom_id":"","custom_value":0}
+                ]
+            }
+        },
+        {
+            "start": "",
+            "end": "",
+            "grade": "",
+            "rank": "",
+            "rank_image": "",
+            "rewards" : {
+                "exp":{"exp_value":0},
+                "point":{"point_value":0},
+                "badge":[
+                    {"badge_id":"","badge_value":0},
+                    {"badge_id":"","badge_value":0}
+                ],
+                "custom":[
+                    {"custom_id":"","custom_value":0},
+                    {"custom_id":"","custom_value":0}
+                ]
+            }
+        }
+    ],
+    "questions": [
+        {
+            "question_id": "",
+            "question": "",
+            "question_image": "",
+            "options": [
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                },
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                }
+
+            ]
+        },
+        {
+            "question_id": "",
+            "question": "",
+            "question_image": "",
+            "options": [
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                },
+                {
+                    "option_id" : "",
+                    "option": "",
+                    "option_image": "",
+                    "explanation": "",
+                    "score": ""
+
+                }
+
+            ]
+        }
+    ],
+    "date_added":"",
+    "date_modified":"",
+    "date_start":"",
+    "date_expire":""
+}

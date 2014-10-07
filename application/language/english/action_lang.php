@@ -48,4 +48,6 @@ $lang['form_color']								= 'Icon Color';
 $lang['form_sort']								= 'Sort Order';
 $lang['form_client']							= 'Client';
 
+$lang['error_permission']       = 'Warning: You do not have permission to modify action!';
+
 ?>
