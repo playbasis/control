@@ -10,6 +10,10 @@ function index_quiz_id($obj) {
     return $obj['quiz_id'];
 }
 
+function index_pb_player_id($obj) {
+    return $obj['pb_player_id'];
+}
+
 function convert_MongoId_id($obj) {
     $_id = $obj['_id'];
     unset($obj['_id']);
@@ -156,12 +160,12 @@ class Quiz extends REST2_Controller
         ));
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-        $result = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
-        $result = array_map('convert_MongoId_quiz_id', $result);
+        $results = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
+        $results = array_map('convert_MongoId_quiz_id', $results);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
     public function player_pending_get($player_id, $limit)
@@ -178,12 +182,12 @@ class Quiz extends REST2_Controller
         ));
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-        $result = $this->quiz_model->find_quiz_pending_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
-        $result = array_map('convert_MongoId_quiz_id', $result);
+        $results = $this->quiz_model->find_quiz_pending_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
+        $results = array_map('convert_MongoId_quiz_id', $results);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
     //public function question_post($quiz_id)
@@ -330,6 +334,43 @@ $option_id = $this->input->get('option_id');
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $data, 'processing_time' => $t)), 200);
+    }
+
+    public function rank_get($quiz_id, $limit)
+    {
+        $this->benchmark->mark('start');
+
+        /* param "quiz_id" */
+        if (empty($quiz_id)) $this->response($this->error->setError('PARAMETER_MISSING', array('quiz_id')), 200);
+        $quiz_id = new MongoId($quiz_id);
+        $quiz = $this->quiz_model->find_by_id($this->client_id, $this->site_id, $quiz_id);
+        if ($quiz === null) $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
+
+        $results = array();
+        $ranks = $this->quiz_model->sort_players_by_score($this->client_id, $this->site_id, $quiz_id, $limit);
+        if ($ranks) foreach ($ranks as $rank) {
+            $results[] = array(
+                'pb_player_id' => $rank['pb_player_id'],
+                'player_id' => $this->player_model->getClientPlayerId($rank['pb_player_id'], $this->site_id),
+                'score' => $rank['value'],
+            );
+        }
+        $nin = array_map('index_pb_player_id', $results);
+        if (count($nin) < $limit) {
+            $more = $limit - count($nin);
+            $players = $this->player_model->find_player_with_nin($this->client_id, $this->site_id, $nin, $more);
+            if ($players) foreach ($players as $player) {
+                $results[] = array(
+                    'pb_player_id' => $player['_id'],
+                    'player_id' => $player['cl_player_id'],
+                    'score' => 0,
+                );
+            }
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
     private function update_rewards($client_id, $site_id, $pb_player_id, $cl_player_id, $rewards) {

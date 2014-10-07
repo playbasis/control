@@ -163,6 +163,8 @@ $route['Quiz/player/'.ANY_STRING.'/pending/'.ANY_NUMBER] = 'quiz/player_pending/
 $route['Quiz/player/'.ANY_STRING.'/pending'] = 'quiz/player_pending/$1/-1'; // ANY_STRING = player_id
 $route['Quiz/'.ANY_STRING.'/question'] = 'quiz/question/$1'; // ANY_STRING = quiz_id
 $route['Quiz/'.ANY_STRING.'/answer'] = 'quiz/answer/$1'; // ANY_STRING = quiz_id
+$route['Quiz/'.ANY_STRING.'/rank/'.ANY_NUMBER] = 'quiz/rank/$1/$2'; // ANY_STRING = quiz_id
+$route['Quiz/'.ANY_STRING.'/rank'] = 'quiz/rank/$1/5'; // ANY_STRING = quiz_id
 
 //email API
 $route['Email/send'] = 'email/send';
