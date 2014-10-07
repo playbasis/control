@@ -98,6 +98,19 @@ class Quiz extends REST2_Controller
         $result = $this->quiz_model->find_by_id($this->client_id, $this->site_id, $quiz_id);
         if ($result === null) $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
 
+        /* param "player_id" */
+        $player_id = $this->input->get('player_id');
+        $record = null;
+        if ($player_id !== false) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'cl_player_id' => $player_id,
+            ));
+            if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            $record = $this->quiz_model->find_quiz_by_quiz_and_player($this->client_id, $this->site_id, $quiz_id, $pb_player_id);
+        }
+
         $result = convert_MongoId_id($result);
         $result['date_start'] = $result['date_start'] ? $result['date_start']->sec : null;
         $result['date_expire'] = $result['date_expire'] ? $result['date_expire']->sec : null;
@@ -107,7 +120,14 @@ class Quiz extends REST2_Controller
             $total_max_score += $this->get_max_score_of_question($question['options']);
         }
         $result['total_max_score'] = $total_max_score;
+        $result['total_questions'] = count($questions);
         unset($result['questions']);
+
+        if ($record) {
+            $result['total_score'] = $record['value'];
+            $result['questions'] = count($record['questions']);
+            $result['date_join'] = $record['date_added']->sec; // date which player start doing this quiz
+        }
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');

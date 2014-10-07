@@ -1202,6 +1202,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "quiz id"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
                         }
                     ]
                 },
