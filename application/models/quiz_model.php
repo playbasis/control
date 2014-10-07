@@ -33,7 +33,7 @@ class Quiz_model extends MY_Model
 
     public function find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('quiz_id','value','questions'));
+        $this->mongo_db->select(array('quiz_id','value','questions','date_added','date_modified'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('quiz_id', $quiz_id);
         $this->mongo_db->where('pb_player_id', $pb_player_id);
