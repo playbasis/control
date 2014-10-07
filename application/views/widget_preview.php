@@ -32,7 +32,7 @@
     window.PBAsyncInit = function(){
         PB.init({
             api_key:'<?php echo $site_data["api_key"]; ?>',
-            theme_color :'#<?php echo $color; ?>',//'#52b398',
+            theme_color :'#<?php echo $color; ?>',
             <?php
             if($player_id){
             ?>

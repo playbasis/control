@@ -191,7 +191,7 @@ class User_model extends MY_Model
                 'url'=> base_url('enable_user/?key='),
             );
 
-            if($insert_password == 'playbasis'){
+            if($insert_password == DEFAULT_PASSWORD){
                 $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
             }else{
                 $htmlMessage = $this->parser->parse('user_activateaccountwithpassword.html', $vars, true);
@@ -393,15 +393,7 @@ class User_model extends MY_Model
 
             if (count($Q) > 0) {
 
-                $row = $Q[0];
-
-                $this->user_id = $row['_id'];
-                $this->username = $row['username'];
-                $this->user_group_id = $row['user_group_id'];
-                $this->database = $row['database'];
-                $ip = $row['ip'];
-
-                // update new salt //
+                // update new salt
                 $salt = get_random_password(10, 10);
                 $data = array('salt' => db_clean($salt, 40),
                     'password' => db_clean(dohash($p, $salt), 40)
@@ -410,14 +402,39 @@ class User_model extends MY_Model
                 $this->mongo_db->set('last_login', date('Y-m-d H:i:s'));
                 $this->mongo_db->set($data);
                 $this->mongo_db->update('user');
-                // end update new salt //
 
+                // $this->user_id
+                $row = $Q[0];
+                $this->user_id = $row['_id'];
+                $this->username = $row['username'];
+                $this->user_group_id = $row['user_group_id'];
+                $this->database = $row['database'];
+                $ip = $row['ip'];
+
+                // $this->permission
+                $this->mongo_db->select(array('permission'));
+                $this->mongo_db->where('_id', $this->user_group_id);
+                $this->mongo_db->limit(1);
+                $Q3 = $this->mongo_db->get('user_group');
+                if(count($Q3)>0){
+                    $row3 = $Q3[0];
+                    $permissions = $row3['permission'];
+                    if (is_array($permissions)) {
+                        foreach ($permissions as $key => $value) {
+                            $this->permission[$key] = $value;
+                        }
+                    }
+                }else{
+                    $this->logout();
+                    return;
+                }
+
+                // $this->client_id
                 $this->mongo_db->select(array('client_id'));
                 $this->mongo_db->where('user_id', new MongoID($this->user_id));
                 $this->mongo_db->where('status', true);
                 $this->mongo_db->limit(1);
                 $Q1 = $this->mongo_db->get('user_to_client');
-
                 if(count($Q1)>0){
                     $row1 = $Q1[0];
                     $this->client_id = $row1['client_id'];
@@ -425,40 +442,11 @@ class User_model extends MY_Model
                     $this->client_id = null;
                 }
 
-                $this->mongo_db->select(array('_id'));
-                $this->mongo_db->where('client_id', new MongoID($this->client_id));
-                $this->mongo_db->where('status', true);
-                $this->mongo_db->limit(1);
-                $Q2 = $this->mongo_db->get('playbasis_client_site');
+                if($this->getAdminGroupID() || $this->client_id){
 
-                if(count($Q2)>0){
-                    $row2 = $Q2[0];
-                    $this->site_id = $row2['_id'];
-                }else{
-                    $this->site_id = null;
-                }
+                    // $this->site_id
+                    $this->site_id = $this->fetchSiteId($this->client_id);
 
-                $this->mongo_db->select(array('permission'));
-                $this->mongo_db->where('_id', $this->user_group_id);
-                $this->mongo_db->limit(1);
-                $Q3 = $this->mongo_db->get('user_group');
-
-                if(count($Q3)>0){
-                    $row3 = $Q3[0];
-//                    $permissions = unserialize($row3['permission']);
-                    $permissions = $row3['permission'];
-                }else{
-                    $this->logout();
-                    return;
-                }
-
-                if (is_array($permissions)) {
-                    foreach ($permissions as $key => $value) {
-                        $this->permission[$key] = $value;
-                    }
-                }
-
-                if($this->getAdminGroupID()||($this->client_id && $this->site_id)){
                     $this->set_site_mongodb($this->site_id);
 
                     $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
@@ -501,6 +489,82 @@ class User_model extends MY_Model
         $this->database = '';
         $this->permission = '';
         $this->admin_group_id = '';
+    }
+
+    public function force_login($user_id){
+
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
+        $this->mongo_db->where('_id', $user_id);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
+        $Q = $this->mongo_db->get('user');
+
+        if (count($Q) > 0) {
+
+            // update last_login
+            $this->mongo_db->where('_id', $user_id);
+            $this->mongo_db->set('last_login', date('Y-m-d H:i:s'));
+            $this->mongo_db->update('user');
+
+            // $this->user_id
+            $row = $Q[0];
+            $this->user_id = $row['_id'];
+            $this->username = $row['username'];
+            $this->user_group_id = $row['user_group_id'];
+            $this->database = $row['database'];
+            $ip = $row['ip'];
+
+            // $this->permission
+            $this->mongo_db->select(array('permission'));
+            $this->mongo_db->where('_id', $this->user_group_id);
+            $this->mongo_db->limit(1);
+            $Q3 = $this->mongo_db->get('user_group');
+            if(count($Q3)>0){
+                $row3 = $Q3[0];
+                $permissions = $row3['permission'];
+                if (is_array($permissions)) {
+                        foreach ($permissions as $key => $value) {
+                            $this->permission[$key] = $value;
+                        }
+                }
+            }
+
+            // $this->client_id
+            $this->mongo_db->select(array('client_id'));
+            $this->mongo_db->where('user_id', new MongoID($this->user_id));
+            $this->mongo_db->where('status', true);
+            $this->mongo_db->limit(1);
+            $Q1 = $this->mongo_db->get('user_to_client');
+            if(count($Q1)>0){
+                $row1 = $Q1[0];
+                $this->client_id = $row1['client_id'];
+            }else{
+                $this->client_id = null;
+            }
+
+            if($this->getAdminGroupID() || $this->client_id){
+
+                // $this->site_id
+                $this->site_id = $this->fetchSiteId($this->client_id);
+
+                $this->set_site_mongodb($this->site_id);
+
+                $this->session->set_userdata('multi_login', $this->setMultiLoginKey($this->user_id));
+                $this->session->set_userdata('user_id',$this->user_id );
+                $this->session->set_userdata('username',$this->username );
+                $this->session->set_userdata('user_group_id',$this->user_group_id );
+                $this->session->set_userdata('database',$this->database );
+                $this->session->set_userdata('client_id',$this->client_id );
+                $this->session->set_userdata('site_id',$this->site_id );
+                $this->session->set_userdata('permission',$this->permission );
+                $this->session->set_userdata('ip',$ip );
+
+                return true;
+            }
+        }
+        return false;
     }
 
     public function hasPermission($key, $value) {
@@ -569,6 +633,23 @@ class User_model extends MY_Model
         }
 
         return true;
+    }
+
+    public function fetchSiteId($client_id) {
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
+        $Q2 = $this->mongo_db->get('playbasis_client_site');
+
+        if(count($Q2)>0){
+            $row2 = $Q2[0];
+            $site_id = $row2['_id'];
+        }else{
+            $site_id = null;
+        }
+
+        return $site_id;
     }
 
     private function checkSiteId($site_id){
@@ -714,7 +795,7 @@ class User_model extends MY_Model
 
         $plan = array();
         if($permission){
-            $this->mongo_db->where('_id', new MongoID($permission['plan_id']));
+            $this->mongo_db->where('_id', $permission['plan_id']);
             $plan = $this->mongo_db->get('playbasis_plan');
         }
 

@@ -69,14 +69,16 @@ class Plan_model extends MY_Model
 
     public function getAvailablePlans(){
         $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->order_by(array('name' => 1));
         $plans = $this->mongo_db->get("playbasis_plan");
 
         foreach($plans as $key => $plan){
+            $subscribers = array();
             $this->mongo_db->select(array('client_id'));
             $this->mongo_db->where('plan_id', $plan['_id']);
-            $subscribers = array();
             $records = $this->mongo_db->get('playbasis_permission');
             // one "client_id" can have several "site_id"s within the same "plan_id", so we do the manual count
+            // current version always counts a client regardless of the status of the client
             if ($records) foreach ($records as $record) {
                 $subscribers[$record['client_id']->{'$id'}] = true;
             }

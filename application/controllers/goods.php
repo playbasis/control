@@ -374,7 +374,7 @@ class Goods extends MY_Controller
                             $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
 
                             /* if there is an uploaded file, then import it into the group */
-                            if (!empty($_FILES) && isset($_FILES['file']['tmp_name'])) {
+                            if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
                                 $data = array_merge($this->input->post(), array('quantity' => 1));
                                 $handle = fopen($_FILES['file']['tmp_name'], "r");
                                 $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
@@ -525,7 +525,7 @@ class Goods extends MY_Controller
                 if ($each) { // process the remaining
                     while ($next = array_shift($each)) {
                         array_push($ids, $next['_id']);
-                        if ($next['quantity'] != null) {
+                        if ($next['quantity'] !== null) {
                             $group_name[$first_id]['quantity'] += $next['quantity'];
                         } else {
                             $group_name[$first_id]['quantity'] = null;
@@ -560,16 +560,18 @@ class Goods extends MY_Controller
                 }*/
 
                 $_id = $goods['_id']->{'$id'};
+                $is_group = array_key_exists($_id, $group_name);
                 $this->data['goods_list'][] = array(
                     'goods_id' => $goods['_id'],
-                    'name' => array_key_exists($_id, $group_name) ? $group_name[$_id]['group'] : $goods['name'],
-                    'quantity' => array_key_exists($_id, $group_name) ? $group_name[$_id]['quantity'] : $goods['quantity'],
+                    'name' => $is_group ? $group_name[$_id]['group'] : $goods['name'],
+                    'quantity' => $is_group ? $group_name[$_id]['quantity'] : $goods['quantity'],
                     'per_user' => $goods['per_user'],
                     'status' => $goods['status'],
                     'image' => $image,
                     'sort_order'  => $goods['sort_order'],
                     'selected' => ($this->input->post('selected') && in_array($goods['_id'], $this->input->post('selected'))),
-                    'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null
+                    'sponsor' => isset($goods['sponsor'])?$goods['sponsor']:null,
+                    'is_group' => $is_group,
                 );
             }
         }
@@ -960,7 +962,9 @@ class Goods extends MY_Controller
 
         /* loop insert into playbasis_goods */
         while (($line = fgets($handle)) !== false) {
-            list($name, $code) = explode(',', $line);
+            $obj = explode(',', trim($line));
+            $name = $obj[0];
+            $code = isset($obj[1]) ? $obj[1] : $name;
             $each = array_merge($template, array('name' => $name));
             $goods_id = $this->Goods_model->addGoods($each);
             $each = array_merge($each, array('code' => $code));

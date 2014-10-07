@@ -5,6 +5,9 @@ $lang['channel_title']          				= 'Select Your Payment Channel';
 $lang['order_title']          				= 'Order Details';
 $lang['congrat_title']          				= 'Congratulations!';
 $lang['cancel_title']          				= 'Cancel Subscription';
+$lang['add_site_title']          				= 'Add a Site Name';
+$lang['choose_plan_title']          				= 'Choose a Plan';
+$lang['start_title']          				= 'Start';
 
 // Text
 $lang['text_name']						= 'Name';
@@ -39,6 +42,9 @@ $lang['button_downgrade']						= 'Downgrade';
 $lang['button_cancel_subscription']						= 'Cancel Subscription';
 $lang['button_confirm']						= 'Confirm';
 $lang['button_close']						= 'Close';
+$lang['button_next']						= 'Next';
+$lang['button_back']						= 'Back';
+$lang['button_done']						= 'Done';
 
 
 // Form
@@ -48,6 +54,9 @@ $lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';
 $lang['form_effective_date']						= 'Effective Date';
 
+// Entry
+$lang['entry_site']         = 'Site Name';
+$lang['entry_plan']         = 'Plan';
 
 // Error 
 $lang['error_warning']          				= 'Warning: Please check the form carefully for errors!';

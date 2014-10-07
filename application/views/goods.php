@@ -38,6 +38,9 @@
                             <?php if(!$client_id){?>
                                 <td class="left"><?php echo $this->lang->line('column_owner'); ?></td>
                             <?php }?>
+                            <?php if($client_id){?>
+                                <td class="left"><?php echo $this->lang->line('column_is_group'); ?></td>
+                            <?php }?>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_peruser'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_quantity'); ?></td>
                             <td class="left" style="width:50px;"><?php echo $this->lang->line('column_status'); ?></td>
@@ -70,6 +73,9 @@
                                 <td class="left"><?php echo $goods['name']; ?></td>
                                 <?php if(!$client_id){?>
                                     <td class="left"><?php echo ($goods['is_public'])?"Public":"Private"; ?></td>
+                                <?php }?>
+                                <?php if($client_id){?>
+                                    <td class="left"><?php echo ($goods['is_group'])?"Yes":""; ?></td>
                                 <?php }?>
                                 <td class="right"><?php echo (isset($goods['per_user']) && !is_null($goods['per_user']))?$goods['per_user']:'Unlimited'; ?></td>
                                 <td class="right"><?php echo (isset($goods['quantity']) && !is_null($goods['quantity']))?$goods['quantity']:'Unlimited'; ?></td>

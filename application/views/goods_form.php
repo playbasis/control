@@ -87,13 +87,13 @@
                             <tr>
                                 <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_start" value="<?php if (strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
+                                    <input type="text" class="date" name="date_start" value="<?php if ($date_start && strtotime(datetimeMongotoReadable($date_start))) {echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_start)));} else { echo $date_start; } ?>" size="50" />
                                 </td>
                             </tr>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
                                 <td>
-                                    <input type="text" class="date" name="date_expire" value="<?php if (strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
+                                    <input type="text" class="date" name="date_expire" value="<?php if ($date_expire && strtotime(datetimeMongotoReadable($date_expire))) { echo date('Y-m-d', strtotime(datetimeMongotoReadable($date_expire))); } else { echo $date_expire; } ?>" size="50" />
                                 </td>
                             </tr>
                         </table>
@@ -112,7 +112,7 @@
                             <tr>
                                 <td><?php echo $member['goods_id']->{'$id'}; ?></td>
                                 <td><?php echo $member['name']; ?></td>
-                                <td><?php echo $member['code']; ?></td>
+                                <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
                             </tr>
                             <?php } ?>
                         </tbody>

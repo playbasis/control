@@ -73,17 +73,17 @@ class Client extends MY_Controller
 
             if($this->form_validation->run() && $this->data['message'] == null){
 
-                $clent_id = $this->Client_model->addClient($this->input->post());
+                $client_id = $this->Client_model->addClient($this->input->post());
 
-                $this->Permission_model->addPlanToPermission(array(
-                    'client_id' => $clent_id->{'$id'},
+                $this->Client_model->addPlanToPermission(array(
+                    'client_id' => $client_id->{'$id'},
                     'plan_id' => $this->input->post('plan_id'),
                     'site_id' => null,
                 ));
 
                 $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
-                redirect('/client/update/'.$clent_id, 'refresh');
+                redirect('/client/update/'.$client_id, 'refresh');
             }
         }
 
@@ -201,7 +201,7 @@ class Client extends MY_Controller
             $sort = $this->input->get('sort');
             $parameter_url .= "&sort=".$sort;
         } else {
-            $sort = 'domain_name';
+            $sort = 'first_name';
         }
 
         if ($this->input->get('order')) {
@@ -259,7 +259,8 @@ class Client extends MY_Controller
 
                 $this->data['clients'][] = array(
                     'client_id' => $result['_id'],
-                    'company'=> $result['company'],
+                    'company' => $result['company'],
+                    'email' => $result['email'],
                     'first_name' => $result['first_name'],
                     'last_name' => $result['last_name'],
                     'plan_name' => $plan['name'],
@@ -439,7 +440,6 @@ class Client extends MY_Controller
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
 
-        // $this->data['plan_data'] = $this->Plan_model->getPlans();
         $this->data['plan_data'] = $this->Plan_model->getAvailablePlans();
 
         $this->data['groups'] = $this->User_model->getUserGroups();
@@ -523,7 +523,7 @@ class Client extends MY_Controller
 
             foreach ($results_client as $result) {
                 $json[] = array(
-                    'company' => html_entity_decode($result['company'], ENT_QUOTES, 'UTF-8'),
+                    'email' => html_entity_decode($result['email'], ENT_QUOTES, 'UTF-8'),
                 );
             }
 

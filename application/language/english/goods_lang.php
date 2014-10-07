@@ -32,6 +32,7 @@ $lang['column_peruser']          		= 'Per User';
 $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 $lang['column_owner']	          		= 'Owner';
+$lang['column_is_group']          		= 'Group';
 
 // Entry
 $lang['entry_system_id']             		= 'System Generated ID';

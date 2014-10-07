@@ -56,8 +56,6 @@ class Domain extends MY_Controller
 
         $config['base_url'] = site_url('domain/page');
 
-        $this->load->model('Permission_model');
-
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
@@ -212,7 +210,7 @@ class Domain extends MY_Controller
                 $usage_conut = $usage ? count($usage) : 0;
 
                 // compare
-                if ($limit != null && $usage_conut >= $limit) { // limit = null, means unlimited
+                if ($limit !== null && $usage_conut >= $limit) { // limit = null, means unlimited
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_domain"));
                     redirect("domain/");
                 }
@@ -232,17 +230,19 @@ class Domain extends MY_Controller
                     $site_id = $this->Domain_model->addDomain($d_data);
 
                     if ($site_id) {
-                        $this->load->model('Plan_model');
-                        $this->load->model('Permission_model');
-                        $this->load->model('Client_model');
-
                         $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+
+                        /* bind plan to client in playbasis_permission */
+                        $this->Client_model->addPlanToPermission(array(
+                            'client_id' => $client_id->{'$id'},
+                            'plan_id' => $plan_subscription['plan_id']->{'$id'},
+                            'site_id' => $site_id->{'$id'},
+                        ));
 
                         $another_data['domain_value'] = array(
                             'site_id' => $site_id,
                             'status' => true
                         );
-
                         $this->Client_model->editClientPlan($client_id, $plan_subscription['plan_id'], $another_data);
                     }
 
@@ -286,13 +286,11 @@ class Domain extends MY_Controller
                 $site_id = $this->Domain_model->addDomain($this->input->post());
 
                 if ($site_id) {
-                    $this->load->model('Permission_model');
-
                     $data = array();
                     $data['client_id'] = $this->input->post('client_id');
                     $data['plan_id'] = $this->input->post('plan_id');
                     $data['site_id'] = $site_id;
-                    $this->Permission_model->addPlanToPermission($data);
+                    $this->Client_model->addPlanToPermission($data);
                 }
 
                 $this->session->data['success'] = $this->lang->line('text_success');
@@ -336,11 +334,9 @@ class Domain extends MY_Controller
                     $site_id = $this->Domain_model->addDomain($this->input->post());
 
                     if ($site_id) {
-                        $this->load->model('Permission_model');
-
                         $plan_subscription = $this->Client_model->getPlanByClientId(new MongoID($this->input->post('client_id')));
 
-                        $this->Permission_model->addPlanToPermission(array(
+                        $this->Client_model->addPlanToPermission(array(
                             'client_id' => $this->input->post('client_id'),
                             'plan_id' => $plan_subscription['plan_id']->{'$id'},
                             'site_id' => $site_id->{'$id'},

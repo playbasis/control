@@ -232,7 +232,7 @@ class User extends MY_Controller
                     array("client_id" => $client_id));
 
                 // compute
-                if ($user_limit != null && $user_usage >= $user_limit) {
+                if ($user_limit !== null && $user_usage >= $user_limit) {
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_user"));
                     redirect("user/");
                 }
@@ -307,10 +307,9 @@ class User extends MY_Controller
                 }else{
                     $json['error'] = 'The Email provided already exists';
                 }
-
                 
             }else{
-                $json['error'] = "Please provide the neccessary fields below or check if there are any errors.";
+                $json['error'] = "Please provide the necessary fields below or check if there are any errors: ".$this->data['message'];
             }
         }
 
@@ -548,9 +547,6 @@ class User extends MY_Controller
     }
 
     public function register(){
-
-        $this->load->model('Image_model');
-        $this->load->model('Permission_model');
         
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['main'] = 'register';
@@ -598,8 +594,8 @@ class User extends MY_Controller
             $privateKey = CAPTCHA_PRIVATE_KEY;
 
             if($this->input->post('format') == 'json' || $this->input->post('version') == 'new'){
-                $_POST['password'] = 'playbasis';
-                $_POST['password_confirm'] = 'playbasis';
+                $_POST['password'] = DEFAULT_PASSWORD;
+                $_POST['password_confirm'] = DEFAULT_PASSWORD;
                 $_POST['site_name'] = $_POST['domain_name'];
             }
 
@@ -635,7 +631,7 @@ class User extends MY_Controller
 
                             $site_id = $this->Domain_model->addDomain($data); // [4] then insert a new domain into "playbasis_client_site"
 
-                            $this->Permission_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                            $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
                                 'client_id' => $client_id->{'$id'},
                                 'plan_id' => $plan_id->{'$id'},
                                 'site_id' => $site_id->{'$id'},
@@ -689,6 +685,57 @@ class User extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    /* new register flow (without captcha, plan and domain) */
+    public function regis(){
+
+        $success = false;
+        $message = "";
+
+        //Set rules for form registration
+        $this->form_validation->set_rules('email', $this->lang->line('form_email'), 'trim|valid_email|xss_clean|required|cehck_space');
+        $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+        $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            $_POST['password'] = DEFAULT_PASSWORD;
+            $_POST['password_confirm'] = DEFAULT_PASSWORD;
+
+            if($this->form_validation->run()){
+                if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
+                    $user_info = $this->User_model->getUserInfo($user_id);
+
+                    $plan = $this->Plan_model->getPlanById(new MongoId(DEFAULT_PLAN));
+
+                    $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
+
+                    $data = $this->input->post();
+                    $data['client_id'] = $client_id;
+                    $data['user_id'] =  $user_info['_id'];
+                    $this->User_model->addUserToClient($data); // [3] map the user to the client in "user_to_client"
+
+                    $this->Client_model->addPlanToPermission(array( // [5] bind the client to the selected plan "playbasis_permission"
+                        'client_id' => $client_id->{'$id'},
+                        'plan_id' => $plan['_id']->{'$id'},
+                        'site_id' => null,
+                    ));
+
+                    $success = true;
+                    $message = $this->lang->line('text_email_sent');
+                }else{
+                    $message = $this->lang->line('text_fail');
+                }
+            }else{
+                $message = strip_tags(validation_errors());
+            }
+        } else {
+            $message = "Unsupported HTTP method";
+        }
+
+        echo json_encode(array("response" => $success ? "success" : "fail", "message" => $message));
+        exit();
     }
 
     public function list_pending_users() {
@@ -773,16 +820,15 @@ class User extends MY_Controller
             if($user != null){
                 $user_id = $user[0]['_id'];
 
-                if(dohash('playbasis',$user[0]['salt']) == $user[0]['password']){
+                /* generate initial password */
+                if(dohash(DEFAULT_PASSWORD,$user[0]['salt']) == $user[0]['password']){
                     $initial_password = get_random_password(8,8);
                     $this->User_model->insertNewPassword($user_id, $initial_password);
                 }else{
                     $initial_password = '******';
                 }
-                
-                $user = $this->User_model->getById($user_id);
 
-                /* find plan of this user */
+                /* check free/paid */
                 $client_id = $this->User_model->getClientIdByUserId($user_id);
                 $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
                 $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
@@ -793,7 +839,8 @@ class User extends MY_Controller
                 $free_flag = $price <= 0;
                 $paid_flag = !$free_flag;
 
-                /* proceed by sending email */
+                /* send email */
+                $user = $this->User_model->getById($user_id);
                 $vars = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
@@ -804,9 +851,9 @@ class User extends MY_Controller
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                 $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
 
-                $this->data['username'] = null;
-                $this->data['main'] = 'account_activated';
-                $this->render_page('template');
+                /* force login, so that user doesn't have to type email and password (obtained by email) */
+                $this->User_model->force_login($user_id);
+                redirect('/', 'refresh');
             }else{
                 echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
                 echo "<script>window.location.href = '".site_url()."';</script>";

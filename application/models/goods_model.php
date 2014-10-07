@@ -399,9 +399,6 @@ class Goods_model extends MY_Model
         $this->mongo_db->where('group', $group);
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->set('code', isset($data['code']) ? $data['code'] : null);
-        $this->mongo_db->set('quantity', (isset($data['quantity']) && !empty($data['quantity']))?(int)$data['quantity']:null);
-        $this->mongo_db->set('per_user', (isset($data['per_user']) && !empty($data['per_user']))?(int)$data['per_user']:null);
         $this->mongo_db->set('status', (bool)$data['status']);
         $this->mongo_db->set('sort_order', (int)$data['sort_order']);
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));

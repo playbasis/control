@@ -263,8 +263,8 @@ class Domain_model extends MY_Model
         $domain = preg_replace("/https:\/\//", "", $domain);
 
         $this->mongo_db->where('domain_name', $domain);
-        return $this->mongo_db->get('playbasis_client_site');
-
+        $c = $this->mongo_db->count('playbasis_client_site');
+        return $c > 0;
     }
 }
 ?>

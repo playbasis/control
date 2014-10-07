@@ -43,7 +43,10 @@ define('S3_IMAGE', 'http://images.pbapp.net/');
 define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');
 //define('DIR_IMAGE', './control/image/');
 
-define('DEFAULT_PLAN_PRICE', 0); // default is free package
+define('DEFAULT_PASSWORD', 'playbasis');
+
+define('DEFAULT_PLAN', '542a69e02cfa49be0c6755e4'); // default package when a user registers without plan
+define('DEFAULT_PLAN_PRICE', 0); // default is free
 define('DEFAULT_PLAN_DISPLAY', false); // default is to not display the plan
 define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
 define('MAX_ALLOWED_TRIAL_DAYS', 90); // this is limited by PayPal
