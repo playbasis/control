@@ -47,6 +47,31 @@ class Reward_model extends MY_Model
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		return $result ? $result[0]['reward_id'] : array();
 	}
+	public function getPlayerReward($client_id, $site_id, $pb_player_id, $reward_id)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('reward_id','value'));
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'pb_player_id' => $pb_player_id,
+			'reward_id' => $reward_id,
+		));
+		$result = $this->mongo_db->get('playbasis_reward_to_player');
+		return $result ? $result[0] : array();
+	}
+	public function setPlayerReward($client_id, $site_id, $pb_player_id, $reward_id, $value)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'pb_player_id' => $pb_player_id,
+			'reward_id' => $reward_id,
+		));
+		$this->mongo_db->set('value', $value);
+		$this->mongo_db->update('playbasis_reward_to_player');
+	}
 	public function rewardLog($data, $reward_name, $from=null, $to=null)
 	{
 		$reward_id = $this->findByName($data, $reward_name);

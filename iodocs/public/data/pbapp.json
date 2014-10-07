@@ -841,6 +841,43 @@
                             "Description": "player id as used in client's website"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Deduct Reward",
+                    "Synopsis": "Deduct a reward from a given player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/deduct_reward",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "reward",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "the name of the reward"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "number",
+                            "Description": "amount"
+                        },
+                        {
+                            "Name": "force",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "number",
+                            "Description": "0 = not force if player has not enough reward to deduct, 1 = force to do the deduct (and player's reward becomes zero)"
+                        }
+                    ]
                 }
 			]
 		},

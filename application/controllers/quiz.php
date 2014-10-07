@@ -64,11 +64,9 @@ class Quiz extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $result = null;
-        $nin = null;
-
         /* param "player_id" */
         $player_id = $this->input->get('player_id');
+        $nin = null;
         if ($player_id !== false) {
             $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id' => $this->client_id,
@@ -80,12 +78,12 @@ class Quiz extends REST2_Controller
             $nin = array_map('index_quiz_id', $arr);
         }
 
-        $result = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
-        $result = array_map('convert_MongoId_id', $result);
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
+        $results = array_map('convert_MongoId_id', $results);
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
-        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+        $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
     public function detail_get($quiz_id)
@@ -138,11 +136,9 @@ class Quiz extends REST2_Controller
     {
         $this->benchmark->mark('start');
 
-        $result = null;
-        $nin = null;
-
         /* param "player_id" */
         $player_id = $this->input->get('player_id');
+        $nin = null;
         if ($player_id === false) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         $pb_player_id = $this->player_model->getPlaybasisId(array(
                 'client_id' => $this->client_id,
@@ -153,12 +149,13 @@ class Quiz extends REST2_Controller
 
         $arr = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id);
         $nin = array_map('index_quiz_id', $arr);
-        $result = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
-        $result = array_map('convert_MongoId_id', $result);
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
+        $results = array_map('convert_MongoId_id', $results);
 
-        if ($result) {
-            $index = $this->random_weight(array_map('index_weight', $result));
-            $result = $result[$index];
+        $result = null;
+        if ($results) {
+            $index = $this->random_weight(array_map('index_weight', $results));
+            $result = $results[$index];
         }
 
         $this->benchmark->mark('end');
@@ -172,7 +169,6 @@ class Quiz extends REST2_Controller
 
         /* param "player_id" */
         if (empty($player_id)) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
-        $result = null;
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
@@ -194,7 +190,6 @@ class Quiz extends REST2_Controller
 
         /* param "player_id" */
         if (empty($player_id)) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
-        $result = null;
         $pb_player_id = $this->player_model->getPlaybasisId(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
