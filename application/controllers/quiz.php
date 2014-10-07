@@ -106,6 +106,64 @@ class Quiz extends MY_Controller
                                 $quiz["grades"][] = $grades;
                             }
 
+                        }else if($qkey == "questions"){
+                            $questions = array();
+
+                            foreach($qvalue as $ggkey => $ggvalue){
+                                $grades['grade_id'] = $ggkey;
+                                foreach($ggvalue as $gggkey => $gggvalue){
+
+                                    if($gggkey == "rewards"){
+
+                                        foreach($gggvalue as $rkey => $rvalue){
+                                            if($rkey == "badge"){
+
+                                                $badge = array();
+
+                                                foreach($rvalue as $bkey => $bvalue){
+                                                    if(!empty($bvalue)){
+                                                        $badge["badge_id"] = $bkey;
+                                                        $badge["badge_value"] = $bvalue;
+                                                    }
+
+                                                }
+
+                                                if($badge){
+                                                    $grades[$gggkey]["badge"] = $badge;
+                                                }
+
+                                            }
+                                            if($rkey == "exp" && !empty($rvalue)){
+                                                $grades[$gggkey]["exp"] = $rvalue;
+                                            }
+                                            if($rkey == "point" && !empty($rvalue)){
+                                                $grades[$gggkey]["point"] = $rvalue;
+                                            }
+                                            if($rkey == "custom"){
+                                                $custom = array();
+
+                                                foreach($rvalue as $ckey => $cvalue){
+                                                    if(!empty($cvalue)){
+                                                        $custom["custom_id"] = $ckey;
+                                                        $custom["custom_value"] = $cvalue;
+                                                    }
+
+                                                }
+
+                                                if($custom){
+                                                    $grades[$gggkey]["custom"] = $custom;
+                                                }
+
+                                            }
+                                        }
+
+                                    }else{
+                                        $grades[$gggkey] = $gggvalue;
+                                    }
+
+                                }
+                                $quiz["grades"][] = $grades;
+                            }
                         }
 
                     }
