@@ -110,6 +110,17 @@ class Player_model extends MY_Model
 		$this->mongo_db->set($fieldData);
 		return $this->mongo_db->update('playbasis_player');
 	}
+	public function setPlayerExp($client_id, $site_id, $pb_player_id, $value)
+	{
+		$d = new MongoDate(time());
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'_id' => $pb_player_id,
+		));
+		$this->mongo_db->set('exp', $value);
+		$this->mongo_db->set('date_modified', $d);
+		print $this->mongo_db->update('playbasis_player');
+	}
 	public function deletePlayer($id, $site_id)
 	{
 		if(!$id)

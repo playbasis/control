@@ -62,6 +62,7 @@ class Reward_model extends MY_Model
 	}
 	public function setPlayerReward($client_id, $site_id, $pb_player_id, $reward_id, $value)
 	{
+		$d = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
@@ -70,6 +71,7 @@ class Reward_model extends MY_Model
 			'reward_id' => $reward_id,
 		));
 		$this->mongo_db->set('value', $value);
+		$this->mongo_db->set('date_modified', $d);
 		$this->mongo_db->update('playbasis_reward_to_player');
 	}
 	public function rewardLog($data, $reward_name, $from=null, $to=null)
