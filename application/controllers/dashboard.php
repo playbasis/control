@@ -47,33 +47,26 @@ class Dashboard extends MY_Controller
         );
 
 //        $this->data['weekly_events'] = $this->Statistic_model->getWeeklyActionmeaturement($data);
-//
 //        $this->data['monthly_events'] = $this->Statistic_model->getMonthlyActionmeaturement($data);
-//
 //        $this->data['daily_events'] = $this->Statistic_model->getDailyActionmeaturement($data);
 
+        $cached_player_point = array();
+
         $this->data['leaderboards'] = array();
-
         if($client_id){
-            $leaderboards = $this->Statistic_model->LeaderBoard($data);
-
-            if ($leaderboards) {
-                foreach ($leaderboards as $leaderboard) {
-
-                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
-
-                    $this->data['leaderboards'][] = array(
-                        'player_id' => $leaderboard['pb_player_id'],
-                        'name' => $info['first_name'] .' '. $info['last_name'],
-                        'image' => $info['image'],
-                        'exp' => $info['exp'],
-                        'email' => $info['email'],
-                        'level' => $info['level'],
-                        'point' => $leaderboard['value'],
-                        'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_added']))),
-                        'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_modified'])))
-                    );
-                }
+            $players = $this->Statistic_model->getLeaderboardByExp($data['limit'], $data['client_id'], $data['site_id']);
+            if ($players) foreach ($players as $player) {
+                $this->data['leaderboards'][] = array(
+                    'player_id' => $player['_id'],
+                    'name' => $player['first_name'] .' '. $player['last_name'],
+                    'image' => $player['image'],
+                    'exp' => $player['exp'],
+                    'email' => $player['email'],
+                    'level' => $player['level'],
+                    'point' => $this->get_player_point_cache($client_id, $site_id, $player['_id'], $cached_player_point),
+                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_added']))),
+                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_modified'])))
+                );
             }
         }
 
@@ -85,13 +78,6 @@ class Dashboard extends MY_Controller
 
             foreach ($results as $player) {
                 $action = array();
-
-                $player_filter = array(
-                    'client_id' => $client_id,
-                    'site_id' => $site_id,
-                    'pb_player_id' => $player['_id']
-                );
-                $reward = $this->Player_model->getPlayerPoint($player_filter);
 
                 $this->data['players'][] = array(
                     'pb_player_id'   => $player['_id'],
@@ -106,7 +92,7 @@ class Dashboard extends MY_Controller
                     'exp'      => $player['exp'],
                     'email' => $player['email'],
                     'level' => $player['level'],
-                    'point' => $reward,
+                    'point' => $this->get_player_point_cache($client_id, $site_id, $player['_id'], $cached_player_point),
                     'action'     => $action
                 );
             }
@@ -122,7 +108,6 @@ class Dashboard extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('dashboard');
     }
 
     public function home(){
@@ -178,33 +163,26 @@ class Dashboard extends MY_Controller
         );
 
 //        $this->data['weekly_events'] = $this->Statistic_model->getWeeklyActionmeaturement($data);
-//
 //        $this->data['monthly_events'] = $this->Statistic_model->getMonthlyActionmeaturement($data);
-//
 //        $this->data['daily_events'] = $this->Statistic_model->getDailyActionmeaturement($data);
 
+        $cached_player_point = array();
+
         $this->data['leaderboards'] = array();
-
         if($client_id){
-            $leaderboards = $this->Statistic_model->LeaderBoard($data);
-
-            if ($leaderboards) {
-                foreach ($leaderboards as $leaderboard) {
-
-                    $info = $this->Player_model->getPlayerById($leaderboard['pb_player_id']);
-
-                    $this->data['leaderboards'][] = array(
-                        'player_id' => $leaderboard['pb_player_id'],
-                        'name' => $info['first_name'] .' '. $info['last_name'],
-                        'image' => $info['image'],
-                        'exp' => $info['exp'],
-                        'email' => $info['email'],
-                        'level' => $info['level'],
-                        'point' => $leaderboard['value'],
-                        'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_added']))),
-                        'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($info['date_modified'])))
-                    );
-                }
+            $players = $this->Statistic_model->getLeaderboardByExp($data['limit'], $data['client_id'], $data['site_id']);
+            if ($players) foreach ($players as $player) {
+                $this->data['leaderboards'][] = array(
+                    'player_id' => $player['_id'],
+                    'name' => $player['first_name'] .' '. $player['last_name'],
+                    'image' => $player['image'],
+                    'exp' => $player['exp'],
+                    'email' => $player['email'],
+                    'level' => $player['level'],
+                    'point' => $this->get_player_point_cache($client_id, $site_id, $player['_id'], $cached_player_point),
+                    'date_added' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_added']))),
+                    'last_active' => date($this->lang->line('date_format_short'), strtotime($this->datetimeMongotoReadable($player['date_modified'])))
+                );
             }
         }
 
@@ -216,13 +194,6 @@ class Dashboard extends MY_Controller
 
             foreach ($results as $player) {
                 $action = array();
-
-                $player_filter = array(
-                    'client_id' => $client_id,
-                    'site_id' => $site_id,
-                    'pb_player_id' => $player['_id']
-                );
-                $reward = $this->Player_model->getPlayerPoint($player_filter);
 
                 $this->data['players'][] = array(
                     'pb_player_id'   => $player['_id'],
@@ -237,7 +208,7 @@ class Dashboard extends MY_Controller
                     'exp'      => $player['exp'],
                     'email' => $player['email'],
                     'level' => $player['level'],
-                    'point' => $reward,
+                    'point' => $this->get_player_point_cache($client_id, $site_id, $player['_id'], $cached_player_point),
                     'action'     => $action
                 );
             }
@@ -256,8 +227,20 @@ class Dashboard extends MY_Controller
     }
 
     public function liveFeed() {
-
         $this->load->view('live_feed');
+    }
+
+    private function get_player_point_cache($client_id, $site_id, $pb_player_id, $cache) {
+        $key = $pb_player_id->{'$id'};
+        if (!array_key_exists($key, $cache)) {
+            $point = $this->Player_model->getPlayerPoint(array(
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'pb_player_id' => $pb_player_id
+            ));
+            $cache[$key] = $point;
+        }
+        return $cache[$key];
     }
 
     private function is_default_enabled($features) {

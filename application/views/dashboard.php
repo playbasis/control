@@ -300,7 +300,7 @@
                     <div class="isot-player-stats">
 
                         <div class="isot-player-points">
-                            <span><?php echo $leaderboard['point']; ?> <small>points</small></span>
+                            <span><?php echo $leaderboard['exp']; ?> <small>exp</small></span>
                         </div>
 
                         <div class="isot-player-level" title="Level">

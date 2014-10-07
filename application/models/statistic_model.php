@@ -282,11 +282,9 @@ class Statistic_model extends MY_Model
         }else{
             return array();
         }
-
-
-        
     }
 
+    /* getLeaderboardByPoint */
     public function LeaderBoard($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -322,6 +320,19 @@ class Statistic_model extends MY_Model
         $LeaderBoardList =  $this->mongo_db->get('playbasis_reward_to_player');
 
         return $LeaderBoardList;
+    }
+
+    public function getLeaderboardByExp($limit, $client_id, $site_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('email','first_name','last_name','username','image','exp','level','date_added','date_modified'));
+        $this->mongo_db->where(array(
+            'status' => true,
+            'site_id' => $site_id,
+            'client_id' => $client_id
+        ));
+        $this->mongo_db->order_by(array('exp' => -1));
+        $this->mongo_db->limit($limit);
+        return $this->mongo_db->get('playbasis_player');
     }
 
 //    public function getPlayerInfo($pb_player_id){
