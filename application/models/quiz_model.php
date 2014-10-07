@@ -105,5 +105,17 @@ class Quiz_model extends MY_Model
             return $this->mongo_db->update('playbasis_quiz_to_player');
         }
     }
+
+    public function sort_players_by_score($client_id, $site_id, $quiz_id, $limit) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('pb_player_id','value'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('quiz_id', $quiz_id);
+        $this->mongo_db->order_by(array('value' => 'DESC'));
+        $this->mongo_db->limit($limit);
+        return $this->mongo_db->get('playbasis_quiz_to_player');
+    }
 }
 ?>
