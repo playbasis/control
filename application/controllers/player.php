@@ -843,6 +843,9 @@ class Player extends REST2_Controller
         if ($new_value < 0) $new_value = 0;
         $value_deducted = $record['value'] - $new_value;
         $this->reward_model->setPlayerReward($this->client_id, $this->site_id, $pb_player_id, $reward_id, $new_value);
+        if ($reward == 'exp') {
+            $this->player_model->setPlayerExp($this->client_id, $this->site_id, $pb_player_id, $new_value);
+        }
 
         $this->response($this->resp->setRespond(array("old_value" => $record['value'], "new_value" => $new_value, "value_deducted" => $value_deducted)), 200);
     }
