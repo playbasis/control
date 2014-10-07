@@ -38,7 +38,7 @@
                         </td>
                     </tr>
 
-                    <?php if(isset($quizs)){?>
+                    <?php if(isset($quizs) && $quizs){?>
                         <?php foreach($quizs as $quiz){?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($quiz['selected'])) { ?>
@@ -62,7 +62,11 @@
                         <?php }
                             }else{
                         ?>
-                                No quiz
+                    <tr>
+                        <td colspan="5">
+                        No quiz
+                        </td>
+                    </tr>
                     <?php }?>
 
                     </tbody>
