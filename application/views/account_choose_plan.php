@@ -117,10 +117,630 @@
           </div>
           <!-- End plans -->
 
+<div class="regis-plan-table-btn"><a href="javascript:void()">View Compare Plans</a></div>
+<div class="regis-plan-table-wrapper" style="display:none">
+
+
+
+
+  <table cellspacing="0" cellpadding="0" class="t1">
+    <tbody>
+      <tr class="table-header">
+        <th>
+          FEATURES
+        </th>
+        <th>
+          FREE
+        </th>
+        <th>
+          PRO 1
+        </th>
+        <th>
+          PRO 2
+        </th>
+        <th>
+          PRO 3
+        </th>
+        <th>
+          ENTERPRISE
+        </th>
+      </tr>
+      <tr class="row-price">
+        <th>
+          Price <span>(monthly)</span>
+        </th>
+
+        <?php foreach ($plan_data as $key => $plan): ?>
+        <td>
+          <?php if($plan['price'] == 0): ?>
+            FREE
+          <?php else: ?>
+              <?php echo $plan['price']; ?> USD
+         <?php endif; ?>
+         <?php endforeach; ?>
+         </td>
+         <td>CALL US</td>
+      </tr>
+      <tr>
+        <td colspan="6" class="row-head">
+          Support
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Email
+        </th>
+
+         <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Dedicated Account Manager
+        </th>
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-minus"></i>
+            <?php else: ?>
+                <i class="fa fa-minus"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+      </tr>
+      <tr>
+        <th>
+          Custom Setup &amp; Training
+        </th>
+
+      <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-minus"></i>
+            <?php else: ?>
+                <i class="fa fa-minus"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <td colspan="6" class="row-head">
+          Core Features
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Admin interface
+        </th>
+        
+       <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Gamification Engine
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          User Profile
+        </th>
+        
+      <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Engagement points
+        </th>
+        
+       <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Virtual Currencies
+        </th>
+        
+       <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Badges
+        </th>
+        
+       <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Rules
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Capture &amp; store Users Actions
+        </th>
+        
+       <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Registered Users
+        </th>
+
+
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <p><span ><?php echo $plan['limit_others']['player'] ?> Users</span></p>
+            <?php else: ?>
+               <p><span ><?php echo $plan['limit_others']['player'] ?> Users</span></p>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><p><span >Unlimited Users</span></p></td>
+
+
+
+      </tr>
+      <tr>
+        <th>
+          Allowed Requests per second to gamification API
+        </th>
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <p><span ><?php echo $plan['limit_requests']['/engine'] ?> Users</span></p>
+            <?php else: ?>
+               <p><span ><?php echo $plan['limit_requests']['/engine'] ?> Users</span></p>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><p><span >Unlimited</span></p></td>
+
+      </tr>
+      <tr>
+        <th>
+          Leaderboards
+        </th>
+        
+         <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          Live Feed
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          History Feed
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          Social CRM
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          Reporting
+        </th>
+        
+       <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          SDK
+        </th>
+
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          Levels
+        </th>
+        
+         <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          Analytics &amp; insight
+        </th>
+        
+         <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-minus"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        
+        <td colspan="6" class="row-head">
+          Advanced Features
+        </td>
+        
+      </tr>
+      <tr>
+        <th>
+          Social login
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-minus"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          Data Exporting capabilities
+        </th>
+        
+         <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+
+      </tr>
+      <tr>
+        <th>
+          Quests &amp; Missions
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              
+              <?php if($plan['limit_others']['quest'] === 0 ): ?>
+                  <i class="fa fa-minus"></i>
+              <?php else: ?>
+                   <?php if( !empty( $plan['limit_others']['quest'] ) ): ?>
+                        <p ><span ><?php echo $plan['limit_others']['quest']; ?><br>Quests</span></p>
+                    <?php else: ?>
+                        <p ><span >Unlimited<br>Quests</span></p>
+                    <?php endif; ?>
+              <?php endif; ?>
+
+            <?php else: ?>
+               
+              <?php if($plan['limit_others']['quest'] === 0): ?>
+                  <i class="fa fa-minus"></i>
+              <?php else: ?>
+                   <?php if( !empty( $plan['limit_others']['quest'] ) ): ?>
+                        <p ><span ><?php echo $plan['limit_others']['quest']; ?><br>Quests</span></p>
+                    <?php else: ?>
+                        <p ><span >Unlimited<br>Quests</span></p>
+                    <?php endif; ?>
+              <?php endif; ?>
+
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><p><span >Unlimited<br>Quests</span></p>
+
+      </tr>
+      <tr>
+        <th>
+          Rewards
+        </th>
+        
+     <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-check"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Reward Store
+        </th>
+        
+
+        <?php foreach ($plan_data as $key => $plan): ?>
+
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              
+              <?php if($plan['limit_others']['goods'] === 0 ): ?>
+                  <i class="fa fa-minus"></i>
+              <?php else: ?>
+                   <?php if( !empty( $plan['limit_others']['goods'] ) ): ?>
+                        <p ><span ><?php echo $plan['limit_others']['goods']; ?><br>Goods</span></p>
+                    <?php else: ?>
+                        <p ><span >Unlimited<br>Goods</span></p>
+                    <?php endif; ?>
+              <?php endif; ?>
+
+            <?php else: ?>
+               
+              <?php if($plan['limit_others']['goods'] === 0): ?>
+                  <i class="fa fa-minus"></i>
+              <?php else: ?>
+                   <?php if( !empty( $plan['limit_others']['goods'] ) ): ?>
+                        <p ><span ><?php echo $plan['limit_others']['goods']; ?><br>Goods</span></p>
+                    <?php else: ?>
+                        <p ><span >Unlimited<br>Goods</span></p>
+                    <?php endif; ?>
+              <?php endif; ?>
+
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><p><span >Unlimited<br>Goods</span></p>
+
+
+       
+
+      </tr>
+      <tr>
+        <th>
+          Messaging
+        </th>
+        
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <td>
+            <?php if($plan['price'] == 0): ?>
+              <i class="fa fa-minus"></i>
+            <?php else: ?>
+                <i class="fa fa-check"></i>
+           <?php endif; ?>
+           <?php endforeach; ?>
+           </td>
+           <td><i class="fa fa-check"></i></td>
+
+      </tr>
+      <tr>
+        <th>
+          Emails
+        </th>
+
+
+        <?php foreach ($plan_data as $key => $plan): ?>
+             <td>
+               <?php if($plan['price'] == 0): ?>
+                 <i class="fa fa-minus"></i>
+               <?php else: ?>
+                   <p ><span ><?php echo $plan['limit_notifications']['email'] ?>  / Month</span></p>
+              <?php endif; ?>
+              <?php endforeach; ?>
+              </td>
+              <td><p ><span >Unlimited / Month</span></p></td>
+
+      </tr>
+     
+      <tr class="row-action">
+        <th>
+          
+        </th>
+
+        <?php foreach ($plan_data as $key => $plan): ?>
+          <?php if($plan['price'] == 0): ?>
+            <td class="col-try">
+              <a href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Start</a>
+            </td>
+          <?php else: ?>
+              <td>
+              <a href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Start</a>
+            </td>
+            <?php endif; ?>
+          <?php endforeach; ?>
+
+          <td class="col-enterprise">
+              <a href="mailto:info@playbasis.com">Call us</a>
+            </td>
+
+      </tr>
+    </tbody>
+  </table>
+  
+</div>
           
 
-<div class="regis-content span8 offset2">
-    </div><!-- .content -->
+
 
     <div class="clearfix"></div>
     <div class="regis-step-wrapper text-center span6 offset3">
@@ -163,6 +783,10 @@
         $('.plan-btn').click(function(){
             $('input[name=plan_id]').val($(this).attr('data-plan-id'));
             $('form#form').submit();
+        })
+
+        $('.regis-plan-table-btn').click(function(){
+          $('.regis-plan-table-wrapper').slideDown('slow');
         })
 
     });
