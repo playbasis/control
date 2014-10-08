@@ -221,7 +221,11 @@ class Quiz extends MY_Controller
                         }
                     }
                 }else{
-                    $quiz[$key] = $value;
+                    if($key == "status"){
+                        $quiz[$key] = ('true' === $value);
+                    }else{
+                        $quiz[$key] = $value;
+                    }
                 }
             }
 

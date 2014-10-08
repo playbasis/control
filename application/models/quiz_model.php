@@ -110,10 +110,25 @@ class Quiz_model extends MY_Model{
             $this->mongo_db->set('description_image', $data['description_image']);
         }
 
-        if(isset($data['status']) && !is_null($data['status'])){
-            $this->mongo_db->set('status', $data['status']);
+        if(isset($data['status'])){
+            $this->mongo_db->set('status', (boolean)$data['status']);
         }
 
+        if(isset($data['date_start'])){
+            if($data['date_start'] != ''){
+                $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
+            }else{
+                $this->mongo_db->set('date_start', null);
+            }
+        }
+
+        if(isset($data['date_expire'])){
+            if($data['date_expire']  != ''){
+                $this->mongo_db->set('date_expire', new MongoDate(strtotime($data['date_expire'])));
+            }else{
+                $this->mongo_db->set('date_expire', null);
+            }
+        }
 
         if(isset($data['grades']) && !is_null($data['grades'])){
             $this->mongo_db->set('grades', $data['grades']);
