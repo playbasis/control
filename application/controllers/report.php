@@ -188,7 +188,7 @@ class Report extends REST2_Controller
 			'FROM' => date(REPORT_DATE_FORMAT, strtotime('+1 day', strtotime($from))),
 			'TO' => date(REPORT_DATE_FORMAT, strtotime($to)),
 		);
-		$params['DIR'] = $params['CLIENT_NAME'].'/'.$params['SITE_ID'];
+		$params['DIR'] = $params['CLIENT_ID'].'/'.$params['SITE_ID'];
 		$params['FILE'] = "$to.html";
 		$params['REPORT_URL'] = $conf['report_url'].$params['DIR'].'/'.$params['FILE'];
 
