@@ -188,7 +188,7 @@ class Report extends REST2_Controller
 			'FROM' => date(REPORT_DATE_FORMAT, strtotime('+1 day', strtotime($from))),
 			'TO' => date(REPORT_DATE_FORMAT, strtotime($to)),
 		);
-		$params['DIR'] = $params['CLIENT_NAME'].'/'.$params['SITE_NAME'];
+		$params['DIR'] = $params['CLIENT_ID'].'/'.$params['SITE_ID'];
 		$params['FILE'] = "$to.html";
 		$params['REPORT_URL'] = $conf['report_url'].$params['DIR'].'/'.$params['FILE'];
 
@@ -202,12 +202,14 @@ class Report extends REST2_Controller
 		$arr = array();
 		$actions = $this->action_model->listActions($opts);
 		if (is_array($actions)) foreach ($actions as $action) {
+			$stat = $this->get_stat('', $conf, $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from));
+			if ($stat['TOTAL_NUM'] == 0 && $stat['TOTAL_PREV_NUM'] == 0) continue; // skip inactive data points
 			$arr[] = array_merge(
 				array(
 					'IMAGE_SRC' => $conf['static_image_url'].'images/'.str_replace('-alt', '', $action['icon']).'.gif',
 					'NAME' => $action['name'],
 				),
-				$this->get_stat('', $conf, $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
+				$stat
 			);
 		}
 		usort($arr, 'compare_TOTAL_NUM_desc');
@@ -221,12 +223,14 @@ class Report extends REST2_Controller
 		$arr = array();
 		$badges = $this->badge_model->getAllBadges($opts);
 		if (is_array($badges)) foreach ($badges as $badge) {
+			$stat = $this->get_stat('', $conf, $this->reward_model->badgeLog($opts, $badge['badge_id'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->reward_model->badgeLog($opts, $badge['badge_id'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from));
+			if ($stat['TOTAL_NUM'] == 0 && $stat['TOTAL_PREV_NUM'] == 0) continue; // skip inactive data points
 			$arr[] = array_merge(
 				array(
 					'IMAGE_SRC' => $badge['image'],
 					'NAME' => $badge['name'],
 				),
-				$this->get_stat('', $conf, $this->reward_model->badgeLog($opts, $badge['badge_id'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->reward_model->badgeLog($opts, $badge['badge_id'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
+				$stat
 			);
 		}
 		usort($arr, 'compare_TOTAL_NUM_desc');

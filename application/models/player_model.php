@@ -110,6 +110,17 @@ class Player_model extends MY_Model
 		$this->mongo_db->set($fieldData);
 		return $this->mongo_db->update('playbasis_player');
 	}
+	public function setPlayerExp($client_id, $site_id, $pb_player_id, $value)
+	{
+		$d = new MongoDate(time());
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'_id' => $pb_player_id,
+		));
+		$this->mongo_db->set('exp', $value);
+		$this->mongo_db->set('date_modified', $d);
+		print $this->mongo_db->update('playbasis_player');
+	}
 	public function deletePlayer($id, $site_id)
 	{
 		if(!$id)
@@ -159,6 +170,16 @@ class Player_model extends MY_Model
 		$this->mongo_db->where('_id', $pb_player_id);
 		$id = $this->mongo_db->get('playbasis_player');
 		return ($id) ? $id[0]['cl_player_id'] : null;
+	}
+	public function find_player_with_nin($client_id, $site_id, $nin, $limit)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('cl_player_id'));
+		$this->mongo_db->where('client_id', $client_id);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where_not_in('_id', $nin);
+		$this->mongo_db->limit($limit);
+		return $this->mongo_db->get('playbasis_player');
 	}
 	public function getPlayerPoints($pb_player_id, $site_id)
 	{
@@ -517,7 +538,6 @@ class Player_model extends MY_Model
 		));
 	}
 	public function getLeaderboardByLevel($limit, $client_id, $site_id) {
-		//get reward id
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('cl_player_id','first_name','last_name','username','image','exp','level'));
 		$this->mongo_db->where(array(
@@ -538,7 +558,6 @@ class Player_model extends MY_Model
 		return $ret;
 	}
 	public function getLeaderboardByLevelForReport($limit, $client_id, $site_id) {
-		//get reward id
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('cl_player_id','first_name','last_name','username','image','exp','level'));
 		$this->mongo_db->where(array(

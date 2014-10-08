@@ -13,6 +13,7 @@ class Player extends REST2_Controller
 		$this->load->model('point_model');
 		$this->load->model('action_model');
 		$this->load->model('level_model');
+		$this->load->model('reward_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -808,6 +809,45 @@ class Player extends REST2_Controller
         //get player goods
         $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
         $this->response($this->resp->setRespond($goodsList), 200);
+    }
+    public function deduct_reward_post($player_id) {
+        /* param "player_id" */
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
+        ));
+        if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        /* param "reward" */
+        $reward = $this->input->post('reward');
+        if ($reward === false) $this->response($this->error->setError('PARAMETER_MISSING', array('reward')), 200);
+        $reward_id = $this->reward_model->findByName(array('client_id' => $this->client_id, 'site_id' => $this->site_id), $reward);
+        if (!$reward_id) $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+
+        /* param "amount" */
+        $amount = $this->input->post('amount');
+        if ($amount === false) $this->response($this->error->setError('PARAMETER_MISSING', array('amount')), 200);
+        $amount = intval($amount);
+
+        /* param "force" */
+        $force = $this->input->post('force');
+
+        /* get current reward value */
+        $record = $this->reward_model->getPlayerReward($this->client_id, $this->site_id, $pb_player_id, $reward_id);
+        if (!$record) $this->response($this->error->setError('REWARD_FOR_USER_NOT_EXIST'), 200);
+
+        /* set new reward value */
+        if (!$force && $record['value'] < $amount) $this->response($this->error->setError('REWARD_FOR_USER_NOT_ENOUGH'), 200);
+        $new_value = $record['value'] - $amount;
+        if ($new_value < 0) $new_value = 0;
+        $value_deducted = $record['value'] - $new_value;
+        $this->reward_model->setPlayerReward($this->client_id, $this->site_id, $pb_player_id, $reward_id, $new_value);
+        if ($reward == 'exp') {
+            $this->player_model->setPlayerExp($this->client_id, $this->site_id, $pb_player_id, $new_value);
+        }
+
+        $this->response($this->resp->setRespond(array("old_value" => $record['value'], "new_value" => $new_value, "value_deducted" => $value_deducted)), 200);
     }
 	public function total_get()
 	{
