@@ -761,7 +761,7 @@ class Quest extends MY_Controller
         $this->output->set_output(json_encode($json));
     }
 
-    public function getListForAjax($offset) {
+    public function _getListForAjax($offset) {
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -803,8 +803,16 @@ class Quest extends MY_Controller
         }
 
         $this->pagination->initialize($config);
+    }
 
+    public function getListForAjax($offset) {
+        $this->_getListForAjax($offset);
         $this->render_page('quest_ajax');
+    }
+
+    public function getListForAjaxReset($offset) {
+        $this->_getListForAjax($offset);
+        $this->render_page('quest_ajax_reset');
     }
 
     public function delete() {
@@ -840,6 +848,40 @@ class Quest extends MY_Controller
         }
 
         $this->getList(0);
+    }
+
+    public function reset() {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->error['warning'] = null;
+
+        if(!$this->validateModify()){
+            $this->error['warning'] = $this->lang->line('error_permission');
+        }
+
+        $success = false;
+        $message = array();
+        $selected = $this->input->post('selected');
+        if (!$selected) $message[] = 'No quest has been selected';
+        $pb_player_id = $this->input->post('pb_player_id');
+        if (!$pb_player_id) $message[] = '"pb_player_id" is not sent';
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) $message[] = 'Super-admin cannot use this function';
+        if ($selected && $pb_player_id && $this->error['warning'] == null && $this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
+            $success = true;
+            if (is_array($selected)) foreach ($selected as $quest_id) {
+                $success = $success && $this->Quest_model->resetQuestClient($quest_id, $pb_player_id);
+            } else {
+                $success = $this->Quest_model->resetQuestClient($selected, $pb_player_id);
+            }
+            if (!$success) $message[] = 'There is an error in processing quest reset for the player';
+            else $message[] = 'Successfully reset the selected quests for the player';
+        }
+
+        $this->output->set_output(json_encode(array("success" => $success, "message" => implode(', ', $message))));
     }
 
     public function edit($quest_id){
