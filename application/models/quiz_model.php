@@ -17,8 +17,10 @@ class Quiz_model extends MY_Model
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where(array('status' => true, 'deleted' => false));
-        $this->mongo_db->where_lte('date_start', $d);
-        $this->mongo_db->where_gt('date_expire', $d);
+        $this->mongo_db->where(array('$and' => array(
+            array('$or' => array(array('date_start' => array('$lte' => $d)), array('date_start' => null))),
+            array('$or' => array(array('date_expire' => array('$gt' => $d)), array('date_expire' => null)))
+        )));
         if ($nin !== null) $this->mongo_db->where_not_in('_id', $nin);
         return $this->mongo_db->get('playbasis_quiz_to_client');
     }
