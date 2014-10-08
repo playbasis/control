@@ -154,6 +154,7 @@ class Quest_model extends MY_Model
             'pb_player_id' => $data['pb_player_id'],
             'quest_id' => $data['quest_id']
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->set(array('status' => $status));
         $this->mongo_db->set(array('date_modified' => new MongoDate(time())));
         $this->mongo_db->update('playbasis_quest_to_player');
@@ -167,6 +168,7 @@ class Quest_model extends MY_Model
             'quest_id' => $data['quest_id'],
             'missions.mission_id' => $data['mission_id'],
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $qp = $this->mongo_db->get('playbasis_quest_to_player');
 
         if($qp && isset($qp[0])){
@@ -175,6 +177,7 @@ class Quest_model extends MY_Model
                 'pb_player_id' => $data['pb_player_id'],
                 'missions.mission_id' => $data['mission_id'],
             ));
+            $this->mongo_db->where_ne('deleted', true);
             $this->mongo_db->set(array('missions.$.status' => $status));
             $this->mongo_db->set(array('missions.$.date_modified' => new MongoDate(time())));
             $this->mongo_db->update('playbasis_quest_to_player');
