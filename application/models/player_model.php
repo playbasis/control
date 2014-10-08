@@ -1387,6 +1387,7 @@ class Player_model extends MY_Model
             'pb_player_id' => $pb_player_id,
             'site_id' => $site_id,
         ));
+        $this->mongo_db->where_ne('deleted', true);
         $c_status = array("join", "unjoin", "finish");
         if($status != '' && in_array($status, $c_status) ){
             $this->mongo_db->where(array(
