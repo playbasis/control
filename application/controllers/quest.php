@@ -343,7 +343,7 @@ class Quest extends REST2_Controller
 
                 if($c["completion_type"] == "ACTION"){
 
-                    $datetime_check = (isset($player_mission["missions"][0]["date_modified"]))?datetimeMongotoReadable($player_mission["missions"][0]["date_modified"]):date("Y-m-d H:i:s");
+                    $datetime_check = (isset($player_mission["missions"][0]["date_modified"]))?$player_mission["missions"][0]["date_modified"]:new MongoDate(time());
                     $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
 
                     if((int)$c["completion_value"] > (int)$action["count"]){

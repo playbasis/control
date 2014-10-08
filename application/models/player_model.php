@@ -290,10 +290,10 @@ class Player_model extends MY_Model
         }
         $datecondition = array();
         if($starttime != ''){
-            $datecondition = array_merge($datecondition, array('$gt' => new MongoDate(strtotime($starttime))));
+            $datecondition = array_merge($datecondition, array('$gt' => $starttime));
         }
         if($endtime != ''){
-            $datecondition = array_merge($datecondition, array('$lte' => new MongoDate(strtotime($endtime))));
+            $datecondition = array_merge($datecondition, array('$lte' => $endtime));
         }
 
         $this->set_site_mongodb($site_id);
