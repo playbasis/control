@@ -260,7 +260,40 @@ class Quest_model extends MY_Model{
         $this->mongo_db->where('quest_id', new MongoId($quest_id));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->update_all('playbasis_quest_to_player');
+    }
 
+    public function resetQuestClient($quest_id, $pb_player_id){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoId($quest_id));
+        $results = $this->mongo_db->get('playbasis_quest_to_client');
+        $mission_order = $results ? $results[0]['mission_order'] : null;
+        if ($mission_order === null) return false;
+
+        $this->mongo_db->where('quest_id', new MongoId($quest_id));
+        $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+        $this->mongo_db->where_ne('deleted', true);
+        $results = $this->mongo_db->get('playbasis_quest_to_player');
+        $result = $results ? $results[0] : null;
+        if (!$result) return false;
+
+        $d = new MongoDate(time());
+        $first = true;
+        foreach ($result['missions'] as &$m) {
+            if ($mission_order) {
+                $m['status'] = $first ? 'join' : 'unjoin';
+                $first = false;
+            } else {
+                $m['status'] = 'join';
+            }
+            $m['date_modified'] = $d;
+        }
+        $this->mongo_db->where('_id', $result['_id']);
+        $this->mongo_db->set('status', 'unjoin');
+        $this->mongo_db->set('missions', $result['missions']);
+        $this->mongo_db->set('date_modified', $d);
+        $this->mongo_db->update('playbasis_quest_to_player');
+        return true;
     }
 
     public function addQuestToClient($data){
