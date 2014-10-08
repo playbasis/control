@@ -1269,11 +1269,11 @@
                     "MethodName": "List Recent Quizzes Done by the Player",
                     "Synopsis": "List recent quizzes done by the player.",
                     "HTTPMethod": "GET",
-                    "URI": "/Quiz/player/:id/:limit",
+                    "URI": "/Quiz/player/:player_id/:limit",
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
-                            "Name": "id",
+                            "Name": "player_id",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
@@ -1292,11 +1292,11 @@
                     "MethodName": "List Pending Quizzes by the Player",
                     "Synopsis": "List pending quizzes by the player.",
                     "HTTPMethod": "GET",
-                    "URI": "/Quiz/player/:id/pending/:limit",
+                    "URI": "/Quiz/player/:player_id/pending/:limit",
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
-                            "Name": "id",
+                            "Name": "player_id",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
