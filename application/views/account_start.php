@@ -29,7 +29,7 @@
 
                 <div class="row ">
                     <p>
-                    You are just one step away for finalizing your account. <br>Please click the button above to proceed.
+                    You are just one step away for finalizing your account. <br>Please click the button below to proceed.
                     </p>
                     <ul class="span4 offset4">
                         <?php
