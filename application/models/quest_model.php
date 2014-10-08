@@ -321,6 +321,7 @@ class Quest_model extends MY_Model{
     public function editQuestToClient($quest_id, $data){
 
         $this->mongo_db->where('_id', new MongoID($quest_id));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
 
         if(isset($data['quest_name']) && !is_null($data['quest_name'])){
             $this->mongo_db->set('quest_name', $data['quest_name']);

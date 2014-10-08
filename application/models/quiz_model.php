@@ -6,6 +6,7 @@ class Quiz_model extends MY_Model{
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id',  new MongoID($quiz_id));
+
         $this->mongo_db->where('deleted',  false);
         $results = $this->mongo_db->get("playbasis_quiz_to_client");
 
@@ -16,6 +17,7 @@ class Quiz_model extends MY_Model{
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted',  false);
+        $this->mongo_db->where('site_id', $data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -62,6 +64,7 @@ class Quiz_model extends MY_Model{
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted',  false);
+        $this->mongo_db->where('site_id', $data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
@@ -90,6 +93,8 @@ class Quiz_model extends MY_Model{
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($quiz_id));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
         if(isset($data['name']) && !is_null($data['name'])){
             $this->mongo_db->set('name', $data['name']);

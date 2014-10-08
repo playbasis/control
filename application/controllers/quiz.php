@@ -233,6 +233,9 @@ class Quiz extends MY_Controller
             $this->form_validation->set_rules('description', $this->lang->line('description'), 'trim|required|xss_clean');
 
             if($this->form_validation->run()){
+                $quiz['client_id'] = $this->User_model->getClientId();
+                $quiz['site_id'] = $this->User_model->getSiteId();
+
                 if($quiz_info){
                     $this->Quiz_model->editQuizToClient($quiz_id, $quiz);
                 }else{
