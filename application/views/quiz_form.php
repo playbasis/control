@@ -181,7 +181,7 @@
                                         <tbody>
                                         <tr>
                                             <td colspan="2">
-                                                If user's final grade is between <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][grade_start]" value = "<?php echo $grade['grade_start']; ?>" class="grades-range" />% and <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][grade_end]" value = "<?php echo $grade['grade_end']; ?>" class="grades-range" />%,
+                                                If user's final grade is between <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][start]" value = "<?php echo $grade['start']; ?>" class="grades-range" />% and <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][end]" value = "<?php echo $grade['end']; ?>" class="grades-range" />%,
                                             </td>
                                         </tr>
                                         <tr>
@@ -311,7 +311,7 @@
                                     <tbody>
                                     <tr>
                                         <td colspan="2">
-                                            If user's final grade is between <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][grade_start]" value = "" class="grades-range" />% and <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][grade_end]" value = "" class="grades-range" />%,
+                                            If user's final grade is between <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][start]" value = "" class="grades-range" />% and <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][end]" value = "" class="grades-range" />%,
                                         </td>
                                     </tr>
                                     <tr>
@@ -647,7 +647,7 @@
             <tbody>\
             <tr>\
             <td colspan="2">\
-            If user\'s final grade is between <input type="text" name="quiz[grades]['+countGrades+'][grade_start]" value = "" class="grades-range" />% and <input type="text" name="quiz[grades]['+countGrades+'][grade_end]" value = "" class="grades-range" />%,\
+            If user\'s final grade is between <input type="text" name="quiz[grades]['+countGrades+'][start]" value = "" class="grades-range" />% and <input type="text" name="quiz[grades]['+countGrades+'][end]" value = "" class="grades-range" />%,\
         </td>\
         </tr>\
             <tr>\
