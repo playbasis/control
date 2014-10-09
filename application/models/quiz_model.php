@@ -13,7 +13,7 @@ class Quiz_model extends MY_Model
     public function find($client_id, $site_id, $nin=null) {
         $d = new MongoDate(time());
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('name','image','description','weight'));
+        $this->mongo_db->select(array('name','image','description','description_image','weight'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where(array('status' => true, 'deleted' => false));
@@ -147,7 +147,34 @@ class Quiz_model extends MY_Model
             }else{
                 $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
-
+        }
+        if($key == "description_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+        }
+        if($key == "rank_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+        }
+        if($key == "question_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+        }
+        if($key == "option_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
         }
     }
 }
