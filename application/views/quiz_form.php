@@ -430,7 +430,7 @@
                                             Question :
                                         </td>
                                         <td>
-                                            <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]" value = "<?php echo $questions['question']; ?>">
+                                            <textarea rows="3" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]"><?php echo $questions['question']; ?></textarea>
                                         </td>
                                     </tr>
                                     <tr>
@@ -514,7 +514,7 @@
                                         Question :
                                     </td>
                                     <td>
-                                        <input type="text" name="quiz[questions][<?php echo $count_question; ?>][question]" value = "">
+                                        <textarea rows="3" name="quiz[questions][<?php echo $count_question; ?>][question]"></textarea>
                                     </td>
                                 </tr>
                                 <tr>
@@ -785,7 +785,7 @@
             Question :\
         </td>\
             <td>\
-        <input type="text" name="quiz[questions]['+countQuestions+'][question]" value = "">\
+        <textarea rows="3" name="quiz[questions]['+countQuestions+'][question]"></textarea>\
             </td>\
         </tr>\
             <tr>\
