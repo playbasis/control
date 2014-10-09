@@ -1440,7 +1440,7 @@ class Player_model extends MY_Model
             'quest_id' => $quest_id,
             'missions.mission_id' => $mission_id
         ));
-
+        $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
         return $result ? $result[0] : array();
     }
