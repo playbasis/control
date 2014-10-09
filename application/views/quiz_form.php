@@ -152,6 +152,8 @@
                     if(isset($quiz) && $quiz['grades']){
                         foreach($quiz['grades'] as $grade){
 
+                            $grade['grade_id'] = $grade['grade_id']."";
+
                             $custom_user_set = array();
                             $badge_user_set = array();
                             $point_user_set = array();
@@ -303,7 +305,10 @@
                     }else{
                     ?>
 
-                        <?php $countgrade = new MongoId(); ?>
+                        <?php
+                        $countgrade = new MongoId();
+                        $countgrade = $countgrade."";
+                        ?>
                         <div class="box-content clearfix">
                             <div class="span6">
                                 <a href="javascript:void(0)" class="btn btn-danger right remove-grade-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
@@ -420,6 +425,7 @@
                     if(isset($quiz) && $quiz['questions']){
                         foreach($quiz['questions'] as $questions){
 
+                            $questions['question_id'] = $questions['question_id']."";
                     ?>
                         <div class="box-content clearfix">
                             <div class="span6">
@@ -459,6 +465,8 @@
                                             <?php
                                             if(isset($questions['options'])){
                                                 foreach($questions['options'] as $option){
+
+                                                    $option['option_id'] = $option['option_id']."";
                                             ?>
                                                     <div class="option-container">
                                                         option  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]" value = "<?php echo $option["option"]; ?>"><br>
@@ -475,6 +483,7 @@
                                                 }
                                             }else{
                                                 $count_option = new MongoId();
+                                                $count_option = $count_option."";
                                             ?>
                                                 <div class="option-container">
                                                     option  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][option]" value = ""><br>
@@ -503,8 +512,13 @@
                         }
                     }else{
                     ?>
-<?php $count_question = new MongoId(); ?>
-<?php $count_option = new MongoId(); ?>
+                    <?php
+                        $count_question = new MongoId();
+                        $count_question = $count_question."";
+
+                        $count_option = new MongoId();
+                        $count_option = $count_option."";
+                    ?>
                     <div class="box-content clearfix">
                         <div class="span6">
                             <table class="form">

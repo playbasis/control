@@ -137,7 +137,7 @@ class Quiz extends MY_Controller
                         if($qkey == "grades"){
                             foreach($qvalue as $ggkey => $ggvalue){
                                 $grades = array();
-                                $grades['grade_id'] = $ggkey;
+                                $grades['grade_id'] = new MongoId($ggkey);
                                 foreach($ggvalue as $gggkey => $gggvalue){
 
                                     if($gggkey == "rewards"){
@@ -149,7 +149,7 @@ class Quiz extends MY_Controller
 
                                                 foreach($rvalue as $bkey => $bvalue){
                                                     if(!empty($bvalue)){
-                                                        $b["badge_id"] = $bkey;
+                                                        $b["badge_id"] = new MongoId($bkey);
                                                         $b["badge_value"] = $bvalue;
 
                                                         $badge[] = $b;
@@ -171,7 +171,7 @@ class Quiz extends MY_Controller
 
                                                 foreach($rvalue as $ckey => $cvalue){
                                                     if(!empty($cvalue)){
-                                                        $c["custom_id"] = $ckey;
+                                                        $c["custom_id"] = new MongoId($ckey);
                                                         $c["custom_value"] = $cvalue;
 
                                                         $custom[] = $c;
@@ -195,7 +195,7 @@ class Quiz extends MY_Controller
                         }else if($qkey == "questions"){
                             foreach($qvalue as $qqkey => $qqvalue){
                                 $questions = array();
-                                $questions['question_id'] = $qqkey;
+                                $questions['question_id'] = new MongoId($qqkey);
 
                                 foreach($qqvalue as $qqqkey => $qqqvalue){
 
@@ -205,7 +205,7 @@ class Quiz extends MY_Controller
 
                                         foreach($qqqvalue as $okey => $ovalue){
                                             $option = $ovalue;
-                                            $option['option_id'] = $okey;
+                                            $option['option_id'] = new MongoId($okey);
 
                                             $options[] = $option;
                                         }
