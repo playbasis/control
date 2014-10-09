@@ -353,8 +353,8 @@ class Goods_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id',  new MongoID($goods_id));
-        $this->mongo_db->set('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->set('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
         // $this->mongo_db->set('quantity', (int)$data['quantity']);
         $this->mongo_db->set('quantity', (isset($data['quantity']) && !empty($data['quantity']))?(int)$data['quantity']:null);
         // $this->mongo_db->set('per_user', (int)$data['per_user']);

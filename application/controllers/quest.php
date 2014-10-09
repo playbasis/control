@@ -1021,6 +1021,8 @@ class Quest extends MY_Controller
 
                 $data['status'] = (isset($data['status']))?true:false;
                 $data['mission_order'] = (isset($data['mission_order']))?true:false;
+                $data['client_id'] = $client_id;
+                $data['site_id'] = $site_id;
 
                 if($this->Quest_model->editQuestToClient($quest_id, $data)){
                     redirect('/quest', 'refresh');

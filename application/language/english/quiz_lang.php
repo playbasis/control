@@ -26,7 +26,8 @@ $lang['entry_point']           		    = 'Point';
 $lang['entry_badge']           		    = 'Badge';
 $lang['entry_rewards']           		= 'Reward';
 $lang['entry_custom_point']           		= 'Custom Point';
-
+$lang['entry_start_date']				= 'Start Date';
+$lang['entry_expire_date']				= 'Expire Date';
 
 $lang['column_date_added']          			= 'Date Added';
 $lang['column_action']							= 'Action';

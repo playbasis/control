@@ -83,6 +83,18 @@
                             </td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_start_date'); ?>:</td>
+                            <td>
+                                <input type="text" class="date" name="date_start" value="<?php echo isset($quiz)&&isset($quiz['date_start'])&&$quiz['date_start']?date('Y-m-d', strtotime(datetimeMongotoReadable($quiz['date_start']))):''; ?>" size="50" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $this->lang->line('entry_expire_date'); ?>:</td>
+                            <td>
+                                <input type="text" class="date" name="date_expire" value="<?php echo isset($quiz)&&isset($quiz['date_expire'])&&$quiz['date_expire']?date('Y-m-d', strtotime(datetimeMongotoReadable($quiz['date_expire']))):''; ?>" size="50" />
+                            </td>
+                        </tr>
+                        <tr>
                             <td>
                                 <?php echo $this->lang->line('status'); ?> :
                             </td>
@@ -92,7 +104,7 @@
                                         <span><?php echo isset($quiz)&&$quiz['status']==true?'enabled':'disabled'; ?></span>
                                     </div>
                                     <?php
-                                    echo form_hidden('status', isset($quiz)&&$quiz['status']==true?true:false);
+                                    echo form_hidden('status', isset($quiz)&&$quiz['status']==true?'true':'false');
                                     ?>
                                 </div>
                             </td>
@@ -823,4 +835,11 @@
         init_sub_remove_event('.remove-question-btn', 1);
     })
 
+</script>
+<script type="text/javascript">
+    $(function(){
+
+        $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+
+    })
 </script>
