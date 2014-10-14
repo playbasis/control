@@ -675,7 +675,6 @@ class Quest extends REST2_Controller
         if($required)
             $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
         $required = $this->input->checkParam(array(
-            'action',
             'player_id'
         ));
         if($required)
