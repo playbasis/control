@@ -80,6 +80,7 @@ class Quiz extends REST2_Controller
 
         $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
         $results = array_map('convert_MongoId_id', $results);
+        array_walk_recursive($results, array($this, "convert_mongo_object"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -125,8 +126,10 @@ class Quiz extends REST2_Controller
             $result['questions'] = count($record['questions']);
             $result['total_score'] = $record['value'];
             $result['grade'] = $record['grade'];
-            $result['date_join'] = $record['date_added']->sec; // date which player start doing this quiz
+            $result['date_join'] = $record['date_added']; // date which player start doing this quiz
         }
+
+        array_walk_recursive($result, array($this, "convert_mongo_object"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -179,6 +182,7 @@ class Quiz extends REST2_Controller
 
         $results = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
         $results = array_map('convert_MongoId_quiz_id', $results);
+        array_walk_recursive($results, array($this, "convert_mongo_object"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -200,6 +204,7 @@ class Quiz extends REST2_Controller
 
         $results = $this->quiz_model->find_quiz_pending_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
         $results = array_map('convert_MongoId_quiz_id', $results);
+        array_walk_recursive($results, array($this, "convert_mongo_object"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -378,6 +383,8 @@ class Quiz extends REST2_Controller
             }
         }
 
+        array_walk_recursive($results, array($this, "convert_mongo_object"));
+
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
@@ -518,6 +525,23 @@ class Quiz extends REST2_Controller
             if ($score > $max) $max = $score;
         }
         return $max;
+    }
+
+    /**
+     * Use with array_walk and array_walk_recursive.
+     * Recursive iterable items to modify array's value
+     * from MongoId to string and MongoDate to readable date
+     * @param mixed $item this is reference
+     * @param string $key
+     */
+    private function convert_mongo_object(&$item, $key) {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else if (get_class($item) === 'MongoDate') {
+                $item =  datetimeMongotoReadable($item);
+            }
+        }
     }
 }
 ?>
