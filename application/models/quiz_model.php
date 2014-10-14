@@ -141,35 +141,35 @@ class Quiz_model extends MY_Model
 
     private function change_image_path(&$item, $key)
     {
-        if($key == "image"){
+        if($key === "image"){
             if(!empty($item)){
                 $item = $this->config->item('IMG_PATH').$item;
             }else{
                 $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
         }
-        if($key == "description_image"){
+        if($key === "description_image"){
             if(!empty($item)){
                 $item = $this->config->item('IMG_PATH').$item;
             }else{
                 $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
         }
-        if($key == "rank_image"){
+        if($key === "rank_image"){
             if(!empty($item)){
                 $item = $this->config->item('IMG_PATH').$item;
             }else{
                 $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
         }
-        if($key == "question_image"){
+        if($key === "question_image"){
             if(!empty($item)){
                 $item = $this->config->item('IMG_PATH').$item;
             }else{
                 $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
         }
-        if($key == "option_image"){
+        if($key === "option_image"){
             if(!empty($item)){
                 $item = $this->config->item('IMG_PATH').$item;
             }else{
