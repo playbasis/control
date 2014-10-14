@@ -122,8 +122,9 @@ class Quiz extends REST2_Controller
         unset($result['questions']);
 
         if ($record) {
-            $result['total_score'] = $record['value'];
             $result['questions'] = count($record['questions']);
+            $result['total_score'] = $record['value'];
+            $result['grade'] = $record['grade'];
             $result['date_join'] = $record['date_added']->sec; // date which player start doing this quiz
         }
 
