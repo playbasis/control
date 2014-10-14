@@ -187,6 +187,33 @@ class Quest_model extends MY_Model
         }
     }
 
+    public function getQuestName($client_id, $site_id, $quest_id) {
+        $this->mongo_db->where(array(
+            '_id' => $quest_id,
+        ));
+        $records = $this->mongo_db->get('playbasis_quest_to_client');
+        return $records ? $records[0]['quest_name'] : null;
+    }
+
+    public function getRewardHistoryFromPlayerID($client_id, $site_id, $pb_player_id, $offset, $limit) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array(),array('_id','client_id','site_id','pb_player_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $pb_player_id,
+        ));
+        $this->mongo_db->limit((int)$limit);
+        $this->mongo_db->offset((int)$offset);
+        $records = $this->mongo_db->get('playbasis_quest_reward_log');
+        if (!$records) $records = array();
+        foreach ($records as &$record) {
+            $record['quest_name'] = $this->getQuestName($client_id, $site_id, $record['quest_id']);
+            $record['type'] = $record['mission_id'] === null ? 'quest' : 'mission';
+        }
+        return $records;
+    }
+
     private function change_image_path(&$item, $key)
     {
         if($key == "image"){
