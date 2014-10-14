@@ -189,7 +189,7 @@ class Quest_model extends MY_Model
 
     private function change_image_path(&$item, $key)
     {
-        if($key == "image"){
+        if($key === "image"){
             if(!empty($item)){
                 $item = $this->config->item('IMG_PATH').$item;
             }else{
