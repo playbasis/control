@@ -307,9 +307,6 @@ class Quiz extends REST2_Controller
         $acc_score = $result ? $result['value'] : 0;
         $total_score = $acc_score + $score;
 
-        /* update player's score */
-        $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $total_score);
-
         /* if this is the last question, then grade the player's score */
         $grade = null;
         if (count($completed_questions) + 1 >= count($quiz['questions'])) {
@@ -321,6 +318,9 @@ class Quiz extends REST2_Controller
                 }
             }
         }
+
+        /* update player's score */
+        $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $total_score, $grade);
 
         /* check to see if grade has any reward associated with it */
         $rewards = isset($grade["rewards"]) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade["rewards"]) : null;
