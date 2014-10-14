@@ -43,7 +43,7 @@ class Quiz_model extends MY_Model
 
     public function find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('quiz_id','value','questions','date_added','date_modified'));
+        $this->mongo_db->select(array('quiz_id','value','questions','grade','date_added','date_modified'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('quiz_id', $quiz_id);
         $this->mongo_db->where('pb_player_id', $pb_player_id);
@@ -56,7 +56,7 @@ class Quiz_model extends MY_Model
 
     public function find_quiz_by_player($client_id, $site_id, $pb_player_id, $limit=-1) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('quiz_id','value','questions'));
+        $this->mongo_db->select(array('quiz_id','value','questions','grade'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $this->mongo_db->order_by(array('date_modified' => -1));
@@ -95,7 +95,7 @@ class Quiz_model extends MY_Model
         return $results['completed'];
     }
 
-    public function update_player_score($client_id, $site_id, $quiz_id, $pb_player_id, $question_id, $score) {
+    public function update_player_score($client_id, $site_id, $quiz_id, $pb_player_id, $question_id, $score, $grade) {
         $d = new MongoDate(time());
         $result = $this->find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id);
         if (!$result) {
@@ -106,6 +106,7 @@ class Quiz_model extends MY_Model
                 'pb_player_id' => $pb_player_id,
                 'value' => $score,
                 'questions' => array($question_id),
+                'grade' => $grade,
                 'date_added' => $d,
                 'date_modified' => $d
             ));
@@ -118,6 +119,7 @@ class Quiz_model extends MY_Model
             $this->mongo_db->where('pb_player_id', $pb_player_id);
             $this->mongo_db->set('questions', $questions);
             $this->mongo_db->set('value', $score);
+            $this->mongo_db->set('grade', $grade);
             $this->mongo_db->set('date_modified', $d);
             return $this->mongo_db->update('playbasis_quiz_to_player');
         }
