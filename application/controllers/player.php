@@ -14,6 +14,7 @@ class Player extends REST2_Controller
 		$this->load->model('action_model');
 		$this->load->model('level_model');
 		$this->load->model('reward_model');
+		$this->load->model('quest_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -647,7 +648,34 @@ class Player extends REST2_Controller
 		$respondThis['points'] = $this->player_model->getPointHistoryFromPlayerID($pb_player_id, $this->site_id, $reward_id, $offset, $limit);
 
 		$this->response($this->resp->setRespond($respondThis), 200);
+	}
 
+	public function quest_reward_history_get($player_id =''){
+		$required = array();
+		if(!$player_id){
+			array_push($required, 'player_id');
+		}
+		if($required){
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		}
+
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+			'cl_player_id' => $player_id
+		)));
+		if(!$pb_player_id){
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+
+		$offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
+		$limit = ($this->input->get('limit'))?$this->input->get('limit'):20;
+		if($limit > 500){
+			$limit = 500;
+		}
+
+		$respondThis['rewards'] = $this->quest_model->getRewardHistoryFromPlayerID($this->client_id, $this->site_id, $pb_player_id, $offset, $limit);
+		array_walk_recursive($respondThis, array($this, "convert_mongo_object"));
+
+		$this->response($this->resp->setRespond($respondThis), 200);
 	}
 
 	public function action_get($player_id = '', $action = '', $option = 'time')
@@ -1126,6 +1154,23 @@ class Player extends REST2_Controller
 
     private function validTelephonewithCountry($number){
         return ( ! preg_match("/\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d| 2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]| 4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/", $number)) ? FALSE : TRUE ;
+    }
+
+    /**
+     * Use with array_walk and array_walk_recursive.
+     * Recursive iterable items to modify array's value
+     * from MongoId to string and MongoDate to readable date
+     * @param mixed $item this is reference
+     * @param string $key
+     */
+    private function convert_mongo_object(&$item, $key) {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else if (get_class($item) === 'MongoDate') {
+                $item =  datetimeMongotoReadable($item);
+            }
+        }
     }
 }
 ?>

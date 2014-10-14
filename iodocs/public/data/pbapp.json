@@ -843,6 +843,36 @@
                     ]
                 },
                 {
+                    "MethodName": "Quest Reward History",
+                    "Synopsis": "Returns quest reward history of player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/quest_reward_history",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "50",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Deduct Reward",
                     "Synopsis": "Deduct a reward from a given player.",
                     "HTTPMethod": "POST",
