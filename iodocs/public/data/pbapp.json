@@ -1207,7 +1207,7 @@
                 }
             ]
         },
-        {
+        /*{
             "name": "Quiz API",
             "methods": [
                 {
@@ -1402,7 +1402,7 @@
                     ]
                 }
             ]
-        },
+        },*/
         {
             "name": "Redeem API",
             "methods": [
