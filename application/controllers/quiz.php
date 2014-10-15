@@ -24,21 +24,21 @@ function convert_MongoId_id($obj) {
 function convert_MongoId_quiz_id($obj) {
     $_id = $obj['quiz_id'];
     unset($obj['quiz_id']);
-    $obj['id'] = $_id->{'$id'};
+    $obj['quiz_id'] = $_id->{'$id'};
     return $obj;
 }
 
 function convert_MongoId_question_id($obj) {
     $_id = $obj['question_id'];
     unset($obj['question_id']);
-    $obj['id'] = $_id->{'$id'};
+    $obj['question_id'] = $_id->{'$id'};
     return $obj;
 }
 
 function convert_MongoId_option_id($obj) {
     $_id = $obj['option_id'];
     unset($obj['option_id']);
-    $obj['id'] = $_id->{'$id'};
+    $obj['option_id'] = $_id->{'$id'};
     return $obj;
 }
 
