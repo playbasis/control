@@ -338,7 +338,7 @@ function processRequest(req, res, next) {
             host: baseHostUrl,
             port: baseHostPort,
             method: httpMethod,
-            path: apiConfig.publicPath + methodURL// + ((paramString.length > 0) ? '?' + paramString : "")
+            path: apiConfig.publicPath + encodeURI(methodURL)// + ((paramString.length > 0) ? '?' + paramString : "")
         };
 
     if (['POST','DELETE','PUT'].indexOf(httpMethod) !== -1) {
