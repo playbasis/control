@@ -23,9 +23,6 @@ class Quiz_model extends MY_Model
         )));
         if ($nin !== null) $this->mongo_db->where_not_in('_id', $nin);
         $result = $this->mongo_db->get('playbasis_quiz_to_client');
-        if($result){
-            array_walk_recursive($result, array($this, "change_image_path"));
-        }
 
         return $result;
     }
@@ -35,9 +32,7 @@ class Quiz_model extends MY_Model
         $this->mongo_db->select(array(),array('client_id','site_id','date_added','date_modified'));
         $this->mongo_db->where('_id', $quiz_id);
         $results = $this->mongo_db->get('playbasis_quiz_to_client');
-        if($results){
-            array_walk_recursive($results, array($this, "change_image_path"));
-        }
+
         return $results ? $results[0] : null;
     }
 
@@ -48,9 +43,7 @@ class Quiz_model extends MY_Model
         $this->mongo_db->where('quiz_id', $quiz_id);
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $results = $this->mongo_db->get('playbasis_quiz_to_player');
-        if($results){
-            array_walk_recursive($results, array($this, "change_image_path"));
-        }
+
         return $results ? $results[0] : null;
     }
 
@@ -62,9 +55,7 @@ class Quiz_model extends MY_Model
         $this->mongo_db->order_by(array('date_modified' => -1));
         if ($limit > 0) $this->mongo_db->limit($limit);
         $results = $this->mongo_db->get('playbasis_quiz_to_player');
-        if($results){
-            array_walk_recursive($results, array($this, "change_image_path"));
-        }
+
         return $results;
     }
 
@@ -135,49 +126,8 @@ class Quiz_model extends MY_Model
         $this->mongo_db->order_by(array('value' => 'DESC'));
         $this->mongo_db->limit($limit);
         $result = $this->mongo_db->get('playbasis_quiz_to_player');
-        if($result){
-            array_walk_recursive($results, array($this, "change_image_path"));
-        }
-        return $result;
-    }
 
-    private function change_image_path(&$item, $key)
-    {
-        if($key === "image"){
-            if(!empty($item)){
-                $item = $this->config->item('IMG_PATH').$item;
-            }else{
-                $item = $this->config->item('IMG_PATH')."no_image.jpg";
-            }
-        }
-        if($key === "description_image"){
-            if(!empty($item)){
-                $item = $this->config->item('IMG_PATH').$item;
-            }else{
-                $item = $this->config->item('IMG_PATH')."no_image.jpg";
-            }
-        }
-        if($key === "rank_image"){
-            if(!empty($item)){
-                $item = $this->config->item('IMG_PATH').$item;
-            }else{
-                $item = $this->config->item('IMG_PATH')."no_image.jpg";
-            }
-        }
-        if($key === "question_image"){
-            if(!empty($item)){
-                $item = $this->config->item('IMG_PATH').$item;
-            }else{
-                $item = $this->config->item('IMG_PATH')."no_image.jpg";
-            }
-        }
-        if($key === "option_image"){
-            if(!empty($item)){
-                $item = $this->config->item('IMG_PATH').$item;
-            }else{
-                $item = $this->config->item('IMG_PATH')."no_image.jpg";
-            }
-        }
+        return $result;
     }
 }
 ?>

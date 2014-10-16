@@ -80,7 +80,7 @@ class Quiz extends REST2_Controller
 
         $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
         $results = array_map('convert_MongoId_id', $results);
-        array_walk_recursive($results, array($this, "convert_mongo_object"));
+        array_walk_recursive($results, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -129,7 +129,7 @@ class Quiz extends REST2_Controller
             $result['date_join'] = $record['date_added']; // date which player start doing this quiz
         }
 
-        array_walk_recursive($result, array($this, "convert_mongo_object"));
+        array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -161,6 +161,7 @@ class Quiz extends REST2_Controller
             $index = $this->random_weight(array_map('index_weight', $results));
             $result = $results[$index];
         }
+        array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -182,7 +183,7 @@ class Quiz extends REST2_Controller
 
         $results = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
         $results = array_map('convert_MongoId_quiz_id', $results);
-        array_walk_recursive($results, array($this, "convert_mongo_object"));
+        array_walk_recursive($results, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -204,7 +205,7 @@ class Quiz extends REST2_Controller
 
         $results = $this->quiz_model->find_quiz_pending_by_player($this->client_id, $this->site_id, $pb_player_id, $limit);
         $results = array_map('convert_MongoId_quiz_id', $results);
-        array_walk_recursive($results, array($this, "convert_mongo_object"));
+        array_walk_recursive($results, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -248,6 +249,7 @@ class Quiz extends REST2_Controller
                 unset($option['explanation']);
             }
         }
+        array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -345,6 +347,7 @@ class Quiz extends REST2_Controller
             'grade' => $grade,
             'rewards' => $rewards
         );
+        array_walk_recursive($data, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -383,7 +386,7 @@ class Quiz extends REST2_Controller
             }
         }
 
-        array_walk_recursive($results, array($this, "convert_mongo_object"));
+        array_walk_recursive($results, array($this, "convert_mongo_object_and_image_path"));
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -540,6 +543,52 @@ class Quiz extends REST2_Controller
                 $item = $item->{'$id'};
             } else if (get_class($item) === 'MongoDate') {
                 $item =  datetimeMongotoReadable($item);
+            }
+        }
+    }
+
+    private function convert_mongo_object_and_image_path(&$item, $key)
+    {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else if (get_class($item) === 'MongoDate') {
+                $item =  datetimeMongotoReadable($item);
+            }
+        }
+        if($key === "image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+        }
+        if($key === "description_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+        }
+        if($key === "rank_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+        }
+        if($key === "question_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+        }
+        if($key === "option_image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
         }
     }
