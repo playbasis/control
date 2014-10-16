@@ -1,5 +1,8 @@
 <?php $attributes = array('id'=>'form');?>
 <?php echo form_open('quest/reset', $attributes);?>
+            <div class="success"></div>
+            <div class="warning"></div>
+            <input type="hidden" name="pb_player_id" value="<?php echo $_GET['pb_player_id']; ?>">
             <table class="list">
                 <thead>
                     <tr>
@@ -67,4 +70,34 @@
                     
                 </tbody>
             </table>
+            <div class="pull-right">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary" type="submit">Reset Quest</button>
+            </div>
         <?php echo form_close();?>
+
+<script type="text/javascript">
+    $('.success').hide();
+    $('.warning').hide();
+    $('#form').submit(function(event) {
+        $form = $(this);
+        $.ajax({
+            url: $form.attr('action'),
+            type: 'post',
+            dataType: 'json',
+            data: $('#form').serialize(),
+            success: function(data) {
+                if (data.success) {
+                    $('.success').show();
+                    $('.success').html(data.message);
+                    $('.warning').hide('');
+                } else {
+                    $('.success').hide();
+                    $('.warning').show(data.message);
+                    $('.warning').html(data.message);
+                }
+            }
+        });
+        event.preventDefault();
+    });
+</script>

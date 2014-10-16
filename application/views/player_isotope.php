@@ -23,7 +23,11 @@
 
                 <ul class="isot-player-actions">
 
+                    <?php if ($this->session->userdata('client_id').'' === '52ea1eab8d8c89401c0000d9') { ?>
+                    <li action="setting"><a href="#" style="text-decoration: none" onclick="openResetQuestModal('<?php echo $player['pb_player_id'] ?>')"><i class="icon-cogs"></i></a></li>
+                    <?php } else { ?>
                     <li action="setting"><i class="icon-cogs"></i></li>
+                    <?php } ?>
                     <li action="email"><i class="icon-envelope"></i></li>
                     <li action="gift"><i class="icon-gift"></i></li>
                     <li action="info"><i class="icon-info-sign"></i></li>
@@ -140,4 +144,26 @@
     <!-- End isot-player-container -->
 
     <?php } } ?>
+</div>
+
+<script type="text/javascript" >
+    function openResetQuestModal(pb_player_id){
+        $.ajax({
+            url: "<?php echo base_url(); ?>index.php/quest/getListForAjaxReset?pb_player_id="+pb_player_id
+        }).done(function(data) {
+            $('#reset-quest-modal .modal-body').html(data);
+            $('#reset-quest-modal').modal({backdrop:false});
+            $('#reset-quest-modal').modal('show');
+        });
+    }
+</script>
+
+<!-- Modal -->
+<div id="reset-quest-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Reset Quest</h3>
+    </div>
+    <div class="modal-body">
+    </div>
 </div>

@@ -905,8 +905,6 @@
 	text-decoration: none;
 }
 
-
-
 /* =========== [ Login page ] =========== */
 .regis-login-page .pbf-form .input-center input{
 	width: 70%;
@@ -922,6 +920,10 @@
 	margin-bottom: 100px;
 }
 
+/* ========== [ Reset Quest in Player Isotope] =========*/
+.isot-player-actions li.reset-quest-btn{
+    width:100px;
+}
 
 /* ====== [ regis-content ] ======== */
 
