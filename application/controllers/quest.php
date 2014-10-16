@@ -810,7 +810,7 @@ class Quest extends MY_Controller
         $this->render_page('quest_ajax');
     }
 
-    public function getListForAjaxReset($offset) {
+    public function getListForAjaxReset($offset=0) {
         $this->_getListForAjax($offset);
         $this->render_page('quest_ajax_reset');
     }
