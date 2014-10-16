@@ -695,7 +695,7 @@ class Player extends REST2_Controller
 		if($action)
 		{
 			$action_id = $this->action_model->findAction(array_merge($this->validToken, array(
-				'action_name' => $action
+				'action_name' => urldecode($action)
 			)));
 			if(!$action_id)
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
