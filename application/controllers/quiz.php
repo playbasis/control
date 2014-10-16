@@ -111,8 +111,8 @@ class Quiz extends REST2_Controller
         }
 
         $result = convert_MongoId_id($result);
-        $result['date_start'] = $result['date_start'] ? $result['date_start']->sec : null;
-        $result['date_expire'] = $result['date_expire'] ? $result['date_expire']->sec : null;
+        //$result['date_start'] = $result['date_start'] ? $result['date_start']->sec : null;
+        //$result['date_expire'] = $result['date_expire'] ? $result['date_expire']->sec : null;
         $questions = $result['questions'];
         $total_max_score = 0;
         if (is_array($questions)) foreach ($questions as $question) {
@@ -327,17 +327,18 @@ class Quiz extends REST2_Controller
             }
         }
 
+        /* check to see if grade has any reward associated with it */
+        $rewards = isset($grade['rewards']) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade['rewards']) : array();
+        $grade['rewards'] = $this->filter_levelup($rewards);
+
         /* update player's score */
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $total_score, $grade);
-
-        /* check to see if grade has any reward associated with it */
-        $rewards = isset($grade["rewards"]) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade["rewards"]) : null;
-        unset($grade['rewards']);
 
         /* publish the reward (if any) */
         if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $this->validToken['domain_name'], $reward);
 
         /* data */
+        unset($grade['rewards']);
         $data = array(
             'score' => $score,
             'max_score' => $max_score,
@@ -391,6 +392,15 @@ class Quiz extends REST2_Controller
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
+    }
+
+    private function filter_levelup($events) {
+        $result = array();
+        foreach ($events as $event) {
+            if ($event['event_type'] == 'LEVEL_UP') continue;
+            array_push($result, $event);
+        }
+        return $result;
     }
 
     private function update_rewards($client_id, $site_id, $pb_player_id, $cl_player_id, $rewards) {
@@ -542,7 +552,7 @@ class Quiz extends REST2_Controller
             if (get_class($item) === 'MongoId') {
                 $item = $item->{'$id'};
             } else if (get_class($item) === 'MongoDate') {
-                $item =  datetimeMongotoReadable($item);
+                $item = datetimeMongotoReadable($item);
             }
         }
     }
