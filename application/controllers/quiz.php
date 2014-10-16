@@ -111,8 +111,8 @@ class Quiz extends REST2_Controller
         }
 
         $result = convert_MongoId_id($result);
-        $result['date_start'] = $result['date_start'] ? $result['date_start']->sec : null;
-        $result['date_expire'] = $result['date_expire'] ? $result['date_expire']->sec : null;
+        //$result['date_start'] = $result['date_start'] ? $result['date_start']->sec : null;
+        //$result['date_expire'] = $result['date_expire'] ? $result['date_expire']->sec : null;
         $questions = $result['questions'];
         $total_max_score = 0;
         if (is_array($questions)) foreach ($questions as $question) {
@@ -539,7 +539,7 @@ class Quiz extends REST2_Controller
             if (get_class($item) === 'MongoId') {
                 $item = $item->{'$id'};
             } else if (get_class($item) === 'MongoDate') {
-                $item =  datetimeMongotoReadable($item);
+                $item = datetimeMongotoReadable($item);
             }
         }
     }
