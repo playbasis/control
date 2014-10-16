@@ -23,7 +23,7 @@
 
                 <ul class="isot-player-actions">
 
-                    <?php if ($this->session->userdata('client_id').'' === '52ea1eab8d8c89401c0000d9') { ?>
+                    <?php if ($reset_quest) { ?>
                     <li action="setting"><a href="#" style="text-decoration: none" onclick="openResetQuestModal('<?php echo $player['pb_player_id'] ?>')"><i class="icon-cogs"></i></a></li>
                     <?php } else { ?>
                     <li action="setting"><i class="icon-cogs"></i></li>

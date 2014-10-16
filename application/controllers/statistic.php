@@ -6,6 +6,8 @@ class Statistic extends CI_Controller
     {
         parent::__construct();
 
+        $this->load->model('Client_model');
+        $this->load->model('Plan_model');
         $this->load->model('User_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
@@ -273,6 +275,10 @@ class Statistic extends CI_Controller
         $this->data['current_page'] = $this->current_page;
         $this->data['limit'] = $this->limit;
         $this->data['total_players'] = $total_players;
+
+        $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+        $this->data['reset_quest'] = array_key_exists('reset_quest', $plan) && $plan['reset_quest'];
 
         $this->load->library('parser');
         $html = $this->parser->parse('player_isotope', $this->data, TRUE);
