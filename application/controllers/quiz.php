@@ -523,7 +523,7 @@ class Quiz extends REST2_Controller
     private function skip($results, &$skip_id) {
         $ret = array();
         foreach ($results as $result) {
-            if ($result['id'] == $skip_id) {
+            if ($result['quiz_id'] == $skip_id) {
                 $skip_id = $result;
                 continue;
             }
