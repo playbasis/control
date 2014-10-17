@@ -17,6 +17,8 @@ class Quiz extends MY_Controller
         }
 
         $this->load->model('Quiz_model');
+        $this->load->model('Badge_model');
+        $this->load->model('Reward_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -66,7 +68,12 @@ class Quiz extends MY_Controller
 
         if($client_id){
             $this->data['quizs'] = $this->Quiz_model->getQuizs($filter);
-
+            $badge_list = $this->Badge_model->getBadgeBySiteId(array("site_id" => $site_id));
+            $point_list = $this->Reward_model->getAnotherRewardBySiteId($site_id);
+            foreach ($this->data['quizs'] as &$quiz) {
+                $error = $this->checkQuizError($quiz, $badge_list, $point_list);
+                $quiz['error'] = !empty($error) ? 'The following rewards are not available: '.implode(',', $error) : null;
+            }
             $config['total_rows'] = $this->Quiz_model->getTotalQuizs($filter);
         }
 
@@ -91,7 +98,6 @@ class Quiz extends MY_Controller
 
         $this->data['main'] = 'quiz';
         $this->render_page('template');
-
     }
 
     public function insert(){
@@ -293,6 +299,32 @@ class Quiz extends MY_Controller
         $this->getList(0);
     }
 
+    private function checkQuizError($quiz, $badge_list, $point_list) {
+        $badges = array();
+        $customs = array();
+        if (!empty($quiz['grades'])) {
+            foreach($quiz['grades'] as $grade){
+                if(isset($grade["rewards"])){
+                    foreach($grade["rewards"] as $rk=>$rv){
+                        if($rk == "custom"){
+                            foreach ($rv as $b) {
+                                array_push($customs, $b['custom_id']);
+                            }
+                        }
+                        if($rk == "badge"){
+                            foreach ($rv as $b) {
+                                array_push($badges, $b['badge_id']);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $badges_avail = array_map('index_badge_id', $badge_list);
+        $customs_avail = array_map('index_reward_id', $point_list);
+        return array_merge(array_diff($badges, $badges_avail), array_diff($customs, $customs_avail));
+    }
+
     private function validateModify() {
 
         if ($this->User_model->hasPermission('modify', 'quiz')) {
@@ -301,5 +333,13 @@ class Quiz extends MY_Controller
             return false;
         }
     }
+}
+
+function index_badge_id($obj) {
+    return $obj['badge_id'];
+}
+
+function index_reward_id($obj) {
+    return $obj['reward_id'];
 }
 ?>
