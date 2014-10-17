@@ -145,6 +145,14 @@ class Player_model extends MY_Model
         $this->mongo_db->where('pb_player_id', $id);
         $this->mongo_db->delete('playbasis_reward_to_player');
 
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('pb_player_id', $id);
+        $this->mongo_db->delete('playbasis_redeem_to_player');
+
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('pb_player_id', $id);
+        $this->mongo_db->delete('playbasis_quiz_to_player');
+
         return true;
 	}
 	public function getPlaybasisId($clientData)
