@@ -136,7 +136,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function random_get()
+    public function random_get($quest_id_to_skip=null)
     {
         $this->benchmark->mark('start');
 
@@ -158,6 +158,10 @@ class Quiz extends REST2_Controller
 
         $result = null;
         if ($results) {
+            if ($quest_id_to_skip) {
+                $results = $this->skip($results, $quest_id_to_skip);
+                if (count($results) <= 0) array_push($results, $quest_id_to_skip); // we cannot skip if this is the only quiz left
+            }
             $index = $this->random_weight(array_map('index_weight', $results));
             $result = $results[$index];
         }
@@ -510,6 +514,18 @@ class Quiz extends REST2_Controller
                 'action_icon' => 'fa-trophy',
             ), $message), $domain_name, $site_id);
         }
+    }
+
+    private function skip($results, &$skip_id) {
+        $ret = array();
+        foreach ($results as $result) {
+            if ($result['id'] == $skip_id) {
+                $skip_id = $result;
+                continue;
+            }
+            array_push($ret, $result);
+        }
+        return $ret;
     }
 
     private function random_weight($weights) {
