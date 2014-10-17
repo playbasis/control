@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 define('EMAIL_FROM', 'info@playbasis.com');
+define('EMAIL_MAX_SENT', 3);
 define('DAYS_TO_BECOME_INACTIVE', 30);
 define('DAYS_TO_SEND_ANOTHER_EMAIL', 7);
 define('PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT', 0.9);
@@ -31,8 +32,8 @@ class Cron extends CI_Controller
 				$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id);
-				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
-				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
+				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times */
+				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL) && $this->email_model->countSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id) < EMAIL_MAX_SENT) {
 					/* email */
 					$from = EMAIL_FROM;
 					$to = $email;
@@ -72,8 +73,8 @@ $email = 'pechpras@playbasis.com';
 				$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS, $client_id);
-				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
-				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
+				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times  */
+				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL) && $this->email_model->countSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id) < EMAIL_MAX_SENT) {
 					/* email */
 					$from = EMAIL_FROM;
 					$to = $email;
@@ -117,8 +118,8 @@ $email = 'pechpras@playbasis.com';
 							$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 							$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE.$field, $client_id, $site_id);
-							/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
-							if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
+							/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times  */
+							if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL) && $this->email_model->countSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id) < EMAIL_MAX_SENT) {
 								/* email */
 								$from = EMAIL_FROM;
 								$to = $email;
@@ -153,7 +154,7 @@ $email = 'pechpras@playbasis.com';
 				$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION, $client_id);
-				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
+				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times  */
 				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
 					/* email */
 					$from = EMAIL_FROM;
@@ -193,8 +194,8 @@ $email = 'pechpras@playbasis.com';
 					$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 					$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD, $client_id);
-					/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
-					if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
+					/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times  */
+					if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL) && $this->email_model->countSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id) < EMAIL_MAX_SENT) {
 						/* email */
 						$from = EMAIL_FROM;
 						$to = $email;
@@ -222,8 +223,8 @@ $email = 'pechpras@playbasis.com';
 				$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id);
-				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email */
-				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL)) {
+				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times  */
+				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL) && $this->email_model->countSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id) < EMAIL_MAX_SENT) {
 					/* email */
 					$from = EMAIL_FROM;
 					$to = $email;

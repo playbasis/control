@@ -79,7 +79,7 @@ class Email_model extends MY_Model
 		return $this->mongo_db->insert('playbasis_email_log', $data);
 	}
 
-	public function findLatestSent($type, $client_id, $site_id=null, $site_id=0) {
+	public function findLatestSent($type, $client_id, $site_id=0) {
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('date_added'));
 		$where = array('client_id' => $client_id, 'type' => $type);
@@ -89,6 +89,15 @@ class Email_model extends MY_Model
 		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_email_log');
 		return $result ? $result[0]['date_added'] : null;
+	}
+
+	public function countSent($type, $client_id, $site_id=0) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('date_added'));
+		$where = array('client_id' => $client_id, 'type' => $type);
+		if ($site_id) $wherep['site_id'] = $site_id;
+		$this->mongo_db->where($where);
+		return $this->mongo_db->count('playbasis_email_log');
 	}
 }
 ?>
