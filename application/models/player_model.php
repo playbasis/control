@@ -131,27 +131,27 @@ class Player_model extends MY_Model
 
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('pb_player_id', $id);
-        $this->mongo_db->delete('playbasis_badge_to_player');
+        $this->mongo_db->delete_all('playbasis_badge_to_player');
 
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('pb_player_id', $id);
-        $this->mongo_db->delete('playbasis_goods_to_player');
+        $this->mongo_db->delete_all('playbasis_goods_to_player');
 
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('pb_player_id', $id);
-        $this->mongo_db->delete('playbasis_quest_to_player');
+        $this->mongo_db->delete_all('playbasis_quest_to_player');
 
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('pb_player_id', $id);
-        $this->mongo_db->delete('playbasis_reward_to_player');
+        $this->mongo_db->delete_all('playbasis_reward_to_player');
 
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('pb_player_id', $id);
-        $this->mongo_db->delete('playbasis_redeem_to_player');
+        $this->mongo_db->delete_all('playbasis_redeem_to_player');
 
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('pb_player_id', $id);
-        $this->mongo_db->delete('playbasis_quiz_to_player');
+        $this->mongo_db->delete_all('playbasis_quiz_to_player');
 
         return true;
 	}
