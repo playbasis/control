@@ -161,6 +161,7 @@ $route['Quest/joinAll'] = 'quest/joinAll';
 $route['Quiz/list'] = 'quiz/list';
 $route['Quiz/'.ANY_STRING.'/detail'] = 'quiz/detail/$1'; // ANY_STRING = quiz_id
 $route['Quiz/random'] = 'quiz/random';
+$route['Quiz/random/'.ANY_STRING] = 'quiz/random/$1'; // ANY_STRING = quiz_id
 $route['Quiz/player/'.ANY_STRING.'/'.ANY_NUMBER] = 'quiz/player_recent/$1/$2'; // ANY_STRING = player_id
 $route['Quiz/player/'.ANY_STRING] = 'quiz/player_recent/$1/5'; // ANY_STRING = player_id
 $route['Quiz/player/'.ANY_STRING.'/pending/'.ANY_NUMBER] = 'quiz/player_pending/$1/$2'; // ANY_STRING = player_id
