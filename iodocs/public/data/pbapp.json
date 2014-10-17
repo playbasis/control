@@ -1238,6 +1238,202 @@
             ]
         },
         {
+            "name": "Quiz API",
+            "methods": [
+                {
+                    "MethodName": "A List of Active Quizzes",
+                    "Synopsis": "Returns a list of active quizzes.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/list",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Get Detail of a Quiz",
+                    "Synopsis": "Get detail of a quiz.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/:id/detail",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz id"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Random Get a Quiz for a Player",
+                    "Synopsis": "Randomly get one quiz of a list of active quizzes for a given player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/random/",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List Recent Quizzes Done by the Player",
+                    "Synopsis": "List recent quizzes done by the player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/player/:player_id/:limit",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "Y",
+                            "Default": "5",
+                            "Type": "string",
+                            "Description": "limit number of quizzes"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List Pending Quizzes by the Player",
+                    "Synopsis": "List pending quizzes by the player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/player/:player_id/pending/:limit",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "Y",
+                            "Default": "5",
+                            "Type": "string",
+                            "Description": "limit number of quizzes"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Get a Question from a Quiz",
+                    "Synopsis": "Get a question with a list of options for a given quiz.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/:id/question",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz id"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Answer a Question from a Quiz",
+                    "Synopsis": "Submit a player's answer for a question for a given quiz.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quiz/:id/answer",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz id"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "question_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "question id"
+                        },
+                        {
+                            "Name": "option_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "option id"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Rank Players by Their Scores for a Quiz",
+                    "Synopsis": "Rank players by their scores for a give quiz.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/:id/rank/:limit",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz id"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "Y",
+                            "Default": "5",
+                            "Type": "string",
+                            "Description": "limit number of players"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "Redeem API",
             "methods": [
                 {

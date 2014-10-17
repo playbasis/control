@@ -17,7 +17,7 @@ function index_pb_player_id($obj) {
 function convert_MongoId_id($obj) {
     $_id = $obj['_id'];
     unset($obj['_id']);
-    $obj['id'] = $_id->{'$id'};
+    $obj['quiz_id'] = $_id->{'$id'};
     return $obj;
 }
 
@@ -87,7 +87,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
-    public function detail_get($quiz_id)
+    public function detail_get($quiz_id = '')
     {
         $this->benchmark->mark('start');
 
@@ -168,7 +168,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
-    public function player_recent_get($player_id, $limit)
+    public function player_recent_get($player_id = '', $limit = 10)
     {
         $this->benchmark->mark('start');
 
@@ -190,7 +190,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
-    public function player_pending_get($player_id, $limit)
+    public function player_pending_get($player_id = '', $limit = 10)
     {
         $this->benchmark->mark('start');
 
@@ -212,7 +212,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
-    public function question_get($quiz_id)
+    public function question_get($quiz_id = '')
     {
         $this->benchmark->mark('start');
 
@@ -248,15 +248,16 @@ class Quiz extends REST2_Controller
                 unset($option['score']);
                 unset($option['explanation']);
             }
+            array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
         }
-        array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
+
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $question, 'processing_time' => $t)), 200);
     }
 
-    public function answer_post($quiz_id)
+    public function answer_post($quiz_id = '')
     {
         $this->benchmark->mark('start');
 
@@ -355,7 +356,7 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $data, 'processing_time' => $t)), 200);
     }
 
-    public function rank_get($quiz_id, $limit)
+    public function rank_get($quiz_id = '', $limit = 10)
     {
         $this->benchmark->mark('start');
 
@@ -568,7 +569,11 @@ class Quiz extends REST2_Controller
         }
         if($key === "image"){
             if(!empty($item)){
-                $item = $this->config->item('IMG_PATH').$item;
+                $pattern = '#^'.$this->config->item('IMG_PATH').'#';
+                preg_match($pattern, $item, $matches);
+                if(!$matches){
+                    $item = $this->config->item('IMG_PATH').$item;
+                }
             }else{
                 $item = $this->config->item('IMG_PATH')."no_image.jpg";
             }
