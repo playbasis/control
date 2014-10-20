@@ -377,7 +377,8 @@ class Quest extends REST2_Controller
                     }
                 }
                 if($c["completion_type"] == "POINT"){
-                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
+//                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
+                    $point_a = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $c["completion_id"], $validToken['site_id'], '', $quest_expire);
 
                     if(isset($point_a[0]['value'])){
                         $point = $point_a[0]['value'];
@@ -398,7 +399,8 @@ class Quest extends REST2_Controller
                     }
                 }
                 if($c["completion_type"] == "CUSTOM_POINT"){
-                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
+//                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
+                    $point_a = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $c["completion_id"], $validToken['site_id'], '', $quest_expire);
 
                     if(isset($point_a[0]['value'])){
                         $custom_point = $point_a[0]['value'];
