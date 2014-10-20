@@ -377,7 +377,7 @@ class Quest extends REST2_Controller
                     }
                 }
                 if($c["completion_type"] == "POINT"){
-//                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
+                    //$point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
                     $point_a = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $c["completion_id"], $validToken['site_id'], '', $quest_expire);
 
                     if(isset($point_a[0]['value'])){
@@ -385,6 +385,7 @@ class Quest extends REST2_Controller
                     }else{
                         $point = 0;
                     }
+
                     if((int)$c["completion_value"] > (int)$point){
                         $event = array(
                             'event_type' => 'POINT_NOT_ENOUGH',
@@ -399,7 +400,7 @@ class Quest extends REST2_Controller
                     }
                 }
                 if($c["completion_type"] == "CUSTOM_POINT"){
-//                    $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
+                    //$point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
                     $point_a = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $c["completion_id"], $validToken['site_id'], '', $quest_expire);
 
                     if(isset($point_a[0]['value'])){
@@ -407,6 +408,7 @@ class Quest extends REST2_Controller
                     }else{
                         $custom_point = 0;
                     }
+
                     if((int)$c["completion_value"] > (int)$custom_point){
                         $event = array(
                             'event_type' => 'CUSTOM_POINT_NOT_ENOUGH',
@@ -700,19 +702,19 @@ class Quest extends REST2_Controller
             'cl_player_id' => $cl_player_id
         )));
 
-        $site_id = new MongoId("53a9422f988040355a8b45d3");
-        $reward_id = new MongoId("53bbecbb988040116c8b462f");
-        $starttime = new MongoDate(strtotime("2014-01-01"));
-        $endtime = new MongoDate(strtotime("2014-10-15"));
+//        $site_id = new MongoId("53a9422f988040355a8b45d3");
+//        $reward_id = new MongoId("53bbecbb988040116c8b462f");
+//        $starttime = new MongoDate(strtotime("2014-01-01"));
+//        $endtime = new MongoDate(strtotime("2014-10-15"));
+//
+//        $res = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $reward_id, $site_id, $starttime, $endtime);
+//
+//        var_dump($res);
 
-        $res = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $reward_id, $site_id, $starttime, $endtime);
+        $apiResult = $this->QuestProcess($pb_player_id, $validToken);
 
-        var_dump($res);
-
-        //$apiResult = $this->QuestProcess($pb_player_id, $validToken);
-
-//        $this->response($this->resp->setRespond($apiResult), 200);
-        $this->response($this->resp->setRespond($res), 200);
+        $this->response($this->resp->setRespond($apiResult), 200);
+//        $this->response($this->resp->setRespond($res), 200);
     }
 
     /**

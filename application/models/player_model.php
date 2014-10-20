@@ -8,6 +8,18 @@ function cmp1($a, $b) {
 	return ($a['_id'] < $b['_id']) ? -1 : 1;
 }
 
+function change_key_for_getpoint_from_datetime($obj) {
+    $_id = $obj['_id'];
+    unset($obj['_id']);
+    $obj['reward_id'] = $_id->{'$id'};
+
+    $value = $obj['sum'];
+    unset($obj['sum']);
+    $obj['value'] = $value;
+
+    return $obj;
+}
+
 class Player_model extends MY_Model
 {
 	public function __construct()
@@ -245,14 +257,16 @@ class Player_model extends MY_Model
             }
         }
 
-        //$condition = array_merge($datecondition, array('reward_id' => $reward_id, 'pb_player_id' => $pb_player_id));
-        $condition = array('reward_id' => $reward_id, 'pb_player_id' => $pb_player_id);
+        $condition = array_merge($datecondition, array('reward_id' => $reward_id, 'pb_player_id' => $pb_player_id));
 
         $query = array(
             array('$match' => $condition),
-            array('$group' => array( "_id" => null, "sum" => array('$sum' => '$value'))),
+            array('$group' => array( "_id" => '$reward_id', "sum" => array('$sum' => '$value'))),
         );
         $result = $this->mongo_db->aggregate('playbasis_event_log',$query);
+
+        $result = $result['result'];
+        $result = array_map('change_key_for_getpoint_from_datetime', $result);
 
         return $result;
     }
@@ -1488,6 +1502,5 @@ class Player_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_quest_to_player');
         return $result ? $result[0] : array();
     }
-
 }
 ?>
