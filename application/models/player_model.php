@@ -221,6 +221,42 @@ class Player_model extends MY_Model
 
 		return $result;
 	}
+    public function getPlayerPointFromDateTime($pb_player_id, $reward_id, $site_id, $starttime="", $endtime="")
+    {
+        $this->set_site_mongodb($site_id);
+
+        $datecondition = array();
+        $datestartcondition = array();
+        $dateendcondition = array();
+        if($starttime != ''){
+            $datestartcondition = array('date_added' => array('$gt' => $starttime));
+        }
+        if($endtime != ''){
+            $dateendcondition = array('date_added' => array('$lte' => $endtime));
+        }
+
+        if($datestartcondition && $dateendcondition){
+            $datecondition = array( '$and' => array( $datestartcondition, $dateendcondition));
+        }else{
+            if($datestartcondition){
+                $datecondition = $datecondition;
+            }else{
+                $datecondition = $dateendcondition;
+            }
+        }
+
+        //$condition = array_merge($datecondition, array('reward_id' => $reward_id, 'pb_player_id' => $pb_player_id));
+        $condition = array('reward_id' => $reward_id, 'pb_player_id' => $pb_player_id);
+
+        $query = array(
+            array('$match' => $condition),
+            array('$group' => array( "_id" => null, "sum" => array('$sum' => '$value'))),
+        );
+        $result = $this->mongo_db->aggregate('playbasis_event_log',$query);
+
+        return $result;
+    }
+
 	public function getLastActionPerform($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);
