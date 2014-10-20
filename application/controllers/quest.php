@@ -333,6 +333,15 @@ class Quest extends REST2_Controller
             }
         }
 
+        $quest_expire = null;
+        if($quest){
+            foreach($quest["condition"] as $qc){
+                if($qc["condition_type"] == "DATETIME_END"){
+                    $quest_expire = new MongoDate(strtotime($qc["condition_value"]));
+                }
+            }
+        }
+
         $missionEvent = array();
 
         $player_mission = $this->player_model->getMission($pb_player_id, $quest["_id"], $mission["mission_id"], $validToken['site_id']);
@@ -344,7 +353,8 @@ class Quest extends REST2_Controller
                 if($c["completion_type"] == "ACTION"){
 
                     $datetime_check = (isset($player_mission["missions"][0]["date_modified"]))?$player_mission["missions"][0]["date_modified"]:new MongoDate(time());
-                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
+//                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
+                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check, $quest_expire);
 
                     if((int)$c["completion_value"] > (int)$action["count"]){
                         $event = array(
