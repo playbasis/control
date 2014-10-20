@@ -102,7 +102,7 @@ class Tracker_model extends MY_Model
             'reward_id'		=> (isset($input['reward_id']))	? $input['reward_id'] : null,
             'reward_name'	=> (isset($input['reward_name'])) ? $input['reward_name'] : null,
             'item_id'		=> null,
-            'value'			=> $input['reward_value'],
+            'value'			=> intval($input['reward_value']),
             'objective_id'	=> null,
             'objective_name'=> null,
             'quest_id'		=> $input['quest_id'],
