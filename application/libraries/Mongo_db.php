@@ -1139,6 +1139,20 @@ class Mongo_db
 			$this->_show_error('Insert of data into MongoDB failed: ' . $exception->getMessage(), 500);
 		}
 	}
+
+    public function aggregate($collection='',$query = array()){
+        try
+        {
+            return $this->_dbhandle
+                ->{$collection}
+                ->aggregate($query);
+        }
+
+        catch (MongoCursorException $exception)
+        {
+            $this->_show_error('Insert of data into MongoDB failed: ' . $exception->getMessage(), 500);
+        }
+    }
 	
 	/**
 	 * Update a document.
