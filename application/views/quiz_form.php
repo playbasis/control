@@ -37,7 +37,7 @@
             $qwdata = array('name' => 'weight', 'id' => 'quiz_weight','value' => isset($quiz)?$quiz['weight']:'', "placeholder" => $this->lang->line('weight'), "class"=>"form-control");
 
             $attributes = array('id' => 'form_quiz');
-            if(isset($quiz)){
+            if(isset($quiz['_id'])){
                 echo form_open_multipart('quiz/edit/'.$quiz['_id']."",$attributes);
             }else{
                 echo form_open_multipart('quiz/insert',$attributes);
