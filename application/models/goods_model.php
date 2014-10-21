@@ -316,7 +316,7 @@ class Goods_model extends MY_Model
 
     public function addGoodsToClient_bulk($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        return $this->mongo_db->batch_insert('playbasis_goods_to_client', $data);
+        return $this->mongo_db->batch_insert('playbasis_goods_to_client', $data, array("w" => 0, "j" => false));
     }
 
     public function editGoods($goods_id, $data) {
