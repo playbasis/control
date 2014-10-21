@@ -91,6 +91,36 @@ class Goods extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_file');
             }
 
+            if(isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+
+                $maxsize    = 2097152;
+                $csv_mimetypes = array(
+                    'text/csv',
+                    'text/plain',
+                    'application/csv',
+                    'text/comma-separated-values',
+                    'application/excel',
+                    'application/vnd.ms-excel',
+                    'application/vnd.msexcel',
+                    'text/anytext',
+                    'application/octet-stream',
+                    'application/txt',
+                );
+
+                if(($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                    $this->data['message'] = $this->lang->line('error_file_too_large');
+                }
+
+                if(!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                    $this->data['message'] = $this->lang->line('error_type_accepted');
+                }
+
+                $handle = fopen($_FILES['file']['tmp_name'], "r");
+                if (!$handle) {
+                    $this->data['message'] = $this->lang->line('error_upload');
+                }
+            }
+
             $point_empty = true;
             $badge_empty = true;
             $custom_empty = true;
@@ -121,11 +151,6 @@ class Goods extends MY_Controller
 
             if($point_empty && $badge_empty && $custom_empty){
                 $this->data['message'] = $this->lang->line('error_redeem');
-            }
-
-            $handle = fopen($_FILES['file']['tmp_name'], "r");
-            if (!$handle) {
-                $this->data['message'] = $this->lang->line('error_upload');
             }
 
             if ($this->User_model->getClientId() && $this->User_model->getSiteId()) {
