@@ -380,6 +380,11 @@ $(document).ready(function(){
         $('.paginate_button').click(function(){
             var page = $(this).attr("data-page");
 
+            $('.member_wrapper').append('<div class="backgrund-load"><div class="loading-img"><img src="<?php echo base_url();?>image/white_loading.gif" /></div></div>');
+
+            $(".backgrund-load").css({"width": $("#members").width(), "height": $("#members").height(), "top": $("#members").height()*(-1)});
+            $(".loading-img").css({"top": ($("#members").height()/3)});
+
             $.ajax({
                 type: "GET",
                 url: baseUrlPath+"goods/getGoodsGroupAjax/<?php echo $goods_id; ?>",

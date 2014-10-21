@@ -82,3 +82,43 @@
     text-align: center;
     text-decoration: none !important;
 }
+
+.backgrund-load{
+    opacity: 0.5;
+    visibility: visible;
+    position: relative;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: 2000;
+    background-color: black;
+}
+.loading-img{
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+    overflow: auto;
+    z-index: 2001;
+
+    top: 150px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+    text-align: center;
+    display: block;
+}
+.loading-img img {
+    background: darkgray;
+    border-radius: 75px;
+    opacity: 1;
+    visibility: visible;
+    display: inline-block;
+    outline: none;
+    text-align: left;
+    position: relative;
+    vertical-align: middle;
+    margin: 0;
+    height: 100px;
+    width: 100px;
+}
