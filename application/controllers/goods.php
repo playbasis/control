@@ -515,23 +515,16 @@ class Goods extends MY_Controller
                 );
             }
         }else{
-            $groups = $this->Goods_model->getGroups($this->session->userdata('site_id'));
+            $results = $this->Goods_model->getGroupsAggregate($this->session->userdata('site_id'));
             $ids = array();
             $group_name = array();
-            foreach ($groups as $group => $each) {
-                $first = array_shift($each); // skip first one
-                $first_id = $first['_id']->{'$id'};
-                $group_name[$first_id] = array('group' => $group, 'quantity' => $first['quantity']);
-                if ($each) { // process the remaining
-                    while ($next = array_shift($each)) {
-                        array_push($ids, $next['_id']);
-                        if ($next['quantity'] !== null) {
-                            $group_name[$first_id]['quantity'] += $next['quantity'];
-                        } else {
-                            $group_name[$first_id]['quantity'] = null;
-                        }
-                    }
-                }
+            foreach ($results as $i => $result) {
+                $group = $result['_id']['group'];
+                $quantity = $result['quantity'];
+                $list = $result['list'];
+                $first = array_shift($list); // skip first one
+                $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+                $ids = array_merge($ids, $list);
             }
             $goods_total = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id, 'sort' => 'sort_order', '$nin' => $ids));
             $goods_list = $this->Goods_model->getGoodsBySiteId(array('site_id' => $site_id, 'limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order', '$nin' => $ids));

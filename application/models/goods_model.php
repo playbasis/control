@@ -166,6 +166,7 @@ class Goods_model extends MY_Model
         return $total;
     }
 
+    /* Deprecated: use getGroupsAggregate instead */
     public function getGroups($site_id) {
         $this->mongo_db->select(array('group','quantity'));
         $this->mongo_db->where('deleted', false);
@@ -182,6 +183,18 @@ class Goods_model extends MY_Model
             }
         }
         return $groups;
+    }
+
+    public function getGroupsAggregate($site_id) {
+        $results = $this->mongo_db->aggregate('playbasis_goods_to_client', array(
+            array(
+                '$project' => array('group' => 1, 'quantity' => 1)
+            ),
+            array(
+                '$group' => array('_id' => array('group' => '$group'), 'quantity' => array('$sum' => '$quantity'), 'list' => array('$addToSet' => '$_id'))
+            ),
+        ));
+        return $results ? $results['result'] : array();
     }
 
     public function checkExists($site_id, $group) {
