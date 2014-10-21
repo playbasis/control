@@ -658,7 +658,7 @@ class Goods extends MY_Controller
 
         if (!empty($goods_info) && array_key_exists('group', $goods_info)) {
 
-            $limit_group = 2;
+            $limit_group = 10;
 
             $data = array(
                 'site_id' => $this->User_model->getSiteId(),
@@ -861,7 +861,7 @@ class Goods extends MY_Controller
     public function getGoodsGroupAjax($goods_id = null){
 
         $offset = $this->input->get('page') ? $this->input->get('page') - 1 : 0;
-        $limit = 2;
+        $limit = 10;
 
         if (isset($goods_id) && ($goods_id != 0)) {
             if($this->User_model->getClientId()){
