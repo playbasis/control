@@ -135,9 +135,6 @@
     <link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>javascript/colorpicker/css/colorpicker.css" />
     <script type="text/javascript" src="<?php echo base_url();?>javascript/colorpicker/js/colorpicker.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>javascript/dataTables/css/jquery.dataTables.css">
-    <script type="text/javascript" charset="utf8" src="<?php echo base_url();?>javascript/dataTables/js/jquery.dataTables.min.js"></script>
-
 </head>
 <body>
 
