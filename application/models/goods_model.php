@@ -188,6 +188,12 @@ class Goods_model extends MY_Model
     public function getGroupsAggregate($site_id) {
         $results = $this->mongo_db->aggregate('playbasis_goods_to_client', array(
             array(
+                '$match' => array(
+                    'deleted' => false,
+                    'site_id' => $site_id,
+                ),
+            ),
+            array(
                 '$project' => array('group' => 1, 'quantity' => 1)
             ),
             array(
