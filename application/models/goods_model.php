@@ -191,6 +191,7 @@ class Goods_model extends MY_Model
                 '$match' => array(
                     'deleted' => false,
                     'site_id' => $site_id,
+                    'group' => array('$exists' => true),
                 ),
             ),
             array(
