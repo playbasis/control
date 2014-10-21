@@ -7,6 +7,7 @@ class Report_goods extends MY_Controller{
 
 		parent::__construct();
 		$this->load->model('User_model');
+		$this->load->model('Goods_model');
 		if(!$this->User_model->isLogged()){
 			redirect('/login','refresh');
 		}
@@ -103,13 +104,16 @@ class Report_goods extends MY_Controller{
             $filter_username = '';
         }
 
+        $goods = null;
+        $is_group = false;
         if ($this->input->get('goods_id')) {
             $filter_goods_id = $this->input->get('goods_id');
+            $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
+            $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=".$filter_goods_id;
         } else {
             $filter_goods_id = '';
         }
-
 
         $limit =($this->input->get('limit')) ? $this->input->get('limit') : $per_page;
 
@@ -122,7 +126,8 @@ class Report_goods extends MY_Controller{
             'date_start'             => $filter_date_start,
             'date_expire'            => $filter_date_end,
             'username'               => $filter_username,
-            'goods_id'               => $filter_goods_id,
+            'goods_id'               => ($is_group ? $goods['group'] : $filter_goods_id),
+            'is_group'               => $is_group,
             'start'                  => $offset,
             'limit'                  => $limit
         );
@@ -171,22 +176,13 @@ class Report_goods extends MY_Controller{
         $this->data['goods_available'] = array();
 
         if($client_id){
-            $data_filter['client_id'] = $client_id;
-            $data_filter['site_id'] = $site_id;
-
-            $allGoodsAvailable = $this->Report_goods_model->getAllGoodsFromSite($data_filter);
-
+            $allGoodsAvailable = $this->getList($site_id);
             $all_goods = array();
-            foreach($allGoodsAvailable as $good){
-                if(isset($good['goods_id']) && $good['goods_id']!=null){
-                    $aGood = $this->Report_goods_model->getGoodsName($good['goods_id']);
-                    if(!in_array($aGood, $all_goods)){
-                        $all_goods[] = $aGood;
-                    }
-                }
+            foreach($allGoodsAvailable as $goods){
+                $is_group = array_key_exists('group', $goods);
+                $all_goods[] = array('_id' => $goods['goods_id']->{'$id'}, 'name' => $goods[$is_group ? 'group' : 'name']);
             }
             $this->data['goods_available'] = $all_goods;
-
         }
 
         $config['base_url'] = $url.$parameter_url;
@@ -227,9 +223,21 @@ class Report_goods extends MY_Controller{
         $this->data['main'] = 'report_goods';
         $this->load->vars($this->data);
         $this->render_page('template');
+	}
 
-
-
+	private function getList($site_id) {
+		$results = $this->Goods_model->getGroupsAggregate($site_id);
+		$ids = array();
+		$group_name = array();
+		foreach ($results as $i => $result) {
+			$group = $result['_id']['group'];
+			$quantity = $result['quantity'];
+			$list = $result['list'];
+			$first = array_shift($list); // skip first one
+			$group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+			$ids = array_merge($ids, $list);
+		}
+		return $this->Goods_model->getGoodsBySiteId(array('site_id' => $site_id, 'sort' => 'sort_order', '$nin' => $ids));
 	}
 
 	private function validateAccess(){
