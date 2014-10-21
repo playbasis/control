@@ -25,7 +25,7 @@
                 </span>
                 <span>
                         <?php echo $this->lang->line('filter_reward_id'); ?>
-                    <select name="filter_action_id">
+                    <select name="filter_goods_id">
                         <option value="0"><?php echo "All"; ?></option>
                         <?php foreach ($goods_available as $good){?>
                             <?php if ($good['_id'] == $filter_goods_id) { ?>
@@ -119,10 +119,10 @@ function filter() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+    var filter_goods_id = $('select[name=\'filter_goods_id\']').attr('value');
 
-    if (filter_action_id != 0) {
-        url += '&goods_id=' + encodeURIComponent(filter_action_id);
+    if (filter_goods_id != 0) {
+        url += '&goods_id=' + encodeURIComponent(filter_goods_id);
     }
 
     location = url;
