@@ -1035,10 +1035,10 @@ class Mongo_db
 	/**
 	 * Insert.
 	 *
-	 * Insert a new document
+	 * Insert a set of documents
 	 *
 	 * <code>
-	 * $this->mongo_db->insert('foo', array('foo'=>'bar'));
+	 * $this->mongo_db->batch_insert('foo', array('foo'=>'bar'));
 	 * </code>
 	 *
 	 * @param string $collection Name of the collection
@@ -1565,8 +1565,22 @@ class Mongo_db
 			$this->_show_error('MongoDB command failed to execute: ' . $exception->getMessage(), 500);
 		}
 	}
-	
-	/**
+
+	public function aggregate($collection, $ops = array())
+	{
+		try
+		{
+			$execute = $this->_dbhandle->{$collection}->aggregate($ops);
+			return $execute;
+		}
+
+		catch (MongoCursorException $exception)
+		{
+			$this->_show_error('MongoDB aggregate failed to execute: ' . $exception->getMessage(), 500);
+		}
+	}
+
+    /**
 	 * Add indexes.
 	 *
 	 * Ensure an index of the keys in a collection with optional parameters. To set values to descending order, you must pass values of either -1, FALSE, 'desc', or 'DESC', else they will be set to 1 (ASC).
