@@ -35,7 +35,7 @@ class Report_goods_model extends MY_Model{
             $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lte' => new MongoDate(strtotime($data['date_expire']))));
         }
 
-        if (isset($data['is_group'])) {
+        if (isset($data['is_group']) && $data['is_group']) {
             if (isset($data['goods_id']) && $data['goods_id'] != ''){
                 $ids = $this->listGoodsIdByGroup($data['goods_id']);
                 $this->mongo_db->where_in('goods_id', array_map('index_goods_id', $ids));
@@ -81,7 +81,7 @@ class Report_goods_model extends MY_Model{
             $this->mongo_db->where('date_added', array('$gt' => new MongoDate(strtotime($data['date_start'])), '$lte' => new MongoDate(strtotime($data['date_expire']))));
         }
 
-        if ($data['is_group']) {
+        if (isset($data['is_group']) && $data['is_group']) {
             if (isset($data['goods_id']) && $data['goods_id'] != ''){
                 $ids = $this->listGoodsIdByGroup($data['goods_id']);
                 $this->mongo_db->where_in('goods_id', array_map('index_goods_id', $ids));
