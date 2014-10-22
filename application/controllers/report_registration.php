@@ -103,15 +103,6 @@ class Report_registration extends MY_Controller{
             $filter_username = '';
         }
 
-        /*
-        if ($this->input->get('goods_id')) {
-            $filter_goods_id = $this->input->get('goods_id');
-            $parameter_url .= "&goods_id=".$filter_goods_id;
-        } else {
-            $filter_goods_id = '';
-        }
-        */
-
         // --> NEW INPUT!
 
         if($this->input->get('filter_site_id')){
@@ -144,8 +135,6 @@ class Report_registration extends MY_Controller{
         $result = array();
 
         if($client_id){
-        	// $report_total = $this->Report_goods_model->getTotalReportGoods($data);
-        	// $results = $this->Report_goods_model->getReportGoods($data);
 
             $this->load->model('Report_player_model');
 
@@ -167,11 +156,6 @@ class Report_registration extends MY_Controller{
             }else{
                 $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
             }
-        	/*if (!empty($result['image']) && $result['image'] && ($result['image'] != 'HTTP/1.1 404 Not Found' && $result['image'] != 'HTTP/1.0 403 Forbidden')) {
-                $thumb = $result['image'];
-            } else {
-                $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }*/
 
             $this->data['reports'][] = array(
                 'cl_player_id'      => $result['cl_player_id'],
@@ -233,35 +217,6 @@ class Report_registration extends MY_Controller{
         } else {
             return false;
         }
-    }
-
-    private function xlsBOF()
-    {
-        echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
-    }
-    private function xlsEOF()
-    {
-        echo pack("ss", 0x0A, 0x00);
-    }
-    private function xlsWriteNumber($Row, $Col, $Value)
-    {
-        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);echo pack("d", $Value);
-    }
-    private function xlsWriteLabel($Row, $Col, $Value )
-    {
-        $L = strlen($Value);echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
-        echo $Value;
-    }
-
-    function download_send_headers($filename) {
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Content-Type: application/force-download");
-        header("Content-Type: application/octet-stream");
-        header("Content-Type: application/download");
-        header("Content-Disposition: attachment;filename={$filename}");
-        header("Content-Transfer-Encoding: binary");
     }
 
     public function actionDownload() {
@@ -334,25 +289,32 @@ class Report_registration extends MY_Controller{
             );
         }
         $results = $this->data['reports'];
-       
-        $this->download_send_headers("RegisterReport_" . date("YmdHis") . ".xls");
-        $this->xlsBOF();
-        $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
-        $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
-        $this->xlsWriteLabel(0,2,$this->lang->line('column_email'));
-        $this->xlsWriteLabel(0,3,$this->lang->line('column_date_registered'));
-        $xlsRow = 1;
-        
+
+        $this->load->helper('export_data');
+
+        $exporter = new ExportDataExcel('browser', "RegisterReport_" . date("YmdHis") . ".xls");
+
+        $exporter->initialize(); // starts streaming data to web browser
+
+        $exporter->addRow(array(
+                $this->lang->line('column_player_id'),
+                $this->lang->line('column_username'),
+                $this->lang->line('column_email'),
+                $this->lang->line('column_date_registered')
+            )
+        );
+
         foreach($results as $row)
         {
-            $this->xlsWriteNumber($xlsRow,0,$row['cl_player_id']);
-            $this->xlsWriteLabel($xlsRow,1,$row['username']);
-            $this->xlsWriteLabel($xlsRow,2,$row['email']);
-            $this->xlsWriteLabel($xlsRow,3,$row['date_added']);
-            $xlsRow++;
+            $exporter->addRow(array(
+                    $row['cl_player_id'],
+                    $row['username'],
+                    $row['email'],
+                    $row['date_added']
+                )
+            );
         }
-
-        $this->xlsEOF();
+        $exporter->finalize();
     }
 
 }
