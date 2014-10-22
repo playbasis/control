@@ -305,8 +305,12 @@ class Report_goods extends MY_Controller{
             $filter_username = '';
         }
 
+        $goods = null;
+        $is_group = false;
         if ($this->input->get('goods_id')) {
             $filter_goods_id = $this->input->get('goods_id');
+            $goods = $this->Goods_model->getGoodsOfClientPrivate($filter_goods_id);
+            $is_group = array_key_exists('group', $goods);
             $parameter_url .= "&goods_id=".$filter_goods_id;
         } else {
             $filter_goods_id = '';
@@ -321,7 +325,8 @@ class Report_goods extends MY_Controller{
             'date_start'             => $filter_date_start,
             'date_expire'            => $filter_date_end,
             'username'               => $filter_username,
-            'goods_id'              => $filter_goods_id,
+            'goods_id'               => ($is_group ? $goods['group'] : $filter_goods_id),
+            'is_group'               => $is_group,
         );
 
         $report_total = 0;
@@ -330,7 +335,6 @@ class Report_goods extends MY_Controller{
 
         if($client_id){
             $report_total = $this->Report_goods_model->getTotalReportGoods($data);
-
             $results = $this->Report_goods_model->getReportGoods($data);
         }
 
@@ -400,11 +404,4 @@ class Report_goods extends MY_Controller{
 
         $this->xlsEOF();
     }
-
-
-
-
-
-
-
 }
