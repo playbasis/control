@@ -239,13 +239,17 @@ class Quiz extends REST2_Controller
         $result = $this->quiz_model->find_quiz_by_quiz_and_player($this->client_id, $this->site_id, $quiz_id, $pb_player_id);
         $completed_questions = $result ? $result['questions'] : array();
         $question = null;
-        foreach ($quiz['questions'] as $q) {
+        $index = -1;
+        foreach ($quiz['questions'] as $i => $q) {
             if (!in_array($q['question_id'], $completed_questions)) {
                 $question = $q; // get the first question in the quiz that the player has not submitted an answer
+                $index = $i;
                 break;
             }
         }
         if ($question) {
+            $question['index'] = $index+1;
+            $question['total'] = count($quiz['questions']);
             $question = convert_MongoId_question_id($question);
             foreach ($question['options'] as &$option) {
                 $option = convert_MongoId_option_id($option);
@@ -254,7 +258,6 @@ class Quiz extends REST2_Controller
             }
             array_walk_recursive($question, array($this, "convert_mongo_object_and_image_path"));
         }
-
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
