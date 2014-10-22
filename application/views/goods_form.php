@@ -1,9 +1,10 @@
+<link rel="stylesheet" media="screen" type="text/css" href="<?php echo base_url();?>stylesheet/goods/style.css" />
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
             <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
+                <button class="btn btn-info" onclick="<?php if($is_group){ ?> fromcheck() <?php }else{ ?> $('#form').submit(); <?php } ?>" type="button"><?php echo $this->lang->line('button_save'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'goods'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
             </div>
         </div>
@@ -46,7 +47,7 @@
                             <?php if ($client_id && $is_group) { ?>
                             <tr>
                                 <td><?php if ($is_import) { ?><span class="required">*</span>  <?php } ?><?php echo $this->lang->line('entry_file'); ?>:</td>
-                                <td><input type="file" name="file" size="100" /></td>
+                                <td><input id="file" type="file" name="file" size="100" /></td>
                             </tr>
                             <?php } ?>
                             <tr>
@@ -99,24 +100,41 @@
                         </table>
 
                         <?php if (isset($members)) { ?>
-                        <table id="members" class="display form" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th><?php echo $this->lang->line('entry_system_id'); ?></th>
-                                <th><?php echo $this->lang->line('entry_name'); ?></th>
-                                <th><?php echo $this->lang->line('entry_code'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (is_array($members)) foreach ($members as $member) { ?>
-                            <tr>
-                                <td><?php echo $member['goods_id']->{'$id'}; ?></td>
-                                <td><?php echo $member['name']; ?></td>
-                                <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-                        </table>
+                            <div class="member_wrapper">
+                                <table id="members" class="display form no-footer" cellspacing="0" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th><?php echo $this->lang->line('entry_system_id'); ?></th>
+                                        <th><?php echo $this->lang->line('entry_name'); ?></th>
+                                        <th><?php echo $this->lang->line('entry_code'); ?></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php if (is_array($members)){
+                                        $count = 0;
+                                        foreach ($members as $member) { ?>
+                                            <tr class="<?php echo (++$count%2 ? "odd" : "even") ?>">
+                                                <td><?php echo $member['goods_id']->{'$id'}; ?></td>
+                                                <td><?php echo $member['name']; ?></td>
+                                                <td><?php echo isset($member['code']) ? $member['code'] : ''; ?></td>
+                                            </tr>
+                                        <?php
+                                        }
+                                    }
+                                    ?>
+                                    </tbody>
+                                </table>
+                                <div id="members_info" class="paging_info" role="status" aria-live="polite">Showing 1 to <?php echo $members_current_total_page; ?> of <?php echo $members_total; ?> entries</div>
+                                <div class="paging_simple_numbers" id="members_paginate">
+                                    <span>
+                                        <?php echo $total_page; ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="hide" id="member_current">1</div>
+                            <div class="hide" id="member_order"></div>
+                            <div class="hide" id="member_sort"></div>
+
                         <?php } ?>
 
                 </div>
@@ -304,10 +322,6 @@ $(document).ready(function(){
     $("#point-entry").live('click', function() {$(".point").toggle()});
     $("#badge-entry").live('click', function() {$(".badges").toggle()});
     $("#reward-entry").live('click', function() {$(".rewards").toggle()});
-    $('#members').dataTable({
-        lengthChange: false,
-        searching: false
-    });
 });
 
 //--></script>
@@ -341,4 +355,50 @@ $(document).ready(function(){
     });
     
     //--></script>
+<?php } ?>
+<?php if ($is_group) { ?>
+<script>
+    function fromcheck(){
+        var file = document.getElementById('file').files[0];
+
+        if(file){
+            if(file.size < 2097152) { // 2MB (this size is in bytes)
+                //Submit form
+                $('#form').submit();
+            } else {
+                //Prevent default and display error
+                $(".content").prepend('<div class="content messages half-width"><div class="warning"><?php echo $this->lang->line('error_file_too_large'); ?></div> </div>');
+            }
+        }else{
+            $(".content").prepend('<div class="content messages half-width"><div class="warning"><?php echo $this->lang->line('error_file'); ?></div> </div>');
+        }
+    }
+
+    pagination_click();
+
+    function pagination_click(){
+        $('.paginate_button').click(function(){
+            var page = $(this).attr("data-page");
+
+            $('.member_wrapper').append('<div class="backgrund-load"><div class="loading-img"><img src="<?php echo base_url();?>image/white_loading.gif" /></div></div>');
+
+            $(".backgrund-load").css({"width": $("#members").width(), "height": $("#members").height(), "top": $("#members").height()*(-1)});
+            $(".loading-img").css({"top": ($("#members").height()/3)});
+
+            $.ajax({
+                type: "GET",
+                url: baseUrlPath+"goods/getGoodsGroupAjax/<?php echo $goods_id; ?>",
+                data: { page: page },
+                dataType: "html"
+            }).done(function( data ) {
+                $('.member_wrapper').html(data);
+
+                pagination_click();
+            });
+
+        });
+    }
+
+
+</script>
 <?php } ?>

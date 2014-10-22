@@ -150,10 +150,10 @@ function downloadFile() {
         url += '&username=' + encodeURIComponent(filter_username);
     }
 
-    var filter_action_id = $('select[name=\'filter_action_id\']').attr('value');
+    var filter_goods_id = $('select[name=\'filter_goods_id\']').attr('value');
 
-    if (filter_action_id != 0) {
-        url += '&goods_id=' + encodeURIComponent(filter_action_id);
+    if (filter_goods_id != 0) {
+        url += '&goods_id=' + encodeURIComponent(filter_goods_id);
     }
 
     location = url;

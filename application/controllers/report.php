@@ -233,34 +233,7 @@ class Report extends MY_Controller
         $this->load->vars($this->data);
         $this->render_page('template');
     }
-    private function xlsBOF()
-    {
-        echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
-    }
-    private function xlsEOF()
-    {
-        echo pack("ss", 0x0A, 0x00);
-    }
-    private function xlsWriteNumber($Row, $Col, $Value)
-    {
-        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);echo pack("d", $Value);
-    }
-    private function xlsWriteLabel($Row, $Col, $Value )
-    {
-        $L = strlen($Value);echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
-        echo $Value;
-    }
 
-    function download_send_headers($filename) {
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Content-Type: application/force-download");
-        header("Content-Type: application/octet-stream");
-        header("Content-Type: application/download");
-        header("Content-Disposition: attachment;filename={$filename}");
-        header("Content-Transfer-Encoding: binary");
-    }
     public function actionDownload() {
         $this->load->model('Action_model');
         $this->load->model('Player_model');
@@ -300,34 +273,43 @@ class Report extends MY_Controller
             'username'               => $filter_username,
             'action_id'              => $filter_action_id
         );
-        $this->download_send_headers("ActionReport_" . date("YmdHis") . ".xls");
-        $this->xlsBOF();
-        $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
-        $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
-        $this->xlsWriteLabel(0,2,$this->lang->line('column_email'));
-        $this->xlsWriteLabel(0,3,$this->lang->line('column_level'));
-        $this->xlsWriteLabel(0,4,$this->lang->line('column_exp'));
-        $this->xlsWriteLabel(0,5,$this->lang->line('column_action_name'));
-        $this->xlsWriteLabel(0,6,$this->lang->line('column_url'));
-        $this->xlsWriteLabel(0,7,$this->lang->line('column_date_added'));
-        $xlsRow = 1;
+
+        $this->load->helper('export_data');
 
         $results = $this->Action_model->getActionReport($data, true);
+
+        $exporter = new ExportDataExcel('browser', "ActionReport_" . date("YmdHis") . ".xls");
+
+        $exporter->initialize(); // starts streaming data to web browser
+
+        $exporter->addRow(array(
+                $this->lang->line('column_player_id'),
+                $this->lang->line('column_username'),
+                $this->lang->line('column_email'),
+                $this->lang->line('column_level'),
+                $this->lang->line('column_exp'),
+                $this->lang->line('column_action_name'),
+                $this->lang->line('column_url'),
+                $this->lang->line('column_date_added')
+            )
+        );
 
         foreach($results as $row)
         {
             $player = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
-            $this->xlsWriteNumber($xlsRow,0,$player['cl_player_id']);
-            $this->xlsWriteLabel($xlsRow,1,$player['username']);
-            $this->xlsWriteLabel($xlsRow,2,$player['email']);
-            $this->xlsWriteLabel($xlsRow,3,$player['level']);
-            $this->xlsWriteLabel($xlsRow,4,$player['exp']);
-            $this->xlsWriteLabel($xlsRow,5,$row['action_name']);
-            $this->xlsWriteLabel($xlsRow,6,$row['url']);
-            $this->xlsWriteLabel($xlsRow,7,$this->datetimeMongotoReadable($row['date_added']));
-            $xlsRow++;
+            $exporter->addRow(array(
+                    $player['cl_player_id'],
+                    $player['username'],
+                    $player['email'],
+                    $player['level'],
+                    $player['exp'],
+                    $row['action_name'],
+                    $row['url'],
+                    $this->datetimeMongotoReadable($row['date_added'])
+                )
+            );
         }
-        $this->xlsEOF();
+        $exporter->finalize();
     }
 
     private function datetimeMongotoReadable($dateTimeMongo)
@@ -350,61 +332,6 @@ class Report extends MY_Controller
         } else {
             return false;
         }
-    }
-    public function getActionsToDownload(){
-        $this->load->helper('php-excel');
-        
-        if ($this->input->get('date_start')) {
-            $filter_date_start = $this->input->get('date_start');
-        } else {
-            $filter_date_start = '';
-        }
-
-        if ($this->input->get('date_expire')) {
-            $filter_date_end = $this->input->get('date_expire');
-        } else {
-            $filter_date_end = '';
-        }
-
-        if ($this->input->get('username')) {
-            $filter_username = $this->input->get('username');
-
-        } else {
-            $filter_username = '';
-        }
-
-        if ($this->input->get('action_id')) {
-            $filter_action_id = $this->input->get('action_id');
-        } else {
-            $filter_action_id = 0;
-        }
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-
-        $data = array(
-                'client_id' =>$client_id,
-                'site_id' => $site_id,
-                'username' => $filter_username,
-                'date_expire' => $filter_date_end,
-                'date_start' => $filter_date_start,
-                'action_id' => $filter_action_id,
-            );
-
-        $this->load->model('Action_model');
-        $this->load->model('Player_model');
-
-        $results = $this->Action_model->getActionsForDownload($data);
-
-        foreach ($results as $row){
-            $player_info = $this->Player_model->getPlayerById($row['pb_player_id'], $data['site_id']);
-            $data_array[] = array( $player_info['cl_player_id'], $player_info['username'], $player_info['email'],$row['action_name'], $row['url'], date("Y-m-d", $row['date_added']->sec), );
-        }
-
-        $xls = new Excel_XML;
-        $xls->addArray ($data_array);
-        $xls->generateXML ( "output_name" );
-
     }
 }
 ?>

@@ -168,11 +168,6 @@ class Report_reward extends MY_Controller{
             }else{
                 $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
             }
-            /*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }*/
 
             if(isset($result['reward_id']) && $result['reward_id'] != null){
                 $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
@@ -273,42 +268,18 @@ class Report_reward extends MY_Controller{
         }
     }
 
-
-    private function xlsBOF()
-    {
-        echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
-    }
-    private function xlsEOF()
-    {
-        echo pack("ss", 0x0A, 0x00);
-    }
-    private function xlsWriteNumber($Row, $Col, $Value)
-    {
-        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);echo pack("d", $Value);
-    }
-    private function xlsWriteLabel($Row, $Col, $Value )
-    {
-        $L = strlen($Value);echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
-        echo $Value;
-    }
-
-    function download_send_headers($filename) {
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Content-Type: application/force-download");
-        header("Content-Type: application/octet-stream");
-        header("Content-Type: application/download");
-        header("Content-Disposition: attachment;filename={$filename}");
-        header("Content-Transfer-Encoding: binary");
-    }
-
     public function actionDownload() {
 
         $parameter_url = "?t=".rand();
+
+        $this->load->library('pagination');
+
         $this->load->model('Report_reward_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
+
+        $lang = get_lang($this->session, $this->config);
+        $this->lang->load("action", $lang['folder']);
 
         if ($this->input->get('date_start')) {
             $filter_date_start = $this->input->get('date_start');
@@ -320,8 +291,22 @@ class Report_reward extends MY_Controller{
         if ($this->input->get('date_expire')) {
             $filter_date_end = $this->input->get('date_expire');
             $parameter_url .= "&date_expire=".$filter_date_end;
+
+            //--> This will enable to search on the day until the time 23:59:59
+            $date = $this->input->get('date_expire');
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate+("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            //--> end
         } else {
-            $filter_date_end = date("Y-m-d"); ;
+            $filter_date_end = date("Y-m-d");
+
+            //--> This will enable to search on the current day until the time 23:59:59
+            $date = date("Y-m-d");
+            $currentDate = strtotime($date);
+            $futureDate = $currentDate+("86399");
+            $filter_date_end = date("Y-m-d H:i:s", $futureDate);
+            //--> end
         }
 
         if ($this->input->get('username')) {
@@ -347,16 +332,11 @@ class Report_reward extends MY_Controller{
             'date_start'             => $filter_date_start,
             'date_expire'            => $filter_date_end,
             'username'               => $filter_username,
-            'action_id'              => $filter_action_id,
+            'action_id'              => $filter_action_id
         );
 
-        $report_total = 0;
-
         $results = array();
-
         if($client_id){
-            $report_total = $this->Report_reward_model->getTotalReportReward($data);
-
             $results = $this->Report_reward_model->getReportReward($data);
         }
 
@@ -374,11 +354,6 @@ class Report_reward extends MY_Controller{
             }else{
                 $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
             }
-            /*if (!empty($player['image']) && $player['image'] && ($player['image'] != 'HTTP/1.1 404 Not Found' && $player['image'] != 'HTTP/1.0 403 Forbidden')) {
-                $thumb = $player['image'];
-            } else {
-                $thumb = $this->Image_model->resize('no_image.jpg', 40, 40);
-            }*/
 
             if(isset($result['reward_id']) && $result['reward_id'] != null){
                 $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
@@ -399,38 +374,44 @@ class Report_reward extends MY_Controller{
                 'value'             => $result['value']
             );
         }
+
         $results = $this->data['reports'];
-       
-        $this->download_send_headers("RewardReport_" . date("YmdHis") . ".xls");
-        $this->xlsBOF();
-        $this->xlsWriteLabel(0,0,$this->lang->line('column_player_id'));
-        $this->xlsWriteLabel(0,1,$this->lang->line('column_username'));
-        $this->xlsWriteLabel(0,2,$this->lang->line('column_email'));
-        $this->xlsWriteLabel(0,3,$this->lang->line('column_reward_name'));
-        $this->xlsWriteLabel(0,4,$this->lang->line('column_reward_value'));
-        $this->xlsWriteLabel(0,5,$this->lang->line('column_date_added'));
-        $xlsRow = 1;
-        
+
+        $this->load->helper('export_data');
+
+        $exporter = new ExportDataExcel('browser', "RewardReport_" . date("YmdHis") . ".xls");
+
+        $exporter->initialize(); // starts streaming data to web browser
+
+        $exporter->addRow(array(
+                $this->lang->line('column_player_id'),
+                $this->lang->line('column_username'),
+                $this->lang->line('column_email'),
+                $this->lang->line('column_reward_name'),
+                $this->lang->line('column_reward_value'),
+                $this->lang->line('column_date_added')
+            )
+        );
+
         foreach($results as $row)
         {
-
             if($row['badge_name'] != null){
                 $badge_name = $row['badge_name'];
             }else{
                 $reward_name = $row['reward_name']['name'];
             }
-            $this->xlsWriteNumber($xlsRow,0,$row['cl_player_id']);
-            $this->xlsWriteLabel($xlsRow,1,$row['username']);
-            $this->xlsWriteLabel($xlsRow,2,$row['email']);
-            $this->xlsWriteLabel($xlsRow,3,isset($badge_name)?$badge_name:$reward_name);
-            $this->xlsWriteLabel($xlsRow,4,$row['value']);
-            $this->xlsWriteLabel($xlsRow,5,$row['date_added']);
-            $xlsRow++;
+            $exporter->addRow(array(
+                    $row['cl_player_id'],
+                    $row['username'],
+                    $row['email'],
+                    isset($badge_name)?$badge_name:$reward_name,
+                    $row['value'],
+                    $row['date_added']
+                )
+            );
         }
-
-        $this->xlsEOF();
+        $exporter->finalize();
     }
-
 }
 
 ?>

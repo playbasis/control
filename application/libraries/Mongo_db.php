@@ -1566,7 +1566,7 @@ class Mongo_db
 		}
 	}
 
-	public function aggregate($collection, $ops = array())
+    public function aggregate($collection, $ops = array())
 	{
 		try
 		{

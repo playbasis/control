@@ -657,7 +657,22 @@ class Goods extends MY_Controller
         }
 
         if (!empty($goods_info) && array_key_exists('group', $goods_info)) {
-            $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($this->User_model->getSiteId(), $goods_info['group']);
+
+            $limit_group = 10;
+
+            $data = array(
+                'site_id' => $this->User_model->getSiteId(),
+                'group' => $goods_info['group'],
+                'limit' => $limit_group,
+                'start' => 0
+            );
+            $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
+            $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
+            $this->data['members_current_total_page'] = $this->data['members_total'] > $limit_group ? $limit_group : $this->data['members_total'];
+
+            $total_page = $this->data['members_total'] > 0 ? ($this->data['members_total'] / $limit_group): 0;
+
+            $this->data['total_page'] = $this->create(1, $total_page, 1, '<a class="paginate_button" data-page="%d">%d</a>', '<a class="paginate_button current" data-page="%d">%d</a>');
         }
 
         if ($this->input->post('name')) {
@@ -835,6 +850,39 @@ class Goods extends MY_Controller
         $this->render_page('template');
     }
 
+    public function getGoodsGroupAjax($goods_id = null){
+
+        $offset = $this->input->get('page') ? $this->input->get('page') - 1 : 0;
+        $limit = 10;
+
+        if (isset($goods_id) && ($goods_id != 0)) {
+            if($this->User_model->getClientId()){
+                $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
+            }else{
+                $goods_info = $this->Goods_model->getGoods($goods_id);
+            }
+        }
+        if (!empty($goods_info) && array_key_exists('group', $goods_info)) {
+            $data = array(
+                'site_id' => $this->User_model->getSiteId(),
+                'group' => $goods_info['group'],
+                'limit' => $limit,
+                'start' => $offset
+            );
+            $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
+            $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
+            $this->data['members_current_total_page'] = ($limit*($offset+1)) >= $limit ? ($limit*($offset+1)) : $this->data['members_total'];
+            $this->data['members_current_start_page'] = (($limit*$offset)+1) >= 1 ? (($limit*$offset)+1) : 1;
+
+            $total_page = $this->data['members_total'] > 0 ? ($this->data['members_total'] / $limit): 0;
+
+            $this->data['total_page'] = $this->create(($offset+1), $total_page, 1, '<a class="paginate_button" data-page="%d">%d</a>', '<a class="paginate_button current" data-page="%d">%d</a>');
+        }
+
+        $this->load->vars($this->data);
+        $this->load->view('goods_group_ajax');
+    }
+
     public function getBadgeForGoods(){
         if($this->input->get('client_id')){
             $this->load->model('Badge_model');
@@ -1000,5 +1048,106 @@ class Goods extends MY_Controller
 
         /* bulk insert into playbasis_goods_to_client */
         return $this->Goods_model->addGoodsToClient_bulk($list);
+    }
+
+    /* Returns a set of pagination links. The parameters are:
+   *
+   * $page          - the current page number
+   * $numberOfPages - the total number of pages
+   * $context       - the amount of context to show around page links - this
+   *                  optional parameter defauls to 1
+   * $linkFormat    - the format to be used for links to other pages - this
+   *                  parameter is passed to sprintf, with the page number as a
+   *                  second and third parameter. This optional parameter
+   *                  defaults to creating an HTML link with the page number as
+   *                  a GET parameter.
+   * $pageFormat    - the format to be used for the current page - this
+   *                  parameter is passed to sprintf, with the page number as a
+   *                  second and third parameter. This optional parameter
+   *                  defaults to creating an HTML span containing the page
+   *                  number.
+   * $ellipsis      - the text to be used where pages are omitted - this
+   *                  optional parameter defaults to an ellipsis ('...')
+   */
+    private function create(
+        $page,
+        $numberOfPages,
+        $context    = 1,
+        $linkFormat = '<a href="?page=%d">%d</a>',
+        $pageFormat = '<span>%d</span>',
+        $ellipsis   = '&hellip;'){
+
+        // create the list of ranges
+        $ranges = array(array(1, 1 + $context));
+        self::mergeRanges($ranges, $page   - $context, $page + $context);
+        self::mergeRanges($ranges, $numberOfPages - $context, $numberOfPages);
+
+        // initialise the list of links
+        $links = array();
+
+        // loop over the ranges
+        foreach ($ranges as $range){
+
+            // if there are preceeding links, append the ellipsis
+            if (count($links) > 0) $links[] = $ellipsis;
+
+            // merge in the new links
+            $links =
+                array_merge(
+                    $links,
+                    self::createLinks($range, $page, $linkFormat, $pageFormat));
+
+        }
+
+        // return the links
+        return implode(' ' , $links);
+
+    }
+
+    /* Merges a new range into a list of ranges, combining neighbouring ranges.
+     * The parameters are:
+     *
+     * $ranges - the list of ranges
+     * $start  - the start of the new range
+     * $end    - the end of the new range
+     */
+    private function mergeRanges(&$ranges, $start, $end){
+
+        // determine the end of the previous range
+        $endOfPreviousRange =& $ranges[count($ranges) - 1][1];
+
+        // extend the previous range or add a new range as necessary
+        if ($start <= $endOfPreviousRange + 1){
+            $endOfPreviousRange = $end;
+        }else{
+            $ranges[] = array($start, $end);
+        }
+
+    }
+
+    /* Create the links for a range. The parameters are:
+     *
+     * $range      - the range
+     * $page       - the current page
+     * $linkFormat - the format for links
+     * $pageFormat - the format for the current page
+     */
+    private function createLinks($range, $page, $linkFormat, $pageFormat){
+
+        // initialise the list of links
+        $links = array();
+
+        // loop over the pages, adding their links to the list of links
+        for ($index = $range[0]; $index <= $range[1]; $index ++){
+            $links[] =
+                sprintf(
+                    ($index == $page ? $pageFormat : $linkFormat),
+                    $index,
+                    $index);
+        }
+
+        // return the array of links
+        return $links;
+
     }
 }
