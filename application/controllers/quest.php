@@ -681,7 +681,7 @@ class Quest extends REST2_Controller
         return $eventMessage;
     }
 
-    public function testQuest_post(){
+    /*public function testQuest_post(){
         //process regular data
         $required = $this->input->checkParam(array(
             'token'
@@ -715,7 +715,8 @@ class Quest extends REST2_Controller
 
         $this->response($this->resp->setRespond($apiResult), 200);
 //        $this->response($this->resp->setRespond($res), 200);
-    }
+    }*/
+
 
     /**
      * Check quest available for the player.
