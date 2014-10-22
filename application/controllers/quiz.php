@@ -338,6 +338,10 @@ class Quiz extends REST2_Controller
         /* check to see if grade has any reward associated with it */
         $rewards = isset($grade['rewards']) ? $this->update_rewards($this->client_id, $this->site_id, $pb_player_id, $player_id, $grade['rewards']) : array();
         $grade['rewards'] = $this->filter_levelup($rewards);
+        $grade['score'] = $score;
+        $grade['max_score'] = $max_score;
+        $grade['total_score'] = $total_score;
+        $grade['total_max_score'] = $total_max_score;
 
         /* update player's score */
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $total_score, $grade);
