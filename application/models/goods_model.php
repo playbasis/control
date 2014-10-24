@@ -214,8 +214,9 @@ class Goods_model extends MY_Model
 		$this->mongo_db->where($query);
 		return $this->mongo_db->get('playbasis_goods_log');
 	}
-	public function getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount) {
+	public function getTotalGoodsByGroup($client_id, $site_id, $group) {
 		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('goods_id','date_start','date_expire','quantity','per_user','redeem'));
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id,
@@ -224,11 +225,43 @@ class Goods_model extends MY_Model
 			'status' => true
 		));
 		$this->mongo_db->where_gt('quantity', 0);
-		$goodsList = $this->mongo_db->get('playbasis_goods_to_client');
-		return is_array($goodsList) && count($goodsList) > 0 && $this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount) ? $goodsList : array();
+		return $this->mongo_db->count('playbasis_goods_to_client');
+	}
+	public function getGoodsByGroup($client_id, $site_id, $group, $offset=null, $limit=null) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('goods_id','date_start','date_expire','quantity','per_user','redeem'));
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'group' => $group,
+			'deleted' => false,
+			'status' => true
+		));
+		$this->mongo_db->where_gt('quantity', 0);
+		if ($offset !== null) $this->mongo_db->offset($offset);
+		if ($limit !== null) $this->mongo_db->limit($limit);
+		return $this->mongo_db->get('playbasis_goods_to_client');
+	}
+	public function getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount) {
+		$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, 0, 1);
+		if ($goodsList) {
+			if ($this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount)) {
+				$total = $this->getTotalGoodsByGroup($client_id, $site_id, $group);
+				$offset = rand(0, $total-1); // randomly pick one
+				$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, $offset, 1);
+				return $goodsList ? $goodsList[0] : null;
+			}
+		}
+		return null;
 	}
 	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount) {
-		return count($this->getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount));
+		$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, 0, 1);
+		if ($goodsList) {
+			if ($this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount)) {
+				return $this->getTotalGoodsByGroup($client_id, $site_id, $group);
+			}
+		}
+		return 0; // unavailable
 	}
     public function getGroups($site_id) {
         $this->mongo_db->select(array('goods_id','group','quantity'));
