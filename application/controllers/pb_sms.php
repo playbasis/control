@@ -43,9 +43,9 @@ class Pb_sms extends REST2_Controller
             $this->config->load("twilio",TRUE);
             $config = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
             $config['api_version'] = $this->config->item('twilio')['api_version'];
-            $this->load->library('twilio', $config);
+            $this->load->library('twilio/twiliomini', $config);
 
-            $response = $this->twilio->sms($from, $to, $message);
+            $response = $this->twiliomini->sms($from, $to, $message);
             $this->sms_model->log($validToken['client_id'], $validToken['site_id'], $type, $from, $to, $message, $response);
             if ($response->IsError) {
                 log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
