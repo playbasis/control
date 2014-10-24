@@ -61,10 +61,18 @@ Class TwilioMini
         try {
             // make call
             $call = $this->_twilio->account->calls->create($from, $to, $make, $optional);
-        } catch (Exception $e) {
-            $call = 'Error : ' . $e->getMessage();
+
+            $res = $call->subresources["media"]->client->last_response;
+            $res->IsError = false;
+            if($res->error_message){
+                $res->IsError = true;
+            }
+		} catch (Exception $e) {
+            $res = (object)array();
+            $res->IsError = true;
+            $res->error_message = $e->getMessage();
         }
-        return $call;
+        return $res;
     }
 
     /**
@@ -86,10 +94,17 @@ Class TwilioMini
                 'From' => $from,
                 'Body' => $message
             ));
-        } catch (Exception $e) {
-            $message = 'Error : ' . $e->getMessage();
+            $res = $message->subresources["media"]->client->last_response;
+            $res->IsError = false;
+            if($res->error_message){
+                $res->IsError = true;
+            }
+		} catch (Exception $e) {
+            $res = (object)array();
+            $res->IsError = true;
+            $res->error_message = $e->getMessage();
         }
-        return $message;
+        return $res;
     }
 
 }
