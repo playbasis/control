@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+
+define('MAX_REDEEM_TRIES', 5);
+
 class Redeem extends REST2_Controller
 {
     public function __construct()
@@ -113,10 +116,9 @@ class Redeem extends REST2_Controller
 
         $amount = $this->input->post('amount') ? (int)$this->input->post('amount') : 1;
 
-        $goodsList = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
-        if ($goodsList) {
-            shuffle($goodsList); // randomize the order in $goodList
-            foreach ($goodsList as $goods) {
+        $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
+        if ($goods) {
+            for ($i=0; $i < MAX_REDEEM_TRIES; $i++) { // try to redeem for a few times before giving up
                 log_message('debug', 'random = '.$goods['goods_id']);
                 /* actual redemption */
                 try {
@@ -130,6 +132,7 @@ class Redeem extends REST2_Controller
                         $this->response($this->error->setError(
                             "INTERNAL_ERROR", array()), 200);
                 }
+                $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
             }
         }
         $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
