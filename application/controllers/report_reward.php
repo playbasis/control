@@ -170,11 +170,11 @@ class Report_reward extends MY_Controller{
                 $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
             }
 
-            if(isset($result['reward_id']) && $result['reward_id'] != null){
-                $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
-            }else{
-                $badge_info = $this->Badge_model->getBadge($result['badge_id']);
+            if(isset($result['item_id']) && $result['item_id'] != null){
+                $badge_info = $this->Badge_model->getBadge($result['item_id']);
                 $badge_name = $badge_info['name'];
+            }else{
+                $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
             }
 
             $this->data['reports'][] = array(
@@ -196,27 +196,9 @@ class Report_reward extends MY_Controller{
             $data_filter['site_id'] = $site_id;
             // $this->data['actions'] = $this->Action_model->getActionsSite($data_filter);
 
-            $badges_reward = $this->Report_reward_model->getRewardsBadgesSite($data_filter);
+            $all_badges_reward = $this->Report_reward_model->getRewardsBadgesSite($data_filter);
 
-            $all_badges_reward = array();
-            foreach($badges_reward as $br){
-                if(isset($br['reward_id']) && $br['reward_id']!=null){
-                    $reward = $this->Report_reward_model->getRewardName($br['reward_id']);
-                    if(!in_array($reward, $all_badges_reward)){
-                        $all_badges_reward[] = $this->Report_reward_model->getRewardName($br['reward_id']);
-                    }
-                }
-
-                if(isset($br['badge_id']) && $br['badge_id']!=null){
-                    $this->load->model('Badge_model');
-                    $badge_info = $this->Badge_model->getBadge($br['badge_id']);
-                    if(!in_array($badge_info, $all_badges_reward)){
-                        $all_badges_reward [] = $badge_info;    
-                    }
-                }
-            }
             $this->data['badge_rewards'] = $all_badges_reward;
-
         }
 
         $config['base_url'] = $url.$parameter_url;
@@ -356,11 +338,11 @@ class Report_reward extends MY_Controller{
                 $thumb = S3_IMAGE."cache/no_image-40x40.jpg";
             }
 
-            if(isset($result['reward_id']) && $result['reward_id'] != null){
-                $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
-            }else{
-                $badge_info = $this->Badge_model->getBadge($result['badge_id']);
+            if(isset($result['item_id']) && $result['item_id'] != null){
+                $badge_info = $this->Badge_model->getBadge($result['item_id']);
                 $badge_name = $badge_info['name'];
+            }else{
+                $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
             }
 
             $this->data['reports'][] = array(
