@@ -14,8 +14,8 @@
         <div class="content">
             <div id="tabs" class="htabs">
                 <a href="#tab-quiz-info"><?php echo $this->lang->line('tab_info'); ?></a>
-                <a href="#tab-quiz-grade"><?php echo $this->lang->line('tab_grade'); ?></a>
                 <a href="#tab-quiz-data"><?php echo $this->lang->line('tab_data'); ?></a>
+                <a href="#tab-quiz-grade"><?php echo $this->lang->line('tab_grade'); ?></a>
             </div>
 
             <?php if(validation_errors() || isset($message)){?>
@@ -143,10 +143,223 @@
                     </table>
                 </div>
             </div>
+            
+            <div id="tab-quiz-data">
+                <div class="question-head-wrapper">
+                    <a href="javascript:void(0)" class="btn  open-question-btn btn-lg">Open All</a>
+                    <a href="javascript:void(0)" class="btn close-question-btn btn-lg">Close All</a>
+                    <a href="javascript:void(0)" class="btn btn-primary add-question-btn btn-lg">Add Question</a>
+                </div>
+                <div class="question-wrapper" >
+                    <?php
+                    if(isset($quiz) && $quiz['questions']){
+                        foreach($quiz['questions'] as $questions){
+
+                            $questions['question_id'] = $questions['question_id']."";
+                    ?>
+                        <div class="question-item-wrapper" data-question-id="<?php echo $questions['question_id']; ?>">
+                            <div class="box-header box-question-header overflow-visible">
+                                <h2><img src="<?php echo base_url();?>image/default-image.png" width="50"><?php echo $questions['question']; ?></h2>
+                                <div class="box-icon">
+                                    <a href="javascript:void(0)" class="btn btn-danger right remove-question-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
+                                    <span class="break"></span>
+                                    <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>
+                                </div>
+                        </div>
+                        <div class="box-content clearfix">
+                            <div class="span12">
+                                <table class="form">
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            Question : 
+                                        </td>
+                                        <td>
+                                            <input type="text" class="question-input" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]" value="<?php echo $questions['question']; ?>" ></input>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Question image :
+                                        </td>
+                                        <td>
+                                            <img width="100" height="100" src="<?php echo isset($questions['question_image'])? S3_IMAGE.$questions['question_image'] : S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                            <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][question_image]" value="<?php echo isset($questions['question_image'])? $questions['question_image'] : "no_image.jpg"; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_image" />
+                                            <br />
+                                            <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="span11">
+                                <div class="box box-add-item option-box-wrapper">
+                                    <div class="box-header overflow-visible">
+                                        <h2><i class="icon-question-sign"></i><span class="break"></span>Choice</h2>
+                                        <div class="box-icon box-icon-action"> 
+                                            <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $questions['question_id']; ?>"> Add option</a>
+                                        </div>
+                                    </div>
+                                    <div class="option-wrapper">
+
+                                        <div class="box-content clearfix">
+                                            <?php
+                                            if(isset($questions['options'])){
+                                                foreach($questions['options'] as $option){
+
+                                                    $option['option_id'] = $option['option_id']."";
+                                            ?>
+                                                    <div class="option-container well clearfix">
+                                                    <div class="span7">
+                                                            <table class="form">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        Option
+                                                                    </td>
+                                                                     <td>
+                                                                        <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]" value = "<?php echo $option["option"]; ?>">
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                   <td>Score</td>
+                                                                   <td><input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][score]" value = "<?php echo $option["score"]; ?>"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                   <td>Explanation</td>
+                                                                   <td>
+                                                                        <textarea name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][explanation]"><?php echo $option["explanation"]; ?></textarea></td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+
+                                                        </div>
+                                                        <div class="span1">
+                                                        </div>
+                                                        <div class="span4">
+                                                        Image<br><br><img width="100" height="100" src="<?php echo isset($option["option_image"])? S3_IMAGE.$option["option_image"] : S3_IMAGE."cache/no_image-100x100.jpg" ; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                                        <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option_image]" value="<?php echo isset($option["option_image"])? $option["option_image"] : "no_image.jpg" ; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image" />
+                                                        <br />
+                                                        <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                        
+                                                        <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+
+                                                            <br>
+                                                            <br>
+
+                                                            <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete Option</a>
+                                                        </div>
+                                                </div>
+                                            <?php
+                                                }
+                                            }else{
+                                                $count_option = new MongoId();
+                                                $count_option = $count_option."";
+                                            ?>
+                                                <div class="option-container">
+                                                    option  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][option]" value = ""><br>
+                                                    image  <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                                    <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image" />
+                                                    <br />
+                                                    <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                                    <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br>
+                                                    explanation  <textarea name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][explanation]"></textarea><br>
+                                                    score  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][score]" value = "">
+                                                </div>
+                                            <?php
+                                            }
+                                            ?>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    <?php
+                        }
+                    }else{
+
+                        //================= [ Empty Question ] ===================//
+                    ?>
+                    <!--
+                    <?php
+                        $count_question = new MongoId();
+                        $count_question = $count_question."";
+
+                        $count_option = new MongoId();
+                        $count_option = $count_option."";
+                    ?>
+                    <a href="javascript:void(0)" class="btn btn-danger right remove-question-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
+                    <div class="box-content clearfix">
+                        <div class="span6">
+                            <table class="form">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        Question :
+                                    </td>
+                                    <td>
+                                        <textarea rows="3" name="quiz[questions][<?php echo $count_question; ?>][question]"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Question image :
+                                    </td>
+                                    <td>
+                                        <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $count_question; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                        <input type="hidden" name="quiz[questions][<?php echo $count_question; ?>][question_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_<?php echo $count_question; ?>_image" />
+                                        <br />
+                                        <a onclick="image_upload('quiz_questions_<?php echo $count_question; ?>_image', 'quiz_questions_<?php echo $count_question; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                        <a onclick="$('#quiz_questions_<?php echo $count_question; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $count_question; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="span6">
+                            <div class="box box-add-item completion-wrapper">
+                                <div class="box-header overflow-visible">
+                                    <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $count_question; ?>" data-toggle="dropdown"> Add option</a>
+                                </div>
+                                <div class="option-wrapper">
+
+                                    <div class="box-content clearfix">
+                                        <div class="option-container">
+                                            option  <input type="text" name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][option]" value = ""><br>
+                                            image  <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                                            <input type="hidden" name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_image" />
+                                            <br />
+                                            <a onclick="image_upload('quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_image', 'quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                                            <a onclick="$('#quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br>
+                                            explanation  <textarea name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][explanation]"></textarea><br>
+                                            score  <input type="text" name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][score]" value = "">
+                                            <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                    </div>
+                     -->
+                    <?php
+                    }
+                    ?>
+
+                </div>
+            </div>
+
             <div id="tab-quiz-grade">
                 <div class="grade-head-wrapper">
                     <a href="javascript:void(0)" class="btn btn-primary add-grade-btn btn-lg">Add Grade</a>
                 </div>
+
                 <div class="grade-wrapper">
                     <?php
                     if(isset($quiz) && $quiz['grades']){
@@ -309,6 +522,7 @@
                         $countgrade = new MongoId();
                         $countgrade = $countgrade."";
                         ?>
+                        
                         <div class="box-content clearfix">
                             <div class="span6">
                                 <a href="javascript:void(0)" class="btn btn-danger right remove-grade-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
@@ -407,7 +621,7 @@
                                 </table>
                             </div>
                         </div>
-
+                   
 
                     <?php
                     }
@@ -416,169 +630,7 @@
 
                 </div>
             </div>
-            <div id="tab-quiz-data">
-                <div class="question-head-wrapper">
-                    <a href="javascript:void(0)" class="btn btn-primary add-question-btn btn-lg">Add Question</a>
-                </div>
-                <div class="question-wrapper">
-                    <?php
-                    if(isset($quiz) && $quiz['questions']){
-                        foreach($quiz['questions'] as $questions){
 
-                            $questions['question_id'] = $questions['question_id']."";
-                    ?>
-                        <div class="box-content clearfix">
-                            <div class="span6">
-                                <table class="form">
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            Question :
-                                        </td>
-                                        <td>
-                                            <textarea rows="3" name="quiz[questions][<?php echo $questions['question_id']; ?>][question]"><?php echo $questions['question']; ?></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Question image :
-                                        </td>
-                                        <td>
-                                            <img width="100" height="100" src="<?php echo isset($questions['question_image'])? S3_IMAGE.$questions['question_image'] : S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                            <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][question_image]" value="<?php echo isset($questions['question_image'])? $questions['question_image'] : "no_image.jpg"; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_image" />
-                                            <br />
-                                            <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                            <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="span6">
-                                <div class="box box-add-item completion-wrapper">
-                                    <div class="box-header overflow-visible">
-                                        <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $questions['question_id']; ?>" data-toggle="dropdown"> Add option</a>
-                                    </div>
-                                    <div class="option-wrapper">
-
-                                        <div class="box-content clearfix">
-                                            <?php
-                                            if(isset($questions['options'])){
-                                                foreach($questions['options'] as $option){
-
-                                                    $option['option_id'] = $option['option_id']."";
-                                            ?>
-                                                    <div class="option-container">
-                                                        option  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option]" value = "<?php echo $option["option"]; ?>"><br>
-                                                        image  <img width="100" height="100" src="<?php echo isset($option["option_image"])? S3_IMAGE.$option["option_image"] : S3_IMAGE."cache/no_image-100x100.jpg" ; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                                        <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][option_image]" value="<?php echo isset($option["option_image"])? $option["option_image"] : "no_image.jpg" ; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image" />
-                                                        <br />
-                                                        <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                                        <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $option['option_id']; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br>
-                                                        explanation  <textarea name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][explanation]"><?php echo $option["explanation"]; ?></textarea><br>
-                                                        score  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $option['option_id']; ?>][score]" value = "<?php echo $option["score"]; ?>">
-                                                        <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
-                                                    </div>
-                                            <?php
-                                                }
-                                            }else{
-                                                $count_option = new MongoId();
-                                                $count_option = $count_option."";
-                                            ?>
-                                                <div class="option-container">
-                                                    option  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][option]" value = ""><br>
-                                                    image  <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                                    <input type="hidden" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image" />
-                                                    <br />
-                                                    <a onclick="image_upload('quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image', 'quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                                    <a onclick="$('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $questions['question_id']; ?>_options_<?php echo $count_option; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br>
-                                                    explanation  <textarea name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][explanation]"></textarea><br>
-                                                    score  <input type="text" name="quiz[questions][<?php echo $questions['question_id']; ?>][options][<?php echo $count_option; ?>][score]" value = "">
-                                                    <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
-                                                </div>
-                                            <?php
-                                            }
-                                            ?>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <a href="javascript:void(0)" class="btn btn-danger right remove-question-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
-
-                        </div>
-                    <?php
-                        }
-                    }else{
-                    ?>
-                    <?php
-                        $count_question = new MongoId();
-                        $count_question = $count_question."";
-
-                        $count_option = new MongoId();
-                        $count_option = $count_option."";
-                    ?>
-                    <div class="box-content clearfix">
-                        <div class="span6">
-                            <table class="form">
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        Question :
-                                    </td>
-                                    <td>
-                                        <textarea rows="3" name="quiz[questions][<?php echo $count_question; ?>][question]"></textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Question image :
-                                    </td>
-                                    <td>
-                                        <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $count_question; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                        <input type="hidden" name="quiz[questions][<?php echo $count_question; ?>][question_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_<?php echo $count_question; ?>_image" />
-                                        <br />
-                                        <a onclick="image_upload('quiz_questions_<?php echo $count_question; ?>_image', 'quiz_questions_<?php echo $count_question; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                        <a onclick="$('#quiz_questions_<?php echo $count_question; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $count_question; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="span6">
-                            <div class="box box-add-item completion-wrapper">
-                                <div class="box-header overflow-visible">
-                                    <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="<?php echo $count_question; ?>" data-toggle="dropdown"> Add option</a>
-                                </div>
-                                <div class="option-wrapper">
-
-                                    <div class="box-content clearfix">
-                                        <div class="option-container">
-                                            option  <input type="text" name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][option]" value = ""><br>
-                                            image  <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                            <input type="hidden" name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_image" />
-                                            <br />
-                                            <a onclick="image_upload('quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_image', 'quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                            <a onclick="$('#quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#quiz_questions_<?php echo $count_question; ?>_options_<?php echo $count_option; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a><br>
-                                            explanation  <textarea name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][explanation]"></textarea><br>
-                                            score  <input type="text" name="quiz[questions][<?php echo $count_question; ?>][options][<?php echo $count_option; ?>][score]" value = "">
-                                            <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <a href="javascript:void(0)" class="btn btn-danger right remove-question-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
-
-                    </div>
-                    <?php
-                    }
-                    ?>
-                </div>
-            </div>
             <?php
             echo form_close();
             ?>
@@ -602,7 +654,16 @@
 
         init_sub_remove_event('.remove-grade-btn', 2);
         init_sub_remove_event('.remove-option-btn', 2);
-        init_sub_remove_event('.remove-question-btn', 1);
+        
+        init_question_event();
+
+        $('.open-question-btn').click(function(){
+            $('.question-item-wrapper>.box-content').show();
+        })
+        $('.close-question-btn').click(function(){
+            $('.question-item-wrapper>.box-content').hide();
+        })
+
     });
 
     var countGrades = 0;
@@ -765,22 +826,50 @@
 
             var currentQuestion = $(this).attr("data-question-id");
             countOptions = mongoIDjs();
+            
+            var optionHtml = '<div class="option-container well clearfix">\
+            <div class="span7">\
+                    <table class="form">\
+                        <tbody>\
+                        <tr>\
+                            <td>Option</td>\
+                             <td>\
+                             <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option]" value = "">\
+                                </td>\
+                            </tr>\
+                            <tr>\
+                               <td>Score</td>\
+                               <td>\
+                                    <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][score]" value = "">\
+                                </td>\
+                            </tr>\
+                            <tr>\
+                               <td>Explanation</td>\
+                               <td>\
+                                    <textarea name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][explanation]"></textarea>\
+                                </td>\
+                            </tr>\
+                            </tbody>\
+                        </table>\
+                        </div>\
+                        <div class="span1">\
+                        </div>\
+                        <div class="span4">\
+                        Image<br><br>\
+                        <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />\
+                                    <input type="hidden" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image" />\
+                                    <br />\
+                                    <a onclick="image_upload(\'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\', \'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
+                                    <a onclick="$(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a><br><br>\
+                                    <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete Option</a>\
+                                </div>\
+                        </div>';
 
-            var optionHtml = '<div class="box-content clearfix">\
-            <div class="option-container">\
-            option  <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option]" value = ""><br>\
-            image  <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />\
-            <input type="hidden" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image" />\
-            <br />\
-            <a onclick="image_upload(\'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\', \'quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
-            <a onclick="$(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'#quiz_questions_'+currentQuestion+'_options_'+countOptions+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a><br>\
-            explanation  <textarea name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][explanation]"></textarea><br>\
-            score  <input type="text" name="quiz[questions]['+currentQuestion+'][options]['+countOptions+'][score]" value = "">\
-            <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete </a>\
-            </div>\
-            </div>';
+            $(this).parent().parent().parent().find('.option-wrapper > .box-content').append(optionHtml);
+            var element_position = $('.question-item-wrapper[data-question-id="'+currentQuestion+'"] .option-container:last-child').offset();
 
-            $(this).parent().parent().find('.option-wrapper').append(optionHtml);
+            console.log(element_position);
+            $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
 
             init_sub_remove_event('.remove-option-btn', 2);
         });
@@ -790,22 +879,31 @@
         countQuestions = mongoIDjs();
         countOptions = mongoIDjs();
 
-        var questionHtml = '<div class="box-content clearfix">\
-            <div class="span6">\
-            <table class="form">\
-            <tbody>\
-            <tr>\
-            <td>\
-            Question :\
-        </td>\
-            <td>\
-        <textarea rows="3" name="quiz[questions]['+countQuestions+'][question]"></textarea>\
-            </td>\
-        </tr>\
-            <tr>\
-            <td>\
-        Question image :\
-            </td>\
+        var questionHtml = '<div class="question-item-wrapper" data-question-id="'+countQuestions+'">\
+                        <div class="box-header box-question-header overflow-visible">\
+                            <h2><img src="<?php echo base_url();?>image/default-image.png" width="50"> Question Name</h2>\
+                            <div class="box-icon">\
+                                <a href="javascript:void(0)" class="btn btn-danger right remove-question-btn dropdown-toggle" data-toggle="dropdown">Delete </a>\
+                                <span class="break"></span>\
+                                <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>\
+                            </div>\
+                        </div>\
+        <div class="box-content clearfix">\
+            <div class="span12">\
+                                <table class="form">\
+                                    <tbody>\
+                                    <tr>\
+                                        <td>\
+                                            Question : \
+                                        </td>\
+                                        <td>\
+                                            <input type="text" class="question-input" name="quiz[questions]['+countQuestions+'][question]" value="" ></input>\
+                                        </td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td>\
+                                            Question image :\
+                                        </td>\
             <td>\
         <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_'+countQuestions+'_thumb" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />\
             <input type="hidden" name="quiz[questions]['+countQuestions+'][question_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_'+countQuestions+'_image" />\
@@ -817,37 +915,56 @@
         </tbody>\
         </table>\
         </div>\
-        <div class="span6">\
-            <div class="box box-add-item completion-wrapper">\
+        <div class="span11">\
+            <div class="box box-add-item option-box-wrapper">\
             <div class="box-header overflow-visible">\
-            <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="'+countQuestions+'" data-toggle="dropdown"> Add option</a>\
-        </div>\
+                <h2><i class="icon-question-sign"></i><span class="break"></span>Choice</h2>\
+                <div class="box-icon box-icon-action"> \
+                    <a href="javascript:void(0)" class="btn btn-primary right add-option-btn dropdown-toggle" data-question-id="'+countQuestions+'"> Add option</a>\
+                </div>\
+            </div>\
         <div class="option-wrapper">\
             <div class="box-content clearfix">\
-            <div class="option-container">\
-            option  <input type="text" name="quiz[questions]['+countQuestions+'][options]['+countOptions+'][option]" value = ""><br>\
-            image  <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_questions_'+countQuestions+'_options_'+countOptions+'_thumb" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />\
-            <input type="hidden" name="quiz[questions]['+countQuestions+'][options]['+countOptions+'][option_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_questions_'+countQuestions+'_options_'+countOptions+'_image" />\
-            <br />\
-            <a onclick="image_upload(\'quiz_questions_'+countQuestions+'_options_'+countOptions+'_image\', \'quiz_questions_'+countQuestions+'_options_'+countOptions+'_thumb\');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;\
-        <a onclick="$(\'#quiz_questions_'+countQuestions+'_options_'+countOptions+'_thumb\').attr(\'src\', \'<?php echo $this->lang->line('no_image'); ?>\'); $(\'#quiz_questions_'+countQuestions+'_options_'+countOptions+'_image\').attr(\'value\', \'\');"><?php echo $this->lang->line('text_clear'); ?></a><br>\
-            explanation  <textarea name="quiz[questions]['+countQuestions+'][options]['+countOptions+'][explanation]"></textarea><br>\
-            score  <input type="text" name="quiz[questions]['+countQuestions+'][options]['+countOptions+'][score]" value = "">\
-            <a href="javascript:void(0)" class="btn btn-danger right remove-option-btn dropdown-toggle" data-toggle="dropdown">Delete </a>\
+            </div>\
         </div>\
         </div>\
         </div>\
         </div>\
-        </div>\
-            <a href="javascript:void(0)" class="btn btn-danger right remove-question-btn dropdown-toggle" data-toggle="dropdown">Delete </a>\
         </div>';
 
         $('.question-wrapper').append(questionHtml);
 
+        var element_position = $('.question-item-wrapper[data-question-id="'+countQuestions+'"]').offset();
+        $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
+
         init_option_event();
         init_sub_remove_event('.remove-option-btn', 2);
-        init_sub_remove_event('.remove-question-btn', 1);
+
+        init_question_event();
     })
+    
+    function init_question_event(){
+       
+        $('.question-item-wrapper .box-question-header').unbind().bind('click',function(data){
+            var $target = $(this).next('.box-content');
+
+            if($target.is(':visible')) $('i',$(this)).removeClass('icon-chevron-up').addClass('icon-chevron-down');
+            else                       $('i',$(this)).removeClass('icon-chevron-down').addClass('icon-chevron-up');
+            $target.slideToggle();
+        });
+
+        $('.remove-question-btn').unbind().bind('click',function(data){
+            var $target = $(this).parent().parent().parent();
+            
+            var r = confirm("Are you sure to remove!");
+            if (r == true) {
+                $target.remove();
+                init_question_event()
+            }
+        });
+    }
+
+    
 
 </script>
 <script type="text/javascript">

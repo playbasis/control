@@ -1,3 +1,6 @@
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	height: auto;
+}
 .text-center{
 	text-align: center;
 }
@@ -117,28 +120,34 @@
 }
 
 
-.mission-item-wrapper{
+.mission-item-wrapper,
+.question-item-wrapper{
 	box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
 	margin-bottom: 10px;
 }
-.mission-head-wrapper{
+.mission-head-wrapper,
+.question-head-wrapper{
 	text-align: center;
 	margin-bottom: 10px;
 }
-.mission-item-wrapper>.box-content{
+.mission-item-wrapper>.box-content,
+.question-item-wrapper>.box-content{
 	padding: 0 20px;
 }
 
-.mission-item-wrapper .box-mission-header{
+.mission-item-wrapper .box-mission-header,
+.question-item-wrapper .box-question-header{
 	line-height: 50px;
 	height: 50px;
 	cursor: pointer;
 }
-.mission-item-wrapper .box-mission-header h2{
+.mission-item-wrapper .box-mission-header h2,
+.question-item-wrapper .box-question-header h2{
 	line-height: 50px;
 	color:#333;
 }
-.mission-item-wrapper .box-add-item .box-header h2{
+.mission-item-wrapper .box-add-item .box-header h2,
+.question-item-wrapper .box-add-item .box-header h2{
 	color: #333;
 }
 
@@ -923,6 +932,24 @@
 /* ========== [ Reset Quest in Player Isotope] =========*/
 .isot-player-actions li.reset-quest-btn{
     width:100px;
+}
+
+
+/* ========== [ question ] =========*/
+
+
+.question-input{
+	width: 80%;
+}
+.option-box-wrapper .box-content{
+	background: #f5f5f5;
+}
+.option-box-wrapper .box-header{
+	position: relative;
+}
+
+.option-container.well{
+	padding-top: 20px !important; 
 }
 
 /* ====== [ regis-content ] ======== */
