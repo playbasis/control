@@ -386,6 +386,18 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 
 /* ========= [ Regis Flow] ======== */
+.regis-site-header{
+	left: 29%;
+	position: relative;
+	margin-bottom: 30px;
+}
+.regis-site-header .pbr-header-logo{
+	display: block;
+	height: 60px;
+	width: 200px;
+	fill: #fff;
+}
+
 .regis-page-wrapper{
 	background: #fff !important;
 	padding-top: 0px !important;
@@ -396,7 +408,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 .regis-page-wrapper .regis-header{
 	background: #86559c;
 	padding-top: 40px;
-	padding-bottom: 140px;
+	padding-bottom: 180px;
 }
 .regis-page-wrapper h1{
 	font-size: 2.4em;
@@ -1204,6 +1216,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	}
 }
 @media screen and (max-width: 767px){
+	.regis-site-header{
+		left: 15px;
+	}
 	.regis-page-wrapper h1{
 		position: relative;
 		left: 0;
@@ -1215,6 +1230,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	.regis-page-wrapper .regis-header{
 		margin-left: -20px;
 		margin-right: -20px;	
+		padding-bottom: 120px;
 	}
 	.regis-login-page .regis-header h1{
 		left: 0;

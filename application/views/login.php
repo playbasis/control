@@ -1,7 +1,16 @@
 <div id="content" class="regis-page-wrapper regis-login-page">
 
 
+
 <div class="row regis-header">
+
+    <div class="regis-site-header">
+        <svg title="Playbasis" class="pbr-header-logo">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<?php echo base_url();?>image/logo.svg#logo"></use>
+        </svg>    
+    </div>
+    
+
     <h1>
             <small>Get started with Gamification today!</small>
             Login
