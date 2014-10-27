@@ -13,13 +13,12 @@ class Goods_model extends MY_Model
     {
         $this->set_site_mongodb($data['site_id']);
         $this->mongo_db->select(array('goods_id','image','name','code','description','quantity','redeem','group','date_start','date_expire','sponsor','sort_order'));
-        $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             'deleted' => false
         ));
-        if (!empty($nin)) $this->mongo_db->where_not_in('goods_id', $nin);
+        if (!empty($nin)) $this->mongo_db->where_not_in('_id', $nin);
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
         if($goods){
             foreach($goods as &$g){
@@ -60,6 +59,7 @@ class Goods_model extends MY_Model
                 }
 
                 $g['image'] = $this->config->item('IMG_PATH') . $g['image'];
+                $g['_id'] = $g['_id']."";
                 $g['goods_id'] = $g['goods_id']."";
                 $g['date_start'] = $g['date_start'] ? datetimeMongotoReadable($g['date_start']) : null;
                 $g['date_expire'] = $g['date_expire'] ? datetimeMongotoReadable($g['date_expire']) : null;

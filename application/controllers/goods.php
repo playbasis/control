@@ -48,13 +48,15 @@ class Goods extends REST2_Controller
         {
             $goodsList['goods_list'] = $this->goods_model->getAllGoods($this->validToken, $ids);
             if (is_array($goodsList['goods_list'])) foreach ($goodsList['goods_list'] as &$goods) {
-                $goods_id = $goods['goods_id'];
-                $is_group = array_key_exists($goods_id, $group_name);
+                $goods_id = $goods['_id'];
+                $is_group = array_key_exists('group', $goods);
                 if ($is_group) {
-                    $goods['is_group'] = $is_group;
+                    $goods['is_group'] = true;
                     $goods['name'] = $group_name[$goods_id]['group'];
                     $goods['quantity'] = $group_name[$goods_id]['quantity'];
                 }
+                unset($goods['_id']);
+                $goods['code'] = null;
             }
             $this->response($this->resp->setRespond($goodsList), 200);
         }
