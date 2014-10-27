@@ -15,23 +15,16 @@ class Goods extends REST2_Controller
     public function index_get($goodsId = 0)
     {
         /* process group */
-        $groups = $this->goods_model->getGroups($this->validToken['site_id']);
+        $results = $this->goods_model->getGroupsAggregate($this->validToken['site_id']);
         $ids = array();
         $group_name = array();
-        foreach ($groups as $group => $each) {
-            $first = array_shift($each); // skip first one
-            $first_id = $first['goods_id']->{'$id'};
-            $group_name[$first_id] = array('group' => $group, 'quantity' => $first['quantity']);
-            if ($each) { // process the remaining
-                while ($next = array_shift($each)) {
-                    array_push($ids, $next['goods_id']);
-                    if ($next['quantity'] !== null) {
-                        $group_name[$first_id]['quantity'] += $next['quantity'];
-                    } else {
-                        $group_name[$first_id]['quantity'] = null;
-                    }
-                }
-            }
+        foreach ($results as $i => $result) {
+            $group = $result['_id']['group'];
+            $quantity = $result['quantity'];
+            $list = $result['list'];
+            $first = array_shift($list); // skip first one
+            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+            $ids = array_merge($ids, $list);
         }
         /* main */
         if($goodsId) // given specified goods_id
