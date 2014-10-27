@@ -29,7 +29,6 @@
 			<?php $attributes = array('id' => 'form','class' => 'pbf-form');?>
 			<?php echo form_open_multipart($form, $attributes);?>
 
-           
             <fieldset>
             <p>Please provide your email, we will send you a link via email to reset your password.</p>
               

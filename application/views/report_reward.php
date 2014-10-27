@@ -28,10 +28,10 @@
                     <select name="filter_action_id">
                         <option value="0"><?php echo "All"; ?></option>
                         <?php foreach ($badge_rewards as $br){?>
-                            <?php if ($br['_id'] == $filter_action_id) { ?>
-                            <option selected="selected" value="<?php echo $br['_id']?>"><?php echo $br['name'];?></option>
+                            <?php if ($br['reward_id'] == $filter_action_id) { ?>
+                            <option selected="selected" value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
                             <?php }else{?>
-                            <option value="<?php echo $br['_id']?>"><?php echo $br['name'];?></option>
+                            <option value="<?php echo $br['reward_id']?>"><?php echo $br['name'];?></option>
                             <?php }?>
                         <?php }?>
                     </select>

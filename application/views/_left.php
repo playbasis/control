@@ -1,3 +1,6 @@
+<?php
+if (isset($username)) {
+?>
 <!-- start: Main Menu -->
 <div class="main-menu-span span2">
     <div class="nav-collapse sidebar-nav in collapse" style="height: auto;">
@@ -45,3 +48,6 @@
         });
     });
 </script>
+<?php
+}
+?>

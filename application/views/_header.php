@@ -150,6 +150,9 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
 };
 ?>
 
+<?php
+if (isset($username)) {
+?>
 <!-- start: Header -->
 <div id="top-header" class="navbar">
     <div class="navbar-inner">
@@ -212,6 +215,9 @@ if(isset($check_limit) && isset($check_limit['limit_user']) && (int)$check_limit
         </div>
     </div>
 </div>
+<?php
+}
+?>
 <!-- start: Body -->
 <div class="container-fluid">
     <div class="row-fluid">
