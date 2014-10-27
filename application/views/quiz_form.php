@@ -166,7 +166,7 @@
                                     <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>
                                 </div>
                         </div>
-                        <div class="box-content clearfix">
+                        <div class="box-content clearfix" style="display: none;">
                             <div class="span12">
                                 <table class="form">
                                     <tbody>
@@ -357,6 +357,8 @@
 
             <div id="tab-quiz-grade">
                 <div class="grade-head-wrapper">
+                    <a href="javascript:void(0)" class="btn  open-grade-btn btn-lg">Open All</a>
+                    <a href="javascript:void(0)" class="btn close-grade-btn btn-lg">Close All</a>
                     <a href="javascript:void(0)" class="btn btn-primary add-grade-btn btn-lg">Add Grade</a>
                 </div>
 
@@ -389,20 +391,42 @@
                                 }
                             }
                     ?>
-                            <div class="box-content clearfix">
+                        <div class="grade-item-wrapper" data-grade-id="<?php echo $grade['grade_id']; ?>">
+                            <div class="box-header box-grade-header overflow-visible">
+                                    <h2><img src="<?php echo base_url();?>image/default-image.png" width="50"> Grade between <?php echo $grade['start']; ?>% - <?php echo $grade['end']; ?>%</h2>
+                                    <div class="box-icon">
+                                        <a href="javascript:void(0)" class="btn btn-danger right remove-grade-btn" >Delete </a>
+                                        <span class="break"></span>
+                                        <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>
+                                    </div>
+                            </div>
+                            <div class="box-content clearfix" style="display: none;">
                                 <div class="span6">
-                                    <a href="javascript:void(0)" class="btn btn-danger right remove-grade-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
                                     <table class="form">
                                         <tbody>
                                         <tr>
-                                            <td colspan="2">
-                                                If user's final grade is between <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][start]" value = "<?php echo $grade['start']; ?>" class="grades-range" />% and <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][end]" value = "<?php echo $grade['end']; ?>" class="grades-range" />%,
+                                            <td>
+                                                If user's final grade is between
+                                            </td>
+                                            <td>
+                                                Start : <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][start]" value = "<?php echo $grade['start']; ?>" class="grades-range" />% 
+                                                <br>
+                                                End : <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][end]"  value = "<?php echo $grade['end']; ?>" class="grades-range" />%,
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2">
-                                                give letter grade  <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][grade]" value = "<?php echo $grade['grade']; ?>"> and assign the rank : <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rank]" value = "<?php echo $grade['rank']; ?>">
+                                            <td >
+                                                Give grade :
                                             </td>
+                                            <td>
+                                                <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][grade]" value = "<?php echo $grade['grade']; ?>"> <small>* ex. A, B+, B</small>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Rank title : 
+                                            </td>
+                                            <td><input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rank]" value = "<?php echo $grade['rank']; ?>"> <small>* ex. Super good, normal</small></td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -425,10 +449,12 @@
                                         <tbody>
                                         <tr>
                                             <td>
-                                                <?php echo $this->lang->line('entry_rewards'); ?> :
-                                            </td>
-                                            <td>
+                                                <p class="text-center">
+                                                    <?php echo $this->lang->line('entry_rewards'); ?> 
+                                                </p>
+                                                
                                                 <div class="reward">
+
                                                     <button id="exp-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_exp'); ?></button>
                                                     <div class="exp">
                                                         <div class="reward-panel">
@@ -436,6 +462,9 @@
                                                             <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][exp][exp_value]" size="100" class="orange tooltips" value="<?php echo $exp_user_set? $exp_user_set["exp_value"] : ''; ?>" />
                                                         </div>
                                                     </div>
+
+                                                    <br>
+
                                                     <button id="point-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
                                                     <div class="point">
                                                         <div class="reward-panel">
@@ -443,6 +472,7 @@
                                                             <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][rewards][point][point_value]" size="100" class="orange tooltips" value="<?php echo $point_user_set ? $point_user_set["point_value"] : ''; ?>" />
                                                         </div>
                                                     </div>
+
                                                     <div id="badge-panel">
                                                         <?php
                                                         if($badge_list){
@@ -512,118 +542,9 @@
                                     </table>
                                 </div>
                             </div>
-
+                        </div>
                     <?php
                         }
-                    }else{
-                    ?>
-
-                        <?php
-                        $countgrade = new MongoId();
-                        $countgrade = $countgrade."";
-                        ?>
-                        
-                        <div class="box-content clearfix">
-                            <div class="span6">
-                                <a href="javascript:void(0)" class="btn btn-danger right remove-grade-btn dropdown-toggle" data-toggle="dropdown">Delete </a>
-                                <table class="form">
-                                    <tbody>
-                                    <tr>
-                                        <td colspan="2">
-                                            If user's final grade is between <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][start]" value = "" class="grades-range" />% and <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][end]" value = "" class="grades-range" />%,
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            give letter grade  <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][grade]" value = ""> and assign the rank : <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][rank]" value = "">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <?php echo $this->lang->line('rank_image'); ?> :
-                                        </td>
-                                        <td>
-                                            <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_grades_<?php echo $countgrade; ?>_thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                            <input type="hidden" name="quiz[grades][<?php echo $countgrade; ?>][rank_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_grades_<?php echo $countgrade; ?>_image" />
-                                            <br />
-                                            <a onclick="image_upload('quiz_grades_<?php echo $countgrade; ?>_image', 'quiz_grades_<?php echo $countgrade; ?>_thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                            <a onclick="$('quiz_grades_<?php echo $countgrade; ?>_thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('quiz_grades_<?php echo $countgrade; ?>_image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-
-                            </div>
-                            <div class="span6">
-                                <table class="form">
-                                    <tbody>
-                                    <tr>
-                                        <td>
-                                            <?php echo $this->lang->line('entry_rewards'); ?> :
-                                        </td>
-                                        <td>
-                                            <div class="reward">
-                                                <button id="point-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>
-                                                <div class="point">
-                                                    <div class="reward-panel">
-                                                        <span class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
-                                                        <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][rewards][point][point_value]" size="100" class="orange tooltips" value="" />
-                                                    </div>
-                                                </div>
-                                                <div id="badge-panel">
-                                                    <?php
-                                                    if($badge_list){
-                                                        ?>
-                                                        <br>
-                                                        <button id="badge-entry" type="button" class="btn btn-primary btn-large btn-block"><?php echo $this->lang->line('entry_badge'); ?></button>
-                                                        <div class="badges">
-                                                            <div class="reward-panel">
-                                                                <?php
-                                                                foreach($badge_list as $badge){
-                                                                    ?>
-                                                                    <img height="50" width="50" src="<?php echo S3_IMAGE.$badge['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                                                    <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][rewards][badge][<?php echo $badge['badge_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?> tooltips" size="100" value="" /><br/>
-                                                                <?php
-                                                                }
-                                                                ?>
-                                                            </div>
-                                                        </div>
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                </div>
-                                                <div id="reward-panel">
-                                                    <?php
-                                                    if($point_list){
-                                                        ?>
-                                                        <br>
-                                                        <button id="reward-entry" type="button" class="btn btn-warning btn-large btn-block"><?php echo $this->lang->line('entry_custom_point'); ?></button>
-                                                        <div class="rewards">
-                                                            <div class="reward-panel">
-                                                                <?php
-                                                                foreach($point_list as $point){
-                                                                    ?>
-                                                                    <?php echo $point['name']; ?>
-                                                                    <input type="text" name="quiz[grades][<?php echo $countgrade; ?>][rewards][custom][<?php echo $point['reward_id']; ?>]" class="<?php echo alternator('green','yellow','blue');?>" size="100" value="" /><br/>
-                                                                <?php
-                                                                }
-                                                                ?>
-                                                            </div>
-                                                        </div>
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                   
-
-                    <?php
                     }
                     ?>
 
@@ -656,12 +577,20 @@
         init_sub_remove_event('.remove-option-btn', 2);
         
         init_question_event();
+        init_grade_event();
 
         $('.open-question-btn').click(function(){
             $('.question-item-wrapper>.box-content').show();
         })
         $('.close-question-btn').click(function(){
             $('.question-item-wrapper>.box-content').hide();
+        })
+
+        $('.open-grade-btn').click(function(){
+            $('.grade-item-wrapper>.box-content').show();
+        })
+        $('.close-grade-btn').click(function(){
+            $('.grade-item-wrapper>.box-content').hide();
         })
 
     });
@@ -715,26 +644,50 @@
     $('.add-grade-btn').click(function(){
         countGrades = mongoIDjs();
 
-        var gradeHtml = '<div class="box-content clearfix">\
+        var gradeHtml = '<div class="grade-item-wrapper" data-grade-id="'+countGrades+'">\
+        <div class="box-header box-grade-header overflow-visible">\
+                <h2><img src="<?php echo base_url();?>image/default-image.png" width="50"> Grading</h2>\
+                <div class="box-icon">\
+                    <a href="javascript:void(0)" class="btn btn-danger right remove-grade-btn" >Delete </a>\
+                    <span class="break"></span>\
+                    <a href="javaScript:void()" ><i class="icon-chevron-up"></i></a>\
+                </div>\
+        </div>\
+        <div class="box-content clearfix">\
             <div class="span6">\
-            <a href="javascript:void(0)" class="btn btn-danger right remove-grade-btn dropdown-toggle" data-toggle="dropdown">Delete </a>\
         <table class="form">\
             <tbody>\
             <tr>\
-            <td colspan="2">\
-            If user\'s final grade is between <input type="text" name="quiz[grades]['+countGrades+'][start]" value = "" class="grades-range" />% and <input type="text" name="quiz[grades]['+countGrades+'][end]" value = "" class="grades-range" />%,\
+                <td>\
+                    If user\'s final grade is between\
+                </td>\
+            <td>\
+            Start :  <input type="text" name="quiz[grades]['+countGrades+'][start]" value = "" class="grades-range" />%\
+            <br>\
+            End : <input type="text" name="quiz[grades]['+countGrades+'][end]" value = "" class="grades-range" />%\
         </td>\
         </tr>\
             <tr>\
-        <td colspan="2">\
-            give letter grade  <input type="text" name="quiz[grades]['+countGrades+'][grade]" value = ""> and assign the rank : <input type="text" name="quiz[grades]['+countGrades+'][rank]" value = "">\
-            </td>\
-        </tr>\
+                <td >\
+                    Give grade :\
+                </td>\
+                <td>\
+                    <input type="text" name="quiz[grades]['+countGrades+'][grade]" value = ""> <small>* ex. A, B+, B</small>\
+                </td>\
+            </tr>\
             <tr>\
-            <td>\
-        <?php echo $this->lang->line('rank_image'); ?> :\
-        </td>\
-            <td>\
+                <td >\
+                    Rank title : \
+                </td>\
+                <td>\
+                    <input type="text" name="quiz[grades]['+countGrades+'][rank]" value = ""> <small>* ex. Super good, normal</small>\
+                </td>\
+            </tr>\
+            <tr>\
+                <td>\
+                    <?php echo $this->lang->line('rank_image'); ?> :\
+                </td>\
+                <td>\
             <img width="100" height="100" src="<?php echo S3_IMAGE."cache/no_image-100x100.jpg"; ?>" alt="" id="quiz_grades_'+countGrades+'_thumb" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');" />\
             <input type="hidden" name="quiz[grades]['+countGrades+'][rank_image]" value="<?php echo 'no_image.jpg'; ?>" id="quiz_grades_'+countGrades+'_image" />\
             <br />\
@@ -750,10 +703,18 @@
             <tbody>\
             <tr>\
             <td>\
-        <?php echo $this->lang->line('entry_rewards'); ?> :\
-        </td>\
-            <td>\
-        <div class="reward">\
+                <p class="text-center">\
+                    <?php echo $this->lang->line('entry_rewards'); ?>\
+                </p>\
+            <div class="reward">\
+            <button id="exp-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_exp'); ?></button>\
+            <div class="exp" style="display: none;">\
+                <div class="reward-panel">\
+                    <span class="label label-primary"><?php echo $this->lang->line('entry_exp'); ?></span>\
+                    <input type="text" name="quiz[grades]['+countGrades+'][rewards][exp][exp_value]" size="100" class="orange tooltips" value="" />\
+                </div>\
+            </div>\
+            <br>\
             <button id="point-entry" type="button" class="btn btn-info btn-large btn-block"><?php echo $this->lang->line('entry_point'); ?></button>\
         <div class="point hide">\
             <div class="reward-panel">\
@@ -811,11 +772,16 @@
         </tbody>\
         </table>\
         </div>\
+        </div>\
         </div>';
 
         $('.grade-wrapper').append(gradeHtml);
 
-        init_sub_remove_event('.remove-grade-btn', 2);
+        // init_sub_remove_event('.remove-grade-btn', 2);
+        var element_position = $('.grade-item-wrapper[data-grade-id="'+countGrades+'"] ').offset();
+        $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
+
+        init_grade_event();
     });
 
     init_option_event();
@@ -868,7 +834,6 @@
             $(this).parent().parent().parent().find('.option-wrapper > .box-content').append(optionHtml);
             var element_position = $('.question-item-wrapper[data-question-id="'+currentQuestion+'"] .option-container:last-child').offset();
 
-            console.log(element_position);
             $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
 
             init_sub_remove_event('.remove-option-btn', 2);
@@ -960,6 +925,27 @@
             if (r == true) {
                 $target.remove();
                 init_question_event()
+            }
+        });
+    }
+
+    function init_grade_event(){
+       
+        $('.grade-item-wrapper .box-grade-header').unbind().bind('click',function(data){
+            var $target = $(this).next('.box-content');
+
+            if($target.is(':visible')) $('i',$(this)).removeClass('icon-chevron-up').addClass('icon-chevron-down');
+            else                       $('i',$(this)).removeClass('icon-chevron-down').addClass('icon-chevron-up');
+            $target.slideToggle();
+        });
+
+        $('.remove-grade-btn').unbind().bind('click',function(data){
+            var $target = $(this).parent().parent().parent();
+            
+            var r = confirm("Are you sure to remove!");
+            if (r == true) {
+                $target.remove();
+                init_grade_event()
             }
         });
     }
