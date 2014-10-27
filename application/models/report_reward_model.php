@@ -99,8 +99,8 @@ class Report_reward_model extends MY_Model{
     public function getRewardName($reward_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-    	$this->mongo_db->where('_id', new MongoID($reward_id));
-    	$var = $this->mongo_db->get('playbasis_reward');
+    	$this->mongo_db->where('reward_id', new MongoID($reward_id));
+    	$var = $this->mongo_db->get('playbasis_reward_to_client');
     	return isset($var[0])?$var[0]:null;
     }
 

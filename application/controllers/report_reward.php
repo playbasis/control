@@ -81,6 +81,7 @@ class Report_reward extends MY_Controller{
         $this->load->model('Report_reward_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
+        $this->load->model('Badge_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load("action", $lang['folder']);
@@ -158,7 +159,7 @@ class Report_reward extends MY_Controller{
 
         foreach ($results as $result) {
 
-            $budget_name = null;
+            $badge_name = null;
             $reward_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
@@ -172,7 +173,6 @@ class Report_reward extends MY_Controller{
             if(isset($result['reward_id']) && $result['reward_id'] != null){
                 $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
             }else{
-                $this->load->model('Badge_model');
                 $badge_info = $this->Badge_model->getBadge($result['badge_id']);
                 $badge_name = $badge_info['name'];
             }
@@ -277,6 +277,7 @@ class Report_reward extends MY_Controller{
         $this->load->model('Report_reward_model');
         $this->load->model('Image_model');
         $this->load->model('Player_model');
+        $this->load->model('Badge_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load("action", $lang['folder']);
@@ -344,7 +345,7 @@ class Report_reward extends MY_Controller{
 
         foreach ($results as $result) {
 
-            $budget_name = null;
+            $badge_name = null;
             $reward_name = null;
 
             $player = $this->Player_model->getPlayerById($result['pb_player_id'], $data['site_id']);
@@ -358,7 +359,6 @@ class Report_reward extends MY_Controller{
             if(isset($result['reward_id']) && $result['reward_id'] != null){
                 $reward_name = $this->Report_reward_model->getRewardName($result['reward_id']);
             }else{
-                $this->load->model('Badge_model');
                 $badge_info = $this->Badge_model->getBadge($result['badge_id']);
                 $badge_name = $badge_info['name'];
             }
