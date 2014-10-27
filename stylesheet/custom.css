@@ -1,3 +1,6 @@
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+	height: auto;
+}
 .text-center{
 	text-align: center;
 }
@@ -117,28 +120,45 @@
 }
 
 
-.mission-item-wrapper{
+.mission-item-wrapper,
+.question-item-wrapper,
+.grade-item-wrapper{
 	box-shadow: 0px 2px 10px rgba(0 ,0 ,0 ,.15);
 	margin-bottom: 10px;
 }
-.mission-head-wrapper{
+.mission-head-wrapper,
+.question-head-wrapper,
+.grade-head-wrapper
+{
 	text-align: center;
 	margin-bottom: 10px;
 }
-.mission-item-wrapper>.box-content{
+.mission-item-wrapper>.box-content,
+.question-item-wrapper>.box-content,
+.grade-item-wrapper>.box-content
+{
 	padding: 0 20px;
 }
 
-.mission-item-wrapper .box-mission-header{
+.mission-item-wrapper .box-mission-header,
+.question-item-wrapper .box-question-header,
+.grade-item-wrapper .box-grade-header
+{
 	line-height: 50px;
 	height: 50px;
 	cursor: pointer;
 }
-.mission-item-wrapper .box-mission-header h2{
+.mission-item-wrapper .box-mission-header h2,
+.question-item-wrapper .box-question-header h2,
+.grade-item-wrapper .box-grade-header h2
+{
 	line-height: 50px;
 	color:#333;
 }
-.mission-item-wrapper .box-add-item .box-header h2{
+.mission-item-wrapper .box-add-item .box-header h2,
+.question-item-wrapper .box-add-item .box-header h2,
+.grade-item-wrapper .box-add-item .box-header h2
+{
 	color: #333;
 }
 
@@ -423,6 +443,12 @@
 	border-width: 1px 0 0;
 	margin: 10px 10px 20px;
 }
+
+  
+/* ==========================================================================
+   pbf-form
+/* ========================================================================== */
+
 .pbf-form input[type="submit"],
 .pbf-form button[type="submit"]{
 	font-weight: 600;
@@ -484,6 +510,233 @@
 	font-size: 13px;
 	line-height: 13px;
 }
+
+/* ==========================================================================
+   Start pbf-form
+/* ========================================================================== */
+
+
+.pbf-field-group, .pbf-form {
+  *zoom: 1;
+}
+.pbf-field-group:before, .pbf-form:before, .pbf-field-group:after, .pbf-form:after {
+  content: " ";
+  display: table;
+}
+.pbf-field-group:after, .pbf-form:after {
+  clear: both;
+}
+
+/* ==========================================================================
+   Forms
+/* ========================================================================== */
+.pbf-field-group {
+  float: left;
+  width: 100%;
+  padding: 0 10px 10px;
+  position: relative;
+}
+
+@media (min-width: 1000px) {
+  .pbf-half {
+    width: 50%;
+  }
+}
+
+.pbf-hidden {
+  display: none;
+}
+
+.pbf-checked {
+  line-height: 40px;
+}
+
+.pbf-form {
+  padding: 10px;
+  color: white;
+  background: #556270;
+}
+.pbf-form fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.pbf-form hr {
+  border: #cccccc solid 1px;
+  border-width: 1px 0 0;
+  margin: 10px 10px 20px;
+}
+.pbf-form legend {
+  font-size: 1.25em;
+  font-weight: 600;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.4);
+  padding: 0 10px 10px;
+}
+.pbf-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+.pbf-form label span {
+  color: #f26023;
+}
+.pbf-form label.error {
+  position: absolute;
+  right: 10px;
+  bottom: 36px;
+  padding: 5px 10px 17px;
+  color: #fff;
+  font-weight: 600;
+  line-height: 20px;
+  background: #e66161;
+  border-radius: 5px;
+  z-index: 1;
+  -webkit-animation: moveError .3s ease-in;
+          animation: moveError .3s ease-in;
+}
+.pbf-form select,
+.pbf-form textarea,
+.pbf-form input[type="text"],
+.pbf-form input[type="password"],
+.pbf-form input[type="datetime"],
+.pbf-form input[type="datetime-local"],
+.pbf-form input[type="date"],
+.pbf-form input[type="month"],
+.pbf-form input[type="time"],
+.pbf-form input[type="week"],
+.pbf-form input[type="number"],
+.pbf-form input[type="email"],
+.pbf-form input[type="url"],
+.pbf-form input[type="search"],
+.pbf-form input[type="tel"],
+.pbf-form input[type="color"] {
+  color: #333333;
+  font-weight: 600;
+  line-height: 18px;
+  width: 100%;
+  padding: 6px;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
+  background: white;
+  border-radius: 5px;
+  border: transparent solid 5px;
+  -webkit-transition: all .5s ease-in-out;
+          transition: all .5s ease-in-out;
+  z-index: 2;
+  position: relative;
+}
+.pbf-form select.error,
+.pbf-form textarea.error,
+.pbf-form input[type="text"].error,
+.pbf-form input[type="password"].error,
+.pbf-form input[type="datetime"].error,
+.pbf-form input[type="datetime-local"].error,
+.pbf-form input[type="date"].error,
+.pbf-form input[type="month"].error,
+.pbf-form input[type="time"].error,
+.pbf-form input[type="week"].error,
+.pbf-form input[type="number"].error,
+.pbf-form input[type="email"].error,
+.pbf-form input[type="url"].error,
+.pbf-form input[type="search"].error,
+.pbf-form input[type="tel"].error,
+.pbf-form input[type="color"].error {
+  border-color: #e66161;
+}
+.pbf-form select:focus,
+.pbf-form textarea:focus,
+.pbf-form input[type="text"]:focus,
+.pbf-form input[type="password"]:focus,
+.pbf-form input[type="datetime"]:focus,
+.pbf-form input[type="datetime-local"]:focus,
+.pbf-form input[type="date"]:focus,
+.pbf-form input[type="month"]:focus,
+.pbf-form input[type="time"]:focus,
+.pbf-form input[type="week"]:focus,
+.pbf-form input[type="number"]:focus,
+.pbf-form input[type="email"]:focus,
+.pbf-form input[type="url"]:focus,
+.pbf-form input[type="search"]:focus,
+.pbf-form input[type="tel"]:focus,
+.pbf-form input[type="color"]:focus {
+  outline: 0;
+  outline: thin dotted \9;
+  /* IE6-9 */
+  background-color: #e1f0f9;
+}
+.pbf-form textarea {
+  resize: none;
+  height: 160px;
+}
+.pbf-form input[type="checkbox"],
+.pbf-form input[type="radio"] {
+  margin: 10px;
+}
+.pbf-form select {
+  border: none;
+  height: 40px;
+  *margin-top: 4px;
+  line-height: 50px;
+}
+.pbf-form ::-webkit-input-placeholder {
+  color: #bdbdbf;
+}
+.pbf-form :-moz-placeholder {
+  color: #bdbdbf;
+}
+.pbf-form ::-moz-placeholder {
+  color: #bdbdbf;
+}
+.pbf-form :-ms-input-placeholder {
+  color: #bdbdbf;
+}
+.pbf-form input[type="submit"] {
+  font-weight: 600;
+  line-height: normal;
+  white-space: normal;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 -1px #bf4c1b;
+  box-shadow: 0 1px #bf4c1b;
+  background: #f26023 -webkit-linear-gradient(#f26023, #ed500e);
+  background: #f26023 linear-gradient(#f26023, #ed500e);
+  width: 100%;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+.pbf-form input[type="submit"]:hover, .pbf-form input[type="submit"]:focus {
+  outline: none;
+  background: #ff5b16 -webkit-linear-gradient(#ff5b16, #fe5b17);
+  background: #ff5b16 linear-gradient(#ff5b16, #fe5b17);
+}
+
+@-webkit-keyframes moveError {
+  0% {
+    bottom: 10px;
+  }
+
+  100% {
+    bottom: 36px;
+  }
+}
+
+@keyframes moveError {
+  0% {
+    bottom: 10px;
+  }
+
+  100% {
+    bottom: 36px;
+  }
+}
+
+
+
+/* ==========================================================================
+  End pbf-form
+/* ========================================================================== */
+
 
 .regis-step-wrapper{
 	margin: 0px 0 30px;
@@ -923,6 +1176,24 @@
 /* ========== [ Reset Quest in Player Isotope] =========*/
 .isot-player-actions li.reset-quest-btn{
     width:100px;
+}
+
+
+/* ========== [ question ] =========*/
+
+
+.question-input{
+	width: 80%;
+}
+.option-box-wrapper .box-content{
+	background: #f5f5f5;
+}
+.option-box-wrapper .box-header{
+	position: relative;
+}
+
+.option-container.well{
+	padding-top: 20px !important; 
 }
 
 /* ====== [ regis-content ] ======== */
