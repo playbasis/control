@@ -263,23 +263,42 @@ class Goods_model extends MY_Model
 		}
 		return 0; // unavailable
 	}
-    public function getGroups($site_id) {
-        $this->mongo_db->select(array('goods_id','group','quantity'));
-        $this->mongo_db->where('deleted', false);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where_exists('group', true);
-        $results = $this->mongo_db->get("playbasis_goods_to_client");
-        $groups = array();
-        if ($results) foreach ($results as $result) {
-            $name = $result['group'];
-            if (array_key_exists($name, $groups)) {
-                $groups[$name][] = array('goods_id' => $result['goods_id'], 'quantity' => $result['quantity']);
-            } else {
-                $groups[$name] = array(array('goods_id' => $result['goods_id'], 'quantity' => $result['quantity']));
-            }
-        }
-        return $groups;
-    }
+	/* Deprecated: use getGroupsAggregate instead */
+	public function getGroups($site_id) {
+		$this->mongo_db->select(array('goods_id','group','quantity'));
+		$this->mongo_db->where('deleted', false);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where_exists('group', true);
+		$results = $this->mongo_db->get("playbasis_goods_to_client");
+		$groups = array();
+		if ($results) foreach ($results as $result) {
+			$name = $result['group'];
+			if (array_key_exists($name, $groups)) {
+				$groups[$name][] = array('goods_id' => $result['goods_id'], 'quantity' => $result['quantity']);
+			} else {
+				$groups[$name] = array(array('goods_id' => $result['goods_id'], 'quantity' => $result['quantity']));
+			}
+		}
+		return $groups;
+	}
+	public function getGroupsAggregate($site_id) {
+		$results = $this->mongo_db->aggregate('playbasis_goods_to_client', array(
+			array(
+				'$match' => array(
+					'deleted' => false,
+					'site_id' => $site_id,
+					'group' => array('$exists' => true)
+				),
+			),
+			array(
+				'$project' => array('group' => 1, 'quantity' => 1)
+			),
+			array(
+				'$group' => array('_id' => array('group' => '$group'), 'quantity' => array('$sum' => '$quantity'), 'list' => array('$addToSet' => '$_id'))
+			),
+		));
+		return $results ? $results['result'] : array();
+	}
 	private function checkGoods($client_id, $site_id, $goods, $pb_player_id, $amount)
 	{
 		if (isset($goods['date_start'])) $goods['date_start'] = datetimeMongotoReadable($goods['date_start']);
