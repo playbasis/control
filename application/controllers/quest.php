@@ -311,7 +311,9 @@ class Quest extends REST2_Controller
 
     }
 
-    private function checkCompletionMission($quest, $mission, $pb_player_id, $validToken){
+    private function checkCompletionMission($quest, $mission, $pb_player_id, $validToken, $badge_player_check=array(), $player_mission=array()){
+
+$this->benchmark->mark('check-begin');
 
         if(empty($quest)){
             $event = array(
@@ -324,37 +326,45 @@ class Quest extends REST2_Controller
         if(isset($mission["status"]) && $mission["status"] == "finish")
             return array();
 
-        $player_badges = $this->player_model->getBadge($pb_player_id, $validToken['site_id']);
+        if(!$badge_player_check){
+$this->benchmark->mark('check-badge-begin');
+            $player_badges = $this->player_model->getBadge($pb_player_id, $validToken['site_id']);
 
-        if($player_badges){
-            $badge_player_check = array();
-            foreach($player_badges as $b){
-                $badge_player_check[$b["badge_id"]] = $b["amount"];
-            }
-        }
-
-        $quest_expire = null;
-        if($quest && isset($quest["condition"])){
-            foreach($quest["condition"] as $qc){
-                if($qc["condition_type"] == "DATETIME_END"){
-                    $quest_expire = new MongoDate(strtotime($qc["condition_value"]));
+            if($player_badges){
+                $badge_player_check = array();
+                foreach($player_badges as $b){
+                    $badge_player_check[$b["badge_id"]] = $b["amount"];
                 }
             }
+$this->benchmark->mark('check-badge-end');
+print('checkCompletionMission: t = '.$this->benchmark->elapsed_time('check-badge-begin', 'check-badge-end')." (A)\n");
         }
 
         $missionEvent = array();
 
-        $player_mission = $this->player_model->getMission($pb_player_id, $quest["_id"], $mission["mission_id"], $validToken['site_id']);
+        if(!$player_mission) {
+$this->benchmark->mark('check-mission-begin');
+            $obj = $this->player_model->getMission($pb_player_id, $quest["_id"], $mission["mission_id"], $validToken['site_id']);
+            $player_mission = $obj["missions"][0];
+$this->benchmark->mark('check-mission-end');
+print('checkCompletionMission: t = '.$this->benchmark->elapsed_time('check-mission-begin', 'check-mission-end')." (B)\n");
+//print_r($player_mission);
+//print_r($mission);
+        }
+        $datetime_check = (isset($player_mission["date_modified"]))?$player_mission["date_modified"]:new MongoDate(time());
+
+$this->benchmark->mark('check-end');
+print('checkCompletionMission: t = '.$this->benchmark->elapsed_time('check-begin', 'check-end')." (1)\n");
 
         if($mission && isset($mission["completion"])){
+
+$this->benchmark->mark('check-loop-begin');
 
             foreach($mission["completion"] as $c){
 
                 if($c["completion_type"] == "ACTION"){
 
-                    $datetime_check = (isset($player_mission["missions"][0]["date_modified"]))?$player_mission["missions"][0]["date_modified"]:new MongoDate(time());
-//                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
-                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check, $quest_expire);
+                    $action = $this->player_model->getActionCountFromDatetime($pb_player_id, $c["completion_id"], isset($c["completion_filter"])?$c["completion_filter"]:null, $validToken['site_id'], $datetime_check);
 
                     if((int)$c["completion_value"] > (int)$action["count"]){
                         $event = array(
@@ -378,7 +388,6 @@ class Quest extends REST2_Controller
                 }
                 if($c["completion_type"] == "POINT"){
                     $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
-//                    $point_a = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $c["completion_id"], $validToken['site_id'], '', $quest_expire);
 
                     if(isset($point_a[0]['value'])){
                         $point = $point_a[0]['value'];
@@ -401,7 +410,6 @@ class Quest extends REST2_Controller
                 }
                 if($c["completion_type"] == "CUSTOM_POINT"){
                     $point_a = $this->player_model->getPlayerPoint($pb_player_id, $c["completion_id"], $validToken['site_id']);
-//                    $point_a = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $c["completion_id"], $validToken['site_id'], '', $quest_expire);
 
                     if(isset($point_a[0]['value'])){
                         $custom_point = $point_a[0]['value'];
@@ -442,6 +450,9 @@ class Quest extends REST2_Controller
                     }
                 }
             }
+
+$this->benchmark->mark('check-loop-end');
+print('checkCompletionMission: t = '.$this->benchmark->elapsed_time('check-loop-begin', 'check-loop-end')." (2)\n");
         }
 
         return $missionEvent;
@@ -706,10 +717,6 @@ class Quest extends REST2_Controller
 //        $reward_id = new MongoId("53bbecbb988040116c8b462f");
 //        $starttime = new MongoDate(strtotime("2014-01-01"));
 //        $endtime = new MongoDate(strtotime("2014-10-15"));
-//
-//        $res = $this->player_model->getPlayerPointFromDateTime($pb_player_id, $reward_id, $site_id, $starttime, $endtime);
-//
-//        var_dump($res);
 
         $apiResult = $this->QuestProcess($pb_player_id, $validToken);
 
@@ -1064,6 +1071,7 @@ class Quest extends REST2_Controller
 
     public function questOfPlayer_get($quest_id = 0)
     {
+$this->benchmark->mark('main-begin');
         $required = $this->input->checkParam(array('player_id'));
         if ($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
@@ -1075,6 +1083,14 @@ class Quest extends REST2_Controller
         )));
         if(!$pb_player_id)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $badge_player_check = array();
+        $player_badges = $this->player_model->getBadge($pb_player_id, $this->validToken['site_id']);
+        if($player_badges){
+            foreach($player_badges as $b){
+                $badge_player_check[$b["badge_id"]] = $b["amount"];
+            }
+        }
 
         $data = array(
             'client_id' => $this->validToken['client_id'],
@@ -1100,7 +1116,8 @@ class Quest extends REST2_Controller
                 foreach($quest_player["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken);
+                    //$quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken);
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken, $badge_player_check, $m);
                 }
 
                 $quest['status'] = $quest_player['status'];
@@ -1114,18 +1131,30 @@ class Quest extends REST2_Controller
                 $resp['quest'] = array();
             }
         } else {
+$this->benchmark->mark('begin');
             // get all questss related to clients
             $data['status'] = array("join","finish");
             $quests_player = $this->quest_model->getPlayerQuests($data);
+$this->benchmark->mark('end');
+print('getPlayerQuests: t = '.$this->benchmark->elapsed_time('begin', 'end')."\n");
 
+$this->benchmark->mark('loop-begin');
             $quests = array();
             foreach ($quests_player as $q) {
+//print_r($q);
+$this->benchmark->mark('begin');
                 $quest = $this->quest_model->getQuest(array_merge($data, array('quest_id' => $q['quest_id'])));
+$this->benchmark->mark('end');
+print('getQuest: t = '.$this->benchmark->elapsed_time('begin', 'end')."\n");
 
                 foreach($q["missions"] as $k=>$m){
                     $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
                     $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
-                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken);
+$this->benchmark->mark('begin');
+                    //$quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken);
+                    $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken, $badge_player_check, $m);
+$this->benchmark->mark('end');
+print('checkCompletionMission: t = '.$this->benchmark->elapsed_time('begin', 'end')."\n");
                 }
 
                 $quest['status'] = $q['status'];
@@ -1133,12 +1162,20 @@ class Quest extends REST2_Controller
                 unset($quest['_id']);
 
                 $quests[] = $quest;
+//break;
             }
+$this->benchmark->mark('loop-end');
+print('loop: t = '.$this->benchmark->elapsed_time('loop-begin', 'loop-end')."\n");
 
+$this->benchmark->mark('begin');
             array_walk_recursive($quests, array($this, "convert_mongo_object"));
+$this->benchmark->mark('end');
+print('array_walk_recursive(convert_mongo_object): t = '.$this->benchmark->elapsed_time('begin', 'end')."\n");
 
             $resp['quests'] = $quests;
         }
+$this->benchmark->mark('main-end');
+print('main: t = '.$this->benchmark->elapsed_time('main-begin', 'main-end')."\n");
         $this->response($this->resp->setRespond($resp), 200);
     }
 
