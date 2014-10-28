@@ -7,6 +7,10 @@ define('DAYS_TO_SEND_ANOTHER_EMAIL', 7);
 define('PERCENTAGE_TO_ALERT_USAGE_NEAR_LIMIT', 0.9);
 define('ACCOUNT_HAS_TO_BE_REGISTERED_AT_LEAST_DAYS', 30);
 define('RECENT_DAYS_SENDING_API_TO_BE_CONSIDERED_ACTIVE', 7);
+define('MONTHS_TO_STORE_IN_SERVICE_LOG', 3);
+define('S3_BUCKET', 'elasticbeanstalk-ap-southeast-1-007834438823');
+define('S3_FOLDER', 'log/playbasis_web_service_log');
+
 class Cron extends CI_Controller
 {
 	public function __construct()
@@ -235,6 +239,11 @@ $email = 'pechpras@playbasis.com';
 				}
 			}
 		}
+	}
+
+	public function archiveWebServiceLog() {
+		$results = $this->service_model->archive(MONTHS_TO_STORE_IN_SERVICE_LOG, S3_BUCKET, S3_FOLDER);
+		print('Total records archived = '.$results);
 	}
 }
 ?>
