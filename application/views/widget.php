@@ -13,6 +13,7 @@
 	  <li><a href="#widget-livefeed" data-toggle="tab"><?php echo $this->lang->line('column_livefeed'); ?></a></li>
 	  <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
 	  <li><a href="#widget-userbar" data-toggle="tab"><?php echo $this->lang->line('column_userbar'); ?></a></li>
+	  <li><a href="#widget-achievement" data-toggle="tab"><?php echo $this->lang->line('column_achievement'); ?></a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -240,6 +241,58 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
+        <div class="tab-pane" id="widget-achievement">
+
+            <h3><?php echo $this->lang->line('text_achievement_widget'); ?></h3>
+
+            <div class="row">
+                <div class="span5">
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
+                            <div class="controls">
+                                <div class="input-prepend">
+                                    <span class="colorSelectorHolder add-on"></span>
+                                    <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
+                            <div class="controls">
+                                <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" ></label>
+                            <div class="controls">
+                                <a href="javascript:void(0);" onclick="reloadAchievement()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="span7">
+                    <iframe id="iframe-achievement" src="<?php echo base_url();?>index.php/widget/preview?type=achievement" width="100%" height="500" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div><!-- .tab-pane -->
+
 	        </div>
         </div><!-- .content -->
     </div><!-- .box -->
@@ -307,6 +360,10 @@
 			clearTimeout(timeout);
 			timeout = setTimeout(reloadUserbar,timeBuffer);
 		});
+        $('#widget-achievement input, #widget-achievement select').bind("change paste blur", function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(reloadAchievement,timeBuffer);
+        });
 
 		$('#getcode-modal').on('show', function () {
 
@@ -327,6 +384,9 @@
 				case "#widget-userbar":
 					reloadUserbar();
 				break;
+                case "#widget-achievement":
+                    reloadAchievement();
+                break;
 			}
 		})
 
@@ -453,6 +513,37 @@
 		$('#getcode-modal .code-element').html(codeElement);
 		$('#getcode-modal .code-header').html(codeHeader);
 	}
+    function reloadAchievement(){
+        var width = getVal($('#widget-achievement .wg-width').val());
+        var height = getVal($('#widget-achievement .wg-height').val());
+        var color =getColor($('#widget-achievement .wg-color').val());
+        var playerIdTest =$('#widget-achievement .wg-player-id').val();
+        var url = '<?php echo base_url();?>index.php/widget/preview?type=achievement';
+        var codeElement = '&lt;div class="pb-achievement" ';
+        var codeHeader = codeHeaderPlayerTestTemplate;
+
+        if(typeof width != 'undefined' && width != ""){
+            url+='&width='+width;
+            codeElement += 'data-pb-width="'+width+'" ';
+        }
+        if(typeof height != 'undefined' && height != ""){
+            url+='&height='+height;
+            codeElement += 'data-pb-height="'+height+'" ';
+        }
+        if(typeof color != 'undefined' && color != ""){
+            url+='&color='+color;
+            codeHeader = codeHeader.replace("#0e9ce4", color);
+        }
+        if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
+            url+='&playerId='+playerIdTest;
+            codeHeader = codeHeader.replace("playertest", playerIdTest);
+        }
+        codeElement += '&gt;&lt;/div&gt;';
+        $('#iframe-achievement').attr('src',url);
+
+        $('#getcode-modal .code-element').html(codeElement);
+        $('#getcode-modal .code-header').html(codeHeader);
+    }
 	function getVal(val){
 		if(typeof val == 'undefined' ){
 			return '';
