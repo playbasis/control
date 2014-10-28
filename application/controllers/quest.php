@@ -39,6 +39,14 @@ class Quest extends REST2_Controller
             'events_quests' => array()
         );
 
+        $badge_player_check = array();
+        $player_badges = $this->player_model->getBadge($pb_player_id, $site_id);
+        if($player_badges){
+            foreach($player_badges as $b){
+                $badge_player_check[$b["badge_id"]] = $b["amount"];
+            }
+        }
+
         foreach($quests as $q){
 
             $missionEvent = array();
@@ -93,7 +101,7 @@ class Quest extends REST2_Controller
                         if(isset($player_missions[$m["mission_id"].""]) && $player_missions[$m["mission_id"].""] == "join"){
                             //echo "join";
                             if (!$test_id)
-                                $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                                $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken, $badge_player_check);
                             else
                                 $event_of_mission = array();
 
@@ -138,7 +146,7 @@ class Quest extends REST2_Controller
                             }
 
                             if (!$test_id)
-                                $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken);
+                                $event_of_mission = $this->checkCompletionMission($quest, $m, $pb_player_id, $validToken, $badge_player_check);
                             else
                                 $event_of_mission = array();
 
