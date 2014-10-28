@@ -682,24 +682,16 @@ class Quest extends REST2_Controller
         return $eventMessage;
     }
 
-    /*public function testQuest_post(){
+    /*public function testQuest_get(){
         //process regular data
-        $required = $this->input->checkParam(array(
-            'token'
-        ));
-        if($required)
-            $this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
         $required = $this->input->checkParam(array(
             'player_id'
         ));
         if($required)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-        $validToken = $this->auth_model->findToken($this->input->post('token'));
-        if(!$validToken)
-            $this->response($this->error->setError('INVALID_TOKEN'), 200);
         //get playbasis player id from client player id
-        $cl_player_id = $this->input->post('player_id');
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array(
+        $cl_player_id = $this->input->get('player_id');
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $cl_player_id
         )));
 
@@ -708,12 +700,11 @@ class Quest extends REST2_Controller
 //        $starttime = new MongoDate(strtotime("2014-01-01"));
 //        $endtime = new MongoDate(strtotime("2014-10-15"));
 
-        $apiResult = $this->QuestProcess($pb_player_id, $validToken);
+        $apiResult = $this->QuestProcess($pb_player_id, $this->validToken);
 
         $this->response($this->resp->setRespond($apiResult), 200);
 //        $this->response($this->resp->setRespond($res), 200);
     }*/
-
 
     /**
      * Check quest available for the player.
