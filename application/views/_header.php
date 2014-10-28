@@ -157,10 +157,10 @@ if (isset($username)) {
 <div id="top-header" class="navbar">
     <div class="navbar-inner">
         <div class="container-fluid">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
+            <a class="btn btn-navbar btn-not-login" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
+                <span class="icon-bar btn-not-login"></span>
+                <span class="icon-bar btn-not-login"></span>
+                <span class="icon-bar btn-not-login"></span>
             </a>
             <a class="brand" href="<?php echo base_url(); ?>"> <img src="<?php echo base_url();?>image/playbasis_logo_120_white.png" title="<?php echo $heading_title; ?>" onclick="location = '<?php echo base_url(); ?>'" /> <span class="hidden-phone"></span></a>
 

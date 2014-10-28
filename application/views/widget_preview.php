@@ -91,5 +91,11 @@
 <div class="pb-userbar"  data-pb-displayPoint="<?php echo $displaypoint; ?>" ></div>
 <?php endif; ?>
 
+<?php if($typeWidget == 'achievement'): ?>
+    <div style="width:<?php echo $width; ?>px;margin:40px auto;">
+        <div class="pb-achievement" data-pb-width="<?php echo $width; ?>" data-pb-height="<?php echo $height; ?>" ></div>
+    </div>
+<?php endif; ?>
+
 </body>
 </html>
