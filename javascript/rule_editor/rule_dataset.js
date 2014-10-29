@@ -168,8 +168,8 @@ DataSet = function(jsonArray, parent_id) {
 
             _validateByType = {
                 'number': function(value) {
-                    console.log('hello from number validate : ' + value);
-                    console.log(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value));
+//                    console.log('hello from number validate : ' + value);
+//                    console.log(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value));
                     return /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);
                 },
                 'url': function(value) {
