@@ -224,6 +224,10 @@ class Service extends REST2_Controller
     {
         $reward_name = $this->input->post('point_name');
 
+        if(strtolower($reward_name) == "exp"){
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+        }
+
         $reward = array(
             'site_id' => $this->site_id,
             'client_id' => $this->client_id,

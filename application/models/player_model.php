@@ -240,6 +240,19 @@ class Player_model extends MY_Model
         $datecondition = array();
         $datestartcondition = array();
         $dateendcondition = array();
+
+        $reset = $this->getResetRewardEvent($site_id, new MongoId($reward_id));
+        if($reset){
+            $reset_time = array_values($reset);
+            if($starttime != ''){
+                if($reset_time[0] > $starttime){
+                    $starttime = $reset_time[0];
+                }
+            }else{
+                $starttime = $reset_time[0];
+            }
+        }
+
         if($starttime != ''){
             $datestartcondition = array('date_added' => array('$gt' => $starttime));
         }
@@ -251,7 +264,7 @@ class Player_model extends MY_Model
             $datecondition = array( '$and' => array( $datestartcondition, $dateendcondition));
         }else{
             if($datestartcondition){
-                $datecondition = $datecondition;
+                $datecondition = $datestartcondition;
             }else{
                 $datecondition = $dateendcondition;
             }
@@ -1501,6 +1514,30 @@ class Player_model extends MY_Model
         $this->mongo_db->where_ne('deleted', true);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
         return $result ? $result[0] : array();
+    }
+
+    public function getResetRewardEvent($site_id, $reward_id=null) {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array('reward_id','date_added'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('event_type', 'RESET');
+        if ($reward_id) {
+            $this->mongo_db->where('reward_id', $reward_id);
+            $this->mongo_db->limit(1);
+        }
+        $this->mongo_db->order_by(array('date_added' => 'DESC')); // use 'date_added' instead of '_id'
+        $results = $this->mongo_db->get('playbasis_event_log');
+        $ret = array();
+        if ($results){
+            foreach ($results as $result) {
+                $reward_id = $result['reward_id']->{'$id'};
+                if (array_key_exists($reward_id, $ret)) continue;
+                $ret[$reward_id] = $result['date_added'];
+            }
+        }
+
+        return $ret;
     }
 }
 ?>
