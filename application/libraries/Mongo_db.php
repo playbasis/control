@@ -1615,7 +1615,42 @@ class Mongo_db
 			$this->_show_error('Delete of data into MongoDB failed: ' . $exception->getMessage(), 500);
 		}	
 	}
-	
+
+	/**
+	 * Delete all given a list of MongoIds.
+	 *
+	 * Delete all documents from the passed collection based upon certain criteria
+	 *
+	 * <code>
+	 * $this->mongo_db->delete_all_with_ids('foo', $data = array());
+	 * </code>
+	 *
+	 * @param string $collection Name of the collection
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public function delete_all_with_ids($collection = '')
+	{
+		if (empty($collection))
+		{
+			$this->_show_error('No Mongo collection selected to delete from', 500);
+		}
+
+		try
+		{
+			/* $this->_dbhandle->{$collection}->remove($this->wheres, array($this->_query_safety => TRUE, 'justOne' => FALSE)); */
+			$this->_dbhandle->{$collection}->remove($this->wheres, array('justOne' => FALSE));
+			$this->_clear($collection, 'delete_all');
+			return TRUE;
+		}
+
+		catch (MongoCursorException $exception)
+		{
+			$this->_show_error('Delete of data into MongoDB failed: ' . $exception->getMessage(), 500);
+		}
+	}
+
 	/**
 	 * Command.
 	 * 

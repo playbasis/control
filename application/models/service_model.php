@@ -10,6 +10,7 @@ class Service_model extends MY_Model
         $this->load->helper('memcache');
         $this->load->library('mongo_db');
     }
+
     public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false, $show_quest=false){
 
         $this->mongo_db->where('site_id', $site_id);
@@ -206,12 +207,52 @@ class Service_model extends MY_Model
         ));
     }*/
 
-	public function listActiveClientsUsingAPI($days, $list_client_ids=null, $site_id=0) {
-		$this->set_site_mongodb($site_id);
-		$d = strtotime("-".$days." day");
-		$this->mongo_db->where_gt('date_added', new MongoDate($d));
-		if ($list_client_ids) $this->mongo_db->where_in('client_id', $list_client_ids);
-		return $this->mongo_db->distinct('client_id', 'playbasis_web_service_log');
-	}
+    public function listActiveClientsUsingAPI($days, $list_client_ids=null, $site_id=0) {
+        $this->set_site_mongodb($site_id);
+        $d = strtotime("-".$days." day");
+        $this->mongo_db->where_gt('date_added', new MongoDate($d));
+        if ($list_client_ids) $this->mongo_db->where_in('client_id', $list_client_ids);
+        return $this->mongo_db->distinct('client_id', 'playbasis_web_service_log');
+    }
+
+    public function archive($m, $bucket, $folder, $pageSize=50) {
+        $this->load->library('s3');
+
+        $c = 0;
+
+        /* find total "old" records to archive */
+        $d = strtotime("-".$m." month");
+        $this->mongo_db->where_lt('date_added', new MongoDate($d));
+        $total = $this->mongo_db->count('playbasis_web_service_log');
+
+        /* do paging over such records */
+        $numPage = intval(ceil($total/(1.0*$pageSize)));
+        for ($i = 0; $i < $numPage; $i++) {
+            /* fetch the documents */
+            $this->mongo_db->offset($i*$pageSize);
+            $this->mongo_db->limit($pageSize);
+            $documents = $this->mongo_db->get('playbasis_web_service_log');
+
+            /* upload to S3 */
+            $_ids = array();
+            foreach ($documents as $document) {
+                $id = $document['_id'];
+                $result = $this->s3->putObject(json_encode($document), $bucket, $folder.'/'.$id.'.json', S3::ACL_PRIVATE);
+                if ($result) {
+                    array_push($_ids, $id);
+                }
+            }
+
+            /* remove the documents */
+            $this->mongo_db->where_in('_id', $_ids);
+            $this->mongo_db->delete_all_with_ids('playbasis_web_service_log');
+
+            $c += count($_ids);
+
+            print('> '.($i+1).'/'.$numPage.' ('.$c.')'."\n");
+        }
+
+        return $c;
+    }
 }
 ?>
