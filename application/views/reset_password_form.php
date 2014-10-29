@@ -23,11 +23,11 @@
 					<table class="form">
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_password');?>: </td>
-							<td><input type = "password" name="password" size="50" value = ""></td>
+							<td><input type = "password" name="password" size="50" value = "" class="btn-not-login"></td>
 						</tr>
 						<tr>
 							<td><span class="required">*</span> <?php echo $this->lang->line('form_confirm_password');?>: </td>
-							<td><input type = "password" name="password_confirm" size="50" value =""></td>
+							<td><input type = "password" name="password_confirm" size="50" value ="" class="btn-not-login"></td>
 						</tr>			
 					</table>
 				</div>
