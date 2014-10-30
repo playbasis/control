@@ -595,7 +595,7 @@ class Player_model extends MY_Model
             $reset_where = array();
             $reset_not_id = array();
             foreach($reset as $k => $v){
-                $reset_not_id[] = $k;
+                $reset_not_id[] = new MongoId($k);
                 $reset_where[] = array('reward_id' => new MongoId($k), 'date_added' => array('$gte' => $v));
             }
             $reset_where[] = array('reward_id' => array('$nin' => $reset_not_id));
@@ -928,9 +928,35 @@ class Player_model extends MY_Model
 
     public function getPointHistoryFromPlayerID($pb_player_id, $site_id, $reward_id, $offset, $limit){
 
+        $this->set_site_mongodb($site_id);
+
     	if($reward_id){
-    		$this->mongo_db->where('reward_id', $reward_id);	
+            $reset = $this->getResetRewardEvent($site_id, $reward_id);
+
+            if($reset){
+                $reset_time = array_values($reset);
+                $starttime = $reset_time[0];
+
+                $this->mongo_db->where('date_added', array('$gt' => $starttime));
+            }
+
+            $this->mongo_db->where('reward_id', $reward_id);
     	}else{
+
+            $reset = $this->getResetRewardEvent($site_id, $reward_id);
+
+            if($reset){
+                $reset_where = array();
+                $reset_not_id = array();
+                foreach($reset as $k => $v){
+                    $reset_not_id[] = new MongoId($k);
+                    $reset_where[] = array('reward_id' => new MongoId($k), 'date_added' => array('$gte' => $v));
+                }
+                $reset_where[] = array('reward_id' => array('$nin' => $reset_not_id));
+
+                $this->mongo_db->where(array('$or' => $reset_where));
+            }
+
             $this->mongo_db->where_ne('reward_id', null);
         }
     	$this->mongo_db->where('pb_player_id', $pb_player_id);
