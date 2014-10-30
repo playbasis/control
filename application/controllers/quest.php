@@ -696,7 +696,8 @@ class Quest extends REST2_Controller
         )));
 
         $validToken = $this->validToken;
-        $res = $this->player_model->getPlayerPointFromDateTime($pb_player_id, new MongoId("53c551c69880409d6c8b45ac"), $validToken['site_id'], new MongoDate(strtotime("2014-07-01")));
+//        $res = $this->player_model->getPlayerPointFromDateTime($pb_player_id, new MongoId("53c551c69880409d6c8b45ac"), $validToken['site_id'], new MongoDate(strtotime("2014-07-01")));
+        $res = $this->player_model->getLastEventTime($pb_player_id, $validToken['site_id'], "REWARD");
 
 //        $site_id = new MongoId("53a9422f988040355a8b45d3");
 //        $reward_id = new MongoId("53bbecbb988040116c8b462f");
