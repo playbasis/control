@@ -98,7 +98,7 @@
 
 
 	footer {
-		margin: -20px -20px 0px -20px;
+		margin: -20px 0px 0px 0px;
 		padding: 10px 20px;
 		position: relative;
 		z-index: 2;
@@ -211,7 +211,7 @@
 
 
 	footer {
-		margin: -20px -20px 0px -20px;
+		margin: -20px 0px 0px 0px;
 		padding: 10px 20px;
 		position: relative;
 		z-index: 2;
@@ -347,7 +347,7 @@
 	}
 
 	footer {
-		margin: -20px -20px 0px -20px;
+		margin: -20px 0px 0px 0px;
 		padding: 10px 20px;
 		position: relative;
 		z-index: 2;

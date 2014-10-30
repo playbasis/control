@@ -390,6 +390,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	left: 29%;
 	position: relative;
 	margin-bottom: 30px;
+    width: 200px;
 }
 .regis-site-header .pbr-header-logo{
 	display: block;
