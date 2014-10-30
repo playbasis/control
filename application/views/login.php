@@ -54,13 +54,20 @@
             <fieldset>
 
               
-                <div class="input-center">
+                <!--div class="input-center">
                     <?php echo form_input($udata); ?>
                     <?php echo form_password($pdata); ?><br>
                     <?php echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login')); ?>
-                </div>
-
-
+                </div-->
+            <div class="pbf-field-group">
+                <label for="username">E-mail</label>
+                <?php echo form_input($udata); ?>
+            </div>
+            <div class="pbf-field-group">
+                <label for="password">Password</label>
+                <?php echo form_password($pdata); ?>
+            </div>
+                <?php echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login')); ?>
 
               <hr>
 
