@@ -242,6 +242,7 @@ $email = 'pechpras@playbasis.com';
 	}
 
 	public function archiveWebServiceLog() {
+		set_time_limit(0);
 		$results = $this->service_model->archive(MONTHS_TO_STORE_IN_SERVICE_LOG, S3_BUCKET, S3_FOLDER);
 		print('Total records archived = '.$results);
 	}
