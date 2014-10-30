@@ -118,7 +118,6 @@
         }
     });
     $('.pb-alert--close').on('click', function( e ) {
-        console.log('click');
         setTimeout( function() { $('.pb-alert').remove(); }, 1000);
     });
 //--></script>

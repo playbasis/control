@@ -993,13 +993,27 @@ class User extends MY_Controller
                     $this->amazon_ses->message($htmlMessage);
                     $this->amazon_ses->send();
 
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'success', 'message' => 'A link has been sent to your email, please click on it and change your password.'));
+                        exit();
+                    }
+
                     echo "<script>alert('A link has been sent to your email, please click on it and change your password.');</script>";
                     echo "<script>window.location.href = '".site_url()."';</script>";   
                 }else{
                     // echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
                     // $this->data['message'] = $this->lang->line('error_no_email');
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_no_email')));
+                        exit();
+                    }
                     $this->session->set_flashdata('fail', $this->lang->line('error_no_email'));
                     redirect('forgot_password', 'refresh');
+                }
+            }else{
+                if($this->input->post('format') == 'json'){
+                    echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                    exit();
                 }
             }
 
@@ -1039,8 +1053,17 @@ class User extends MY_Controller
                     $this->User_model->insertNewPassword($user_id[0]['_id'], $new_password);
                     $this->session->unset_userdata('user');
 
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'success', 'message' => 'Your password has been changed! We will redirect you to our login page.'));
+                        exit();
+                    }
                     echo "<script>alert('Your password has been changed! We will redirect you to our login page.');</script>";
                     echo "<script>window.location.href = '".site_url()."';</script>";
+                }else{
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                        exit();
+                    }
                 }
 
             }
