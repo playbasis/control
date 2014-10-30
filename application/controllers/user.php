@@ -521,10 +521,22 @@ class User extends MY_Controller
                     } else {
                         $redirect = '/';
                     }
+                    if($this->input->post('format') == 'json'){
+                        echo json_encode(array('status' => 'success', 'message' => ''));
+                        exit();
+                    }
                     redirect($redirect, 'refresh');
                 }
-
+                if($this->input->post('format') == 'json'){
+                    echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_login')));
+                    exit();
+                }
                 $this->data['message'] = $this->lang->line('error_login');
+            }else{
+                if($this->input->post('format') == 'json'){
+                    echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                    exit();
+                }
             }
         }
 

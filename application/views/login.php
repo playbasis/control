@@ -33,12 +33,13 @@
                 </div>
                 <?php
             }
-            $udata = array('name' => 'username', 'id' => 'username','value' => set_value('username'), 'class'=>'btn-not-login', 'placeholder'=>'E-mail');
-            $pdata = array('name' => 'password', 'id' => 'password', 'class'=>'btn-not-login', 'placeholder'=>'Password');
+            $udata = array('name' => 'username', 'id' => 'username','value' => set_value('username'), 'class'=>'btn-not-login', 'placeholder'=>'E-mail', 'required'=>"");
+            $pdata = array('name' => 'password', 'id' => 'password', 'class'=>'btn-not-login', 'placeholder'=>'Password', 'required'=>"");
 
             $attributes = array('id' => 'form', 'class' => 'pbf-form');
-            echo form_open('login',$attributes);
+            //echo form_open('login',$attributes);
             ?>
+            <form id="form" class="pbf-form">
             <?php if($this->session->flashdata('email_sent')){ ?>
                 <div class="content messages half-width">
                 <div class="success"><?php echo $this->session->flashdata('email_sent'); ?></div>
@@ -59,19 +60,22 @@
                     <?php echo form_password($pdata); ?><br>
                     <?php echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login')); ?>
                 </div-->
-            <div class="pbf-field-group">
-                <label for="username">E-mail</label>
-                <?php echo form_input($udata); ?>
-            </div>
-            <div class="pbf-field-group">
-                <label for="password">Password</label>
-                <?php echo form_password($pdata); ?>
-            </div>
-                <?php echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login')); ?>
-
+                <div class="pbf-field-group">
+                    <label for="username">E-mail</label>
+                    <?php echo form_input($udata); ?>
+                </div>
+                <div class="pbf-field-group">
+                    <label for="password">Password</label>
+                    <?php echo form_password($pdata); ?>
+                </div>
+                <div class="pbf-field-group">
+                    <?php echo anchor('forgot_password', $this->lang->line('text_forgot_password'), array('class' => 'btn-not-login')); ?>
+                </div>
               <hr>
 
-              <button onclick="$('#form').submit();" type="submit" class=" btn-not-login"><?php echo $this->lang->line('button_login'); ?></button>
+                <div class="pbf-field-group">
+                    <button id="pbf-login" type="submit" class="btn-not-login"><?php echo $this->lang->line('button_login'); ?></button>
+                </div>
 
             </fieldset>
             
@@ -84,17 +88,37 @@
 
 </div><!-- #content .span10 -->
 
-
-
-
-
-
-
-
+<script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery.validate.min.js"></script>
 <script type="text/javascript"><!--
-$('#form input').keydown(function(e) {
-    if (e.keyCode == 13) {
-        $('#form').submit();
-    }
-});
+    $('.pbf-form').validate({
+        messages: {
+            username: "Required",
+            password: "Required"
+        },
+        submitHandler: function(form) {
+
+            $.ajax({
+                url: baseUrlPath+"login",
+                type: "POST",
+                cache: false,
+                dataType: "json",
+                data: $( form ).serialize()+'&format=json'
+            }).done(function(data) {
+                if(data.status == 'error'){
+                    $('.pb-alert').remove();
+                    $('.regis-content').prepend('<div class="pb-alert pb-alert--add"><div class="pb-alert--close" title="Close Alert"></div>'+data.message+'</div>');
+                    $('.pb-alert--close').on('click', function( e ) {
+                        setTimeout( function() { $('.pb-alert').remove(); }, 1000);
+                    });
+                }else{
+                    window.location = baseUrlPath;
+                }
+            });
+            return false;
+        }
+    });
+    $('.pb-alert--close').on('click', function( e ) {
+        console.log('click');
+        setTimeout( function() { $('.pb-alert').remove(); }, 1000);
+    });
 //--></script>

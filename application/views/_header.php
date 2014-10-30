@@ -77,8 +77,10 @@
 
     <link href="<?php echo base_url();?>stylesheet/custom.css" rel="stylesheet">
 
-
     <script type="text/javascript">
+        <?php
+        if (isset($username)) {
+        ?>
         //-----------------------------------------
         // Confirm Actions (delete, uninstall)
         //-----------------------------------------
@@ -121,7 +123,9 @@
                 }
             });
         });
-
+        <?php
+        }
+        ?>
         var imageUrlPath = "<?php echo S3_IMAGE ?>";
         var baseUrlPath = "<?php echo base_url();?><?php echo (index_page() == '')? '' : index_page()."/" ?>";
         var SiteId = "<?php echo $site_id;?>";
