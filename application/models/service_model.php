@@ -13,18 +13,68 @@ class Service_model extends MY_Model
 
     public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false, $show_quest=false){
 
-        $this->mongo_db->where('site_id', $site_id);
+        $this->set_site_mongodb($site_id);
 
         if($show_login){
             if($reward_id){
+
+                $reset = $this->getResetRewardEvent($site_id, $reward_id);
+
+                if($reset){
+                    $reset_time = array_values($reset);
+                    $starttime = $reset_time[0];
+
+                    $this->mongo_db->where('date_added', array('$gt' => $starttime));
+                }
+
                 $this->mongo_db->where('reward_id', $reward_id);
+            }else{
+                $reset = $this->getResetRewardEvent($site_id);
+
+                if($reset){
+                    $reset_where = array();
+                    $reset_not_id = array();
+                    foreach($reset as $k => $v){
+                        $reset_not_id[] = new MongoId($k);
+                        $reset_where[] = array('reward_id' => new MongoId($k), 'date_added' => array('$gte' => $v));
+                    }
+                    $reset_where[] = array('reward_id' => array('$nin' => $reset_not_id));
+
+                    $this->mongo_db->where(array('$or' => $reset_where));
+                }
             }
+
             $this->mongo_db->where_in('event_type', array('REWARD', 'LOGIN'));
         }else{
             if($reward_id){
+
+                $reset = $this->getResetRewardEvent($site_id, $reward_id);
+
+                if($reset){
+                    $reset_time = array_values($reset);
+                    $starttime = $reset_time[0];
+
+                    $this->mongo_db->where('date_added', array('$gt' => $starttime));
+                }
+
                 $this->mongo_db->where('reward_id', $reward_id);
             }else{
-                $this->mongo_db->where_ne('reward_id', null);
+                $reset = $this->getResetRewardEvent($site_id);
+
+                if($reset){
+                    $reset_where = array();
+                    $reset_not_id = array();
+                    foreach($reset as $k => $v){
+                        $reset_not_id[] = new MongoId($k);
+                        $reset_where[] = array('reward_id' => new MongoId($k), 'date_added' => array('$gte' => $v));
+                    }
+                    $reset_not_id[] = null;
+                    $reset_where[] = array('reward_id' => array('$nin' => $reset_not_id));
+
+                    $this->mongo_db->where(array('$or' => $reset_where));
+                }else{
+                    $this->mongo_db->where_ne('reward_id', null);
+                }
             }
             $this->mongo_db->where_in('event_type', array('REWARD'));
             $this->mongo_db->where_gt('value', 0);
@@ -34,11 +84,14 @@ class Service_model extends MY_Model
             $this->mongo_db->where('quest_id', null);
         }
 
+        $this->mongo_db->where('site_id', $site_id);
+
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
         $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
+
         $event_log = $this->mongo_db->get('playbasis_event_log');
 
         foreach($event_log as $key => &$event){
@@ -253,6 +306,30 @@ class Service_model extends MY_Model
         }
 
         return $c;
+    }
+
+    public function getResetRewardEvent($site_id, $reward_id=null) {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->select(array('reward_id','date_added'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('event_type', 'RESET');
+        if ($reward_id) {
+            $this->mongo_db->where('reward_id', $reward_id);
+            $this->mongo_db->limit(1);
+        }
+        $this->mongo_db->order_by(array('date_added' => 'DESC')); // use 'date_added' instead of '_id'
+        $results = $this->mongo_db->get('playbasis_event_log');
+        $ret = array();
+        if ($results){
+            foreach ($results as $result) {
+                $reward_id = $result['reward_id']->{'$id'};
+                if (array_key_exists($reward_id, $ret)) continue;
+                $ret[$reward_id] = $result['date_added'];
+            }
+        }
+
+        return $ret;
     }
 }
 ?>
