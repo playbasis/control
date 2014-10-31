@@ -218,7 +218,31 @@ DataSet = function(jsonArray, parent_id) {
                     }
                 });
             });
+            $('.pbd_rule_unit_wrapper').on('click', '#pbd_rule_action_save', function(event) {
+                // loop for each class type
+                $.each(_validateByType, function(validatorName, validatorFunction) {
+                    var target = $(event.currentTarget);
+                    target = target.parent().parent().find('input');
+                    if(target.hasClass(validatorName) ) {
+                        if(DEBUG)console.log(validatorName);
 
+                        if(!validatorFunction(target.val())) {
+                            window.isValid = false;
+                            if(validatorName === 'valid') {
+                                $('#errorModal .modal-body').html('rule attribute can not contain these character \' "');
+                            }
+                            else {
+                                $('#errorModal .modal-body').html( validatorName + ' is not valid');
+                                console.log(validatorName + ' fail');
+                            }
+                        }
+                        else {
+                            window.isValid = true;
+                            //console.log(validatorName + ' pass');
+                        }
+                    }
+                });
+            });
             // ******************************//
             // binding event enter for input //
             // ******************************//

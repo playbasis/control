@@ -1088,6 +1088,12 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
 
 // }
 
-$("input").live('keyup', function(){
-    this.value = this.value.replace(/[^0-9a-zA-Z\,\_\.\- ]/g,'');
+$("input").on('keyup', function(){
+    if($(this).hasClass('url')){
+
+    }else if($(this).hasClass('number')){
+        this.value = this.value.replace(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/g,'');
+    }else{
+        this.value = this.value.replace(/[^0-9a-zA-Z\,\_\.\- ]/g,'');
+    }
 });
