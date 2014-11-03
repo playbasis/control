@@ -275,19 +275,6 @@ class Redeem extends REST2_Controller
 
             array_push($redeemResult['events'], $event);
 
-            // log event - goods
-            $validToken = array_merge($validToken, array(
-                'pb_player_id' => $pb_player_id,
-                // 'goods_id' => $goodsData['goods_id'],
-                'goods_id' => new MongoId($goodsData['goods_id']),
-                'goods_name' => $goodsData['name'],
-                'amount' => $amount,
-                'redeem' => $goodsData['redeem'],
-                'action_name' => 'redeem_goods',
-                'action_icon' => 'fa-icon-shopping-cart',
-            ));
-            $this->tracker_model->trackGoods($validToken);
-
             $log_id = $this->redeem_model->exerciseCode('goods', $validToken['client_id'], $validToken['site_id'], $pb_player_id, $goodsData['code']);
             $redeemResult = array_merge($redeemResult, array('log_id' => $log_id->{'$id'}));
 
@@ -299,6 +286,19 @@ class Redeem extends REST2_Controller
                 'message' => $eventMessage,
                 'goods' => $event['goods_data']
             )), $validToken['domain_name'], $validToken['site_id']);
+
+            // log event - goods
+            $validToken = array_merge($validToken, array(
+                'pb_player_id' => $pb_player_id,
+                'goods_id' => new MongoId($goodsData['goods_id']),
+                'goods_name' => $goodsData['name'],
+                'amount' => $amount,
+                'redeem' => $goodsData['redeem'],
+                'action_name' => 'redeem_goods',
+                'action_icon' => 'fa-icon-shopping-cart',
+                'message' => $eventMessage
+            ));
+            $this->tracker_model->trackGoods($validToken);
 
             // publish to facebook notification
             //if($fbData)

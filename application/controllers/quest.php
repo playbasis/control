@@ -640,7 +640,7 @@ class Quest extends REST2_Controller
             'reward_type'	=> $data_reward['reward_type'],
             'reward_id'	    => $data_reward['reward_id'],
             'reward_name'	=> $data_reward['reward_name'],
-            'reward_value'	=> $data_reward['reward_value'],
+            'amount'	    => $data_reward['reward_value'],
             'message'       => $eventMessage
         );
         $this->tracker_model->trackQuest($data);

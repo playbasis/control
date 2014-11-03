@@ -32,7 +32,7 @@ class Tracker_model extends MY_Model
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
             'event_type'	=> $type,
-            'action_log_id' => $input['action_log_id'],
+            'action_log_id' => (isset($input['action_log_id']))	? $input['action_log_id']	: null,
             'message'		=> $message,
             'reward_id'		=> (isset($input['reward_id']))		? $input['reward_id']		: null,
             'reward_name'	=> (isset($input['reward_name']))	? $input['reward_name']		: null,
@@ -40,6 +40,9 @@ class Tracker_model extends MY_Model
             'value'			=> (isset($input['amount']))		? intval($input['amount'])	: null,
             'objective_id'	=> (isset($input['objective_id']))	? $input['objective_id']	: null,
             'objective_name'=> (isset($input['objective_name']))? $input['objective_name']	: null,
+            'goods_id'		=> (isset($input['goods_id']))		? $input['goods_id']		: null,
+            'goods_name'	=> (isset($input['goods_name']))	? $input['goods_name']		: null,
+            'goods_log_id'  => (isset($input['goods_log_id']))	? $input['goods_log_id']	: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
@@ -48,7 +51,7 @@ class Tracker_model extends MY_Model
     {
         $this->set_site_mongodb($input['site_id']);
         $mongoDate = new MongoDate(time());
-        return $this->mongo_db->insert('playbasis_goods_log', array(
+        $goods_log_id = $this->mongo_db->insert('playbasis_goods_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
@@ -59,6 +62,8 @@ class Tracker_model extends MY_Model
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
+
+        return $this->trackEvent('REDEEM', $input['message'], array_merge($input, array('goods_log_id' => $goods_log_id)));
     }
     public function trackBadge($input)
     {
@@ -87,29 +92,12 @@ class Tracker_model extends MY_Model
             'reward_type'	=> $input['reward_type'],
             'reward_id'	    => $input['reward_id'],
             'reward_name'	=> $input['reward_name'],
-            'reward_value'	=> $input['reward_value'],
+            'reward_value'	=> $input['amount'],
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
 
-        return $this->mongo_db->insert('playbasis_event_log', array(
-            'pb_player_id'	=> $input['pb_player_id'],
-            'client_id'		=> $input['client_id'],
-            'site_id'		=> $input['site_id'],
-            'event_type'	=> 'REWARD',
-            'action_log_id' => null,
-            'message'		=> $input['message'],
-            'reward_id'		=> (isset($input['reward_id']))	? $input['reward_id'] : null,
-            'reward_name'	=> (isset($input['reward_name'])) ? $input['reward_name'] : null,
-            'item_id'		=> null,
-            'value'			=> intval($input['reward_value']),
-            'objective_id'	=> null,
-            'objective_name'=> null,
-            'quest_id'		=> $input['quest_id'],
-            'mission_id'	=> $input['mission_id'],
-            'date_added'	=> $mongoDate,
-            'date_modified' => $mongoDate
-        ));
+        return $this->trackEvent('REWARD', $input['message'], $input);
     }
 }
 ?>
