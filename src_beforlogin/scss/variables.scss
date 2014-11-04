@@ -1,0 +1,129 @@
+//
+// Variables and Mixins
+// --------------------------------------------------
+
+//
+// Variables
+// --------------------------------------------------
+
+// Grayscale
+$black-10:                darken(#fff, 10%);
+$black-20:                darken(#fff, 20%);
+$black-30:                darken(#fff, 30%);
+$black-40:                darken(#fff, 40%);
+$black-50:                darken(#fff, 50%);
+$black-60:                darken(#fff, 60%);
+$black-70:                darken(#fff, 70%);
+$black-80:                darken(#fff, 80%);
+$black-90:                darken(#fff, 90%);
+
+// Brand colors
+$brand-primary:           #428bca;
+
+// Call to action colors
+$action-primary:          #f26023;
+$action-secondary:        #bf4c1b;
+
+// Dark
+$dark-text:               #fff;
+$dark-primary:            #556270;
+$dark-secondary:          #687889;
+
+// Pinwheel Colors
+$red-primary:             #ff6b6b;
+$red-secondary:           #a64545;
+$red-accent:              #e66161;
+
+$blue-primary:            #47aaff;
+$blue-secondary:          #2b679a;
+$blue-accent:             #4099e6;
+
+$green-primary:           #4ecdc4;
+$green-secondary:         #30807a;
+$green-accent:            #44b3ab;
+
+$purple-primary:          #d691f2;
+$purple-secondary:        #86559c;
+$purple-accent:           #b57bcc;
+
+// Form Colors
+$form-text:               $dark-text;
+$form-background:         $dark-primary;
+$form-divider:            $black-20;
+$form-required:           $action-primary;
+$form-error:              $red-accent;
+
+$field-text:              $black-80;
+$field-background:        #fff;
+$focus-background:        #e1f0f9;
+$placeholder-text:        #bdbdbf;
+
+$submit-primary:          $action-primary;
+$submit-secondary:        $action-secondary;
+
+// Alerts
+$alert:                   $blue-accent;
+$error:                   $red-accent;
+$success:                 $green-accent;
+
+// Scaffolding
+$body-background:         #fff;
+$text-color:              $black-60;
+
+// Links
+$link-color:              $brand-primary;
+$link-color-hover:        darken($link-color, 15%);
+
+// Typography
+$font-size-base:          15px;
+$font-size-small:         13px;
+$line-height-base:        1.6;
+$font-family-base:        "Open Sans", sans-serif;
+
+// Layout Help
+$base-unit:             80px;
+$base-padding:          20px;
+
+// Grid
+$grid-columns:          12;
+$grid-column-padding:   10px;
+$grid-float-breakpoint: $base-unit * $grid-columns;
+
+
+//
+// Mixins
+// --------------------------------------------------
+
+// Breakpoints
+@mixin breakpoint($point) {
+  @if $point == small {
+    @media (min-width: 480px) { @content; }
+  }
+  @else if $point == medium {
+    @media (min-width: 768px) { @content; }
+  }
+  @else if $point == large {
+    @media (min-width: 1000px)  { @content; }
+  }
+}
+
+// Clearfix
+%clearfix {
+  *zoom: 1;
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+@mixin transition($transition-property, $transition-time, $method) {
+    -webkit-transition: $transition-property $transition-time $method;
+    -moz-transition: $transition-property $transition-time $method;
+    -ms-transition: $transition-property $transition-time $method;
+    -o-transition: $transition-property $transition-time $method;
+    transition: $transition-property $transition-time $method;
+}

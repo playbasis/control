@@ -1,0 +1,50 @@
+/* ==========================================================================
+   Modal Card
+/* ========================================================================== */
+
+.modal-card{
+	background: #FFF;
+	border-radius: 10px;
+	max-width: 500px;
+	width: 90%;
+	min-height: 400px;
+	overflow: hidden;
+}
+.modal-card-head{
+	background: $purple-secondary;
+	color: #fff;
+	text-align: center;
+	padding: 30px;
+	height: 205px;
+	h3{
+		font-weight: 300 !important;
+	}
+	.big-icon{
+		font-size: 180px;
+	}
+}
+.modal-card-content{
+	text-align: center;
+	padding: 30px;
+	h3{
+		font-weight: 300 !important;
+	}
+	strong{
+		color: $purple-secondary;
+		font-size: 20px;
+	}
+}
+
+@media screen and (max-width: 480px){
+	.modal-card-head{
+		h3{
+			font-size: 16px;
+		}
+	}
+	.modal-card-content{
+		h3{
+			font-size: 16px;
+		}
+	}
+}
+	

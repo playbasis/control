@@ -1,0 +1,246 @@
+/* ==========================================================================
+   Registration
+/* ========================================================================== */
+
+#pb-registration {
+  padding: 0;
+
+// --------------------------------------------------
+// Reused styles from main pb site
+// --------------------------------------------------
+
+  // Scaffolding
+  // --------------------------------------------------
+
+  color: $text-color;
+  font-size: $font-size-small;
+  font-family: $font-family-base;
+  line-height: $line-height-base;
+
+  @include breakpoint(small) {
+    font-size: $font-size-base;
+  }
+
+  .row {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    padding: $base-padding;
+    position: relative;
+    @extend %clearfix;
+
+    @include breakpoint(large) {
+      width: $grid-float-breakpoint;
+      padding: $base-padding 0;
+    }
+  }
+
+  // Type
+  // --------------------------------------------------
+
+  a {
+    color: $link-color;
+    text-decoration: none;
+  }
+  a:hover,
+  a:focus {
+    color: $link-color-hover;
+    text-decoration: underline;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    font-family: inherit;
+    text-rendering: optimizelegibility;
+    margin: 0 0 $line-height-base * $font-size-base / 4;
+  }
+
+  .registration-form{
+    a{
+        color: #fff;
+    }
+  }
+  .pbf-link-2-line{
+    color:$black-30;
+    a{
+      text-decoration: underline;
+      color: #fff;
+    }
+    label{
+      color: #fff; 
+      font-size: 15px;
+    }
+    span{
+      margin-left: 15px;
+    }
+  }
+
+// --------------------------------------------------
+// End reused styles
+// --------------------------------------------------
+
+
+  // Header
+  // --------------------------------------------------
+
+  .pbr-header {
+    padding: 0 0 $base-unit * 2;
+    background: $purple-secondary;
+  }
+
+  .pbr-header-logo {
+    display: block;
+    height: 60px;
+    width: 200px;
+    fill: #fff;
+  }
+
+  h1 {
+    float: left;
+    color: #fff;
+    font-size: 1.875em;
+    line-height: 1.4;
+
+    @include breakpoint(small) {
+      font-size: 2.4em;
+    }
+  }
+
+  // Light inset text on pb colors
+  @mixin colored-text($color) {
+    color: lighten($color, 40%);
+    text-shadow: 0 -1px darken($color, 10%);
+  }
+
+  small {
+    display: block;
+    font-size: 0.375em;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    @include colored-text($purple-secondary);
+  }
+
+  .plan {
+    float: right;
+    font-size: 0.875em;
+    text-align: right;
+    font-weight: 600;
+    margin-left: $base-padding;
+  }
+
+  .plan-type {
+    text-transform: uppercase;
+    @include colored-text($green-accent);
+
+    border-radius: 3px;
+    padding: 0.8em 1.5em;
+    background: $green-accent;
+  }
+
+  .plan-price {
+    @include colored-text($purple-secondary);
+  }
+
+  // Form
+  // --------------------------------------------------
+
+  .pbr-main {
+    margin-top: -2 * $base-unit;
+  }
+
+  .registration-page {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+    background: $black-10;
+    @extend %clearfix;
+  }
+
+  .registration-form,
+  .registration-benefits {
+    width: 100%;
+    float: left;
+    z-index: 1;
+    position: relative;
+  }
+
+  @include breakpoint(small) {
+    .registration-form {
+      background: #556270;
+      padding: 10px $base-padding 0;
+    }
+  }
+
+  @include breakpoint(medium) {
+    .registration-form { width: 62.5% }
+    .registration-benefits { width: 37.5% }
+    .registration-form-bg {
+      background: #556270;
+      position: absolute;
+      right: 37.5%;
+      bottom: 0;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  .benefits-block {
+    margin: $base-padding * 2;
+
+    h4 {
+      font-size: 1em;
+      color: $purple-secondary;
+      margin: 0 0 0.2em;
+    }
+
+    p {
+      font-size: 0.8em;
+      margin: 0 0 1em;
+    }
+  }
+
+  .registration-policy {
+    padding-top: 1em;
+    font-size: 0.8em;
+    color: lighten(desaturate($brand-primary, 50%), 20%);
+  }
+
+
+  // Footer
+  // --------------------------------------------------
+
+  .pbr-footer {
+    font-size: 0.8em;
+    line-height: 42px;
+    color: lighten(desaturate($brand-primary, 50%), 20%);
+  }
+
+  .pbr-footer-logo {
+    float: left;
+    width: 140px;
+    height: 42px;
+    display: block;
+    fill: lighten(desaturate($brand-primary, 50%), 20%);
+  }
+
+  .pbr-footer-copyright {
+    float: right;
+  }
+
+}
+
+.message-success{
+  color:#fff;
+  margin-top: 40px;
+  text-align: center;
+  font-size: 18px;
+  color: #fff;
+  margin-top: 90px;
+  text-align: center;
+  font-size: 22px;
+  display: none;
+}
