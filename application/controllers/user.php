@@ -490,6 +490,10 @@ class User extends MY_Controller
 
     public function login(){
 
+        if ($this->session->userdata('user_id')) {
+            redirect('/', 'refresh');
+        }
+
         if($this->input->get('back')){
             $this->session->set_userdata('redirect', $this->input->get('back'));
         }
@@ -546,7 +550,7 @@ class User extends MY_Controller
         $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
 
         $this->load->vars($this->data);
-        $this->render_page('template');
+        $this->render_page('template_beforelogin');
     }
 
     public function logout(){
@@ -1069,7 +1073,7 @@ class User extends MY_Controller
             }
 
             $this->data['main'] = 'reset_password_form';
-            $this->render_page('template');
+            $this->render_page('template_beforelogin');
         }else{
             echo "<script>alert('The link has already been used.');</script>";
             echo "<script>window.location.href = '".site_url()."';</script>";  

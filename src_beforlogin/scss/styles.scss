@@ -1,0 +1,24 @@
+/*!
+ * Playbasis Registration Styles
+ */
+
+@import 'bootstrap.css';
+@import 'font-awesome.css';
+// CSS reset for common browser issues
+@import 'normalize';
+
+// Core variables
+@import 'variables';
+
+// Core styles
+@import 'forms';
+@import 'alerts';
+
+// Page styles
+@import 'registration';
+
+// Activated Page styles
+@import 'activated';
+
+// Modal-card styles
+@import 'modal-card';

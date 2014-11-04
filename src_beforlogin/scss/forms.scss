@@ -1,0 +1,197 @@
+/* ==========================================================================
+   Forms
+/* ========================================================================== */
+
+// Special classes
+.pbf-field-group {
+  float: left;
+  width: 100%;
+  padding: 0 10px 10px;
+  position: relative;
+  @extend %clearfix;
+}
+
+// Half width fields on large screens
+.pbf-half {
+  @include breakpoint(large) {
+    width: 50%;
+  }
+}
+
+// Fix line-height for checkbox and radio buttons
+.pbf-checked {
+  line-height: 40px;
+}
+
+// Fix line-height link 2 line
+.pbf-link-2-line {
+  margin-top: -4px;
+  font-size: 13px;
+  line-height: 24px;
+  a{
+    color: #fff;
+    text-decoration: underline;
+  }
+}
+
+// The form
+.pbf-form {
+  padding: 10px;
+  color: $form-text;
+  background: $form-background;
+  @extend %clearfix;
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  hr {
+    border: $form-divider solid 1px;
+    border-width: 1px 0 0;
+    margin: 10px 10px 20px;
+  }
+
+  legend {
+    color:#fff;
+    font-size: 1.25em;
+    font-weight: 600;
+    text-shadow: 0 -1px rgba(#000, 0.4);
+    padding: 0 10px 10px;
+  }
+
+  label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: inline-block;
+
+    span {
+      color: $form-required;
+    }
+  }
+
+  label.error {
+    position: absolute;
+    right: 10px;
+    bottom: 36px;
+
+    padding: 5px 10px 17px;
+
+    color: #fff;
+    font-weight: 600;
+    line-height: 20px;
+
+    background: $form-error;
+    border-radius: 5px;
+
+    z-index: 1;
+    animation: moveError .3s ease-in;
+  }
+
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"] {
+    color: $field-text;
+    font-weight: 600;
+    line-height: 18px;
+
+    width: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+    background: $field-background;
+
+    border-radius: 5px;
+    border: transparent solid 5px;
+    transition: all .5s ease-in-out;
+
+    z-index: 2;
+    position: relative;
+
+    &.error {
+      border-color: $form-error
+    }
+
+    &:focus {
+      outline: 0;
+      outline: thin dotted \9; /* IE6-9 */
+      background-color: $focus-background;
+    }
+    &[disabled] {
+      background-color: $black-20;
+      color: $black-50;
+    }
+  }
+
+  textarea {
+    resize: none;
+    height: 160px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    margin: 10px;
+  }
+
+  select {
+    border: none;
+    height: 40px;
+    *margin-top: 4px;
+    line-height: 50px;
+  }
+
+  ::-webkit-input-placeholder {
+    color: $placeholder-text;
+  }
+  :-moz-placeholder {
+    color: $placeholder-text;
+  }
+  ::-moz-placeholder {
+    color: $placeholder-text;
+  }
+  :-ms-input-placeholder {
+    color: $placeholder-text;
+  }
+
+  input[type="submit"] {
+    font-weight: 600;
+    line-height: normal;
+    white-space: normal;
+
+    text-align: center;
+
+    color: #fff;
+    text-shadow: 0 -1px $submit-secondary;
+    box-shadow: 0 1px $submit-secondary;
+    background: $submit-primary linear-gradient($submit-primary, darken($submit-primary, 5%));
+
+    width: 100%;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+
+    &:hover, &:focus {
+      outline: none;
+      background: saturate($submit-primary, 50%) linear-gradient(saturate($submit-primary, 50%), saturate($submit-primary, 10%));
+    }
+  }
+}
+
+// Error animations
+@keyframes moveError {
+  0% { bottom: 10px }
+  100% { bottom: 36px }
+}
