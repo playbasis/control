@@ -65,7 +65,8 @@ class Quiz extends MY_Controller
 
         $config['base_url'] = site_url('quiz/page');
         $config["uri_segment"] = 3;
-
+        $config['total_rows'] = 0;
+        
         if($client_id){
             $this->data['quizs'] = $this->Quiz_model->getQuizs($filter);
             $badge_list = $this->Badge_model->getBadgeBySiteId(array("site_id" => $site_id));
