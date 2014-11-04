@@ -169,7 +169,7 @@ class Goods_model extends MY_Model
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 		));
-		$this->mongo_db->where_in('goods_id', $goods_id);
+		$this->mongo_db->where_in('goods_id', is_array($goods_id) ? $goods_id : array($goods_id));
 		return $this->mongo_db->get('playbasis_goods_to_player');
 	}
 	public function redeemLogDistinctPlayer($data, $goods_id, $from=null, $to=null)
