@@ -790,7 +790,7 @@ class User extends MY_Controller
                             'lastname' => $user['lastname'],
                             'username' => $user['username'],
                             'password' => $initial_password,
-                            'paid_flag' => $paid_flag ? 1 : 0,
+                            'paid_flag' => $paid_flag ? array(array('force' => 1)) : array(),
                         );
                         $htmlMessage = $this->parser->parse('user_activated.html', $vars, true);
                         $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
@@ -844,7 +844,7 @@ class User extends MY_Controller
                     'lastname' => $user['lastname'],
                     'username' => $user['username'],
                     'password' => $initial_password,
-                    'paid_flag' => $paid_flag ? 1 : 0,
+                    'paid_flag' => $paid_flag ? array(array('force' => 1)) : array(),
                 );
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                 $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
