@@ -268,7 +268,7 @@ class Service_model extends MY_Model
         return $this->mongo_db->distinct('client_id', 'playbasis_web_service_log');
     }
 
-    public function archive($m, $bucket, $folder, $pageSize=50) {
+    public function archive($m, $bucket, $folder, $pageSize=100) {
         $this->load->library('s3');
 
         $c = 0;
