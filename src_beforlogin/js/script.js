@@ -56,8 +56,9 @@ jQuery(document).ready( function($) {
                  $('.registration-register').pbAlert({
                   content: 'Register success!'
                 });
-               //window.location = baseUrlPath+'login?signup=finish';
-                window.location = baseUrlPath+'user/signup_finish?i='+data.data;
+                setTimeout( function() {
+                    window.location = baseUrlPath+'user/signup_finish?i='+data.data;
+                }, 5000);
             }
       })
       .fail(function(data) {

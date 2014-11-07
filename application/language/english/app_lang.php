@@ -30,6 +30,7 @@ $lang['tab_user'] 								= 'Users';
 // Column
 $lang['column_image']							= 'Logo';
 $lang['column_name']            				= 'Name';
+$lang['column_platform']            		    = 'Platform';
 $lang['column_quantity']          				= 'Domains';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
@@ -92,6 +93,7 @@ $lang['column_domain_plan'] 			= 'Package';
 $lang['column_domain_status'] 			= 'Status';
 $lang['column_domain_modified'] 		= 'Date Modified.';
 $lang["text_fail_limit_domain"]         = "Sorry, you have reach domain limit";
+$lang['text_fail_domain_exists']				= 'The domain name provided was already registered';
 
 // User
 $lang['column_title']					= 'Title';

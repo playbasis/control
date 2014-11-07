@@ -15,6 +15,10 @@ class App extends MY_Controller
             redirect('/login', 'refresh');
         }
 
+        if($this->input->get('site_id')){
+            $this->User_model->updateSiteId($this->input->get('site_id'));
+        }
+
         $this->load->model('App_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -90,13 +94,13 @@ class App extends MY_Controller
         );
 
         if($client_id){
-            $total = $this->Domain_model->getTotalDomainsByClientId($data);
+            $total = $this->App_model->getTotalDomainsByClientId($data);
 
-            $results_site = $this->Domain_model->getDomainsByClientId($data);
+            $results_site = $this->App_model->getDomainsByClientId($data);
         }else{
-            $total = $this->Domain_model->getTotalDomains($data);
+            $total = $this->App_model->getTotalDomains($data);
 
-            $results_site = $this->Domain_model->getDomains($data);
+            $results_site = $this->App_model->getDomains($data);
         }
 
         if ($results_site) {
@@ -168,7 +172,7 @@ class App extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $this->Domain_model->resetToken($this->input->post('site_id'));
+            $this->App_model->resetToken($this->input->post('site_id'));
 
             $json['success'] = $this->lang->line('text_success');
 
@@ -185,10 +189,10 @@ class App extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'domain/insert';
+        $this->data['form'] = 'app/add';
 
-        $this->form_validation->set_rules('domain_domain_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|valid_url_format|url_exists');
-        $this->form_validation->set_rules('domain_site_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+        $this->form_validation->set_rules('app_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space');
+        $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -212,24 +216,35 @@ class App extends MY_Controller
                 // compare
                 if ($limit !== null && $usage_conut >= $limit) { // limit = null, means unlimited
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_domain"));
-                    redirect("domain/");
+                    redirect("app");
                 }
 
-                $c_data = array('domain_name' => $this->input->post('domain_domain_name'));
+                $c_data = array('domain_name' => $this->input->post('app_name'));
 
-                $domain = $this->Domain_model->checkDomainExists($c_data);
+                $domain = $this->App_model->checkAppExists($c_data);
 
                 if(!$domain){
 
                     $d_data = array();
                     $d_data['client_id'] = $client_id;
-                    $d_data['domain_name'] = $this->input->post('domain_domain_name');
-                    $d_data['site_name'] = $this->input->post('domain_site_name');
+                    $d_data['domain_name'] = $this->input->post('app_name');
+                    $d_data['site_name'] = $this->input->post('app_name');
                     $d_data['user_id'] =  $this->User_model->getId();
 
-                    $site_id = $this->Domain_model->addDomain($d_data);
+                    $site_id = $this->App_model->addDomain($d_data);
 
                     if ($site_id) {
+
+                        $this->session->set_userdata('site_id',$site_id );
+
+                        $insert_data = array(
+                            "client_id" => $client_id,
+                            "site_id" => $site_id,
+                            "platform" => strtolower($this->input->post('platform')),
+                            "data" => $domain
+                        );
+                        $this->App_model->addApp($insert_data);
+
                         $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
                         /* bind plan to client in playbasis_permission */
@@ -248,12 +263,14 @@ class App extends MY_Controller
 
                     $this->session->data['success'] = $this->lang->line('text_success');
 
-                    redirect('/domain', 'refresh');
+                    redirect('app', 'refresh');
                 }else{
                     if($this->input->post('format') == 'json'){
-                        echo json_encode($this->data['fail_domain_exists']);
+                        echo json_encode($this->lang->line('text_fail_domain_exists'));
                         exit();
                     }
+
+                    $this->data['message'] = $this->lang->line('text_fail_domain_exists');
                 }
 
             }
@@ -262,46 +279,6 @@ class App extends MY_Controller
         $this->getForm();
 
     }
-
-    /*public function insert() {
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-        $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'domain/insert';
-
-        $this->form_validation->set_rules('domain_name', $this->lang->line('domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('plan_id', $this->lang->line('plan_id'), 'required');
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            $this->data['message'] = null;
-
-            if (!$this->validateModify()) {
-                $this->data['message'] = $this->lang->line('error_permission');
-            }
-
-            if($this->form_validation->run() && $this->data['message'] == null){
-                $site_id = $this->Domain_model->addDomain($this->input->post());
-
-                if ($site_id) {
-                    $data = array();
-                    $data['client_id'] = $this->input->post('client_id');
-                    $data['plan_id'] = $this->input->post('plan_id');
-                    $data['site_id'] = $site_id;
-                    $this->Client_model->addPlanToPermission($data);
-                }
-
-                $this->session->data['success'] = $this->lang->line('text_success');
-
-                redirect('/domain', 'refresh');
-            }
-        }
-
-        $this->getForm();
-
-    }*/
 
     public function insert_ajax() {
 
@@ -328,10 +305,10 @@ class App extends MY_Controller
 
                 $data['domain_name']= $this->input->post('domain_name');
                 $data['site_id'] = $this->User_model->getSiteId();
-                $check_domain_exists = $this->Domain_model->checkDomainExists($data);
+                $check_domain_exists = $this->App_model->checkDomainExists($data);
 
                 if(!$check_domain_exists){
-                    $site_id = $this->Domain_model->addDomain($this->input->post());
+                    $site_id = $this->App_model->addDomain($this->input->post());
 
                     if ($site_id) {
                         $plan_subscription = $this->Client_model->getPlanByClientId(new MongoID($this->input->post('client_id')));
@@ -375,7 +352,7 @@ class App extends MY_Controller
             foreach ($this->input->post('selected') as $site_id) {
                 if($this->checkOwnerDomain($site_id)){
 
-                    $this->Domain_model->deleteDomain($site_id);
+                    $this->App_model->deleteDomain($site_id);
                 }
             }
 
@@ -399,7 +376,7 @@ class App extends MY_Controller
 
             if($this->checkOwnerDomain($this->input->post('site_id'))){
 
-                $this->Domain_model->deleteDomain($this->input->post('site_id'));
+                $this->App_model->deleteDomain($this->input->post('site_id'));
             }
 
             $this->session->data['success'] = $this->lang->line('text_success_delete');
@@ -414,9 +391,9 @@ class App extends MY_Controller
 
         if (isset($domain_id) && ($domain_id != 0)) {
             if($this->User_model->getClientId()){
-                $domain_info = $this->Domain_model->getDomain($domain_id);
+                $domain_info = $this->App_model->getDomain($domain_id);
             }else{
-                $domain_info = $this->Domain_model->getDomain($domain_id);
+                $domain_info = $this->App_model->getDomain($domain_id);
             }
         }
 
@@ -465,7 +442,7 @@ class App extends MY_Controller
 
             $theData = array('client_id' => $this->User_model->getClientId(), 'site_id' =>$site_id);
 
-            $sites = $this->Domain_model->getDomainsByClientId($theData);
+            $sites = $this->App_model->getDomainsByClientId($theData);
 
             $has = false;
 
@@ -489,7 +466,7 @@ class App extends MY_Controller
 
     private function checkLimitDomain($client_id){
         $data['client_id'] = $client_id;
-        $domains = $this->Domain_model->getTotalDomainsByClientId($data);
+        $domains = $this->App_model->getTotalDomainsByClientId($data);
 
         if ($domains > 10) {
             return true;
@@ -510,16 +487,22 @@ class App extends MY_Controller
         $this->load->model('App_model');
         $this->load->model('Domain_model');
 
-        $domains = $this->Domain_model->getDomains();
+        $domains = $this->Domain_model->getDomains(array());
 
         foreach($domains as $d){
+
+            $domain = preg_replace("/http:\/\//", "", $d['domain_name']);
+            $domain = preg_replace("/https:\/\//", "", $domain);
+
             $insert_data = array(
                 "client_id" => $d["client_id"],
                 "site_id" => $d["_id"],
                 "platform" => "web",
-                "app_name" => $d["site_name"],
+                "api_key" => $d["api_key"],
+                "api_secret" => $d["api_secret"],
+                "data" => $domain
             );
-            $this->App_model->addApp($insert_data);
+            $this->App_model->moveOldtoNewSystem($insert_data);
         }
     }*/
 }

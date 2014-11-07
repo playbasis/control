@@ -33,8 +33,6 @@
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="left" style="width:100px;"><?php echo $this->lang->line('column_key'); ?></td>
-                        <td class="left" style="width:300px;"><?php echo $this->lang->line('column_secret'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
                     </thead>
@@ -50,13 +48,7 @@
                                 <?php } ?>
                             </td>
                             <td class="left">
-                                <?php echo $domain['domain_name']; ?>
-                            </td>
-                            <td class="left">
-                                <?php echo $domain['keys']; ?>
-                            </td>
-                            <td class="left">
-                                <?php echo $domain['secret']; ?> [ <?php echo anchor('domain', $this->lang->line('text_reset_secret'), array('onclick' => "confirmation('".$domain['site_id']."'); return false;")); ?> ]
+                                <?php echo $domain['app_name']; ?>
                             </td>
                             <td class="right">
                                 <?php if ($domain['status']==1) { ?>
@@ -69,7 +61,7 @@
                             <?php } ?>
                         <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="5"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
                     </tr>
                         <?php } ?>
                     </tbody>

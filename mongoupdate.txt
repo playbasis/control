@@ -84,6 +84,9 @@ update
 
   "link":"user_permission"  -> "link":"user_group"
 
+  "link":"domain" -> "link":"app"
+  "name":"Domain" -> "name":"App"
+
 remove
 
     "name":{$in:['Monitor','Backup\/Restore','System','Error Log']}

@@ -6,7 +6,7 @@ if (isset($username)) {
     <div class="nav-collapse sidebar-nav in collapse" style="height: auto;">
         <ul class="nav nav-tabs nav-stacked main-menu">
             <?php
-            if($this->session->userdata('site')){
+            if($this->session->userdata('site_id')){
                 if (isset($features)) { ?>
                 <?php foreach ($features as $feature) { ?>
                     <li>

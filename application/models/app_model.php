@@ -256,13 +256,13 @@ class App_model extends MY_Model
         $this->mongo_db->update_all('playbasis_client_site');
     }
 
-    public function checkDomainExists($data){
+    public function checkAppExists($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
         $domain = preg_replace("/https:\/\//", "", $domain);
 
-        $this->mongo_db->where('domain_name', $domain);
+        $this->mongo_db->where('domain_name', strtolower($domain));
         $c = $this->mongo_db->count('playbasis_client_site');
         return $c > 0;
     }
@@ -274,7 +274,7 @@ class App_model extends MY_Model
             'client_id' =>  new MongoID($data['client_id']),
             'site_id' =>  new MongoID($data['site_id']),
             'platform' => strtolower($data['platform']),
-            'app_name' => $data['app_name'],
+            'data' => $data['data'],
             'api_key'=> '',
             'api_secret' => '',
             'status' => true,
@@ -295,5 +295,24 @@ class App_model extends MY_Model
 
         return $c;
     }
+
+    /*public function moveOldtoNewSystem($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $data_insert = array(
+            'client_id' =>  new MongoID($data['client_id']),
+            'site_id' =>  new MongoID($data['site_id']),
+            'platform' => strtolower($data['platform']),
+            'api_key'=> $data['api_key'],
+            'api_secret' => $data['api_secret'],
+            'data' => $data['data'],
+            'status' => true,
+            'deleted' => false,
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+        );
+
+        return $this->mongo_db->insert('playbasis_platform_client_site', $data_insert);
+    }*/
 }
 ?>
