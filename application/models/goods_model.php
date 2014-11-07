@@ -141,28 +141,24 @@ class Goods_model extends MY_Model
 	{
 		$this->set_site_mongodb($data['site_id']);
 		$this->mongo_db->where(array(
-			'client_id' => $data['client_id'],
-			'site_id' => $data['site_id'],
 			'$and' => array(
 				array('$or' => array(array('date_start' => array('$lte' => $this->new_mongo_date($to))), array('date_start' => null))),
 				array('$or' => array(array('date_expire' => array('$gte' => $this->new_mongo_date($to, '23:59:59'))), array('date_expire' => null)))
 //array('$or' => array(array('date_expire' => array('$gte' => $this->new_mongo_date('2014-03-09', '23:59:59'))), array('date_expire' => null)))
 			),
-			'deleted' => false,
 			'status' => true
 		));
+		$this->mongo_db->where_in('_id', $data['in']);
 		return $this->mongo_db->get('playbasis_goods_to_client');
 	}
 	public function listExpiredItems($data, $from, $to)
 	{
 		$this->set_site_mongodb($data['site_id']);
 		$this->mongo_db->where(array(
-			'client_id' => $data['client_id'],
-			'site_id' => $data['site_id'],
 			'date_expire' => array('$gte' => $this->new_mongo_date($from), '$lte' => $this->new_mongo_date($to, '23:59:59')),
-			'deleted' => false,
 			'status' => true
 		));
+		$this->mongo_db->where_in('_id', $data['in']);
 		return $this->mongo_db->get('playbasis_goods_to_client');
 	}
 	public function totalRedemption($data, $goods_id)
@@ -172,8 +168,8 @@ class Goods_model extends MY_Model
 		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
-			'goods_id' => $goods_id
 		));
+		$this->mongo_db->where_in('goods_id', is_array($goods_id) ? $goods_id : array($goods_id));
 		return $this->mongo_db->get('playbasis_goods_to_player');
 	}
 	public function redeemLogDistinctPlayer($data, $goods_id, $from=null, $to=null)
@@ -262,6 +258,18 @@ class Goods_model extends MY_Model
 			}
 		}
 		return 0; // unavailable
+	}
+	public function listGoodsIdsByGroup($client_id, $site_id, $group) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('goods_id'));
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'group' => $group,
+			'deleted' => false,
+			'status' => true
+		));
+		return $this->mongo_db->get('playbasis_goods_to_client');
 	}
 	/* Deprecated: use getGroupsAggregate instead */
 	public function getGroups($site_id) {
