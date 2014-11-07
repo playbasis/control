@@ -31,20 +31,21 @@
 	.landingpage-content{
 		text-align: center;
 		padding-top: 50px;
-		padding-bottom: 40px;
+		padding-bottom: 50px;
 	}
 	.landingpage-content h1{
 		color: #86559c;
 		font-size: 32px;
 		font-weight: normal;
 		text-transform: uppercase;
-		margin-bottom: 20px;
+		line-height: 32px;
 	}
 	.landingpage-content h2{
 		color: #86559c;
 		font-weight: normal;
 		font-size: 24px;
-		margin-bottom: 30px;
+		margin-bottom: 40px;
+		line-height: 26px;
 	}
 	.landingpage-content a{
 		margin-top: 50px;
@@ -68,6 +69,32 @@
 		outline: medium none;
 		background: linear-gradient(#FF5B16, #FE5B17) repeat scroll 0% 0% #FF5B16;
 	}
+	.getstarted-wrapper{
+		margin-bottom: 50px;	
+	}
+	.getstarted-wrapper h1{
+		color: #86559c;
+		font-weight: normal;
+		font-size: 24px;
+		line-height: 26px;
+	}
+	.getstarted-wrapper h2{
+		font-weight: normal;
+		font-size: 14px;
+	}
+	.sdk-list-wrapper{
+		max-width: 820px;
+		margin-left: auto;
+		margin-right: auto; 
+		list-style-type: none;
+	}
+	.sdk-list-wrapper li{
+		display: inline-block;
+		margin: 15px;
+	}
+	.sdk-list-wrapper li img{
+		width: 90px;
+	}
 	@media (max-width: 979px) and (min-width: 768px){
 		.noti-plan-wrapper {
 			width: 91.43646408839778%;
@@ -85,6 +112,14 @@
 		.noti-plan-wrapper i{
 			display: none;
 		}
+		.landingpage-content h1{
+			font-size: 22px;
+			line-height: 22px;
+		}
+		.landingpage-content h2{
+			font-size: 16px;
+			line-height: 16px;
+		}
 	}
 </style>
 
@@ -98,12 +133,47 @@
 		<div class="landingpage-content">
 			<h1>To start using Playbasis Platform, </h1>
 			<h2>please create application below:</h2>
-			<a href="<?php echo site_url("app"); ?>">Create App</a>
+			<a href="#">Create App</a>
 		</div>
       	
       	<div class="getstarted-wrapper">
       		<h1>Getting Started with Playbasis</h1>
       		<h2>We provide several SDKs for faster and easier integrations with your framework.</h2>
+      		<ul class="sdk-list-wrapper">
+      			<li><a href="https://github.com/playbasis/sdk-android/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/android.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-ios/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/ios.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-php/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/php.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-ruby/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/rb.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-python/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/py.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-pblib.NET/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/net.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-pblib.js/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/js.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-sharepoint/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/sharepoint.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-wordpress/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/wp.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-magento/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/magento.png"></a>
+      			</li>
+      			<li><a href="https://github.com/playbasis/sdk-java/archive/master.zip" target="_blank">
+      				<img src="<?php echo base_url(); ?>/image/sdk-icon/java.png"></a>
+      			</li>
+      		</ul>
       	</div>
     </div>
 </div>
