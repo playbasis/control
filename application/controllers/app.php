@@ -15,7 +15,7 @@ class App extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Domain_model');
+        $this->load->model('App_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -420,20 +420,20 @@ class App extends MY_Controller
             }
         }
 
-        if ($this->input->post('domain_domain_name')) {
-            $this->data['domain_domain_name'] = $this->input->post('domain_domain_name');
+        if ($this->input->post('app_name')) {
+            $this->data['app_name'] = $this->input->post('app_name');
         } elseif (isset($domain_id) && ($domain_id != 0)) {
-            $this->data['domain_domain_name'] = $domain_info['domain_name'];
+            $this->data['app_name'] = $domain_info['domain_name'];
         } else {
-            $this->data['domain_domain_name'] = '';
+            $this->data['app_name'] = '';
         }
 
-        if ($this->input->post('domain_site_name')) {
-            $this->data['domain_site_name'] = $this->input->post('domain_site_name');
+        if ($this->input->post('platform')) {
+            $this->data['platform'] = $this->input->post('platform');
         } elseif (isset($domain_id) && ($domain_id != 0)) {
-            $this->data['domain_site_name'] = $domain_info['site_name'];
+            $this->data['platform'] = $domain_info['site_name'];
         } else {
-            $this->data['domain_site_name'] = '';
+            $this->data['platform'] = '';
         }
 
         if (isset($domain_id)) {
@@ -505,5 +505,22 @@ class App extends MY_Controller
             return false;
         }
     }
+
+    /*public function move_key_secret_to_platform(){
+        $this->load->model('App_model');
+        $this->load->model('Domain_model');
+
+        $domains = $this->Domain_model->getDomains();
+
+        foreach($domains as $d){
+            $insert_data = array(
+                "client_id" => $d["client_id"],
+                "site_id" => $d["_id"],
+                "platform" => "web",
+                "app_name" => $d["site_name"],
+            );
+            $this->App_model->addApp($insert_data);
+        }
+    }*/
 }
 ?>

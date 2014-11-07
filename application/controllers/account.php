@@ -288,7 +288,7 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
-    public function home() {
+    public function first_app() {
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -331,7 +331,7 @@ class Account extends MY_Controller
                     exit();
                 }
 
-                redirect('/account/home', 'refresh');
+                redirect('/first_app', 'refresh');
             }else{
                 if($this->input->post('format') == 'json'){
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
@@ -342,7 +342,7 @@ class Account extends MY_Controller
 
         $user = $this->User_model->getUserInfo($user_id);
         if(dohash(DEFAULT_PASSWORD,$user['salt']) != $user['password']){
-            redirect('/account/home', 'refresh');
+            redirect('/first_app', 'refresh');
         }
         $this->data['heading_title'] = $this->lang->line('add_site_title');
         $this->data['main'] = 'partial/completeprofile_partial';

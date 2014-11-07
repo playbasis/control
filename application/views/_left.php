@@ -5,22 +5,26 @@ if (isset($username)) {
 <div class="main-menu-span span2">
     <div class="nav-collapse sidebar-nav in collapse" style="height: auto;">
         <ul class="nav nav-tabs nav-stacked main-menu">
-            <?php if (isset($features)) { ?>
-            <?php foreach ($features as $feature) { ?>
+            <?php
+            if($this->session->userdata('site')){
+                if (isset($features)) { ?>
+                <?php foreach ($features as $feature) { ?>
+                    <li>
+                        <?php
+                        echo anchor($feature['link'], '<i class="fa '.$feature["icon"].'"></i><span class="hidden-tablet">'.$feature['name'].'</span>');
+                        ?>
+                    </li>
+                <?php } ?>
+            <?php }
+            }else{ ?>
                 <li>
                     <?php
-                    echo anchor($feature['link'], '<i class="fa '.$feature["icon"].'"></i><span class="hidden-tablet">'.$feature['name'].'</span>');
-                    ?>
-                    <?php
-                    if(false){
-                    ?>
-                    <a href="#<?php echo $feature['link']; ?>" class="left-menu"><i class="<?php echo $feature["icon"]; ?>"></i><span class="hidden-tablet"><?php echo $feature['name']; ?></span></a>
-                    <?php
-                    }
+                    echo anchor("first_app", '<i class="fa fa-th-list"></i><span class="hidden-tablet">Get Started</span>');
                     ?>
                 </li>
-                <?php } ?>
-            <?php } ?>
+            <?php
+            }
+            ?>
             <li>
                 <?php
                 echo anchor('logout', '<i class="icon-off icon-whit"></i><span class="hidden-tablet">'.$text_logout.'</span>');

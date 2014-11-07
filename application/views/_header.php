@@ -177,28 +177,41 @@ if (isset($username)) {
 
 
                 <li class="dropdown">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i>
-                            <?php echo $username; ?>
-                            <?php echo (isset($domain_name['site_name'])) ? '[' . $domain_name['site_name'] .']' : '' ; ?>
-                        </i>
-                        <span class="caret"></span>
-                    </a>
-                    <?php if(isset($domain_all)) { ?>
-                        <ul class="dropdown-menu">
-                        
-                            <?php foreach($domain_all as $a_domain){?>
-                                <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-asterisk"></i> <?php echo $a_domain['site_name'];?></a></li>
-                            <?php }?>
-                        </ul>
-                    <?php }else{echo "";} ?>
+                    <?php
+                    if($this->session->userdata('site')){
+                    ?>
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i>
+                                <?php echo (isset($domain_name['site_name'])) ? '[' . $domain_name['site_name'] .']' : '' ; ?>
+                            </i>
+                            <span class="caret"></span>
+                        </a>
+                        <?php if(isset($domain_all)) { ?>
+                            <ul class="dropdown-menu">
+
+                                <?php foreach($domain_all as $a_domain){?>
+                                    <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-asterisk"></i> <?php echo $a_domain['site_name'];?></a></li>
+                                <?php }?>
+                            </ul>
+                        <?php }else{echo "";} ?>
+                    <?php
+                    }else{
+                    ?>
+                        <a class="btn" href="<?php echo site_url("app/add"); ?>">
+                            <i>
+                                Create App
+                            </i>
+                        </a>
+                    <?php
+                    }
+                    ?>
                 </li>
 
                 <li class="dropdown">
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                         <div class='profilepic'>
                             <img src="<?php echo $thumbprofile; ?>" alt="" class="thumbprofile" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                        
+                            <?php echo $username; ?>
                         <span class="caret"></span>
                         </div>
                     </a>
