@@ -133,7 +133,7 @@
 		<div class="landingpage-content">
 			<h1>To start using Playbasis Platform, </h1>
 			<h2>please create application below:</h2>
-			<a href="#">Create App</a>
+			<a href="<?php echo site_url("app"); ?>">Create App</a>
 		</div>
       	
       	<div class="getstarted-wrapper">
