@@ -128,7 +128,7 @@ jQuery(document).ready( function($) {
     submitHandler: function(form) {
       $.ajax({
         type:'post',
-        url: baseUrlPath+"resetpassword",
+        url: baseUrlPath+"reset_password",
         data: $(form).serialize()+'&format=json',
         cache: false,
         dataType: 'json'
@@ -145,7 +145,12 @@ jQuery(document).ready( function($) {
                 content: messageAlert
               });
             }else{
-               window.location = baseUrlPath;
+                $('.registration-resetpassword').pbAlert({
+                    content: messageAlert
+                });
+                setTimeout( function() {
+                    window.location = baseUrlPath;
+                }, 5000);
             }
       })
       .fail(function(data) {
@@ -183,11 +188,16 @@ jQuery(document).ready( function($) {
                 var messageAlert = message_error_default;
             }
             if(data.status == 'error'){
-               $('.registration-forgotpassword').pbAlert({
-                content: messageAlert
-              });
+                $('.registration-forgotpassword').pbAlert({
+                    content: messageAlert
+                });
             }else{
-               window.location = baseUrlPath;
+                $('.registration-forgotpassword').pbAlert({
+                    content: messageAlert
+                });
+                setTimeout( function() {
+                  window.location = baseUrlPath;
+                }, 5000);
             }
       })
       .fail(function(data) {

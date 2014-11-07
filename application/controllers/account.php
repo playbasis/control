@@ -288,6 +288,22 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
+    public function home() {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['heading_title'] = $this->lang->line('add_site_title');
+        $this->data['main'] = 'partial/landingpage_partial';
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
     public function update_profile() {
 
         if(!$this->validateAccess()){
@@ -298,6 +314,8 @@ class Account extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
+        $user_id = $this->session->userdata('user_id')."";
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
 
@@ -306,7 +324,6 @@ class Account extends MY_Controller
 
             if($this->form_validation->run()){
                 $new_password = $this->input->post('password');
-                $user_id = $this->session->userdata('user_id')."";
                 $this->User_model->insertNewPassword($user_id, $new_password);
 
                 if($this->input->post('format') == 'json'){
@@ -314,7 +331,7 @@ class Account extends MY_Controller
                     exit();
                 }
 
-                redirect('/account/add_app', 'refresh');
+                redirect('/account/home', 'refresh');
             }else{
                 if($this->input->post('format') == 'json'){
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
@@ -323,7 +340,10 @@ class Account extends MY_Controller
             }
         }
 
-        if ($this->session->userdata('site')) $this->data['site']  = $this->session->userdata('site');
+        $user = $this->User_model->getUserInfo($user_id);
+        if(dohash(DEFAULT_PASSWORD,$user['salt']) != $user['password']){
+            redirect('/account/home', 'refresh');
+        }
         $this->data['heading_title'] = $this->lang->line('add_site_title');
         $this->data['main'] = 'partial/completeprofile_partial';
         $this->data['form'] = 'account/update_profile';
