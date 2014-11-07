@@ -26,12 +26,8 @@
 </head>
 <body id="pb-registration" >
 
-<?php 
-    if( isset($_GET['activated']) ){
-        $this->load->view('account_activated');
-    }else{
-        $this->load->view($main);
-    }
+<?php
+    $this->load->view($main);
 ?>
 
 <footer class="pbr-footer" role="contentinfo">

@@ -69,8 +69,8 @@
               <label for="mailing-list">Signup for our mailing list.</label>
             </div> -->
             <div class="pbf-field-group pbf-half pbf-link-2-line">
-              <input type="checkbox" name="mailing-list" id="mailing-list" checked>
-              <label for="mailing-list">Signup for our mailing list.</label><br>
+              <!--input type="checkbox" name="mailing-list" id="mailing-list" checked>
+              <label for="mailing-list">Signup for our mailing list.</label><br-->
               <span>Already have an account? <a href="#login" role="tab" data-toggle="tab">LogIn</a></span>
             </div>
 

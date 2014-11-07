@@ -188,16 +188,17 @@ class User_model extends MY_Model
                 'username' => $email,
                 'password' => $insert_password,
                 'key' => $random_key,
-                'url'=> base_url('enable_user/?key='),
+                'url'=> site_url('enable_user/?key='),
             );
 
             if($insert_password == DEFAULT_PASSWORD){
-                $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
+//                $htmlMessage = $this->parser->parse('user_activateaccount.html', $vars, true);
+                $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
             }else{
-                $htmlMessage = $this->parser->parse('user_activateaccountwithpassword.html', $vars, true);
+                $htmlMessage = $this->parser->parse('emails/user_activateaccountwithpassword.html', $vars, true);
             }
             
-            $this->email($email, '[Playbasis] Your account has been activated', $htmlMessage);
+            $this->email($email, '[Playbasis] Please activate your account', $htmlMessage);
 
             return $this->mongo_db->insert('user', $data);
         }else{

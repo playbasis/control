@@ -574,8 +574,11 @@ class User extends MY_Controller
         $plan_id = null;
         $plan = null;
         try {
-            $plan_id = new MongoId($this->input->get('plan'));
-            $plan = $this->Plan_model->getPlanById($plan_id);
+            //$plan_id = new MongoId($this->input->get('plan'));
+            //$plan = $this->Plan_model->getPlanById($plan_id);
+
+            $plan = $this->Plan_model->getPlanById(new MongoId(DEFAULT_PLAN));
+
             if (!$plan) throw new Exception('Cannot find plan '.$plan_id);
             if (!array_key_exists('price', $plan)) {
                 $plan['price'] = DEFAULT_PLAN_PRICE;
@@ -666,8 +669,9 @@ class User extends MY_Controller
                             }
                             // echo "<script>alert('We have sent you an email, please click the link provided to activate your account.');</script>";
                             // echo "<script>window.location.href = '".site_url()."';</script>";    
-                            $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
-                            redirect('login', 'refresh');
+//                            $this->session->set_flashdata('email_sent', $this->lang->line('text_email_sent'));
+//                            redirect('login', 'refresh');
+                            redirect('login#register', 'refresh');
                         }else{
                             $this->data['fail_email_exists'] = $this->lang->line('text_fail');
 
@@ -699,8 +703,9 @@ class User extends MY_Controller
             $this->data['temp_fields'] = $this->input->post();
         }
 
-        $this->load->vars($this->data);
-        $this->render_page('template');
+//        $this->load->vars($this->data);
+//        $this->render_page('template');
+        redirect('login#register', 'refresh');
     }
 
     /* new register flow (without captcha, plan and domain) */
@@ -750,8 +755,50 @@ class User extends MY_Controller
             $message = "Unsupported HTTP method";
         }
 
-        echo json_encode(array("response" => $success ? "success" : "fail", "message" => $message));
+        $res = array("response" => $success ? "success" : "fail", "message" => $message);
+        if($success){
+            $res = array_merge($res, array("data" => $user_id.""));
+        }
+        echo json_encode($res);
         exit();
+    }
+
+    public function signup_finish(){
+        $user_id = $this->input->get('i');
+
+        $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
+
+        $this->data['user_before_info'] = $user_info;
+        $this->data['url_resend'] = site_url('user/resend_signup_email?i='.$user_id."");
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['main'] = 'account_activated';
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title_user'] = $this->lang->line('heading_title_user');
+
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
+
+    public function resend_signup_email(){
+        $user_id = $this->input->get('i');
+
+        $user_info = $this->User_model->getUserInfo(new MongoId($user_id));
+
+        $this->load->library('parser');
+        $this->load->library('email');
+        $vars = array(
+            'firstname' => $user_info['firstname'],
+            'lastname' => $user_info['lastname'],
+            'username' => $user_info['username'],
+            'key' => $user_info['random_key'],
+            'url'=> site_url('enable_user/?key='),
+        );
+
+        $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
+
+        $this->email($user_info['email'], '[Playbasis] Please activate your account', $htmlMessage);
+
+        redirect('user/signup_finish?i='.$user_id, 'refresh');
     }
 
     public function list_pending_users() {
@@ -810,7 +857,7 @@ class User extends MY_Controller
                             'password' => $initial_password,
                             'paid_flag' => $paid_flag ? 1 : 0,
                         );
-                        $htmlMessage = $this->parser->parse('user_activated.html', $vars, true);
+                        $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
                         $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
                         $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                         $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
@@ -981,15 +1028,6 @@ class User extends MY_Controller
                     $subject = "[Playbasis] Reset Your Password";
                     $htmlMessage = $this->parser->parse('reset_password.html', $data, true);
 
-                    /*$this->email->initialize($config);
-                    $this->email->clear();
-                    $this->email->from('info@playbasis.com', 'Playbasis');
-                    $this->email->to($email);
-                    // $this->email->bcc('test@playbasis.com');
-                    $this->email->subject($subject);
-                    $this->email->message($htmlMessage);
-                    $this->email->send();*/
-
                     $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
                     $this->amazon_ses->to($email);
                     // $this->amazon_ses->bcc('info@playbasis.com');
@@ -1011,8 +1049,9 @@ class User extends MY_Controller
                         echo json_encode(array('status' => 'error', 'message' => $this->lang->line('error_no_email')));
                         exit();
                     }
-                    $this->session->set_flashdata('fail', $this->lang->line('error_no_email'));
-                    redirect('forgot_password', 'refresh');
+//                    $this->session->set_flashdata('fail', $this->lang->line('error_no_email'));
+//                    redirect('forgot_password', 'refresh');
+                    redirect('login#forgotpassword', 'refresh');
                 }
             }else{
                 if($this->input->post('format') == 'json'){
@@ -1023,8 +1062,10 @@ class User extends MY_Controller
 
 
         }
-        $this->data['main'] = 'forgot_password';
-        $this->render_page('template');
+//        $this->data['main'] = 'forgot_password';
+//        $this->render_page('template');
+
+        redirect('login#forgotpassword', 'refresh');
     }
 
     public function reset_password(){

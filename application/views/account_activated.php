@@ -8,11 +8,11 @@
 			<h3>Please confirm your email address</h3>
 			<p>We sent the verification email to:</p>
 			<p>
-				<strong>johndoe@example.com</strong>
+				<strong><?php echo $user_before_info['email']; ?></strong>
 			</p>
 			<hr>
 			<p>
-				No message received? <a href="">Resend Sign-Up Email</a>
+				No message received? <a href="<?php echo $url_resend; ?>">Resend Sign-Up Email</a>
 			</p>
 		</div>
 	</div>

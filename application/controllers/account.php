@@ -106,7 +106,8 @@ class Account extends MY_Controller
 			$this->data['plan']['date_added'] = $plan_subscription['date_added']->sec;
 			$this->data['plan']['date_modified'] = $plan_subscription['date_modified']->sec;
 		} else {
-			redirect('/account/add_site', 'refresh');
+//			redirect('/account/add_site', 'refresh');
+			redirect('/account/update_profile', 'refresh');
 		}
 
 		$this->load->vars($this->data);
@@ -286,6 +287,50 @@ class Account extends MY_Controller
 		$this->load->vars($this->data);
 		$this->render_page('template');
 	}
+
+    public function update_profile() {
+
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->data['message'] = null;
+
+            $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+
+            if($this->form_validation->run()){
+                $new_password = $this->input->post('password');
+                $user_id = $this->session->userdata('user_id')."";
+                $this->User_model->insertNewPassword($user_id, $new_password);
+
+                if($this->input->post('format') == 'json'){
+                    echo json_encode(array('status' => 'success', 'message' => 'Your password has been update!'));
+                    exit();
+                }
+
+                redirect('/account/add_app', 'refresh');
+            }else{
+                if($this->input->post('format') == 'json'){
+                    echo json_encode(array('status' => 'error', 'message' => validation_errors()));
+                    exit();
+                }
+            }
+        }
+
+        if ($this->session->userdata('site')) $this->data['site']  = $this->session->userdata('site');
+        $this->data['heading_title'] = $this->lang->line('add_site_title');
+        $this->data['main'] = 'partial/completeprofile_partial';
+        $this->data['form'] = 'account/update_profile';
+
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
 
 	public function choose_plan() {
 

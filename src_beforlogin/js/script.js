@@ -1,5 +1,7 @@
   'use strict';
 
+var before_debug =true;
+
 jQuery(document).ready( function($) {
 
     if(window.location.hash) {
@@ -34,12 +36,12 @@ jQuery(document).ready( function($) {
     submitHandler: function(form) {
       $.ajax({
         type:'post',
-        url: 'https://devv2.pbapp.net/user/regis',
+        url: baseUrlPath+"user/regis",
         data: $(form).serialize()+'&format=json',
           dataType: 'json'
       })
       .done(function(data) {
-          console.log(data);
+            if(before_debug)console.log(data);
             if(data.message){
                 var messageAlert = data.message;
             }else{
@@ -54,7 +56,8 @@ jQuery(document).ready( function($) {
                  $('.registration-register').pbAlert({
                   content: 'Register success!'
                 });
-               window.location = baseUrlPath+'login?activated=true';
+               //window.location = baseUrlPath+'login?signup=finish';
+                window.location = baseUrlPath+'user/signup_finish?i='+data.data;
             }
       })
       .fail(function(data) {
@@ -83,7 +86,7 @@ jQuery(document).ready( function($) {
         dataType: 'json'
       })
       .done(function(data) {
-          console.log(data);
+            if(before_debug)console.log(data);
             if(data.message){
                 var messageAlert = data.message;
             }else{
@@ -131,7 +134,7 @@ jQuery(document).ready( function($) {
         dataType: 'json'
       })
       .done(function(data) {
-          console.log(data);
+            if(before_debug)console.log(data);
             if(data.message){
                 var messageAlert = data.message;
             }else{
@@ -173,7 +176,7 @@ jQuery(document).ready( function($) {
         dataType: 'json'
       })
       .done(function(data) {
-          console.log(data);
+            if(before_debug)console.log(data);
             if(data.message){
                 var messageAlert = data.message;
             }else{
@@ -216,13 +219,13 @@ jQuery(document).ready( function($) {
     submitHandler: function(form) {
       $.ajax({
         type:'post',
-        url: baseUrlPath+"completeprofile",
+        url: baseUrlPath+"account/update_profile",
         data: $(form).serialize()+'&format=json',
         cache: false,
         dataType: 'json'
       })
       .done(function(data) {
-          console.log(data);
+            if(before_debug)console.log(data);
             if(data.message){
                 var messageAlert = data.message;
             }else{

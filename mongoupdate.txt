@@ -38,6 +38,47 @@ playbasis_feature
     "date_added": new Date(),
     "date_modified": new Date()
 
+    "_id" : ObjectId("5423a9ffcc2902d91e1397bf"),
+    "name" : "Account",
+    "description" : "",
+    "sort_order" : 1,
+    "icon" : "fa-th-list",
+    "link" : "account",
+    "status" : true,
+    "date_added" : ISODate("2014-09-24T12:29:26.000Z"),
+    "date_modified" : ISODate("2014-09-24T12:29:26.000Z")
+
+
+playbasis_plan
+
+    "_id" : ObjectId("542a69e02cfa49be0c6755e4"),
+    "name" : "Init",
+    "description" : "Playbasis starting plan",
+    "price" : 0,
+    "display" : false,
+    "date_modified" : ISODate("2014-10-02T08:21:59.000Z"),
+    "date_added" : ISODate("2014-10-02T08:21:59.000Z"),
+    "status" : true,
+    "sort_order" : 0,
+    "limit_num_client" : null,
+    "feature_to_plan" : [
+        ObjectId("5423a9ffcc2902d91e1397bf")
+    ],
+    "reward_to_plan" : [
+        {
+            "reward_id" : ObjectId("52ea1ea78d8c89401c0000b6"),
+            "limit" : 0
+        },
+        {
+            "reward_id" : ObjectId("52ea1ea78d8c89401c0000b5"),
+            "limit" : 0
+        },
+        {
+            "reward_id" : ObjectId("52ea1ea78d8c89401c0000b4"),
+            "limit" : 0
+        }
+    ]
+
 
 update
 

@@ -128,7 +128,7 @@ class Dashboard extends MY_Controller
                     if (array_key_exists('feature_to_plan', $user_plan)) {
                         if (is_array($user_plan['feature_to_plan']) && count($user_plan['feature_to_plan']) > 0) {
                             $value = $this->Feature_model->getFeature($user_plan['feature_to_plan'][0]);
-                            redirect('/'.$value['link'], 'refresh'); /* if it isn't, then we select second menu for the user */
+                            if($value) redirect('/'.$value['link'], 'refresh'); /* if it isn't, then we select second menu for the user */
                         }
                     }
                 }
