@@ -95,6 +95,24 @@
 	.sdk-list-wrapper li img{
 		width: 90px;
 	}
+	.free-plan-features-wrapper{
+		max-width: 320px;
+		width: 320px;
+		color: #86559c;
+	}
+	.free-plan-features-wrapper h3{
+		text-transform: uppercase;
+	}
+	.free-plan-features-wrapper table td{
+		padding: 5px 10px;
+		color: #86559c;
+	}
+	.free-plan-features-wrapper i.fa-check{
+		color: #13c48c;
+	}
+	.free-plan-features-wrapper i.fa-times{
+		color: #f05a1b;
+	}
 	@media (max-width: 979px) and (min-width: 768px){
 		.noti-plan-wrapper {
 			width: 91.43646408839778%;
@@ -124,7 +142,7 @@
 </style>
 
 <div class="noti-plan-wrapper">
-	You're now in <strong>"Free Plan"</strong> <i class="fa fa-question-circle"></i> , upgrade to higher plan to get more features! <a href="<?php echo site_url(); ?>/account/subscribe" >Upgrade Now</a>
+	You're now in <strong>"Free Plan"</strong> <a href="javascript:void(0)"  data-toggle="tooltip" data-placement="bottom" class="free-plan-info" ><i class="fa fa-question-circle"></i></a> , upgrade to higher plan to get more features! <a href="<?php echo site_url(); ?>/account/subscribe" >Upgrade Now</a>
 </div>
 
 <div id="content" class="span10 landingpage-wrapper">
@@ -177,3 +195,32 @@
       	</div>
     </div>
 </div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.free-plan-info').popover({
+			html: true,
+			container: 'body',
+			template: '<div class="popover free-plan-features-wrapper" ><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>',
+			title: function(){
+				return 'Free plan features:';
+			},
+		   content: function(){ 
+		      return '<table>\
+				<tr>\
+					<td><i class="fa fa-check"></i> Upto 1,000 users</td>\
+					<td><i class="fa fa-times"></i> Social login</td>\
+				</tr>\
+				<tr>\
+					<td><i class="fa fa-check"></i> 5 quests available</td>\
+					<td><i class="fa fa-times"></i> Analytics & insights</td>\
+				</tr>\
+				<tr>\
+					<td><i class="fa fa-check"></i> 1 admin user</td>\
+					<td><i class="fa fa-times"></i> Email & Messaging</td>\
+				</tr>\
+			</table>';
+		   }
+		});
+	});
+</script>
