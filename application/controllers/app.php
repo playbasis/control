@@ -191,15 +191,24 @@ class App extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'app/add';
 
-        $this->form_validation->set_rules('app_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space');
-        $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            $this->form_validation->set_rules('app_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space');
+            $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+
+            if(strtolower($this->input->post('platform')) == "ios" ){
+                $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+
+            }elseif(strtolower($this->input->post('platform')) == "android"){
+                $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+            }else{
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -483,27 +492,27 @@ class App extends MY_Controller
         }
     }
 
-    /*public function move_key_secret_to_platform(){
-        $this->load->model('App_model');
-        $this->load->model('Domain_model');
-
-        $domains = $this->Domain_model->getDomains(array());
-
-        foreach($domains as $d){
-
-            $domain = preg_replace("/http:\/\//", "", $d['domain_name']);
-            $domain = preg_replace("/https:\/\//", "", $domain);
-
-            $insert_data = array(
-                "client_id" => $d["client_id"],
-                "site_id" => $d["_id"],
-                "platform" => "web",
-                "api_key" => $d["api_key"],
-                "api_secret" => $d["api_secret"],
-                "data" => $domain
-            );
-            $this->App_model->moveOldtoNewSystem($insert_data);
-        }
-    }*/
+//    public function move_key_secret_to_platform(){
+//        $this->load->model('App_model');
+//        $this->load->model('Domain_model');
+//
+//        $domains = $this->Domain_model->getDomains(array());
+//
+//        foreach($domains as $d){
+//
+//            $domain = preg_replace("/http:\/\//", "", $d['domain_name']);
+//            $domain = preg_replace("/https:\/\//", "", $domain);
+//
+//            $insert_data = array(
+//                "client_id" => $d["client_id"],
+//                "site_id" => $d["_id"],
+//                "platform" => "web",
+//                "api_key" => $d["api_key"],
+//                "api_secret" => $d["api_secret"],
+//                "data" => $domain
+//            );
+//            $this->App_model->moveOldtoNewSystem($insert_data);
+//        }
+//    }
 }
 ?>
