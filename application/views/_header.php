@@ -172,9 +172,12 @@ if (isset($username)) {
             <div class="nav-no-collapse header-nav">
             <?php //echo $site_id; echo "--".$domain['_id'];?>
             <?php //var_dump($domain);?>
+
+            
+
         <?php if (isset($username)) { ?>
             <ul class="nav pull-right">
-
+                <li><a href="<?php echo site_url(); ?>/account/subscribe"  class="header-upgrade-btn">Upgrade Now</a></li>
 
                 <li class="dropdown">
                     <?php
@@ -197,10 +200,10 @@ if (isset($username)) {
                     <?php
                     }else{
                     ?>
-                        <a class="btn" href="<?php echo site_url("app/add"); ?>">
-                            <i>
-                                Create App
-                            </i>
+                        <a class="btn header-app-manu" href="<?php echo site_url("app/add"); ?>">
+                            <span>
+                                + Create App
+                            </span>
                         </a>
                     <?php
                     }

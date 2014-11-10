@@ -1,3 +1,5 @@
+
+
 <div id="content" class="span10">
 
 <div class="box">
@@ -42,34 +44,72 @@ echo form_open($form ,$attributes);
             </tr>
             <tr>
                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_platform'); ?>:</td>
-                <td><?php
-                    $data1 = array(
-                        'name'        => 'platform',
-                        'value'       => 'web',
-                        'checked'     => TRUE
-                    );
+                <td>
+                        <div class="select-platform-wrapper">
+                            
+                                <?php
+                                $data1 = array(
+                                    'id'        => 'web',
+                                    'name'        => 'platform',
+                                    'value'       => 'web',
+                                    'checked'     => TRUE
+                                );
 
-                    echo form_radio($data1); ?>
-                    <?php echo $this->lang->line('entry_web'); ?>
-                    <?php
-                    $data2 = array(
-                        'name'        => 'platform',
-                        'value'       => 'ios',
-                        'checked'     => FALSE
-                    );
+                                echo form_radio($data1); ?>
+                                <label class="web" for="web">
+                                    <i class="fa fa-desktop"></i><br>
+                                    <?php echo $this->lang->line('entry_web'); ?>
+                                </label>
 
-                    echo form_radio($data2); ?>
-                    <?php echo $this->lang->line('entry_ios'); ?>
-                    <?php
-                    $data3 = array(
-                        'name'        => 'platform',
-                        'value'       => 'android',
-                        'checked'     => FALSE
-                    );
+                            
+                                <?php
+                                $data2 = array(
+                                    'id'        => 'ios',
+                                    'name'        => 'platform',
+                                    'value'       => 'ios',
+                                    'checked'     => FALSE
+                                );
+                                echo form_radio($data2); ?>
+                                <label class="ios" for="ios">
+                                    <i class="fa fa-apple"></i><br>
+                                    <?php echo $this->lang->line('entry_ios'); ?>
+                                </label>
 
-                    echo form_radio($data3); ?>
-                    <?php echo $this->lang->line('entry_andriod'); ?>
+                             
+                                <?php
+                                $data3 = array(
+                                    'id'        => 'android',
+                                    'name'        => 'platform',
+                                    'value'       => 'android',
+                                    'checked'     => FALSE
+                                );
+                                echo form_radio($data3); ?>
+                                <label class="android" for="android">
+                                    <i class="fa fa-android"></i><br>
+                                    <?php echo $this->lang->line('entry_andriod'); ?>
+                                </label>
+                        </div>
                 </td>
+            </tr>
+            <tr class="app-tab web">
+                <td><span class="required">*</span> Site Url:</td>
+                <td><input type="text" name="site_url" value="" size="50" /> <span class="muted">ex. http://www.example.com</span></td>
+            </tr>
+            <tr class="app-tab ios">
+                <td><span class="required">*</span> Bundle ID:</td>
+                <td><input type="text" name="ios_bundle_id" value="" size="50" /> <span class="muted">ex. com.companyname.appname</span></td>
+            </tr>
+            <tr class="app-tab ios">
+                <td>iPhone Store ID</td>
+                <td><input type="text" name="ios_iphone_store_id" value="" size="50" /> <span class="muted">ex. 544007664</span></td>
+            </tr>
+            <tr class="app-tab ios">
+                <td>iPad Store ID</td>
+                <td><input type="text" name="ios_ipad_store_id" value="" size="50" /> <span class="muted">ex. 544007664</span></td>
+            </tr>
+            <tr class="app-tab android">
+                <td><span class="required">*</span> Package Name:</td>
+                <td><input type="text" name="android_package_name" value="" size="50" /> <span class="muted">ex. com.companyname.appname</span></td>
             </tr>
         </table>
     </div>
@@ -79,3 +119,14 @@ echo form_close();
 </div>
 </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.app-tab').hide();
+        $('.app-tab.'+$('input[name=platform]').val() ).fadeIn('fast');
+        $('input[name=platform]').change(function(){
+            $('.app-tab').hide();
+            $('.app-tab.'+$(this).val() ).fadeIn('fast');
+        });
+    })
+</script>

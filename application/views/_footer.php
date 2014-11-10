@@ -3,7 +3,7 @@
 <footer class="footer">
     <p>
         <span style="text-align:left;float:left"></span>
-        <span style="text-align:right;float:right"><?php echo $this->lang->line('text_footer'); ?></span>
+        <span style="text-align:right;float:right"><?php echo $this->lang->line('text_footer'); ?> <span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=92vN5shBDgwsjV7hvDwDsZvCbo8huBQoo6oOypCaK7B5MgEohD"></script></span></span>
     </p>
 
 </footer>
