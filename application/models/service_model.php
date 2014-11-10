@@ -268,7 +268,7 @@ class Service_model extends MY_Model
         return $this->mongo_db->distinct('client_id', 'playbasis_web_service_log');
     }
 
-    public function archive($m, $bucket, $folder, $pageSize=50) {
+    public function archive($m, $bucket, $folder, $pageSize=100) {
         $this->load->library('s3');
 
         $c = 0;
@@ -279,10 +279,9 @@ class Service_model extends MY_Model
         $total = $this->mongo_db->count('playbasis_web_service_log');
 
         /* do paging over such records */
-        $numPage = intval(ceil($total/(1.0*$pageSize)));
-        for ($i = 0; $i < $numPage; $i++) {
+        while ($c < $total) {
             /* fetch the documents */
-            $this->mongo_db->offset($i*$pageSize);
+            $this->mongo_db->order_by(array('date_added' => 'ASC'));
             $this->mongo_db->limit($pageSize);
             $documents = $this->mongo_db->get('playbasis_web_service_log');
 
@@ -290,17 +289,19 @@ class Service_model extends MY_Model
             $_ids = array();
             foreach ($documents as $document) {
                 $id = $document['_id'];
-                $result = $this->s3->putObject(json_encode($document), $bucket, $folder.'/'.$id.'.bson', S3::ACL_PRIVATE);
+                $result = $this->s3->putObject(json_encode($document), $bucket, $folder.'/'.$id.'.json', S3::ACL_PRIVATE);
                 if ($result) {
                     array_push($_ids, $id);
                 }
             }
 
             /* remove the documents */
-            //$this->mongo_db->where_in('_id', $_ids);
-            //$this->mongo_db->delete_all('playbasis_web_service_log');
+            $this->mongo_db->where_in('_id', $_ids);
+            $this->mongo_db->delete_all_with_ids('playbasis_web_service_log');
 
             $c += count($_ids);
+
+            print('> '.$c.'/'.$total."\n");
         }
 
         return $c;

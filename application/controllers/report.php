@@ -11,6 +11,7 @@ define('SITE_ID_PLAYBOY', '52ea1eff8d8c89642100006d');
 define('SITE_ID_TRUE', '52ea1ebd8d8c89001a00004e');
 define('SITE_ID_BURUFLY', '52ea1eac8d8c89401c0000e7');
 define('SITE_ID_ASSOPOKER', '53a9422f988040355a8b45d3');
+define('SITE_ID_TRUE_MONEY', '5423ce3dbe120b680f8b456c');
 
 define('CANNOT_VIEW_EMAIL', 'CANNOT_VIEW_EMAIL');
 define('NUMBER_OF_PLAYERS', 20);
@@ -60,6 +61,7 @@ class Report extends REST2_Controller
 		    SITE_ID_TRUE => false,
 		    SITE_ID_BURUFLY => false,
 		    SITE_ID_ASSOPOKER => true,
+		    SITE_ID_TRUE_MONEY => true,
 	    );
 	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
 	    $conf = array(
@@ -89,7 +91,7 @@ class Report extends REST2_Controller
 		    if (array_key_exists((string)$client_id, $clients)) continue;
 		    $clients[(string)$client_id] = $this->client_model->getById($client_id);
 	    }
-		log_message('debug', 'clients = '.print_r($clients, true));
+	    log_message('debug', 'clients = '.print_r($clients, true));
 
 	    /* query and process data */
 	    $master = $this->master_init($conf, $from, $to);
@@ -242,18 +244,33 @@ class Report extends REST2_Controller
 		}
 		// ITEMS
 		$arr = array();
-		$items = array_merge($this->goods_model->listActiveItems($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->goods_model->listExpiredItems($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to));
+		/* process group */
+		$results = $this->goods_model->getGroupsAggregate($opts['site_id']);
+		$ids = array();
+		$group_name = array();
+		foreach ($results as $i => $result) {
+			$group = $result['_id']['group'];
+			$quantity = $result['quantity'];
+			$list = $result['list'];
+			$first = array_shift($list); // skip first one
+			$group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+			$ids = array_merge($ids, $list);
+		}
+		$goodsList = $this->goods_model->getAllGoods($opts, $ids);
+		$goodsList_ids = array_map('convert_id_to_mongoId', $goodsList);
+		$items = array_merge($this->goods_model->listActiveItems(array_merge($opts, array('in' => $goodsList_ids)), date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->goods_model->listExpiredItems(array_merge($opts, array('in' => $goodsList_ids)), date('Y-m-d', strtotime('+1 day', strtotime($from))), $to));
 		foreach ($items as $item) {
-			$goods_qty = $item['quantity'];
 			$goods_criteria = $item['redeem'];
-			$smm = get_sum_min_max($this->goods_model->totalRedemption($opts, $item['goods_id']));
+			$goods_id = array_key_exists('group', $item) ? array_map('index_goods_id', $this->goods_model->listGoodsIdsByGroup($opts['client_id'], $opts['site_id'], $item['group'])) : $item['goods_id'];
+			$smm = get_sum_min_max($this->goods_model->totalRedemption($opts, $goods_id));
 			$goods_qty_redeemed = $smm['sum'];
-			$goods_qty_remain = ($goods_qty != null || $goods_qty === 0 ? $goods_qty - $goods_qty_redeemed : null);
+			$goods_qty_remain = array_key_exists('group', $item) ? $group_name[$item['_id']->{'$id'}]['quantity'] : $item['quantity'];
+			$goods_qty = $goods_qty_remain !== null ? $goods_qty_remain + $goods_qty_redeemed : $goods_qty_remain;
 			$goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($opts, $goods_criteria);
 			$arr[] = array_merge(
 				array(
 					'IMAGE_SRC' => $conf['disable_url_exists'] || $this->utility->url_exists($item['image'], $conf['dynamic_image_url']) ? $conf['dynamic_image_url'].$item['image'] : $conf['static_image_url'].'images/no_image.jpg',
-					'NAME' => $item['name'],
+					'NAME' => array_key_exists('group', $item) ? $item['group'] : $item['name'],
 					'START_DATE' => ($item['date_start'] ? date(REPORT_DATE_FORMAT, $item['date_start']->sec) : ITEM_DATE_NOT_CONFIG),
 					'EXPIRATION_DATE' => ($item['date_expire'] ? date(REPORT_DATE_FORMAT, $item['date_expire']->sec) : ITEM_DATE_NOT_CONFIG),
 					'PEOPLE_CAN_REDEEM' => number_format($goods_players_can_redeem),
@@ -440,5 +457,13 @@ function compare_SITE_NAME_asc($a, $b) {
 		return 0;
 	}
 	return $a_lower < $b_lower ? -1 : 1;
+}
+
+function convert_id_to_mongoId($obj) {
+    return new MongoID($obj['_id']);
+}
+
+function index_goods_id($obj) {
+    return $obj['goods_id'];
 }
 ?>

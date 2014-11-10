@@ -225,7 +225,7 @@ $email = 'pechpras@playbasis.com';
 
 			if ($today >= $date_expire && $this->utility->find_diff_in_days($date_expire, $today) == GRACE_PERIOD_IN_DAYS+1) {
 				$email = $client['email'];
-$email = 'pechpras@playbasis.com';
+                $email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD, $client_id);
 				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times  */
 				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL) && $this->email_model->countSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id) < EMAIL_MAX_SENT) {
@@ -242,6 +242,7 @@ $email = 'pechpras@playbasis.com';
 	}
 
 	public function archiveWebServiceLog() {
+		set_time_limit(0);
 		$results = $this->service_model->archive(MONTHS_TO_STORE_IN_SERVICE_LOG, S3_BUCKET, S3_FOLDER);
 		print('Total records archived = '.$results);
 	}

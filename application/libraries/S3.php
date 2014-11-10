@@ -1337,7 +1337,7 @@ final class S3Request {
 	 *
 	 * @return object | false
 	 */
-	public function getResponse()
+	public function getResponse($timeout=null)
 	{
 		$query = '';
 		if (sizeof($this->parameters) > 0)
@@ -1446,6 +1446,9 @@ final class S3Request {
 				break;
 			default: break;
 		}
+
+        // Set timeout
+        if ($timeout !== null) curl_setopt($curl, CURLOPT_TIMEOUT_MS, $timeout);
 
 		// Execute, grab errors
 		if (curl_exec($curl))

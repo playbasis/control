@@ -11,25 +11,41 @@ class Auth_model extends MY_Model
 	public function getApiInfo($data)
 	{
 		$this->set_site_mongodb(0);
-		$this->mongo_db->select(array(
-			'_id',
-			'client_id',
-			'domain_name',
-			'site_name'
-		));
-		$this->mongo_db->where(array(
-			'api_key' => $data['key'],
-			'api_secret' => $data['secret'],
-			'status' => true
-		));
-		$result = $this->mongo_db->get('playbasis_client_site');
-		if($result)
-		{
-			$result = $result[0];
-			$result['site_id'] = $result['_id'];
-			unset($result['_id']);
-			return $result;
-		}
+
+        $this->mongo_db->select(array(
+            'site_id',
+            'client_id'
+        ));
+        $this->mongo_db->where(array(
+            'api_key' => $data['key'],
+            'api_secret' => $data['secret'],
+            'status' => true,
+            'deleted' => false
+        ));
+        $cl_info = $this->mongo_db->get('playbasis_platform_client_site');
+        if($cl_info){
+            $this->mongo_db->select(array(
+                '_id',
+                'client_id',
+                'domain_name',
+                'site_name'
+            ));
+            $this->mongo_db->where(array(
+                '_id' => $cl_info[0]['site_id'],
+                'client_id' => $cl_info[0]['client_id'],
+                'status' => true
+            ));
+            $result = $this->mongo_db->get('playbasis_client_site');
+            if($result)
+            {
+                $result = $result[0];
+                $result['site_id'] = $result['_id'];
+                $result['platform_id'] = $cl_info[0]['_id'];
+                unset($result['_id']);
+                return $result;
+            }
+        }
+
 		return array();
 	}
 	public function generateToken($data)
@@ -42,6 +58,7 @@ class Auth_model extends MY_Model
 		$this->mongo_db->where(array(
 			'site_id' => $data['site_id'],
 			'client_id' => $data['client_id'],
+			'platform_id' => $data['platform_id'],
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
 		$token = $this->mongo_db->get('playbasis_token');
@@ -70,13 +87,15 @@ class Auth_model extends MY_Model
 			$this->set_site_mongodb($key);
 			$this->mongo_db->where(array(
 				'site_id' => $data['site_id'],
-				'client_id' => $data['client_id']
+				'client_id' => $data['client_id'],
+                'platform_id' => $data['platform_id'],
 			));
 			$this->mongo_db->delete_all('playbasis_token');
 			//insert new token
 			$this->mongo_db->insert('playbasis_token', array(
 				'client_id' => $data['client_id'],
 				'site_id' => $data['site_id'],
+                'platform_id' => $data['platform_id'],
 				'token' => $token['token'],
 				'date_expire' => $expire
 			));
@@ -90,7 +109,8 @@ class Auth_model extends MY_Model
 		$this->set_site_mongodb(0);
 		$this->mongo_db->select(array(
 			'client_id',
-			'site_id'
+			'site_id',
+            'platform_id'
 		));
 		$this->mongo_db->where(array(
 			'token' => $token,
