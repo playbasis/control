@@ -61,7 +61,7 @@
                             <?php } ?>
                         <?php } else { ?>
                     <tr>
-                        <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
+                        <td class="center" colspan="4"><?php echo $this->lang->line('text_no_results'); ?></td>
                     </tr>
                         <?php } ?>
                     </tbody>
@@ -69,6 +69,73 @@
             <?php
             echo form_close();
             ?>
+
+
+            <table class="list">
+                <thead style="height:0">
+                <tr>
+                    <td width="1" style="text-align: center;"><input type="checkbox" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);"></td>
+                    <td class="left" colspan="2">APP NAME</td>
+                    <td class="right" style="width:100px;">Status</td>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="selected[]" value="54609911d4139e702bd63af4">
+                        </td>
+                        <td class="left">
+                            <i class="fa fa-desktop fa-lg"></i> Web Site
+                        </td>
+                        <td >
+                            Test-App
+                        </td>
+                        <td >
+                            Test-App
+                        </td>
+                        <td class="right">
+                            Enabled
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="selected[]" value="54609911d4139e702bd63af4">
+                        </td>
+                        <td class="left">
+                            <i class="fa fa-apple fa-lg"></i> iOS
+                        </td>
+                        <td >
+                            
+                        </td>
+                        <td >
+                            Test-App
+                        </td>
+                        <td class="right">
+                            Enabled
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="selected[]" value="54609911d4139e702bd63af4">
+                        </td>
+                        <td class="left">
+                            <i class="fa fa-android fa-lg"></i> Android
+                        </td>
+                        <td >
+                            Test-App
+                        </td>
+                        <td >
+                            Test-App
+                        </td>
+                        <td class="right">
+                            Enabled
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
             <div class="pagination">
                 <ul class='ul_rule_pagination_container'>
                     <?php echo $pagination_links; ?>
