@@ -757,6 +757,7 @@
         
         $('.plan-btn').click(function(){
             $('input[name=plan]').val($(this).attr('data-plan-id'));
+            $('form#form').attr('action', '<?php echo current_url().($user_plan_date_billing ? '/upgrade' : '/subscribe'); ?>');
             $('form#form').submit();
         })
 
