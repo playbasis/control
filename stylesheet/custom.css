@@ -251,6 +251,28 @@ input[type=radio]:checked + label {
     color: #86559c;
 }
 
+
+/*======== [ Purchase ] =========*/
+.purchase-summary-wrapper{
+	padding-top: 100px;
+	padding-bottom: 100px;
+}
+.purchase-summary-wrapper h1{
+	text-transform: uppercase;
+}
+.purchase-summary-wrapper h2{
+	font-size: 24px;
+	color: #999;
+}
+.purchase-summary-wrapper h2 strong{
+	font-size: 48px;
+	color: #86559c;
+	line-height: 60px;
+}
+.purchase-summary-wrapper p{
+	padding-bottom: 40px;
+}
+
 /*======== [ Reward ] =========*/
 #content.account-purchase-page{
 	margin-bottom: 20px;
