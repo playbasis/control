@@ -109,8 +109,7 @@ class Auth_model extends MY_Model
 		$this->set_site_mongodb(0);
 		$this->mongo_db->select(array(
 			'client_id',
-			'site_id',
-            'platform_id'
+			'site_id'
 		));
 		$this->mongo_db->where(array(
 			'token' => $token,
