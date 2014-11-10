@@ -19,6 +19,10 @@ class Account extends MY_Controller
 			redirect('/login', 'refresh');
 		}
 
+        if($this->input->get('site_id')){
+            $this->User_model->updateSiteId($this->input->get('site_id'));
+        }
+
 		$lang = get_lang($this->session, $this->config);
 		$this->lang->load($lang['name'], $lang['folder']);
 		$this->lang->load("account", $lang['folder']);

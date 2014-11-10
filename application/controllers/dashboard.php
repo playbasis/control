@@ -12,6 +12,10 @@ class Dashboard extends MY_Controller
             redirect('/login', 'refresh');
         }
 
+        if($this->input->get('site_id')){
+            $this->User_model->updateSiteId($this->input->get('site_id'));
+        }
+
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("home", $lang['folder']);
@@ -21,10 +25,6 @@ class Dashboard extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
-        if($this->input->get('site_id')){
-            $this->User_model->updateSiteId($this->input->get('site_id'));
         }
 
         $this->load->model('User_model');
@@ -127,7 +127,7 @@ class Dashboard extends MY_Controller
                 if (!empty($user_plan)) {
                     if (array_key_exists('feature_to_plan', $user_plan)) {
                         if (is_array($user_plan['feature_to_plan']) && count($user_plan['feature_to_plan']) > 0) {
-                            $value = $this->Feature_model->getFeature($user_plan['feature_to_plan'][0]);
+                            $value = $this->Feature_model->getFeatureName("Account");
                             if($value) redirect('/'.$value['link'], 'refresh'); /* if it isn't, then we select second menu for the user */
                         }
                     }
@@ -137,10 +137,6 @@ class Dashboard extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
-        if($this->input->get('site_id')){
-            $this->User_model->updateSiteId($this->input->get('site_id'));
         }
 
         $this->load->model('User_model');

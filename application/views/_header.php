@@ -181,7 +181,7 @@ if (isset($username)) {
 
                 <li class="dropdown">
                     <?php
-                    if($this->session->userdata('site')){
+                    if($this->session->userdata('site_id')){
                     ?>
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                             <i>
@@ -193,7 +193,7 @@ if (isset($username)) {
                             <ul class="dropdown-menu">
 
                                 <?php foreach($domain_all as $a_domain){?>
-                                    <li><a href="<?php echo base_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-asterisk"></i> <?php echo $a_domain['site_name'];?></a></li>
+                                    <li><a href="<?php echo site_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-asterisk"></i> <?php echo $a_domain['site_name'];?></a></li>
                                 <?php }?>
                             </ul>
                         <?php }else{echo "";} ?>

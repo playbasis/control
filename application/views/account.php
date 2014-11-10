@@ -50,9 +50,7 @@
 			            <tr>
 				            <td><?php echo $this->lang->line('text_valid'); ?>:</td>
 				            <td>
-				                <select disabled>
-				                    <option selected="selected"><?php echo $client['valid'] ? $this->lang->line('text_enabled') : $this->lang->line('text_disabled'); ?></option>
-				                </select>
+                                <span class="label <?php echo $client['valid'] ? "label-success" : "label-important"; ?>"><?php echo $client['valid'] ? $this->lang->line('text_enabled') : $this->lang->line('text_disabled'); ?></span>
 				            </td>
 			            </tr>
 			            <tr>

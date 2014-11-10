@@ -46,6 +46,8 @@ define('DIR_IMAGE', 'C:\\Program Files (x86)\\Ampps\\www\\control\\image\\');
 define('DEFAULT_PASSWORD', 'playbasis');
 
 define('DEFAULT_PLAN', '542a69e02cfa49be0c6755e4'); // default package when a user registers without plan
+define('BETA_TEST_PLAN', '52ea1eab8d8c89401c0000d8'); // beta plan
+define('FREE_PLAN', '5428f2df998040b0458b45f2'); // free plan
 define('DEFAULT_PLAN_PRICE', 0); // default is free
 define('DEFAULT_PLAN_DISPLAY', false); // default is to not display the plan
 define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
