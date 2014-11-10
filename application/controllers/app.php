@@ -58,7 +58,7 @@ class App extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('domain/page');
+        $config['base_url'] = site_url('app/page');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -266,11 +266,11 @@ class App extends MY_Controller
                     redirect('app', 'refresh');
                 }else{
                     if($this->input->post('format') == 'json'){
-                        echo json_encode($this->lang->line('text_fail_domain_exists'));
+                        echo json_encode($this->lang->line('text_fail_app_exists'));
                         exit();
                     }
 
-                    $this->data['message'] = $this->lang->line('text_fail_domain_exists');
+                    $this->data['message'] = $this->lang->line('text_fail_app_exists');
                 }
 
             }
@@ -357,7 +357,7 @@ class App extends MY_Controller
             }
 
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/domain', 'refresh');
+            redirect('/app', 'refresh');
         }
 
         $this->getList(0);
@@ -427,7 +427,7 @@ class App extends MY_Controller
 
     private function validateModify() {
 
-        if ($this->User_model->hasPermission('modify', 'domain')) {
+        if ($this->User_model->hasPermission('modify', 'app')) {
             return true;
         } else {
             return false;
@@ -476,7 +476,7 @@ class App extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'domain')) {
+        if ($this->User_model->hasPermission('access', 'app')) {
             return true;
         } else {
             return false;

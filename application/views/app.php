@@ -48,7 +48,7 @@
                                 <?php } ?>
                             </td>
                             <td class="left">
-                                <?php echo $domain['app_name']; ?>
+                                <?php echo $domain['domain_name']; ?>
                             </td>
                             <td class="right">
                                 <?php if ($domain['status']==1) { ?>
