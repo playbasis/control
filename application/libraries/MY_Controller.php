@@ -15,6 +15,7 @@ class  MY_Controller  extends  CI_Controller  {
     function render_page($view) {
 
         $this->load->model('User_model');
+        $this->load->model('Client_model');
         $this->load->model('Domain_model');
         $this->load->model('Feature_model');
 
@@ -171,7 +172,10 @@ class  MY_Controller  extends  CI_Controller  {
                     }
                 }
                 $user_plan = $this->User_model->getPlan();
-
+                if (!array_key_exists('price', $user_plan)) {
+                    $user_plan['price'] = DEFAULT_PLAN_PRICE;
+                }
+                $this->data['user_plan'] = $user_plan;
                 if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
                     $this->data['features'][] = array(
                         'feature_id' => new MongoId(),
@@ -189,10 +193,17 @@ class  MY_Controller  extends  CI_Controller  {
                 //         'link' =>$value['link']
                 //     );
                 // }
+
+                $client = $this->Client_model->getClientById($this->User_model->getClientId());
+                $this->data['user_plan_date_billing'] = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
             }else{
                 if($this->data['client_id']){
                     // check to see if there is an associated plan, otherwise we output error no domain
                     $user_plan = $this->User_model->getPlan();
+                    if (!array_key_exists('price', $user_plan)) {
+                        $user_plan['price'] = DEFAULT_PLAN_PRICE;
+                    }
+                    $this->data['user_plan'] = $user_plan;
                     if (!empty($user_plan)) {
                         if (array_key_exists('feature_to_plan', $user_plan)) foreach ($user_plan['feature_to_plan'] as $feature_id) {
                             $value = $this->Feature_model->getFeature($feature_id);
@@ -217,6 +228,8 @@ class  MY_Controller  extends  CI_Controller  {
                     } else {
                         $this->data['check_domain_exists'] = false;
                     }
+                    $client = $this->Client_model->getClientById($this->User_model->getClientId());
+                    $this->data['user_plan_date_billing'] = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
                 }else{
                     // super admin
                     $features = $this->Feature_model->getFeatures();    
