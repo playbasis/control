@@ -180,6 +180,7 @@ class Account extends MY_Controller
 				/* set the parameters for PayPal */
 				$this->data['params'] = array(
 					'plan_id' => $selected_plan['_id'],
+					'plan_name' => $selected_plan['name'],
 					'price' => $selected_plan['price'],
 					'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
 					'callback' => $ci->config->config['server'].'notification',
@@ -196,6 +197,7 @@ class Account extends MY_Controller
 			$this->data['mode'] = $mode;
 			$this->data['plans'] = $this->Plan_model->listDisplayPlans();
 			$this->data['heading_title'] = $this->lang->line('channel_title');
+
 			$this->data['main'] = 'account_purchase';
 			$this->data['form'] = 'account/'.$this->purchase[$mode];
 		}

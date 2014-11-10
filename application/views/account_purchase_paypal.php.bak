@@ -66,31 +66,6 @@
             	</div>
         </div><!-- .content -->
     </div><!-- .box -->
-
-
-
-
-
-
-
-
-
-
-    <div class="purchase-summary-wrapper box-gray">
-    		<h1>Upgrade to the <?php echo PRODUCT_NAME; ?> <?php echo $params['plan_name']; ?></h1>
-    		<p>You'll be charged <strong>$<?php echo $params['price']; ?></strong>/Month </p>
-    		<p>Your payment for this purchase is processed securely by <img src=""></p>
-    		<!-- <p>Effective Date: <?php echo date('d M Y'); ?></p> -->
-    		<a href="" class="btn-hero">UPGRADE YOUR PLAN</a>
-    </div>
-
-
-
-
-
-
-
-
 </div><!-- #content .span10 -->
 <script type="text/javascript"><!--
 	$(document).ready(function(){
@@ -115,7 +90,7 @@
 		$('<input>').attr({
 			type: 'hidden',
 			name: 'p1', // duration
-			value: <?php echo $params['trial_days']; ?> //allowed value: 1-90
+			value: <?php echo $params['trial_days']; ?> <!-- allowed value: 1-90 -->
 		}).appendTo('form');
 		$('<input>').attr({
 			type: 'hidden',
