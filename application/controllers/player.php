@@ -214,8 +214,13 @@ class Player extends REST2_Controller
         //percent exp of level
 //        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
         $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'], $this->validToken['site_id']);
-        $base_exp = $level['min_exp'];
-        $max_exp = $level['max_exp'] - $base_exp;
+        if($level){
+            $base_exp = $level['min_exp'];
+            $max_exp = $level['max_exp'] - $base_exp;
+        }else{
+            $base_exp = 0;
+            $max_exp = 0;
+        }
         $now_exp = $player['player']['exp'] - $base_exp;
         if(isset($level['max_exp']) && $max_exp != 0){
             $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
@@ -274,10 +279,15 @@ class Player extends REST2_Controller
         //percent exp of level
 //        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
         $level = $this->level_model->getLevelByExp($player['player']['exp'], $this->validToken['client_id'], $this->validToken['site_id']);
-        $base_exp = $level['min_exp'];
-        $max_exp = $level['max_exp'] - $base_exp;
+        if($level){
+            $base_exp = $level['min_exp'];
+            $max_exp = $level['max_exp'] - $base_exp;
+        }else{
+            $base_exp = 0;
+            $max_exp = 0;
+        }
         $now_exp = $player['player']['exp'] - $base_exp;
-        if(isset($level['max_exp'])){
+        if(isset($level['max_exp']) && $max_exp != 0){
             $percent_exp = (floatval($now_exp) * floatval (100)) / floatval($max_exp);
             $player['player']['percent_of_level'] = round($percent_exp,2);
         }else{
