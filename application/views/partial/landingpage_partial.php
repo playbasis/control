@@ -13,6 +13,14 @@
       	
       	<div class="getstarted-wrapper box-gray">
       		<h1>Getting Started with Playbasis</h1>
+                                    <a href="http://dev.playbasis.com/docs.php" class="subbox" target="_blank">
+                                          <i class="fa fa-file-text-o"></i>
+                                          <p>Read documentation<br>how to use our API</p>
+                                    </a>
+                                    <a href="http://dev.playbasis.com/io-docs/" class="subbox" target="_blank">
+                                          <i class="fa fa-cogs"></i>
+                                          <p>Live test with Playbasis API<br>using the secret / keys</p>
+                                    </a>
       		<h2>We provide several SDKs for faster and easier integrations with your framework.</h2>
       		<ul class="sdk-list-wrapper">
       			<li><a href="https://github.com/playbasis/sdk-android/archive/master.zip" target="_blank">

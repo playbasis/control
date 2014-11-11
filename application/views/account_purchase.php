@@ -28,7 +28,7 @@
               <div class="plans-wrapper">
                     
                         <h1>
-                                <small>Get started with Gamification today!</small>
+                                Get started with Gamification today!
                         </h1>
                     
 
@@ -65,7 +65,14 @@
                                 <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                               </ul>
                             </li>
-                            <li class="button"><?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a><?php } else { ?>Current Plan<?php } ?></li>
+                            <li class="button">
+                            <?php if ($plan['_id'] != $user_plan['_id']) { ?>
+                              <a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">
+                                Choose Plan</a>
+                              <?php } else { ?>
+                                <span class="plan-current-btn">Current Plan</span>
+                              <?php } ?>
+                              </li>
                           </ul>
                         </li>
 
@@ -86,7 +93,8 @@
                                     <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                                   </ul>
                                 </li>
-                                <li class="button"><?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a><?php } else { ?>Current Plan<?php } ?></li>
+                                <li class="button">
+                                <?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a><?php } else { ?><span class="plan-current-btn">Current Plan</span><?php } ?></li>
                               </ul>
                             </li>
 
@@ -720,11 +728,12 @@
             <?php foreach ($plans as $key => $plan): ?>
               <?php if($plan['price'] == 0): ?>
                 <td class="col-try">
-                  <a href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a>
+                  <?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose</a><?php } else { ?><span class="plan-current-btn">Current</span><?php } ?>
+
                 </td>
               <?php else: ?>
                   <td>
-                  <a href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a>
+                  <?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose</a><?php } else { ?><span class="plan-current-btn">Current</span><?php } ?>
                 </td>
                 <?php endif; ?>
               <?php endforeach; ?>
