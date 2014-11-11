@@ -74,7 +74,7 @@ class Auth_model extends MY_Model
 	public function renewToken($data)
 	{
 		$token = array();
-		$token['token'] = hash('sha1', $data['key'] . time() . $data['secret']);
+		$token['token'] = hash('sha1', $data['key'] . time() . $data['secret'] . rand(4, 4));
 		$expire = new MongoDate(time() + TOKEN_EXPIRE);
 		$updated = array();
 		foreach(self::$dblist as $key => $value)
