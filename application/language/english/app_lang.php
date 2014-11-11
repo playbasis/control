@@ -6,13 +6,13 @@ $lang['heading_title']          				= 'App';
 // Text
 // $lang['text_success']           				= 'Success: You have modified clients!';
 $lang['text_success']           				= 'You have successfully reset the secret!';
-$lang['text_success_insert']					= 'You have successfully added a domain!';
-$lang['text_success_delete']					= 'You have successfully deleted a domain!';
+$lang['text_success_insert']					= 'You have successfully added a App!';
+$lang['text_success_delete']					= 'You have successfully deleted a App!';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';
 $lang['text_clear']             				= 'Clear Image';
-$lang['text_criteria']          				= 'Domain View';
+$lang['text_criteria']          				= 'App View';
 $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
 
 // Gender
@@ -25,14 +25,14 @@ $lang['text_reset_secret']						= 'Reset';
 // Tab
 $lang['tab_token']								= 'Access Token';
 $lang['tab_address'] 							= 'Address';
-$lang['tab_domain'] 							= 'Domain';
+$lang['tab_domain'] 							= 'App';
 $lang['tab_user'] 								= 'Users';
 
 // Column
 $lang['column_image']							= 'Logo';
 $lang['column_name']            				= 'Name';
 $lang['column_platform']            		    = 'Platform';
-$lang['column_quantity']          				= 'Domains';
+$lang['column_quantity']          				= 'Apps';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_action']          				= 'Action';
@@ -77,13 +77,13 @@ $lang['entry_plan']								= 'Plan';
 
 $lang['entry_web']								= 'Web';
 $lang['entry_ios']								= 'IOS';
-$lang['entry_android']								= 'Android';
+$lang['entry_android']						    = 'Android';
 
 // Button
 $lang['button_filter']							= 'Filter';
 $lang['button_add_domain']						= 'Add Domain';
 $lang['button_add_user']						= 'Add User';
-$lang['button_add_app']						        = 'Add App';
+$lang['button_add_app']						    = 'Add App';
 
 // Domain
 $lang['entry_domain']					= 'Domain';

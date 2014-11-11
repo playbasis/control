@@ -39,55 +39,107 @@ echo form_open($form ,$attributes);
     <div id="tab-domain">
         <table class="form">
             <tr>
-                <td><span class="required">*</span> <?php echo $this->lang->line('entry_app_name'); ?>:</td>
-                <td><input type="text" name="app_name" value="<?php echo isset($app_name) ? $app_name : set_value('app_name'); ?>" size="50" class="tooltips" data-placement="right" title="App Name (Unique)"/></td>
+                <?php
+                if($app_id){
+                ?>
+                    <td> <?php echo $this->lang->line('entry_app_name'); ?>:</td>
+                    <td> <?php echo isset($app_name) ? $app_name : set_value('app_name'); ?></td>
+                <?php
+                }else{
+                ?>
+                    <td><span class="required">*</span> <?php echo $this->lang->line('entry_app_name'); ?>:</td>
+                    <td><input type="text" name="app_name" value="<?php echo isset($app_name) ? $app_name : set_value('app_name'); ?>" size="50" class="tooltips" data-placement="right" title="App Name (Unique)"/></td>
+                <?php
+                }
+                ?>
             </tr>
             <tr>
                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_platform'); ?>:</td>
                 <td>
                         <div class="select-platform-wrapper">
-                            
+                            <?php
+                            if($platform_id){
+                            ?>
                                 <?php
-                                $data1 = array(
-                                    'id'        => 'web',
+                                if($platform == 'web'){
+                                    $aicon = 'fa-desktop';
+                                    $aname = $this->lang->line('entry_web');
+                                    $avalue = 'web';
+                                }elseif($platform == 'ios'){
+                                    $aicon = 'fa-apple';
+                                    $aname = $this->lang->line('entry_ios');
+                                    $avalue = 'ios';
+                                }elseif($platform == 'android'){
+                                    $aicon = 'fa-android';
+                                    $aname = $this->lang->line('entry_android');
+                                    $avalue = 'android';
+                                }
+                                ?>
+
+                                <?php
+                                $data = array(
+                                    'id'        => $avalue,
                                     'name'        => 'platform',
-                                    'value'       => 'web',
-                                    'checked'     => isset($platform) && $platform == "web" ? TRUE : (set_value('platform')?(set_value('platform')=='web'?TRUE:FALSE):TRUE)
+                                    'value'       => $avalue,
+                                    'checked'     => TRUE
                                 );
 
-                                echo form_radio($data1); ?>
-                                <label class="web" for="web">
-                                    <i class="fa fa-desktop"></i><br>
-                                    <?php echo $this->lang->line('entry_web'); ?>
+                                echo form_radio($data); ?>
+                                <label class="<?php echo $avalue; ?>" for="<?php echo $avalue; ?>">
+                                    <i class="fa <?php echo $aicon; ?>"></i><br>
+                                    <?php echo $aname; ?>
                                 </label>
+                            <?php
+                            }else{
+                            ?>
+                                <?php if(!($app_id  && in_array('web', $platform_already_have))){?>
+                                    <?php
+                                    $data1 = array(
+                                        'id'        => 'web',
+                                        'name'        => 'platform',
+                                        'value'       => 'web',
+                                        'checked'     => isset($platform) && $platform == "web" ? TRUE : (set_value('platform')?(set_value('platform')=='web'?TRUE:FALSE):FALSE)
+                                    );
 
-                            
-                                <?php
-                                $data2 = array(
-                                    'id'        => 'ios',
-                                    'name'        => 'platform',
-                                    'value'       => 'ios',
-                                    'checked'     => isset($platform) && $platform == "ios" ? TRUE : (set_value('platform')?(set_value('platform')=='ios'?TRUE:FALSE):FALSE)
-                                );
-                                echo form_radio($data2); ?>
-                                <label class="ios" for="ios">
-                                    <i class="fa fa-apple"></i><br>
-                                    <?php echo $this->lang->line('entry_ios'); ?>
-                                </label>
+                                    echo form_radio($data1); ?>
+                                    <label class="web" for="web">
+                                        <i class="fa fa-desktop"></i><br>
+                                        <?php echo $this->lang->line('entry_web'); ?>
+                                    </label>
+                                <?php } ?>
 
-                             
-                                <?php
-                                $data3 = array(
-                                    'id'        => 'android',
-                                    'name'        => 'platform',
-                                    'value'       => 'android',
-                                    'checked'     => isset($platform)  && $platform == "android" ? TRUE : (set_value('platform')?(set_value('platform')=='android'?TRUE:FALSE):FALSE)
-                                );
-                                echo form_radio($data3); ?>
-                                <label class="android" for="android">
-                                    <i class="fa fa-android"></i><br>
-                                    <?php echo $this->lang->line('entry_android'); ?>
-                                </label>
+                                <?php if(!($app_id  && in_array('ios', $platform_already_have))){?>
+                                    <?php
+                                    $data2 = array(
+                                        'id'        => 'ios',
+                                        'name'        => 'platform',
+                                        'value'       => 'ios',
+                                        'checked'     => isset($platform) && $platform == "ios" ? TRUE : (set_value('platform')?(set_value('platform')=='ios'?TRUE:FALSE):FALSE)
+                                    );
+                                    echo form_radio($data2); ?>
+                                    <label class="ios" for="ios">
+                                        <i class="fa fa-apple"></i><br>
+                                        <?php echo $this->lang->line('entry_ios'); ?>
+                                    </label>
+                                <?php } ?>
+
+                                <?php if(!($app_id  && in_array('android', $platform_already_have))){?>
+                                    <?php
+                                    $data3 = array(
+                                        'id'        => 'android',
+                                        'name'        => 'platform',
+                                        'value'       => 'android',
+                                        'checked'     => isset($platform)  && $platform == "android" ? TRUE : (set_value('platform')?(set_value('platform')=='android'?TRUE:FALSE):FALSE)
+                                    );
+                                    echo form_radio($data3); ?>
+                                    <label class="android" for="android">
+                                        <i class="fa fa-android"></i><br>
+                                        <?php echo $this->lang->line('entry_android'); ?>
+                                    </label>
+                                <?php } ?>
+                            <?php
+                            }
+                            ?>
                         </div>
                 </td>
             </tr>
@@ -123,7 +175,9 @@ echo form_close();
 <script type="text/javascript">
     $(document).ready(function(){
         $('.app-tab').hide();
-       
+
+        $("input[name=platform]:first").click();
+
         var platform = $('input[name=platform]:checked').val();
         $('.app-tab.'+platform ).fadeIn('fast');
 

@@ -3,16 +3,61 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class App_model extends MY_Model
 {
 
-    public function getDomain($site_id) {
+    public function getApp($app_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('_id', new MongoID($site_id));
+        $this->mongo_db->where('_id', new MongoID($app_id));
         $results = $this->mongo_db->get("playbasis_client_site");
 
         return $results ? $results[0] : null  ;
     }
 
-    public function getTotalDomainsByClientId($data) {
+    public function getPlatFormsByClientId($data) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
+
+        $sort_data = array(
+            'status',
+            '_id'
+        );
+
+        if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
+            $order = -1;
+        } else {
+            $order = 1;
+        }
+
+        if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+            $this->mongo_db->order_by(array($data['sort'] => $order));
+        } else {
+            $this->mongo_db->order_by(array('name' => $order));
+        }
+
+        if (isset($data['start']) || isset($data['limit'])) {
+            if ($data['start'] < 0) {
+                $data['start'] = 0;
+            }
+
+            if ($data['limit'] < 1) {
+                $data['limit'] = 20;
+            }
+
+            $this->mongo_db->limit((int)$data['limit']);
+            $this->mongo_db->offset((int)$data['start']);
+        }
+
+        $client_data = $this->mongo_db->get("playbasis_platform_client_site");
+
+        return $client_data;
+    }
+
+    public function getTotalAppsByClientId($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);
@@ -32,7 +77,7 @@ class App_model extends MY_Model
         return $total;
     }
 
-    public function getDomainsByClientId($data) {
+    public function getAppsByClientId($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);
@@ -84,7 +129,7 @@ class App_model extends MY_Model
         return $client_data;
     }
 
-    public function getDomainsBySiteId($site_id) {
+    public function getAppsBySiteId($site_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);
@@ -95,7 +140,7 @@ class App_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function getTotalDomains($data) {
+    public function getTotalApps($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);
@@ -114,7 +159,7 @@ class App_model extends MY_Model
         return $total;
     }
 
-    public function getDomains($data) {
+    public function getApps($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);
@@ -165,20 +210,35 @@ class App_model extends MY_Model
         return $client_data;
     }
 
-    public function resetToken($site_id) {
+//    public function resetToken($site_id) {
+//        $this->set_site_mongodb($this->session->userdata('site_id'));
+//
+//        $secret = $this->genAccessSecret($site_id);
+//
+//        $token = $this->checkSecret($secret);
+//
+//        if ($token == '0' || $token == 0) {
+//            $this->mongo_db->where('_id', new MongoID($site_id));
+//            $this->mongo_db->set('api_secret', $secret);
+//            $this->mongo_db->update('playbasis_client_site');
+//        }
+//    }
+
+    public function resetToken($platform_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $secret = $this->genAccessSecret($site_id);
+        $secret = $this->genAccessSecret($platform_id);
 
         $token = $this->checkSecret($secret);
 
         if ($token == '0' || $token == 0) {
-            $this->mongo_db->where('_id', new MongoID($site_id));
+            $this->mongo_db->where('_id', new MongoID($platform_id));
             $this->mongo_db->set('api_secret', $secret);
-            $this->mongo_db->update('playbasis_client_site');
+            $this->mongo_db->update('playbasis_platform_client_site');
         }
-    }
 
+        return $secret;
+    }
 
     public function checkSecret($secret) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -207,52 +267,45 @@ class App_model extends MY_Model
         return $secret;
     }
 
-    public function addDomain($data) {
+    public function deletePlatform($platform_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $domain = preg_replace("/http:\/\//", "", $data['domain_name']);
-        $domain = preg_replace("/https:\/\//", "", $domain);
+        $platform_info = $this->getPlatform($platform_id);
 
-        $data_insert = array(
-            'client_id' =>  new MongoID($data['client_id']),
-            'domain_name' => $domain|'',
-            'site_name' => $data['site_name']|'' ,
-            'api_key'=> '',
-            'api_secret' => '',
-            'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
-            'status' => true,
-            'deleted' => false,
-            'last_send_limit_users' => null,
-            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-        );
+        $this->mongo_db->where('_id', new MongoID($platform_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
+        $this->mongo_db->update('playbasis_platform_client_site');
 
-        $c = $this->mongo_db->insert('playbasis_client_site', $data_insert);
-
-        $keys = $this->genAccessKey($c);
-        $secret = $this->genAccessSecret($c);
-
-        $this->mongo_db->where('_id',  new MongoID($c));
-        $this->mongo_db->set('api_key', $keys);
-        $this->mongo_db->set('api_secret', $secret);
-        $this->mongo_db->update('playbasis_client_site');
-
-        return $c;
+        $data_filter = array("site_id" => $platform_info["site_id"]);
+        if($this->getTotalPlatFormByAppId($data_filter) < 1){
+            $this->mongo_db->where('_id', new MongoID($platform_info["site_id"]));
+            $this->mongo_db->set('deleted', true);
+            $this->mongo_db->set('status', false);
+            $this->mongo_db->update('playbasis_client_site');
+        }
     }
 
-    public function deleteDomain($site_id){
+    public function deleteApp($site_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
+        $this->mongo_db->update_all('playbasis_platform_client_site');
 
         $this->mongo_db->where('_id', new MongoID($site_id));
         $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
         $this->mongo_db->update('playbasis_client_site');
     }
 
-    public function deleteDomainByClientId($client_id){
+    public function deleteAppByClientId($client_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('client_id', new MongoID($client_id));
         $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('status', false);
         $this->mongo_db->update_all('playbasis_client_site');
     }
 
@@ -269,6 +322,25 @@ class App_model extends MY_Model
 
     public function addApp($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $domain = preg_replace("/http:\/\//", "", $data['app_name']);
+        $domain = preg_replace("/https:\/\//", "", $domain);
+
+        $data_insert = array(
+            'client_id' =>  new MongoID($data['client_id']),
+            'domain_name' => $domain|'',
+            'site_name' => $data['app_name']|'' ,
+            'api_key'=> '',
+            'api_secret' => '',
+            'image' => isset($data['image'])? html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8') : '',
+            'status' => true,
+            'deleted' => false,
+            'last_send_limit_users' => null,
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+        );
+
+        $data['site_id'] = $this->mongo_db->insert('playbasis_client_site', $data_insert);
 
         $data_insert = array(
             'client_id' =>  new MongoID($data['client_id']),
@@ -293,7 +365,7 @@ class App_model extends MY_Model
         $this->mongo_db->set('api_secret', $secret);
         $this->mongo_db->update('playbasis_platform_client_site');
 
-        return $c;
+        return $data['site_id'];
     }
 
     public function editApp($platform_id, $data){
@@ -315,7 +387,37 @@ class App_model extends MY_Model
 
     }
 
-    public function getAppsBySiteId($data){
+    public function addPlatform($app_id, $data){
+
+        $app_info = $this->getApp($app_id);
+
+        $data_insert = array(
+            'client_id' =>  new MongoID($app_info['client_id']),
+            'site_id' =>  new MongoID($app_info['_id']),
+            'platform' => strtolower($data['platform']),
+            'data' => $data['data'],
+            'api_key'=> '',
+            'api_secret' => '',
+            'status' => true,
+            'deleted' => false,
+            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+        );
+
+        $c = $this->mongo_db->insert('playbasis_platform_client_site', $data_insert);
+
+        $keys = $this->genAccessKey($c);
+        $secret = $this->genAccessSecret($c);
+
+        $this->mongo_db->where('_id',  new MongoID($c));
+        $this->mongo_db->set('api_key', $keys);
+        $this->mongo_db->set('api_secret', $secret);
+        $this->mongo_db->update('playbasis_platform_client_site');
+
+        return $c;
+    }
+
+    public function getPlatFormByAppId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);
@@ -360,7 +462,7 @@ class App_model extends MY_Model
         return $app_data;
     }
 
-    public function getTotalAppsBySiteId($data) {
+    public function getTotalPlatFormByAppId($data) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('deleted', false);

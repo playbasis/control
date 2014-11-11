@@ -94,13 +94,13 @@ class App extends MY_Controller
         );
 
         if($client_id){
-            $total = $this->App_model->getTotalDomainsByClientId($data);
+            $total = $this->App_model->getTotalAppsByClientId($data);
 
-            $results_site = $this->App_model->getDomainsByClientId($data);
+            $results_site = $this->App_model->getAppsByClientId($data);
         }else{
-            $total = $this->App_model->getTotalDomains($data);
+            $total = $this->App_model->getTotalApps($data);
 
-            $results_site = $this->App_model->getDomains($data);
+            $results_site = $this->App_model->getApps($data);
         }
 
         if ($results_site) {
@@ -109,7 +109,7 @@ class App extends MY_Controller
                 $data_filter_app = array(
                     'site_id' => $result['_id']
                 );
-                $app_data = $this->App_model->getAppsBySiteId($data_filter_app);
+                $app_data = $this->App_model->getPlatFormByAppId($data_filter_app);
 
                 $this->data['domain_list'][] = array(
                     'selected'    => is_array($this->input->post('selected')) && in_array($result['_id'], $this->input->post('selected')),
@@ -176,9 +176,10 @@ class App extends MY_Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $this->App_model->resetToken($this->input->post('site_id'));
+            $secret = $this->App_model->resetToken($this->input->post('platform_id'));
 
             $json['success'] = $this->lang->line('text_success');
+            $json['secret'] = $secret;
 
             $this->session->set_flashdata('success', $this->lang->line('text_success'));
 
@@ -203,6 +204,8 @@ class App extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
+            $client_id = $this->User_model->getClientId();
+
             $this->form_validation->set_rules('app_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space');
             $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
@@ -215,8 +218,13 @@ class App extends MY_Controller
                 $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
             }
 
+            if($this->checkLimitApp($client_id)){
+                $this->data['message'] = $this->lang->line('error_limit');
+                $json['error'] = $this->data['message'];
+            }
+
             if($this->form_validation->run() && $this->data['message'] == null){
-                $client_id = $this->User_model->getClientId();
+
                 $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
                 // get Plan limit_others.domain
@@ -238,51 +246,40 @@ class App extends MY_Controller
 
                 if(!$domain){
 
-                    $d_data = array();
-                    $d_data['client_id'] = $client_id;
-                    $d_data['domain_name'] = $this->input->post('app_name');
-                    $d_data['site_name'] = $this->input->post('app_name');
-                    $d_data['user_id'] =  $this->User_model->getId();
-
-                    $site_id = $this->App_model->addDomain($d_data);
-
-                    if ($site_id) {
-
-                        $this->session->set_userdata('site_id',$site_id );
-
-                        $data_platform = array();
-                        if(strtolower($this->input->post('platform')) == 'ios'){
-                            if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
-                            if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
-                            if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
-                        }elseif(strtolower($this->input->post('platform')) == 'android'){
-                            if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
-                        }else{
-                            if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
-                        }
-                        $insert_data = array(
-                            "client_id" => $client_id,
-                            "site_id" => $site_id,
-                            "platform" => strtolower($this->input->post('platform')),
-                            "data" => $data_platform
-                        );
-                        $this->App_model->addApp($insert_data);
-
-                        $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-
-                        /* bind plan to client in playbasis_permission */
-                        $this->Client_model->addPlanToPermission(array(
-                            'client_id' => $client_id->{'$id'},
-                            'plan_id' => $plan_subscription['plan_id']->{'$id'},
-                            'site_id' => $site_id->{'$id'},
-                        ));
-
-                        $another_data['domain_value'] = array(
-                            'site_id' => $site_id,
-                            'status' => true
-                        );
-                        $this->Client_model->editClientPlan($client_id, $plan_subscription['plan_id'], $another_data);
+                    $data_platform = array();
+                    if(strtolower($this->input->post('platform')) == 'ios'){
+                        if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
+                        if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
+                        if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
+                    }elseif(strtolower($this->input->post('platform')) == 'android'){
+                        if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
+                    }else{
+                        if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
                     }
+                    $insert_data = array(
+                        "app_name" => $this->input->post('app_name'),
+                        "client_id" => $client_id,
+                        "platform" => strtolower($this->input->post('platform')),
+                        "data" => $data_platform
+                    );
+                    $site_id = $this->App_model->addApp($insert_data);
+
+                    $this->session->set_userdata('site_id',$site_id );
+
+                    $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+
+                    /* bind plan to client in playbasis_permission */
+                    $this->Client_model->addPlanToPermission(array(
+                        'client_id' => $client_id->{'$id'},
+                        'plan_id' => $plan_subscription['plan_id']->{'$id'},
+                        'site_id' => $site_id."",
+                    ));
+
+                    $another_data['domain_value'] = array(
+                        'site_id' => $site_id,
+                        'status' => true
+                    );
+                    $this->Client_model->editClientPlan($client_id, $plan_subscription['plan_id'], $another_data);
 
                     $this->session->data['success'] = $this->lang->line('text_success');
 
@@ -303,61 +300,6 @@ class App extends MY_Controller
 
     }
 
-    /*public function insert_ajax() {
-
-        $this->form_validation->set_rules('domain_name', $this->lang->line('entry_domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('site_name', $this->lang->line('entry_site_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-
-        $json = array();
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            $this->data['message'] = null;
-
-            if (!$this->validateModify()) {
-                $this->data['message'] = $this->lang->line('error_permission');
-                $json['error'] = $this->data['message'];
-            }
-
-            if($this->checkLimitDomain($this->input->post('client_id'))){
-                $this->data['message'] = $this->lang->line('error_limit');
-                $json['error'] = $this->data['message'];
-            }
-
-            if($this->form_validation->run() && $this->data['message'] == null){
-
-                $data['domain_name']= $this->input->post('domain_name');
-                $data['site_id'] = $this->User_model->getSiteId();
-                $check_domain_exists = $this->App_model->checkDomainExists($data);
-
-                if(!$check_domain_exists){
-                    $site_id = $this->App_model->addDomain($this->input->post());
-
-                    if ($site_id) {
-                        $plan_subscription = $this->Client_model->getPlanByClientId(new MongoID($this->input->post('client_id')));
-
-                        $this->Client_model->addPlanToPermission(array(
-                            'client_id' => $this->input->post('client_id'),
-                            'plan_id' => $plan_subscription['plan_id']->{'$id'},
-                            'site_id' => $site_id->{'$id'},
-                        ));
-                    }
-
-                    $this->session->data['success'] = $this->lang->line('text_success');
-                    $json['success'] =  $this->lang->line('text_success_insert');    
-                }else{
-                    $json['error'] = "The domain already exists!";    
-                }
-
-                
-            }else{
-                $json['error'] = "Please provide the neccessary fields below or check if there are any errors.";
-            }
-        }
-
-        $this->output->set_output(json_encode($json));
-    }*/
-
     public function delete() {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -371,43 +313,21 @@ class App extends MY_Controller
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
-            foreach ($this->input->post('selected') as $site_id) {
-                if($this->checkOwnerDomain($site_id)){
+        if (($this->input->post('app_selected') || $this->input->post('platform_selected')) && $this->error['warning'] == null) {
 
-                    $this->App_model->deleteDomain($site_id);
+            if($this->input->post('platform_selected')){
+                foreach ($this->input->post('platform_selected') as $platform_id) {
+                    if($this->checkOwnerPlatForm($platform_id)){
+
+                        $this->App_model->deletePlatform($platform_id);
+                    }
                 }
             }
 
-            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
-            redirect('/app', 'refresh');
+            $this->session->data['success'] = $this->lang->line('text_success_delete');
         }
 
         $this->getList(0);
-    }
-
-    public function deleteAjax() {
-
-        $json = array();
-        $this->error['warning'] = null;
-
-        if(!$this->validateModify()){
-            $this->error['warning'] = $this->lang->line('error_permission');
-        }
-
-        if ($this->input->post('site_id') && $this->error['warning'] == null) {
-
-            if($this->checkOwnerDomain($this->input->post('site_id'))){
-
-                $this->App_model->deleteDomain($this->input->post('site_id'));
-            }
-
-            $this->session->data['success'] = $this->lang->line('text_success_delete');
-
-            $json['success'] = $this->lang->line('text_success_delete');
-        }
-
-        $this->output->set_output(json_encode($json));
     }
 
     public function platform_edit($platform_id){
@@ -421,23 +341,46 @@ class App extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            $data_platform = array();
-            if(strtolower($this->input->post('platform')) == 'ios'){
-                if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
-                if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
-                if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
-            }elseif(strtolower($this->input->post('platform')) == 'android'){
-                if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
+            $client_id = $this->User_model->getClientId();
+
+            $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+
+            if(strtolower($this->input->post('platform')) == "ios" ){
+                $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+
+            }elseif(strtolower($this->input->post('platform')) == "android"){
+                $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
-                if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
             }
 
-            $edit_data = array(
-                "platform" => strtolower($this->input->post('platform')),
-                "data" => $data_platform
-            );
-            $this->App_model->editApp($platform_id, $edit_data);
+            if($this->checkLimitApp($client_id)){
+                $this->data['message'] = $this->lang->line('error_limit');
+                $json['error'] = $this->data['message'];
+            }
 
+            if($this->form_validation->run() && $this->data['message'] == null){
+                $data_platform = array();
+                if(strtolower($this->input->post('platform')) == 'ios'){
+                    if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
+                    if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
+                    if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
+                }elseif(strtolower($this->input->post('platform')) == 'android'){
+                    if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
+                }else{
+                    if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
+                }
+
+                $edit_data = array(
+                    "platform" => strtolower($this->input->post('platform')),
+                    "data" => $data_platform
+                );
+                $this->App_model->editApp($platform_id, $edit_data);
+
+                $this->session->data['success'] = $this->lang->line('text_success');
+
+                redirect('app', 'refresh');
+            }
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -448,10 +391,70 @@ class App extends MY_Controller
         $this->getForm($app["site_id"]."", $platform_id);
     }
 
-    private function getForm($domain_id=null, $platform_id=null) {
+    public function add_platform($app_id){
 
-        if (isset($domain_id) && ($domain_id != 0)) {
-            $domain_info = $this->App_model->getDomain($domain_id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            $client_id = $this->User_model->getClientId();
+
+            $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+
+            if(strtolower($this->input->post('platform')) == "ios" ){
+                $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+
+            }elseif(strtolower($this->input->post('platform')) == "android"){
+                $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
+            }else{
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
+            }
+
+            if($this->checkLimitApp($client_id)){
+                $this->data['message'] = $this->lang->line('error_limit');
+                $json['error'] = $this->data['message'];
+            }
+
+            if($this->form_validation->run() && $this->data['message'] == null){
+                $data_platform = array();
+                if(strtolower($this->input->post('platform')) == 'ios'){
+                    if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
+                    if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
+                    if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
+                }elseif(strtolower($this->input->post('platform')) == 'android'){
+                    if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
+                }else{
+                    if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
+                }
+
+                $add_data = array(
+                    "platform" => strtolower($this->input->post('platform')),
+                    "data" => $data_platform
+                );
+                $this->App_model->addPlatform($app_id, $add_data);
+
+                $this->session->data['success'] = $this->lang->line('text_success');
+
+                redirect('app', 'refresh');
+            }
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['form'] = 'app/add_platform/'.$app_id;
+
+        $this->getForm($app_id);
+    }
+
+    private function getForm($app_id=null, $platform_id=null) {
+
+        if (isset($app_id) && ($app_id != 0)) {
+            $domain_info = $this->App_model->getApp($app_id);
         }
 
         if (isset($platform_id) && ($platform_id != 0)) {
@@ -460,7 +463,7 @@ class App extends MY_Controller
 
         if ($this->input->post('app_name')) {
             $this->data['app_name'] = $this->input->post('app_name');
-        } elseif (isset($domain_id) && ($domain_id != 0)) {
+        } elseif (isset($app_id) && ($app_id != 0)) {
             $this->data['app_name'] = $domain_info['domain_name'];
         } else {
             $this->data['app_name'] = '';
@@ -514,11 +517,28 @@ class App extends MY_Controller
             $this->data['android_package_name'] = '';
         }
 
-        if (isset($domain_id)) {
-            $this->data['domain_id'] = $domain_id;
+        if (isset($app_id)) {
+            $this->data['app_id'] = $app_id;
         } else {
-            $this->data['domain_id'] = null;
+            $this->data['app_id'] = null;
         }
+
+        if (isset($platform_id)) {
+            $this->data['platform_id'] = $platform_id;
+        } else {
+            $this->data['platform_id'] = null;
+        }
+
+        $data_filter_app = array(
+            'site_id' => $app_id
+        );
+        $app_data = $this->App_model->getPlatFormByAppId($data_filter_app);
+
+        $platform_already_have = array();
+        foreach($app_data as $ad){
+            $platform_already_have[] = $ad['platform'];
+        }
+        $this->data['platform_already_have'] = $platform_already_have;
 
         $this->data['main'] = 'app_form';
 
@@ -535,20 +555,20 @@ class App extends MY_Controller
         }
     }
 
-    private function checkOwnerDomain($site_id){
+    private function checkOwnerApp($app_id){
 
         $error = null;
 
         if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
 
-            $theData = array('client_id' => $this->User_model->getClientId(), 'site_id' =>$site_id);
+            $theData = array('client_id' => $this->User_model->getClientId(), 'site_id' =>$app_id);
 
-            $sites = $this->App_model->getDomainsByClientId($theData);
+            $sites = $this->App_model->getAppsByClientId($theData);
 
             $has = false;
 
             foreach ($sites as $site) {
-                if($site['_id']."" == $site_id.""){
+                if($site['_id']."" == $app_id.""){
                     $has = true;
                 }
             }
@@ -565,9 +585,38 @@ class App extends MY_Controller
         }
     }
 
-    private function checkLimitDomain($client_id){
+    private function checkOwnerPlatForm($platform_id){
+        $error = null;
+
+        if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
+
+            $theData = array('client_id' => $this->User_model->getClientId());
+
+            $platforms = $this->App_model->getPlatFormsByClientId($theData);
+
+            $has = false;
+
+            foreach ($platforms as $platform) {
+                if($platform['_id']."" == $platform_id.""){
+                    $has = true;
+                }
+            }
+
+            if(!$has){
+                $error = $this->lang->line('error_permission');
+            }
+        }
+
+        if (!$error) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkLimitApp($client_id){
         $data['client_id'] = $client_id;
-        $domains = $this->App_model->getTotalDomainsByClientId($data);
+        $domains = $this->App_model->getTotalAppsByClientId($data);
 
         if ($domains > 10) {
             return true;
