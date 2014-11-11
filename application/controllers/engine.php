@@ -240,9 +240,9 @@ class Engine extends Quest
                     'player_id' => $cl_player_id,
                     'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
                     'email' => 'pbapp_auto_user@playbasis.com',
-                    'username' => 'pbapp_auto_user',
-                    'first_name' => 'pbapp_auto_user',
-                    'nickname' => 'pbapp_auto_user',
+                    'username' => $cl_player_id,
+                    'first_name' => $cl_player_id,
+                    'nickname' => $cl_player_id,
                 )));
             }
 
