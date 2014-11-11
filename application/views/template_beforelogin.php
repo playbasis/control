@@ -4,7 +4,7 @@
     <link rel="icon" type='image/x-icon' href="<?php echo base_url();?>image/favicon.ico">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
 
     <title><?php echo $title; ?></title>
     <base href="<?php echo base_url(); ?>" />
