@@ -325,7 +325,9 @@ class App extends MY_Controller
             }
 
             $client_id = $this->User_model->getClientId();
-            $check = $this->App_model->getTotalAppsByClientId($client_id);
+            $data_check = array('client_id' => $client_id);
+
+            $check = $this->App_model->getTotalAppsByClientId($data_check);
             if($check == 0){
                 $this->session->unset_userdata('site_id');
             }
