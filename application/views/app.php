@@ -33,7 +33,11 @@
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_platform'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_key'); ?></td>
+                        <td class="left"><?php echo $this->lang->line('column_secret'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -49,14 +53,35 @@
                             </td>
                             <td class="left">
                                 <?php echo $domain['domain_name']; ?>
+
+                                <a href="" ><?php echo $domain['site_id']; ?></a>
                             </td>
-                            <td class="right">
-                                <?php if ($domain['status']==1) { ?>
-                                <?php echo $this->lang->line('text_enabled'); ?>
-                                <?php } else { ?>
-                                <?php echo $this->lang->line('text_disabled'); ?>
-                                <?php } ?>
-                            </td>
+
+                                <?php
+                                foreach($domain["apps"] as $app){
+                                ?>
+                                <td class="left">
+                                <?php echo $app['platform']; ?>
+                                </td>
+                                <td class="left">
+                                    <?php echo $app['api_key']; ?>
+                                </td>
+                                <td class="left">
+                                    <?php echo $app['api_secret']; ?>
+                                </td>
+                                <td class="right">
+                                    <?php if ($app['status']==1) { ?>
+                                        <?php echo $this->lang->line('text_enabled'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $this->lang->line('text_disabled'); ?>
+                                    <?php } ?>
+                                </td>
+                                <td class="left">
+                                    <a href="<?php echo site_url("app/platform_edit/".$app['_id']) ?>" >Edit</a>
+                                </td>
+                                <?php
+                                }
+                                ?>
                         </tr>
                             <?php } ?>
                         <?php } else { ?>

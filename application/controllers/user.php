@@ -791,7 +791,7 @@ class User extends MY_Controller
             'lastname' => $user_info['lastname'],
             'username' => $user_info['username'],
             'key' => $user_info['random_key'],
-            'url'=> site_url('enable_user/?key='),
+            'url'=> site_url('enable_user?key='),
         );
 
         $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
@@ -882,23 +882,23 @@ class User extends MY_Controller
                 $user_id = $user[0]['_id'];
 
                 /* generate initial password */
-                if(dohash(DEFAULT_PASSWORD,$user[0]['salt']) == $user[0]['password']){
-                    $initial_password = get_random_password(8,8);
-                    $this->User_model->insertNewPassword($user_id, $initial_password);
-                }else{
-                    $initial_password = '******';
-                }
+//                if(dohash(DEFAULT_PASSWORD,$user[0]['salt']) == $user[0]['password']){
+//                    $initial_password = get_random_password(8,8);
+//                    $this->User_model->insertNewPassword($user_id, $initial_password);
+//                }else{
+//                    $initial_password = '******';
+//                }
 
                 /* check free/paid */
-                $client_id = $this->User_model->getClientIdByUserId($user_id);
-                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-                if (!array_key_exists('price', $plan)) {
-                    $plan['price'] = DEFAULT_PLAN_PRICE;
-                }
-                $price = $plan['price'];
-                $free_flag = $price <= 0;
-                $paid_flag = !$free_flag;
+//                $client_id = $this->User_model->getClientIdByUserId($user_id);
+//                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+//                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+//                if (!array_key_exists('price', $plan)) {
+//                    $plan['price'] = DEFAULT_PLAN_PRICE;
+//                }
+//                $price = $plan['price'];
+//                $free_flag = $price <= 0;
+//                $paid_flag = !$free_flag;
 
                 /* send email */
                 /*$user = $this->User_model->getById($user_id);

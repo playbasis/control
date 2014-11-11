@@ -76,7 +76,7 @@ $lang['entry_plan']								= 'Plan';
 
 $lang['entry_web']								= 'Web';
 $lang['entry_ios']								= 'IOS';
-$lang['entry_andriod']								= 'Andriod';
+$lang['entry_android']								= 'Android';
 
 // Button
 $lang['button_filter']							= 'Filter';
