@@ -300,7 +300,7 @@ input[type=radio]:checked + label {
 	-webkit-box-shadow: 0 4px 20px rgba(0,0,0,.1);
 	-moz-box-shadow: 0 4px 20px rgba(0,0,0,.1);
 	box-shadow: 0 4px 20px rgba(0,0,0,.1);
-	min-width: 620px;
+	min-width: 760px;
 }
 .app-table.list tbody td{
 	padding: 10px;
