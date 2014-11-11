@@ -71,15 +71,34 @@
             ?>
 
 
-            <table class="list">
-                <thead style="height:0">
+            <table class="list app-table">
+                <thead>
                 <tr>
                     <td width="1" style="text-align: center;"><input type="checkbox" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);"></td>
-                    <td class="left" colspan="2">APP NAME</td>
-                    <td class="right" style="width:100px;">Status</td>
+                    <td class="left" colspan="5"><h3>APP NAME</h3> <button class="btn btn-info btn-mini" onclick="location = baseUrlPath+'app/add'" type="button">Add Platform</button></td>
                 </tr>
                 </thead>
                 <tbody>
+                    <tr class="app-table-label">
+                        <td style="text-align: center;">
+                            
+                        </td>
+                        <td class="left">
+                            Platform
+                        </td>
+                        <td >
+                            Api Key
+                        </td>
+                        <td >
+                            Api Secret
+                        </td>
+                        <td class="right">
+                            Status
+                        </td>
+                        <td class="right">
+                            Action
+                        </td>
+                    </tr>
                     <tr>
                         <td style="text-align: center;">
                             <input type="checkbox" name="selected[]" value="54609911d4139e702bd63af4">
@@ -88,13 +107,17 @@
                             <i class="fa fa-desktop fa-lg"></i> Web Site
                         </td>
                         <td >
-                            Test-App
+                            1495118408
                         </td>
                         <td >
-                            Test-App
+                            9aafb37ee5df01c42117c5788759daa4 <a href="javascript:void(0)" onclick="alert('Reset Secret')" title="Reset Api Secret" class="tooltips" data-placement="right"><i class="fa fa-repeat fa-lg"></i></a>
                         </td>
                         <td class="right">
                             Enabled
+                        </td>
+                        <td class="right app-col-action">
+                            <a href="javascript:void(0)" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
+                            <a href="javascript:void(0)" title="Delete" class="tooltips" data-placement="top"><i class="fa fa-trash fa-lg"></i></a>
                         </td>
                     </tr>
                     <tr>
@@ -105,13 +128,17 @@
                             <i class="fa fa-apple fa-lg"></i> iOS
                         </td>
                         <td >
-                            
+                            1495118408
                         </td>
                         <td >
-                            Test-App
+                             9aafb37ee5df01c42117c5788759daa4 <a href="javascript:void(0)" onclick="alert('Reset Secret')" title="Reset Api Secret" class="tooltips" data-placement="right"><i class="fa fa-repeat fa-lg"></i></a>
                         </td>
                         <td class="right">
                             Enabled
+                        </td>
+                        <td class="right app-col-action">
+                            <a href="javascript:void(0)" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
+                            <a href="javascript:void(0)" title="Delete" class="tooltips" data-placement="top"><i class="fa fa-trash fa-lg"></i></a>
                         </td>
                     </tr>
                     
@@ -123,13 +150,17 @@
                             <i class="fa fa-android fa-lg"></i> Android
                         </td>
                         <td >
-                            Test-App
+                            1495118408
                         </td>
                         <td >
-                            Test-App
+                             9aafb37ee5df01c42117c5788759daa4 <a href="javascript:void(0)" onclick="alert('Reset Secret')" title="Reset Api Secret" class="tooltips" data-placement="right"><i class="fa fa-repeat fa-lg"></i></a>
                         </td>
                         <td class="right">
                             Enabled
+                        </td>
+                        <td class="right app-col-action">
+                            <a href="javascript:void(0)" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
+                            <a href="javascript:void(0)" title="Delete" class="tooltips" data-placement="top"><i class="fa fa-trash fa-lg"></i></a>
                         </td>
                     </tr>
                 </tbody>

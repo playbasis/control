@@ -183,17 +183,18 @@ if (isset($username)) {
                     <?php
                     if($this->session->userdata('site_id')){
                     ?>
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i>
+                        <a class="btn dropdown-toggle header-app-manu" data-toggle="dropdown" href="#">
+                            <i class="fa fa-hdd-o fa-lg"></i> 
+                            <span>
                                 <?php echo (isset($domain_name['site_name'])) ? '[' . $domain_name['site_name'] .']' : '' ; ?>
-                            </i>
+                            </span>
                             <span class="caret"></span>
                         </a>
                         <?php if(isset($domain_all)) { ?>
                             <ul class="dropdown-menu">
 
                                 <?php foreach($domain_all as $a_domain){?>
-                                    <li><a href="<?php echo site_url().'?site_id='.$a_domain['_id'];?>"><i class="icon-asterisk"></i> <?php echo $a_domain['site_name'];?></a></li>
+                                    <li><a href="<?php echo site_url().'?site_id='.$a_domain['_id'];?>"><i class="fa fa-hdd-o fa-lg"></i> <?php echo $a_domain['site_name'];?></a></li>
                                 <?php }?>
                             </ul>
                         <?php }else{echo "";} ?>
