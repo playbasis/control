@@ -86,6 +86,7 @@ update
 
   "link":"domain" -> "link":"app"
   "name":"Domain" -> "name":"App"
+  "icon":"fa-signal" -> "icon" : "fa-hdd-o"
 
 remove
 
