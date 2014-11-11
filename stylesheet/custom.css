@@ -15,6 +15,14 @@
 	color: #ccc;
 	text-shadow: none;
 }
+.main-menu-span{
+	padding-bottom: 30px;
+}
+.footer-copy{
+	text-align:right;
+	float:right	
+}
+
 #siteseal img{
 	height: 30px;
 	margin-top: -3px;
@@ -1319,6 +1327,7 @@ input[type=radio]:checked + label {
 }
 
 @media screen and (min-width: 769px) {
+
   .pricePlansPro {
     display: block;
     height: 70px;
@@ -1619,6 +1628,15 @@ input[type=radio]:checked + label {
 	}
 }
 @media screen and (max-width: 767px){
+	.footer-copy{
+		text-align:center;
+		float:none;
+		display: block;
+	}
+	.footer-copy #siteseal{
+		display: inline-block;
+		margin-top: 10px;
+	}
 	.regis-site-header{
 		left: 15px;
 	}
