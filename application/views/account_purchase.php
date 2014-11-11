@@ -65,7 +65,7 @@
                                 <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                               </ul>
                             </li>
-                            <li class="button"><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a></li>
+                            <li class="button"><?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a><?php } else { ?>Current Plan<?php } ?></li>
                           </ul>
                         </li>
 
@@ -86,7 +86,7 @@
                                     <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                                   </ul>
                                 </li>
-                                <li class="button"><a href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a></li>
+                                <li class="button"><?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a><?php } else { ?>Current Plan<?php } ?></li>
                               </ul>
                             </li>
 
@@ -757,6 +757,7 @@
         
         $('.plan-btn').click(function(){
             $('input[name=plan]').val($(this).attr('data-plan-id'));
+            $('form#form').attr('action', '<?php echo current_url().($user_plan_date_billing ? '/upgrade' : '/subscribe'); ?>');
             $('form#form').submit();
         })
 
