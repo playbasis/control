@@ -251,12 +251,15 @@ class App extends MY_Controller
                         $this->session->set_userdata('site_id',$site_id );
 
                         $data_platform = array();
-                        if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
-                        if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
-                        if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
-                        if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
-                        if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
-
+                        if(strtolower($this->input->post('platform')) == 'ios'){
+                            if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
+                            if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
+                            if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
+                        }elseif(strtolower($this->input->post('platform')) == 'android'){
+                            if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
+                        }else{
+                            if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
+                        }
                         $insert_data = array(
                             "client_id" => $client_id,
                             "site_id" => $site_id,
@@ -410,9 +413,39 @@ class App extends MY_Controller
     public function platform_edit($platform_id){
         $app = $this->App_model->getPlatform($platform_id);
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            $data_platform = array();
+            if(strtolower($this->input->post('platform')) == 'ios'){
+                if($this->input->post('ios_bundle_id'))$data_platform["ios_bundle_id"] = $this->input->post('ios_bundle_id');
+                if($this->input->post('ios_iphone_store_id'))$data_platform["ios_iphone_store_id"] = $this->input->post('ios_iphone_store_id');
+                if($this->input->post('ios_ipad_store_id'))$data_platform["ios_ipad_store_id"] = $this->input->post('ios_ipad_store_id');
+            }elseif(strtolower($this->input->post('platform')) == 'android'){
+                if($this->input->post('android_package_name'))$data_platform["android_package_name"] = $this->input->post('android_package_name');
+            }else{
+                if($this->input->post('site_url'))$data_platform["site_url"] = $this->input->post('site_url');
+            }
+
+            $edit_data = array(
+                "platform" => strtolower($this->input->post('platform')),
+                "data" => $data_platform
+            );
+            $this->App_model->editApp($platform_id, $edit_data);
+
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['form'] = 'app/platform_edit/'.$platform_id;
 
-        $this->getForm($app["site_id"], $platform_id);
+        $this->getForm($app["site_id"]."", $platform_id);
     }
 
     private function getForm($domain_id=null, $platform_id=null) {
@@ -443,7 +476,7 @@ class App extends MY_Controller
 
         if ($this->input->post('site_url')) {
             $this->data['site_url'] = $this->input->post('site_url');
-        } elseif (isset($platform_id) && ($platform_id != 0)) {
+        } elseif (isset($platform_id) && ($platform_id != 0) && isset($app_info['data']['site_url'])) {
             $this->data['site_url'] = $app_info['data']['site_url'];
         } else {
             $this->data['site_url'] = '';
@@ -451,7 +484,7 @@ class App extends MY_Controller
 
         if ($this->input->post('ios_bundle_id')) {
             $this->data['ios_bundle_id'] = $this->input->post('ios_bundle_id');
-        } elseif (isset($platform_id) && ($platform_id != 0)) {
+        } elseif (isset($platform_id) && ($platform_id != 0) && isset($app_info['data']['ios_bundle_id'])) {
             $this->data['ios_bundle_id'] = $app_info['data']['ios_bundle_id'];
         } else {
             $this->data['ios_bundle_id'] = '';
@@ -459,7 +492,7 @@ class App extends MY_Controller
 
         if ($this->input->post('ios_iphone_store_id')) {
             $this->data['ios_iphone_store_id'] = $this->input->post('ios_iphone_store_id');
-        } elseif (isset($platform_id) && ($platform_id != 0)) {
+        } elseif (isset($platform_id) && ($platform_id != 0) && isset($app_info['data']['ios_iphone_store_id'])) {
             $this->data['ios_iphone_store_id'] = $app_info['data']['ios_iphone_store_id'];
         } else {
             $this->data['ios_iphone_store_id'] = '';
@@ -467,7 +500,7 @@ class App extends MY_Controller
 
         if ($this->input->post('ios_ipad_store_id')) {
             $this->data['ios_ipad_store_id'] = $this->input->post('ios_ipad_store_id');
-        } elseif (isset($platform_id) && ($platform_id != 0)) {
+        } elseif (isset($platform_id) && ($platform_id != 0) && isset($app_info['data']['ios_ipad_store_id'])) {
             $this->data['ios_ipad_store_id'] = $app_info['data']['ios_ipad_store_id'];
         } else {
             $this->data['ios_ipad_store_id'] = '';
@@ -475,7 +508,7 @@ class App extends MY_Controller
 
         if ($this->input->post('android_package_name')) {
             $this->data['android_package_name'] = $this->input->post('android_package_name');
-        } elseif (isset($platform_id) && ($platform_id != 0)) {
+        } elseif (isset($platform_id) && ($platform_id != 0) && isset($app_info['data']['android_package_name'])) {
             $this->data['android_package_name'] = $app_info['data']['android_package_name'];
         } else {
             $this->data['android_package_name'] = '';
@@ -568,7 +601,7 @@ class App extends MY_Controller
 //                "platform" => "web",
 //                "api_key" => $d["api_key"],
 //                "api_secret" => $d["api_secret"],
-//                "data" => $domain
+//                "data" => array("site_url" => $domain)
 //            );
 //            $this->App_model->moveOldtoNewSystem($insert_data);
 //        }

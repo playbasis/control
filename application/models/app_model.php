@@ -296,6 +296,25 @@ class App_model extends MY_Model
         return $c;
     }
 
+    public function editApp($platform_id, $data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($platform_id));
+
+        if(isset($data['platform']) && !is_null($data['platform'])){
+            $this->mongo_db->set('platform', utf8_strtolower($data['platform']));
+        }
+
+        if(isset($data['data']) && !is_null($data['data'])){
+            $this->mongo_db->set('data', $data['data']);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+
+        return $this->mongo_db->update('playbasis_platform_client_site');
+
+    }
+
     public function getAppsBySiteId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 

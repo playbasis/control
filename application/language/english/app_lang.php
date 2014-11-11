@@ -1,5 +1,6 @@
 <?php
 // Heading
+$lang['title']          				        = 'App';
 $lang['heading_title']          				= 'App';
 
 // Text
