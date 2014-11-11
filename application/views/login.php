@@ -1,5 +1,5 @@
 <!-- Nav tabs -->
-<ul class="nav nav-tabs" id="tab-page-nav" role="tablist" >
+<ul class="nav nav-tabs" id="tab-page-nav" role="tablist" style="display:none">
   <li class="active"><a href="#login" role="tab" data-toggle="tab">Login</a></li>
   <li ><a href="#register" role="tab" data-toggle="tab">Register</a></li>
   <li ><a href="#forgotpassword" role="tab" data-toggle="tab">Forgot Password</a></li>

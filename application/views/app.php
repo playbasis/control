@@ -120,7 +120,7 @@
                         <td class="right">
                             Status
                         </td>
-                        <td class="right">
+                        <td class="right app-col-action">
                             Action
                         </td>
                     </tr>
@@ -128,7 +128,7 @@
                         <td style="text-align: center;">
                             <input type="checkbox" name="selected[]" value="54609911d4139e702bd63af4">
                         </td>
-                        <td class="left">
+                        <td class="left app-col-platform">
                             <i class="fa fa-desktop fa-lg"></i> Web Site
                         </td>
                         <td >
@@ -149,7 +149,7 @@
                         <td style="text-align: center;">
                             <input type="checkbox" name="selected[]" value="54609911d4139e702bd63af4">
                         </td>
-                        <td class="left">
+                        <td class="left app-col-platform">
                             <i class="fa fa-apple fa-lg"></i> iOS
                         </td>
                         <td >
@@ -171,7 +171,7 @@
                         <td style="text-align: center;">
                             <input type="checkbox" name="selected[]" value="54609911d4139e702bd63af4">
                         </td>
-                        <td class="left">
+                        <td class="left app-col-platform">
                             <i class="fa fa-android fa-lg"></i> Android
                         </td>
                         <td >

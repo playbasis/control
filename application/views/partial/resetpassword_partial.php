@@ -59,14 +59,10 @@
       <div class="registration-benefits">
 
         <div class="benefits-block">
-          <h4>First 30 days free with every plan</h4>
-          <p>We're so confident you'll love our service that all our plans come with the first 30 days free. Come have a look around.</p>
+          <h4>Ensure security of your account</h4>
+          <p>Choose a new password for your account. This new password will replace the old one; everything else about your account will remain unchanged. We recommend you to change your password regularly for security.</p>
         </div>
 
-        <div class="benefits-block">
-          <h4>Quick and easy to setup</h4>
-          <p>Get up and running quickly with preset rules, or tailor your rules to create a custom framework that aligns with your key objectives.</p>
-        </div>
 
       </div><!-- /benefits -->
 

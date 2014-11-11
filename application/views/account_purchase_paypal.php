@@ -23,12 +23,7 @@
     		<!-- <a href="" class="btn-hero">Upgrade Your Package</a> -->
     </div>
 
-    <div class="purchase-summary-wrapper box-gray">
-    		<h1>Congratulation!</h1>
-    		<h2>Your current package is</h2>
-    		<h1><?php echo PRODUCT_NAME; ?> <?php echo $params['plan_name']; ?></h1>
-    		<a href="<?php echo current_url();?>" class="btn-hero">Go to Dashboard</a>
-    </div>
+    
 
 </div><!-- #content .span10 -->
 <script type="text/javascript"><!--

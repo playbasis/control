@@ -19,8 +19,13 @@
             		<?php }?>
             	</div>
             <?php }?>
-            Thank you for your subscription.<br>
-	        Your payment will be finalized when we receive a confirmation message from PayPal.
+            <div class="purchase-summary-wrapper box-gray">
+                <h1>Congratulation!</h1>
+                <h2>Your current package is</h2>
+                <h1><?php echo PRODUCT_NAME; ?> <?php echo $params['plan_name']; ?></h1>
+                <a href="<?php echo current_url();?>" class="btn-hero">Go to Dashboard</a>
+            </div>
+            
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->

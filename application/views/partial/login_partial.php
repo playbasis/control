@@ -62,14 +62,10 @@
           <div class="registration-benefits">
 
             <div class="benefits-block">
-              <h4>First 30 days free with every plan</h4>
-              <p>We're so confident you'll love our service that all our plans come with the first 30 days free. Come have a look around.</p>
+              <h4>New level of engagement for your application</h4>
+              <p>Playbasis platform allows you to configure your application to be more engaging. With mechanics of gamification, you can easily create fun and addicted elements with our platform.</p>
             </div>
 
-            <div class="benefits-block">
-              <h4>Quick and easy to setup</h4>
-              <p>Get up and running quickly with preset rules, or tailor your rules to create a custom framework that aligns with your key objectives.</p>
-            </div>
 
           </div><!-- /benefits -->
 

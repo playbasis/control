@@ -255,13 +255,39 @@ input[type=radio]:checked + label {
     color: #86559c;
 }
 
+.app-table{
+	-webkit-box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	-moz-box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	min-width: 620px;
+}
 .app-table.list tbody td{
 	padding: 10px;
+}
+.app-table h3{
+	display: inline-block;
+	margin-right: 10px;
+	vertical-align: middle;
 }
 .list tbody .app-table-label td{
 	background: #EFEFEF;
 	color: #999;
 	padding: 3px 10px;
+}
+.list .app-col-action{
+	width: 60px;
+	text-align: center;
+}
+.app-col-action a{
+	color: #999;
+	margin: 0 5px;
+}
+.app-col-platform{
+	
+}
+.app-col-platform i{
+	color: #666;
+	margin-right: 5px;
 }
 
 
