@@ -116,6 +116,14 @@ class Player_model extends MY_Model
 	{
 		if(!$id)
 			return false;
+
+        if(isset($fieldData['gender'])){
+            $fieldData['gender'] = intval($fieldData['gender']);
+        }
+        if(isset($fieldData['birth_date'])){
+            $fieldData['birth_date'] = new MongoDate(strtotime($fieldData['birth_date']));
+        }
+
 		$fieldData['date_modified'] = new MongoDate(time());
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
