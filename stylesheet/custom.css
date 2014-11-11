@@ -232,6 +232,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 
 /*======== [ App ] =========*/
+.app-tab{
+	display: none;
+}
 .select-platform-wrapper label{
     display: inline-block;
     text-align: center;

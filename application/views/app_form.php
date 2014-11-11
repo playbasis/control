@@ -123,10 +123,14 @@ echo form_close();
 <script type="text/javascript">
     $(document).ready(function(){
         $('.app-tab').hide();
-        $('.app-tab.'+$('input[name=platform]').val() ).fadeIn('fast');
+       
+        var platform = $('input[name=platform]:checked').val();
+        $('.app-tab.'+platform ).fadeIn('fast');
+
         $('input[name=platform]').change(function(){
             $('.app-tab').hide();
-            $('.app-tab.'+$(this).val() ).fadeIn('fast');
+            platform = $(this).val();
+            $('.app-tab.'+platform ).fadeIn('fast');
         });
     })
 </script>
