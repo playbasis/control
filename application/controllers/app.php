@@ -324,6 +324,12 @@ class App extends MY_Controller
                 }
             }
 
+            $client_id = $this->User_model->getClientId();
+            $check = $this->App_model->getTotalAppsByClientId($client_id);
+            if($check == 0){
+                $this->session->unset_userdata('site_id');
+            }
+            
             $this->session->data['success'] = $this->lang->line('text_success_delete');
         }
 
