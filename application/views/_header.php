@@ -221,6 +221,7 @@ if (isset($username)) {
                     </a>
                     <ul class="dropdown-menu">
                         <?php if($client_id){?>
+                            <li> <?php echo anchor('account', "<i class='icon-user'></i> View Account");?></li>
                             <li> <?php echo anchor('user/edit_account', "<i class='icon-cog'></i> Edit Account");?></li>
                         <?php }?>
                         <li>

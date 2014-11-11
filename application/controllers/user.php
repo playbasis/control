@@ -577,7 +577,7 @@ class User extends MY_Controller
             //$plan_id = new MongoId($this->input->get('plan'));
             //$plan = $this->Plan_model->getPlanById($plan_id);
 
-            $plan = $this->Plan_model->getPlanById(new MongoId(BETA_TEST_PLAN));
+            $plan = $this->Plan_model->getPlanById(new MongoId(FREE_PLAN));
 
             if (!$plan) throw new Exception('Cannot find plan '.$plan_id);
             if (!array_key_exists('price', $plan)) {
@@ -728,7 +728,7 @@ class User extends MY_Controller
                 if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                     $user_info = $this->User_model->getUserInfo($user_id);
 
-                    $plan = $this->Plan_model->getPlanById(new MongoId(BETA_TEST_PLAN));
+                    $plan = $this->Plan_model->getPlanById(new MongoId(FREE_PLAN));
 
                     $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
 
