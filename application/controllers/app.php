@@ -330,6 +330,7 @@ class App extends MY_Controller
             $check = $this->App_model->getTotalAppsByClientId($data_check);
             if($check == 0){
                 $this->session->unset_userdata('site_id');
+                redirect('/first_app', 'refresh');
             }
             
             $this->session->data['success'] = $this->lang->line('text_success_delete');
