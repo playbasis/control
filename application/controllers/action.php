@@ -48,6 +48,7 @@ class Action extends REST2_Controller
 
 		$log = array();
 		$prev = null;
+		$this->action_model->set_read_preference_secondary();
 		foreach ($this->action_model->listActions($this->validToken) as $key => $v) {
 			$action_name = $v['name'];
 			foreach ($this->action_model->actionLog(
@@ -78,6 +79,7 @@ class Action extends REST2_Controller
 				}
 			}
 		}
+		$this->action_model->set_read_preference_primary();
 		ksort($log);
 		$log2 = array();
 		if (!empty($log)) foreach ($log as $key => $value) {
