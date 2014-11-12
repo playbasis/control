@@ -27,6 +27,18 @@ class MY_Model extends CI_Model
     {
         parent::__construct();
     }
+    public function set_read_preference($readPreference, $tags=array())
+    {
+        $this->mongo_db->setReadPreference($readPreference, $tags);
+    }
+    public function set_read_preference_primary()
+    {
+        $this->mongo_db->setReadPreferencePrimary();
+    }
+    public function set_read_preference_secondary()
+    {
+        $this->mongo_db->setReadPreferenceSecondary();
+    }
     public function get_site()
     {
         return $this->site;

@@ -116,8 +116,11 @@ class Mongo_db
 	 * @access private
 	 */
 	private $_replica_set = FALSE;
-	
-	/**
+
+	private $_read_preference_primary = MongoClient::RP_PRIMARY;
+	private $_read_preference_secondary = MongoClient::RP_PRIMARY;
+
+    /**
 	 * Query safety value.
 	 * 
 	 * @var string
@@ -1915,7 +1918,19 @@ class Mongo_db
 	{
 		return $this->_query_log;
 	}
-		
+
+	public function setReadPreference($readPreference, $tags=array()) {
+		$this->_connection->setReadPreference($readPreference, $tags);
+	}
+
+	public function setReadPreferencePrimary() {
+		$this->setReadPreference($this->_read_preference_primary);
+	}
+
+	public function setReadPreferenceSecondary() {
+		$this->setReadPreference($this->_read_preference_secondary);
+	}
+
 	/**
 	 * Connect to MongoDB
 	 * 
@@ -1945,6 +1960,18 @@ class Mongo_db
 		{
 			$this->_connection = new MongoClient($this->_connection_string, $options);
 			$this->_dbhandle = $this->_connection->{$this->_dbname};
+			if ($this->_replica_set !== FALSE) {
+				$this->_read_preference_primary = MongoClient::RP_PRIMARY_PREFERRED;
+				$this->_read_preference_secondary = MongoClient::RP_SECONDARY_PREFERRED;
+				$this->setReadPreference($this->_read_preference_primary); // instead of MongoClient::RP_PRIMARY (primary only) as a default
+				if (isset($this->_config_data['mongo_collection_to_secondary'])) { // direct requests to selected collections to secondary
+					if (is_array($this->_config_data['mongo_collection_to_secondary'])) foreach ($this->_config_data['mongo_collection_to_secondary'] as $collection) {
+						$this->_dbhandle->{$collection}->setReadPreference($this->_read_preference_secondary);
+					} else {
+						$this->_dbhandle->{$this->_config_data['mongo_collection_to_secondary']}->setReadPreference($this->_read_preference_secondary);
+					}
+				}
+			}
 			return $this;	
 		} 
 		catch (MongoConnectionException $exception)
