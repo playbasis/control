@@ -92,7 +92,6 @@ echo form_open($form ,$attributes);
                             <?php
                             }else{
                             ?>
-                                <?php if(!($app_id  && in_array('web', $platform_already_have))){?>
                                     <?php
                                     $data1 = array(
                                         'id'        => 'web',
@@ -106,9 +105,7 @@ echo form_open($form ,$attributes);
                                         <i class="fa fa-desktop"></i><br>
                                         <?php echo $this->lang->line('entry_web'); ?>
                                     </label>
-                                <?php } ?>
 
-                                <?php if(!($app_id  && in_array('ios', $platform_already_have))){?>
                                     <?php
                                     $data2 = array(
                                         'id'        => 'ios',
@@ -121,9 +118,7 @@ echo form_open($form ,$attributes);
                                         <i class="fa fa-apple"></i><br>
                                         <?php echo $this->lang->line('entry_ios'); ?>
                                     </label>
-                                <?php } ?>
 
-                                <?php if(!($app_id  && in_array('android', $platform_already_have))){?>
                                     <?php
                                     $data3 = array(
                                         'id'        => 'android',
@@ -136,7 +131,7 @@ echo form_open($form ,$attributes);
                                         <i class="fa fa-android"></i><br>
                                         <?php echo $this->lang->line('entry_android'); ?>
                                     </label>
-                                <?php } ?>
+
                             <?php
                             }
                             ?>

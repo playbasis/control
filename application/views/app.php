@@ -9,7 +9,11 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="location = baseUrlPath+'app/add'" type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
+                <?php if( $plan_limit_app !== null &&  $total_app > $plan_limit_app){ ?>
+                    <button class="btn btn-default disabled" disabled type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
+                <?php }else{ ?>
+                    <button class="btn btn-info" onclick="location = baseUrlPath+'app/add'" type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
+                <?php } ?>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
         </div>
@@ -37,7 +41,7 @@
                                 <input type="checkbox" name="app_selected[]" value="<?php echo $domain['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
                             </td>
                             <td class="left" colspan="5"><h3><?php echo $domain['domain_name']; ?></h3>
-                                <?php if( count($domain["apps"]) > 2){ ?>
+                                <?php if( $plan_limit_platform !== null && $total_platform > $plan_limit_platform){ ?>
                                     <button class="btn btn-default btn-mini disabled" disabled type="button">Add Platform</button>
                                 <?php }else{ ?>
                                     <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/add_platform/".$domain['site_id']); ?>'" type="button">Add Platform</button>

@@ -97,12 +97,13 @@ class Action extends MY_Controller
                     if(!$exists){
                         
                         if($this->input->post('client_id') != 'admin_only'){
-                            $this->load->model('Domain_model');
+//                            $this->load->model('Domain_model');
+                            $this->load->model('App_model');
 
                             $data_admin = $this->input->post();
                             $data_admin['action_id'] = $this->Action_model->addAction($data);
                             $data_admin['site_id'] = $data['site_id'];
-                            $domains = $this->Domain_model->getDomainsByClientId($data_admin);
+                            $domains = $this->App_model->getAppsByClientId($data_admin);
 
                             foreach($domains as $domain){
                                 $data_admin['site_id'] = $domain['_id'];

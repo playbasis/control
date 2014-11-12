@@ -125,7 +125,6 @@ class Plan extends MY_Controller
                 $this->session->data['success'] = $this->lang->line('text_success');
 
                 //Save into clients too
-                $this->load->model("Domain_model");
                 $this->load->model("Client_model");
                 $clients_by_plan = $this->Plan_model->getClientByPlan($plan_id); //returns: client_id, site_id, date_added, date_modified
 
@@ -201,8 +200,6 @@ class Plan extends MY_Controller
         $this->load->library('pagination');
 
         $config['base_url'] = site_url('plan/page');
-
-        $this->load->model('Domain_model');
 
         $this->data['client_id'] = $this->User_model->getClientId();
         $this->data['site_id'] = $this->User_model->getSiteId();
@@ -424,7 +421,8 @@ class Plan extends MY_Controller
 
         // default limit others must has these fields
         $default_limit_others = array(
-            "domain" => null,
+            "app" => null,
+            "platform" => null,
             "goods" => null,
             "insight" => null,
             "mission" => null,
