@@ -714,6 +714,21 @@ class Player_model extends MY_Model
         $result = array_values($result1);
 		return $result;
 	}
+	public function sortPlayersByReward($client_id, $site_id, $reward_id, $limit=null) {
+		$this->mongo_db->select(array(
+			'cl_player_id',
+			'value'
+		));
+		$this->mongo_db->select(array(),array('_id'));
+		$this->mongo_db->where(array(
+			'reward_id' => $reward_id,
+			'client_id' => $client_id,
+			'site_id' => $site_id
+		));
+		$this->mongo_db->order_by(array('value' => 'desc'));
+		if ($limit) $this->mongo_db->limit($limit);
+		return $this->mongo_db->get('playbasis_reward_to_player');
+	}
 	public function getUserRanking($ranked_by, $player_id, $client_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);

@@ -799,7 +799,20 @@ class Player extends REST2_Controller
     		    'ranked_by','player_id'
     		)), 200);
     	}else{
-    		$player = $this->player_model->getUserRanking($ranked_by, $player_id, $this->validToken['client_id'], $this->validToken['site_id']);
+    		$players = $this->player_model->sortPlayersByReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by));
+    		$cl_player_ids = array_map('index_cl_player_id', $players);
+    		$idx = array_search($player_id, $cl_player_ids);
+    		$player = ($idx !== false ? array(
+    			'player_id' => $player_id,
+    			'rank' => $idx+1,
+    			'ranked_by' => $ranked_by,
+    			'ranked_value' => $players[$idx]['value'],
+    		) : array(
+    			'player_id' => $player_id,
+    			'rank' => count($players)+1,
+    			'ranked_by' => $ranked_by,
+    			'ranked_value' => 0,
+    		));
     		if(!empty($player)){
     			$this->response($this->resp->setRespond($player), 200);	
     		}else{
@@ -1186,5 +1199,9 @@ class Player extends REST2_Controller
             }
         }
     }
+}
+
+function index_cl_player_id($obj) {
+    return $obj['cl_player_id'];
 }
 ?>
