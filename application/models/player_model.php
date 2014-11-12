@@ -729,54 +729,6 @@ class Player_model extends MY_Model
 		if ($limit) $this->mongo_db->limit($limit);
 		return $this->mongo_db->get('playbasis_reward_to_player');
 	}
-	public function getUserRanking($ranked_by, $player_id, $client_id, $site_id)
-	{
-		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('reward_id'));
-		$this->mongo_db->where(array(
-			'name' => $ranked_by,
-			'site_id' => $site_id,
-			'client_id' => $client_id
-		));
-		$result = $this->mongo_db->get('playbasis_reward_to_client');
-		if(!$result){
-			return array();
-		}
-		$result = $result[0];
-		$this->mongo_db->select(array(
-			'cl_player_id',
-			'value'
-		));
-		$this->mongo_db->select(array(),array('_id'));
-		$this->mongo_db->where(array(
-			'reward_id' => $result['reward_id'],
-			'client_id' => $client_id,
-			'site_id' => $site_id
-		));
-		$this->mongo_db->order_by(array('value' => 'desc'));
-		$result = $this->mongo_db->get('playbasis_reward_to_player');
-		$rank = 1;
-		$found_player = array();
-		foreach($result as $player){
-			if($player['cl_player_id'] == $player_id){
-				$found_player['player_id'] = $player_id;
-				$found_player['rank'] = $rank;
-				$found_player['ranked_by'] = $ranked_by;
-				$found_player['ranked_value'] = $player['value'];
-				break;
-			}
-            $this->mongo_db->where(array(
-                'cl_player_id' => $player['cl_player_id'],
-                'client_id' => $client_id,
-                'site_id' => $site_id
-            ));
-            $check_player = $this->mongo_db->count('playbasis_player');
-            if($check_player > 0){
-                $rank++;
-            }
-		}
-		return $found_player;
-	}
 	public function getLeaderboards($limit, $client_id, $site_id)
 	{
 		//get all rewards
