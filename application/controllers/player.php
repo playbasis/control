@@ -915,6 +915,7 @@ class Player extends REST2_Controller
 
 		$log = array();
 		$prev = null;
+		$this->player_model->set_read_preference_secondary();
 		foreach ($this->player_model->new_registration(
             $this->validToken,
             $startDate->format('Y-m-d'),
@@ -934,6 +935,7 @@ class Player extends REST2_Controller
 			$prev = $key;
 			array_push($log, array($key => array('count' => $value['value'])));
 		}
+		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	/* unused */
@@ -941,6 +943,7 @@ class Player extends REST2_Controller
 	{
 		$log = array();
 		$prev = null;
+		$this->player_model->set_read_preference_secondary();
 		foreach ($this->player_model->daily_active_user($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
@@ -953,12 +956,14 @@ class Player extends REST2_Controller
 			$prev = $key;
 			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 		}
+		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function dauDay_get()
 	{
 		$log = array();
 		$prev = null;
+		$this->player_model->set_read_preference_secondary();
 		foreach ($this->player_model->daily_active_user_per_day($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
@@ -971,6 +976,7 @@ class Player extends REST2_Controller
 			$prev = $key;
 			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 		}
+		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	/* unused */
@@ -978,6 +984,7 @@ class Player extends REST2_Controller
 	{
 		$log = array();
 		$prev = null;
+		$this->player_model->set_read_preference_secondary();
 		foreach ($this->player_model->monthy_active_user($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if ($prev) {
@@ -990,12 +997,14 @@ class Player extends REST2_Controller
 			$prev = $key;
 			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 		}
+		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function mauDay_get()
 	{
 		$log = array();
 		$prev = null;
+		$this->player_model->set_read_preference_secondary();
 		foreach ($this->player_model->monthy_active_user_per_day($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
@@ -1010,12 +1019,14 @@ class Player extends REST2_Controller
 				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 			} else break;
 		}
+		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function mauWeek_get()
 	{
 		$log = array();
 		$prev = null;
+		$this->player_model->set_read_preference_secondary();
 		foreach ($this->player_model->monthy_active_user_per_week($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (strtotime($key.' 00:00:00') <= time()) { // suppress future calculated results
@@ -1036,12 +1047,14 @@ class Player extends REST2_Controller
 				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 			} else break;
 		}
+		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function mauMonth_get()
 	{
 		$log = array();
 		$prev = null;
+		$this->player_model->set_read_preference_secondary();
 		foreach ($this->player_model->monthy_active_user_per_month($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
 			$key = $value['_id'];
 			if (strtotime($key.'-01 00:00:00') <= time()) { // suppress future calculated results
@@ -1056,6 +1069,7 @@ class Player extends REST2_Controller
 				array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
 			} else break;
 		}
+		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function test_get()

@@ -39,6 +39,7 @@ class Reward extends REST2_Controller
 
 		$log = array();
 		$prev = null;
+		$this->reward_model->set_read_preference_secondary();
 		foreach ($this->reward_model->rewardLog(
             $this->validToken,
             'point',
@@ -59,6 +60,7 @@ class Reward extends REST2_Controller
 			$prev = $key;
 			array_push($log, array($key => array('point' => $value['value'])));
 		}
+		$this->reward_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function expLog_get()
@@ -79,6 +81,7 @@ class Reward extends REST2_Controller
 
 		$log = array();
 		$prev = null;
+		$this->reward_model->set_read_preference_secondary();
 		foreach ($this->reward_model->rewardLog(
             $this->validToken,
             'exp',
@@ -99,6 +102,7 @@ class Reward extends REST2_Controller
 			$prev = $key;
 			array_push($log, array($key => array('exp' => $value['value'])));
 		}
+		$this->reward_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 	public function badgeLog_get()
@@ -120,6 +124,7 @@ class Reward extends REST2_Controller
 
 		$log = array();
 		$prev = null;
+		$this->reward_model->set_read_preference_secondary();
 		foreach ($this->badge_model->getAllBadges($this->validToken) as $key => $v) {
 			$badge_id = $v['badge_id'];
 			foreach ($this->reward_model->badgeLog($this->validToken,
@@ -149,6 +154,7 @@ class Reward extends REST2_Controller
 				}
 			}
 		}
+		$this->reward_model->set_read_preference_primary();
 		ksort($log);
 		$log2 = array();
 		if (!empty($log)) foreach ($log as $key => $value) {
@@ -174,6 +180,7 @@ class Reward extends REST2_Controller
 
 		$log = array();
 		$prev = null;
+		$this->reward_model->set_read_preference_secondary();
 		foreach ($this->reward_model->levelupLog(
             $this->validToken,
             $startDate->format('Y-m-d'),
@@ -193,6 +200,7 @@ class Reward extends REST2_Controller
 			$prev = $key;
 			array_push($log, array($key => array('level' => $value['value'])));
 		}
+		$this->reward_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
 }
