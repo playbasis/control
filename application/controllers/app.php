@@ -103,6 +103,11 @@ class App extends MY_Controller
             $results_site = $this->App_model->getApps($data);
         }
 
+        if($total == 0){
+            $this->session->unset_userdata('site_id');
+            redirect('/first_app', 'refresh');
+        }
+
         if ($results_site) {
             foreach ($results_site as $result) {
 
