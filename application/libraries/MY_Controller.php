@@ -16,7 +16,8 @@ class  MY_Controller  extends  CI_Controller  {
 
         $this->load->model('User_model');
         $this->load->model('Client_model');
-        $this->load->model('Domain_model');
+//        $this->load->model('Domain_model');
+        $this->load->model('App_model');
         $this->load->model('Feature_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -141,13 +142,12 @@ class  MY_Controller  extends  CI_Controller  {
 
             if($this->data['site_id']){
 
-                $this->data['domain'] = $this->Domain_model->getDomain($this->data['site_id']);
+                $this->data['domain'] = $this->App_model->getApp($this->data['site_id']);
                 $this->data['domain_name'] = $this->data['domain'];
 
                 $temp = array('client_id'=>$this->data['client_id'], 'site_id'=>$this->data['site_id']);
-                
-                // $this->data['domain_all'] = $this->Domain_model->getDomainsByClientId($temp);
-                $allDomains = $this->Domain_model->getDomainsByClientId($temp);
+
+                $allDomains = $this->App_model->getAppsByClientId($temp);
                 $activeDomains = array();
 
                 foreach ($allDomains as $aDomain){

@@ -19,7 +19,7 @@
                 <a href="#tab-data" onclick= removeNotifications();><?php echo $this->lang->line('tab_data'); ?></a>
                 <!-- <a href="#tab-address"><?php echo $this->lang->line('tab_address'); ?></a> -->
                 <?php if ($list_client_id.""!=0) { ?><a href="#tab-user" onclick= removeNotifications(); ><?php echo $this->lang->line('tab_user'); ?></a><?php } ?>
-                <?php if ($list_client_id.""!=0) { ?><a href="#tab-domain" onclick= removeNotifications();><?php echo $this->lang->line('tab_domain'); ?></a><?php } ?>
+                <?php if(false){ if ($list_client_id.""!=0) { ?><a href="#tab-domain" onclick= removeNotifications();><?php echo $this->lang->line('tab_domain'); ?></a><?php } }?>
             </div>
             <div id ="notification" class="half-width"></div>
             <?php
@@ -181,7 +181,7 @@
 
                 </div>
                 <?php } ?>
-                <?php if ($list_client_id.""!=0) { ?>
+                <?php if(false){ if ($list_client_id.""!=0) { ?>
                 <div id="tab-domain">
                     <table class="form">
                         <tr>
@@ -212,7 +212,7 @@
 
                     </iframe-->
                 </div>
-                <?php } ?>
+                <?php } } ?>
             <?php
             echo form_close();
             ?>

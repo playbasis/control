@@ -33,7 +33,7 @@
                         <td class="right" style="width:50px;"><?php echo $this->lang->line('column_company_name'); ?></td>
                         <td class="right" style="width:20px;"><?php echo $this->lang->line('column_email'); ?></td>
                         <td class="right" style="width:20px;"><?php echo $this->lang->line('column_plan_name'); ?></td>
-                        <td class="right" style="width:30px;"><?php echo $this->lang->line('column_domain'); ?></td>
+                        <td class="right" style="width:30px;"><?php echo $this->lang->line('column_app'); ?></td>
                         <td class="right" style="width:20px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:240px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>

@@ -153,7 +153,7 @@ class Client extends MY_Controller
                     $this->Client_model->deleteClient($client_id);
                     $this->Client_model->deleteClientPersmission($client_id);
                     $site_id = $this->User_model->getSiteId();
-                    $this->Domain_model->deleteDomainByClientId($client_id, $site_id);
+                    $this->App_model->deleteAppByClientId($client_id);
 
                     $data = array('client_id'=>$client_id);
                     $results = $this->User_model->getUserByClientId($data);
@@ -178,7 +178,8 @@ class Client extends MY_Controller
 
         $per_page = 10;
 
-        $this->load->model('Domain_model');
+//        $this->load->model('Domain_model');
+        $this->load->model('App_model');
         $this->load->model('Image_model');
         $this->load->model('Plan_model');
 
@@ -235,7 +236,7 @@ class Client extends MY_Controller
                 $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
 
                 $data_client = array("client_id" => $result['_id'], 'site_id'=>$site_id);
-                $domain_total = $this->Domain_model->getTotalDomainsByClientId($data_client);
+                $domain_total = $this->App_model->getTotalAppsByClientId($data_client);
 
                 if (isset($result['image'])){
                     $info = pathinfo($result['image']);
@@ -469,7 +470,8 @@ class Client extends MY_Controller
 
     private function checkOwnerClient($clientId){
 
-        $this->load->model('Domain_model');
+//        $this->load->model('Domain_model');
+        $this->load->model('App_model');
 
         $error = null;
 
@@ -477,7 +479,7 @@ class Client extends MY_Controller
 
             $theData = array('client_id'=> $this->User_model->getClientId(), 'site_id'=>$this->User_model->getSiteId());
 
-            $clients = $this->Domain_model->getDomainsByClientId($theData);
+            $clients = $this->App_model->getAppsByClientId($theData);
 
             $has = false;
 
@@ -538,7 +540,8 @@ class Client extends MY_Controller
 
         // $per_page = 10;
 
-        $this->load->model('Domain_model');
+//        $this->load->model('Domain_model');
+        $this->load->model('App_model');
         $this->load->model('Plan_model');
 
         // $this->load->library('pagination');
@@ -554,9 +557,9 @@ class Client extends MY_Controller
 
         $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
 
-        $total = $this->Domain_model->getTotalDomainsByClientId($data);
+        $total = $this->App_model->getTotalAppsByClientId($data);
 
-        $results = $this->Domain_model->getDomainsByClientId($data);
+        $results = $this->App_model->getAppsByClientId($data);
 
         if ($results) {
             foreach ($results as $result) {
@@ -608,7 +611,6 @@ class Client extends MY_Controller
 
         // $per_page = 10;
 
-        $this->load->model('Domain_model');
         $this->load->model('Plan_model');
 
         // $this->load->library('pagination');

@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+/*defined('BASEPATH') OR exit('No direct script access allowed');
 class Domain_model extends MY_Model
 {
 
@@ -266,5 +266,5 @@ class Domain_model extends MY_Model
         $c = $this->mongo_db->count('playbasis_client_site');
         return $c > 0;
     }
-}
+}*/
 ?>
