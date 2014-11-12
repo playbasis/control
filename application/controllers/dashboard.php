@@ -164,7 +164,9 @@ class Dashboard extends MY_Controller
 
         $this->data['leaderboards'] = array();
         if($client_id){
+            $this->Statistic_model->set_read_preference_secondary();
             $players = $this->Statistic_model->getLeaderboardByExp($data['limit'], $data['client_id'], $data['site_id']);
+            $this->Statistic_model->set_read_preference_primary();
             if ($players) foreach ($players as $player) {
                 $this->data['leaderboards'][] = array(
                     'player_id' => $player['_id'],
