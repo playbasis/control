@@ -114,7 +114,7 @@ class Action_model extends MY_Model
 			'query' => $query,
 			'out' => array('inline' => 1),
 		));
-		if (!$result) $result = array();
+		$result = $result ? $result['results'] : array();
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 'SKIP'));
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 'SKIP'));
 		return $result;
