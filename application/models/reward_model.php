@@ -84,14 +84,13 @@ class Reward_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_reward_to_player',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_reward_log',
+			'out' => array('inline' => 1),
 		));
-		$result = $this->mongo_db->get('mapreduce_reward_log');
 		if (!$result) $result = array();
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
@@ -109,14 +108,13 @@ class Reward_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_reward_to_player',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_badge_log',
+			'out' => array('inline' => 1),
 		));
-		$result = $this->mongo_db->get('mapreduce_badge_log');
 		if (!$result) $result = array();
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 'SKIP'));
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 'SKIP'));
@@ -131,14 +129,13 @@ class Reward_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_event_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_levelup_log',
+			'out' => array('inline' => 1),
 		));
-		$result = $this->mongo_db->get('mapreduce_levelup_log');
 		if (!$result) $result = array();
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));

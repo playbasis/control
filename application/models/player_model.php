@@ -1098,14 +1098,13 @@ class Player_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_player',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_new_player_log',
+			'out' => array('inline' => 1),
 		));
-		$result = $this->mongo_db->get('mapreduce_new_player_log');
 		if (!$result) $result = array();
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
@@ -1122,14 +1121,13 @@ class Player_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from.'-01');
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to.'-'.MY_Model::get_number_of_days($to), '23:59:59');
-		$this->mongo_db->command(array(
+		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_player_mau_log',
+			'out' => array('inline' => 1),
 		));
-		$_result = $this->mongo_db->get('mapreduce_player_mau_log');
 		if (!$_result) $_result = array();
 		$result = array();
 		foreach ($_result as $key => $value) {
@@ -1166,14 +1164,13 @@ class Player_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_player_dau_log',
+			'out' => array('inline' => 1),
 		));
-		$_result = $this->mongo_db->get('mapreduce_player_dau_log');
 		if (!$_result) $_result = array();
 		$result = array();
 		foreach ($_result as $key => $value) {
@@ -1237,14 +1234,13 @@ class Player_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_active_user_per_day_'.$ndays.'_log',
+			'out' => array('inline' => 1),
 		));
-		$_result = $this->mongo_db->get('mapreduce_active_user_per_day_'.$ndays.'_log');
 		if (!$_result) $_result = array();
 		$result = array();
 		foreach ($_result as $key => $value) {
@@ -1302,14 +1298,13 @@ class Player_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_active_user_per_week_'.$ndays.'_log',
+			'out' => array('inline' => 1),
 		));
-		$_result = $this->mongo_db->get('mapreduce_active_user_per_week_'.$ndays.'_log');
 		if (!$_result) $_result = array();
 		$result = array();
 		foreach ($_result as $key => $value) {
@@ -1359,14 +1354,13 @@ class Player_model extends MY_Model
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$this->mongo_db->command(array(
+		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
-			'out' => 'mapreduce_active_user_per_month_'.$ndays.'_log',
+			'out' => array('inline' => 1),
 		));
-		$_result = $this->mongo_db->get('mapreduce_active_user_per_month_'.$ndays.'_log');
 		if (!$_result) $_result = array();
 		$result = array();
 		foreach ($_result as $key => $value) {
