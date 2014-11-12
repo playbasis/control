@@ -47,19 +47,19 @@
                         </thead>
                         <tbody>
                             <tr class="app-table-label">
-                                <td style="text-align: center;">
+                                <td style="text-align: center;" width="10%">
 
                                 </td>
-                                <td class="left">
+                                <td class="left" width="15%">
                                     Platform
                                 </td>
-                                <td >
+                                <td width="20%">
                                     Api Key
                                 </td>
                                 <td >
                                     Api Secret
                                 </td>
-                                <td class="right">
+                                <td class="right" width="10%">
                                     Status
                                 </td>
                                 <td class="right app-col-action">
@@ -112,7 +112,9 @@
                         </tbody>
                     </table>
                     <?php } ?>
-                <?php } ?>
+                <?php }else{
+
+                    } ?>
             <?php
             echo form_close();
             ?>
