@@ -19,6 +19,10 @@ class Account extends MY_Controller
 			redirect('/login', 'refresh');
 		}
 
+        if($this->input->get('site_id')){
+            $this->User_model->updateSiteId($this->input->get('site_id'));
+        }
+
 		$lang = get_lang($this->session, $this->config);
 		$this->lang->load($lang['name'], $lang['folder']);
 		$this->lang->load("account", $lang['folder']);
@@ -322,7 +326,7 @@ class Account extends MY_Controller
             $this->data['message'] = null;
 
             $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|required|min_length[5]|max_length[40]|xss_clean|check_space');
-            $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'required|matches[password]');
+            $this->form_validation->set_rules('confirm_password', $this->lang->line('form_confirm_password'), 'required|matches[password]');
 
             if($this->form_validation->run()){
                 $new_password = $this->input->post('password');

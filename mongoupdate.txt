@@ -84,6 +84,10 @@ update
 
   "link":"user_permission"  -> "link":"user_group"
 
+  "link":"domain" -> "link":"app"
+  "name":"Domain" -> "name":"App"
+  "icon":"fa-signal" -> "icon" : "fa-hdd-o"
+
 remove
 
     "name":{$in:['Monitor','Backup\/Restore','System','Error Log']}

@@ -6,7 +6,6 @@ class Feature_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($feature_id));
-        $this->mongo_db->order_by(array('sort_order' => 1));
         $results = $this->mongo_db->get("playbasis_feature");
 
         return $results ? $results[0] : null;
@@ -54,6 +53,15 @@ class Feature_model extends MY_Model
 
               
         return $results;
+    }
+
+    public function getFeatureName($feature_name) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('name', $feature_name);
+        $results = $this->mongo_db->get("playbasis_feature");
+
+        return $results ? $results[0] : null;
     }
 }
 ?>

@@ -34,6 +34,24 @@ jQuery(document).ready( function($) {
   //==== Validate Register form=======//
   $('#register_form').validate({
     submitHandler: function(form) {
+
+      if( $(form).find('input[name=mailing-list]:checked').length > 0 ){
+          $.ajax({
+            type:'get',
+            url: '//playbasis.us6.list-manage2.com/subscribe/post-json?u=671d09f1f9e3b028388b39e50&amp;id=3df5213bd0&amp;c=?',
+            data: {
+                'EMAIL' : $(form).find('input[name=email]').val(),
+                'FNAME' : $(form).find('input[name=firstname]').val(),
+                'LNAME' : $(form).find('input[name=lastname]').val(),
+                'MMERGE3' : $(form).find('input[name=company_name]').val()
+            }
+          })
+          .done(function(data) {
+            console.log(data);
+          });
+
+      }
+
       $.ajax({
         type:'post',
         url: baseUrlPath+"user/regis",
@@ -56,8 +74,9 @@ jQuery(document).ready( function($) {
                  $('.registration-register').pbAlert({
                   content: 'Register success!'
                 });
-               //window.location = baseUrlPath+'login?signup=finish';
-                window.location = baseUrlPath+'user/signup_finish?i='+data.data;
+                setTimeout( function() {
+                    window.location = baseUrlPath+'user/signup_finish?i='+data.data;
+                }, 5000);
             }
       })
       .fail(function(data) {

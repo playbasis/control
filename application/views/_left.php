@@ -6,8 +6,15 @@ if (isset($username)) {
     <div class="nav-collapse sidebar-nav in collapse" style="height: auto;">
         <ul class="nav nav-tabs nav-stacked main-menu">
             <?php
-            if($this->session->userdata('site')){
-                if (isset($features)) { ?>
+            if($this->session->userdata('client_id') && !$this->session->userdata('site_id')){
+            ?>
+                <li>
+                    <?php
+                    echo anchor("first_app", '<i class="fa fa-th-list"></i><span class="hidden-tablet">Get Started</span>');
+                    ?>
+                </li>
+            <?php }else{ ?>
+                <?php if (isset($features)) { ?>
                 <?php foreach ($features as $feature) { ?>
                     <li>
                         <?php
@@ -15,13 +22,7 @@ if (isset($username)) {
                         ?>
                     </li>
                 <?php } ?>
-            <?php }
-            }else{ ?>
-                <li>
-                    <?php
-                    echo anchor("first_app", '<i class="fa fa-th-list"></i><span class="hidden-tablet">Get Started</span>');
-                    ?>
-                </li>
+            <?php } ?>
             <?php
             }
             ?>

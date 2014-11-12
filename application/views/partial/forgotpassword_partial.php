@@ -57,13 +57,8 @@
           <div class="registration-benefits">
 
             <div class="benefits-block">
-              <h4>First 30 days free with every plan</h4>
-              <p>We're so confident you'll love our service that all our plans come with the first 30 days free. Come have a look around.</p>
-            </div>
-
-            <div class="benefits-block">
-              <h4>Quick and easy to setup</h4>
-              <p>Get up and running quickly with preset rules, or tailor your rules to create a custom framework that aligns with your key objectives.</p>
+              <h4>Password Recovery</h4>
+              <p>If you have forgotten your password of Playbasis gamification platform, you can request an e-mail with a link to reset your password. If you don’t get e-mail from us within [XXXXX], please be sure to check in both mail box and junk mail.</p>
             </div>
 
           </div><!-- /benefits -->

@@ -28,52 +28,93 @@
             $attributes = array('id' => 'form');
             echo form_open('app/delete',$attributes);
             ?>
-                <table class="list">
-                    <thead>
-                    <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="left" style="width:100px;"><?php echo $this->lang->line('column_key'); ?></td>
-                        <td class="left" style="width:300px;"><?php echo $this->lang->line('column_secret'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php if (isset($domain_list)) { ?>
-                        <?php foreach ($domain_list as $domain) { ?>
+                <?php if (isset($domain_list)) { ?>
+                    <?php foreach ($domain_list as $domain) { ?>
+                    <table class="list app-table">
+                        <thead>
                         <tr>
-                            <td style="text-align: center;">
-                                <?php if ($domain['selected']) { ?>
-                                    <input type="checkbox" name="selected[]" value="<?php echo $domain['site_id']; ?>" checked="checked" />
-                                <?php } else { ?>
-                                    <input type="checkbox" name="selected[]" value="<?php echo $domain['site_id']; ?>" />
-                                <?php } ?>
+                            <td width="1" style="text-align: center;">
+                                <input type="checkbox" name="app_selected[]" value="<?php echo $domain['site_id']; ?>" onclick="$(this).parent().parent().parent().parent().find('input[name*=\'selected\']').attr('checked', this.checked);">
                             </td>
-                            <td class="left">
-                                <?php echo $domain['domain_name']; ?>
-                            </td>
-                            <td class="left">
-                                <?php echo $domain['keys']; ?>
-                            </td>
-                            <td class="left">
-                                <?php echo $domain['secret']; ?> [ <?php echo anchor('domain', $this->lang->line('text_reset_secret'), array('onclick' => "confirmation('".$domain['site_id']."'); return false;")); ?> ]
-                            </td>
-                            <td class="right">
-                                <?php if ($domain['status']==1) { ?>
-                                <?php echo $this->lang->line('text_enabled'); ?>
-                                <?php } else { ?>
-                                <?php echo $this->lang->line('text_disabled'); ?>
+                            <td class="left" colspan="5"><h3><?php echo $domain['domain_name']; ?></h3>
+                                <?php if( count($domain["apps"]) > 2){ ?>
+                                    <button class="btn btn-default btn-mini disabled" disabled type="button">Add Platform</button>
+                                <?php }else{ ?>
+                                    <button class="btn btn-info btn-mini" onclick="location='<?php echo site_url("app/add_platform/".$domain['site_id']); ?>'" type="button">Add Platform</button>
                                 <?php } ?>
                             </td>
                         </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="app-table-label">
+                                <td style="text-align: center;" width="10%">
+
+                                </td>
+                                <td class="left" width="15%">
+                                    Platform
+                                </td>
+                                <td width="20%">
+                                    Api Key
+                                </td>
+                                <td >
+                                    Api Secret
+                                </td>
+                                <td class="right" width="10%">
+                                    Status
+                                </td>
+                                <td class="right app-col-action">
+                                    Action
+                                </td>
+                            </tr>
+                            <?php
+                            foreach($domain["apps"] as $app){
+                            ?>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <input type="checkbox" name="platform_selected[]" value="<?php echo $app['_id']; ?>">
+                                </td>
+                                <td class="left app-col-platform">
+                                    <?php
+                                    if($app['platform'] == 'web'){
+                                        $aicon = 'fa-desktop';
+                                        $aname = 'Web Site';
+                                    }elseif($app['platform'] == 'ios'){
+                                        $aicon = 'fa-apple';
+                                        $aname = 'IOS';
+                                    }elseif($app['platform'] == 'android'){
+                                        $aicon = 'fa-android';
+                                        $aname = 'Android';
+                                    }
+                                    ?>
+                                    <i class="fa <?php echo $aicon; ?> fa-lg"></i> <?php echo $aname; ?>
+                                </td>
+                                <td >
+                                    <?php echo $app['api_key']; ?>
+                                </td>
+                                <td >
+                                    <?php echo $app['api_secret']; ?>
+                                    <a href="javascript:void(0)" onclick="confirmationReset('<?php echo $app['_id']; ?>')" title="Reset Api Secret" class="tooltips" data-placement="right"><i class="fa fa-repeat fa-lg"></i></a>
+                                </td>
+                                <td class="right">
+                                    <?php if ($app['status']==1) { ?>
+                                        <?php echo $this->lang->line('text_enabled'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $this->lang->line('text_disabled'); ?>
+                                    <?php } ?>
+                                </td>
+                                <td class="right app-col-action">
+                                    <a href="<?php echo site_url("app/platform_edit/".$app['_id']) ?>" title="Edit" class="tooltips" data-placement="top"><i class="fa fa-edit fa-lg"></i></a>
+                                    <a href="javascript:void(0)" onclick="confirmationDelete('<?php echo $app['_id']; ?>')" title="Delete" class="tooltips" data-placement="top"><i class="fa fa-trash fa-lg"></i></a>
+                                </td>
+
+                            </tr>
                             <?php } ?>
-                        <?php } else { ?>
-                    <tr>
-                        <td class="center" colspan="5"><?php echo $this->lang->line('text_no_results'); ?></td>
-                    </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                    <?php } ?>
+                <?php }else{
+
+                    } ?>
             <?php
             echo form_close();
             ?>
@@ -86,31 +127,52 @@
     </div>
 </div>
 
-<script type="text/javascript"><!--
-
-function resetSecret(site_id) {
-    $.ajax({
-        url: baseUrlPath+'app/reset',
-        type: 'POST',
-        data: 'site_id=' + site_id,
-        dataType: 'json',
-        success: function(json) {
-            if(json.success){
-                location.href = baseUrlPath+'domain';
+<script type="text/javascript">
+    function resetSecret(platform_id) {
+        $.ajax({
+            url: baseUrlPath+'app/reset',
+            type: 'POST',
+            data: 'platform_id=' + platform_id,
+            dataType: 'json',
+            success: function(json) {
+                if(json.success){
+                    location.href = baseUrlPath+'app';
+                }
             }
-        }
-    });
+        });
 
-    return false;
-}
+        return false;
+    }
 
-//--></script>
+    function deletePlatform(platform_id) {
+        var platform = new Array(platform_id);
+
+        $.ajax({
+            url: baseUrlPath+'app/delete',
+            type: 'POST',
+            data: {platform_selected: platform},
+            dataType: 'json',
+            success: function(json) {
+                location.href = baseUrlPath+'app';
+            }
+        });
+
+        return false;
+    }
+</script>
 
 <script type="text/javascript">
-    function confirmation(site_id){
-        var decision = confirm('Are you sure you want to reset the key?');
+    function confirmationReset(platform_id){
+        var decision = confirm('Are you sure to reset the secret key ?');
         if (decision){
-            resetSecret(site_id);
+            resetSecret(platform_id);
+        }
+    }
+
+    function confirmationDelete(platform_id){
+        var decision = confirm('Are you sure to delete ?');
+        if (decision){
+            deletePlatform(platform_id);
         }
     }
 </script>

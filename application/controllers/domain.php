@@ -251,7 +251,7 @@ class Domain extends MY_Controller
                     redirect('/domain', 'refresh');
                 }else{
                     if($this->input->post('format') == 'json'){
-                        echo json_encode($this->data['fail_domain_exists']);
+                        echo json_encode($this->lang->line('text_fail_domain_exists'));
                         exit();
                     }
                 }

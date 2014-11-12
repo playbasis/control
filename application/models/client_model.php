@@ -506,6 +506,7 @@ class Client_model extends MY_Model
     public function getSitesByClientId($client_id){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('client_id', new MongoID($client_id));
         return $this->mongo_db->get('playbasis_client_site');
 

@@ -1,5 +1,6 @@
 /*======== [ Commons ] =========*/
-.header-app-manu>span{
+.header-app-manu>span,
+.header-app-manu>i{
 	color: #999;
 	text-shadow: none;
 	-webkit-transition: all 0.2s ease-in-out;
@@ -14,6 +15,14 @@
 	color: #ccc;
 	text-shadow: none;
 }
+.main-menu-span{
+	padding-bottom: 30px;
+}
+.footer-copy{
+	text-align:right;
+	float:right	
+}
+
 #siteseal img{
 	height: 30px;
 	margin-top: -3px;
@@ -159,6 +168,39 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 	outline: medium none;
 	background: linear-gradient(#FF5B16, #FE5B17) repeat scroll 0% 0% #FF5B16;
 }*/
+
+.box-gray .subbox{
+	display: inline-block;
+	margin: 15px;
+	background: #ddd;
+	border-radius: 5px;
+	color: #999;
+	padding: 15px 25px;
+	position: relative;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-transition: all 0.2s ease-in-out;
+	  -moz-transition: all 0.2s ease-in-out;
+	  -o-transition: all 0.2s ease-in-out;
+	  transition: all 0.2s ease-in-out;
+}
+.box-gray .subbox i{
+	font-size: 42px;
+	position: absolute;
+	left: 20px;
+	top: 15px;
+}
+.box-gray .subbox p{
+	text-align: left;
+	padding-left: 55px;
+	margin-bottom: 0;
+}
+.box-gray .subbox:hover{
+	text-decoration: none;
+	background: #86559c; 
+	color: #fff;
+}
+
 .getstarted-wrapper{
 	margin-bottom: 50px;	
 }
@@ -231,6 +273,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 
 /*======== [ App ] =========*/
+.app-tab{
+	display: none;
+}
 .select-platform-wrapper label{
     display: inline-block;
     text-align: center;
@@ -249,6 +294,41 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
 }
 input[type=radio]:checked + label {  
     color: #86559c;
+}
+
+.app-table{
+	-webkit-box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	-moz-box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	box-shadow: 0 4px 20px rgba(0,0,0,.1);
+	min-width: 760px;
+}
+.app-table.list tbody td{
+	padding: 10px;
+}
+.app-table h3{
+	display: inline-block;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+.list tbody .app-table-label td{
+	background: #EFEFEF;
+	color: #999;
+	padding: 3px 10px;
+}
+.list .app-col-action{
+	width: 60px;
+	text-align: center;
+}
+.app-col-action a{
+	color: #999;
+	margin: 0 5px;
+}
+.app-col-platform{
+	
+}
+.app-col-platform i{
+	color: #666;
+	margin-right: 5px;
 }
 
 
@@ -1067,8 +1147,10 @@ input[type=radio]:checked + label {
   margin-top: -100px;
 }
 .plans-wrapper > h1 {
-  color: #FFF;
+  color: #ccc;
   text-align: center;
+  font-weight: normal;
+  font-size: 24px;
 }
 #plans,
 #plans ul,
@@ -1174,6 +1256,22 @@ input[type=radio]:checked + label {
   border: 2px solid #f4a70c;
   color: #fff;
 }
+.plan-current-btn{
+	text-transform: uppercase;
+	text-decoration: none;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	line-height: 2.8em;
+	display: inline-block;
+	width: 140px;
+	height: 2.8em;
+	border-radius: 4px;
+	margin: 1.5em 0 1.8em;
+	color: #fff;
+	background: none;
+	border: 2px solid transparent;
+	color: #999;
+}
 .has-try .planContainer .title h2 {
   padding: .2em 0 1em;
   position: relative;
@@ -1229,6 +1327,7 @@ input[type=radio]:checked + label {
 }
 
 @media screen and (min-width: 769px) {
+
   .pricePlansPro {
     display: block;
     height: 70px;
@@ -1392,7 +1491,8 @@ input[type=radio]:checked + label {
   color: #fff;
   font-size: 1em;
 }
-.regis-plan-table-wrapper > table .row-action a {
+.regis-plan-table-wrapper > table .row-action a,
+.regis-plan-table-wrapper > table .row-action span {
   text-transform: uppercase;
   text-decoration: none;
   font-weight: 700;
@@ -1410,6 +1510,10 @@ input[type=radio]:checked + label {
   -ms-transition: all .25s;
   -o-transition: all .25s;
   transition: all .25s;
+}
+.regis-plan-table-wrapper > table .row-action span{
+	background: none;
+	color: #999;
 }
 .regis-plan-table-wrapper > table .row-action a:hover {
   background: #ff9c70;
@@ -1524,6 +1628,15 @@ input[type=radio]:checked + label {
 	}
 }
 @media screen and (max-width: 767px){
+	.footer-copy{
+		text-align:center;
+		float:none;
+		display: block;
+	}
+	.footer-copy #siteseal{
+		display: inline-block;
+		margin-top: 10px;
+	}
 	.regis-site-header{
 		left: 15px;
 	}

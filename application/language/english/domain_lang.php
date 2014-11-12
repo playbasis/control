@@ -79,13 +79,14 @@ $lang['button_add_user']						= 'Add User';
 
 // Domain
 $lang['entry_domain']					= 'Domain';
-$lang['text_no_domain']				= 'No domain found!!';
+$lang['text_no_domain']				    = 'No domain found!!';
 $lang['column_domain_no'] 				= 'No.';
 $lang['column_domain_name'] 			= 'Domain';
 $lang['column_domain_plan'] 			= 'Package';
 $lang['column_domain_status'] 			= 'Status';
 $lang['column_domain_modified'] 		= 'Date Modified.';
 $lang["text_fail_limit_domain"]         = "Sorry, you have reach domain limit";
+$lang['text_fail_domain_exists']				= 'The domain name provided was already registered';
 
 // User
 $lang['column_title']					= 'Title';
@@ -94,10 +95,10 @@ $lang['column_username']				= 'Username';
 $lang['column_password']				= 'Password';
 
 // Error 
-$lang['error_warning']          = 'Warning: Please check the form carefully for errors!';
-$lang['error_permission']       = 'Warning: You do not have permission to modify clients!';
-$lang['error_access']			= 'Warning: You do not have permission to access this page!';
-$lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
+$lang['error_warning']              = 'Warning: Please check the form carefully for errors!';
+$lang['error_permission']           = 'Warning: You do not have permission to modify clients!';
+$lang['error_access']			    = 'Warning: You do not have permission to access this page!';
+$lang['error_name']                 = 'Category Name must be between 2 and 32 characters!';
 $lang['error_required']				= 'Warning: Please check required field!!';
 $lang['error_user']					= 'Error: Username not availble!!!';
 ?>

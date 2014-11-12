@@ -577,7 +577,7 @@ class User extends MY_Controller
             //$plan_id = new MongoId($this->input->get('plan'));
             //$plan = $this->Plan_model->getPlanById($plan_id);
 
-            $plan = $this->Plan_model->getPlanById(new MongoId(DEFAULT_PLAN));
+            $plan = $this->Plan_model->getPlanById(new MongoId(FREE_PLAN));
 
             if (!$plan) throw new Exception('Cannot find plan '.$plan_id);
             if (!array_key_exists('price', $plan)) {
@@ -728,7 +728,7 @@ class User extends MY_Controller
                 if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                     $user_info = $this->User_model->getUserInfo($user_id);
 
-                    $plan = $this->Plan_model->getPlanById(new MongoId(DEFAULT_PLAN));
+                    $plan = $this->Plan_model->getPlanById(new MongoId(FREE_PLAN));
 
                     $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
 
@@ -791,7 +791,7 @@ class User extends MY_Controller
             'lastname' => $user_info['lastname'],
             'username' => $user_info['username'],
             'key' => $user_info['random_key'],
-            'url'=> site_url('enable_user/?key='),
+            'url'=> site_url('enable_user?key='),
         );
 
         $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
@@ -857,8 +857,6 @@ class User extends MY_Controller
                             'password' => $initial_password,
                             'paid_flag' => $paid_flag ? array(array('force' => 1)) : array(),
                         );
-                        $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
-                        $this->email($user['email'], '[Playbasis] Your account has been activated', $htmlMessage);
                         $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
                         $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
                     }
@@ -884,26 +882,26 @@ class User extends MY_Controller
                 $user_id = $user[0]['_id'];
 
                 /* generate initial password */
-                if(dohash(DEFAULT_PASSWORD,$user[0]['salt']) == $user[0]['password']){
-                    $initial_password = get_random_password(8,8);
-                    $this->User_model->insertNewPassword($user_id, $initial_password);
-                }else{
-                    $initial_password = '******';
-                }
+//                if(dohash(DEFAULT_PASSWORD,$user[0]['salt']) == $user[0]['password']){
+//                    $initial_password = get_random_password(8,8);
+//                    $this->User_model->insertNewPassword($user_id, $initial_password);
+//                }else{
+//                    $initial_password = '******';
+//                }
 
                 /* check free/paid */
-                $client_id = $this->User_model->getClientIdByUserId($user_id);
-                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
-                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-                if (!array_key_exists('price', $plan)) {
-                    $plan['price'] = DEFAULT_PLAN_PRICE;
-                }
-                $price = $plan['price'];
-                $free_flag = $price <= 0;
-                $paid_flag = !$free_flag;
+//                $client_id = $this->User_model->getClientIdByUserId($user_id);
+//                $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+//                $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+//                if (!array_key_exists('price', $plan)) {
+//                    $plan['price'] = DEFAULT_PLAN_PRICE;
+//                }
+//                $price = $plan['price'];
+//                $free_flag = $price <= 0;
+//                $paid_flag = !$free_flag;
 
                 /* send email */
-                $user = $this->User_model->getById($user_id);
+                /*$user = $this->User_model->getById($user_id);
                 $vars = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
@@ -912,7 +910,7 @@ class User extends MY_Controller
                     'paid_flag' => $paid_flag ? array(array('force' => 1)) : array(),
                 );
                 $htmlMessage = $this->parser->parse('user_guide.html', $vars, true);
-                $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);
+                $this->email($user['email'], '[Playbasis] Getting started with Playbasis', $htmlMessage);*/
 
                 /* force login, so that user doesn't have to type email and password (obtained by email) */
                 $this->User_model->force_login($user_id);

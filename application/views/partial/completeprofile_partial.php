@@ -57,14 +57,10 @@
           <div class="registration-benefits">
 
             <div class="benefits-block">
-              <h4>First 30 days free with every plan</h4>
-              <p>We're so confident you'll love our service that all our plans come with the first 30 days free. Come have a look around.</p>
+              <h4>Get ready to gamify your application</h4>
+              <p>After you completed setting up your profile, you have to set up your application in our dashboard as first step. You will be able to create and set up ‘1’ application in our dashboard for free plan. Upgrade to higher plan to connect more applications! </p>
             </div>
 
-            <div class="benefits-block">
-              <h4>Quick and easy to setup</h4>
-              <p>Get up and running quickly with preset rules, or tailor your rules to create a custom framework that aligns with your key objectives.</p>
-            </div>
 
           </div><!-- /benefits -->
 
