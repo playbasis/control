@@ -1080,7 +1080,7 @@ class Player_model extends MY_Model
 			'query' => $query,
 			'out' => array('inline' => 1),
 		));
-		if (!$result) $result = array();
+		$result = $result ? $result['results'] : array();
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
 		return $result;
@@ -1103,7 +1103,7 @@ class Player_model extends MY_Model
 			'query' => $query,
 			'out' => array('inline' => 1),
 		));
-		if (!$_result) $_result = array();
+		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
@@ -1146,7 +1146,7 @@ class Player_model extends MY_Model
 			'query' => $query,
 			'out' => array('inline' => 1),
 		));
-		if (!$_result) $_result = array();
+		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
@@ -1216,7 +1216,7 @@ class Player_model extends MY_Model
 			'query' => $query,
 			'out' => array('inline' => 1),
 		));
-		if (!$_result) $_result = array();
+		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
@@ -1280,7 +1280,7 @@ class Player_model extends MY_Model
 			'query' => $query,
 			'out' => array('inline' => 1),
 		));
-		if (!$_result) $_result = array();
+		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
@@ -1336,7 +1336,7 @@ class Player_model extends MY_Model
 			'query' => $query,
 			'out' => array('inline' => 1),
 		));
-		if (!$_result) $_result = array();
+		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
 			$values = array();
