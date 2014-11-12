@@ -48,6 +48,8 @@ class Statistic extends CI_Controller
 
         $json = array();
 
+        $this->Statistic_model->set_read_preference_secondary();
+
         $register = $this->Statistic_model->getNewRegister($data);
         foreach ($register as $key => $value) {
             $json['register'][] = array(
@@ -84,6 +86,8 @@ class Statistic extends CI_Controller
             );
         }
 
+        $this->Statistic_model->set_read_preference_primary();
+
         $this->output->set_output(json_encode($json));
     }
 
@@ -100,7 +104,9 @@ class Statistic extends CI_Controller
             'limit' => 5
         );
 
+        $this->Statistic_model->set_read_preference_secondary();
         $this->data['events'] = $this->Statistic_model->getDailyActionmeaturement($data);
+        $this->Statistic_model->set_read_preference_primary();
 
         $this->load->vars($this->data);
         $this->load->view('carousel');
@@ -119,7 +125,9 @@ class Statistic extends CI_Controller
             'limit' => 5
         );
 
+        $this->Statistic_model->set_read_preference_secondary();
         $this->data['events'] = $this->Statistic_model->getWeeklyActionmeaturement($data);
+        $this->Statistic_model->set_read_preference_primary();
 
         $this->load->vars($this->data);
         $this->load->view('carousel');
@@ -138,7 +146,9 @@ class Statistic extends CI_Controller
             'limit' => 5
         );
 
+        $this->Statistic_model->set_read_preference_secondary();
         $this->data['events'] = $this->Statistic_model->getMonthlyActionmeaturement($data);
+        $this->Statistic_model->set_read_preference_primary();
 
         $this->load->vars($this->data);
         $this->load->view('carousel');
@@ -170,7 +180,9 @@ class Statistic extends CI_Controller
         $reward = $this->Reward_model->getRewardByName('point');
         $reward_id = ($reward ? $reward[0]['_id'] : null);
 
+        $this->Player_model->set_read_preference_secondary();
         $iso_data = $this->Player_model->getIsotopePlayer($data);
+        $this->Player_model->set_read_preference_primary();
 
         $total_players = $iso_data['total'];
         $results = $iso_data['result'];
