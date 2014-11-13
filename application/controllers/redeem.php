@@ -280,14 +280,6 @@ class Redeem extends REST2_Controller
 
             // publish to node stream
             $eventMessage = $this->utility->getEventMessage('goods', '', '', '', '', '', $goodsData['name']);
-            $this->node->publish(array_merge($validToken, array(
-                'action_name' => 'redeem_goods',
-                'action_icon' => 'fa-gift',
-                'message' => $eventMessage,
-                'goods' => $event['goods_data']
-            )), $validToken['domain_name'], $validToken['site_id']);
-
-            // log event - goods
             $validToken = array_merge($validToken, array(
                 'pb_player_id' => $pb_player_id,
                 'goods_id' => new MongoId($goodsData['goods_id']),
@@ -298,11 +290,16 @@ class Redeem extends REST2_Controller
                 'action_icon' => 'fa-icon-shopping-cart',
                 'message' => $eventMessage
             ));
+
+            // log event - goods
             $this->tracker_model->trackGoods($validToken);
 
-            // publish to facebook notification
-            //if($fbData)
-            //    $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
+            $this->node->publish(array_merge($validToken, array(
+                'action_name' => 'redeem_goods',
+                'action_icon' => 'fa-gift',
+                'message' => $eventMessage,
+                'goods' => $event['goods_data']
+            )), $validToken['domain_name'], $validToken['site_id']);
         }
 
         return $redeemResult;
