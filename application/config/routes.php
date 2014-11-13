@@ -104,6 +104,8 @@ $route['Player/quest/'.ANY_STRING] = 'quest/questOfPlayer/$1';
 
 $route['Player/'.ANY_STRING.'/deduct'] = 'player/deduct_reward/$1';
 
+$route['Player/rankuser'] = 'player/rankuser';
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
