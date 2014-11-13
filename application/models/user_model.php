@@ -59,64 +59,59 @@ class User_model extends MY_Model
         $find_salt = $this->getUserInfo($user_id);
         $salt = $find_salt['salt'];
 
+        $check_update = false;
         $this->mongo_db->where('_id', new MongoID($user_id));
 
         if(isset($data['user_group']) && !is_null($data['user_group'])){
             $this->mongo_db->set('user_group_id', new MongoID($data['user_group']));
+            $check_update = true;
         }
 
         // if(isset($data['username']) && !is_null($data['username'])){
-        //     $this->mongo_db->set('username', $data['username']);    
+        //     $this->mongo_db->set('username', $data['username']);
+        //     $check_update = true;
         // }
         
         if(isset($data['firstname']) && !is_null($data['firstname'])){
-            $this->mongo_db->set('firstname', $data['firstname']);    
+            $this->mongo_db->set('firstname', $data['firstname']);
+            $check_update = true;
         }
         
         if(isset($data['lastname']) && !is_null($data['lastname'])){
-            $this->mongo_db->set('lastname', $data['lastname']);    
+            $this->mongo_db->set('lastname', $data['lastname']);
+            $check_update = true;
         }
 
         if(isset($data['email']) && !is_null($data['email'])){
-            $this->mongo_db->set('email', $data['email']);
-            $this->mongo_db->set('username', $data['email']);    
+            if(! $this->findEmail($data)){
+                $this->mongo_db->set('email', $data['email']);
+                $this->mongo_db->set('username', $data['email']);
+                $check_update = true;
+            }
         }
         
         if(isset($data['status']) && !is_null($data['status'])){
-            $this->mongo_db->set('status', (bool)$data['status']);    
+            $this->mongo_db->set('status', (bool)$data['status']);
+            $check_update = true;
         }
 
         if(isset($data['image']) && !is_null($data['image'])){
-            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));    
+            $this->mongo_db->set('image', html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8'));
+            $check_update = true;
         }
         
         if($data['password'] == $data['confirm_password']){
-            
-            if(trim($data['password']) =="" || trim($data['confirm_password']=="")){
-                /*
-                if(isset($data['edit_account'])){
-                    $this->session->set_flashdata('no_changes', $this->lang->line('text_no_changes'));
-                    redirect('user/edit_account');
-                }else{
-                    $this->mongo_db->update('user');
-                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                        
-                    redirect('/user', 'refresh');    
-                }
-                */
-                $this->mongo_db->update('user');
-            }else{
-                $this->mongo_db->set('password', dohash($data['password'],$salt));    
-                $this->mongo_db->update('user');
-                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
-                    if(isset($data['edit_account'])){
-                        $this->session->set_flashdata('success', $this->lang->line('text_success_update_user_account'));
-                        redirect('user/edit_account');
-                    }else{
-                        redirect('/user', 'refresh');        
-                    }
+            if(trim($data['password']) !="" && trim($data['confirm_password'] !="")){
+                $this->mongo_db->set('password', dohash($data['password'],$salt));
+                $check_update = true;
             }
-        } 
+        }
+
+        if($check_update){
+            $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+            return $this->mongo_db->update('user');
+        }
+        return false;
     }
 
     public function insertUser(){

@@ -18,6 +18,11 @@
             <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
             </div>
         <?php }?>
+        <?php if($success){ ?>
+            <div class="content messages half-width">
+                <div class="success"><?php echo $success; ?></div>
+            </div>
+        <?php }?>
         <?php if(validation_errors() || isset($message)) {?>
         	<div class="content messages half-width">
         		<?php echo validation_errors("<div class='warning'>","</div>")?>

@@ -985,7 +985,9 @@ class User extends MY_Controller
                     $data['image'] = '';
                 }
                 if($this->form_validation->run()){
-                    $this->User_model->editUser($user_id, $data);
+                    if($this->User_model->editUser($user_id, $data)){
+                        $this->data['success'] = $this->lang->line('text_success_update');
+                    }
                 }
             }
 
