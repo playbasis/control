@@ -891,7 +891,7 @@ class Player_model extends MY_Model
 	private function updateLastAlertLimitUser($client_id, $site_id)
     {
 		$this->set_site_mongodb($site_id);
-		$mongoDate = new MongoDate();
+		$mongoDate = new MongoDate(time());
 
         $this->mongo_db->where(array(
 			"client_id" => $client_id,
