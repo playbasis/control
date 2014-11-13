@@ -4,7 +4,7 @@
         <h1><img src="<?php echo base_url();?>image/category.png" alt="" /> <?php echo $this->lang->line('text_edit_account'); ?></h1>
 	        <div class="buttons">
 	            <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_save'); ?></button>
-	            <button class="btn btn-info" onclick="location = baseUrlPath+'dashboard'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
+	            <button class="btn btn-info" onclick="location = baseUrlPath+'account'" type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
 	        </div>
         </div><!-- .header -->
         <div class="content">
@@ -18,7 +18,7 @@
             <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
             </div>
         <?php }?>
-        <?php if($success){ ?>
+        <?php if(isset($success)){ ?>
             <div class="content messages half-width">
                 <div class="success"><?php echo $success; ?></div>
             </div>
@@ -36,11 +36,11 @@
 	        	<table class="form">
 	        		<tr>
 	                    <td><?php echo $this->lang->line('form_firstname'); ?></td>
-	                    <td><?php echo $user_info['firstname'];?></td>
+	                    <td><input type="text" name="firstname" size="100" value="<?php echo $user_info['firstname'];?>" /></td>
 	                </tr>
 	                <tr>
 	                    <td><?php echo $this->lang->line('form_lastname'); ?></td>
-	                    <td><?php echo $user_info['lastname'];?></td>
+	                    <td><input type="text" name="lastname" size="100" value="<?php echo $user_info['lastname'];?>" /></td>
 	                </tr>
 	                <tr>
 	                    <td><?php echo $this->lang->line('form_email'); ?></td>
@@ -52,7 +52,7 @@
 	                </tr>
 	                <tr>
 	                    <td><?php echo $this->lang->line('form_password'); ?></td>
-	                    <td><input type="password" name = "password" size="100"/></td>
+	                    <td><input type="password" name="password" size="100"/></td>
 	                </tr>
 	                <tr>
 	                    <td><?php echo $this->lang->line('form_confirm_password'); ?></td>

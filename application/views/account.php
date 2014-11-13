@@ -32,10 +32,6 @@
             	<div id="tab-general">
             		<table class="form">
 			            <tr>
-				            <td><?php echo $this->lang->line('text_name'); ?>:</td>
-				            <td><?php echo $client['first_name'].' '.$client['last_name']; ?></td>
-			            </tr>
-			            <tr>
 				            <td><?php echo $this->lang->line('text_company'); ?>:</td>
 				            <td><?php echo $client['company']; ?></td>
 			            </tr>
