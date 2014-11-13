@@ -11,9 +11,11 @@ class Service_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false, $show_quest=false){
+    public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false, $show_quest=false, $show_redeem=false){
 
         $this->set_site_mongodb($site_id);
+
+        $event_type = array('REWARD');
 
         if($show_login){
             if($reward_id){
@@ -44,7 +46,7 @@ class Service_model extends MY_Model
                 }
             }
 
-            $this->mongo_db->where_in('event_type', array('REWARD', 'LOGIN'));
+            $event_type[] = 'LOGIN';
         }else{
             if($reward_id){
 
@@ -76,9 +78,15 @@ class Service_model extends MY_Model
                     $this->mongo_db->where_ne('reward_id', null);
                 }
             }
-            $this->mongo_db->where_in('event_type', array('REWARD'));
+
             $this->mongo_db->where_gt('value', 0);
         }
+
+        if($show_redeem){
+            $event_type[] = 'REDEEM';
+        }
+
+        $this->mongo_db->where_in('event_type', $event_type);
 
         if(!$show_quest){
             $this->mongo_db->where('quest_id', null);
