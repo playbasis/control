@@ -40,84 +40,155 @@ class Account extends MY_Controller
 		playbasis_payment_channel - store all available payment channels
 	*/
 
-	public function index() {
+//	public function index() {
+//
+//		if(!$this->validateAccess()){
+//			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+//		}
+//
+//		$this->data['meta_description'] = $this->lang->line('meta_description');
+//		$this->data['title'] = $this->lang->line('title');
+//		$this->data['heading_title'] = $this->lang->line('account_title');
+//		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+//		$this->data['main'] = 'account';
+//
+//		/* check that current logged in user is normal user (not super admin) */
+//		if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+//		    $this->data['main'] = 'account_admin';
+//		    $this->load->vars($this->data);
+//		    $this->render_page('template');
+//		    return;
+//		}
+//
+//		$site_id = $this->User_model->getSiteId();
+//		if (!empty($site_id)) {
+//			/* clear session from 'add_site' if applicable */
+//			if ($this->session->userdata('site')) $this->session->unset_userdata('site');
+//			if ($this->session->userdata('plan_id')) $this->session->unset_userdata('plan_id');
+//
+//			/* find details of the subscribed plan of the client */
+//			$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+//			$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+//			if (!array_key_exists('price', $plan)) {
+//				$plan['price'] = DEFAULT_PLAN_PRICE;
+//			}
+//			$price = $plan['price'];
+//			$this->session->set_userdata('plan', $plan);
+//			$plan_days_total = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+//			if ($plan_days_total == null) $plan_days_total = 0;
+//			$plan_free_flag = $price <= 0;
+//			$plan_paid_flag = !$plan_free_flag;
+//			$plan_trial_flag = $plan_paid_flag && $plan_days_total > 0;
+//
+//			/* find details of the client */
+//			$client = $this->Client_model->getClientById($this->User_model->getClientId());
+//			// "date_start" and "date_expire" will be set when we receive payment confirmation in each month
+//			// So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
+//			// In addition, "date_expire" will include extra days to cover grace period.
+//			$date_start = array_key_exists('date_start', $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
+//			$date_expire = array_key_exists('date_expire', $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
+//			// Whenever we set "date_billing", it means that the client has already set up subscription.
+//			// The date will be immediately after the trial period (if exits),
+//			// of which the date is the first day of the client in billing period of the plan.
+//			// After the billing period has ended, "date_billing" is unset from client's record,
+//			// so the client has to extend the subscription before contract expires.
+//			$date_billing = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
+//			$days_remaining = $this->find_diff_in_days(time(), $date_billing);
+//
+//			$this->data['client'] = $client;
+//			$this->data['client']['valid'] = ($plan_free_flag || ($date_billing && $this->check_valid_payment($client)));
+//			$this->data['client']['trial_remaining_days'] = $days_remaining;
+//			$this->data['client']['date_billing'] = $date_billing;
+//			$this->data['client']['date_start'] = $date_start;
+//			$this->data['client']['date_expire'] = $date_expire;
+//			$this->data['client']['date_added'] = $client['date_added']->sec;
+//			$this->data['client']['date_modified'] = $client['date_modified']->sec;
+//			$this->data['plan'] = $plan;
+//			$this->data['plan']['free_flag'] = $plan_free_flag;
+//			$this->data['plan']['paid_flag'] = $plan_paid_flag;
+//			$this->data['plan']['trial_flag'] = $plan_trial_flag;
+//			$this->data['plan']['trial_total_days'] = $plan_days_total;
+//			$this->data['plan']['date_added'] = $plan_subscription['date_added']->sec;
+//			$this->data['plan']['date_modified'] = $plan_subscription['date_modified']->sec;
+//		} else {
+////			redirect('/account/add_site', 'refresh');
+//			redirect('/account/update_profile', 'refresh');
+//		}
+//
+//		$this->load->vars($this->data);
+//		$this->render_page('template');
+//	}
 
-		if(!$this->validateAccess()){
-			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-		}
+    public function index() {
 
-		$this->data['meta_description'] = $this->lang->line('meta_description');
-		$this->data['title'] = $this->lang->line('title');
-		$this->data['heading_title'] = $this->lang->line('account_title');
-		$this->data['text_no_results'] = $this->lang->line('text_no_results');
-		$this->data['main'] = 'account';
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        }
 
-		/* check that current logged in user is normal user (not super admin) */
-		if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
-		    $this->data['main'] = 'account_admin';
-		    $this->load->vars($this->data);
-		    $this->render_page('template');
-		    return;
-		}
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('account_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['main'] = 'account';
 
-		$site_id = $this->User_model->getSiteId();
-		if (!empty($site_id)) {
-			/* clear session from 'add_site' if applicable */
-			if ($this->session->userdata('site')) $this->session->unset_userdata('site');
-			if ($this->session->userdata('plan_id')) $this->session->unset_userdata('plan_id');
+        /* check that current logged in user is normal user (not super admin) */
+        if ($this->User_model->getUserGroupId() == $this->User_model->getAdminGroupID()) {
+            $this->data['main'] = 'account_admin';
+            $this->load->vars($this->data);
+            $this->render_page('template');
+            return;
+        }
 
-			/* find details of the subscribed plan of the client */
-			$plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
-			$plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
-			if (!array_key_exists('price', $plan)) {
-				$plan['price'] = DEFAULT_PLAN_PRICE;
-			}
-			$price = $plan['price'];
-			$this->session->set_userdata('plan', $plan);
-			$plan_days_total = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
-			if ($plan_days_total == null) $plan_days_total = 0;
-			$plan_free_flag = $price <= 0;
-			$plan_paid_flag = !$plan_free_flag;
-			$plan_trial_flag = $plan_paid_flag && $plan_days_total > 0;
+        if ($this->session->userdata('plan_id')) $this->session->unset_userdata('plan_id');
 
-			/* find details of the client */
-			$client = $this->Client_model->getClientById($this->User_model->getClientId());
-			// "date_start" and "date_expire" will be set when we receive payment confirmation in each month
-			// So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
-			// In addition, "date_expire" will include extra days to cover grace period.
-			$date_start = array_key_exists('date_start', $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
-			$date_expire = array_key_exists('date_expire', $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
-			// Whenever we set "date_billing", it means that the client has already set up subscription.
-			// The date will be immediately after the trial period (if exits),
-			// of which the date is the first day of the client in billing period of the plan.
-			// After the billing period has ended, "date_billing" is unset from client's record,
-			// so the client has to extend the subscription before contract expires.
-			$date_billing = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
-			$days_remaining = $this->find_diff_in_days(time(), $date_billing);
+        /* find details of the subscribed plan of the client */
+        $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+        if (!array_key_exists('price', $plan)) {
+            $plan['price'] = DEFAULT_PLAN_PRICE;
+        }
+        $price = $plan['price'];
+        $this->session->set_userdata('plan', $plan);
+        $plan_days_total = array_key_exists('limit_others', $plan) && array_key_exists('trial', $plan['limit_others']) ? $plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+        if ($plan_days_total == null) $plan_days_total = 0;
+        $plan_free_flag = $price <= 0;
+        $plan_paid_flag = !$plan_free_flag;
+        $plan_trial_flag = $plan_paid_flag && $plan_days_total > 0;
 
-			$this->data['client'] = $client;
-			$this->data['client']['valid'] = ($plan_free_flag || ($date_billing && $this->check_valid_payment($client)));
-			$this->data['client']['trial_remaining_days'] = $days_remaining;
-			$this->data['client']['date_billing'] = $date_billing;
-			$this->data['client']['date_start'] = $date_start;
-			$this->data['client']['date_expire'] = $date_expire;
-			$this->data['client']['date_added'] = $client['date_added']->sec;
-			$this->data['client']['date_modified'] = $client['date_modified']->sec;
-			$this->data['plan'] = $plan;
-			$this->data['plan']['free_flag'] = $plan_free_flag;
-			$this->data['plan']['paid_flag'] = $plan_paid_flag;
-			$this->data['plan']['trial_flag'] = $plan_trial_flag;
-			$this->data['plan']['trial_total_days'] = $plan_days_total;
-			$this->data['plan']['date_added'] = $plan_subscription['date_added']->sec;
-			$this->data['plan']['date_modified'] = $plan_subscription['date_modified']->sec;
-		} else {
-//			redirect('/account/add_site', 'refresh');
-			redirect('/account/update_profile', 'refresh');
-		}
+        /* find details of the client */
+        $client = $this->Client_model->getClientById($this->User_model->getClientId());
+        // "date_start" and "date_expire" will be set when we receive payment confirmation in each month
+        // So if whenever payment fails, the two fields would not be updated, which results in blocking the usage of API.
+        // In addition, "date_expire" will include extra days to cover grace period.
+        $date_start = array_key_exists('date_start', $client) && !empty($client['date_start']) ? $client['date_start']->sec : null;
+        $date_expire = array_key_exists('date_expire', $client) && !empty($client['date_expire']) ? $client['date_expire']->sec : null;
+        // Whenever we set "date_billing", it means that the client has already set up subscription.
+        // The date will be immediately after the trial period (if exits),
+        // of which the date is the first day of the client in billing period of the plan.
+        // After the billing period has ended, "date_billing" is unset from client's record,
+        // so the client has to extend the subscription before contract expires.
+        $date_billing = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
+        $days_remaining = $this->find_diff_in_days(time(), $date_billing);
 
-		$this->load->vars($this->data);
-		$this->render_page('template');
-	}
+        $this->data['client'] = $client;
+        $this->data['client']['valid'] = ($plan_free_flag || ($date_billing && $this->check_valid_payment($client)));
+        $this->data['client']['trial_remaining_days'] = $days_remaining;
+        $this->data['client']['date_billing'] = $date_billing;
+        $this->data['client']['date_start'] = $date_start;
+        $this->data['client']['date_expire'] = $date_expire;
+        $this->data['client']['date_added'] = $client['date_added']->sec;
+        $this->data['client']['date_modified'] = $client['date_modified']->sec;
+        $this->data['plan'] = $plan;
+        $this->data['plan']['free_flag'] = $plan_free_flag;
+        $this->data['plan']['paid_flag'] = $plan_paid_flag;
+        $this->data['plan']['trial_flag'] = $plan_trial_flag;
+        $this->data['plan']['trial_total_days'] = $plan_days_total;
+        $this->data['plan']['date_added'] = $plan_subscription['date_added']->sec;
+        $this->data['plan']['date_modified'] = $plan_subscription['date_modified']->sec;
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
 
 	public function subscribe() {
 		$this->purchase(PURCHASE_SUBSCRIBE);
