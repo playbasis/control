@@ -46,6 +46,15 @@
 			            </tr>
 			            <tr>
 				            <td>
+						
+				            <?php 
+				            	 
+				            	  $cancel_return_url = base_url().(index_page() == '') ? '' : index_page()."/";
+				            	if( !empty($params['modify']) ){
+				            		$cancel_return_url .= "account/changeplan"; 
+				            	}else{
+				            		$cancel_return_url .= "account/subscribe"; 
+				            }; ?>
 			            <script src="https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=<?php echo PAYPAL_MERCHANT_ID; ?>"
 			                    data-button="subscribe"
 			                    data-name="<?php echo PRODUCT_NAME; ?>"
@@ -54,7 +63,7 @@
 			                    data-recurrence="1"
 			                    data-period="M"
 			                    data-custom="<?php echo $this->session->userdata('client_id')->{'$id'}.','.$params['plan_id']->{'$id'}; ?>"
-			                    data-cancel_return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/subscribe"
+			                    data-cancel_return="<?php echo $cancel_return_url; ?>"
 			                    data-return="<?php echo base_url(); ?><?php echo (index_page() == '')? '' : index_page()."/"; ?>account/paypal_completed"
 			                    data-callback="<?php echo $params['callback']; ?>"
 			                    data-env="<?php echo PAYPAL_ENV; ?>"

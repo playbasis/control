@@ -201,6 +201,9 @@ class Account extends MY_Controller
 	public function downgrade() {
 		$this->purchase(PURCHASE_DOWNGRADE);
 	}
+	public function changeplan() {
+		$this->purchase(PURCHASE_UPGRADE);
+	}
 
 	private function purchase($mode) {
 
