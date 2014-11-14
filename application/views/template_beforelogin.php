@@ -40,7 +40,8 @@
 		</a>
 
 		<div class="pbr-footer-copyright">
-			<?php echo $this->lang->line('text_footer'); ?>
+			<?php echo $this->lang->line('text_footer'); ?><br>
+                                    If you have any questions or you need help, please send us an email to  <a href="mailto:support@playbasis.com">support@playbasis.com</a>
 		</div>
 
 	</div>
