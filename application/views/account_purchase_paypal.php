@@ -2,7 +2,7 @@
 <div id="content" class="span10">
 
     <div class="purchase-summary-wrapper box-gray">
-    		<h1>Upgrade to <?php echo PRODUCT_NAME; ?> <?php echo $params['plan_name']; ?></h1>
+    		<h1><?php echo $params['modify'] ? 'Change plan to' : 'Upgrade plan to'; ?> <?php echo PRODUCT_NAME; ?> <?php echo $params['plan_name']; ?></h1>
     		<h2>You'll be charged <strong>$<?php echo $params['price']; ?></strong>/Month </h2>
     		<p>Your payment for this purchase is processed securely by <img src="<?php echo base_url();?>image/payment/paypal-newlogo.png"></p>
     		<!--p>Enjoy 30 days trial. Start to pay on <?php echo date('d M Y'); ?></p-->
@@ -64,7 +64,7 @@
 			value: <?php echo $params['modify'] ? PAYPAL_MODIFY_CURRENT_SUBSCRIPTION_ONLY : PAYPAL_MODIFY_NEW_SUBSCRIPTION_ONLY; ?>
 		}).appendTo('form');
 
-		$('form button[type=submit]').text('Upgrade Your Package')
+		$('form button[type=submit]').text("<?php echo $params['modify'] ? 'Change Your Package' : 'Upgrade Your Package'; ?>")
 	});
 //--></script>
 

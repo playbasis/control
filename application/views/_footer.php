@@ -2,6 +2,9 @@
 </div>
 <footer class="footer">
     <p>
+        <span class="footer-support">
+            If you have any questions or you need help, please send us an email to  <a href="mailto:support@playbasis.com">support@playbasis.com</a>
+        </span>
         <span class="footer-copy"><?php echo $this->lang->line('text_footer'); ?> <span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=92vN5shBDgwsjV7hvDwDsZvCbo8huBQoo6oOypCaK7B5MgEohD"></script></span></span>
     </p>
 

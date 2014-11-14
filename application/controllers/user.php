@@ -792,6 +792,7 @@ class User extends MY_Controller
             'username' => $user_info['username'],
             'key' => $user_info['random_key'],
             'url'=> site_url('enable_user?key='),
+            'base_url' =>site_url()
         );
 
         $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
@@ -1024,7 +1025,8 @@ class User extends MY_Controller
                     $this->load->library('parser');
                
                     $data = array(
-                        'url' => site_url('reset_password?key='.$random_key)
+                        'url' => site_url('reset_password?key='.$random_key),
+                        'base_url' =>site_url()
                         );
 
                     $config['mailtype'] = 'html';
