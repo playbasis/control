@@ -72,5 +72,10 @@ define('EMAIL_BCC_PLAYBASIS_EMAIL', 'pascal@playbasis.com');
 
 define('SMS_TYPE_REDEEM_GOODS', 'redeemGoods');
 
+define('CACHE_ADAPTER', 'file');
+//define('CACHE_ADAPTER', 'memcached');
+define('CACHE_KEY_VERSION', 'version-api');
+define('CACHE_TTL_IN_SEC', 10*60);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
