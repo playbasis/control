@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-define('EMAIL_FROM', 'info@playbasis.com');
+
 define('EMAIL_MAX_SENT', 3);
 define('DAYS_TO_BECOME_INACTIVE', 30);
 define('DAYS_TO_SEND_ANOTHER_EMAIL', 7);

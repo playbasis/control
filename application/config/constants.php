@@ -61,6 +61,7 @@ define('PAYPAL_PAYMENT_STATUS_RETURNED', 'Returned'); // Money was returned to t
 define('PAYPAL_PAYMENT_STATUS_UNCLAIMED', 'Unclaimed'); // The recipient hasn't yet accepted this payment
 define('GRACE_PERIOD_IN_DAYS', 5);
 
+define('EMAIL_FROM', 'no-reply@playbasis.com');
 define('EMAIL_TYPE_USER', 'user');
 define('EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS', 'notifyInactiveClients');
 define('EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS', 'notifyFreeActiveClientsToSubscribe');

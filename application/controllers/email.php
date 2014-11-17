@@ -1,8 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
-
-define('EMAIL_FROM', 'info@playbasis.com');
-
 /**
  * Endpoint for Sending Email via Amazon Simple Email Service (SES)
  *
