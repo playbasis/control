@@ -24,7 +24,7 @@
                 <ul class="isot-player-actions">
 
                     <?php if ($reset_quest) { ?>
-                    <li action="setting"><a href="#" style="text-decoration: none" title="Reset quest" class="tooltip" onclick="openResetQuestModal('<?php echo $player['pb_player_id'] ?>')"><i class="icon-cogs"></i></a></li>
+                    <li action="setting"><a href="#" style="text-decoration: none" title="Reset quest" data-toggle="tooltip" onclick="openResetQuestModal('<?php echo $player['pb_player_id'] ?>')"><i class="fa fa-cogs"></i></a></li>
                     <?php } else { ?>
                     <li action="setting"><i class="icon-cogs"></i></li>
                     <?php } ?>

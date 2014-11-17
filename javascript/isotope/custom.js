@@ -79,6 +79,6 @@ $(function(){
         // call Isotope as a callback
         function( newElements ) {
             //console.log('hello');
-            $container.isotope( 'appended', $( newElements ) ); 
+            $container.isotope( 'appended', $( newElements ) );
         });
     });
