@@ -25,7 +25,7 @@
             	<div id="tab-general">
             		<table class="form">
 			            <tr>
-				            <td><A HREF="https://www.<?php echo PAYPAL_ENV == 'sandbox' ? PAYPAL_ENV.'.' : '' ?>paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=<?php echo PAYPAL_MERCHANT_ID; ?>"><IMG BORDER="0" SRC="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif"></A></td>
+				            <td><A HREF="https://www.<?php echo PAYPAL_ENV == 'sandbox' ? PAYPAL_ENV.'.' : '' ?>paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=<?php echo PAYPAL_MERCHANT_ID; ?>" target="_blank"><IMG BORDER="0" SRC="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif"></A></td>
 				            <td>&nbsp;</td>
 			            </tr>
             		</table>
