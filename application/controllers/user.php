@@ -915,7 +915,7 @@ class User extends MY_Controller
 
                 /* force login, so that user doesn't have to type email and password (obtained by email) */
                 $this->User_model->force_login($user_id);
-                redirect('/', 'refresh');
+                redirect('account/update_profile', 'refresh');
             }else{
                 echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
                 echo "<script>window.location.href = '".site_url()."';</script>";
