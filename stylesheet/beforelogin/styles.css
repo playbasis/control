@@ -910,7 +910,9 @@ table {
   fill: #b5b9bd;
 }
 #pb-registration .pbr-footer-copyright {
+  text-align: right;
   float: right;
+  line-height: 17px;
 }
 
 .message-success {

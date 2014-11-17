@@ -792,6 +792,7 @@ class User extends MY_Controller
             'username' => $user_info['username'],
             'key' => $user_info['random_key'],
             'url'=> site_url('enable_user?key='),
+            'base_url' =>site_url()
         );
 
         $htmlMessage = $this->parser->parse('emails/user_activated.html', $vars, true);
@@ -969,11 +970,15 @@ class User extends MY_Controller
 
             $this->data['usergroup_name'] = $this->User_model->getUserGroupNameForUser($user_id);
 
+            $this->form_validation->set_rules('firstname', $this->lang->line('form_firstname'), 'trim|required|min_length[3]|max_length[40]|xss_clean|check_space');
+            $this->form_validation->set_rules('lastname', $this->lang->line('form_lastname'), 'trim|required|min_length[3]|max_length[40]|xss_clean');
             $this->form_validation->set_rules('password', $this->lang->line('form_password'), 'trim|min_length[3]|max_length[40]|xss_clean|check_space');
             $this->form_validation->set_rules('password_confirm', $this->lang->line('form_confirm_password'), 'matches[password]');
 
             if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 $data = array(
+                    'firstname'=>$this->input->post('firstname'),
+                    'lastname'=>$this->input->post('lastname'),
                     'password'=>$this->input->post('password'),
                     'confirm_password' =>$this->input->post('password_confirm'),
                     'edit_account'=>true,
@@ -985,7 +990,9 @@ class User extends MY_Controller
                     $data['image'] = '';
                 }
                 if($this->form_validation->run()){
-                    $this->User_model->editUser($user_id, $data);
+                    if($this->User_model->editUser($user_id, $data)){
+                        $this->data['success'] = $this->lang->line('text_success_update');
+                    }
                 }
             }
 
@@ -1018,7 +1025,8 @@ class User extends MY_Controller
                     $this->load->library('parser');
                
                     $data = array(
-                        'url' => site_url('reset_password?key='.$random_key)
+                        'url' => site_url('reset_password?key='.$random_key),
+                        'base_url' =>site_url()
                         );
 
                     $config['mailtype'] = 'html';

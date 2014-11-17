@@ -13,7 +13,7 @@
       <div class="row">
         <h1>
           <small>Get started with Gamification today!</small>
-          Complete Your Account
+          Create a password
         </h1>
       </div>
     </header><!-- /header -->
@@ -45,7 +45,7 @@
               <fieldset>
 
                 <div class="pbf-field-group pbf-half ">
-                  <input type="submit" value="Complate Infomation">
+                  <input type="submit" value="Complete Information">
                 </div>
 
               </fieldset>

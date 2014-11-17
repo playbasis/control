@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="pbf-field-group pbf-half pbf-checked">
-                    <a href="#login" role="tab" data-toggle="tab">Cancle</a>
+                    <a href="#login" role="tab" data-toggle="tab">Cancel</a>
                 </div>
 
               </fieldset>

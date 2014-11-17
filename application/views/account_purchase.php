@@ -17,7 +17,7 @@
 
                 <?php $attributes = array('id' => 'form');?>
                 <?php echo form_open($form ,$attributes); ?>
-                                    
+
                                     <input type="hidden" name="plan" >
                                     <input type="hidden" name="channel" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>">
                                     
@@ -67,7 +67,7 @@
                             </li>
                             <li class="button">
                             <?php if ($plan['_id'] != $user_plan['_id']) { ?>
-                              <a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">
+                              <a  href="javascript:void(0)" class="plan-btn free-plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">
                                 Choose Plan</a>
                               <?php } else { ?>
                                 <span class="plan-current-btn">Current Plan</span>
@@ -766,7 +766,12 @@
         
         $('.plan-btn').click(function(){
             $('input[name=plan]').val($(this).attr('data-plan-id'));
-            $('form#form').attr('action', '<?php echo current_url().($user_plan_date_billing ? '/upgrade' : '/subscribe'); ?>');
+            $('form#form').attr('action', '<?php echo site_url("account/".($user_plan_date_billing ? "upgrade" : "subscribe") ); ?>');
+
+            if( $(this).hasClass('free-plan-btn') ){
+                $('form#form').attr('method', 'POST');
+                $('form#form').attr('action', '<?php echo site_url("account/cancel_subscription"); ?>' );              
+            }
             $('form#form').submit();
         })
 
