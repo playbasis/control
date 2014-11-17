@@ -18,6 +18,6 @@
             <h1>Change plan to PLAYBASIS API SUBSCRIPTION BASIC</h1>
             <h2>You'll be charged <strong>$0</strong>/Month </h2>
             <p>Your payment for this purchase is processed securely by <img src="<?php echo base_url();?>image/payment/paypal-newlogo.png"></p>
-            <a href="https://www.<?php echo PAYPAL_ENV == 'sandbox' ? PAYPAL_ENV.'.' : '' ?>paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=<?php echo PAYPAL_MERCHANT_ID; ?>" class="btn-hero">Change Your Package</a>
+            <a href="https://www.<?php echo PAYPAL_ENV == 'sandbox' ? PAYPAL_ENV.'.' : '' ?>paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=<?php echo PAYPAL_MERCHANT_ID; ?>" class="btn-hero" target="_blank">Change Your Package</a>
     </div>
 </div><!-- #content .span10 -->
