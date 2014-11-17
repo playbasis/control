@@ -180,7 +180,11 @@ class Error extends CI_Model
         $errorData['time'] = date('r e');
         $version = $this->cache->get(CACHE_KEY_VERSION);
         if ($version === false) {
-            $version = @file_get_contents('./application/config/version.txt');
+            $str = @file_get_contents('./pom.xml');
+            $xml = new SimpleXMLElement($str);
+            $version = (string) $xml->version;
+            $obj = explode('-', $version);
+            $version = $obj[0];
             $this->cache->save(CACHE_KEY_VERSION, $version, CACHE_TTL_IN_SEC);
         }
         $errorData['version'] = $version;
