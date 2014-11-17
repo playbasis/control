@@ -184,6 +184,7 @@ class User_model extends MY_Model
                 'password' => $insert_password,
                 'key' => $random_key,
                 'url'=> site_url('enable_user/?key='),
+                'base_url' =>site_url()
             );
 
             if($insert_password == DEFAULT_PASSWORD){
