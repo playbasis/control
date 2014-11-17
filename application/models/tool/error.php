@@ -5,6 +5,7 @@ class Error extends CI_Model
     public function __construct()
     {
         parent::__construct();
+        $this->load->driver('cache', array('adapter' => CACHE_ADAPTER));
     }
     public function setError($code, $dataArray = array())
     {
@@ -177,6 +178,12 @@ class Error extends CI_Model
         }
         $errorData['timestamp'] = (int) time();
         $errorData['time'] = date('r e');
+        $version = $this->cache->get(CACHE_KEY_VERSION);
+        if ($version === false) {
+            $version = @file_get_contents('./application/config/version.txt');
+            $this->cache->save(CACHE_KEY_VERSION, $version, CACHE_TTL_IN_SEC);
+        }
+        $errorData['version'] = $version;
         return $errorData;
     }
 }
