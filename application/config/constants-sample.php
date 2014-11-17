@@ -64,7 +64,7 @@ define('PURCHASE_UPGRADE', 1);
 define('PURCHASE_DOWNGRADE', 2);
 define('FOREVER', 100); // number of years our system used for representing an unlimited value (for example, free package has no "date_expire")
 
-define('EMAIL_FROM', 'info@playbasis.com');
+define('EMAIL_FROM', 'no-reply@playbasis.com');
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
