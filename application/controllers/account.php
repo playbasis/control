@@ -12,7 +12,8 @@ class Account extends MY_Controller
 
 		$this->load->model('User_model');
 		$this->load->model('Client_model');
-		$this->load->model('Domain_model');
+//		$this->load->model('Domain_model');
+		$this->load->model('App_model');
 		$this->load->model('Plan_model');
 
 		if(!$this->User_model->isLogged()){
@@ -262,37 +263,37 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
-	public function add_site() {
-
-		if(!$this->validateAccess()){
-			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-		}
-
-		$this->data['meta_description'] = $this->lang->line('meta_description');
-		$this->data['title'] = $this->lang->line('title');
-		$this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$this->data['message'] = null;
-
-			$this->form_validation->set_rules('site', $this->lang->line('entry_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|url_exists_without_http');
-			$site = $this->input->post('site');
-			$this->session->set_userdata('site', $site);
-			if (!empty($site) && $this->Domain_model->checkDomainExists(array('domain_name' => $site))) $this->data['message'] = 'This site has already been registered';
-
-			if($this->form_validation->run() && $this->data['message'] == null){
-				redirect('/account/choose_plan', 'refresh');
-			}
-		}
-
-		if ($this->session->userdata('site')) $this->data['site']  = $this->session->userdata('site');
-		$this->data['heading_title'] = $this->lang->line('add_site_title');
-		$this->data['main'] = 'account_add_site';
-		$this->data['form'] = 'account/add_site';
-
-		$this->load->vars($this->data);
-		$this->render_page('template');
-	}
+//	public function add_site() {
+//
+//		if(!$this->validateAccess()){
+//			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+//		}
+//
+//		$this->data['meta_description'] = $this->lang->line('meta_description');
+//		$this->data['title'] = $this->lang->line('title');
+//		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+//
+//		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//			$this->data['message'] = null;
+//
+//			$this->form_validation->set_rules('site', $this->lang->line('entry_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space|url_exists_without_http');
+//			$site = $this->input->post('site');
+//			$this->session->set_userdata('site', $site);
+//			if (!empty($site) && $this->Domain_model->checkDomainExists(array('domain_name' => $site))) $this->data['message'] = 'This site has already been registered';
+//
+//			if($this->form_validation->run() && $this->data['message'] == null){
+//				redirect('/account/choose_plan', 'refresh');
+//			}
+//		}
+//
+//		if ($this->session->userdata('site')) $this->data['site']  = $this->session->userdata('site');
+//		$this->data['heading_title'] = $this->lang->line('add_site_title');
+//		$this->data['main'] = 'account_add_site';
+//		$this->data['form'] = 'account/add_site';
+//
+//		$this->load->vars($this->data);
+//		$this->render_page('template');
+//	}
 
     public function first_app() {
 
@@ -390,67 +391,67 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
-	public function start() {
-
-		if(!$this->validateAccess()){
-			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-		}
-
-		$this->data['meta_description'] = $this->lang->line('meta_description');
-		$this->data['title'] = $this->lang->line('title');
-		$this->data['text_no_results'] = $this->lang->line('text_no_results');
-
-		$this->data['plan_data'] = $this->Plan_model->listDisplayPlans();
-
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-			$this->data['message'] = null;
-
-			$site = $this->session->userdata('site');
-			$plan_id = $this->session->userdata('plan_id');
-			if (empty($site)) $this->data['message'] = 'Invalid site';
-			if (empty($plan_id)) $this->data['message'] = 'Invalid plan';
-
-			if($this->data['message'] == null){
-				$site = $this->session->userdata('site');
-				$plan_id = new MongoId($this->session->userdata('plan_id'));
-				$client_id = $this->User_model->getClientId();
-
-				/* add domain in playbasis_client_site */
-				$site_id = $this->Domain_model->addDomain(array(
-					'client_id' => $this->User_model->getClientId(),
-					'domain_name' => $site,
-					'site_name' => $site
-				));
-
-				/* bind plan to client in playbasis_permission */
-				$this->Client_model->addPlanToPermission(array(
-					'client_id' => $client_id->{'$id'},
-					'plan_id' => $plan_id->{'$id'},
-					'site_id' => $site_id->{'$id'},
-				));
-
-				/* populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client */
-				$another_data['domain_value'] = array(
-					'site_id' => $site_id,
-					'status' => true
-				);
-				$this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] finally, populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
-
-				/* reset site_id, so that we con't have to force the user to log out */
-				$site_id = $this->User_model->fetchSiteId($client_id);
-				$this->User_model->updateSiteId($site_id);
-				redirect('/account', 'refresh');
-			}
-		}
-
-		$this->data['plan_id'] = $this->session->userdata('plan_id') ? $this->session->userdata('plan_id') : null;
-		$this->data['heading_title'] = $this->lang->line('start_title');
-		$this->data['main'] = 'account_start';
-		$this->data['form'] = 'account/start';
-
-		$this->load->vars($this->data);
-		$this->render_page('template');
-	}
+//	public function start() {
+//
+//		if(!$this->validateAccess()){
+//			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+//		}
+//
+//		$this->data['meta_description'] = $this->lang->line('meta_description');
+//		$this->data['title'] = $this->lang->line('title');
+//		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+//
+//		$this->data['plan_data'] = $this->Plan_model->listDisplayPlans();
+//
+//		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//			$this->data['message'] = null;
+//
+//			$site = $this->session->userdata('site');
+//			$plan_id = $this->session->userdata('plan_id');
+//			if (empty($site)) $this->data['message'] = 'Invalid site';
+//			if (empty($plan_id)) $this->data['message'] = 'Invalid plan';
+//
+//			if($this->data['message'] == null){
+//				$site = $this->session->userdata('site');
+//				$plan_id = new MongoId($this->session->userdata('plan_id'));
+//				$client_id = $this->User_model->getClientId();
+//
+//				/* add domain in playbasis_client_site */
+//				$site_id = $this->Domain_model->addDomain(array(
+//					'client_id' => $this->User_model->getClientId(),
+//					'domain_name' => $site,
+//					'site_name' => $site
+//				));
+//
+//				/* bind plan to client in playbasis_permission */
+//				$this->Client_model->addPlanToPermission(array(
+//					'client_id' => $client_id->{'$id'},
+//					'plan_id' => $plan_id->{'$id'},
+//					'site_id' => $site_id->{'$id'},
+//				));
+//
+//				/* populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client */
+//				$another_data['domain_value'] = array(
+//					'site_id' => $site_id,
+//					'status' => true
+//				);
+//				$this->Client_model->editClientPlan($client_id, $plan_id, $another_data); // [6] finally, populate 'feature', 'action', 'reward', 'jigsaw' into playbasis_xxx_to_client
+//
+//				/* reset site_id, so that we con't have to force the user to log out */
+//				$site_id = $this->User_model->fetchSiteId($client_id);
+//				$this->User_model->updateSiteId($site_id);
+//				redirect('/account', 'refresh');
+//			}
+//		}
+//
+//		$this->data['plan_id'] = $this->session->userdata('plan_id') ? $this->session->userdata('plan_id') : null;
+//		$this->data['heading_title'] = $this->lang->line('start_title');
+//		$this->data['main'] = 'account_start';
+//		$this->data['form'] = 'account/start';
+//
+//		$this->load->vars($this->data);
+//		$this->render_page('template');
+//	}
 
 	private function find_next_billing_date_of($date_billing, $date_as_of) {
 		$current = $date_billing;

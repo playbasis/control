@@ -12,7 +12,8 @@ class Widget extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        $this->load->model('Domain_model');
+//        $this->load->model('Domain_model');
+        $this->load->model('App_model');
         $this->load->model('Custompoints_model');
         $this->load->model('Widget_model');
         if(!$this->User_model->isLogged()){
@@ -34,7 +35,7 @@ class Widget extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
+        $site_data = $this->App_model->getAppsBySiteId($site_id);
         $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
 
         $this->data['site_data'] = $site_data;
@@ -51,7 +52,7 @@ class Widget extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
+        $site_data = $this->App_model->getAppsBySiteId($site_id);
         $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
 
         $this->data['site_data'] = $site_data;
@@ -67,7 +68,7 @@ class Widget extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        $site_data = $this->Domain_model->getDomainsBySiteId($site_id);
+        $site_data = $this->App_model->getAppsBySiteId($site_id);
 
         $w_data = array(
             'client_id'=>$client_id,

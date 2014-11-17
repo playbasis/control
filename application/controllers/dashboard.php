@@ -28,7 +28,6 @@ class Dashboard extends MY_Controller
         }
 
         $this->load->model('User_model');
-        $this->load->model('Domain_model');
         $this->load->model('Statistic_model');
         $this->load->model('Player_model');
 
@@ -140,7 +139,6 @@ class Dashboard extends MY_Controller
         }
 
         $this->load->model('User_model');
-        $this->load->model('Domain_model');
         $this->load->model('Statistic_model');
         $this->load->model('Player_model');
 

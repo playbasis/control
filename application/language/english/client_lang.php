@@ -38,6 +38,7 @@ $lang['column_first_name']					= 'First Name';
 $lang['column_last_name']					= 'Last Name';
 $lang['column_plan_name']					= 'Plan Name';
 $lang['column_domain']          				= 'Domains';
+$lang['column_app']          				= 'Apps';
 $lang['column_status']          				= 'Status';
 $lang['column_sort_order']      				= 'Sort Order';
 $lang['column_action']          				= 'Action';

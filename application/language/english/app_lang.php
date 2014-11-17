@@ -93,7 +93,8 @@ $lang['column_domain_name'] 			= 'Domain';
 $lang['column_domain_plan'] 			= 'Package';
 $lang['column_domain_status'] 			= 'Status';
 $lang['column_domain_modified'] 		= 'Date Modified.';
-$lang["text_fail_limit_domain"]         = "Sorry, you have reach domain limit";
+$lang["text_fail_limit_app"]         = "Sorry, you have reach app limit";
+$lang["text_fail_limit_platform"]         = "Sorry, you have reach platform limit";
 $lang['text_fail_app_exists']				= 'This pp name cannot use';
 
 // User

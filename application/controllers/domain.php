@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+/*defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 class Domain extends MY_Controller
 {
@@ -232,7 +232,7 @@ class Domain extends MY_Controller
                     if ($site_id) {
                         $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
-                        /* bind plan to client in playbasis_permission */
+                        // bind plan to client in playbasis_permission
                         $this->Client_model->addPlanToPermission(array(
                             'client_id' => $client_id->{'$id'},
                             'plan_id' => $plan_subscription['plan_id']->{'$id'},
@@ -263,45 +263,45 @@ class Domain extends MY_Controller
 
     }
 
-    /*public function insert() {
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-        $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'domain/insert';
-
-        $this->form_validation->set_rules('domain_name', $this->lang->line('domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
-        $this->form_validation->set_rules('plan_id', $this->lang->line('plan_id'), 'required');
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            $this->data['message'] = null;
-
-            if (!$this->validateModify()) {
-                $this->data['message'] = $this->lang->line('error_permission');
-            }
-
-            if($this->form_validation->run() && $this->data['message'] == null){
-                $site_id = $this->Domain_model->addDomain($this->input->post());
-
-                if ($site_id) {
-                    $data = array();
-                    $data['client_id'] = $this->input->post('client_id');
-                    $data['plan_id'] = $this->input->post('plan_id');
-                    $data['site_id'] = $site_id;
-                    $this->Client_model->addPlanToPermission($data);
-                }
-
-                $this->session->data['success'] = $this->lang->line('text_success');
-
-                redirect('/domain', 'refresh');
-            }
-        }
-
-        $this->getForm();
-
-    }*/
+//    public function insert() {
+//
+//        $this->data['meta_description'] = $this->lang->line('meta_description');
+//        $this->data['title'] = $this->lang->line('title');
+//        $this->data['heading_title'] = $this->lang->line('heading_title');
+//        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+//        $this->data['form'] = 'domain/insert';
+//
+//        $this->form_validation->set_rules('domain_name', $this->lang->line('domain_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean|check_space');
+//        $this->form_validation->set_rules('plan_id', $this->lang->line('plan_id'), 'required');
+//
+//        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//
+//            $this->data['message'] = null;
+//
+//            if (!$this->validateModify()) {
+//                $this->data['message'] = $this->lang->line('error_permission');
+//            }
+//
+//            if($this->form_validation->run() && $this->data['message'] == null){
+//                $site_id = $this->Domain_model->addDomain($this->input->post());
+//
+//                if ($site_id) {
+//                    $data = array();
+//                    $data['client_id'] = $this->input->post('client_id');
+//                    $data['plan_id'] = $this->input->post('plan_id');
+//                    $data['site_id'] = $site_id;
+//                    $this->Client_model->addPlanToPermission($data);
+//                }
+//
+//                $this->session->data['success'] = $this->lang->line('text_success');
+//
+//                redirect('/domain', 'refresh');
+//            }
+//        }
+//
+//        $this->getForm();
+//
+//    }
 
     public function insert_ajax() {
 
@@ -505,5 +505,5 @@ class Domain extends MY_Controller
             return false;
         }
     }
-}
+}*/
 ?>
