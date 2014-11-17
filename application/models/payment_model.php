@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-define('EMAIL_FROM', 'info@playbasis.com');
+
 class Payment_model extends MY_Model
 {
 	public function __construct()

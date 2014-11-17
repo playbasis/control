@@ -24,7 +24,6 @@ define('FEED_CHARACTER_LIMIT', 256);
 define('ITEM_DATE_NOT_CONFIG', 'Not Set');
 define('ITEM_QTY_NOT_CONFIG', 'Inf.');
 define('REPORT_DATE_FORMAT', 'd M Y');
-define('EMAIL_FROM', 'info@playbasis.com');
 
 class Report extends REST2_Controller
 {

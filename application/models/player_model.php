@@ -859,7 +859,7 @@ class Player_model extends MY_Model
                 //email client to upgrade account
             /*$this->email->initialize($config);
             $this->email->clear();
-            $this->email->from('info@playbasis.com', 'Playbasis');
+            $this->email->from(EMAIL_FROM, 'Playbasis');
 //            $this->email->to($email);
             $this->email->to('cscteam@playbasis.com','devteam@playbasis.com');
 //            $this->email->bcc('cscteam@playbasis.com');
@@ -867,7 +867,7 @@ class Player_model extends MY_Model
             $this->email->message($htmlMessage);
             $this->email->send();*/
 
-                $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+                $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
                 $this->amazon_ses->to('cscteam@playbasis.com,devteam@playbasis.com');
                 $this->amazon_ses->subject($subject);
                 $this->amazon_ses->message($htmlMessage);
