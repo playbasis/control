@@ -204,9 +204,9 @@ class User_model extends MY_Model
     }
 
     private function email($to, $subject, $message) {
-        $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+        $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
         $this->amazon_ses->to($to);
-        $this->amazon_ses->bcc(array('info@playbasis.com','pascal@playbasis.com'));
+        $this->amazon_ses->bcc(array(EMAIL_FROM,'pascal@playbasis.com'));
         $this->amazon_ses->subject($subject);
         $this->amazon_ses->message($message);
         $this->amazon_ses->send();

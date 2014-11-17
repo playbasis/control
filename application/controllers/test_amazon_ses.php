@@ -19,8 +19,8 @@ class Test_amazon_ses extends CI_Controller {
 		$this->unit->run($this->amazon_ses->from, 'is_string', 'Configuration file loaded', 'Since most config variables are protected, we only test $from and assume other config variables are in the same state.');
 				
 		// Set from address
-		$this->amazon_ses->from('info@playbasis.com');
-		$this->unit->run($this->amazon_ses->from, 'info@playbasis.com', 'Set from address', '-');
+		$this->amazon_ses->from(EMAIL_FROM);
+		$this->unit->run($this->amazon_ses->from, EMAIL_FROM, 'Set from address', '-');
 		
 		// Set invalid from address
 		$this->amazon_ses->from('wee@wee.com');
@@ -70,11 +70,11 @@ class Test_amazon_ses extends CI_Controller {
         $subject = "Playbasis user limit alert";
 //        $htmlMessage = $this->parser->parse('limit_user_alert.html', $data, true);
 
-        $this->amazon_ses->verify_address('info@playbasis.com');
+        $this->amazon_ses->verify_address(EMAIL_FROM);
 
         $this->amazon_ses->to('wee@playbasis.com');
 
-        $this->amazon_ses->from('info@playbasis.com', 'Playbasis');
+        $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
 
         $this->amazon_ses->subject($subject);
 
