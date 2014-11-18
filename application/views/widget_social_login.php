@@ -122,6 +122,7 @@
                                 <div class="social-controls">
                                     <button class="btn btn-primary social-controls-save" type="submit">Save</button>
                                     <button class="btn social-controls-cancel" type="button">Cancel</button>
+                                    <button class="btn social-help-<?php echo $k; ?>" type="button">?</button>
                                 </div>
 
                                 <div class="social-status <?php echo $s["status"]; ?>">
@@ -207,6 +208,30 @@ function reloadSocial(){
     $('#getcode-modal .code-element').html(codeElement);
     $('#getcode-modal .code-header').html(codeHeader);
 }
+
+function facebookHelp(){
+
+}
+
+$(document).ready(function(){
+
+    $('.social-help-facebook').tooltip({
+        position: {
+            my: "center bottom-20",
+            at: "center top",
+            using: function( position, feedback ) {
+                $( this ).css( position );
+                $( "<div>" )
+                    .addClass( "arrow" )
+                    .addClass( feedback.vertical )
+                    .addClass( feedback.horizontal )
+                    .appendTo( this );
+            }
+        }
+    });
+
+});
+
 
 </script>
 
