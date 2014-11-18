@@ -363,22 +363,14 @@ class App extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            $client_id = $this->User_model->getClientId();
-
             $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
             if(strtolower($this->input->post('platform')) == "ios" ){
                 $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
-
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
                 $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
-            }
-
-            if($this->checkLimitApp($client_id)){
-                $this->data['message'] = $this->lang->line('error_limit');
-                $json['error'] = $this->data['message'];
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -445,7 +437,6 @@ class App extends MY_Controller
 
             if(strtolower($this->input->post('platform')) == "ios" ){
                 $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
-
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
