@@ -28,6 +28,7 @@
             <div class="controls">
                 <h3>Manage Social</h3>
                 <label>CallBackURL :<input type="text" id="social-callback" name="callback" placeholder="callback" value="<?php echo $callback? $callback : ''; ?>"></label>
+
                 <a href="javascript:void(0);" onclick="saveSocial()" class="btn btn-primary">Save All</a>
             </div>
         </div>
@@ -43,7 +44,12 @@
                         "key" => $social_widget&&isset($social_widget['facebook']['key'])?$social_widget['facebook']['key']:"",
                         "secret" => $social_widget&&isset($social_widget['facebook']['secret'])?$social_widget['facebook']['secret']:"",
                         "sort_order" => $social_widget&&isset($social_widget['facebook']['sort_order'])?$social_widget['facebook']['sort_order']:"0",
-                        "status" => $social_widget&&isset($social_widget['facebook']['status'])?($social_widget['facebook']['status']?"enabled":"disabled"):"enabled"
+                        "status" => $social_widget&&isset($social_widget['facebook']['status'])?($social_widget['facebook']['status']?"enabled":"disabled"):"enabled",
+                        "tooltip" => htmlentities("<p>
+                                        1. Go to https://developers.facebook.com/apps and create a new application by clicking 'Create New App'.<br>
+                                        2. Fill out any required fields such as the application name and description.<br>
+                                        3. Put 'https://widget.pbapp.net/' in the Site Url field.<br><br>
+                                        <img src='".base_url("image/widgets/facebook-siteurl.png")."' ></p>")
                     ),
                     "twitter" => array(
                         "color" => "social-azure",
@@ -51,7 +57,13 @@
                         "key" => $social_widget&&isset($social_widget['twitter']['key'])?$social_widget['twitter']['key']:"",
                         "secret" => $social_widget&&isset($social_widget['twitter']['secret'])?$social_widget['twitter']['secret']:"",
                         "sort_order" => $social_widget&&isset($social_widget['twitter']['sort_order'])?$social_widget['twitter']['sort_order']:"0",
-                        "status" => $social_widget&&isset($social_widget['twitter']['status'])?($social_widget['twitter']['status']?"enabled":"disabled"):"disabled"
+                        "status" => $social_widget&&isset($social_widget['twitter']['status'])?($social_widget['twitter']['status']?"enabled":"disabled"):"disabled",
+                        "tooltip" => "<p>
+                                        1. Go to https://dev.twitter.com/apps and create a new application.<br>
+                                        2. Fill out any required fields such as the application name and description.<br>
+                                        3. Put 'https://widget.pbapp.net/' in the Website field.<br>
+                                        4. Provide this URL as the Callback URL for your application: 'https://widget.pbapp.net/playbasis/login/auth/?auth=Twitter'.<br><br>
+                                        <img src='".base_url("image/widgets/twitter-siteurl.png")."' ></p>"
                     ),
                     "google-plus" => array(
                         "color" => "social-scarlet",
@@ -59,7 +71,15 @@
                         "key" => $social_widget&&isset($social_widget['google-plus']['key'])?$social_widget['google-plus']['key']:"",
                         "secret" => $social_widget&&isset($social_widget['google-plus']['secret'])?$social_widget['google-plus']['secret']:"",
                         "sort_order" => $social_widget&&isset($social_widget['google-plus']['sort_order'])?$social_widget['google-plus']['sort_order']:"0",
-                        "status" => $social_widget&&isset($social_widget['google-plus']['status'])?($social_widget['google-plus']['status']?"enabled":"disabled"):"disabled"
+                        "status" => $social_widget&&isset($social_widget['google-plus']['status'])?($social_widget['google-plus']['status']?"enabled":"disabled"):"disabled",
+                        "tooltip" => "<p>
+                                        1. Go to https://code.google.com/apis/console/ and create a new project.<br>
+                                        2. Go to API Access under API Project. After that click on Create an OAuth 2.0 client ID to create a new application.<br>
+                                        3. A pop-up named 'Create Client ID' will appear, fill out any required fields such as the application name and description.<br>
+                                        4. Click on Next.<br>
+                                        5. On the popup set Application type to Web application and switch to advanced settings by clicking on (more options).<br>
+                                        6. Provide this URL as the Callback URL for your application: 'https://widget.pbapp.net/playbasis/login/auth/?auth=Google' .<br><br>
+                                        <img src='".base_url("image/widgets/google-siteurl.png")."' ></p>"
                     ),
                     "linkedin" => array(
                         "color" => "social-cesocialan",
@@ -67,7 +87,12 @@
                         "key" => $social_widget&&isset($social_widget['linkedin']['key'])?$social_widget['linkedin']['key']:"",
                         "secret" => $social_widget&&isset($social_widget['linkedin']['secret'])?$social_widget['linkedin']['secret']:"",
                         "sort_order" => $social_widget&&isset($social_widget['linkedin']['sort_order'])?$social_widget['linkedin']['sort_order']:"0",
-                        "status" => $social_widget&&isset($social_widget['linkedin']['status'])?($social_widget['linkedin']['status']?"enabled":"disabled"):"disabled"
+                        "status" => $social_widget&&isset($social_widget['linkedin']['status'])?($social_widget['linkedin']['status']?"enabled":"disabled"):"disabled",
+                        "tooltip" => "<p>
+                                        1. Go to https://www.linkedin.com/secure/developer (or https://www.linkedin.com/secure/developer?newapp=) and create a new application.<br>
+                                        2. Fill out any required fields such as the application name and description.<br>
+                                        3. Put 'https://widget.pbapp.net/' in the Integration URL and OAuth Redirect URL fields.<br><br>
+                                        <img src='".base_url("image/widgets/linkedin-siteurl.png")."' ></p>"
                     ),
                     "instagram" => array(
                         "color" => "social-persian-blue",
@@ -75,7 +100,13 @@
                         "key" => $social_widget&&isset($social_widget['instagram']['key'])?$social_widget['instagram']['key']:"",
                         "secret" => $social_widget&&isset($social_widget['instagram']['secret'])?$social_widget['instagram']['secret']:"",
                         "sort_order" => $social_widget&&isset($social_widget['instagram']['sort_order'])?$social_widget['instagram']['sort_order']:"0",
-                        "status" => $social_widget&&isset($social_widget['instagram']['status'])?($social_widget['instagram']['status']?"enabled":"disabled"):"disabled"
+                        "status" => $social_widget&&isset($social_widget['instagram']['status'])?($social_widget['instagram']['status']?"enabled":"disabled"):"disabled",
+                        "tooltip" => "<p>
+                                        1. Go to http://instagram.com/developer and Register a new Client.<br>
+                                        2. Fill out any required fields such as the application name and description.<br>
+                                        3. Put 'https://widget.pbapp.net/' in the Website field.<br>
+                                        4. Put https://widget.pbapp.net/playbasis/login/auth/?auth=Instagram OAuth Redirect URL fields.<br><br>
+                                        <img src='".base_url("image/widgets/instagram-siteurl.png")."' ></p>"
                     ),
                 );
                 ?>
@@ -122,6 +153,7 @@
                                 <div class="social-controls">
                                     <button class="btn btn-primary social-controls-save" type="submit">Save</button>
                                     <button class="btn social-controls-cancel" type="button">Cancel</button>
+                                    <button class="btn social-help" type="button" title="<?php echo $s["tooltip"] ?>">?</button>
                                 </div>
 
                                 <div class="social-status <?php echo $s["status"]; ?>">
@@ -143,6 +175,9 @@
                 <div class="control-group">
                     <label class="control-label" ></label>
                     <div class="controls">
+
+                        <input type="checkbox" id="no-logout" name="no-logout" checked  /> Show Logout <br><br>
+
                         <a href="javascript:void(0);" onclick="reloadSocial()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
                         <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                     </div>
@@ -161,7 +196,8 @@
 </div><!-- .box -->
 </div><!-- #content .span10 -->
 
-
+<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>stylesheet/widget/tooltipster.css" />
+<script type="text/javascript" src="<?php echo base_url();?>javascript/widget/jquery.tooltipster.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/widget/social.js"></script>
 <script>
 $(document).ready(function(){
@@ -171,7 +207,7 @@ $(document).ready(function(){
     });
 
     $('#getcode-modal').on('show', function () {
-
+        reloadSocial();
     })
 
 });
@@ -202,11 +238,28 @@ function reloadSocial(){
     var url = '<?php echo base_url();?>index.php/widget/preview?type=login';
     var codeElement = '&lt;div class="pb-login" ';
     var codeHeader = codeHeaderTemplate;
+
+    if(!$('#no-logout').is(':checked')){
+        codeElement+= ' data-pb-nologout ';
+        url+= '&nologin=true'
+    }
     codeElement += '&gt;&lt;/div&gt;';
+
     $('#iframe-login').attr('src',url);
     $('#getcode-modal .code-element').html(codeElement);
     $('#getcode-modal .code-header').html(codeHeader);
 }
+
+$(document).ready(function(){
+
+    $('.social-help').tooltipster({
+        contentAsHTML: true,
+        position: 'bottom',
+        trigger: 'click'
+    });
+
+});
+
 
 </script>
 
