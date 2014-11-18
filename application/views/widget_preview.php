@@ -6,6 +6,7 @@
     $rankby =  isset($_GET['rankby'] )  ? $_GET['rankby'] : 'point';
     $displaypoint =  isset($_GET['displaypoint'] )  ? $_GET['displaypoint'] : 'point';
     $player_id =  isset($_GET['playerId'] )  ? $_GET['playerId'] : '';
+    $nologin =  isset($_GET['nologin'] )  ? $_GET['nologin'] : '';
 
     // echo $width.'<br>';
     // echo $height.'<br>';
@@ -75,7 +76,11 @@
 
 <?php if($typeWidget == 'login'): ?>
     <div style="width:<?php echo $width; ?>px;margin:40px auto;">
+        <?php if($nologin){ ?>
+        <div class="pb-login" data-pb-nologout ></div>
+        <?php }else{ ?>
         <div class="pb-login" ></div>
+        <?php } ?>
     </div>
 <?php endif; ?>
 

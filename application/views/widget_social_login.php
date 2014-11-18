@@ -28,6 +28,7 @@
             <div class="controls">
                 <h3>Manage Social</h3>
                 <label>CallBackURL :<input type="text" id="social-callback" name="callback" placeholder="callback" value="<?php echo $callback? $callback : ''; ?>"></label>
+
                 <a href="javascript:void(0);" onclick="saveSocial()" class="btn btn-primary">Save All</a>
             </div>
         </div>
@@ -174,6 +175,9 @@
                 <div class="control-group">
                     <label class="control-label" ></label>
                     <div class="controls">
+
+                        <input type="checkbox" id="no-logout" name="no-logout" checked  /> Show Logout <br><br>
+
                         <a href="javascript:void(0);" onclick="reloadSocial()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
                         <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                     </div>
@@ -203,7 +207,7 @@ $(document).ready(function(){
     });
 
     $('#getcode-modal').on('show', function () {
-
+        reloadSocial();
     })
 
 });
@@ -234,7 +238,13 @@ function reloadSocial(){
     var url = '<?php echo base_url();?>index.php/widget/preview?type=login';
     var codeElement = '&lt;div class="pb-login" ';
     var codeHeader = codeHeaderTemplate;
+
+    if(!$('#no-logout').is(':checked')){
+        codeElement+= ' data-pb-nologout ';
+        url+= '&nologin=true'
+    }
     codeElement += '&gt;&lt;/div&gt;';
+
     $('#iframe-login').attr('src',url);
     $('#getcode-modal .code-element').html(codeElement);
     $('#getcode-modal .code-header').html(codeHeader);
