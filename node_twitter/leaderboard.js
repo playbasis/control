@@ -144,7 +144,6 @@ var auth = express.basicAuth(function(user, pass){
 });
 
 function getTweetFeed(){
-    var hd = new memwatch.HeapDiff();
     FbLeader.find({}, function (err, data) {
 
         if (data) {
@@ -179,9 +178,6 @@ function getTweetFeed(){
             });
         }
     });
-
-    var diff = hd.end();
-    console.log(diff.change.details);
 }
 
 app.get('/restart', auth, function(req, res)

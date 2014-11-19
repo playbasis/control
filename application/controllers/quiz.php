@@ -164,8 +164,10 @@ class Quiz extends REST2_Controller
             }
             $index = $this->random_weight(array_map('index_weight', $results));
             $result = $results[$index];
+
+            array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
         }
-        array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
+
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
