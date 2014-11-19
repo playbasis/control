@@ -77,21 +77,7 @@
                                           <span class="label <?php echo $client['valid'] ? "label-success" : "label-important"; ?>"><?php echo $client['valid'] ? $this->lang->line('text_enabled') : $this->lang->line('text_disabled'); ?></span>
           				            </td>
           			            </tr>
-          			            <tr>
-          				            <td><?php echo $this->lang->line('text_valid_api'); ?>:</td>
-          				            <td>
-          				            <?php if ($client['valid']) { ?>
-          				                <?php $start = ($client['date_start'] ? date('d M Y', $client['date_start']) : ''); ?>
-          				                <?php $end = ($client['date_expire'] ? date('d M Y', $client['date_expire']) : ''); ?>
-          				                <?php if ($start && $end) echo $start.' - '.$end; ?>
-          				                <?php if (!$start && $end) echo 'Until '.$end; ?>
-          				                <?php if ($start && !$end) echo 'From '.$start; ?>
-          				                <?php if (!$start && !$end) echo $this->lang->line('text_unlimited'); ?>
-          				            <?php } else { ?>
-          				                <?php echo $this->lang->line('text_not_available'); ?>
-          				            <?php } ?>
-          				            </td>
-          			            </tr>
+          			            
           			            <?php if ($plan['paid_flag']) { ?>
           			            
           			            
