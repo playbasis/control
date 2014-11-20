@@ -152,7 +152,7 @@
                 </div>
                 <div class="question-wrapper" >
                     <?php
-                    if(isset($quiz) && $quiz['questions']){
+                    if(isset($quiz['questions']) && $quiz['questions']){
                         foreach($quiz['questions'] as $questions){
 
                             $questions['question_id'] = $questions['question_id']."";
