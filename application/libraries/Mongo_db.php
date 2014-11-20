@@ -214,7 +214,8 @@ class Mongo_db
 			$this->_ci = NULL;
 		}
 
-        MongoCursor::$timeout = -1;
+		//MongoCursor::$timeout = -1;
+		$this->timeout = -1;
 
 		$this->load();
 	}
