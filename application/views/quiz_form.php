@@ -364,7 +364,7 @@
 
                 <div class="grade-wrapper">
                     <?php
-                    if(isset($quiz) && $quiz['grades']){
+                    if(isset($quiz['grades']) && $quiz['grades']){
                         foreach($quiz['grades'] as $grade){
 
                             $grade['grade_id'] = $grade['grade_id']."";
