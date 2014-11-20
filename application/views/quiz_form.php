@@ -152,7 +152,7 @@
                 </div>
                 <div class="question-wrapper" >
                     <?php
-                    if(isset($quiz) && $quiz['questions']){
+                    if(isset($quiz['questions']) && $quiz['questions']){
                         foreach($quiz['questions'] as $questions){
 
                             $questions['question_id'] = $questions['question_id']."";
@@ -364,7 +364,7 @@
 
                 <div class="grade-wrapper">
                     <?php
-                    if(isset($quiz) && $quiz['grades']){
+                    if(isset($quiz['grades']) && $quiz['grades']){
                         foreach($quiz['grades'] as $grade){
 
                             $grade['grade_id'] = $grade['grade_id']."";
