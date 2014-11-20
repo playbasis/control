@@ -352,6 +352,7 @@ class Quiz extends REST2_Controller
         /* data */
         unset($grade['rewards']);
         $data = array(
+            'options' => $question['options'], // return list of options with score and explanation
             'score' => $score,
             'max_score' => $max_score,
             'explanation' => $explanation,
