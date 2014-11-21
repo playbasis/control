@@ -917,12 +917,16 @@ class User extends MY_Controller
                 $this->User_model->force_login($user_id);
                 redirect('account/update_profile', 'refresh');
             }else{
-                echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
-                echo "<script>window.location.href = '".site_url()."';</script>";
+                $this->data['topic_message'] = 'Your validation key was not found,';
+                $this->data['message'] = 'please contact Playbasis.';
+                $this->data['main'] = 'something_wrong';
+                $this->render_page('template_beforelogin');
             }
         }else{
-            echo "<script>alert('Your validation key was not found, please contact Playbasis.');</script>";
-            echo "<script>window.location.href = '".site_url()."';</script>";
+            $this->data['topic_message'] = 'Your validation key was not found,';
+            $this->data['message'] = 'please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->render_page('template_beforelogin');
         }
     }
 
@@ -996,7 +1000,7 @@ class User extends MY_Controller
                 }
             }
 
-            $this->data['main'] = 'edit_account.php';
+            $this->data['main'] = 'edit_account';
             $this->render_page('template');
         }
     }
@@ -1046,8 +1050,10 @@ class User extends MY_Controller
                         exit();
                     }
 
-                    echo "<script>alert('A link has been sent to your email, please click on it and change your password.');</script>";
-                    echo "<script>window.location.href = '".site_url()."';</script>";   
+                    $this->data['topic_message'] = 'A link has been sent to your email,';
+                    $this->data['message'] = 'please click on it and change your password.';
+                    $this->data['main'] = 'something_wrong';
+                    $this->render_page('template_beforelogin');
                 }else{
                     // echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
                     // $this->data['message'] = $this->lang->line('error_no_email');
@@ -1108,8 +1114,11 @@ class User extends MY_Controller
                         echo json_encode(array('status' => 'success', 'message' => 'Your password has been changed! We will redirect you to our login page.'));
                         exit();
                     }
-                    echo "<script>alert('Your password has been changed! We will redirect you to our login page.');</script>";
-                    echo "<script>window.location.href = '".site_url()."';</script>";
+
+                    $this->data['topic_message'] = 'Your password has been changed!';
+                    $this->data['message'] = 'You will click <a href="'.site_url().'">back</a> go to our login page.';
+                    $this->data['main'] = 'something_wrong';
+                    $this->render_page('template_beforelogin');
                 }else{
                     if($this->input->post('format') == 'json'){
                         echo json_encode(array('status' => 'error', 'message' => validation_errors()));
@@ -1122,8 +1131,10 @@ class User extends MY_Controller
             $this->data['main'] = 'reset_password_form';
             $this->render_page('template_beforelogin');
         }else{
-            echo "<script>alert('The link has already been used.');</script>";
-            echo "<script>window.location.href = '".site_url()."';</script>";  
+            $this->data['topic_message'] = 'The link has already been used.';
+            $this->data['message'] = 'please contact Playbasis.';
+            $this->data['main'] = 'something_wrong';
+            $this->render_page('template_beforelogin');
         }
     }
 
