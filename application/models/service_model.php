@@ -96,7 +96,7 @@ class Service_model extends MY_Model
 
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id'));
+        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
 
@@ -140,10 +140,20 @@ class Service_model extends MY_Model
                 }
                 $event['action_icon'] = 'fa-trophy';
             }
+            if(isset($event['goods_id']) && $event['goods_id']){
+                $event['action_name'] = 'redeem_goods';
+                $event['action_icon'] = 'fa-gift';
+            }
+            if($event['event_type'] == 'LOGIN'){
+                $event['action_name'] = 'login';
+                $event['action_icon'] = 'fa-sign-in';
+            }
             unset($event['action_log_id']);
             unset($event['pb_player_id']);
             unset($event['quest_id']);
             unset($event['mission_id']);
+            unset($event['goods_id']);
+            unset($event['event_type']);
 
             $event['reward_id'] = $event['reward_id']."";
 
