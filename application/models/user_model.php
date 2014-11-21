@@ -763,13 +763,13 @@ class User_model extends MY_Model
 
         try {
             $this->mongo_db->where('client_id', new MongoID($client_id));
-            $this->mongo_db->where('_id', new MongoID($site_id));
+            $this->mongo_db->where('site_id', new MongoID($site_id));
             $this->mongo_db->limit(1);
         }
         catch (Exception $e) {
         }
 
-		$result = $this->mongo_db->get("playbasis_client_site");
+		$result = $this->mongo_db->get("playbasis_platform_client_site");
 
 		return $result ? $result[0] : null;
 	}
