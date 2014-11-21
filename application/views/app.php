@@ -9,7 +9,7 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <?php if( $plan_limit_app !== null &&  $total_app >= $plan_limit_app && $plan_limit_platform !== null && $total_platform >= $plan_limit_platform){ ?>
+                <?php if( ($plan_limit_app !== null &&  $total_app >= $plan_limit_app) || ($plan_limit_platform !== null && $total_platform >= $plan_limit_platform)){ ?>
                     <button class="btn btn-default disabled" disabled type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
                 <?php }else{ ?>
                     <button class="btn btn-info" onclick="location = baseUrlPath+'app/add'" type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
@@ -150,13 +150,12 @@
 
     function deletePlatform(platform_id) {
         var platform = new Array(platform_id);
-
+        console.log('start');
         $.ajax({
             url: baseUrlPath+'app/delete',
             type: 'POST',
             data: {platform_selected: platform},
-            dataType: 'json',
-            success: function(json) {
+            success: function() {
                 location.href = baseUrlPath+'app';
             }
         });
