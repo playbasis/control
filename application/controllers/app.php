@@ -677,7 +677,9 @@ class App extends MY_Controller
 //                "platform" => "web",
 //                "api_key" => $d["api_key"],
 //                "api_secret" => $d["api_secret"],
-//                "data" => array("site_url" => $domain)
+//                "data" => array("site_url" => $domain),
+//                "status" => $d["status"],
+//                "deleted" => $d["deleted"]
 //            );
 //            $this->App_model->moveOldtoNewSystem($insert_data);
 //        }

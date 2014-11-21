@@ -513,8 +513,8 @@ class App_model extends MY_Model
 //            'api_key'=> $data['api_key'],
 //            'api_secret' => $data['api_secret'],
 //            'data' => $data['data'],
-//            'status' => true,
-//            'deleted' => false,
+//            'status' => $data['status'],
+//            'deleted' => $data['deleted'],
 //            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
 //            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
 //        );
