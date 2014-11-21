@@ -919,7 +919,7 @@ class User extends MY_Controller
             }else{
                 $this->data['topic_message'] = 'Your validation key was not found,';
                 $this->data['message'] = 'please contact Playbasis.';
-                $this->data['main'] = 'something_wrong';
+                $this->data['main'] = 'partial/something_wrong';
                 $this->render_page('template_beforelogin');
             }
         }else{
@@ -1052,7 +1052,7 @@ class User extends MY_Controller
 
                     $this->data['topic_message'] = 'A link has been sent to your email,';
                     $this->data['message'] = 'please click on it and change your password.';
-                    $this->data['main'] = 'something_wrong';
+                    $this->data['main'] = 'partial/something_wrong';
                     $this->render_page('template_beforelogin');
                 }else{
                     // echo "<script>alert('The email was not found in our server, please make sure you have typed it correctly.');</script>";
@@ -1117,7 +1117,7 @@ class User extends MY_Controller
 
                     $this->data['topic_message'] = 'Your password has been changed!';
                     $this->data['message'] = 'You will click <a href="'.site_url().'">back</a> go to our login page.';
-                    $this->data['main'] = 'something_wrong';
+                    $this->data['main'] = 'partial/something_wrong';
                     $this->render_page('template_beforelogin');
                 }else{
                     if($this->input->post('format') == 'json'){
@@ -1133,7 +1133,7 @@ class User extends MY_Controller
         }else{
             $this->data['topic_message'] = 'The link has already been used.';
             $this->data['message'] = 'please contact Playbasis.';
-            $this->data['main'] = 'something_wrong';
+            $this->data['main'] = 'partial/something_wrong';
             $this->render_page('template_beforelogin');
         }
     }
