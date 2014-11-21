@@ -102,6 +102,8 @@ class Service_model extends MY_Model
 
         $event_log = $this->mongo_db->get('playbasis_event_log');
 
+        $events_output = array();
+
         foreach($event_log as $key => &$event){
 
             $this->mongo_db->where('site_id', $site_id);
@@ -178,9 +180,10 @@ class Service_model extends MY_Model
             }
 
             unset($event['item_id']);
+            array_push($events_output, $event);
         }
 
-        return $event_log;
+        return $events_output;
     }
 
     private function getActionNameAndStringFilter($action_log_id){
