@@ -9,7 +9,7 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <?php if( $plan_limit_app !== null &&  $total_app >= $plan_limit_app){ ?>
+                <?php if( $plan_limit_app !== null &&  $total_app >= $plan_limit_app && $plan_limit_platform !== null && $total_platform >= $plan_limit_platform){ ?>
                     <button class="btn btn-default disabled" disabled type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
                 <?php }else{ ?>
                     <button class="btn btn-info" onclick="location = baseUrlPath+'app/add'" type="button"><?php echo $this->lang->line('button_add_app'); ?></button>
