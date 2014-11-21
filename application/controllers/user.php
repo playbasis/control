@@ -917,14 +917,14 @@ class User extends MY_Controller
                 $this->User_model->force_login($user_id);
                 redirect('account/update_profile', 'refresh');
             }else{
-                $this->data['topic_message'] = 'Your validation key was not found,';
-                $this->data['message'] = 'please contact Playbasis.';
+                $this->data['topic_message'] = 'Your validation key is invalid,';
+                $this->data['message'] = 'Please contact Playbasis.';
                 $this->data['main'] = 'partial/something_wrong';
                 $this->render_page('template_beforelogin');
             }
         }else{
-            $this->data['topic_message'] = 'Your validation key was not found,';
-            $this->data['message'] = 'please contact Playbasis.';
+            $this->data['topic_message'] = 'Your validation key is invalid,';
+            $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
             $this->render_page('template_beforelogin');
         }
@@ -1051,7 +1051,7 @@ class User extends MY_Controller
                     }
 
                     $this->data['topic_message'] = 'A link has been sent to your email,';
-                    $this->data['message'] = 'please click on it and change your password.';
+                    $this->data['message'] = 'Please click on it and change your password.';
                     $this->data['main'] = 'partial/something_wrong';
                     $this->render_page('template_beforelogin');
                 }else{
@@ -1132,7 +1132,7 @@ class User extends MY_Controller
             $this->render_page('template_beforelogin');
         }else{
             $this->data['topic_message'] = 'The link has already been used.';
-            $this->data['message'] = 'please contact Playbasis.';
+            $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
             $this->render_page('template_beforelogin');
         }
