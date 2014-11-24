@@ -223,7 +223,7 @@ class App extends MY_Controller
 
             $client_id = $this->User_model->getClientId();
 
-            $this->form_validation->set_rules('app_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|xss_clean|check_space');
+            $this->form_validation->set_rules('app_name', $this->lang->line('form_domain'), 'trim|required|min_length[3]|max_length[100]|check_space|alpha_dash');
             $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
             if(strtolower($this->input->post('platform')) == "ios" ){
