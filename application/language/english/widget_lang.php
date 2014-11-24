@@ -13,6 +13,7 @@ $lang['text_clear']             				= 'Clear Image';
 $lang['text_criteria']          				= 'Domain View';
 $lang['text_confirm']			           		= 'Remove cannot be undone! Are you sure you want to do this?';
 
+$lang['text_choose_key']			            = 'Choose a key';
 $lang['text_choose_type']			           	= 'Choose a type of widget';
 $lang['text_leaderboard_widget']			    = 'Leaderboard Widget';
 $lang['text_pixel_width']			           	= 'The pixel width of the widget';

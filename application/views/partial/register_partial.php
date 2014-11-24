@@ -92,7 +92,7 @@
 
     </div><!-- /registration -->
 
-    <div class="registration-policy">By clicking on "Take me to my dashboard", you agree to the <a href="http://app-dev.pbapp.net/playbasis/playbasis/app/terms-of-service.html">Terms of Service</a> and the <a href="http://app-dev.pbapp.net/playbasis/playbasis/app/privacy.html">Privacy Policy</a></div>
+    <div class="registration-policy">By clicking on "Take me to my dashboard", you agree to the <a href="http://www.playbasis.com/terms-of-service.html">Terms of Service</a> and the <a href="http://www.playbasis.com/privacy.html">Privacy Policy</a></div>
 
   </div>
 </main><!-- /main -->

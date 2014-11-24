@@ -6,6 +6,7 @@ class App_model extends MY_Model
     public function getApp($app_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('_id', new MongoID($app_id));
         $results = $this->mongo_db->get("playbasis_client_site");
 
@@ -497,10 +498,23 @@ class App_model extends MY_Model
     public function getPlatform($platform_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('_id', new MongoID($platform_id));
         $results = $this->mongo_db->get("playbasis_platform_client_site");
 
-        return $results ? $results[0] : null  ;
+        return $results ? $results[0] : null;
+    }
+
+    public function getPlatformWithType($app_id, $type) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->where('site_id', new MongoID($app_id));
+        $this->mongo_db->where('platform', $type);
+
+        $results = $this->mongo_db->get("playbasis_platform_client_site");
+
+        return $results;
     }
 
 //    public function moveOldtoNewSystem($data){

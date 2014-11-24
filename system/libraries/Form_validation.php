@@ -1430,6 +1430,9 @@ class CI_Form_validation {
 	 * @return boolean
      */
     function url_exists_without_http($url){
+        if($url == "localhost"){
+            return true;
+        }
 		$pattern = "|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i";
 		if(!preg_match($pattern, $url)){
 			$url = 'http://'.$url;	

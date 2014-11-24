@@ -5,6 +5,18 @@
         </div><!-- .heading -->
 
         <div class="content">
+        <h1><?php echo $this->lang->line('text_choose_key'); ?></h1>
+
+        <select class="wg-apikey" >
+            <?php
+            foreach($platform_data as $pfd){
+                ?>
+                <option  value="<?php echo $pfd["api_key"]; ?>"><?php echo $pfd["api_key"]; ?></option>
+            <?php
+            }
+            ?>
+        </select>
+
         <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
         <ul class="nav nav-tabs">
@@ -301,7 +313,11 @@
 
 
 <script>
+
+    var apikey = '';
+
 	$(document).ready(function(){
+
 		$('#widget-leaderboard a:first').tab('show');
 		$('.colorSelector').ColorPicker({
 			onBeforeShow: function () {
@@ -411,26 +427,33 @@
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=leaderboard';
 		var codeElement = '&lt;div class="pb-leaderboard" ';
 		var codeHeader = codeHeaderTemplate;
+        apikey = getVal($('.wg-apikey').val());
 
-		if(typeof width != 'undefined' && width != ""){
-			url+='&width='+width;
-			codeElement += 'data-pb-width="'+width+'" ';
-		}
+        if(apikey){
 
-		if(typeof color != 'undefined' && color != ""){
-			url+='&color='+color;
-			codeHeader = codeHeader.replace("#0e9ce4", color);
-		}
-		if(typeof rankby != 'undefined'  && rankby != ""){
-			url+='&rankby='+rankby;
-			codeElement += 'data-pb-rankBy="'+rankby+'" ';
-		}
-		codeElement += '&gt;&lt;/div&gt;';
+            url+='&apikey='+apikey;
+            codeHeader = codeHeader.replace('abc', apikey);
 
-		$('#iframe-leaderboard').attr('src',url);
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
 
-		$('#getcode-modal .code-element').html(codeElement);
-		$('#getcode-modal .code-header').html(codeHeader);
+            if(typeof color != 'undefined' && color != ""){
+                url+='&color='+color;
+                codeHeader = codeHeader.replace("#0e9ce4", color);
+            }
+            if(typeof rankby != 'undefined'  && rankby != ""){
+                url+='&rankby='+rankby;
+                codeElement += 'data-pb-rankBy="'+rankby+'" ';
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+
+            $('#iframe-leaderboard').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
 	}
 	function reloadLivefeed(){
 		var width = getVal($('#widget-livefeed .wg-width').val());
@@ -439,24 +462,31 @@
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=livefeed';
 		var codeElement = '&lt;div class="pb-livefeed" ';
 		var codeHeader = codeHeaderTemplate;
+        apikey = getVal($('.wg-apikey').val());
 
-		if(typeof width != 'undefined' && width != ""){
-			url+='&width='+width;
-			codeElement += 'data-pb-width="'+width+'" ';
-		}
-		if(typeof height != 'undefined' && height != ""){
-			url+='&height='+height;
-			codeElement += 'data-pb-height="'+height+'" ';
-		}
-		if(typeof color != 'undefined' && color != ""){
-			url+='&color='+color;
-			codeHeader = codeHeader.replace("#0e9ce4", color);
-		}
-		codeElement += '&gt;&lt;/div&gt;';
-		$('#iframe-livefeed').attr('src',url);
+        if(apikey){
 
-		$('#getcode-modal .code-element').html(codeElement);
-		$('#getcode-modal .code-header').html(codeHeader);
+            url+='&apikey='+apikey;
+            codeHeader = codeHeader.replace('abc', apikey);
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof height != 'undefined' && height != ""){
+                url+='&height='+height;
+                codeElement += 'data-pb-height="'+height+'" ';
+            }
+            if(typeof color != 'undefined' && color != ""){
+                url+='&color='+color;
+                codeHeader = codeHeader.replace("#0e9ce4", color);
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-livefeed').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
 	}
 	function reloadProfile(){
 		var width = getVal($('#widget-profile .wg-width').val());
@@ -466,27 +496,34 @@
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=profile';
 		var codeElement = '&lt;div class="pb-profile" ';
 		var codeHeader = codeHeaderPlayerTestTemplate;
+        apikey = getVal($('.wg-apikey').val());
 
-		if(typeof width != 'undefined' && width != ""){
-			url+='&width='+width;
-			codeElement += 'data-pb-width="'+width+'" ';
-		}
-		if(typeof color != 'undefined' && color != ""){
-			url+='&color='+color;
-			codeHeader = codeHeader.replace("#0e9ce4", color);
-		}
-		if(typeof displaypoint != 'undefined'  && displaypoint != ""){
-            url+='&displaypoint='+displaypoint;
-            codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
+        if(apikey){
+
+            url+='&apikey='+apikey;
+            codeHeader = codeHeader.replace('abc', apikey);
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof color != 'undefined' && color != ""){
+                url+='&color='+color;
+                codeHeader = codeHeader.replace("#0e9ce4", color);
+            }
+            if(typeof displaypoint != 'undefined'  && displaypoint != ""){
+                url+='&displaypoint='+displaypoint;
+                codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
+            }
+            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
+                url+='&playerId='+playerIdTest;
+                codeHeader = codeHeader.replace("playertest", playerIdTest);
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-profile').attr('src',url);
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
         }
-        if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
-            url+='&playerId='+playerIdTest;
-            codeHeader = codeHeader.replace("playertest", playerIdTest);
-        }
-		codeElement += '&gt;&lt;/div&gt;';
-		$('#iframe-profile').attr('src',url);
-		$('#getcode-modal .code-element').html(codeElement);
-		$('#getcode-modal .code-header').html(codeHeader);
 	}
 	function reloadUserbar(){
 		var color =getColor($('#widget-userbar .wg-color').val());
@@ -495,23 +532,30 @@
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=userbar';
 		var codeElement = '&lt;div class="pb-userbar" ';
 		var codeHeader = codeHeaderPlayerTestTemplate;
+        apikey = getVal($('.wg-apikey').val());
 
-		if(typeof color != 'undefined' && color != ""){
-			url+='&color='+color;
-			codeHeader = codeHeader.replace("#0e9ce4", color);
-		}
-		if(typeof displaypoint != 'undefined'  && displaypoint != ""){
-			url+='&displaypoint='+displaypoint;
-			codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
-		}
-        if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
-            url+='&playerId='+playerIdTest;
-            codeHeader = codeHeader.replace("playertest", playerIdTest);
+        if(apikey){
+
+            url+='&apikey='+apikey;
+            codeHeader = codeHeader.replace('abc', apikey);
+
+            if(typeof color != 'undefined' && color != ""){
+                url+='&color='+color;
+                codeHeader = codeHeader.replace("#0e9ce4", color);
+            }
+            if(typeof displaypoint != 'undefined'  && displaypoint != ""){
+                url+='&displaypoint='+displaypoint;
+                codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
+            }
+            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
+                url+='&playerId='+playerIdTest;
+                codeHeader = codeHeader.replace("playertest", playerIdTest);
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-userbar').attr('src',url);
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
         }
-		codeElement += '&gt;&lt;/div&gt;';
-		$('#iframe-userbar').attr('src',url);
-		$('#getcode-modal .code-element').html(codeElement);
-		$('#getcode-modal .code-header').html(codeHeader);
 	}
     function reloadAchievement(){
         var width = getVal($('#widget-achievement .wg-width').val());
@@ -521,28 +565,35 @@
         var url = '<?php echo base_url();?>index.php/widget/preview?type=achievement';
         var codeElement = '&lt;div class="pb-achievement" ';
         var codeHeader = codeHeaderPlayerTestTemplate;
+        apikey = getVal($('.wg-apikey').val());
 
-        if(typeof width != 'undefined' && width != ""){
-            url+='&width='+width;
-            codeElement += 'data-pb-width="'+width+'" ';
-        }
-        if(typeof height != 'undefined' && height != ""){
-            url+='&height='+height;
-            codeElement += 'data-pb-height="'+height+'" ';
-        }
-        if(typeof color != 'undefined' && color != ""){
-            url+='&color='+color;
-            codeHeader = codeHeader.replace("#0e9ce4", color);
-        }
-        if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
-            url+='&playerId='+playerIdTest;
-            codeHeader = codeHeader.replace("playertest", playerIdTest);
-        }
-        codeElement += '&gt;&lt;/div&gt;';
-        $('#iframe-achievement').attr('src',url);
+        if(apikey){
 
-        $('#getcode-modal .code-element').html(codeElement);
-        $('#getcode-modal .code-header').html(codeHeader);
+            url+='&apikey='+apikey;
+            codeHeader = codeHeader.replace('abc', apikey);
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof height != 'undefined' && height != ""){
+                url+='&height='+height;
+                codeElement += 'data-pb-height="'+height+'" ';
+            }
+            if(typeof color != 'undefined' && color != ""){
+                url+='&color='+color;
+                codeHeader = codeHeader.replace("#0e9ce4", color);
+            }
+            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
+                url+='&playerId='+playerIdTest;
+                codeHeader = codeHeader.replace("playertest", playerIdTest);
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-achievement').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
     }
 	function getVal(val){
 		if(typeof val == 'undefined' ){
@@ -573,7 +624,7 @@
 &lt;script&gt;
 window.PBAsyncInit = function(){
     PB.init({
-        api_key:'<?php echo $site_data["api_key"]; ?>',
+        api_key:'',
         theme_color :'#52b398'
     });
 };(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://widget.pbapp.net/playbasis/en/all.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","playbasis-js"));&lt;/script&gt;

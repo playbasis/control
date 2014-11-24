@@ -7,6 +7,7 @@
     $displaypoint =  isset($_GET['displaypoint'] )  ? $_GET['displaypoint'] : 'point';
     $player_id =  isset($_GET['playerId'] )  ? $_GET['playerId'] : '';
     $nologin =  isset($_GET['nologin'] )  ? $_GET['nologin'] : '';
+    $apikey =  isset($_GET['apikey'] )  ? $_GET['apikey'] : '';
 
     // echo $width.'<br>';
     // echo $height.'<br>';
@@ -29,10 +30,12 @@
 </head>
 <body>
 
+<?php if($apikey != ''){ ?>
+
 <script type='text/javascript'>
     window.PBAsyncInit = function(){
         PB.init({
-            api_key:'<?php echo $site_data["api_key"]; ?>',
+            api_key:'<?php echo $apikey; ?>',
             theme_color :'#<?php echo $color; ?>',
             <?php
             if($player_id){
@@ -101,6 +104,9 @@
         <div class="pb-achievement" data-pb-width="<?php echo $width; ?>" data-pb-height="<?php echo $height; ?>" ></div>
     </div>
 <?php endif; ?>
+
+
+<?php } ?>
 
 </body>
 </html>
