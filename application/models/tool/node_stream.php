@@ -18,6 +18,7 @@ class Node_stream extends MY_Model
 	{
 		//get chanel name
 		$chanelName = preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', $domain_name);
+		$chanelName = urlencode($chanelName);
 		$message = json_encode($this->activityFeedFormatter($data, $site_id));
 		$ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
