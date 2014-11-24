@@ -73,7 +73,7 @@ class Utility extends CI_Model
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,
-                'attachments' => $attachments,
+                'attachment' => $attachments,
             ));
             sleep(1);
         }
@@ -98,7 +98,7 @@ class Utility extends CI_Model
                     'subject' => $subject,
                     'message' => $message,
                     'message_alt' => $message_alt,
-                    'attachments' => $attachments,
+                    'attachment' => $attachments,
                 ));
                 sleep(1);
             }
@@ -111,7 +111,7 @@ class Utility extends CI_Model
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,
-                'attachments' => $attachments,
+                'attachment' => $attachments,
             ));
         }*/
 	}
@@ -150,7 +150,7 @@ class Utility extends CI_Model
                         'subject' => $subject,
                         'message' => $message,
                         'message_alt' => $message_alt,
-                        'attachments' => $attachments,
+                        'attachment' => $attachments,
                     );
 
                     if(isset($email_prepare_cc[$i])){
@@ -170,7 +170,7 @@ class Utility extends CI_Model
                         'subject' => $subject,
                         'message' => $message,
                         'message_alt' => $message_alt,
-                        'attachments' => $attachments,
+                        'attachment' => $attachments,
                     );
 
                     if(isset($email_prepare_to[$i])){
@@ -192,7 +192,7 @@ class Utility extends CI_Model
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,
-                'attachments' => $attachments,
+                'attachment' => $attachments,
             ));
         }
 	}
@@ -219,7 +219,7 @@ class Utility extends CI_Model
                     'subject' => $subject,
                     'message' => $message,
                     'message_alt' => $message_alt,
-                    'attachments' => $attachments,
+                    'attachment' => $attachments,
                 ));
                 sleep(1);
             }
@@ -232,7 +232,7 @@ class Utility extends CI_Model
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,
-                'attachments' => $attachments,
+                'attachment' => $attachments,
             ));
         }*/
 
@@ -244,7 +244,7 @@ class Utility extends CI_Model
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,
-                'attachments' => $attachments,
+                'attachment' => $attachments,
             ));
             sleep(1);
         }
