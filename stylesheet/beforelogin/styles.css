@@ -987,3 +987,38 @@ table {
     font-size: 16px;
   }
 }
+
+
+/* something wrong page*/
+.somethingwrong-page {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+    background: #556270;
+}
+
+.somethingwrong-benefits {
+    width: 100%;
+    float: left;
+    z-index: 1;
+    position: relative;
+    color: #fff;
+}
+
+#pb-registration .somethingwrong-benefits .benefits-block h4{
+    color: #ff5b16;
+}
+
+.somethingwrong-benefits .benefits-block{
+    min-height: 100px;
+}
+
+
+@media (min-width: 768px){
+    #pb-registration .registration-benefits .somethingwrong-benefits {
+        width: 37.5%;
+    }
+}
+

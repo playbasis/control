@@ -380,6 +380,8 @@ isotopeMan = {
                   nbVisible: resp.total_page
               });
           }
+
+          $('*[data-toggle=tooltip]').tooltip();
       },
       error: function (err) {
         console.log('Request fail');

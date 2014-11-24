@@ -240,16 +240,30 @@ class App extends MY_Controller
                 $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
 
                 // get Plan limit_others.domain
-                $limit = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "app");
+                $limit_app = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "app");
 
                 // Get current client app
                 $data_filter_app = array('client_id' => $client_id);
-                $usage = $this->App_model->getAppsByClientId($data_filter_app);
-                $usage_conut = $usage ? count($usage) : 0;
+                $usage_app = $this->App_model->getAppsByClientId($data_filter_app);
+                $usage_app_conut = $usage_app ? count($usage_app) : 0;
 
                 // compare
-                if ($limit !== null && $usage_conut >= $limit) { // limit = null, means unlimited
+                if ($limit_app !== null && $usage_app_conut >= $limit_app) { // limit = null, means unlimited
                     $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_app"));
+                    redirect("app");
+                }
+
+                // get Plan limit_others.domain
+                $limit_platform = $this->Plan_model->getPlanLimitById($plan_subscription["plan_id"], "others", "platform");
+
+                // Get current client site
+                $data_filter_app = array('client_id' => $client_id);
+                $usage_platform = $this->App_model->getPlatFormsByClientId($data_filter_app);
+                $usage_platform_conut = $usage_platform ? count($usage_platform) : 0;
+
+                // compare
+                if ($limit_platform !== null && $usage_platform_conut >= $limit_platform) { // limit = null, means unlimited
+                    $this->session->set_flashdata("fail", $this->lang->line("text_fail_limit_platform"));
                     redirect("app");
                 }
 
@@ -363,22 +377,14 @@ class App extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            $client_id = $this->User_model->getClientId();
-
             $this->form_validation->set_rules('platform', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
 
             if(strtolower($this->input->post('platform')) == "ios" ){
                 $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
-
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
                 $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
-            }
-
-            if($this->checkLimitApp($client_id)){
-                $this->data['message'] = $this->lang->line('error_limit');
-                $json['error'] = $this->data['message'];
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -445,7 +451,6 @@ class App extends MY_Controller
 
             if(strtolower($this->input->post('platform')) == "ios" ){
                 $this->form_validation->set_rules('ios_bundle_id', $this->lang->line('form_ios_bundle_id'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
-
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{

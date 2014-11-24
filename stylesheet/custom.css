@@ -19,11 +19,17 @@
 	padding-bottom: 30px;
 }
 .footer-support{
+	float: left;
 	color: #555;
 }
 .footer-copy{
 	text-align:right;
 	float:right	
+}
+footer.footer:after{
+	clear: both;
+	content: " ";
+	display: block;
 }
 
 #siteseal img{

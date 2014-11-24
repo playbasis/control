@@ -331,6 +331,8 @@ class App_model extends MY_Model
         $domain = preg_replace("/https:\/\//", "", $domain);
 
         $this->mongo_db->where('domain_name', strtolower($domain));
+        $this->mongo_db->where('deleted', false);
+
         $c = $this->mongo_db->count('playbasis_client_site');
         return $c > 0;
     }
