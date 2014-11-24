@@ -8,7 +8,7 @@ exports.config = {
     /**
     * Array of application names.
     */
-    app_name : ['Node Server'],
+    app_name : ['Notification'],
     /**
     * Your New Relic license key.
     */
