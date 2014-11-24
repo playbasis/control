@@ -18,7 +18,7 @@ class Node_stream extends MY_Model
 	{
 		//get chanel name
 		$chanelName = preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', $domain_name);
-		$chanelName = urlencode($chanelName);
+		$chanelName = preg_replace('/\//', '\\',$chanelName);
 		$message = json_encode($this->activityFeedFormatter($data, $site_id));
 		$ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -37,10 +37,6 @@ class Node_stream extends MY_Model
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);			// http authen
 		curl_setopt($ch, CURLOPT_USERPWD, USERPASS);				// user password
 		$res = curl_exec($ch);
-//		var_dump(curl_errno($ch));
-//		$cinfo = curl_getinfo($ch);
-//		var_dump($cinfo);
-//        var_dump($res);
 		curl_close($ch);
 	}
 	private function activityFeedFormatter($data, $site_id)

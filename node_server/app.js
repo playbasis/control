@@ -176,6 +176,12 @@ function verifyChannel(channel, callback)
 		callback(null, channel)
 	});*/
 
+    /*
+    * convert for old information about url has sub path
+    * it cannot go to node route
+    */
+     var str = channel;
+    channel = str.replace("\\", "/");
 
     ClientSite.findOne({$or : [{domain_name: channel}, {domain_name: 'www.' + channel}]}, function (err, data) {
         if(err){
@@ -205,7 +211,12 @@ io.sockets.on('connection', function(socket){
 				console.log(err);
 				return;
 			}
+
+            var str = channel;
+            channel = str.replace("/", "\\");
+
 			host = CHANNEL_PREFIX + channel;
+
 			if(!redisSubClients[host]){
 				createRedisSubClient(host);
 				redisSubClients[host].subscribe(host);
@@ -227,6 +238,10 @@ io.sockets.on('connection', function(socket){
                 console.log(err);
                 return;
             }
+
+            var str = channel;
+            channel = str.replace("/", "\\");
+
             host = CHANNEL_PREFIX + channel;
             socket.leave(host);
         });
@@ -242,6 +257,10 @@ io.sockets.on('disconnection', function(socket){
                 console.log(err);
                 return;
             }
+
+            var str = channel;
+            channel = str.replace("/", "\\");
+
             host = CHANNEL_PREFIX + channel;
             socket.leave(host);
         });
