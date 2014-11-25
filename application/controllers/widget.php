@@ -75,6 +75,10 @@ class Widget extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $site_data = $this->App_model->getAppsBySiteId($site_id);
+        $platform_data = $this->App_model->getPlatformWithType($site_id, 'web');
+
+        //force use first web app platform
+        $this->data['platform_data'] = $platform_data;
 
         $w_data = array(
             'client_id'=>$client_id,

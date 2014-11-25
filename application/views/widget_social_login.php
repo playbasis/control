@@ -7,18 +7,30 @@
 </div><!-- .heading -->
 
 <div class="content">
-<h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
+    <h1 class="hide"><?php echo $this->lang->line('text_choose_key'); ?></h1>
 
-<ul class="nav nav-tabs">
-    <li class="active"> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login')); ?></li>
-    <li> <?php echo anchor('widget#widget-leaderboard', $this->lang->line('column_leaderboard'));?></li>
-    <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
-    <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
-    <li> <?php echo anchor('widget#widget-userbar', $this->lang->line('column_userbar'));?></li>
-</ul>
+    <select class="wg-apikey hide" >
+        <?php
+        foreach($platform_data as $pfd){
+            ?>
+            <option  value="<?php echo $pfd["api_key"]; ?>"><?php echo $pfd["api_key"]; ?></option>
+        <?php
+        }
+        ?>
+    </select>
 
-<div class="tab-content">
-<div class="tab-social">
+    <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
+
+    <ul class="nav nav-tabs">
+        <li class="active"> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login')); ?></li>
+        <li> <?php echo anchor('widget#widget-leaderboard', $this->lang->line('column_leaderboard'));?></li>
+        <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
+        <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
+        <li> <?php echo anchor('widget#widget-userbar', $this->lang->line('column_userbar'));?></li>
+    </ul>
+
+    <div class="tab-content">
+    <div class="tab-social">
 
     <h3>Social Login<?php echo $this->lang->line('text_social_login_widget'); ?></h3>
 
@@ -217,7 +229,7 @@ var isReload = false;
 var timeout = setTimeout(void(0),0);
 var codeHeaderTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
 var codeHeaderPlayerTestTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4',\n\t\tplayerId :'playertest'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
-
+var apikey = '';
 
 function getVal(val){
     if(typeof val == 'undefined' ){
@@ -238,16 +250,22 @@ function reloadSocial(){
     var url = '<?php echo base_url();?>index.php/widget/preview?type=login';
     var codeElement = '&lt;div class="pb-login" ';
     var codeHeader = codeHeaderTemplate;
+    apikey = getVal($('.wg-apikey').val());
 
-    if(!$('#no-logout').is(':checked')){
-        codeElement+= ' data-pb-nologout ';
-        url+= '&nologin=true'
+    if(apikey){
+
+        url+='&apikey='+apikey;
+        codeHeader = codeHeader.replace('abc', apikey);
+        if(!$('#no-logout').is(':checked')){
+            codeElement+= ' data-pb-nologout ';
+            url+= '&nologin=true'
+        }
+        codeElement += '&gt;&lt;/div&gt;';
+
+        $('#iframe-login').attr('src',url);
+        $('#getcode-modal .code-element').html(codeElement);
+        $('#getcode-modal .code-header').html(codeHeader);
     }
-    codeElement += '&gt;&lt;/div&gt;';
-
-    $('#iframe-login').attr('src',url);
-    $('#getcode-modal .code-element').html(codeElement);
-    $('#getcode-modal .code-header').html(codeHeader);
 }
 
 $(document).ready(function(){
@@ -274,7 +292,7 @@ $(document).ready(function(){
 &lt;script&gt;
 window.PBAsyncInit = function(){
     PB.init({
-        api_key:'<?php echo $site_data["api_key"]; ?>'
+        api_key:'abc'
     });
 };(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://widget.pbapp.net/playbasis/en/all.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","playbasis-js"));&lt;/script&gt;
 	            </pre>

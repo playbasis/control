@@ -5,9 +5,9 @@
         </div><!-- .heading -->
 
         <div class="content">
-        <!--h1><?php echo $this->lang->line('text_choose_key'); ?></h1>
+        <h1 class="hide"><?php echo $this->lang->line('text_choose_key'); ?></h1>
 
-        <select class="wg-apikey" >
+        <select class="wg-apikey hide" >
             <?php
             foreach($platform_data as $pfd){
                 ?>
@@ -15,7 +15,7 @@
             <?php
             }
             ?>
-        </select-->
+        </select>
 
         <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
@@ -381,6 +381,8 @@
             timeout = setTimeout(reloadAchievement,timeBuffer);
         });
 
+        reloadLeaderboard();
+
 		$('#getcode-modal').on('show', function () {
 
 		})
@@ -413,8 +415,6 @@
 	var timeout = setTimeout(void(0),0);
     var codeHeaderTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
     var codeHeaderPlayerTestTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4',\n\t\tplayerId :'playertest'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
-
-    reloadLeaderboard();
 
     function updateWidget(type){
 		clearTimeout(timeout);
