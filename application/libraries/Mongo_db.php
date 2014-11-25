@@ -215,7 +215,6 @@ class Mongo_db
 		}
 
 		//MongoCursor::$timeout = -1;
-		$this->timeout = -1;
 
 		$this->load();
 	}
@@ -922,6 +921,8 @@ class Mongo_db
 		// Clear
 		$this->_clear($collection, 'get');
 
+        $cursor->timeout = -1;
+
 		// Return the raw cursor if wanted
 		if ($return_cursor === TRUE)
 		{
@@ -973,7 +974,9 @@ class Mongo_db
 						->limit($this->_limit)
 						->skip($this->_offset)
 						->count();
-		
+
+        $count->timeout = -1;
+
 		$this->_clear($collection, 'count');
 		return $count;
 	}
