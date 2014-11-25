@@ -74,6 +74,7 @@ class Quest extends MY_Controller
 
         $config['base_url'] = site_url('quest/page');
         $config["uri_segment"] = 3;
+        $choice = 0;
 
         if($client_id){
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
@@ -103,9 +104,9 @@ class Quest extends MY_Controller
             }
 
             $config['total_rows'] = $this->Quest_model->getTotalQuestsClientSite($filter);
+            $choice = $config["total_rows"] / $config["per_page"];
         }
 
-        $choice = $config["total_rows"] / $config["per_page"];
         $config['num_links'] = round($choice);
 
         $config['next_link'] = 'Next';

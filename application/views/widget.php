@@ -5,7 +5,7 @@
         </div><!-- .heading -->
 
         <div class="content">
-        <h1><?php echo $this->lang->line('text_choose_key'); ?></h1>
+        <!--h1><?php echo $this->lang->line('text_choose_key'); ?></h1>
 
         <select class="wg-apikey" >
             <?php
@@ -15,7 +15,7 @@
             <?php
             }
             ?>
-        </select>
+        </select-->
 
         <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
@@ -624,7 +624,7 @@
 &lt;script&gt;
 window.PBAsyncInit = function(){
     PB.init({
-        api_key:'',
+        api_key:'abc',
         theme_color :'#52b398'
     });
 };(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://widget.pbapp.net/playbasis/en/all.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","playbasis-js"));&lt;/script&gt;
