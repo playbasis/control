@@ -1191,16 +1191,21 @@ class Player_model extends MY_Model
 
 	private function active_user_per_day($data, $ndays, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
+		$str = $from ? explode('-', $from, 3) : "";
+		$var_from = $from ? "var from = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 0, 0, 0);" : "";
 		$str = $to ? explode('-', $to, 3) : "";
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_from = $from ? "if (tmp.getTime() < from.getTime()) continue;" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
 		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
 		$map = new MongoCode("function() {
 			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
 			var tmp = new Date();
+			$var_from
 			$var_to
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_from
 				$check_to
 				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+tmp.getDate()).slice(-2), {a: [this.pb_player_id.toString()]});
 			}
@@ -1220,7 +1225,7 @@ class Player_model extends MY_Model
 		}");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
-		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($ndays > 1 ? date('Y-m-d', strtotime('-'.$ndays.' day', strtotime($from))) : $from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
@@ -1242,8 +1247,11 @@ class Player_model extends MY_Model
 
 	private function active_user_per_week($data, $ndays, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
+		$str = $from ? explode('-', $from, 3) : "";
+		$var_from = $from ? "var from = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 0, 0, 0);" : "";
 		$str = $to ? explode('-', $to, 3) : "";
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_from = $from ? "if (tmp.getTime() < from.getTime()) continue;" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
 		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
 		$map = new MongoCode("function() {
@@ -1255,9 +1263,11 @@ class Player_model extends MY_Model
 			};
 			var days,days_per_week,week,d;
 			var tmp = new Date();
+			$var_from
 			$var_to
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_from
 				$check_to
 				days = get_number_of_days(tmp.getFullYear(), tmp.getMonth());
 				week = Math.ceil(tmp.getDate()/7.0);
@@ -1281,7 +1291,7 @@ class Player_model extends MY_Model
 		}");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
-		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($ndays > 1 ? date('Y-m-d', strtotime('-'.$ndays.' day', strtotime($from))) : $from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
@@ -1305,16 +1315,21 @@ class Player_model extends MY_Model
 
 	private function active_user_per_month($data, $ndays, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
+		$str = $from ? explode('-', $from, 3) : "";
+		$var_from = $from ? "var from = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 0, 0, 0);" : "";
 		$str = $to ? explode('-', $to, 3) : "";
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
+		$check_from = $from ? "if (tmp.getTime() < from.getTime()) continue;" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
 		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
 		$map = new MongoCode("function() {
 			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
 			var tmp = new Date();
+			$var_from
 			$var_to
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);
+				$check_from
 				$check_to
 				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2), {a: [this.pb_player_id.toString()]});
 			}
@@ -1334,7 +1349,7 @@ class Player_model extends MY_Model
 		}");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
-		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($ndays > 1 ? date('Y-m-d', strtotime('-'.$ndays.' day', strtotime($from))) : $from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$_result = $this->mongo_db->command(array(
 			'mapReduce' => 'playbasis_action_log',
