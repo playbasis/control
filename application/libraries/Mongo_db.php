@@ -214,7 +214,9 @@ class Mongo_db
 			$this->_ci = NULL;
 		}
 
-		//MongoCursor::$timeout = -1;
+        if(!defined("MONGO_SUPPORTS_STREAMS")){
+            MongoCursor::$timeout = 5*60000;
+        }
 
 		$this->load();
 	}
@@ -1847,8 +1849,10 @@ class Mongo_db
 	{
 		$options = array();
 
-        $options['connectTimeoutMS'] = -1;
-        $options['socketTimeoutMS'] = -1;
+        if(defined("MONGO_SUPPORTS_STREAMS")){
+            $options['connectTimeoutMS'] = -1;
+            $options['socketTimeoutMS'] = 5*60000;
+        }
 
 		if ($this->_persist === TRUE)
 		{
