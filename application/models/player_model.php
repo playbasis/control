@@ -1194,6 +1194,7 @@ class Player_model extends MY_Model
 		$str = $to ? explode('-', $to, 3) : "";
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
 		$map = new MongoCode("function() {
 			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
 			var tmp = new Date();
@@ -1201,10 +1202,22 @@ class Player_model extends MY_Model
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);
 				$check_to
-				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+tmp.getDate()).slice(-2), this.pb_player_id.toString());
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+tmp.getDate()).slice(-2), {a: [this.pb_player_id.toString()]});
 			}
 		}");
-		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$reduce = new MongoCode("function(key, values) {
+			result = {a: []};
+			check = {};
+			values.forEach(function (v) {
+				v.a.forEach(function (e) {
+					if (!(e in check)) {
+						result.a.push(e);
+						check[e] = true;
+					}
+				})
+			});
+			return result;
+		}");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
@@ -1219,23 +1232,7 @@ class Player_model extends MY_Model
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
-			$values = array();
-			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
-				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
-						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
-							array_push($values, $each);
-						} else {
-							array_push($values, $pb_player_id['pb_player_id']);
-						}
-					} else {
-						array_push($values, $pb_player_id);
-					}
-				} else $values = $value['value']['pb_player_id'];
-			} else {
-				array_push($values, $value['value']);
-			}
-			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
 		}
 		usort($result, 'cmp1');
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
@@ -1248,6 +1245,7 @@ class Player_model extends MY_Model
 		$str = $to ? explode('-', $to, 3) : "";
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
 		$map = new MongoCode("function() {
 			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
 			var get_number_of_days = function(year, month) {
@@ -1265,10 +1263,22 @@ class Player_model extends MY_Model
 				week = Math.ceil(tmp.getDate()/7.0);
 				if (week > 4) week = 4;
 				d = (week-1)*7+1;
-				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+d).slice(-2), this.pb_player_id.toString());
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2)+'-'+('0'+d).slice(-2), {a: [this.pb_player_id.toString()]});
 			}
 		}");
-		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$reduce = new MongoCode("function(key, values) {
+			result = {a: []};
+			check = {};
+			values.forEach(function (v) {
+				v.a.forEach(function (e) {
+					if (!(e in check)) {
+						result.a.push(e);
+						check[e] = true;
+					}
+				})
+			});
+			return result;
+		}");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
@@ -1283,23 +1293,7 @@ class Player_model extends MY_Model
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
-			$values = array();
-			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
-				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
-						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
-							array_push($values, $each);
-						} else {
-							array_push($values, $pb_player_id['pb_player_id']);
-						}
-					} else {
-						array_push($values, $pb_player_id);
-					}
-				} else $values = $value['value']['pb_player_id'];
-			} else {
-				array_push($values, $value['value']);
-			}
-			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
 		}
 		usort($result, 'cmp1');
 		$from2 = $from ? MY_Model::date_to_startdate_of_week($from) : null;
@@ -1314,6 +1308,7 @@ class Player_model extends MY_Model
 		$str = $to ? explode('-', $to, 3) : "";
 		$var_to = $to ? "var to = new Date(".$str[0].", ".(intval($str[1])-1).", ".$str[2].", 23, 59, 59);" : "";
 		$check_to = $to ? "if (tmp.getTime() > to.getTime()) break;" : "";
+		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
 		$map = new MongoCode("function() {
 			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
 			var tmp = new Date();
@@ -1321,10 +1316,22 @@ class Player_model extends MY_Model
 			for (var i = 0; i < ".$ndays."; i++) {
 				tmp.setTime(this.date_added.getTime()+i*86400000);
 				$check_to
-				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2), this.pb_player_id.toString());
+				emit(tmp.getFullYear()+'-'+('0'+(tmp.getMonth()+1)).slice(-2), {a: [this.pb_player_id.toString()]});
 			}
 		}");
-		$reduce = new MongoCode("function(key, values) { return {'pb_player_id': values}; }");
+		$reduce = new MongoCode("function(key, values) {
+			result = {a: []};
+			check = {};
+			values.forEach(function (v) {
+				v.a.forEach(function (e) {
+					if (!(e in check)) {
+						result.a.push(e);
+						check[e] = true;
+					}
+				})
+			});
+			return result;
+		}");
 		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
@@ -1339,23 +1346,7 @@ class Player_model extends MY_Model
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
 		foreach ($_result as $key => $value) {
-			$values = array();
-			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
-				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
-					if (is_array($pb_player_id) && array_key_exists('pb_player_id', $pb_player_id)) {
-						if (is_array($pb_player_id['pb_player_id'])) foreach ($pb_player_id['pb_player_id'] as $key => $each) {
-							array_push($values, $each);
-						} else {
-							array_push($values, $pb_player_id['pb_player_id']);
-						}
-					} else {
-						array_push($values, $pb_player_id);
-					}
-				} else $values = $value['value']['pb_player_id'];
-			} else {
-				array_push($values, $value['value']);
-			}
-			array_push($result, array('_id' => $value['_id'], 'value' => count(array_unique($values))));
+			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
 		}
 		usort($result, 'cmp1');
 		$from2 = $from ? MY_Model::get_year_month($from) : null;
