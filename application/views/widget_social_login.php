@@ -222,6 +222,7 @@ $(document).ready(function(){
         reloadSocial();
     })
 
+    reloadSocial();
 });
 var tabActive = '#widget-leaderboard';
 var timeBuffer = 500;
@@ -229,7 +230,6 @@ var isReload = false;
 var timeout = setTimeout(void(0),0);
 var codeHeaderTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
 var codeHeaderPlayerTestTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4',\n\t\tplayerId :'playertest'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
-var apikey = '';
 
 function getVal(val){
     if(typeof val == 'undefined' ){
@@ -247,10 +247,11 @@ function getColor(val){
     return color;
 }
 function reloadSocial(){
-    var url = '<?php echo base_url();?>index.php/widget/preview?type=login';
+    var url = baseUrlPath+'widget/preview?type=login';
     var codeElement = '&lt;div class="pb-login" ';
     var codeHeader = codeHeaderTemplate;
-    apikey = getVal($('.wg-apikey').val());
+
+    var apikey = $('.wg-apikey').val();
 
     if(apikey){
 
@@ -269,6 +270,7 @@ function reloadSocial(){
 }
 
 $(document).ready(function(){
+    $(".wg-apikey option:first").attr('selected','selected');
 
     $('.social-help').tooltipster({
         contentAsHTML: true,

@@ -314,9 +314,8 @@
 
 <script>
 
-    var apikey = '';
-
 	$(document).ready(function(){
+        $(".wg-apikey option:first").attr('selected','selected');
 
 		$('#widget-leaderboard a:first').tab('show');
 		$('.colorSelector').ColorPicker({
@@ -427,10 +426,9 @@
 		var url = '<?php echo base_url();?>index.php/widget/preview?type=leaderboard';
 		var codeElement = '&lt;div class="pb-leaderboard" ';
 		var codeHeader = codeHeaderTemplate;
-        apikey = getVal($('.wg-apikey').val());
+        var apikey = $('.wg-apikey').val();
 
         if(apikey){
-
             url+='&apikey='+apikey;
             codeHeader = codeHeader.replace('abc', apikey);
 
@@ -459,10 +457,10 @@
 		var width = getVal($('#widget-livefeed .wg-width').val());
 		var height = getVal($('#widget-livefeed .wg-height').val());
 		var color =getColor($('#widget-livefeed .wg-color').val());
-		var url = '<?php echo base_url();?>index.php/widget/preview?type=livefeed';
+		var url = baseUrlPath+'widget/preview?type=livefeed';
 		var codeElement = '&lt;div class="pb-livefeed" ';
 		var codeHeader = codeHeaderTemplate;
-        apikey = getVal($('.wg-apikey').val());
+        var apikey = $('.wg-apikey').val();
 
         if(apikey){
 
@@ -493,10 +491,10 @@
 		var color =getColor($('#widget-profile .wg-color').val());
 		var displaypoint =getColor($('#widget-profile .wg-displaypoint').val());
 		var playerIdTest =$('#widget-profile .wg-player-id').val();
-		var url = '<?php echo base_url();?>index.php/widget/preview?type=profile';
+		var url = baseUrlPath+'widget/preview?type=profile';
 		var codeElement = '&lt;div class="pb-profile" ';
 		var codeHeader = codeHeaderPlayerTestTemplate;
-        apikey = getVal($('.wg-apikey').val());
+        var apikey = $('.wg-apikey').val();
 
         if(apikey){
 
@@ -529,10 +527,10 @@
 		var color =getColor($('#widget-userbar .wg-color').val());
 		var displaypoint =getColor($('#widget-userbar .wg-displaypoint').val());
         var playerIdTest =$('#widget-userbar .wg-player-id').val();
-		var url = '<?php echo base_url();?>index.php/widget/preview?type=userbar';
+		var url = baseUrlPath+'widget/preview?type=userbar';
 		var codeElement = '&lt;div class="pb-userbar" ';
 		var codeHeader = codeHeaderPlayerTestTemplate;
-        apikey = getVal($('.wg-apikey').val());
+        var apikey = $('.wg-apikey').val();
 
         if(apikey){
 
@@ -562,10 +560,10 @@
         var height = getVal($('#widget-achievement .wg-height').val());
         var color =getColor($('#widget-achievement .wg-color').val());
         var playerIdTest =$('#widget-achievement .wg-player-id').val();
-        var url = '<?php echo base_url();?>index.php/widget/preview?type=achievement';
+        var url = baseUrlPath+'widget/preview?type=achievement';
         var codeElement = '&lt;div class="pb-achievement" ';
         var codeHeader = codeHeaderPlayerTestTemplate;
-        apikey = getVal($('.wg-apikey').val());
+        var apikey = $('.wg-apikey').val();
 
         if(apikey){
 
