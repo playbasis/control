@@ -185,14 +185,18 @@ class  MY_Controller  extends  CI_Controller  {
                     );
                 }
 
-                // foreach ($features as $value) {
-                //     $this->data['features'][] = array(
-                //         'feature_id' => $value['_id'],
-                //         'name' => $value['name'],
-                //         'icon' => $value['icon'],
-                //         'link' =>$value['link']
-                //     );
-                // }
+                $player_limit = $this->App_model->getPlanLimitById(
+                    $this->data['site_id'],
+                    $user_plan["_id"],
+                    "others",
+                    "player");
+
+                $usersCount = $this->Player_model->getTotalPlayers($this->data['site_id'], $this->data['client_id']);
+
+                $this->data['check_limit'] = array(
+                    'limit_user' => $player_limit,
+                    'total' => $usersCount
+                );
 
                 $client = $this->Client_model->getClientById($this->User_model->getClientId());
                 $this->data['user_plan_date_billing'] = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;

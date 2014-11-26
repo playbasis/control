@@ -517,6 +517,30 @@ class App_model extends MY_Model
         return $results;
     }
 
+    public function getPlanLimitById($app_id, $plan_id, $type, $field=null)
+    {
+        $this->set_site_mongodb($app_id);
+        $this->mongo_db->where(array(
+            '_id' => $plan_id,
+        ));
+        $res = $this->mongo_db->get('playbasis_plan');
+        if ($res) {
+            $res = $res[0];
+            $limit = 'limit_'.$type;
+            if (isset($res[$limit])) {
+                if ($field) {
+                    return isset($res[$limit][$field]) ? $res[$limit][$field] : null;
+                } else {
+                    return $res[$limit];
+                }
+            } else { // this plan does not set this limitation
+                return null;
+            }
+        }
+        else {
+            throw new Exception("PLANID_NOTFOUND");
+        }
+    }
 //    public function moveOldtoNewSystem($data){
 //        $this->set_site_mongodb($this->session->userdata('site_id'));
 //
