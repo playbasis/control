@@ -38,7 +38,7 @@ class Report_player_model extends MY_Model{
 
 		if (isset($data['username']) && $data['username'] != '') {
             $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
-            $this->mongo_db->where('username', $regex);
+            $this->mongo_db->or_where(array('username' => $regex, 'email' => $data['username']));
         }
 
         if (isset($data['filter_site_id']) && $data['filter_site_id'] != ''){
