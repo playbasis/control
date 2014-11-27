@@ -867,7 +867,7 @@ class Goods extends MY_Controller
                 'site_id' => $this->User_model->getSiteId(),
                 'group' => $goods_info['group'],
                 'limit' => $limit,
-                'start' => $offset
+                'start' => $offset*$limit
             );
             $this->data['members'] = $this->Goods_model->getAvailableGoodsByGroup($data);
             $this->data['members_total'] = $this->Goods_model->getTotalAvailableGoodsByGroup($data);
