@@ -20,7 +20,7 @@
                     <input type="text" name="filter_date_end" value="<?php echo $filter_date_end; ?>" id="date-end" size="12" />
                 </span>
                 <span>
-                        <?php echo $this->lang->line('filter_username'); ?>
+                        <?php echo $this->lang->line('filter_email_username'); ?>
                     <input type="text" name="filter_username" value="<?php echo $filter_username; ?>" id="username" size="12" />
                 </span>
                 <span>

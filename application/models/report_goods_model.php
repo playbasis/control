@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+function index_id($obj) {
+    return $obj['_id'];
+}
+
 function index_goods_id($obj) {
     return $obj['goods_id'];
 }
@@ -17,14 +21,14 @@ class Report_goods_model extends MY_Model{
             $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
             $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
             $this->mongo_db->where('username', $regex);
-            $users = $this->mongo_db->get("playbasis_player");
+            $users1 = $this->mongo_db->get("playbasis_player");
 
-            $user_id =array();
-            foreach($users as $u){
-                $user_id[] = $u["_id"];
-            }
+            $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+            $this->mongo_db->where('email', $data['username']);
+            $users2 = $this->mongo_db->get("playbasis_player");
 
-            $this->mongo_db->where_in('pb_player_id',  $user_id);
+            $this->mongo_db->where_in('pb_player_id', array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
@@ -64,14 +68,14 @@ class Report_goods_model extends MY_Model{
             $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
             $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
             $this->mongo_db->where('username', $regex);
-            $users = $this->mongo_db->get("playbasis_player");
+            $users1 = $this->mongo_db->get("playbasis_player");
 
-            $user_id =array();
-            foreach($users as $u){
-                $user_id[] = $u["_id"];
-            }
+            $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+            $this->mongo_db->where('email', $data['username']);
+            $users2 = $this->mongo_db->get("playbasis_player");
 
-            $this->mongo_db->where_in('pb_player_id',  $user_id);
+            $this->mongo_db->where_in('pb_player_id', array_merge(array_map('index_id', $users1), array_map('index_id', $users2)));
         }
 
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
