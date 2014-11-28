@@ -78,11 +78,7 @@ class Email extends REST2_Controller
 		}
 
 		/* process parameters */
-		$required = $this->input->checkParam(array(
-			'player_id',
-			'ref_id',
-			'subject'
-		));
+		$required = $this->input->checkParam(array('player_id', 'ref_id', 'subject', 'message'));
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$cl_player_id = $this->input->post('player_id');
@@ -104,7 +100,6 @@ class Email extends REST2_Controller
 		$to = array($email);
 		$subject = $this->input->post('subject');
 		$message = $this->input->post('message');
-		if ($message == false) $message = ''; // $message is optional
 		$message = str_replace('{{code}}', $redeemData['code'], $message);
 
 		$this->processEmail($from, $to, null, $subject, $message);
