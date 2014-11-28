@@ -56,8 +56,6 @@ class Quiz extends REST2_Controller
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/node_stream', 'node');
         $this->load->model('tracker_model');
-        $this->load->model('tool/error', 'error');
-        $this->load->model('tool/respond', 'resp');
     }
 
     public function list_get()
@@ -537,10 +535,10 @@ class Quiz extends REST2_Controller
         }
         if ($message) {
             $this->node->publish(array_merge(array(
-                "client_id" => $client_id,
-                "site_id" => $site_id,
-                "pb_player_id" => $pb_player_id,
-                "player_id" => $cl_player_id,
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'pb_player_id' => $pb_player_id,
+                'player_id' => $cl_player_id,
                 'action_name' => 'quiz_reward',
                 'action_icon' => 'fa-trophy',
             ), $message), $domain_name, $site_id);
