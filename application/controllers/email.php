@@ -110,6 +110,51 @@ class Email extends REST2_Controller
 		$this->processEmail($from, $to, null, $subject, $message);
 	}
 
+	public function send_player_post()
+	{
+		/* check permission to send email in this bill cycle */
+		try {
+			$this->client_model->permissionProcess(
+				$this->client_id,
+				$this->site_id,
+				"notifications",
+				"email"
+			);
+		} catch(Exception $e) {
+			if ($e->getMessage() == "LIMIT_EXCEED")
+				$this->response($this->error->setError(
+					"LIMIT_EXCEED", array()), 200);
+			else
+				$this->response($this->error->setError(
+					"INTERNAL_ERROR", array()), 200);
+		}
+
+		/* process parameters */
+		$required = $this->input->checkParam(array('player_id', 'subject', 'message'));
+		if ($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+		$cl_player_id = $this->input->post('player_id');
+		$validToken = array_merge($this->validToken, array(
+			'cl_player_id' => $cl_player_id
+		));
+		$pb_player_id = $this->player_model->getPlaybasisId($validToken);
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+		if (!$player)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		/* variables */
+		$email = $player['email'];
+		$from = EMAIL_FROM;
+		$to = array($email);
+		$subject = $this->input->post('subject');
+		$message = $this->input->post('message');
+
+		$this->processEmail($from, $to, null, $subject, $message);
+	}
+
 	private function processEmail($from, $to, $bcc, $subject, $message) {
 		if (!empty($to)) { // 'to-cc' mode
 			$_to = $this->filter_email_out($to, $this->site_id);
