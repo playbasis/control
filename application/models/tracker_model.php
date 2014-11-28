@@ -43,6 +43,9 @@ class Tracker_model extends MY_Model
             'goods_id'		=> (isset($input['goods_id']))		? $input['goods_id']		: null,
             'goods_name'	=> (isset($input['goods_name']))	? $input['goods_name']		: null,
             'goods_log_id'  => (isset($input['goods_log_id']))	? $input['goods_log_id']	: null,
+            'quest_id'      => (isset($input['quest_id']))	? $input['quest_id']	: null,
+            'mission_id'    => (isset($input['mission_id']))	? $input['mission_id']	: null,
+            'quiz_id'       => (isset($input['quiz_id']))	? $input['quiz_id']	: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
