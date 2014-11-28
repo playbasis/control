@@ -1513,6 +1513,159 @@
             ]
         },
         {
+            "name": "Communication API",
+            "methods": [
+                {
+                    "MethodName": "Send Email",
+                    "Synopsis": "Send email to a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Email/send",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "subject",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email subject"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email message"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Send Email Coupon",
+                    "Synopsis": "Send coupon to a player via email.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Email/goods",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "ref_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "reference transaction id for redemption"
+                        },
+                        {
+                            "Name": "subject",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email subject"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "email message, can use variable {{code}} for the actual code"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Send SMS",
+                    "Synopsis": "Send SMS to a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Sms/send",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "SMS message"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Send SMS Coupon",
+                    "Synopsis": "Send coupon to a player via SMS.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Sms/goods",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "ref_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "reference transaction id for redemption"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "SMS message, can use variable {{code}} for the actual code"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "Service API",
             "methods": [
                 {

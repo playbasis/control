@@ -174,7 +174,7 @@ $route['Quiz/'.ANY_STRING.'/rank/'.ANY_NUMBER] = 'quiz/rank/$1/$2'; // ANY_STRIN
 $route['Quiz/'.ANY_STRING.'/rank'] = 'quiz/rank/$1/5'; // ANY_STRING = quiz_id
 
 //email API
-$route['Email/send'] = 'email/send';
+$route['Email/send'] = 'email/send_player';
 $route['Email/isBlackList'] = 'email/isBlackList';
 $route['Email/addBlackList'] = 'email/addBlackList';
 $route['Email/removeBlackList'] = 'email/removeBlackList';
