@@ -349,7 +349,7 @@ class Quiz extends REST2_Controller
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $total_score, $grade);
 
         /* publish the reward (if any) */
-        if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $this->validToken['domain_name'], $reward);
+        if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz_id, $this->validToken['domain_name'], $reward);
 
         /* data */
         unset($grade['rewards']);
@@ -423,6 +423,8 @@ class Quiz extends REST2_Controller
         foreach ($rewards as $type => $reward) {
             switch ($type) {
             case 'exp':
+                $name = 'exp';
+                $id = $this->reward_model->findByName(array('client_id' => $client_id, 'site_id' => $site_id), $name);
                 $value = $reward['exp_value'];
                 // update player's exp
                 $lv = $this->client_model->updateExpAndLevel($value, $pb_player_id, $cl_player_id, array(
@@ -438,7 +440,8 @@ class Quiz extends REST2_Controller
                 }
                 array_push($events, array(
                     'event_type' => 'REWARD_RECEIVED',
-                    'reward_type' => 'exp',
+                    'reward_type' => $name,
+                    'reward_id' => $id,
                     'value' => $value
                 ));
                 break;
@@ -456,6 +459,7 @@ class Quiz extends REST2_Controller
                 array_push($events, array(
                     'event_type' => 'REWARD_RECEIVED',
                     'reward_type' => $name,
+                    'reward_id' => $id,
                     'value' => $value
                 ));
                 break;
@@ -469,6 +473,7 @@ class Quiz extends REST2_Controller
                     array_push($events, array(
                         'event_type' => 'REWARD_RECEIVED',
                         'reward_type' => 'badge',
+                        'reward_id' => $id,
                         'reward_data' => $badgeData,
                         'value' => $value
                     ));
@@ -489,6 +494,7 @@ class Quiz extends REST2_Controller
                     array_push($events, array(
                         'event_type' => 'REWARD_RECEIVED',
                         'reward_type' => $name,
+                        'reward_id' => $id,
                         'value' => $value
                     ));
                 }
@@ -501,7 +507,7 @@ class Quiz extends REST2_Controller
         return $events;
     }
 
-    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $domain_name, $event) {
+    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz_id, $domain_name, $event) {
         $message = null;
         switch ($event['event_type']) {
         case 'LEVEL_UP':
@@ -516,6 +522,17 @@ class Quiz extends REST2_Controller
                 $message = array('message' => $this->utility->getEventMessage('point', $event['value'], $event['reward_type']), 'amount' => $event['value'], 'point' => $event['reward_type']);
                 break;
             }
+            $this->tracker_model->trackEvent('REWARD', $message, array(
+                'pb_player_id'	=> $pb_player_id,
+                'client_id'		=> $client_id,
+                'site_id'		=> $site_id,
+                'quiz_id'		=> $quiz_id,
+                'reward_type'	=> $event['reward_type'] === 'badge' ? 'badge' : 'point',
+                'reward_id'	    => $event['reward_id'],
+                'reward_name'	=> $event['reward_type'],
+                'amount'	    => $event['value'],
+                'message'       => $message
+            ));
             break;
         }
         if ($message) {
