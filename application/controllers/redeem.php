@@ -265,41 +265,60 @@ class Redeem extends REST2_Controller
                 return false;
             }
 
-            $this->getRedeemGoods($pb_player_id, $goodsData, $amount, $validToken);
+            try {
+                /* check limit of redeem according to their plan */
+                $this->client_model->permissionProcess(
+                    $this->client_id,
+                    $this->site_id,
+                    "others",
+                    "redeem"
+                );
 
-            $event = array(
-                'event_type' => 'GOODS_RECEIVED',
-                'goods_data' => $goodsData,
-                'value' => $amount
-            );
+                /* give goods reward, if exists */
+                $this->getRedeemGoods($pb_player_id, $goodsData, $amount, $validToken);
+                $event = array(
+                    'event_type' => 'GOODS_RECEIVED',
+                    'goods_data' => $goodsData,
+                    'value' => $amount
+                );
+                array_push($redeemResult['events'], $event);
 
-            array_push($redeemResult['events'], $event);
+                /* obtain coupon code */
+                $log_id = $this->redeem_model->exerciseCode('goods', $validToken['client_id'], $validToken['site_id'], $pb_player_id, $goodsData['code']);
+                $redeemResult = array_merge($redeemResult, array('log_id' => $log_id->{'$id'}));
 
-            $log_id = $this->redeem_model->exerciseCode('goods', $validToken['client_id'], $validToken['site_id'], $pb_player_id, $goodsData['code']);
-            $redeemResult = array_merge($redeemResult, array('log_id' => $log_id->{'$id'}));
+                // publish to node stream
+                $eventMessage = $this->utility->getEventMessage('goods', '', '', '', '', '', $goodsData['name']);
+                $validToken = array_merge($validToken, array(
+                    'pb_player_id' => $pb_player_id,
+                    'goods_id' => new MongoId($goodsData['goods_id']),
+                    'goods_name' => $goodsData['name'],
+                    'amount' => $amount,
+                    'redeem' => $goodsData['redeem'],
+                    'action_name' => 'redeem_goods',
+                    'action_icon' => 'fa-icon-shopping-cart',
+                    'message' => $eventMessage
+                ));
 
-            // publish to node stream
-            $eventMessage = $this->utility->getEventMessage('goods', '', '', '', '', '', $goodsData['name']);
-            $validToken = array_merge($validToken, array(
-                'pb_player_id' => $pb_player_id,
-                'goods_id' => new MongoId($goodsData['goods_id']),
-                'goods_name' => $goodsData['name'],
-                'amount' => $amount,
-                'redeem' => $goodsData['redeem'],
-                'action_name' => 'redeem_goods',
-                'action_icon' => 'fa-icon-shopping-cart',
-                'message' => $eventMessage
-            ));
+                // log event - goods
+                $this->tracker_model->trackGoods($validToken);
 
-            // log event - goods
-            $this->tracker_model->trackGoods($validToken);
-
-            $this->node->publish(array_merge($validToken, array(
-                'action_name' => 'redeem_goods',
-                'action_icon' => 'fa-gift',
-                'message' => $eventMessage,
-                'goods' => $event['goods_data']
-            )), $validToken['domain_name'], $validToken['site_id']);
+                $this->node->publish(array_merge($validToken, array(
+                    'action_name' => 'redeem_goods',
+                    'action_icon' => 'fa-gift',
+                    'message' => $eventMessage,
+                    'goods' => $event['goods_data']
+                )), $validToken['domain_name'], $validToken['site_id']);
+            } catch(Exception $e) {
+                if ($e->getMessage() == "LIMIT_EXCEED")
+                    $this->response($this->error->setError(
+                        "LIMIT_EXCEED", array()), 200);
+                else {
+                    log_message('error', '[processRedeem] error = '.$e->getMessage());
+                    $this->response($this->error->setError(
+                        "INTERNAL_ERROR", array()), 200);
+                }
+            }
         }
 
         return $redeemResult;

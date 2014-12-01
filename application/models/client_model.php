@@ -707,7 +707,7 @@ class Client_model extends MY_Model
     private function getPermissionUsage($client_id, $site_id, $type, $field, $clientDate)
     {
         // wrong type
-        if ($type != "notifications" && $type != "requests")
+        if (!in_array($type, array("notifications", "requests", "others")))
             throw new Exception("WRONG_TYPE");
 
         $this->set_site_mongodb($site_id);
