@@ -106,9 +106,11 @@ abstract class REST2_Controller extends REST_Controller
             if ($e->getMessage() == "LIMIT_EXCEED")
                 $this->response($this->error->setError(
                     "LIMIT_EXCEED", array()), 200);
-            else
+            else {
+                log_message('error', '[REST2::permissionProcess] error = '.$e->getMessage());
                 $this->response($this->error->setError(
                     "INTERNAL_ERROR", array()), 200);
+            }
         }
 	}
 
