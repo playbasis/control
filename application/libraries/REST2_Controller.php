@@ -4,7 +4,7 @@ require_once APPPATH . '/libraries/REST_Controller.php';
 /**
  * Playbasis REST2_Controller
  *
- * An extension on fully RESTful server implementation for implementing logging functinoality for Playbasis project.
+ * An extension on fully RESTful server implementation for implementing logging functionality for Playbasis API.
  *
  * @package        	CodeIgniter
  * @subpackage    	Libraries
