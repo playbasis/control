@@ -199,7 +199,7 @@ class  MY_Controller  extends  CI_Controller  {
                 );
 
                 $client = $this->Client_model->getClientById($this->User_model->getClientId());
-                $this->data['user_plan_date_billing'] = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
+                $this->data['user_plan_enterprise_flag'] = $user_plan['price'] <= 0 && $user_plan['_id'] != FREE_PLAN;
             }else{
                 if($this->data['client_id']){
                     // check to see if there is an associated plan, otherwise we output error no domain
@@ -232,8 +232,7 @@ class  MY_Controller  extends  CI_Controller  {
                     } else {
                         $this->data['check_domain_exists'] = false;
                     }
-                    $client = $this->Client_model->getClientById($this->User_model->getClientId());
-                    $this->data['user_plan_date_billing'] = array_key_exists('date_billing', $client) && !empty($client['date_billing']) ? $client['date_billing']->sec : null;
+                    $this->data['user_plan_enterprise_flag'] = $user_plan['price'] <= 0 && $user_plan['_id'] != FREE_PLAN;
                 }else{
                     // super admin
                     $features = $this->Feature_model->getFeatures();    
