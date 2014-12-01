@@ -490,16 +490,6 @@ class Goods extends MY_Controller
 
     private function getList($offset) {
         $this->_getList($offset);
-        // Get Usage
-        $site_id = $this->User_model->getSiteId();
-        $usage = $this->Goods_model->getTotalGoodsBySiteId(
-            array('site_id' => $site_id));
-        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-
-        // Get Limit
-        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
-        $this->data['usage'] = $usage;
-        $this->data['limit'] = $limit;
         $this->load->vars($this->data);
         $this->render_page('template');
     }
