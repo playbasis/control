@@ -35,14 +35,19 @@ class Widget extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        $site_data = $this->App_model->getAppsBySiteId($site_id);
-        $platform_data = $this->App_model->getPlatformWithType($site_id, 'web');
+        $this->data['platform_data'] = array();
+        $site_data = array();
+        $points_data = array();
 
-        //force use first web app platform
-        $this->data['platform_data'] = $platform_data;
+        if($client_id){
+            $site_data = $this->App_model->getAppsBySiteId($site_id);
+            $platform_data = $this->App_model->getPlatformWithType($site_id, 'web');
 
+            //force use first web app platform
+            $this->data['platform_data'] = $platform_data;
 
-        $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+            $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+        }
 
         $this->data['site_data'] = $site_data;
         $this->data['points_data'] = $points_data;
@@ -58,8 +63,13 @@ class Widget extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        $site_data = $this->App_model->getAppsBySiteId($site_id);
-        $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+        $site_data = array();
+        $points_data = array();
+
+        if($client_id){
+            $site_data = $this->App_model->getAppsBySiteId($site_id);
+            $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+        }
 
         $this->data['site_data'] = $site_data;
         $this->data['points_data'] = $points_data;
@@ -74,17 +84,24 @@ class Widget extends MY_Controller
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
-        $site_data = $this->App_model->getAppsBySiteId($site_id);
-        $platform_data = $this->App_model->getPlatformWithType($site_id, 'web');
+        $this->data['platform_data'] = array();
+        $site_data = array();
+        $sw_data = array();
 
-        //force use first web app platform
-        $this->data['platform_data'] = $platform_data;
+        if($client_id){
+            $site_data = $this->App_model->getAppsBySiteId($site_id);
+            $platform_data = $this->App_model->getPlatformWithType($site_id, 'web');
 
-        $w_data = array(
-            'client_id'=>$client_id,
-            'site_id'=>$site_id,
-        );
-        $sw_data = $this->Widget_model->getWidgetSocialsSite($w_data);
+            //force use first web app platform
+            $this->data['platform_data'] = $platform_data;
+
+            $w_data = array(
+                'client_id'=>$client_id,
+                'site_id'=>$site_id,
+            );
+            $sw_data = $this->Widget_model->getWidgetSocialsSite($w_data);
+        }
+
         $sw_ready = array();
 
         $callback = '';

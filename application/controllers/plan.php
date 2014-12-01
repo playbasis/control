@@ -435,9 +435,12 @@ class Plan extends MY_Controller
         } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
             $this->data['limit_others'] = $plan_info["limit_others"];
             // merge with default, prevent missing fields
-            $this->data["limit_others"] = array_merge(
-                $default_limit_others,
-                $this->data["limit_others"]);
+            foreach($this->data['limit_others'] as $k=>$v){
+                if (!array_key_exists($k, $default_limit_others)) {
+                   unset($this->data['limit_others'][$k]);
+                }
+            }
+            $this->data["limit_others"] = array_merge($default_limit_others, $this->data["limit_others"]);
         } else {
             // Client don't have this field in DB, use default
             $this->data["limit_others"] = $default_limit_others;
@@ -456,6 +459,32 @@ class Plan extends MY_Controller
             $this->data['limit_req'] = $limit_req;
         } else {
             $this->data['limit_req'] = array();
+        }
+
+        $default_limit_widgets = array(
+            "app" => null,
+            "platform" => null,
+            "goods" => null,
+            "insight" => null,
+            "mission" => null,
+            "player" => null,
+            "quest" => null,
+            "trial" => null,
+            "user" => null);
+        if ($this->input->post('limit_others')) {
+            $this->data['limit_others'] = $this->input->post('limit_others');
+        } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
+            $this->data['limit_others'] = $plan_info["limit_others"];
+            // merge with default, prevent missing fields
+            foreach($this->data['limit_others'] as $k=>$v){
+                if (!array_key_exists($k, $default_limit_others)) {
+                    unset($this->data['limit_others'][$k]);
+                }
+            }
+            $this->data["limit_others"] = array_merge($default_limit_widgets, $this->data["limit_others"]);
+        } else {
+            // Client don't have this field in DB, use default
+            $this->data["limit_others"] = $default_limit_widgets;
         }
 
         $this->data['client_id'] = $this->User_model->getClientId();
