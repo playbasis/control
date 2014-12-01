@@ -7,6 +7,7 @@ class Goods extends MY_Controller
     {
         parent::__construct();
 
+        $this->load->model('Client_model');
         $this->load->model('User_model');
         $this->load->model('Plan_model');
         $this->load->model('Permission_model');
@@ -165,12 +166,14 @@ class Goods extends MY_Controller
 
                 if($this->User_model->getClientId()){
 
-                    $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
-
-                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
-
-                    fclose($handle);
-                    redirect('/goods', 'refresh');
+                    try {
+                        $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
+                        $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                        fclose($handle);
+                        redirect('/goods', 'refresh');
+                    } catch (Exception $e) {
+                        $this->data['message'] = $e->getMessage();
+                    }
                 }else{
 
                     $this->load->model('Client_model');
@@ -184,7 +187,13 @@ class Goods extends MY_Controller
                             array_push($list_site_id, $client['_id']);
                         }
 
-                        $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
+                        try {
+                            $this->addGoods($handle, $data, $redeem, array(new MongoId($goods_data['admin_client_id'])), $list_site_id);
+                            fclose($handle);
+                            redirect('/goods', 'refresh');
+                        } catch (Exception $e) {
+                            $this->data['message'] = $e->getMessage();
+                        }
                     }else{
                         $all_sites_clients = $this->Client_model->getAllSitesFromAllClients();
                         $hash_client_id = array();
@@ -194,10 +203,14 @@ class Goods extends MY_Controller
                             array_push($list_site_id, $site['_id']);
                         }
 
-                        $this->addGoods($handle, $data, $redeem, array_keys($hash_client_id), array($list_site_id));
+                        try {
+                            $this->addGoods($handle, $data, $redeem, array_keys($hash_client_id), array($list_site_id));
+                            fclose($handle);
+                            redirect('/goods', 'refresh');
+                        } catch (Exception $e) {
+                            $this->data['message'] = $e->getMessage();
+                        }
                     }
-                    fclose($handle);
-                    redirect('/goods', 'refresh');
                 }
             }
         }
@@ -387,6 +400,8 @@ class Goods extends MY_Controller
             $goods_data['redeem'] = $redeem;
 
             if($this->form_validation->run() && $this->data['message'] == null){
+                try {
+
                 if($this->User_model->getClientId()){
 
                     if(!$this->Goods_model->checkGoodsIsSponsor($goods_id)){
@@ -395,9 +410,6 @@ class Goods extends MY_Controller
                         $goods_info = $this->Goods_model->getGoodsToClient($goods_id);
                         if ($goods_info && array_key_exists('group', $goods_info)) {
 
-                            /* update all existing records in the group */
-                            $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
-
                             /* if there is an uploaded file, then import it into the group */
                             if (!empty($_FILES) && isset($_FILES['file']['tmp_name']) && !empty($_FILES['file']['tmp_name'])) {
                                 $data = array_merge($this->input->post(), array('quantity' => 1));
@@ -405,6 +417,9 @@ class Goods extends MY_Controller
                                 $this->addGoods($handle, $data, $redeem, array($this->User_model->getClientId()), array($this->User_model->getSiteId()));
                                 fclose($handle);
                             }
+
+                            /* update all existing records in the group */
+                            $this->Goods_model->editGoodsGroupToClient($goods_info['group'], $goods_data);
                         } else {
                             $this->Goods_model->editGoodsToClient($goods_id, $goods_data);
                         }
@@ -420,6 +435,10 @@ class Goods extends MY_Controller
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
 
                 redirect('/goods', 'refresh');
+
+                } catch (Exception $e) {
+                    $this->data['message'] = $e->getMessage();
+                }
             }
         }
 
@@ -471,6 +490,16 @@ class Goods extends MY_Controller
 
     private function getList($offset) {
         $this->_getList($offset);
+        // Get Usage
+        $site_id = $this->User_model->getSiteId();
+        $usage = $this->Goods_model->getTotalGoodsBySiteId(
+            array('site_id' => $site_id));
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+
+        // Get Limit
+        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
+        $this->data['usage'] = $usage;
+        $this->data['limit'] = $limit;
         $this->load->vars($this->data);
         $this->render_page('template');
     }
@@ -1044,6 +1073,15 @@ class Goods extends MY_Controller
                     )));
                 }
             }
+        }
+
+        /* check limit for goods group */
+        $site_id = $this->User_model->getSiteId();
+        $usage = $this->Goods_model->getTotalGoodsBySiteId(array('site_id' => $site_id));
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $limit = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'goods');
+        if ($limit !== null && $usage+count($list) > $limit) {
+            throw new Exception('Cannot process your request because of uploaded goods will go over the limit');
         }
 
         /* bulk insert into playbasis_goods_to_client */
