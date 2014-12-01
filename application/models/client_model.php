@@ -736,8 +736,8 @@ class Client_model extends MY_Model
             try {
                 $this->syncPermissionDate($clientDate, $res);
                 // check this limitation on this client-site
-                if (isset($res[$type]) && isset($res[$type][$field]))
-                    $result["value"] = $res[$type][$field];
+                if (isset($res['usage'][$type]) && isset($res['usage'][$type][$field]))
+                    $result["value"] = $res['usage'][$type][$field];
                 else // this limitation is not found in database
                     $result["value"] = 0;
             } catch (Exception $e) {
