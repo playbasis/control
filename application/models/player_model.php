@@ -26,8 +26,6 @@ class Player_model extends MY_Model
 	{
 		parent::__construct();
 		$this->config->load('playbasis');
-        $this->load->library('memcached_library');
-		$this->load->helper('memcache');
 		$this->load->library('mongo_db');
 	}
 	public function createPlayer($data, $limit)

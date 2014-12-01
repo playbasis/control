@@ -6,8 +6,6 @@ class Redeem_model extends MY_Model
     {
         parent::__construct();
         $this->config->load('playbasis');
-        $this->load->library('memcached_library');
-        $this->load->helper('memcache');
     }
 
     public function findByReferenceId($type, $refId, $site_id=0) {

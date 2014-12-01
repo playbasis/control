@@ -5,8 +5,6 @@ class Point_model extends MY_Model
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->library('memcached_library');
-		$this->load->helper('memcache');
 		$this->load->library('mongo_db');
 	}
 	public function getRewardNameById($data)
