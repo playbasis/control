@@ -180,6 +180,7 @@ class Account extends MY_Controller
         $this->data['client']['date_modified'] = $client['date_modified']->sec;
         $this->data['plan'] = $plan;
         $this->data['plan']['free_flag'] = $plan_free_flag;
+        $this->data['plan']['paid_enterprise_flag'] = $plan_free_flag && ($plan_subscription['plan_id'] != FREE_PLAN);
         $this->data['plan']['paid_flag'] = $plan_paid_flag;
         $this->data['plan']['trial_flag'] = $plan_trial_flag;
         $this->data['plan']['trial_total_days'] = $plan_days_total;
