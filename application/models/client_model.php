@@ -725,6 +725,8 @@ class Client_model extends MY_Model
             'client_id' => $client_id,
             'site_id' => $site_id
         ));
+        $this->mongo_db->order_by(array('date_modified' => 'desc'));
+        $this->mongo_db->limit(1);
         $res = $this->mongo_db->get('playbasis_permission');
 
         $result = array();
@@ -842,6 +844,8 @@ class Client_model extends MY_Model
             "site_id" => $site_id);
 
         $this->mongo_db->select($select);
+        $this->mongo_db->order_by(array('date_modified' => 'desc'));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get_where("playbasis_permission", $criteria);
         if ($result)
             return $result[0];
