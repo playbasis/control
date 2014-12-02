@@ -44,5 +44,6 @@ $lang = array(
 );
 
 $lang['error_permission']       = 'Warning: You do not have permission to modify quest!';
+$lang['error_access']       	= 'Warning: You do not have permission to access this page!';
 
 

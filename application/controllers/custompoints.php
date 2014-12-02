@@ -58,11 +58,28 @@ class Custompoints extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'custompoints/insert';
 
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+
+        $custom_points = $this->Custompoints_model->countCustompoints($client_id, $site_id);
+
+        $this->load->model('Permission_model');
+        $this->load->model('Plan_model');
+        // Get Limit
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $limit_custompoints = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'custompoint');
+
+        $this->data['message'] = null;
+
+        if ($limit_custompoints && $custom_points >= $limit_custompoints) {
+            $this->data['message'] = $this->lang->line('error_custompoint_limit');
+        }
+
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-           if($this->form_validation->run()){
+           if($this->form_validation->run() && $this->data['message'] == null){
                 $custompoints_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();

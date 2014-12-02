@@ -429,6 +429,7 @@ class Plan extends MY_Controller
             "player" => null,
             "quest" => null,
             "quiz" => null,
+            "custompoint" => null,
             "trial" => null,
             "user" => null);
         if ($this->input->post('limit_others')) {

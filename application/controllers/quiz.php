@@ -114,21 +114,6 @@ class Quiz extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $site_id = $this->User_model->getSiteId();
-
-        $quizs = $this->Quiz_model->getTotalQuizs(array(
-            'site_id' => $site_id
-        ));
-
-        // Get Limit
-        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
-        $limit_quiz = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'quiz');
-
-        $this->data['message'] = array();
-        if ($limit_quiz && $quizs >= $limit_quiz) {
-            $this->data['message'][] = $this->lang->line('error_quiz_limit');
-        }
-
         $this->getForm(0);
     }
 
@@ -154,6 +139,23 @@ class Quiz extends MY_Controller
             }else{
                 $quiz_info = $this->Quiz_model->getQuiz($quiz_id);
             }
+        }
+
+        $site_id = $this->User_model->getSiteId();
+
+        $quizs = $this->Quiz_model->getTotalQuizs(array(
+            'site_id' => $site_id
+        ));
+
+        $this->load->model('Permission_model');
+        $this->load->model('Plan_model');
+        // Get Limit
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $limit_quiz = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'quiz');
+
+        $this->data['message'] = null;
+        if ($limit_quiz && $quizs >= $limit_quiz) {
+            $this->data['message'] = $this->lang->line('error_quiz_limit');
         }
 
         if($this->input->post()){
@@ -262,7 +264,7 @@ class Quiz extends MY_Controller
             $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
             $this->form_validation->set_rules('description', $this->lang->line('description'), 'trim|required|xss_clean');
 
-            if($this->form_validation->run()){
+            if($this->form_validation->run() && $this->data['message'] == null){
                 $quiz['client_id'] = $this->User_model->getClientId();
                 $quiz['site_id'] = $this->User_model->getSiteId();
 

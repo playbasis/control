@@ -20,4 +20,5 @@ $lang = array(
 
 
 $lang['error_permission']       = 'Warning: You do not have permission to modify custompoint!';
+$lang['error_custompoint_limit']       = 'You have reached Custom Points Limit.';
 ?>

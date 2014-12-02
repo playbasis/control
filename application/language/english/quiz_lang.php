@@ -39,5 +39,6 @@ $lang['button_filter']							= 'Filter';
 $lang['button_clear_filter']					= 'Clear filter';
 
 $lang['error_permission']       = 'Warning: You do not have permission to modify quiz!';
+$lang['error_access']       	= 'Warning: You do not have permission to access this page!';
 $lang['error_quiz_limit']       = 'You have reached Quiz Limit.';
 ?>
