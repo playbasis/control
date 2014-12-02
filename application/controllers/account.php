@@ -121,10 +121,6 @@ class Account extends MY_Controller
 
     public function index() {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('account_title');
@@ -321,10 +317,6 @@ class Account extends MY_Controller
 
 	public function paypal_completed() {
 
-		if(!$this->validateAccess()){
-			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-		}
-
 		$this->data['meta_description'] = $this->lang->line('meta_description');
 		$this->data['title'] = $this->lang->line('title');
 		$this->data['heading_title'] = $this->lang->line('congrat_title');
@@ -388,10 +380,6 @@ class Account extends MY_Controller
 
     public function update_profile() {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-        }
-
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
@@ -413,7 +401,27 @@ class Account extends MY_Controller
                     exit();
                 }
 
-                redirect('/first_app', 'refresh');
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
+                $data = array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id
+                );
+
+                if($client_id){
+                    $total = $this->App_model->getTotalAppsByClientId($data);
+                }else{
+                    $total = $this->App_model->getTotalApps($data);
+                }
+
+                if($total == 0){
+                    $this->session->unset_userdata('site_id');
+                    redirect('/first_app', 'refresh');
+                }else{
+                    redirect('/', 'refresh');
+                }
+
             }else{
                 if($this->input->post('format') == 'json'){
                     echo json_encode(array('status' => 'error', 'message' => validation_errors()));
@@ -424,7 +432,26 @@ class Account extends MY_Controller
 
         $user = $this->User_model->getUserInfo($user_id);
         if(dohash(DEFAULT_PASSWORD,$user['salt']) != $user['password']){
-            redirect('/first_app', 'refresh');
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
+            $data = array(
+                'client_id' => $client_id,
+                'site_id' => $site_id
+            );
+
+            if($client_id){
+                $total = $this->App_model->getTotalAppsByClientId($data);
+            }else{
+                $total = $this->App_model->getTotalApps($data);
+            }
+
+            if($total == 0){
+                $this->session->unset_userdata('site_id');
+                redirect('/first_app', 'refresh');
+            }else{
+                redirect('/', 'refresh');
+            }
         }
         $this->data['heading_title'] = $this->lang->line('add_site_title');
         $this->data['main'] = 'partial/completeprofile_partial';

@@ -252,7 +252,7 @@ class User extends MY_Controller
                     $this->session->data['success'] = $this->lang->line('text_success');
 
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
-                    redirect('user/','refresh');    
+                    redirect('user/','refresh');
                 }else{
                     $this->session->set_flashdata('fail', $this->lang->line('text_fail'));
                     redirect('user/insert');

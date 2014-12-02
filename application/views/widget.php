@@ -62,6 +62,13 @@
         <?php
         }
         ?>
+        <?php
+        if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
+        ?>
+            <li><a href="#widget-quiz" data-toggle="tab"><?php echo $this->lang->line('column_quiz'); ?></a></li>
+        <?php
+        }
+        ?>
 	</ul>
 
 	<div class="tab-content">
@@ -77,7 +84,7 @@
         <?php
         if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
         ?>
-		<div class="tab-pane active" id="widget-leaderboard">
+		<div class="tab-pane" id="widget-leaderboard">
 			
 			<h3><?php echo $this->lang->line('text_leaderboard_widget'); ?></h3>
 			
@@ -371,6 +378,68 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
+            ?>
+            <div class="tab-pane" id="widget-quiz">
+
+                <h3><?php echo $this->lang->line('text_leaderboard_widget'); ?></h3>
+
+                <div class="row">
+                    <div class="span5">
+                        <form class="form-horizontal">
+                            <div class="control-group">
+                                <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                                <div class="controls">
+                                    <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
+                                <div class="controls">
+                                    <div class="input-prepend">
+                                        <span class="colorSelectorHolder add-on"></span>
+                                        <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="wg-rank"><?php echo $this->lang->line('form_rankby'); ?></label>
+                                <div class="controls">
+                                    <select class="wg-rankby" >
+                                        <option value="point">Point</option>
+                                        <option value="exp">Exp</option>
+                                        <?php
+                                        foreach($points_data as $p){
+                                            ?>
+                                            <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" ></label>
+                                <div class="controls">
+                                    <a href="javascript:void(0);" onclick="reloadLeaderboard()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                    <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                    <div class="span7">
+                        <iframe id="iframe-leaderboard" src="<?php echo base_url();?>index.php/widget/preview?type=leaderboard" width="100%" height="400" frameborder="0"></iframe>
+                    </div>
+                </div>
+            </div><!-- .tab-pane -->
         <?php
         }
         ?>

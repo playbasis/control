@@ -24,6 +24,7 @@ $lang['text_livefeed_widget']			        = 'Livefeed Widget';
 $lang['text_profile_widget']			        = 'Profile Widget';
 $lang['text_userbar_widget']			        = 'Userbar Widget';
 $lang['text_achievement_widget']			    = 'Achievement Widget';
+$lang['text_quiz_widget']			            = 'Achievement Widget';
 $lang['text_require']			                = 'Require';
 
 // Column Table
@@ -33,6 +34,7 @@ $lang['column_profile']      				    = 'Profile';
 $lang['column_userbar']          				= 'Userbar';
 $lang['column_social_login']          			= 'Social Login';
 $lang['column_achievement']          			= 'Achievement';
+$lang['column_quiz']          			        = 'Quiz';
 
 //Form fields
 $lang['form_width']							    ='Width';
