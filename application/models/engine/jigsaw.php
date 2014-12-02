@@ -404,6 +404,7 @@ class jigsaw extends MY_Model
 		$this->mongo_db->order_by(array(
 			'date_added' => 'desc'
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('jigsaw_log');
 		//for backward compatibility, check again without jigsaw_index
 		if(!$result)
@@ -417,6 +418,7 @@ class jigsaw extends MY_Model
 			$this->mongo_db->order_by(array(
 				'date_added' => 'desc'
 			));
+			$this->mongo_db->limit(1);
 			$result = $this->mongo_db->get('jigsaw_log');
 		}
 		return ($result) ? $result[0] : $result;
