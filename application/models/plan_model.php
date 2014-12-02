@@ -354,6 +354,43 @@ class Plan_model extends MY_Model
             }
             $dinsert['reward_to_plan'] = $reward;
         }
+        if (isset($data['limit_noti'])) {
+            $limit_noti = array();
+            foreach ($data['limit_noti'] as $key => $value) {
+                $limit_noti[$key] = ($value['limit'] != null && $value['limit'] !== '' ? intval($value['limit']) : null);
+            }
+            $dinsert['limit_notifications'] = $limit_noti;
+        }
+        if (isset($data['limit_others'])) {
+            $limit_others = array();
+            foreach ($data['limit_others'] as $key => $value) {
+                $limit_others[$key] = ($value['limit'] != null && $value['limit'] !== '' ? intval($value['limit']) : null);
+            }
+            $dinsert['limit_others'] = $limit_others;
+        }
+        if (isset($data['limit_widget'])) {
+            $limit_widget = array();
+            foreach ($data['limit_widget'] as $key => $value) {
+                $limit_widget[$key] = ($value['limit'] != null && $value['limit'] !== '' ? true : false);
+            }
+            $dinsert['limit_widget'] = $limit_widget;
+        }
+        if (isset($data['limit_req'])) {
+            $limit_req = array();
+            for ($i=0; $i<sizeof($data['limit_req']); $i++) {
+                $item = $data['limit_req'][$i];
+                if (!$item['field']) continue;
+                // strip only first path of the api and lowercase
+                $item['field'] = strtolower(preg_replace(
+                    "/(\w+)\/.*/", '${1}',
+                    $item['field']));
+                if (substr($item['field'], 0, 1) != "/") {
+                    $item['field'] = "/".$item['field'];
+                }
+                $limit_req[$item['field']] = ($item['limit'] != null && $item['limit'] !== '' ? intval($item['limit']) : null);
+            }
+            $dinsert['limit_requests'] = $limit_req;
+        }
         $p = $this->mongo_db->insert('playbasis_plan', $dinsert);
     }
 
@@ -423,6 +460,13 @@ class Plan_model extends MY_Model
                 $limit_others[$key] = ($value['limit'] != null && $value['limit'] !== '' ? intval($value['limit']) : null);
             }
             $this->mongo_db->set('limit_others', $limit_others);
+        }
+        if (isset($data['limit_widget'])) {
+            $limit_widget = array();
+            foreach ($data['limit_widget'] as $key => $value) {
+                $limit_widget[$key] = ($value['limit'] != null && $value['limit'] !== '' ? true : false);
+            }
+            $this->mongo_db->set('limit_widget', $limit_widget);
         }
         if (isset($data['limit_req'])) {
             $limit_req = array();
@@ -501,6 +545,27 @@ class Plan_model extends MY_Model
 
         return false;
 
+    }
+
+    /**
+     * Return Permission Display Widget by Plan ID
+     * @param plan_id string
+     * @return array | null
+     */
+    public function getPlanDisplayWidget($plan_id)
+    {
+        $this->mongo_db->select(array('limit_widget'));
+        $this->mongo_db->where(array(
+            '_id' => $plan_id,
+        ));
+        $res = $this->mongo_db->get('playbasis_plan');
+        if ($res) {
+            $res = $res[0];
+            return isset($res['limit_widget'])?$res['limit_widget']:null;
+        }
+        else {
+            throw new Exception("getPlanLimitById plan_id not found");
+        }
     }
 
     /**

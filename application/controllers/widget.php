@@ -12,7 +12,6 @@ class Widget extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-//        $this->load->model('Domain_model');
         $this->load->model('App_model');
         $this->load->model('Custompoints_model');
         $this->load->model('Widget_model');
@@ -38,6 +37,7 @@ class Widget extends MY_Controller
         $this->data['platform_data'] = array();
         $site_data = array();
         $points_data = array();
+        $plan_widget = array();
 
         if($client_id){
             $site_data = $this->App_model->getAppsBySiteId($site_id);
@@ -47,8 +47,15 @@ class Widget extends MY_Controller
             $this->data['platform_data'] = $platform_data;
 
             $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+
+            $this->load->model('Client_model');
+            $this->load->model('Plan_model');
+            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+            // get Plan display
+            $plan_widget = $this->Plan_model-> getPlanDisplayWidget($plan_subscription["plan_id"]);
         }
 
+        $this->data['plan_widget'] = $plan_widget;
         $this->data['site_data'] = $site_data;
         $this->data['points_data'] = $points_data;
         $this->data['main'] = 'widget';
@@ -87,6 +94,7 @@ class Widget extends MY_Controller
         $this->data['platform_data'] = array();
         $site_data = array();
         $sw_data = array();
+        $plan_widget = array();
 
         if($client_id){
             $site_data = $this->App_model->getAppsBySiteId($site_id);
@@ -100,6 +108,16 @@ class Widget extends MY_Controller
                 'site_id'=>$site_id,
             );
             $sw_data = $this->Widget_model->getWidgetSocialsSite($w_data);
+
+            $this->load->model('Client_model');
+            $this->load->model('Plan_model');
+            $plan_subscription = $this->Client_model->getPlanByClientId($client_id);
+            // get Plan display
+            $plan_widget = $this->Plan_model-> getPlanDisplayWidget($plan_subscription["plan_id"]);
+
+            if(!(isset($plan_widget['social']) && $plan_widget['social'])){
+                redirect('/widget', 'refresh');
+            }
         }
 
         $sw_ready = array();
@@ -114,6 +132,7 @@ class Widget extends MY_Controller
             $callback = $sw['callback'] && $sw['callback'] != '' ? $sw['callback'] : $callback;
             $sw_ready[$sw['provider']] = $sw_prepare;
         }
+        $this->data['plan_widget'] = $plan_widget;
         $this->data['social_widget'] = $sw_ready;
         $this->data['callback'] = $callback;
         $this->data['site_data'] = $site_data;

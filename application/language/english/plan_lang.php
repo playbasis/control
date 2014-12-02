@@ -24,6 +24,7 @@ $lang['tab_jigsaw'] 							= 'Conditions';
 $lang['tab_feature'] 							= 'Features';
 $lang['tab_action'] 							= 'Actions';
 $lang['tab_clients'] 							= 'Clients in Plan Setting';
+$lang['tab_widget'] 							= 'Widget';
 
 
 // Column

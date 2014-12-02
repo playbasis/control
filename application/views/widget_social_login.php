@@ -22,11 +22,49 @@
     <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
     <ul class="nav nav-tabs">
-        <li class="active"> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login')); ?></li>
-        <li> <?php echo anchor('widget#widget-leaderboard', $this->lang->line('column_leaderboard'));?></li>
-        <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
-        <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
-        <li> <?php echo anchor('widget#widget-userbar', $this->lang->line('column_userbar'));?></li>
+
+        <?php
+        if(isset($plan_widget['social']) && $plan_widget['social']){
+        ?>
+            <li class="active"> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login')); ?></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
+        ?>
+            <li> <?php echo anchor('widget#widget-leaderboard', $this->lang->line('column_leaderboard'));?></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['livefeed']) && $plan_widget['livefeed']){
+        ?>
+            <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['profile']) && $plan_widget['profile']){
+        ?>
+            <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['userbar']) && $plan_widget['userbar']){
+        ?>
+            <li> <?php echo anchor('widget#widget-userbar', $this->lang->line('column_userbar'));?></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['achievement']) && $plan_widget['achievement']){
+        ?>
+            <li> <?php echo anchor('widget#widget-achievement', $this->lang->line('column_achievement'));?></li>
+        <?php
+        }
+        ?>
     </ul>
 
     <div class="tab-content">

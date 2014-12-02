@@ -114,6 +114,21 @@ class Quiz extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
+        $site_id = $this->User_model->getSiteId();
+
+        $quizs = $this->Quiz_model->getTotalQuizs(array(
+            'site_id' => $site_id
+        ));
+
+        // Get Limit
+        $plan_id = $this->Permission_model->getPermissionBySiteId($site_id);
+        $limit_quiz = $this->Plan_model->getPlanLimitById($plan_id, 'others', 'quiz');
+
+        $this->data['message'] = array();
+        if ($limit_quiz && $quizs >= $limit_quiz) {
+            $this->data['message'][] = $this->lang->line('error_quiz_limit');
+        }
+
         $this->getForm(0);
     }
 

@@ -290,7 +290,6 @@ class Plan extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
-//        $this->render_page('plan');
     }
 
     private function getForm($plan_id=null) {
@@ -429,6 +428,7 @@ class Plan extends MY_Controller
             "mission" => null,
             "player" => null,
             "quest" => null,
+            "quiz" => null,
             "trial" => null,
             "user" => null);
         if ($this->input->post('limit_others')) {
@@ -463,29 +463,26 @@ class Plan extends MY_Controller
         }
 
         $default_limit_widgets = array(
-            "app" => null,
-            "platform" => null,
-            "goods" => null,
-            "insight" => null,
-            "mission" => null,
-            "player" => null,
-            "quest" => null,
-            "trial" => null,
-            "user" => null);
-        if ($this->input->post('limit_others')) {
-            $this->data['limit_others'] = $this->input->post('limit_others');
-        } elseif (!empty($plan_info) && isset($plan_info['limit_others'])){
-            $this->data['limit_others'] = $plan_info["limit_others"];
+            "social" => null,
+            "leaderboard" => null,
+            "livefeed" => null,
+            "profile" => null,
+            "userbar" => null,
+            "achievement" => null);
+        if ($this->input->post('limit_widget')) {
+            $this->data['limit_widget'] = $this->input->post('limit_widget');
+        } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])){
+            $this->data['limit_widget'] = $plan_info["limit_widget"];
             // merge with default, prevent missing fields
-            foreach($this->data['limit_others'] as $k=>$v){
-                if (!array_key_exists($k, $default_limit_others)) {
-                    unset($this->data['limit_others'][$k]);
+            foreach($this->data['limit_widget'] as $k=>$v){
+                if (!array_key_exists($k, $default_limit_widgets)) {
+                    unset($this->data['limit_widget'][$k]);
                 }
             }
-            $this->data["limit_others"] = array_merge($default_limit_widgets, $this->data["limit_others"]);
+            $this->data["limit_widget"] = array_merge($default_limit_widgets, $this->data["limit_widget"]);
         } else {
             // Client don't have this field in DB, use default
-            $this->data["limit_others"] = $default_limit_widgets;
+            $this->data["limit_widget"] = $default_limit_widgets;
         }
 
         $this->data['client_id'] = $this->User_model->getClientId();

@@ -19,21 +19,64 @@
 
         <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
 
-        <ul class="nav nav-tabs">
-      <li> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login'));?></li>
-	  <li class="active"><a href="#widget-leaderboard"  data-toggle="tab"><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
-	  <li><a href="#widget-livefeed" data-toggle="tab"><?php echo $this->lang->line('column_livefeed'); ?></a></li>
-	  <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
-	  <li><a href="#widget-userbar" data-toggle="tab"><?php echo $this->lang->line('column_userbar'); ?></a></li>
-	  <li><a href="#widget-achievement" data-toggle="tab"><?php echo $this->lang->line('column_achievement'); ?></a></li>
+    <ul class="nav nav-tabs">
+        <?php
+        if(isset($plan_widget['social']) && $plan_widget['social']){
+        ?>
+        <li> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login'));?></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
+        ?>
+        <li><a href="#widget-leaderboard"  data-toggle="tab"><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['livefeed']) && $plan_widget['livefeed']){
+        ?>
+        <li><a href="#widget-livefeed" data-toggle="tab"><?php echo $this->lang->line('column_livefeed'); ?></a></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['profile']) && $plan_widget['profile']){
+        ?>
+        <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['userbar']) && $plan_widget['userbar']){
+        ?>
+        <li><a href="#widget-userbar" data-toggle="tab"><?php echo $this->lang->line('column_userbar'); ?></a></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['achievement']) && $plan_widget['achievement']){
+        ?>
+        <li><a href="#widget-achievement" data-toggle="tab"><?php echo $this->lang->line('column_achievement'); ?></a></li>
+        <?php
+        }
+        ?>
 	</ul>
 
 	<div class="tab-content">
+        <?php
+        if(isset($plan_widget['social']) && $plan_widget['social']){
+        ?>
         <div class="tab-pane" id="widget-social-login">
 
         </div><!-- .tab-pane -->
-
-
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
+        ?>
 		<div class="tab-pane active" id="widget-leaderboard">
 			
 			<h3><?php echo $this->lang->line('text_leaderboard_widget'); ?></h3>
@@ -90,6 +133,12 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['livefeed']) && $plan_widget['livefeed']){
+        ?>
         <div class="tab-pane" id="widget-livefeed">
 			
 			<h3><?php echo $this->lang->line('text_livefeed_widget'); ?></h3>
@@ -135,6 +184,12 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['profile']) && $plan_widget['profile']){
+        ?>
         <div class="tab-pane" id="widget-profile">
 
             <h3><?php echo $this->lang->line('text_profile_widget'); ?></h3>
@@ -197,6 +252,12 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['userbar']) && $plan_widget['userbar']){
+        ?>
         <div class="tab-pane" id="widget-userbar">
 
             <h3><?php echo $this->lang->line('text_userbar_widget'); ?></h3>
@@ -253,6 +314,12 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['achievement']) && $plan_widget['achievement']){
+        ?>
         <div class="tab-pane" id="widget-achievement">
 
             <h3><?php echo $this->lang->line('text_achievement_widget'); ?></h3>
@@ -304,6 +371,9 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
+        <?php
+        }
+        ?>
 
 	        </div>
         </div><!-- .content -->
@@ -317,7 +387,13 @@
 	$(document).ready(function(){
         $(".wg-apikey option:first").attr('selected','selected');
 
-		$('#widget-leaderboard a:first').tab('show');
+        if(location.hash){
+            var tabclick = location.hash;
+            $('.nav-tabs a[href='+tabclick+']').tab('show') ;
+        }else{
+            $('a[data-toggle="tab"]:first').tab('show');
+        }
+
 		$('.colorSelector').ColorPicker({
 			onBeforeShow: function () {
 				$(this).ColorPickerSetColor(this.value);
@@ -379,8 +455,6 @@
             clearTimeout(timeout);
             timeout = setTimeout(reloadAchievement,timeBuffer);
         });
-
-        reloadLeaderboard();
 
 		$('#getcode-modal').on('show', function () {
 
