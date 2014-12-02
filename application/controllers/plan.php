@@ -424,6 +424,7 @@ class Plan extends MY_Controller
             "app" => null,
             "platform" => null,
             "goods" => null,
+            "redeem" => null,
             "insight" => null,
             "mission" => null,
             "player" => null,
