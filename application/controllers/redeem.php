@@ -271,7 +271,8 @@ class Redeem extends REST2_Controller
                     $this->client_id,
                     $this->site_id,
                     "others",
-                    "redeem"
+                    "redeem",
+                    $amount
                 );
 
                 /* give goods reward, if exists */

@@ -857,7 +857,7 @@ class Client_model extends MY_Model
      * @param (notifications | requests) $type
      * @particular string $field
      */
-    public function permissionProcess($client_id, $site_id, $type, $field) {
+    public function permissionProcess($client_id, $site_id, $type, $field, $inc=1) {
         // get "date_start" && "date_expire" of client for permission processing
         $myplan_id = $this->getPlanIdByClientId($client_id);
         $myplan = $this->getPlanById($myplan_id);
@@ -874,11 +874,11 @@ class Client_model extends MY_Model
         $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
 
         // compare
-        if ($limit !== null && $usage["value"] >= $limit) {
+        if ($limit !== null && ($usage["value"] >= $limit || $usage["value"]+$inc > $limit)) {
             // no permission to use this service
             throw new Exception("LIMIT_EXCEED");
         } else {  // increase service usage
-            $this->updatePermission($client_id, $site_id, $type, $field);
+            $this->updatePermission($client_id, $site_id, $type, $field, $inc);
         }
     }
 
