@@ -450,6 +450,7 @@ class Client_model extends MY_Model
 			'client_id'		  =>		$logData['client_id'],
 			'site_id'		  =>		$logData['site_id'],
 			'domain_name'	  =>		$logData['domain_name'],
+			'action_log_id'		  => (isset($logData['action_log_id']))		  ? $logData['action_log_id']		: 0,
 			'action_id'		  => (isset($logData['action_id']))		  ? $logData['action_id']		: 0,
 			'action_name'	  => (isset($logData['action_name']))	  ? $logData['action_name']		: '',
 			'rule_id'		  => (isset($logData['rule_id']))		  ? $logData['rule_id']			: 0,
