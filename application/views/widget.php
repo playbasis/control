@@ -128,7 +128,7 @@
 						<label class="control-label" ></label>
 						<div class="controls">
 							<a href="javascript:void(0);" onclick="reloadLeaderboard()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+							<a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-leaderboard" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
 					
@@ -179,7 +179,7 @@
 						<label class="control-label" ></label>
 						<div class="controls">
 							<a href="javascript:void(0);" onclick="reloadLivefeed()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+							<a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-livefeed" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
 						</div>
 					</div>
 					
@@ -247,7 +247,7 @@
                             <label class="control-label" ></label>
                             <div class="controls">
                                 <a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-                                <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-profile" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                             </div>
                         </div>
 
@@ -309,7 +309,7 @@
                             <label class="control-label" ></label>
                             <div class="controls">
                                 <a href="javascript:void(0);" onclick="reloadUserbar()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-                                <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-userbar" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                             </div>
                         </div>
 
@@ -366,7 +366,7 @@
                             <label class="control-label" ></label>
                             <div class="controls">
                                 <a href="javascript:void(0);" onclick="reloadAchievement()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-                                <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-achievement" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                             </div>
                         </div>
 
@@ -386,7 +386,7 @@
             ?>
             <div class="tab-pane" id="widget-quiz">
 
-                <h3><?php echo $this->lang->line('text_leaderboard_widget'); ?></h3>
+                <h3><?php echo $this->lang->line('text_quiz_widget'); ?></h3>
 
                 <div class="row">
                     <div class="span5">
@@ -397,7 +397,12 @@
                                     <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
                                 </div>
                             </div>
-
+                            <div class="control-group">
+                                <label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
+                                <div class="controls">
+                                    <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
+                                </div>
+                            </div>
                             <div class="control-group">
                                 <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
                                 <div class="controls">
@@ -408,27 +413,17 @@
                                 </div>
                             </div>
                             <div class="control-group">
-                                <label class="control-label" for="wg-rank"><?php echo $this->lang->line('form_rankby'); ?></label>
+                                <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
                                 <div class="controls">
-                                    <select class="wg-rankby" >
-                                        <option value="point">Point</option>
-                                        <option value="exp">Exp</option>
-                                        <?php
-                                        foreach($points_data as $p){
-                                            ?>
-                                            <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
-                                        <?php
-                                        }
-                                        ?>
-                                    </select>
+                                    <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
                                 </div>
                             </div>
 
                             <div class="control-group">
                                 <label class="control-label" ></label>
                                 <div class="controls">
-                                    <a href="javascript:void(0);" onclick="reloadLeaderboard()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-                                    <a href="#getcode-modal" role="button" data-toggle="modal" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                    <a href="javascript:void(0);" onclick="reloadQuiz()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                    <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-quiz" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
                                 </div>
                             </div>
 
@@ -436,7 +431,7 @@
 
                     </div>
                     <div class="span7">
-                        <iframe id="iframe-leaderboard" src="<?php echo base_url();?>index.php/widget/preview?type=leaderboard" width="100%" height="400" frameborder="0"></iframe>
+                        <iframe id="iframe-quiz" src="<?php echo base_url();?>index.php/widget/preview?type=quiz" width="100%" height="400" frameborder="0"></iframe>
                     </div>
                 </div>
             </div><!-- .tab-pane -->
@@ -475,10 +470,12 @@
                 case "#widget-achievement":
                     reloadAchievement();
                     break;
+                case "#widget-quiz":
+                    reloadQuiz();
+                    break;
             }
         }else{
             $('a[data-toggle="tab"]:first').tab('show');
-            reloadLeaderboard();
         }
 
 		$('.colorSelector').ColorPicker({
@@ -496,11 +493,6 @@
 			onChange: function (hsb, hex, rgb) {
 				$('.colorSelectorHolder').css('backgroundColor', '#' + hex);
 				$('.colorSelector').val('#' +hex);
-				//TODO:
-				// reloadLeaderboard();
-				// reloadLivefeed();
-				// reloadProfile();
-				// reloadUserbar();
 			},
             onSubmit: function(hsb, hex, rgb, el) {
                 $('.colorSelectorHolder').css('backgroundColor', '#' + hex);
@@ -542,6 +534,34 @@
             clearTimeout(timeout);
             timeout = setTimeout(reloadAchievement,timeBuffer);
         });
+        $('#widget-quiz input, #widget-quiz select').bind("change paste blur", function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(reloadQuiz,timeBuffer);
+        });
+
+        $('.controls .btn-primary').click(function(){
+            tabActive = $(this).attr('data-href');
+            switch(tabActive){
+                case "#widget-leaderboard":
+                    reloadLeaderboard();
+                    break;
+                case "#widget-livefeed":
+                    reloadLivefeed();
+                    break;
+                case "#widget-profile":
+                    reloadProfile();
+                    break;
+                case "#widget-userbar":
+                    reloadUserbar();
+                    break;
+                case "#widget-achievement":
+                    reloadAchievement();
+                    break;
+                case "#widget-quiz":
+                    reloadQuiz();
+                    break;
+            }
+        });
 
 		$('#getcode-modal').on('show', function () {
 
@@ -565,6 +585,9 @@
                 case "#widget-achievement":
                     reloadAchievement();
                 break;
+                case "#widget-quiz":
+                    reloadQuiz();
+                    break;
 			}
 		})
 
@@ -749,6 +772,44 @@
             }
             codeElement += '&gt;&lt;/div&gt;';
             $('#iframe-achievement').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
+    }
+    function reloadQuiz(){
+        var width = getVal($('#widget-quiz .wg-width').val());
+        var height = getVal($('#widget-quiz .wg-height').val());
+        var color =getColor($('#widget-quiz .wg-color').val());
+        var playerIdTest =$('#widget-quiz .wg-player-id').val();
+        var url = baseUrlPath+'widget/preview?type=quiz';
+        var codeElement = '&lt;div class="pb-quiz" ';
+        var codeHeader = codeHeaderPlayerTestTemplate;
+        var apikey = $('.wg-apikey').val();
+
+        if(apikey){
+
+            url+='&apikey='+apikey;
+            codeHeader = codeHeader.replace('abc', apikey);
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof height != 'undefined' && height != ""){
+                url+='&height='+height;
+                codeElement += 'data-pb-height="'+height+'" ';
+            }
+            if(typeof color != 'undefined' && color != ""){
+                url+='&color='+color;
+                codeHeader = codeHeader.replace("#0e9ce4", color);
+            }
+            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
+                url+='&playerId='+playerIdTest;
+                codeHeader = codeHeader.replace("playertest", playerIdTest);
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-quiz').attr('src',url);
 
             $('#getcode-modal .code-element').html(codeElement);
             $('#getcode-modal .code-header').html(codeHeader);

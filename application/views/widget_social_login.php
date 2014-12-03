@@ -65,6 +65,13 @@
         <?php
         }
         ?>
+        <?php
+        if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
+            ?>
+            <li> <?php echo anchor('widget#widget-quiz', $this->lang->line('column_quiz'));?></li>
+        <?php
+        }
+        ?>
     </ul>
 
     <div class="tab-content">

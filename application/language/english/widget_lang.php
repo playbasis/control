@@ -26,6 +26,7 @@ $lang['text_userbar_widget']			        = 'Userbar Widget';
 $lang['text_achievement_widget']			    = 'Achievement Widget';
 $lang['text_quiz_widget']			            = 'Achievement Widget';
 $lang['text_require']			                = 'Require';
+$lang['text_quiz_widget']			            = 'Quiz Widget';
 
 // Column Table
 $lang['column_leaderboard']            			= 'Leaderboard';

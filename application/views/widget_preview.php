@@ -105,6 +105,11 @@
     </div>
 <?php endif; ?>
 
+<?php if($typeWidget == 'quiz'): ?>
+    <div style="width:<?php echo $width; ?>px;margin:40px auto;">
+        <div class="pb-quiz" data-pb-width="<?php echo $width; ?>" data-pb-height="<?php echo $height; ?>" ></div>
+    </div>
+<?php endif; ?>
 
 <?php } ?>
 
