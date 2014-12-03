@@ -459,8 +459,26 @@
         if(location.hash){
             var tabclick = location.hash;
             $('.nav-tabs a[href='+tabclick+']').tab('show') ;
+            switch(tabclick){
+                case "#widget-leaderboard":
+                    reloadLeaderboard();
+                    break;
+                case "#widget-livefeed":
+                    reloadLivefeed();
+                    break;
+                case "#widget-profile":
+                    reloadProfile();
+                    break;
+                case "#widget-userbar":
+                    reloadUserbar();
+                    break;
+                case "#widget-achievement":
+                    reloadAchievement();
+                    break;
+            }
         }else{
             $('a[data-toggle="tab"]:first').tab('show');
+            reloadLeaderboard();
         }
 
 		$('.colorSelector').ColorPicker({
