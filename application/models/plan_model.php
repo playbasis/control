@@ -615,27 +615,6 @@ class Plan_model extends MY_Model
         }
     }
 
-    /**
-     * Update Permission service usage
-     * in particular type and field
-     * e.g. notifications email
-     * @param client_id string
-     * @param site_id string
-     * @param type notifications | requests
-     * @param field string
-     */
-    public function updatePermission($client_id, $site_id, $type, $field, $inc=1)
-    {
-        $year_month = date("Ym");
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id
-        ));
-        $this->mongo_db->inc($type.'.'.$year_month.'.'.$field, $inc);
-        $this->mongo_db->update('playbasis_permission');
-    }
-
 	public function listDisplayPlans() {
 		$this->set_site_mongodb($this->session->userdata('site_id'));
 		$this->mongo_db->where('display', true);
