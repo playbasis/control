@@ -25,12 +25,20 @@
         ?>
         <li> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login'));?></li>
         <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_social_login'); ?></a></li>
+        <?php
         }
         ?>
         <?php
         if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
         ?>
         <li><a href="#widget-leaderboard"  data-toggle="tab"><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
         <?php
         }
         ?>
@@ -39,12 +47,20 @@
         ?>
         <li><a href="#widget-livefeed" data-toggle="tab"><?php echo $this->lang->line('column_livefeed'); ?></a></li>
         <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_livefeed'); ?></a></li>
+        <?php
         }
         ?>
         <?php
         if(isset($plan_widget['profile']) && $plan_widget['profile']){
         ?>
         <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_profile'); ?></a></li>
         <?php
         }
         ?>
@@ -53,6 +69,10 @@
         ?>
         <li><a href="#widget-userbar" data-toggle="tab"><?php echo $this->lang->line('column_userbar'); ?></a></li>
         <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_userbar'); ?></a></li>
+        <?php
         }
         ?>
         <?php
@@ -60,12 +80,20 @@
         ?>
         <li><a href="#widget-achievement" data-toggle="tab"><?php echo $this->lang->line('column_achievement'); ?></a></li>
         <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_achievement'); ?></a></li>
+        <?php
         }
         ?>
         <?php
         if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
         ?>
-            <li><a href="#widget-quiz" data-toggle="tab"><?php echo $this->lang->line('column_quiz'); ?></a></li>
+        <li><a href="#widget-quiz" data-toggle="tab"><?php echo $this->lang->line('column_quiz'); ?></a></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_quiz'); ?></a></li>
         <?php
         }
         ?>

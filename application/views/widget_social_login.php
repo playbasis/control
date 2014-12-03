@@ -26,49 +26,77 @@
         <?php
         if(isset($plan_widget['social']) && $plan_widget['social']){
         ?>
-            <li class="active"> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login')); ?></li>
+        <li class="active"> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login')); ?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_social_login'); ?></a></li>
         <?php
         }
         ?>
         <?php
         if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
         ?>
-            <li> <?php echo anchor('widget#widget-leaderboard', $this->lang->line('column_leaderboard'));?></li>
+        <li> <?php echo anchor('widget#widget-leaderboard', $this->lang->line('column_leaderboard'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
         <?php
         }
         ?>
         <?php
         if(isset($plan_widget['livefeed']) && $plan_widget['livefeed']){
         ?>
-            <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
+        <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_livefeed'); ?></a></li>
         <?php
         }
         ?>
         <?php
         if(isset($plan_widget['profile']) && $plan_widget['profile']){
         ?>
-            <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
+        <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_profile'); ?></a></li>
         <?php
         }
         ?>
         <?php
         if(isset($plan_widget['userbar']) && $plan_widget['userbar']){
         ?>
-            <li> <?php echo anchor('widget#widget-userbar', $this->lang->line('column_userbar'));?></li>
+        <li> <?php echo anchor('widget#widget-userbar', $this->lang->line('column_userbar'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_userbar'); ?></a></li>
         <?php
         }
         ?>
         <?php
         if(isset($plan_widget['achievement']) && $plan_widget['achievement']){
         ?>
-            <li> <?php echo anchor('widget#widget-achievement', $this->lang->line('column_achievement'));?></li>
+        <li> <?php echo anchor('widget#widget-achievement', $this->lang->line('column_achievement'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_achievement'); ?></a></li>
         <?php
         }
         ?>
         <?php
         if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
-            ?>
-            <li> <?php echo anchor('widget#widget-quiz', $this->lang->line('column_quiz'));?></li>
+        ?>
+        <li> <?php echo anchor('widget#widget-quiz', $this->lang->line('column_quiz'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_quiz'); ?></a></li>
         <?php
         }
         ?>
