@@ -556,7 +556,7 @@ class Quiz extends REST2_Controller
                 'reward_id'	    => $event['reward_id'],
                 'reward_name'	=> $event['reward_type'],
                 'amount'	    => $event['value'],
-                'message'       => $message
+                'message'       => $message['message']
             ));
             break;
         }
@@ -568,7 +568,7 @@ class Quiz extends REST2_Controller
                 'player_id' => $cl_player_id,
                 'action_name' => 'quiz_reward',
                 'action_icon' => 'fa-trophy',
-            ), $message), $domain_name, $site_id);
+            ), $message['message']), $domain_name, $site_id);
         }
     }
 
