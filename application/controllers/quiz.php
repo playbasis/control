@@ -407,6 +407,33 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
+    /*
+     * reset quiz
+     *
+     * @param player_id string player id of client
+     * @param quiz_id string (optional) id of quiz
+     * return array
+     */
+    public function reset_post(){
+        $this->benchmark->mark('start');
+
+        $player_id = $this->input->post('player_id') ? new MongoId($this->input->post('player_id')) : $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+
+        $pb_player_id = $this->player_model->getPlaybasisId(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
+        ));
+        if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $quiz_id = $this->input->post('quiz_id') ? new MongoId($this->input->post('quiz_id')) : null;
+        $results = $this->quiz_model->delete($this->client_id, $this->site_id, $pb_player_id, $quiz_id);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
+    }
+
     private function filter_levelup($events) {
         $result = array();
         foreach ($events as $event) {

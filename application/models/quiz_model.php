@@ -127,5 +127,31 @@ class Quiz_model extends MY_Model
 
         return $result;
     }
+
+    /*
+     * delete quiz
+     *
+     * @param client_id string client_id
+     * @param site_id string site_id
+     * @param player_id string pb_player_id
+     * @param quiz_id string (optional) id of quiz
+     * return string
+     */
+    public function delete($client_id, $site_id, $player_id, $quiz_id=null){
+
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('pb_player_id', $player_id);
+        if($quiz_id){
+            $this->mongo_db->where('quiz_id', $quiz_id);
+            $this->mongo_db->delete('playbasis_player');
+        }else{
+            $this->mongo_db->delete_all('playbasis_quiz_to_player');
+        }
+
+        return 'success';
+    }
 }
 ?>
