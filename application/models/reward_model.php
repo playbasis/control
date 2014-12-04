@@ -78,12 +78,12 @@ class Reward_model extends MY_Model
 		$this->set_site_mongodb($data['site_id']);
 		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.value); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
-		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'reward_id' => $reward_id);
+		$query = array('site_id' => $data['site_id'], 'event_type' => 'REWARD', 'reward_id' => $reward_id);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$result = $this->mongo_db->command(array(
-			'mapReduce' => 'playbasis_reward_to_player',
+			'mapReduce' => 'playbasis_event_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
@@ -102,12 +102,12 @@ class Reward_model extends MY_Model
 		$this->set_site_mongodb($data['site_id']);
 		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.value); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
-		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'badge_id' => $badge_id);
+		$query = array('site_id' => $data['site_id'], 'event_type' => 'REWARD', 'item_id' => $badge_id);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$result = $this->mongo_db->command(array(
-			'mapReduce' => 'playbasis_reward_to_player',
+			'mapReduce' => 'playbasis_event_log',
 			'map' => $map,
 			'reduce' => $reduce,
 			'query' => $query,
@@ -123,7 +123,7 @@ class Reward_model extends MY_Model
 		$this->set_site_mongodb($data['site_id']);
 		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
-		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'event_type' => 'LEVEL');
+		$query = array('site_id' => $data['site_id'], 'event_type' => 'LEVEL');
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
