@@ -417,13 +417,12 @@ class Quiz extends REST2_Controller
     public function reset_post(){
         $this->benchmark->mark('start');
 
-        $player_id = $this->input->post('player_id') ? new MongoId($this->input->post('player_id')) : $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+        $player_id = $this->input->post('player_id') ? $this->input->post('player_id') : $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
 
-        $pb_player_id = $this->player_model->getPlaybasisId(array(
-            'client_id' => $this->client_id,
-            'site_id' => $this->site_id,
-            'cl_player_id' => $player_id,
-        ));
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         $quiz_id = $this->input->post('quiz_id') ? new MongoId($this->input->post('quiz_id')) : null;
