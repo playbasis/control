@@ -60,7 +60,7 @@ class Report extends REST2_Controller
 		    SITE_ID_TRUE => false,
 		    SITE_ID_BURUFLY => false,
 		    SITE_ID_ASSOPOKER => true,
-            SITE_ID_TRUE_MONEY => true,
+		    SITE_ID_TRUE_MONEY => true,
 	    );
 	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
 	    $conf = array(
@@ -261,8 +261,7 @@ class Report extends REST2_Controller
 		foreach ($items as $item) {
 			$goods_criteria = $item['redeem'];
 			$goods_id = array_key_exists('group', $item) ? array_map('index_goods_id', $this->goods_model->listGoodsIdsByGroup($opts['client_id'], $opts['site_id'], $item['group'])) : $item['goods_id'];
-			$smm = get_sum_min_max($this->goods_model->totalRedemption($opts, $goods_id));
-			$goods_qty_redeemed = $smm['sum'];
+			$goods_qty_redeemed = $this->goods_model->redeemLogCount($opts, $goods_id);
 			$goods_qty_remain = array_key_exists('group', $item) ? $group_name[$item['_id']->{'$id'}]['quantity'] : $item['quantity'];
 			$goods_qty = $goods_qty_remain !== null ? $goods_qty_remain + $goods_qty_redeemed : $goods_qty_remain;
 			$goods_players_can_redeem = $this->player_model->playerWithEnoughCriteria($opts, $goods_criteria);
@@ -277,7 +276,7 @@ class Report extends REST2_Controller
 					'QTY_TOTAL' => ($goods_qty != null || $goods_qty === 0 ? number_format($goods_qty) : ITEM_QTY_NOT_CONFIG),
 					'QTY_REMAIN' => $goods_qty_remain != null ? number_format($goods_qty_remain) : ITEM_QTY_NOT_CONFIG,
 				),
-				$this->get_stat('', $conf, $this->goods_model->redeemLogCount($opts, $item['goods_id'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->goods_model->redeemLogCount($opts, $item['goods_id'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
+				$this->get_stat('', $conf, $this->goods_model->redeemLog($opts, $goods_id, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->goods_model->redeemLog($opts, $goods_id, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from))
 			);
 		}
 		usort($arr, 'compare_TOTAL_NUM_desc');

@@ -187,26 +187,33 @@ class Goods_model extends MY_Model
 	public function redeemLogCount($data, $goods_id, $from=null, $to=null)
 	{
 		$this->set_site_mongodb($data['site_id']);
-		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'goods_id' => $goods_id->{'$id'});
-		if ($from || $to) $query['date_added'] = array();
-		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
-		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
-		$result = $this->mongo_db->command(array(
-			'count' => 'playbasis_goods_log',
-			'query' => $query
-		));
-		return $result['n'];
-	}
-	public function redeemLog($data, $goods_id, $from=null, $to=null)
-	{
-		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select(array('pb_player_id','amount'));
-		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'goods_id' => $goods_id->{'$id'});
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
 		if ($from || $to) $query['date_added'] = array();
 		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
 		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
 		$this->mongo_db->where($query);
-		return $this->mongo_db->get('playbasis_goods_log');
+		$this->mongo_db->where_in('goods_id', is_array($goods_id) ? $goods_id : array($goods_id));
+		return $this->mongo_db->count('playbasis_goods_log');
+	}
+	public function redeemLog($data, $goods_id, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), this.amount); }");
+		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'goods_id' => array('$in' => is_array($goods_id) ? $goods_id : array($goods_id)));
+		if ($from || $to) $query['date_added'] = array();
+		if ($from) $query['date_added']['$gte'] = $this->new_mongo_date($from);
+		if ($to) $query['date_added']['$lte'] = $this->new_mongo_date($to, '23:59:59');
+		$result = $this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_goods_log',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $query,
+			'out' => array('inline' => 1),
+		));
+		$result = $result ? $result['results'] : array();
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
 	}
 	public function getTotalGoodsByGroup($client_id, $site_id, $group) {
 		$this->set_site_mongodb($site_id);
