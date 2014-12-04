@@ -533,6 +533,8 @@ class Quiz extends REST2_Controller
 
     private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz_id, $domain_name, $event) {
         $message = null;
+        if($event['value'] == 0 || empty($event['value']))return;
+        
         switch ($event['event_type']) {
         case 'LEVEL_UP':
             $message = array('message' => $this->utility->getEventMessage('level', '', '', '', $event['value']), 'level' => $event['value']);
