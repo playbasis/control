@@ -9,7 +9,7 @@ class Service_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false, $show_quest=false, $show_redeem=false){
+    public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false, $show_quest=false, $show_redeem=false, $show_quiz=false){
 
         $this->set_site_mongodb($site_id);
 
@@ -90,11 +90,15 @@ class Service_model extends MY_Model
             $this->mongo_db->where('quest_id', null);
         }
 
+        if(!$show_quiz){
+            $this->mongo_db->where('quiz_id', null);
+        }
+
         $this->mongo_db->where('site_id', $site_id);
 
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type'));
+        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id'));
         $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
 
@@ -143,6 +147,10 @@ class Service_model extends MY_Model
             if(isset($event['goods_id']) && $event['goods_id']){
                 $event['action_name'] = 'redeem_goods';
                 $event['action_icon'] = 'fa-gift';
+            }
+            if(isset($event['quiz_id']) && $event['quiz_id']){
+                $event['action_name'] = 'quiz_reward';
+                $event['action_icon'] = 'fa-bar-chart';
             }
             if($event['event_type'] == 'LOGIN'){
                 $event['action_name'] = 'login';
