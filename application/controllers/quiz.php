@@ -546,7 +546,7 @@ class Quiz extends REST2_Controller
                 $message = array('message' => $this->utility->getEventMessage('point', $event['value'], $event['reward_type']), 'amount' => $event['value'], 'point' => $event['reward_type']);
                 break;
             }
-            $this->tracker_model->trackEvent('REWARD', $message, array(
+            $this->tracker_model->trackEvent('REWARD', $message['message'], array(
                 'pb_player_id'	=> $pb_player_id,
                 'client_id'		=> $client_id,
                 'site_id'		=> $site_id,
@@ -554,8 +554,7 @@ class Quiz extends REST2_Controller
                 'reward_type'	=> $event['reward_type'] === 'badge' ? 'badge' : 'point',
                 'reward_id'	    => $event['reward_id'],
                 'reward_name'	=> $event['reward_type'],
-                'amount'	    => $event['value'],
-                'message'       => $message['message']
+                'amount'	    => $event['value']
             ));
             break;
         }
