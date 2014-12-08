@@ -85,7 +85,8 @@ class Report extends REST2_Controller
 
 	    /* pre-calculated info */
 	    $clients = array();
-	    foreach ($this->client_model->listSites() as $site) {
+	    $sites = $this->client_model->listSites();
+	    foreach ($sites as $site) {
 		    $client_id = $site['client_id'];
 		    if (array_key_exists((string)$client_id, $clients)) continue;
 		    $clients[(string)$client_id] = $this->client_model->getById($client_id);
@@ -94,7 +95,7 @@ class Report extends REST2_Controller
 
 	    /* query and process data */
 	    $master = $this->master_init($conf, $from, $to);
-	    foreach ($this->client_model->listSites() as $site) {
+	    foreach ($sites as $site) {
 		    $client_id = $site['client_id'];
 		    $site_id = $site['_id'];
 
@@ -126,16 +127,16 @@ class Report extends REST2_Controller
 
 		    if ($conf['report_email']) {
 		        $this->utility->elapsed_time('email');
-			    $email_to = array_merge(
-				    $conf['report_email_client'] ? array($params['CLIENT_EMAIL']) : array(),
-				    $to_pbteam_email
-			    );
+		        $email_to = array_merge(
+		            $conf['report_email_client'] ? array($params['CLIENT_EMAIL']) : array(),
+		            $to_pbteam_email
+		        );
 		        $subject = '[Playbasis] Weekly Report for '.$params['SITE_NAME'].' ('.$params['FROM'].' - '.$params['TO'].')';
 		        $message = str_replace('{'.CANNOT_VIEW_EMAIL.'}', '<tr><td align="center"><span style="color: #999999;font-size: 13px">If you cannot view this email, please <a href="'.$params['REPORT_URL'].'" style="color: #0a92d9;font-size: 13px">click here</a></span></td></tr>', $html);
 		        $file_path = $conf['report_dir'].$params['DIR'].'/'.str_replace('.html', '.pdf', $params['FILE']);
 		        $file_name = 'report-'.$params['SITE_NAME'].'-'.str_replace('.html', '.pdf', $params['FILE']);
 		        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
-			    $this->email_model->log($this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
+		        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], array());
 		        log_message('debug', 'email = '.print_r($resp, true));
 		        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 		    }
@@ -168,7 +169,7 @@ class Report extends REST2_Controller
 	        $file_path = $conf['report_dir'].$master['DIR'].'/'.str_replace('.html', '.pdf', $master['FILE']);
 	        $file_name = 'report-master-'.str_replace('.html', '.pdf', $master['FILE']);
 	        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
-		    $this->email_model->log($this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
+	        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], array());
 	        log_message('debug', 'email = '.print_r($resp, true));
 	        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 	    }

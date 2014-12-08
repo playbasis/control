@@ -961,27 +961,6 @@ class Player extends REST2_Controller
 		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
-	/* unused */
-	public function dau_get()
-	{
-		$log = array();
-		$prev = null;
-		$this->player_model->set_read_preference_secondary();
-		foreach ($this->player_model->daily_active_user($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
-			$key = $value['_id'];
-			if ($prev) {
-				$d = date('Y-m-d', strtotime('+1 day', strtotime($prev)));
-				while (strtotime($d) < strtotime($key)) {
-					array_push($log, array($d => array('count' => 0)));
-					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
-				}
-			}
-			$prev = $key;
-			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
-		}
-		$this->player_model->set_read_preference_primary();
-		$this->response($this->resp->setRespond($log), 200);
-	}
 	public function dauDay_get()
 	{
 		$log = array();
@@ -994,27 +973,6 @@ class Player extends REST2_Controller
 				while (strtotime($d) < strtotime($key)) {
 					array_push($log, array($d => array('count' => 0)));
 					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
-				}
-			}
-			$prev = $key;
-			array_push($log, array($key => array('count' => ($value['value'] instanceof MongoId ? 1 : $value['value']))));
-		}
-		$this->player_model->set_read_preference_primary();
-		$this->response($this->resp->setRespond($log), 200);
-	}
-	/* unused */
-	public function mau_get()
-	{
-		$log = array();
-		$prev = null;
-		$this->player_model->set_read_preference_secondary();
-		foreach ($this->player_model->monthy_active_user($this->validToken, $this->input->get('from'), $this->input->get('to')) as $key => $value) {
-			$key = $value['_id'];
-			if ($prev) {
-				$d = date('Y-m', strtotime('+1 month', strtotime($prev.'-01 00:00:00')));
-				while (strtotime($d.'-01 00:00:00') < strtotime($key.'-01 00:00:00')) {
-					array_push($log, array($d => array('count' => 0)));
-					$d = date('Y-m', strtotime('+1 month', strtotime($d.'-01 00:00:00')));
 				}
 			}
 			$prev = $key;
