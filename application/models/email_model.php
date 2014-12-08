@@ -76,6 +76,10 @@ class Email_model extends MY_Model
 		if (count($attachments) > 0) $data['attachments'] = implode(',', $attachments);
 		$data['date_added'] = $mongoDate;
 		$data['date_modified'] = $mongoDate;
+		/* prevent possibly not utf-8 string error */
+		foreach (array('subject', 'message', 'message_alt') as $field) {
+			$data[$field] = mb_convert_encoding($data[$field], 'ISO-8859-1', 'UTF-8');
+		}
 		return $this->mongo_db->insert('playbasis_email_log', $data);
 	}
 
