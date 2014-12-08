@@ -85,7 +85,8 @@ class Report extends REST2_Controller
 
 	    /* pre-calculated info */
 	    $clients = array();
-	    foreach ($this->client_model->listSites() as $site) {
+	    $sites = $this->client_model->listSites();
+	    foreach ($sites as $site) {
 		    $client_id = $site['client_id'];
 		    if (array_key_exists((string)$client_id, $clients)) continue;
 		    $clients[(string)$client_id] = $this->client_model->getById($client_id);
@@ -94,7 +95,7 @@ class Report extends REST2_Controller
 
 	    /* query and process data */
 	    $master = $this->master_init($conf, $from, $to);
-	    foreach ($this->client_model->listSites() as $site) {
+	    foreach ($sites as $site) {
 		    $client_id = $site['client_id'];
 		    $site_id = $site['_id'];
 
