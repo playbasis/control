@@ -561,14 +561,12 @@ class Quiz extends REST2_Controller
             break;
         }
         if ($message) {
-            $this->node->publish(array_merge(array(
-                'client_id' => $client_id,
-                'site_id' => $site_id,
+            $this->node->publish(array(
                 'pb_player_id' => $pb_player_id,
-                'player_id' => $cl_player_id,
                 'action_name' => 'quiz_reward',
                 'action_icon' => 'fa-trophy',
-            ), $message['message']), $domain_name, $site_id);
+                'message' => $message['message']
+            ), $domain_name, $site_id);
         }
     }
 
