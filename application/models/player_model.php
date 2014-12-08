@@ -938,7 +938,7 @@ class Player_model extends MY_Model
         $this->mongo_db->where_gt('value', 0);
     	$this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-    	$this->mongo_db->select(array('reward_id', 'reward_name', 'value', 'message', 'date_added','action_log_id'));
+    	$this->mongo_db->select(array('reward_id', 'reward_name', 'value', 'message', 'date_added','action_log_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id'));
     	$this->mongo_db->select(array(), array('_id'));
     	$event_log = $this->mongo_db->get('playbasis_event_log');
 
@@ -951,7 +951,31 @@ class Player_model extends MY_Model
 				$event['action_name'] = $actionAndStringFilter['action_name'];
 				$event['string_filter'] = $actionAndStringFilter['url'];	
 			}
+            if(isset($event['quest_id']) && $event['quest_id']){
+                if(isset($event['mission_id']) && $event['mission_id']){
+                    $event['action_name'] = 'mission_reward';
+                }else{
+                    $event['action_name'] = 'quest_reward';
+                }
+                $event['action_icon'] = 'fa-trophy';
+            }
+            if(isset($event['goods_id']) && $event['goods_id']){
+                $event['action_name'] = 'redeem_goods';
+                $event['action_icon'] = 'fa-gift';
+            }
+            if(isset($event['quiz_id']) && $event['quiz_id']){
+                $event['action_name'] = 'quiz_reward';
+                $event['action_icon'] = 'fa-bar-chart';
+            }
+            if($event['event_type'] == 'LOGIN'){
+                $event['action_name'] = 'login';
+                $event['action_icon'] = 'fa-sign-in';
+            }
 			unset($event['action_log_id']);
+            unset($event['quest_id']);
+            unset($event['mission_id']);
+            unset($event['goods_id']);
+            unset($event['event_type']);
 
             $event['reward_id'] = $event['reward_id']."";
 		}
