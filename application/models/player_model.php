@@ -1103,7 +1103,7 @@ class Player_model extends MY_Model
 		));
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
-		foreach ($_result as $key => $value) {
+		if (is_array($_result)) foreach ($_result as $key => $value) {
 			$values = array();
 			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
 				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
@@ -1146,7 +1146,7 @@ class Player_model extends MY_Model
 		));
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
-		foreach ($_result as $key => $value) {
+		if (is_array($_result)) foreach ($_result as $key => $value) {
 			$values = array();
 			if (is_array($value['value']) && array_key_exists('pb_player_id', $value['value'])) {
 				if (is_array($value['value']['pb_player_id'])) foreach ($value['value']['pb_player_id'] as $key => $pb_player_id) {
@@ -1234,7 +1234,7 @@ class Player_model extends MY_Model
 		));
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
-		foreach ($_result as $key => $value) {
+		if (is_array($_result)) foreach ($_result as $key => $value) {
 			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
 		}
 		usort($result, 'cmp1');
@@ -1300,7 +1300,7 @@ class Player_model extends MY_Model
 		));
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
-		foreach ($_result as $key => $value) {
+		if (is_array($_result)) foreach ($_result as $key => $value) {
 			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
 		}
 		usort($result, 'cmp1');
@@ -1358,7 +1358,7 @@ class Player_model extends MY_Model
 		));
 		$_result = $_result ? $_result['results'] : array();
 		$result = array();
-		foreach ($_result as $key => $value) {
+		if (is_array($_result)) foreach ($_result as $key => $value) {
 			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
 		}
 		usort($result, 'cmp1');
