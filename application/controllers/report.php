@@ -136,7 +136,7 @@ class Report extends REST2_Controller
 		        $file_path = $conf['report_dir'].$params['DIR'].'/'.str_replace('.html', '.pdf', $params['FILE']);
 		        $file_name = 'report-'.$params['SITE_NAME'].'-'.str_replace('.html', '.pdf', $params['FILE']);
 		        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
-		        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
+		        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], array());
 		        log_message('debug', 'email = '.print_r($resp, true));
 		        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 		    }
@@ -169,7 +169,7 @@ class Report extends REST2_Controller
 	        $file_path = $conf['report_dir'].$master['DIR'].'/'.str_replace('.html', '.pdf', $master['FILE']);
 	        $file_name = 'report-master-'.str_replace('.html', '.pdf', $master['FILE']);
 	        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
-	        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
+	        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], array());
 	        log_message('debug', 'email = '.print_r($resp, true));
 	        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
 	    }

@@ -78,7 +78,7 @@ class Email_model extends MY_Model
 		$data['date_modified'] = $mongoDate;
 		/* prevent possibly not utf-8 string error */
 		foreach (array('subject', 'message', 'message_alt') as $field) {
-			$data[$field] = mb_convert_encoding($data[$field], 'ISO-8859-1', 'UTF-8');
+			$data[$field] = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $data[$field]);
 		}
 		return $this->mongo_db->insert('playbasis_email_log', $data);
 	}
