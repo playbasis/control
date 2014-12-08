@@ -975,6 +975,7 @@ class Player_model extends MY_Model
             unset($event['quest_id']);
             unset($event['mission_id']);
             unset($event['goods_id']);
+            unset($event['quiz_id']);
             unset($event['event_type']);
 
             $event['reward_id'] = $event['reward_id']."";
