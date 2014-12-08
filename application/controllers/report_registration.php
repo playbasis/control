@@ -19,6 +19,7 @@ class Report_registration extends MY_Controller{
 	public function index(){
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
 		}
 		$this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -32,6 +33,7 @@ class Report_registration extends MY_Controller{
 	public function page($offset = 0){
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -45,6 +47,7 @@ class Report_registration extends MY_Controller{
     public function registration_filter(){
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -212,7 +215,10 @@ class Report_registration extends MY_Controller{
 	}
 
 	private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'report/action')) {
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'report/action')) {
             return true;
         } else {
             return false;

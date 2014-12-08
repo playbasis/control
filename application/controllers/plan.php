@@ -23,6 +23,7 @@ class Plan extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -37,6 +38,7 @@ class Plan extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
