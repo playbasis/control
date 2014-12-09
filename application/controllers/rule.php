@@ -23,6 +23,7 @@ class Rule extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -314,7 +315,10 @@ class Rule extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'rule')) {
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'rule') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'rule')) {
             return true;
         } else {
             return false;

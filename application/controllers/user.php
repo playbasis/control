@@ -28,7 +28,7 @@ class User extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            return;
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -43,7 +43,7 @@ class User extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            return;
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -442,7 +442,10 @@ class User extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'user')) {
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'user') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'user')) {
             return true;
         } else {
             return false;

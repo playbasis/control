@@ -23,6 +23,7 @@ class Player extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            exit();
         }
 
         $this->load->model('Image_model');
@@ -685,7 +686,10 @@ class Player extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'player')) {
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'player') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'player')) {
             return true;
         } else {
             return false;

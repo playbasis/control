@@ -297,7 +297,7 @@ class Metric extends MY_Controller {
     }
 
     private function validateAccess(){
-return true;
+        return true;
         if ($this->User_model->hasPermission('access', 'metric')) {
             return true;
         } else {
