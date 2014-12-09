@@ -54,8 +54,21 @@ var ruleTableMan = {
         var errorHtml = ' <a herf="javascript:void(0)" class="error-icon" title="'+this.error+'" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a>';
         $('<span>').addClass('red').html(errorHtml).appendTo(ruleColumn);
         $('.error-icon').tooltip();
-
       }
+
+      // Frequency
+      var noFrequency = '';
+      if(this.complete == undefined || this.complete == '' ){
+        this.complete = 0;
+        noFrequency = "no-frequency";
+      }
+      if(this.partial == undefined || this.partial == '' ){
+        this.partial = 0;
+      }
+
+      var frequencyHtml = ' <strong class="frequency-icon '+noFrequency+' label" title="Rule has called / Rule has called but uncomplate" data-toggle="tooltip">'+this.complete+'<span> / '+this.partial+'</span></strong> ';
+      $(frequencyHtml).prependTo(ruleColumn);
+      $('.frequency-icon').tooltip();
 
       // tags section
       if(this.tags !== undefined && this.tags !== '')
