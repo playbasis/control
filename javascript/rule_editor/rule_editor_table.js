@@ -66,7 +66,7 @@ var ruleTableMan = {
         this.partial = 0;
       }
 
-      var frequencyHtml = ' <strong class="frequency-icon '+noFrequency+' label" title="Rule has called / Rule has called but uncomplate" data-toggle="tooltip">'+this.complete+'<span> / '+this.partial+'</span></strong> ';
+      var frequencyHtml = ' <strong class="frequency-icon '+noFrequency+' label" title="Number of times the rule has been executed. This rule has been called '+(this.complete+this.partial)+' times" data-toggle="tooltip">'+this.complete+'</strong> ';
       $(frequencyHtml).prependTo(ruleColumn);
       $('.frequency-icon').tooltip();
 
