@@ -232,7 +232,7 @@ class App extends MY_Controller
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
-                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -384,7 +384,7 @@ class App extends MY_Controller
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
-                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -454,7 +454,7 @@ class App extends MY_Controller
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
-                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
