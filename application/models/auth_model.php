@@ -157,7 +157,7 @@ class Auth_model extends MY_Model
 		}
 		return null;
 	}
-	public function createTokenFromAPIKey($apiKey)
+	/*public function createTokenFromAPIKey($apiKey)
 	{
 		$this->set_site_mongodb(0);
 		$this->mongo_db->select(array(
@@ -178,6 +178,45 @@ class Auth_model extends MY_Model
 			return $result;
 		}
 		return array();
+	}*/
+    public function createTokenFromAPIKey($apiKey)
+	{
+        $this->set_site_mongodb(0);
+
+        $this->mongo_db->select(array(
+            'site_id',
+            'client_id'
+        ));
+        $this->mongo_db->where(array(
+            'api_key' => $apiKey,
+            'status' => true,
+            'deleted' => false
+        ));
+        $cl_info = $this->mongo_db->get('playbasis_platform_client_site');
+        if($cl_info){
+            $this->mongo_db->select(array(
+                '_id',
+                'client_id',
+                'domain_name',
+                'site_name'
+            ));
+            $this->mongo_db->where(array(
+                '_id' => $cl_info[0]['site_id'],
+                'client_id' => $cl_info[0]['client_id'],
+                'status' => true
+            ));
+            $result = $this->mongo_db->get('playbasis_client_site');
+            if($result)
+            {
+                $result = $result[0];
+                $result['site_id'] = $result['_id'];
+                $result['platform_id'] = $cl_info[0]['_id'];
+                unset($result['_id']);
+                return $result;
+            }
+        }
+
+        return array();
 	}
 }
 ?>
