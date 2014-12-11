@@ -58,15 +58,11 @@ var ruleTableMan = {
 
       // Frequency
       var noFrequency = '';
-      if(this.complete == undefined || this.complete == '' ){
-        this.complete = 0;
+      if(this.usage == undefined || this.usage == '' ){
+        this.usage = 0;
         noFrequency = "no-frequency";
       }
-      if(this.partial == undefined || this.partial == '' ){
-        this.partial = 0;
-      }
-
-      var frequencyHtml = ' <strong class="frequency-icon '+noFrequency+' label" title="Number of times the rule has been executed. This rule has been called '+(this.complete+this.partial)+' times" data-toggle="tooltip">'+this.complete+'</strong> ';
+      var frequencyHtml = ' <strong class="frequency-icon '+noFrequency+' label" title="This rule has been executed '+this.usage+' times" data-toggle="tooltip">'+this.usage+'</strong> ';
       $(frequencyHtml).prependTo(ruleColumn);
       $('.frequency-icon').tooltip();
 
