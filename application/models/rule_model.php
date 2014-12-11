@@ -443,14 +443,6 @@ class Rule_model extends MY_Model
 
         try{
             if(count($results)>0) {
-                $usage = array();
-                foreach ($this->countUsage(new MongoID($siteId)) as $row) {
-                    if (!isset($row['_id']['rule_id']) || !$row['_id']['rule_id']) continue;
-                    $key = $row['_id']['rule_id']->{'$id'};
-                    if (!isset($row['_id']['action_log_id']) || !$row['_id']['action_log_id']) continue;
-                    if (!array_key_exists($key, $usage)) $usage[$key] = array();
-                    $usage[$key][] = $row['count'];
-                }
                 $output = $results;
                  /*Cut time string off*/
                 foreach($output as  &$value){
@@ -458,16 +450,7 @@ class Rule_model extends MY_Model
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
-                    $complete = 0;
-                    $partial = 0;
-                    $num_jigsaw = count($value['jigsaw_set']);
-                    if (array_key_exists($value['rule_id'], $usage)) foreach ($usage[$value['rule_id']] as $each) {
-                        //$sum += $each/(1.0*$num_jigsaw);
-                        if ($each >= $num_jigsaw) $complete += 1;
-                        else $partial += 1;
-                    }
-                    $value['complete'] = $complete;
-                    $value['partial'] = $partial;
+                    $value['usage'] = $this->countUsage(new MongoID($siteId), $value["_id"], count($value['jigsaw_set']));
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
@@ -499,24 +482,12 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function countUsage($site_id) {
+    public function countUsage($site_id, $rule_id, $n) {
         $this->set_site_mongodb($site_id);
-        $results = $this->mongo_db->aggregate('jigsaw_log', array(
-                array(
-                    '$match' => array(
-                        //'action_log_id' => array('$exists' => true),
-                        'site_id' => $site_id,
-                    ),
-                ),
-                array(
-                    '$project' => array('action_log_id' => 1, 'rule_id' => 1)
-                ),
-                array(
-                    '$group' => array('_id' => array('action_log_id' => '$action_log_id', 'rule_id' => '$rule_id'), 'count' => array('$sum' => 1))
-                ),
-            )
-        );
-        return $results ? $results['result'] : array();
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('rule_id', $rule_id);
+        $this->mongo_db->where_gte('n', $n);
+        return $this->mongo_db->count('jigsaw_log_precomp');
     }
 
     private function checkRuleError($jigsaw_set, $params) {
