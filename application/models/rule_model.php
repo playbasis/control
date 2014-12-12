@@ -429,8 +429,8 @@ class Rule_model extends MY_Model
             'date_added',
             'date_modified'
         ));
-        $this->mongo_db->where('site_id', new MongoID($siteId));
-        $this->mongo_db->where('client_id', new MongoID($clientId));
+        $this->mongo_db->where('site_id', $siteObj);
+        $this->mongo_db->where('client_id', $clientObj);
         if ($clientObj == $siteObj) // Admin
             $this->mongo_db->where('active_status', true);
         $results = $this->mongo_db->get("playbasis_rule");
@@ -443,14 +443,30 @@ class Rule_model extends MY_Model
 
         try{
             if(count($results)>0) {
+                /* init */
+                $rules = array();
+                $last = $this->getLastCalculateFrequencyTime();
+                foreach($results as $each) {
+                    $rules[$each['_id']->{'$id'}] = array('n' => count($each['jigsaw_set']), 'c' => 0);
+                }
+                /*foreach ($this->calculateFrequency($siteObj, $last) as $each) {
+                    if (empty($each['_id']['rule_id'])) continue;
+                    $rule_id = $each['_id']['rule_id']->{'$id'};
+                    if ($each['n'] >= $rules[$rule_id]['n']) {
+                        $rules[$rule_id]['c']++;
+                    }
+                }*/
+                /* process */
                 $output = $results;
-                 /*Cut time string off*/
                 foreach($output as  &$value){
                     $value['rule_id'] = strval($value["_id"]);
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
-                    $value['usage'] = $this->countUsage(new MongoID($siteId), $value["_id"], count($value['jigsaw_set']));
+                    $n = $rules[$value['rule_id']]['n'];
+                    $c = $rules[$value['rule_id']]['c'];
+                    $batch = $this->countUsage($siteObj, $value["_id"], $n);
+                    $value['usage'] = $batch + $c; // batch + live
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
@@ -488,6 +504,62 @@ class Rule_model extends MY_Model
         $this->mongo_db->where('rule_id', $rule_id);
         $this->mongo_db->where_gte('n', $n);
         return $this->mongo_db->count('jigsaw_log_precomp');
+    }
+
+    public function calculateFrequency($site_id, $from=null, $to=null) {
+        $this->set_site_mongodb($site_id);
+        $date_added = array();
+        if ($from) $date_added['$gt'] = $from;
+        if ($to) $date_added['$lt'] = $to;
+        $default = array('action_log_id' => array('$exists' => 1), 'site_id' => $site_id);
+        $match = array_merge($date_added ? array('date_added' => $date_added) : array(), $default);
+        $results = $this->mongo_db->aggregate('jigsaw_log',
+            array(
+                array(
+                    '$match' => $match
+                ),
+                array(
+                    '$project' => array('action_log_id' => 1, 'rule_id' => 1)
+                ),
+                array(
+                    '$group' => array('_id' => array('action_log_id' => '$action_log_id', 'rule_id' => '$rule_id'), 'n' => array('$sum' => 1))
+                ),
+            )
+        );
+        return $results ? $results['result'] : array();
+    }
+
+    public function calculateRuleFrequency($rule_id, $n, $from=null, $to=null) {
+        $date_added = array();
+        if ($from) $date_added['$gt'] = $from;
+        if ($to) $date_added['$lt'] = $to;
+        $default = array('action_log_id' => array('$exists' => 1), 'rule_id' => $rule_id);
+        $match = array_merge($date_added ? array('date_added' => $date_added) : array(), $default);
+        $results = $this->mongo_db->aggregate('jigsaw_log',
+            array(
+                array(
+                    '$match' => $match
+                ),
+                array(
+                    '$project' => array('action_log_id' => 1)
+                ),
+                array(
+                    '$group' => array('_id' => '$action_log_id', 'n' => array('$sum' => 1))
+                ),
+                array(
+                    '$match' => array('n' => array('$gte' => $n))
+                ),
+            )
+        );
+        return $results ? $results['result'] : array();
+    }
+
+    public function getLastCalculateFrequencyTime() {
+        $this->mongo_db->select(array('date_added'));
+        $this->mongo_db->order_by(array('date_added' => -1));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('jigsaw_log_precomp');
+        return $results ? $results[0]['date_added'] : array();
     }
 
     private function checkRuleError($jigsaw_set, $params) {
