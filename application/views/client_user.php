@@ -65,8 +65,6 @@
     </tfoot>
 </table>
 
-<div class="pagination"><?php if(isset($pagination_links)){echo $pagination_links;} ?></div>
-
 <script type="text/javascript">
     function removeUser(user_id) {
 

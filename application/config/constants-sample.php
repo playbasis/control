@@ -66,5 +66,8 @@ define('FOREVER', 100); // number of years our system used for representing an u
 
 define('EMAIL_FROM', 'no-reply@playbasis.com');
 
+define('NUMBER_OF_ADJACENT_PAGES', 6);
+define('NUMBER_OF_RECORDS_PER_PAGE', 10);
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

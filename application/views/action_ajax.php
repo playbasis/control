@@ -75,3 +75,11 @@
                 </tbody>
             </table>
         <?php echo form_close();?>
+
+<div class="pagination">
+    <ul class='ul_rule_pagination_container'>
+        <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
+        <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
+        <?php echo $pagination_links; ?>
+    </ul>
+</div>

@@ -178,7 +178,7 @@ class Client extends MY_Controller
 
         $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-        $per_page = 10;
+        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
 //        $this->load->model('Domain_model');
         $this->load->model('App_model');
@@ -293,8 +293,8 @@ class Client extends MY_Controller
         $config['total_rows'] = $total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = $choice;
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
         $config['page_query_string'] = true;
 
         $config['next_link'] = 'Next';
@@ -311,10 +311,19 @@ class Client extends MY_Controller
         $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
 
         $this->pagination->initialize($config);
 
         $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['main'] = 'client';
@@ -539,28 +548,15 @@ class Client extends MY_Controller
 
     public function domain($offset=0) {
 
-        // $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
-
-        // $per_page = 10;
-
-//        $this->load->model('Domain_model');
         $this->load->model('App_model');
         $this->load->model('Plan_model');
-
-        // $this->load->library('pagination');
 
         $this->data['domains_data'] = array();
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
             'site_id' =>$this->User_model->getSiteId()
-            // 'start' => $offset,
-            // 'limit' => $per_page
         );
-
-        $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
-
-        $total = $this->App_model->getTotalAppsByClientId($data);
 
         $results = $this->App_model->getAppsByClientId($data);
 
@@ -591,44 +587,19 @@ class Client extends MY_Controller
 
         $this->data['plan_data'] = $this->Plan_model->getPlans($data);
 
-        // $config['base_url'] = site_url('client/domain').$parameter_url;
-        // $config['total_rows'] = $total;
-        // $config['per_page'] = $per_page;
-        // $config["uri_segment"] = 3;
-        // $choice = $config["total_rows"] / $config["per_page"];
-        // $config['num_links'] = $choice;
-        // $config['page_query_string'] = true;
-
-        // $this->pagination->initialize($config);
-
-        // $this->data['pagination_links'] = $this->pagination->create_links();
-
         $this->load->vars($this->data);
-//        $this->load->view('client_domain');
         $this->render_page('client_domain');
     }
 
     public function users($offset=0) {
 
-        // $offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
-
-        // $per_page = 10;
-
         $this->load->model('Plan_model');
-
-        // $this->load->library('pagination');
 
         $this->data['users'] = array();
 
         $data = array(
             'client_id' => $this->input->get('client_id'),
-            // 'start' => $offset,
-            // 'limit' => $per_page
         );
-
-        $parameter_url = "?t=".rand()."&client_id=".$data['client_id'];
-
-        $total = $this->User_model->getTotalUserByClientId($data);
 
         $results = $this->User_model->getUserByClientId($data);
 
@@ -652,18 +623,6 @@ class Client extends MY_Controller
         }
         $this->data['list_client_id'] = $data['client_id'];
         $this->data['groups'] = $this->User_model->getUserGroups();
-
-        // $config['base_url'] = site_url('client/users').$parameter_url;
-        // $config['total_rows'] = $total;
-        // $config['per_page'] = $per_page;
-        // $config["uri_segment"] = 3;
-        // $choice = $config["total_rows"] / $config["per_page"];
-        // $config['num_links'] = $choice;
-        // $config['page_query_string'] = true;
-
-        // $this->pagination->initialize($config);
-
-        // $this->data['pagination_links'] = $this->pagination->create_links();
 
         $this->load->vars($this->data);
         $this->render_page('client_user');
