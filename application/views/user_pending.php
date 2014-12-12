@@ -58,8 +58,6 @@
 
 			</div>
 
-<div class="pagination"><?php if(isset($pagination_links)){echo $pagination_links;} ?></div>
-
 		</div><!-- .content -->
 	</div><!-- .box -->
 </div><!-- #content .span10 -->

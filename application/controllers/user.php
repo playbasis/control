@@ -56,27 +56,19 @@ class User extends MY_Controller
 
     public function getList($offset){
 
-        //Added
         $client_id = $this->User_model->getClientId();
 
         $this->load->library('pagination');        
         $config['base_url'] = site_url('user/page');
-        $config['per_page'] = 10;
+        $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         if($client_id){
-
-            $data = array(
-                'client_id'=>$client_id
-                );
-            $config['total_rows'] = $this->User_model->getTotalUserByClientId($data);
+            $config['total_rows'] = $this->User_model->getTotalUserByClientId(array('client_id' => $client_id));
         }else{
             $config['total_rows'] = $this->User_model->getTotalNumUsers();
         }
 
-        //End Added
-
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = $choice;
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
@@ -92,8 +84,19 @@ class User extends MY_Controller
         $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
         $this->pagination->initialize($config);
 
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
@@ -129,16 +132,12 @@ class User extends MY_Controller
 
             $this->data['users'] = $UsersInfoForClientId;
 
-
         }else{
             $this->data['users'] = $this->User_model->fetchAllUsers($filter);
         }
-            
-
 
         $this->data['main'] = 'user';
         $this->render_page('template');
-        
     }
 
     public function update($user_id){
