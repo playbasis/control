@@ -211,7 +211,7 @@ class Report_reward extends MY_Controller{
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = $choice;
+        $config['num_links'] = 6;
         $config['page_query_string'] = true;
 
         $config['next_link'] = 'Next';
@@ -231,6 +231,8 @@ class Report_reward extends MY_Controller{
         $this->pagination->initialize($config);
 
         $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = $choice;
+        $this->data['pagination_total_rows'] = $report_total;
 
         $this->data['filter_date_start'] = $filter_date_start;
         // --> This will show only the date, not including the time
