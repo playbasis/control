@@ -449,13 +449,13 @@ class Rule_model extends MY_Model
                 foreach($results as $each) {
                     $rules[$each['_id']->{'$id'}] = array('n' => count($each['jigsaw_set']), 'c' => 0);
                 }
-                foreach ($this->calculateFrequency($siteObj, $last) as $each) {
+                /*foreach ($this->calculateFrequency($siteObj, $last) as $each) {
                     if (empty($each['_id']['rule_id'])) continue;
                     $rule_id = $each['_id']['rule_id']->{'$id'};
                     if ($each['n'] >= $rules[$rule_id]['n']) {
                         $rules[$rule_id]['c']++;
                     }
-                }
+                }*/
                 /* process */
                 $output = $results;
                 foreach($output as  &$value){
