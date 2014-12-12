@@ -406,7 +406,7 @@ class Badge extends MY_Controller
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+        $config['num_links'] = $choice;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
@@ -581,7 +581,7 @@ class Badge extends MY_Controller
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+        $config['num_links'] = $choice;
 
         $this->pagination->initialize($config);
 

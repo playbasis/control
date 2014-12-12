@@ -203,7 +203,7 @@ class Report extends MY_Controller
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
         $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+        $config['num_links'] = $choice;
         $config['page_query_string'] = true;
 
         $config['next_link'] = 'Next';

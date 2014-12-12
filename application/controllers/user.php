@@ -76,7 +76,7 @@ class User extends MY_Controller
         //End Added
 
         $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+        $config['num_links'] = $choice;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
