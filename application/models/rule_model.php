@@ -449,6 +449,7 @@ class Rule_model extends MY_Model
                 foreach($results as $each) {
                     $rules[$each['_id']->{'$id'}] = array('n' => count($each['jigsaw_set']), 'c' => 0);
                 }
+                /* rule usage processing (live) */
                 /*foreach ($this->calculateFrequency($siteObj, $last) as $each) {
                     if (empty($each['_id']['rule_id'])) continue;
                     $rule_id = $each['_id']['rule_id']->{'$id'};
@@ -456,7 +457,7 @@ class Rule_model extends MY_Model
                         $rules[$rule_id]['c']++;
                     }
                 }*/
-                /* process */
+                /* main process */
                 $output = $results;
                 foreach($output as  &$value){
                     $value['rule_id'] = strval($value["_id"]);
@@ -465,8 +466,9 @@ class Rule_model extends MY_Model
                     $value['action_id'] = strval($value["action_id"]);
                     $n = $rules[$value['rule_id']]['n'];
                     $c = $rules[$value['rule_id']]['c'];
-                    $batch = $this->countUsage($siteObj, $value["_id"], $n);
+                    $batch = $this->countUsage($siteObj, $value["_id"], $n); // rule usage processing (batch)
                     $value['usage'] = $batch + $c; // batch + live
+                    $value['usage_sync_date'] = $last ? date('d M Y, H:i', $last->sec) : null;
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
