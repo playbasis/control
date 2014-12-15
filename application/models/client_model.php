@@ -705,7 +705,7 @@ class Client_model extends MY_Model
      * @param field string
      * @return array('plan_id' => string, 'value' => integer) | null
      */
-    private function getPermissionUsage($client_id, $site_id, $type, $field, $clientDate)
+    public function getPermissionUsage($client_id, $site_id, $type, $field, $clientDate)
     {
         // wrong type
         if (!in_array($type, array("notifications", "requests", "others")))
