@@ -460,7 +460,7 @@ class Client_model extends MY_Model
 			'jigsaw_category' => (isset($logData['jigsaw_category'])) ? $logData['jigsaw_category'] : '',
 			'jigsaw_index'	  => (isset($logData['jigsaw_index']))	  ? $logData['jigsaw_index']	: '',
 			'site_name'		  => (isset($logData['site_name']))		  ? $logData['site_name']		: '',
-			'date_added'	  => $mongoDate,
+			'date_added'	  => (isset($logData['rule_time']))		  ? $logData['rule_time']		: $mongoDate,
 			'date_modified'	  => $mongoDate
 		));
 	}
