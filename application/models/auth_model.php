@@ -22,6 +22,7 @@ class Auth_model extends MY_Model
             'status' => true,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $cl_info = $this->mongo_db->get('playbasis_platform_client_site');
         if($cl_info){
             $this->mongo_db->select(array(
@@ -76,6 +77,7 @@ class Auth_model extends MY_Model
 			'platform_id' => $data['platform_id'],
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
+		$this->mongo_db->limit(1);
 		$results = $this->mongo_db->get('playbasis_token');
 		return $results ? $results[0] : array();
 	}
@@ -128,6 +130,7 @@ class Auth_model extends MY_Model
 			'token' => $token,
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_token');
 		if($result && $result[0])
 		{
@@ -140,6 +143,7 @@ class Auth_model extends MY_Model
 				'site_name'
 			));
 			$this->mongo_db->where($info);
+			$this->mongo_db->limit(1);
 			$result = $this->mongo_db->get('playbasis_client_site');
 			$result = array_merge($info, ($result) ? $result[0] : array());
 			$result['site_id'] = $result['_id'];
@@ -183,6 +187,7 @@ class Auth_model extends MY_Model
             'status' => true,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $cl_info = $this->mongo_db->get('playbasis_platform_client_site');
         if($cl_info){
             $this->mongo_db->select(array(
@@ -196,6 +201,7 @@ class Auth_model extends MY_Model
                 'client_id' => $cl_info[0]['client_id'],
                 'status' => true
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_client_site');
             if($result)
             {
