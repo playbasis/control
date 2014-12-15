@@ -460,7 +460,7 @@ class Client_model extends MY_Model
 			'jigsaw_category' => (isset($logData['jigsaw_category'])) ? $logData['jigsaw_category'] : '',
 			'jigsaw_index'	  => (isset($logData['jigsaw_index']))	  ? $logData['jigsaw_index']	: '',
 			'site_name'		  => (isset($logData['site_name']))		  ? $logData['site_name']		: '',
-			'date_added'	  => $mongoDate,
+			'date_added'	  => (isset($logData['rule_time']))		  ? $logData['rule_time']		: $mongoDate,
 			'date_modified'	  => $mongoDate
 		));
 	}
@@ -586,23 +586,22 @@ class Client_model extends MY_Model
         return $result ? $result[0]['name'] : null;
     }
 
-	public function listSites($client_id = null)
+	public function listSites()
 	{
 		$this->set_site_mongodb(0);
 		$where = array(
 			'status' => true,
 			'deleted' => false
 		);
-		if (!empty($client_id)) $where['client_id'] = $client_id;
+		$this->mongo_db->select(array('client_id', 'site_name'));
 		$this->mongo_db->where($where);
 		return $this->mongo_db->get('playbasis_client_site');
 	}
 
 	public function getById($client_id) {
 		$this->set_site_mongodb(0);
-		$this->mongo_db->where(array(
-			'_id' => $client_id,
-		));
+		$this->mongo_db->select(array('first_name', 'last_name', 'email'));
+		$this->mongo_db->where(array('_id' => $client_id));
 		$ret = $this->mongo_db->get('playbasis_client');
 		return is_array($ret) && count($ret) == 1 ? $ret[0] : $ret;
 	}
@@ -705,7 +704,7 @@ class Client_model extends MY_Model
      * @param field string
      * @return array('plan_id' => string, 'value' => integer) | null
      */
-    private function getPermissionUsage($client_id, $site_id, $type, $field, $clientDate)
+    public function getPermissionUsage($client_id, $site_id, $type, $field, $clientDate)
     {
         // wrong type
         if (!in_array($type, array("notifications", "requests", "others")))

@@ -25,7 +25,7 @@ define('ITEM_DATE_NOT_CONFIG', 'Not Set');
 define('ITEM_QTY_NOT_CONFIG', 'Inf.');
 define('REPORT_DATE_FORMAT', 'd M Y');
 
-class Report extends REST2_Controller
+class Report extends CI_Controller
 {
     public function __construct()
     {
@@ -47,7 +47,7 @@ class Report extends REST2_Controller
 	    $this->load->library('rssparser');
     }
 
-    public function generate_get($ref = null)
+    public function generate($ref = null)
     {
 	    $msg = array();
 	    $this->utility->elapsed_time('report');
@@ -56,9 +56,6 @@ class Report extends REST2_Controller
 	    $allowed_site_ids = array( // true = send email, false = will not send
 		    SITE_ID_DEMO => true,
 		    SITE_ID_MTD => true,
-		    SITE_ID_PLAYBOY => false,
-		    SITE_ID_TRUE => false,
-		    SITE_ID_BURUFLY => false,
 		    SITE_ID_ASSOPOKER => true,
 		    SITE_ID_TRUE_MONEY => true,
 	    );
@@ -94,7 +91,9 @@ class Report extends REST2_Controller
 	    log_message('debug', 'clients = '.print_r($clients, true));
 
 	    /* query and process data */
-	    $master = $this->master_init($conf, $from, $to);
+	    $this->utility->elapsed_time('master_init');
+	    $master = $this->master_init($conf, $to, $from, $from2);
+	    log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('master_init').' sec (master_init)');
 	    foreach ($sites as $site) {
 		    $client_id = $site['client_id'];
 		    $site_id = $site['_id'];
@@ -104,16 +103,16 @@ class Report extends REST2_Controller
 		    log_message('debug', 'site = '.print_r($site, true));
 		    $this->utility->elapsed_time('data');
 		    $params = $this->build_data($conf, $clients[(string)$client_id], $site, $to, $from, $from2);
-		    log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('data').' sec');
+		    log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('data').' sec (build_data)');
 		    log_message('debug', 'params = '.print_r($params, true));
 
 		    $html = $this->parser->parse('report.html', $params, true);
 		    $this->utility->save_file($conf['report_dir'].$params['DIR'], $params['FILE'], str_replace('{'.CANNOT_VIEW_EMAIL.'}', '', $html));
-		    log_message('debug', 'html = '.print_r($html, true));
+		    //log_message('debug', 'html = '.print_r($html, true));
 
 		    $pdf_html = $this->parser->parse('report_pdf.html', $params, true);
 		    $this->utility->save_file($conf['report_dir'].$params['DIR'], str_replace('.html', '.pdf.html', $params['FILE']), $pdf_html);
-		    log_message('debug', 'pdf_html = '.print_r($pdf_html, true));
+		    //log_message('debug', 'pdf_html = '.print_r($pdf_html, true));
 
 		    if ($conf['report_pdf']) {
 		        $pdf = $this->utility->html2mpdf($pdf_html, true);
@@ -136,9 +135,9 @@ class Report extends REST2_Controller
 		        $file_path = $conf['report_dir'].$params['DIR'].'/'.str_replace('.html', '.pdf', $params['FILE']);
 		        $file_name = 'report-'.$params['SITE_NAME'].'-'.str_replace('.html', '.pdf', $params['FILE']);
 		        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
-		        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], array());
+		        $this->email_model->log(EMAIL_TYPE_REPORT, $client_id, $site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$params['REPORT_URL'], array());
 		        log_message('debug', 'email = '.print_r($resp, true));
-		        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
+		        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec (email)');
 		    }
 	    }
 	    $this->master_finalize($conf, $master);
@@ -169,9 +168,9 @@ class Report extends REST2_Controller
 	        $file_path = $conf['report_dir'].$master['DIR'].'/'.str_replace('.html', '.pdf', $master['FILE']);
 	        $file_name = 'report-master-'.str_replace('.html', '.pdf', $master['FILE']);
 	        $resp = $this->utility->email(EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], $conf['report_pdf'] ? array($file_path => $file_name) : array());
-	        $this->email_model->log(EMAIL_TYPE_REPORT, $this->client_id, $this->site_id, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], array());
+	        $this->email_model->log(EMAIL_TYPE_REPORT, null, null, $resp, EMAIL_FROM, $email_to, $subject, $message, 'If you cannot view this email, please visit '.$master['REPORT_URL'], array());
 	        log_message('debug', 'email = '.print_r($resp, true));
-	        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec');
+	        log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('email').' sec (email)');
 	    }
 
 	    $msg['elapsed_time'] = $this->utility->elapsed_time('report');
@@ -196,11 +195,19 @@ class Report extends REST2_Controller
 
 		$opts = array('client_id' => $site['client_id'], 'site_id' => $site['_id']);
 
+		// PLAYERS
+		$this->utility->elapsed_time('PLAYERS');
+		log_message('debug', 'PLAYERS start');
 		$params = array_merge($params, $this->get_stat('TOTAL_USER_', $conf, $this->player_model->new_registration($opts, null, $to), $this->player_model->new_registration($opts, null, $from)));
 		$params = array_merge($params, $this->get_stat('NEW_USER_', $conf, $this->player_model->new_registration($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->player_model->new_registration($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from)));
 		$params = array_merge($params, $this->get_stat('DAU_', $conf, $this->player_model->daily_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->player_model->daily_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from)));
 		$params = array_merge($params, $this->get_stat('MAU_', $conf, $this->player_model->monthy_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->player_model->monthy_active_user_per_day($opts, date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from)));
+		log_message('debug', 'PLAYERS end');
+		log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('PLAYERS').' sec (PLAYERS)');
+
 		// ACTIONS
+		$this->utility->elapsed_time('ACTIONS');
+		log_message('debug', 'ACTIONS start');
 		$arr = array();
 		$actions = $this->action_model->listActions($opts);
 		if (is_array($actions)) foreach ($actions as $action) {
@@ -221,7 +228,12 @@ class Report extends REST2_Controller
 			$params['ACTIONS'][] = $each;
 			if (NUMBER_OF_ACTIONS > 0 && $i == (NUMBER_OF_ACTIONS-1)) break;
 		}
+		log_message('debug', 'ACTIONS end');
+		log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('ACTIONS').' sec (ACTIONS)');
+
 		// BADGES
+		$this->utility->elapsed_time('BADGES');
+		log_message('debug', 'BADGES start');
 		$arr = array();
 		$badges = $this->badge_model->getAllBadges($opts);
 		if (is_array($badges)) foreach ($badges as $badge) {
@@ -242,7 +254,12 @@ class Report extends REST2_Controller
 			$params['BADGES'][] = $each;
 			if (NUMBER_OF_BADGES > 0 && $i == (NUMBER_OF_BADGES-1)) break;
 		}
+		log_message('debug', 'BADGES end');
+		log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('BADGES').' sec (BADGES)');
+
 		// ITEMS
+		$this->utility->elapsed_time('ITEMS');
+		log_message('debug', 'ITEMS start');
 		$arr = array();
 		/* process group */
 		$results = $this->goods_model->getGroupsAggregate($opts['site_id']);
@@ -287,7 +304,12 @@ class Report extends REST2_Controller
 			$params['ITEMS'][] = $each;
 			if (NUMBER_OF_ITEMS > 0 && $i == (NUMBER_OF_ITEMS-1)) break;
 		}
+		log_message('debug', 'ITEMS end');
+		log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('ITEMS').' sec (ITEMS)');
+
 		// PLAYERS (ranking)
+		$this->utility->elapsed_time('RANKING');
+		log_message('debug', 'RANKING start');
 		$players = $this->player_model->getLeaderboardByLevelForReport(NUMBER_OF_PLAYERS, $site['client_id'], $site['_id']);
 		$params['PLAYERS'] = array();
 		if (is_array($players)) foreach ($players as $i => $player) {
@@ -302,7 +324,12 @@ class Report extends REST2_Controller
 				'LEVEL' => number_format($player['level']),
 			);
 		}
+		log_message('debug', 'RANKING end');
+		log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('RANKING').' sec (RANKING)');
+
 		// FEEDS
+		$this->utility->elapsed_time('FEEDS');
+		log_message('debug', 'FEEDS start');
 		$params['FEEDS'] = array();
 		$rssparser = $this->rssparser;
 		foreach (array('http://www.gamification.co/feed/', 'http://www.entrepreneur.com/feeds/tags/gamification/1908.rss') as $url) {
@@ -319,6 +346,8 @@ class Report extends REST2_Controller
 			}
 		}
 		usort($params['FEEDS'], 'compare_FEED_DATE_NUM_desc');
+		log_message('debug', 'FEEDS end');
+		log_message('debug', 'Elapsed time = '.$this->utility->elapsed_time('FEEDS').' sec (FEEDS)');
 
 		return $params;
 	}
@@ -348,16 +377,16 @@ class Report extends REST2_Controller
 		);
 	}
 
-	private function master_init($conf, $from, $to) {
+	private function master_init($conf, $to, $from, $from2) {
 		$params = array(
 			'STATIC_IMAGE_URL' => $conf['static_image_url'],
 			'DYNAMIC_IMAGE_URL' => $conf['dynamic_image_url'],
 			'FROM' => date(REPORT_DATE_FORMAT, strtotime('+1 day', strtotime($from))),
 			'TO' => date(REPORT_DATE_FORMAT, strtotime($to)),
-			'GLOBAL_TOTAL_USER_TOTAL_NUM' => 0,
-			'GLOBAL_TOTAL_USER_TOTAL_PREV_NUM' => 0,
-			'GLOBAL_NEW_USER_TOTAL_NUM' => 0,
-			'GLOBAL_NEW_USER_TOTAL_PREV_NUM' => 0,
+			'GLOBAL_TOTAL_USER_TOTAL_NUM' => $this->player_model->new_registration_all_customers(null, $to, array(SITE_ID_TRUE)),
+			'GLOBAL_TOTAL_USER_TOTAL_PREV_NUM' => $this->player_model->new_registration_all_customers(null, $from, array(SITE_ID_TRUE)),
+			'GLOBAL_NEW_USER_TOTAL_NUM' => $this->player_model->new_registration_all_customers(date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, array(SITE_ID_TRUE)),
+			'GLOBAL_NEW_USER_TOTAL_PREV_NUM' => $this->player_model->new_registration_all_customers(date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from, array(SITE_ID_TRUE)),
 			'GLOBAL_DAU_AVERAGE_NUM' => 0,
 			'GLOBAL_DAU_AVERAGE_PREV_NUM' => 0,
 			'GLOBAL_MAU_AVERAGE_NUM' => 0,
@@ -371,10 +400,6 @@ class Report extends REST2_Controller
 	}
 
 	private function master_accumulate($conf, &$master, $params) {
-		$master['GLOBAL_TOTAL_USER_TOTAL_NUM'] += $params['TOTAL_USER_TOTAL_NUM'];
-		$master['GLOBAL_TOTAL_USER_TOTAL_PREV_NUM'] += $params['TOTAL_USER_TOTAL_PREV_NUM'];
-		$master['GLOBAL_NEW_USER_TOTAL_NUM'] += $params['NEW_USER_TOTAL_NUM'];
-		$master['GLOBAL_NEW_USER_TOTAL_PREV_NUM'] += $params['NEW_USER_TOTAL_PREV_NUM'];
 		$master['GLOBAL_DAU_AVERAGE_NUM'] += $params['DAU_AVERAGE_NUM'];
 		$master['GLOBAL_DAU_AVERAGE_PREV_NUM'] += $params['DAU_AVERAGE_PREV_NUM'];
 		$master['GLOBAL_MAU_AVERAGE_NUM'] += $params['MAU_AVERAGE_NUM'];

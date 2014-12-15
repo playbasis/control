@@ -343,6 +343,7 @@ class Engine extends Quest
 		foreach($ruleSet as $rule) {
 			$input['rule_id'] = new MongoId($rule['rule_id']);
 			$input['rule_name'] = $rule['name'];
+			$input['rule_time'] = new MongoDate(time());
 			$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set']: array();
 
 			foreach($jigsawSet as $jigsaw) {
