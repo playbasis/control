@@ -22,6 +22,7 @@ class Auth_model extends MY_Model
             'status' => true,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $cl_info = $this->mongo_db->get('playbasis_platform_client_site');
         if($cl_info){
             $this->mongo_db->select(array(
@@ -51,6 +52,21 @@ class Auth_model extends MY_Model
 	public function generateToken($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
+		$token = $this->getToken($data);
+		if($token)
+		{
+			$result['token'] = $token['token'];
+//			$result['date_expire'] = date('Y-m-d H:i:s', $token['date_expire']->sec);
+			$result['date_expire'] = datetimeMongotoReadable($token['date_expire']);
+			return $result;
+		}
+		return $this->renewToken($data);
+	}
+	private function token($key, $secret, $r) {
+		return hash('sha1', $key . time() . $secret . $r);
+	}
+	private function getToken($data) {
+		$this->set_site_mongodb($data['site_id']);
 		$this->mongo_db->select(array(
 			'token',
 			'date_expire'
@@ -61,20 +77,19 @@ class Auth_model extends MY_Model
 			'platform_id' => $data['platform_id'],
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
-		$token = $this->mongo_db->get('playbasis_token');
-		if($token && $token[0])
-		{
-			$result['token'] = $token[0]['token'];
-//			$result['date_expire'] = date('Y-m-d H:i:s', $token[0]['date_expire']->sec);
-			$result['date_expire'] = datetimeMongotoReadable($token[0]['date_expire']);
-			return $result;
-		}
-		return $this->renewToken($data);
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_token');
+		return $results ? $results[0] : array();
 	}
 	public function renewToken($data)
 	{
 		$token = array();
-		$token['token'] = hash('sha1', $data['key'] . time() . $data['secret'] . rand(4, 4));
+		$r = rand();
+		$newToken = $this->token($data['key'], $data['secret'], $r);
+		$oldToken = $this->getToken($data);
+		if ($oldToken) $oldToken = $oldToken['token'];
+		if ($newToken == $oldToken) $newToken = $this->token($data['key'], $data['secret'], $r << 1); // prevent duplicate tokens being returned
+		$token['token'] = $newToken;
 		$expire = new MongoDate(time() + TOKEN_EXPIRE);
 		$updated = array();
 		foreach(self::$dblist as $key => $value)
@@ -115,6 +130,7 @@ class Auth_model extends MY_Model
 			'token' => $token,
 		));
 		$this->mongo_db->where_gt('date_expire', new MongoDate(time()));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_token');
 		if($result && $result[0])
 		{
@@ -127,6 +143,7 @@ class Auth_model extends MY_Model
 				'site_name'
 			));
 			$this->mongo_db->where($info);
+			$this->mongo_db->limit(1);
 			$result = $this->mongo_db->get('playbasis_client_site');
 			$result = array_merge($info, ($result) ? $result[0] : array());
 			$result['site_id'] = $result['_id'];
@@ -157,28 +174,6 @@ class Auth_model extends MY_Model
 		}
 		return null;
 	}
-	/*public function createTokenFromAPIKey($apiKey)
-	{
-		$this->set_site_mongodb(0);
-		$this->mongo_db->select(array(
-			'client_id',
-			'_id',
-			'domain_name',
-			'site_name'
-		));
-		$this->mongo_db->where(array(
-			'api_key' => $apiKey,
-			));
-		$result = $this->mongo_db->get('playbasis_client_site');
-		if($result && $result[0])
-		{
-			$result = $result[0];
-			$result['site_id'] = $result['_id'];
-			unset($result['_id']);
-			return $result;
-		}
-		return array();
-	}*/
     public function createTokenFromAPIKey($apiKey)
 	{
         $this->set_site_mongodb(0);
@@ -192,6 +187,7 @@ class Auth_model extends MY_Model
             'status' => true,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $cl_info = $this->mongo_db->get('playbasis_platform_client_site');
         if($cl_info){
             $this->mongo_db->select(array(
@@ -205,6 +201,7 @@ class Auth_model extends MY_Model
                 'client_id' => $cl_info[0]['client_id'],
                 'status' => true
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_client_site');
             if($result)
             {
