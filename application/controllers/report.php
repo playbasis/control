@@ -386,10 +386,10 @@ class Report extends REST2_Controller
 			'DYNAMIC_IMAGE_URL' => $conf['dynamic_image_url'],
 			'FROM' => date(REPORT_DATE_FORMAT, strtotime('+1 day', strtotime($from))),
 			'TO' => date(REPORT_DATE_FORMAT, strtotime($to)),
-			'GLOBAL_TOTAL_USER_TOTAL_NUM' => 0,
-			'GLOBAL_TOTAL_USER_TOTAL_PREV_NUM' => 0,
-			'GLOBAL_NEW_USER_TOTAL_NUM' => 0,
-			'GLOBAL_NEW_USER_TOTAL_PREV_NUM' => 0,
+			'GLOBAL_TOTAL_USER_TOTAL_NUM' => $this->player_model->new_registration_all_customers(null, $to, array(SITE_ID_TRUE)),
+			'GLOBAL_TOTAL_USER_TOTAL_PREV_NUM' => $this->player_model->new_registration_all_customers(null, $from, array(SITE_ID_TRUE)),
+			'GLOBAL_NEW_USER_TOTAL_NUM' => $this->player_model->new_registration_all_customers(date('Y-m-d', strtotime('+1 day', strtotime($from))), $to, array(SITE_ID_TRUE)),
+			'GLOBAL_NEW_USER_TOTAL_PREV_NUM' => $this->player_model->new_registration_all_customers(date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from, array(SITE_ID_TRUE)),
 			'GLOBAL_DAU_AVERAGE_NUM' => 0,
 			'GLOBAL_DAU_AVERAGE_PREV_NUM' => 0,
 			'GLOBAL_MAU_AVERAGE_NUM' => 0,
@@ -403,10 +403,6 @@ class Report extends REST2_Controller
 	}
 
 	private function master_accumulate($conf, &$master, $params) {
-		$master['GLOBAL_TOTAL_USER_TOTAL_NUM'] += $params['TOTAL_USER_TOTAL_NUM'];
-		$master['GLOBAL_TOTAL_USER_TOTAL_PREV_NUM'] += $params['TOTAL_USER_TOTAL_PREV_NUM'];
-		$master['GLOBAL_NEW_USER_TOTAL_NUM'] += $params['NEW_USER_TOTAL_NUM'];
-		$master['GLOBAL_NEW_USER_TOTAL_PREV_NUM'] += $params['NEW_USER_TOTAL_PREV_NUM'];
 		$master['GLOBAL_DAU_AVERAGE_NUM'] += $params['DAU_AVERAGE_NUM'];
 		$master['GLOBAL_DAU_AVERAGE_PREV_NUM'] += $params['DAU_AVERAGE_PREV_NUM'];
 		$master['GLOBAL_MAU_AVERAGE_NUM'] += $params['MAU_AVERAGE_NUM'];

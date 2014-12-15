@@ -1088,6 +1088,23 @@ class Player_model extends MY_Model
     	return ($returnThis)?$returnThis[0]:array();
     }
 
+	private function _new_registration_all_customers($from=null, $to=null) {
+		$this->mongo_db->where('status', true);
+		if ($from) $this->mongo_db->where_gte('date_added', $this->new_mongo_date($from));
+		if ($to) $this->mongo_db->where_lte('date_added', $this->new_mongo_date($to, '23:59:59'));
+		return $this->mongo_db->count('playbasis_player');
+	}
+
+	public function new_registration_all_customers($from=null, $to=null, $site_ids=array()) {
+		$this->set_site_mongodb(0);
+		$n = $this->_new_registration_all_customers($from, $to);
+		if (is_array($site_ids)) foreach ($site_ids as $site_id) {
+			$this->set_site_mongodb(new MongoId($site_id)); // set to dedicated DB (if any)
+			$n += $this->_new_registration_all_customers($from, $to);
+		}
+		return $n;
+	}
+
 	public function new_registration($data, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
 		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
