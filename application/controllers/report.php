@@ -25,7 +25,7 @@ define('ITEM_DATE_NOT_CONFIG', 'Not Set');
 define('ITEM_QTY_NOT_CONFIG', 'Inf.');
 define('REPORT_DATE_FORMAT', 'd M Y');
 
-class Report extends REST2_Controller
+class Report extends CI_Controller
 {
     public function __construct()
     {
@@ -47,7 +47,7 @@ class Report extends REST2_Controller
 	    $this->load->library('rssparser');
     }
 
-    public function generate_get($ref = null)
+    public function generate($ref = null)
     {
 	    $msg = array();
 	    $this->utility->elapsed_time('report');
