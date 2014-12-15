@@ -56,9 +56,6 @@ class Report extends REST2_Controller
 	    $allowed_site_ids = array( // true = send email, false = will not send
 		    SITE_ID_DEMO => true,
 		    SITE_ID_MTD => true,
-		    SITE_ID_PLAYBOY => false,
-		    SITE_ID_TRUE => false,
-		    SITE_ID_BURUFLY => false,
 		    SITE_ID_ASSOPOKER => true,
 		    SITE_ID_TRUE_MONEY => true,
 	    );
