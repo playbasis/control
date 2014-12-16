@@ -44,7 +44,7 @@ class Email extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 		$required_to = $this->input->checkParam(array('to'));
 		$required_bcc = $this->input->checkParam(array('bcc'));
-		if ($required && $required_bcc)
+		if ($required_to && $required_bcc)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required_to), 200);
 
 		/* variables */
