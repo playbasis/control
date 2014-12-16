@@ -198,7 +198,7 @@ class Amazon_ses {
 
         $src = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
         $dest = "";
-        if (isset($this->recipients['to']))
+        if (isset($this->recipients['to']) && !empty($attachments))
         {
             for ($i = 0; $i < count($this->recipients['to']); $i++)
             {
