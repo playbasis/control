@@ -180,6 +180,7 @@ function getTweetFeed(){
     });
 }
 
+//#TODO first start of app should run this path
 app.get('/restart', auth, function(req, res)
 {
     twit.stream.destroy;

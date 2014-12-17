@@ -152,6 +152,7 @@ app.get('/unsubscribe/all', auth, function(req, res){
     res.send(200);
 });
 
+//#TODO first start of app should run this path
 app.get('/subscription', function(req, res){
 	instagram.subscriptions.list();
 	res.send(200);
