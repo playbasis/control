@@ -69,7 +69,7 @@ class Utility extends CI_Model
         foreach($to as $email){
             $message_response[] = $this->_email(array(
                 'from' => $from,
-                'to' => $email,
+                'to' => trim($email),
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,
@@ -240,7 +240,7 @@ class Utility extends CI_Model
         foreach($bcc as $e){
             $message_response[] =  $this->_email(array(
                 'from' => $from,
-                'bcc' => $e,
+                'bcc' => trim($e),
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,

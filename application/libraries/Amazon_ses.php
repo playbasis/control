@@ -198,7 +198,7 @@ class Amazon_ses {
 
         $src = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
         $dest = "";
-        if (isset($this->recipients['to']))
+        if (isset($this->recipients['to']) && !empty($attachments))
         {
             for ($i = 0; $i < count($this->recipients['to']); $i++)
             {
@@ -207,67 +207,67 @@ class Amazon_ses {
                     $dest .= ",";
                 }
             }
-        }
 
-        $raw = array(
-            'To: '.$dest,
-            'From: '.$src,
-            'Subject: '.$this->subject,
-            'MIME-Version: 1.0',
-            'Content-Type: multipart/mixed; boundary="'.BOUNDARY.'"',
-            '',
-            '--'.BOUNDARY,
-            'Content-Type: text/html; charset="utf-8"',
-            'Content-Transfer-Encoding: 7bit',
-            '',
-            $this->message,
-            '',
-            '--'.BOUNDARY,
-        );
-
-        if (!empty($this->message_alt)) {
-            $raw = array_merge($raw, array(
-                'Content-Type: text/plain; charset="utf-8"',
-                'Content-Transfer-Encoding: 7bit',
-                '',
-                $this->message_alt,
+            $raw = array(
+                'To: '.$dest,
+                'From: '.$src,
+                'Subject: '.$this->subject,
+                'MIME-Version: 1.0',
+                'Content-Type: multipart/mixed; boundary="'.BOUNDARY.'"',
                 '',
                 '--'.BOUNDARY,
-            ));
-        }
-        if (is_array($attachments)){
-            foreach ($attachments as $i => $v) {
-                if(is_numeric($i)){
-                    $file_path = $v;
-                    $file_name = basename($v);
-                }else{
-                    $file_path = $i;
-                    $file_name = $v;
-                }
+                'Content-Type: text/html; charset="utf-8"',
+                'Content-Transfer-Encoding: 7bit',
+                '',
+                $this->message,
+                '',
+                '--'.BOUNDARY,
+            );
 
+            if (!empty($this->message_alt)) {
                 $raw = array_merge($raw, array(
-                    'Content-Type: '.mime_content_type($file_path).'; name="'.$file_name.'"',
-                    'Content-Transfer-Encoding: base64',
-                    'Content-Disposition: attachment; filename="'.$file_name.'"',
+                    'Content-Type: text/plain; charset="utf-8"',
+                    'Content-Transfer-Encoding: 7bit',
                     '',
-                    chunk_split(base64_encode(file_get_contents($file_path))),
+                    $this->message_alt,
                     '',
                     '--'.BOUNDARY,
                 ));
             }
-        } else {
-            $raw = array_merge($raw, array(
-                'Content-Type: '.mime_content_type($attachments).'; name="'.basename($attachments).'"',
-                'Content-Transfer-Encoding: base64',
-                'Content-Disposition: attachment; filename="'.basename($attachments).'"',
-                '',
-                chunk_split(base64_encode(file_get_contents($attachments))),
-                '',
-                '--'.BOUNDARY,
-            ));
+            if (is_array($attachments)){
+                foreach ($attachments as $i => $v) {
+                    if(is_numeric($i)){
+                        $file_path = $v;
+                        $file_name = basename($v);
+                    }else{
+                        $file_path = $i;
+                        $file_name = $v;
+                    }
+
+                    $raw = array_merge($raw, array(
+                        'Content-Type: '.mime_content_type($file_path).'; name="'.$file_name.'"',
+                        'Content-Transfer-Encoding: base64',
+                        'Content-Disposition: attachment; filename="'.$file_name.'"',
+                        '',
+                        chunk_split(base64_encode(file_get_contents($file_path))),
+                        '',
+                        '--'.BOUNDARY,
+                    ));
+                }
+            } else {
+                $raw = array_merge($raw, array(
+                    'Content-Type: '.mime_content_type($attachments).'; name="'.basename($attachments).'"',
+                    'Content-Transfer-Encoding: base64',
+                    'Content-Disposition: attachment; filename="'.basename($attachments).'"',
+                    '',
+                    chunk_split(base64_encode(file_get_contents($attachments))),
+                    '',
+                    '--'.BOUNDARY,
+                ));
+            }
+            $raw[count($raw)-1] .= '--';
+            $this->attachments = implode("\n", $raw);
         }
-        $raw[count($raw)-1] .= '--';
-        $this->attachments = implode("\n", $raw);
 
         return $this;
     }
@@ -455,7 +455,7 @@ class Amazon_ses {
     private function _format_query_string()
     {
 
-        if(isset($this->attachments)){
+        if(isset($this->attachments) && $this->attachments){
             $query_string['Action'] = "SendRawEmail";
             $query_string['Source'] = ($this->from_name ? $this->from_name . ' <' . $this->from . '>' : $this->from);
             if (isset($this->recipients['to']))
