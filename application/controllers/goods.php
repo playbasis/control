@@ -1062,9 +1062,11 @@ class Goods extends MY_Controller
 
         /* loop insert into playbasis_goods */
         while (($line = fgets($handle)) !== false) {
-            $obj = explode(',', trim($line));
-            $name = $obj[0];
-            $code = isset($obj[1]) ? $obj[1] : $name;
+            $line = trim($line);
+            if (empty($line) || $line == ',') continue; // skip empty line
+            $obj = explode(',', $line);
+            $name = trim($obj[0]);
+            $code = trim(isset($obj[1]) ? $obj[1] : $name);
             $each = array_merge($template, array('name' => $name));
             $goods_id = $this->Goods_model->addGoods($each);
             $each = array_merge($each, array('code' => $code));
