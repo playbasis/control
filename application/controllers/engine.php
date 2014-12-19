@@ -333,10 +333,9 @@ class Engine extends Quest
 			'events' => array()
 		);
 
+		/* if no matched rules then log empty info in jigsaw_log */
 		if(!$ruleSet) {
-            if (!$input["test"])
-                $this->client_model->log($input); //log jigsaw
-
+			if (!$input["test"]) $this->client_model->log($input);
 			return $apiResult;
 		}
 
