@@ -804,31 +804,6 @@ class Client_model extends MY_Model
     }
 
     /*
-     * Get Plan ID from ClientSite
-     * @param string client_id
-     * @param string site_id
-     * @return array
-     */
-    public function getPlanIDfromClientSite($client_id, $site_id)
-    {
-        $this->set_site_mongodb($site_id);
-
-        $select = array("plan_id");
-        $criteria = array(
-            "client_id" => $client_id,
-            "site_id" => $site_id);
-
-        $this->mongo_db->select($select);
-        $this->mongo_db->order_by(array('date_modified' => 'desc'));
-        $this->mongo_db->limit(1);
-        $result = $this->mongo_db->get_where("playbasis_permission", $criteria);
-        if ($result)
-            return $result[0];
-        else
-            return array();
-    }
-
-    /*
      * Check & Update permission usage
      * Always update if limit is not exceed
      * @param string $client_id

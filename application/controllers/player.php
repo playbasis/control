@@ -383,13 +383,11 @@ class Player extends REST2_Controller
 		}
 
         // get plan_id
-        $plan = $this->client_model->getPlanIDfromClientSite(
-            $this->validToken["client_id"],
-            $this->validToken["site_id"]);
+        $plan_id = $this->client_model->getPlanIdByClientId($this->validToken["client_id"]);
         try {
             $player_limit = $this->client_model->getPlanLimitById(
                 $this->validToken["site_id"],
-                $plan["plan_id"],
+                $plan_id,
                 "others",
                 "player");
         } catch(Exception $e) {
