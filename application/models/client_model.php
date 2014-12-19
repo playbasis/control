@@ -664,7 +664,7 @@ class Client_model extends MY_Model
      * e.g. notifications email
      * @param site_id string
      * @param plan_id string
-     * @param type notifications | requests
+     * @param type notifications | requests | others
      * @param field string
      * @return integer | null
      */
@@ -700,7 +700,7 @@ class Client_model extends MY_Model
      * If Client doesn't has Billing cyle return 0
      * @param client_id string
      * @param site_id string
-     * @param type notifications | requests
+     * @param type notifications | requests | others
      * @param field string
      * @return array('plan_id' => string, 'value' => integer) | null
      */
@@ -761,7 +761,7 @@ class Client_model extends MY_Model
      * e.g. notifications email
      * @param client_id string
      * @param site_id string
-     * @param type notifications | requests
+     * @param type notifications | requests | others
      * @param field string
      */
     private function updatePermission(
@@ -833,7 +833,7 @@ class Client_model extends MY_Model
      * Always update if limit is not exceed
      * @param string $client_id
      * @param string $site_id
-     * @param (notifications | requests) $type
+     * @param (notifications | requests | others) $type
      * @particular string $field
      */
     public function permissionProcess($client_id, $site_id, $type, $field, $inc=1) {
