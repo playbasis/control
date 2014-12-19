@@ -804,31 +804,6 @@ class Client_model extends MY_Model
     }
 
     /*
-     * Get plan price if price not set default is 0
-     * @param string $plan_id
-     * @return int
-     */
-    private function getPlanPrice($site_id, $plan_id)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array("price"));
-        $this->mongo_db->where(array(
-            '_id' => $plan_id,
-        ));
-        $res = $this->mongo_db->get('playbasis_plan');
-
-        if ($res) {
-            $res = $res[0];
-            if (isset($res["price"]))
-                return intval($res["price"]);
-            else
-                return 0;
-        } else {
-            return 0;
-        }
-    }
-
-    /*
      * Get Plan ID from ClientSite
      * @param string client_id
      * @param string site_id
