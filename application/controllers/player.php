@@ -921,10 +921,9 @@ class Player extends REST2_Controller
 	public function new_get()
 	{
         // Limit
-        $site_id = $this->validToken['site_id'];
-        $plan_id = $this->client_model->getPermissionBySiteId($site_id);
+        $plan_id = $this->client_model->getPlanIdByClientId($this->validToken['client_id']);
         $limit = $this->client_model->getPlanLimitById(
-            $site_id,
+            $this->validToken['site_id'],
             $plan_id,
             'others',
             'insight'

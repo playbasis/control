@@ -606,18 +606,6 @@ class Client_model extends MY_Model
 		return is_array($ret) && count($ret) == 1 ? $ret[0] : $ret;
 	}
 
-    public function getPermissionBySiteId($site_id) {
-        $this->set_site_mongodb($site_id);
-
-        $this->mongo_db->where('site_id', new MongoID($site_id));
-
-        $this->mongo_db->limit(1);
-
-        $result = $this->mongo_db->get("playbasis_permission");
-
-        return $result ? $result[0]['plan_id'] : null;
-    }
-
     /*
      * Get Client date_start and date_expire
      * this is monthly billing date
