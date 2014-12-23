@@ -584,7 +584,7 @@ class Engine extends Quest
                             $this->client_model->log($input, $exInfo);
                     } else {
                         //check for completed objective
-                        if(isset($exInfo['objective_complete'])) {
+                        /*if(isset($exInfo['objective_complete'])) {
                             $objId = $exInfo['objective_complete']['id'];
                             $objName = $exInfo['objective_complete']['name'];
 
@@ -628,7 +628,7 @@ class Engine extends Quest
                                         $eventMessage,
                                         '');
                             }  // close if (!$input["test"])
-						}  // close if(isset($exInfo['objective_complete']))
+						}  // close if(isset($exInfo['objective_complete']))*/
 
 						//log jigsaw - condition or action
                         if (!$input["test"])
