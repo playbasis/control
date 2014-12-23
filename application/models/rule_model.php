@@ -45,9 +45,7 @@ class Rule_model extends MY_Model
                     $rowx['specific_id'] = $rowx['action_id']."";
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
-//                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['dataSet'] = $rowx['init_dataset'];
-//                    $rowx['id']=1;#hard code set id to be '1'
                     $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='ACTION';
                     unset($rowx['action_id']);
@@ -99,7 +97,6 @@ class Rule_model extends MY_Model
                     $rowx['id']=$rowx['jigsaw_id']."";
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
-//                    $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
                     $rowx['dataSet'] = $rowx['init_dataset'];
                     $rowx['specific_id']= $rowx['jigsaw_id']."";//'';//no specific id for contion so using the same id with jigsaw id.
                     $rowx['category']='CONDITION';
@@ -158,9 +155,7 @@ class Rule_model extends MY_Model
                     $rowx['specific_id'] = $rowx['reward_id']."";
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
-//                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['dataSet'] = isset($rowx['init_dataset'])?$rowx['init_dataset']:null;
-//                    $rowx['id']=2;#hard code set id to be '2'
                     $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='REWARD';
                     unset($rowx['reward_id']);
@@ -366,7 +361,6 @@ class Rule_model extends MY_Model
         }else{
             return array('success'=>false);
         }
-
     }
 
     public function getRuleById($siteId,$clientId,$ruleId){
@@ -390,13 +384,11 @@ class Rule_model extends MY_Model
                 $ds[0]['_id'] = $ds[0]['_id']."";
                 $output = $ds;
             }
-
         }catch(Exception $e){
             //Exception stuff
         }
 
         return $output;
-
     }
 
     public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'conditionList' => null, 'rewardList' => null)) {
@@ -489,7 +481,6 @@ class Rule_model extends MY_Model
                 $output['error'] = 2;
                 $output['msg'] = 'No data';
             }
-
 
         }catch(Exception $e){
             //Exception stuff
@@ -616,8 +607,6 @@ class Rule_model extends MY_Model
         if ($dateTimeMongo) {
             if (isset($dateTimeMongo->sec)) {
                 $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
-            } else {
-                $dateTimeMongo = $dateTimeMongo;
             }
         } else {
             $dateTimeMongo = "0000-00-00 00:00:00";
@@ -627,8 +616,6 @@ class Rule_model extends MY_Model
 
     private function unserializeRuleSet($dataSet){
         foreach ($dataSet AS &$rowx) {
-//            $rowx['jigsaw_set'] = unserialize(trim($rowx['jigsaw_set']));
-            $rowx['jigsaw_set'] = $rowx['jigsaw_set'];
             $rowx['date_added'] = $this->datetimeMongotoReadable($rowx['date_added']);
             $rowx['date_modified'] = $this->datetimeMongotoReadable($rowx['date_modified']);
         }
