@@ -472,7 +472,9 @@ class Client extends MY_Controller
     }
 
     private function validateAccess(){
-
+        if($this->User_model->isAdmin()){
+            return true;
+        }
         if ($this->User_model->hasPermission('access', 'client')) {
             return true;
         } else {

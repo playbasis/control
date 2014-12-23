@@ -596,6 +596,9 @@ class Account extends MY_Controller
 	}
 
 	private function validateAccess(){
+        if($this->User_model->isAdmin()){
+            return true;
+        }
 		if ($this->User_model->hasPermission('access', 'account')) {
 			return true;
 		} else {

@@ -874,6 +874,9 @@ class Badge extends MY_Controller
     }
 
     private function validateAccess(){
+        if($this->User_model->isAdmin()){
+            return true;
+        }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
