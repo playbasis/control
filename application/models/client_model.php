@@ -761,7 +761,7 @@ class Client_model extends MY_Model
             'site_id' => $site_id
         ));
         $this->mongo_db->inc("usage.". $type. ".". $field, $inc);
-        $this->mongo_db->update('playbasis_permission');
+        $this->mongo_db->update('playbasis_permission', array("w" => 0, "j" => false));
     }
 
     /*
@@ -865,7 +865,7 @@ class Client_model extends MY_Model
             'value' => $value,
             'date_added' => $mongoDate,
             'date_modified' => $mongoDate,
-        ));
+        ), array("w" => 0, "j" => false));
     }
 
     public function listAllActiveClients($refDate=null, $site_id=0) {
