@@ -339,7 +339,19 @@ class Engine extends Quest
 			return $apiResult;
 		}
 
+		/* [rule usage] check rule usage against the associated plan */
+		$this->client_model->permissionCheck(
+			$this->client_id,
+			$this->site_id,
+			"others",
+			"rule"
+		);
+
 		foreach($ruleSet as $rule) {
+			/* [rule usage] init */
+			$count = 0;
+			$last_jigsaw = null;
+
 			$input['rule_id'] = new MongoId($rule['rule_id']);
 			$input['rule_name'] = $rule['name'];
 			$input['rule_time'] = new MongoDate(time());
@@ -375,6 +387,9 @@ class Engine extends Quest
                     $jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
                 else
                     $jigsaw_model = true;
+
+				/* [rule usage] increase rule usage counter if a reward is given on chunk-based basis */
+				if ($jigsaw['category'] === 'REWARD' && $last_jigsaw !== 'REWARD') $count++;
 
 				if($jigsaw_model) {
 					if($jigsaw['category'] == 'REWARD') {
@@ -645,7 +660,28 @@ class Engine extends Quest
 						break;
 					}
 				}  // close if($jigsaw_model)
+
+				/* [rule usage] set last_jigsaw */
+				$last_jigsaw = $jigsaw['category'];
 			}  // close foreach($jigsawSet as $jigsaw)
+
+			/* [rule usage] increase usage value on client's account */
+			if ($count > 0) {
+				$this->client_model->insertRuleUsage(
+					$this->client_id,
+					$this->site_id,
+					$input['rule_id'],
+					$input['pb_player_id'],
+					$count
+				);
+				$this->client_model->permissionProcess(
+					$this->client_id,
+					$this->site_id,
+					"others",
+					"rule",
+					$count
+				);
+			}
 		}  // close foreach($ruleSet as $rule)
 		return $apiResult;
 	}

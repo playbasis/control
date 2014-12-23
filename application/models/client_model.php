@@ -854,6 +854,20 @@ class Client_model extends MY_Model
         }
     }
 
+    public function insertRuleUsage($client_id, $site_id, $rule_id, $pb_player_id, $value) {
+        $this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_rule_log', array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'rule_id' => $rule_id,
+            'pb_player_id' => $pb_player_id,
+            'value' => $value,
+            'date_added' => $mongoDate,
+            'date_modified' => $mongoDate,
+        ));
+    }
+
     public function listAllActiveClients($refDate=null, $site_id=0) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('_id', 'first_name', 'last_name', 'email'));
