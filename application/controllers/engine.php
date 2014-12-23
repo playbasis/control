@@ -572,7 +572,9 @@ class Engine extends Quest
                                             '');
                                     break;
                                 }  // close if (!$input["test"])
+                                break;
                             default:
+                                log_message('error', 'Unknown reward: '.$jigsawConfig['reward_name']);
                                 break;
                             }  // close switch($jigsawConfig['reward_name'])
                         }  // close if(isset($exInfo['dynamic']))
