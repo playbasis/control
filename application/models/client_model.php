@@ -824,6 +824,36 @@ class Client_model extends MY_Model
         }
     }
 
+    /*
+     * Check permission usage
+     * @param string $client_id
+     * @param string $site_id
+     * @param (notifications | requests | others) $type
+     * @particular string $field
+     */
+    public function permissionCheck($client_id, $site_id, $type, $field) {
+        // get "date_start" && "date_expire" of client for permission processing
+        $myplan_id = $this->getPlanIdByClientId($client_id);
+        $myplan = $this->getPlanById($myplan_id);
+        if (!array_key_exists('price', $myplan)) {
+            $myplan['price'] = DEFAULT_PLAN_PRICE;
+        }
+        $free_flag = $myplan['price'] <= 0;
+        $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
+
+        // get current usage
+        $usage = $this->getPermissionUsage($client_id, $site_id, $type, $field, $clientDate);
+
+        // get limit by plan
+        $limit = $this->getPlanLimitById($site_id, $usage["plan_id"], $type, $field);
+
+        // compare
+        if ($limit !== null && $usage["value"] >= $limit) {
+            // no permission to use this service
+            throw new Exception("LIMIT_EXCEED");
+        }
+    }
+
     public function listAllActiveClients($refDate=null, $site_id=0) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('_id', 'first_name', 'last_name', 'email'));
