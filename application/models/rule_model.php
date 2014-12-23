@@ -437,10 +437,14 @@ class Rule_model extends MY_Model
             if(count($results)>0) {
                 /* init */
                 $rules = array();
-                $last = $this->getLastCalculateFrequencyTime();
+                $usage = $this->countUsage($siteObj);
+                if ($usage) foreach ($usage as $each) {
+                    $rules[$each['_id']['rule_id']->{'$id'}] = $each['n'];
+                }
+                /*$last = $this->getLastCalculateFrequencyTime();
                 foreach($results as $each) {
                     $rules[$each['_id']->{'$id'}] = array('n' => count($each['jigsaw_set']), 'c' => 0);
-                }
+                }*/
                 /* rule usage processing (live) */
                 /*foreach ($this->calculateFrequency($siteObj, $last) as $each) {
                     if (empty($each['_id']['rule_id'])) continue;
@@ -456,11 +460,12 @@ class Rule_model extends MY_Model
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
-                    $n = $rules[$value['rule_id']]['n'];
-                    $c = $rules[$value['rule_id']]['c'];
-                    $batch = $this->countUsage($siteObj, $value["_id"], $n); // rule usage processing (batch)
-                    $value['usage'] = $batch + $c; // batch + live
-                    $value['usage_sync_date'] = $last ? date('d M Y, H:i', $last->sec) : null;
+                    //$n = $rules[$value['rule_id']]['n'];
+                    //$c = $rules[$value['rule_id']]['c'];
+                    //$batch = $this->countUsage($siteObj, $value["_id"], $n); // rule usage processing (batch)
+                    //$value['usage'] = $batch + $c; // batch + live
+                    $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
+                    //$value['usage_sync_date'] = $last ? date('d M Y, H:i', $last->sec) : null;
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
@@ -491,12 +496,24 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function countUsage($site_id, $rule_id, $n) {
+    public function countUsage($site_id, $from=null, $to=null) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('rule_id', $rule_id);
-        $this->mongo_db->where_gte('n', $n);
-        return $this->mongo_db->count('jigsaw_log_precomp');
+        $date_added = array();
+        if ($from) $date_added['$gt'] = $from;
+        if ($to) $date_added['$lt'] = $to;
+        $default = array('site_id' => $site_id);
+        $match = array_merge($date_added ? array('date_added' => $date_added) : array(), $default);
+        $results = $this->mongo_db->aggregate('playbasis_rule_log',
+            array(
+                array(
+                    '$match' => $match
+                ),
+                array(
+                    '$group' => array('_id' => array('rule_id' => '$rule_id'), 'n' => array('$sum' => '$value'))
+                ),
+            )
+        );
+        return $results ? $results['result'] : array();
     }
 
     public function calculateFrequency($site_id, $from=null, $to=null) {
