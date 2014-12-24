@@ -577,7 +577,8 @@ class Rule_model extends MY_Model
         $conditionList = $params['conditionList'];
         $rewardList = $params['rewardList'];
         $error = array();
-        $is_condition = false;
+        $is_condition = false; // check if the rule is ending with 'condition' element
+        $check_reward = false; // check if the rule should be set to have at least one reward
         if (is_array($jigsaw_set)) foreach ($jigsaw_set as $each) {
             switch ($each['category']) {
             case 'ACTION':
@@ -592,6 +593,7 @@ class Rule_model extends MY_Model
                 break;
             case 'REWARD':
                 $is_condition = false;
+                $check_reward = true;
                 if (empty($each['specific_id'])) $error[] = '[reward_id] for '.$each['config']['reward_name'].' is missing';
                 else if (!$rewardList || !in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid';
                 break;
@@ -600,6 +602,7 @@ class Rule_model extends MY_Model
             }
         }
         if ($is_condition) $error[] = 'because one condition has been set at the end of rule, this condition will be ineffective';
+        if (!$check_reward) $error[] = 'there is no any reward configured in the rule';
         return implode(', ', $error);
     }
 
