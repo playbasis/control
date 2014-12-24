@@ -434,6 +434,7 @@ class Plan extends MY_Controller
         $default_limit_others = array(
             "app" => null,
             "platform" => null,
+            "rule" => null,
             "goods" => null,
             "redeem" => null,
             "insight" => null,
