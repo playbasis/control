@@ -22,7 +22,6 @@ oneRuleMan = {
      > discard current editing rule
      */
 
-
     nodeList:[],
 
     site_id:undefined,
@@ -33,8 +32,6 @@ oneRuleMan = {
     name:undefined,
     description:undefined,
     rule_tags:undefined,
-
-
 
     rule_header:$('.pbd_box_content_head'),
     currentRuleContainer:"",
@@ -69,12 +66,6 @@ oneRuleMan = {
         else
             this.active_status = "Disable";
 
-
-        /*
-
-         */
-
-
         if(this.rule_tags=="undefined" || this.rule_tags == undefined)
             this.rule_tags="";
 
@@ -85,7 +76,6 @@ oneRuleMan = {
         this.rule_header.find('.content_head_tags .pbd_rule_data .pbd_rule_text').html(this.rule_tags)
 
         $('.pbd_rulebox_name').html(this.name);
-
 
         //Sweep all Rule Header parameter
         var tableRow = $('.pbd_one_rule_holder .pbd_rule_param');
@@ -101,10 +91,7 @@ oneRuleMan = {
         tableRow.find('.pbd_rule_data .pbd_rule_text').show();
         tableRow.find('.pbd_rule_data .pbd_rule_field').hide();
         //End Sweep All Rule Header
-
     },
-
-
 
     updateRuleHeaderById:function(uid){
         // return 'Hello';
@@ -113,8 +100,6 @@ oneRuleMan = {
         }
         return false;
     },
-
-
 
     oneRuleFromJSON:function(json){
         //split rule header
@@ -143,12 +128,9 @@ oneRuleMan = {
         chainMan.cleanNode()
     },
 
-
     oneRuleToJSON:function(){
 
     },
-
-
 
     openNodeSelectionDialog:function(targetDiv,jsonString,kind){
         targetDiv.empty();
@@ -189,9 +171,7 @@ oneRuleMan = {
             }
 
             targetDiv.append(detail);
-
         }
-
 
         // if(kind =='action')
         // 	// var iconClass = ["fa-icon-map-marker","fa-icon-thumbs-up","fa-icon-share","fa-icon-flag","fa-icon-globe","fa-icon-comment","fa-icon-plus-sign","fa-icon-group","fa-icon-cogs","fa-icon-cogs"];
@@ -210,11 +190,8 @@ oneRuleMan = {
         // 	detail.append('<li id="'+listItem.specific_id+'" title="'+listItem.description+'" class="mini-round jigsaw_select_btn line" > <div class="text">'+listItem.name+'</div> <i class="'+iconClass[cnt++%len]+'"/></li>');
         // }
 
-
         // targetDiv.append(detail);
     },
-
-
 
     validateAtLeastOneReward:function() {
         for(var index in oneRuleMan.nodeList){
@@ -255,7 +232,6 @@ oneRuleMan = {
         if(getActionID.category =='ACTION' && getActionID.specific_id != undefined && getActionID.specific_id != '')
             output.action_id = getActionID.specific_id;
 
-
         //Update jigsaw_set
         output.jigsaw_set = [];//reset Jigsaw set to blank
         for(var index in oneRuleMan.nodeList){
@@ -270,22 +246,15 @@ oneRuleMan = {
         else
             output.active_status = 0;
 
-
         if(DEBUG)console.log('Saving Rule As : ')
         if(DEBUG)console.log(output);
 
         return JSON.stringify(output);
-
-
     },
-
-
 
     loadRule:function(){//load target rule by url
         // dataMan.
     },
-
-
 
     clearOneRuleHeader:function(){
         if(DEBUG)console.log('event : Clear one rule Header')
@@ -304,7 +273,6 @@ oneRuleMan = {
         blank.date_modified = '';
         blank.rule_tags = 'Add tags';
 
-
         this.setRuleHeader(blank);
 
         //Clear Node List
@@ -313,18 +281,15 @@ oneRuleMan = {
         chainMan.showAddActionButton();
     },
 
-
     openRuleEditor:function(){
         $('.pbd_one_rule_holder').show('fast');
         $('.one_rule_actionbtn_holder').show('fast');
     },
 
-
     closeRuleEditor:function(){
         $('.pbd_one_rule_holder').hide('fast');
         $('.one_rule_actionbtn_holder').hide('fast');
     },
-
 
     forceHideBackDrop:function(){
         // $(this).modal('hide');
@@ -353,12 +318,8 @@ oneRuleMan = {
             $('.one_rule_new_btn').hide('fast')
             $('.one_rule_actionbtn_holder').show('fast');
         }
-    },
-
-
-
+    }
 },//->
-
 
 //Mod : node chaining manager
     chainMan = {
@@ -370,7 +331,7 @@ oneRuleMan = {
         },
 
         getLen:function(){
-            return this.chain.children().length
+            return this.chain.children().length;
         },
 
         addNode:function(jsonString,nodePosition){
@@ -384,7 +345,6 @@ oneRuleMan = {
              console.log(oneRuleMan.nodeList)
              console.log('===============================\n')
              }*/
-
 
             if(this.getLen() > 0){ //If there is existing NodeList
                 //START : Clone Addning new Node to oneRuleMan.nodeList
@@ -432,8 +392,6 @@ oneRuleMan = {
             //Clean node connection
             chainMan.cleanNode();
             //Sweep data
-
-
         },
 
         deleteNode:function(uid){
@@ -457,8 +415,6 @@ oneRuleMan = {
              console.log('NodeList after deleting : ')
              console.log(oneRuleMan.nodeList);
              }*/
-
-
         },
 
         showAddActionButton:function(){
@@ -511,7 +467,6 @@ oneRuleMan = {
 
             // //Set all tools tip message
 
-
             // if(tooltip.action !=undefined){
 
             // }else if(tooltip.condition !=undefined){
@@ -522,29 +477,23 @@ oneRuleMan = {
 
             //Toggle on rule attirbute tool tip
             $('[rel=tooltip]').tooltip();
-
-        },
-
-
+        }
     },//->
-
 
 //Mod : all about one node in chain 
     nodeMan = {
         newNode:function(){
 
-        },
+        }
     },//->
-
 
 //Mod : all about fields in node , field validation , dataset detail render control
     fieldMan = {
         renderDataSet:function(){
 
-        },
+        }
     }//->
 //End Section : oneRule
-
 
 perventDialogMan = {
     confirmDialog:function(title,message,direction,targetElement){
@@ -582,7 +531,6 @@ perventDialogMan = {
                 answer = true;
             perventDialogMan.updateUIAfterGetAnswer(direction,answer,targetElement);
         })
-
     },
 
     updateUIAfterGetAnswer:function(direction,answer,targetElement){
@@ -600,7 +548,6 @@ perventDialogMan = {
                 oneRuleMan.clearOneRuleHeader();
 
             }
-
         }else if(direction=='DIRECTION_removeNode'){/*action for removeNode answer*/
 
             if(answer){
@@ -627,9 +574,7 @@ perventDialogMan = {
 
                 if(forceAllowAddNewAction)chainMan.showAddActionButton();
             }
-        }
-
-        else if(direction=='DIRECTION_discardRule'){
+        }else if(direction=='DIRECTION_discardRule'){
             if(answer){
                 // if(DEBUG)alert('Discard change current rule : '+answer)
                 oneRuleMan.ruleActionPanelControl('not_editing');
@@ -645,9 +590,7 @@ perventDialogMan = {
                     $(".fixMenu").disableFixMenu();
                 }
             }
-        }
-
-        else if(direction=='DIRECTION_deleteRule'){
+        }else if(direction=='DIRECTION_deleteRule'){
             if(answer && dataMan.currentRuleIdToDelete != undefined && dataMan.currentRuleIdToDelete !=''){
                 // if(DEBUG)alert('Delete Rule : '+answer)
 
@@ -656,11 +599,7 @@ perventDialogMan = {
                 dataMan.deleteRule();
             }
         }
-
-
     }//end function
-
-
 }
 
 preventUnusual ={
@@ -671,17 +610,13 @@ preventUnusual ={
             $('#errorModal').find('#myModalLabel').html(title);
         $('#errorModal').modal({'backdrop': false});
         $('#errorModal .modal-body').html(msg);
-
     }
-
 }
-
 
 //########################################
 //Event 
 //########################################
 //Rule Editor main Event 
-
 
 //Event: select template
 $(".template_sel").click(function(){
@@ -746,24 +681,17 @@ $('.one_rule_new_btn').live('click',function(){
     }
 
     oneRuleMan.ruleActionPanelControl('editing')
-
 })
-
 
 //Event : Click on [Discard] button
 $('.one_rule_discard_btn').live('click',function(){
     perventDialogMan.confirmDialog('Confirm','Do you really want to discard unsaved game rules ?','DIRECTION_discardRule');
 })
 
-
-
-
 //Event : On disable Each node 
 $('.pbd_btn_close').live('click',function(){
     perventDialogMan.confirmDialog('Confirm','Are you sure to delete this node ?','DIRECTION_removeNode',$(this));
 })
-
-
 
 //Event : delete Rule From Table -> move this to table file 
 $('.gen_rule_delete_btn').live('click',function(event){
@@ -774,9 +702,7 @@ $('.gen_rule_delete_btn').live('click',function(event){
     var gameRuleName = tableRow.find('td span:eq(0)').html();
 
     perventDialogMan.confirmDialog('Deletion Confirm','You are going to permanently delete <b style="color:orange"> '+gameRuleName+' </b> game rule <br/>, Do you comfirm ? <span style="font-size:.85em;color:orange"> or you can just set rule state to "Disable" without deletion</span>','DIRECTION_deleteRule');
-
 })
-
 
 //Event : load rule From table -> To edit in rule editor
 $('.gen_rule_edit_btn').live('click',function(event){
@@ -796,7 +722,6 @@ $(".gen_rule_play_btn").live("click", function(event){
     dataMan.playRule(id);
 });
 
-
 //Event : Insert new Action
 $('.init_action_btn').live('click',function(event){
     event.preventDefault();
@@ -806,10 +731,7 @@ $('.init_action_btn').live('click',function(event){
     theModal.modal('show');
     oneRuleMan.openNodeSelectionDialogType = 'ACTION';
     oneRuleMan.nodeInsertAfterPosition = 0;
-
 })
-
-
 
 //Event : Insert new Condition
 $('#new_condition_btn').live('click',function(event){
@@ -821,8 +743,6 @@ $('#new_condition_btn').live('click',function(event){
     oneRuleMan.openNodeSelectionDialogType = 'CONDITION';
 })
 
-
-
 //Event : Insert new Reward
 $('#new_reward_btn').live('click',function(event){
     event.preventDefault();
@@ -833,14 +753,10 @@ $('#new_reward_btn').live('click',function(event){
     oneRuleMan.openNodeSelectionDialogType = 'REWARD';
 })
 
-
-
 //Event : Select option between 'Create Condition Node' and 'Create Reward Node'
 $('.dropdown-toggle').live('click',function(){
     oneRuleMan.nodeInsertAfterPosition = $(this).attr('id');
 })
-
-
 
 //Event : On select node item -> need to be confirm later 
 $('.pbd_list_selection li').live('click',function(event){
@@ -851,8 +767,6 @@ $('.pbd_list_selection li').live('click',function(event){
     oneRuleMan.modalOptionSelectedItem = $(this).attr('id');
 })
 
-
-
 //Event : On confirm to Create Dialog 
 /*on submit to create node form dialog*/
 $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
@@ -860,7 +774,6 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
     event.preventDefault();
     var id = oneRuleMan.modalOptionSelectedItem;
     var type = oneRuleMan.openNodeSelectionDialogType;
-
 
     if(id!=undefined &&  id!='' && id!=' '){
 
@@ -884,32 +797,25 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
 
         /* Append new node  */
         if(selected_jsonstring!='' && type!='ACTION'){
-
             // pbnode.appendNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition);
             chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
             oneRuleMan.nodeInsertAfterPosition = undefined;
-
         }else if(type=='ACTION'){
-
             // Force add item to sort_index 0
             chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
             oneRuleMan.nodeInsertAfterPosition = undefined;
 
             chainMan.hideAddActionButton()
-
         }
 
         $('.close').trigger('click');
         //clear current selected options in modal dialog
         oneRuleMan.clearSelectedItem();
     }
-
 })
-
 
 //Event : onclick slide button in rule_header
 $('.pbd_one_rule_holder .slider-frame').live('click',function(){
-
 
     //Force slider frame : to be disable
     if(dataMan.isObjClassExist($(this),'value_enable')){
@@ -933,7 +839,6 @@ $('.pbd_one_rule_holder .slider-frame').live('click',function(){
     }
 })
 
-
 //Event : rule_header_edit -> Only for rule_header
 $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('click',function(){
 
@@ -944,7 +849,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
         var rowField = tableRow.find('.pbd_rule_field');
         var button = $(this);
 
-
         tableRow.removeClass('state_text');
         tableRow.addClass('state_field');
 
@@ -954,13 +858,10 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
         tableRow.find('.pbd_rule_data .pbd_rule_text').hide();
         tableRow.find('.pbd_rule_data .pbd_rule_field').show();
 
-
-
         //Load data to field
         if(dataMan.isObjClassExist(button,'status_btn')){
             //In case that field is slide button
             var slideframe = tableRow.find('.slider-frame');
-
 
             slideframe.removeClass('value_enable');
             slideframe.removeClass('value_disable');
@@ -972,7 +873,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
                 var objx = slideframe.find('.slider-button');
                 objx.addClass('on').html('Enable');
                 slideframe.css('background','#3B9900');
-
             }else if(rowText.html()=='Disable' || rowText.html()=='0'){
                 rowText.html('Disable');
                 slideframe.addClass('value_disable');
@@ -981,8 +881,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
                 objx.removeClass('on').html('Disable');
                 slideframe.css('background','#BF0016');
             }
-
-
         }else{
             //In case that field is just Text
             rowField.find('input').val(rowText.html());
@@ -991,10 +889,7 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
         //Auto Select
         tableRow.find('.pbd_rule_data .pbd_rule_field input').focus();
         tableRow.find('.pbd_rule_data .pbd_rule_field input').select();
-
-
     }else if( $(this).attr('id')=='pbd_rule_action_save' ){
-
 
         //On state edit to save
         var tableRow = $(this).parent().parent().parent();
@@ -1005,7 +900,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
         tableRow.removeClass('state_field');
         tableRow.addClass('state_text');
 
-
         //Prevent user input escape char and symbolic
         var regex = /['"]/g;
         var inputText = rowField.find('input[type="text"]').val();
@@ -1015,7 +909,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
         }else{
             //Continue
         }
-
 
         tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').show();
         tableRow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
@@ -1033,13 +926,10 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
             }else if(dataMan.isObjClassExist(tableRow.find('.slider-frame'),'value_disable')){
                 rowText.html('Disable');
             }
-
         }else{
             //In case that field is just Text
             rowText.html(rowField.find('input').val());
         }
-
-
 
         //Update Rule box title
         oneRuleMan.name = $('.pbd_box_content_head .content_head_title .pbd_rule_text').html();
@@ -1051,7 +941,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
         //Update Rule Object Attribute
     }else if( $(this).attr('id')=='pbd_rule_action_cancel' ){
 
-
         //On state edit to save
         var tableRow = $(this).parent().parent().parent();
         var rowText  = tableRow.find('.pbd_rule_text');
@@ -1060,7 +949,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
 
         tableRow.removeClass('state_field');
         tableRow.addClass('state_text');
-
 
         //Prevent user input escape char and symbolic
         var regex = /['"]/g;
@@ -1071,7 +959,6 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
         }else{
             //Continue
         }
-
 
         tableRow.find('.pbd_rule_action span#pbd_rule_action_edit').show();
         tableRow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
@@ -1090,12 +977,10 @@ $('.pbd_one_rule_holder .pbd_box_content_head .pbd_rule_action .btn').live('clic
                 tableRow.find('.slider-frame').addClass('value_disable').removeClass('value_enable');
                 tableRow.find('.slider-frame .slider-button').removeClass('on');
             }
-
         }else{
             //In case that field is just Text
             rowField.html(rowText.find('input').val());
         }
-
     }
 })
 
