@@ -648,7 +648,6 @@ class Engine extends Quest
 						//log jigsaw - condition or action
                         if (!$input["test"])
                             $this->client_model->log($input, $exInfo);
-						continue;
 					}  // close if($jigsaw['category'] == 'REWARD')
 				} else {  // jigsaw return false
 					if($jigsaw['category'] == 'REWARD') {
