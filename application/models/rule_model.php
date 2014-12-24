@@ -45,9 +45,7 @@ class Rule_model extends MY_Model
                     $rowx['specific_id'] = $rowx['action_id']."";
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
-//                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['dataSet'] = $rowx['init_dataset'];
-//                    $rowx['id']=1;#hard code set id to be '1'
                     $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='ACTION';
                     unset($rowx['action_id']);
@@ -99,7 +97,6 @@ class Rule_model extends MY_Model
                     $rowx['id']=$rowx['jigsaw_id']."";
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
-//                    $rowx['dataSet'] = unserialize(trim($rowx['init_dataset']));
                     $rowx['dataSet'] = $rowx['init_dataset'];
                     $rowx['specific_id']= $rowx['jigsaw_id']."";//'';//no specific id for contion so using the same id with jigsaw id.
                     $rowx['category']='CONDITION';
@@ -158,9 +155,7 @@ class Rule_model extends MY_Model
                     $rowx['specific_id'] = $rowx['reward_id']."";
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
-//                    $rowx['dataSet'] = unserialize($rowx['init_dataset']);
                     $rowx['dataSet'] = isset($rowx['init_dataset'])?$rowx['init_dataset']:null;
-//                    $rowx['id']=2;#hard code set id to be '2'
                     $rowx['id']=$jigsaw[0]['_id']."";
                     $rowx['category']='REWARD';
                     unset($rowx['reward_id']);
@@ -366,7 +361,6 @@ class Rule_model extends MY_Model
         }else{
             return array('success'=>false);
         }
-
     }
 
     public function getRuleById($siteId,$clientId,$ruleId){
@@ -390,13 +384,11 @@ class Rule_model extends MY_Model
                 $ds[0]['_id'] = $ds[0]['_id']."";
                 $output = $ds;
             }
-
         }catch(Exception $e){
             //Exception stuff
         }
 
         return $output;
-
     }
 
     public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'conditionList' => null, 'rewardList' => null)) {
@@ -445,10 +437,14 @@ class Rule_model extends MY_Model
             if(count($results)>0) {
                 /* init */
                 $rules = array();
-                $last = $this->getLastCalculateFrequencyTime();
+                $usage = $this->countUsage($siteObj);
+                if ($usage) foreach ($usage as $each) {
+                    $rules[$each['_id']['rule_id']->{'$id'}] = $each['n'];
+                }
+                /*$last = $this->getLastCalculateFrequencyTime();
                 foreach($results as $each) {
                     $rules[$each['_id']->{'$id'}] = array('n' => count($each['jigsaw_set']), 'c' => 0);
-                }
+                }*/
                 /* rule usage processing (live) */
                 /*foreach ($this->calculateFrequency($siteObj, $last) as $each) {
                     if (empty($each['_id']['rule_id'])) continue;
@@ -464,11 +460,12 @@ class Rule_model extends MY_Model
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
-                    $n = $rules[$value['rule_id']]['n'];
-                    $c = $rules[$value['rule_id']]['c'];
-                    $batch = $this->countUsage($siteObj, $value["_id"], $n); // rule usage processing (batch)
-                    $value['usage'] = $batch + $c; // batch + live
-                    $value['usage_sync_date'] = $last ? date('d M Y, H:i', $last->sec) : null;
+                    //$n = $rules[$value['rule_id']]['n'];
+                    //$c = $rules[$value['rule_id']]['c'];
+                    //$batch = $this->countUsage($siteObj, $value["_id"], $n); // rule usage processing (batch)
+                    //$value['usage'] = $batch + $c; // batch + live
+                    $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
+                    //$value['usage_sync_date'] = $last ? date('d M Y, H:i', $last->sec) : null;
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
@@ -490,7 +487,6 @@ class Rule_model extends MY_Model
                 $output['msg'] = 'No data';
             }
 
-
         }catch(Exception $e){
             //Exception stuff
         }
@@ -500,12 +496,24 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function countUsage($site_id, $rule_id, $n) {
+    public function countUsage($site_id, $from=null, $to=null) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->where('site_id', $site_id);
-        $this->mongo_db->where('rule_id', $rule_id);
-        $this->mongo_db->where_gte('n', $n);
-        return $this->mongo_db->count('jigsaw_log_precomp');
+        $date_added = array();
+        if ($from) $date_added['$gt'] = $from;
+        if ($to) $date_added['$lt'] = $to;
+        $default = array('site_id' => $site_id);
+        $match = array_merge($date_added ? array('date_added' => $date_added) : array(), $default);
+        $results = $this->mongo_db->aggregate('playbasis_rule_log',
+            array(
+                array(
+                    '$match' => $match
+                ),
+                array(
+                    '$group' => array('_id' => array('rule_id' => '$rule_id'), 'n' => array('$sum' => '$value'))
+                ),
+            )
+        );
+        return $results ? $results['result'] : array();
     }
 
     public function calculateFrequency($site_id, $from=null, $to=null) {
@@ -616,8 +624,6 @@ class Rule_model extends MY_Model
         if ($dateTimeMongo) {
             if (isset($dateTimeMongo->sec)) {
                 $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
-            } else {
-                $dateTimeMongo = $dateTimeMongo;
             }
         } else {
             $dateTimeMongo = "0000-00-00 00:00:00";
@@ -627,8 +633,6 @@ class Rule_model extends MY_Model
 
     private function unserializeRuleSet($dataSet){
         foreach ($dataSet AS &$rowx) {
-//            $rowx['jigsaw_set'] = unserialize(trim($rowx['jigsaw_set']));
-            $rowx['jigsaw_set'] = $rowx['jigsaw_set'];
             $rowx['date_added'] = $this->datetimeMongotoReadable($rowx['date_added']);
             $rowx['date_modified'] = $this->datetimeMongotoReadable($rowx['date_modified']);
         }
