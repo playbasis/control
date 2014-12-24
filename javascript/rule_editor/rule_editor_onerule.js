@@ -216,6 +216,12 @@ oneRuleMan = {
 
 
 
+    validateAtLeastOneReward:function() {
+        for(var index in oneRuleMan.nodeList){
+            if (oneRuleMan.nodeList[index].category == 'REWARD') return true;
+        }
+        return false;
+    },
 
     saveRule:function(){
 
@@ -709,11 +715,18 @@ $(".template_sel").click(function(){
 
 //Event : prevent user
 $('.one_rule_save_btn').live('click',function(){
+    var valid = true;
     if(chainMan.getLen()<1){
+        valid = false;
         //Event : prevent user : save : saving Rule from Rule Editor
         preventUnusual.message('you should add some rule jigsaw!');
         // else if(){//Event : prevent user : save with out edit rule header
-    }else{
+    }
+    if (valid && !oneRuleMan.validateAtLeastOneReward()) {
+        valid = false;
+        preventUnusual.message('rule should be set to have at least one reward');
+    }
+    if (valid) {
         dataMan.saveRule(oneRuleMan.saveRule());
     }
     return true;
