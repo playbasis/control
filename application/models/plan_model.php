@@ -391,7 +391,7 @@ class Plan_model extends MY_Model
             }
             $dinsert['limit_requests'] = $limit_req;
         }
-        $p = $this->mongo_db->insert('playbasis_plan', $dinsert);
+        return $this->mongo_db->insert('playbasis_plan', $dinsert);
     }
 
     public function editPlan($plan_id, $data) {
