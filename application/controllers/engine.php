@@ -340,12 +340,14 @@ class Engine extends Quest
 		}
 
 		/* [rule usage] check rule usage against the associated plan */
-		$this->client_model->permissionCheck(
-			$this->client_id,
-			$this->site_id,
-			"others",
-			"rule"
-		);
+		if (!$input["test"]) {
+			$this->client_model->permissionCheck(
+				$this->client_id,
+				$this->site_id,
+				"others",
+				"rule"
+			);
+		}
 
 		foreach($ruleSet as $rule) {
 			/* [rule usage] init */
@@ -665,7 +667,7 @@ class Engine extends Quest
 			}  // close foreach($jigsawSet as $jigsaw)
 
 			/* [rule usage] increase usage value on client's account */
-			if ($count > 0) {
+			if (!$input["test"] && $count > 0) {
 				$this->client_model->insertRuleUsage(
 					$this->client_id,
 					$this->site_id,
