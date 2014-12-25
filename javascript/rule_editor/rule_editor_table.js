@@ -144,8 +144,15 @@ var ruleTableMan = {
       $("table." + ruleTableMan.targetTable ).tablecloth({ 
         sortable: true
       });
-      $("li.page_index_number.active").children()[0].click(); // fix sorting bug
       ruleTableMan.tableclothed = true;
+      // fix sorting bug
+      var active = $("li.page_index_number.active");
+      if (active) {
+        var children = active.children();
+        if (children && children.length > 0) {
+          children[0].click();
+        }
+      }
     }
     else {
       console.log('tablecloth.js is not loaded');
