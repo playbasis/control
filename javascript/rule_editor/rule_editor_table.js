@@ -144,6 +144,7 @@ var ruleTableMan = {
       $("table." + ruleTableMan.targetTable ).tablecloth({ 
         sortable: true
       });
+      $("li.page_index_number.active").children()[0].click(); // fix sorting bug
       ruleTableMan.tableclothed = true;
     }
     else {
