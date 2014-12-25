@@ -64,7 +64,7 @@ var ruleTableMan = {
       }
       var str = 'This rule has been executed '+this.usage+' times';
       if (this.usage_sync_date) str += ' (last synced: '+this.usage_sync_date+')';
-      var frequencyHtml = ' <strong class="frequency-icon '+noFrequency+' label" title="'+str+'" data-toggle="tooltip">'+this.usage+'</strong> ';
+      var frequencyHtml = '<div style="display: none">'+this.name+'</div> <strong class="frequency-icon '+noFrequency+' label" title="'+str+'" data-toggle="tooltip">'+this.usage+'</strong> ';
       $(frequencyHtml).prependTo(ruleColumn);
       $('.frequency-icon').tooltip();
 
