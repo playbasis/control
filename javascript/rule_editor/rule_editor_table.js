@@ -141,7 +141,7 @@ var ruleTableMan = {
 
     setTimeout(function() {
     if (jQuery().tablecloth) {
-      $("table." + ruleTableMan.targetTable ).tablecloth({ 
+      $("table." + ruleTableMan.targetTable ).tablecloth({
         sortable: true
       });
       ruleTableMan.tableclothed = true;
@@ -288,7 +288,7 @@ ruleTableRow_statusMan = {
       }//End else if value is disable
     });//End Click
 
-  },
+  }
 }
 
 
