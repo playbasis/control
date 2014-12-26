@@ -569,7 +569,7 @@ class User extends MY_Controller
     }
 
     public function register(){
-        
+
 //        $this->data['meta_description'] = $this->lang->line('meta_description');
 //        $this->data['main'] = 'register';
 //        $this->data['title'] = $this->lang->line('title');
@@ -711,7 +711,7 @@ class User extends MY_Controller
 
 //        $this->load->vars($this->data);
 //        $this->render_page('template');
-        redirect('login#register', 'refresh');
+        redirect('login'.($this->input->get('plan') ? '?plan='.$this->input->get('plan') : '').'#register', 'refresh');
     }
 
     /* new register flow (without captcha, plan and domain) */
@@ -728,12 +728,14 @@ class User extends MY_Controller
 
             $_POST['password'] = DEFAULT_PASSWORD;
             $_POST['password_confirm'] = DEFAULT_PASSWORD;
+            $plan_id = $this->input->get('plan');
+            if (empty($plan_id)) $plan_id = FREE_PLAN; // default is free plan
+            $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
 
             if($this->form_validation->run()){
+
                 if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                     $user_info = $this->User_model->getUserInfo($user_id);
-
-                    $plan = $this->Plan_model->getPlanById(new MongoId(FREE_PLAN));
 
                     $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
 

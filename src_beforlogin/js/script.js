@@ -1,5 +1,19 @@
   'use strict';
 
+// http://stackoverflow.com/questions/439463/how-to-get-get-and-post-variables-with-jquery
+function getQueryParams(qs) {
+    qs = qs.split("+").join(" ");
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
 var before_debug =true;
 
 jQuery(document).ready( function($) {
@@ -52,9 +66,10 @@ jQuery(document).ready( function($) {
 
       }
 
+      var $_GET = getQueryParams(document.location.search);
       $.ajax({
         type:'post',
-        url: baseUrlPath+"user/regis",
+        url: baseUrlPath+"user/regis"+('plan' in $_GET ? '?plan='+$_GET['plan'] : ''),
         data: $(form).serialize()+'&format=json',
           dataType: 'json'
       })
