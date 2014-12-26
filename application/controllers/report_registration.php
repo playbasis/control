@@ -19,6 +19,7 @@ class Report_registration extends MY_Controller{
 	public function index(){
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
 		}
 		$this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -32,6 +33,7 @@ class Report_registration extends MY_Controller{
 	public function page($offset = 0){
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -45,6 +47,7 @@ class Report_registration extends MY_Controller{
     public function registration_filter(){
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -58,7 +61,7 @@ class Report_registration extends MY_Controller{
 	public function getRegisteredPlayers($offset, $url){
 		$offset = $this->input->get('per_page') ? $this->input->get('per_page') : $offset;
 
-		$per_page = 10;
+		$per_page = NUMBER_OF_RECORDS_PER_PAGE;
 		$parameter_url = "?t=".rand();
 
 		$this->load->library('pagination');
@@ -174,8 +177,8 @@ class Report_registration extends MY_Controller{
         $config['total_rows'] = $report_total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
         $config['page_query_string'] = true;
 
         $config['next_link'] = 'Next';
@@ -192,9 +195,19 @@ class Report_registration extends MY_Controller{
         $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
         $this->pagination->initialize($config);
 
         $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['filter_date_start'] = $filter_date_start;
         // --> This will show only the date, not including the time
@@ -212,7 +225,13 @@ class Report_registration extends MY_Controller{
 	}
 
 	private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'report/action')) {
+        if($this->User_model->isAdmin()){
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'report/action')) {
             return true;
         } else {
             return false;

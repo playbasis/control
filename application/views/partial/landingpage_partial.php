@@ -1,6 +1,8 @@
+<?php if (!$plan['paid_enterprise_flag'] && $plan['free_flag']) { ?>
 <div class="noti-plan-wrapper">
 	You're now in <strong>"Free Plan"</strong> <a href="javascript:void(0)"  data-toggle="tooltip" data-placement="bottom" class="free-plan-info" ><i class="fa fa-question-circle"></i></a> , upgrade to higher plan to get more features! <a href="<?php echo site_url(); ?>/account/subscribe" >Upgrade Now</a>
 </div>
+<?php } ?>
 
 <div id="content" class="span10 landingpage-wrapper">
 	<div class="box">

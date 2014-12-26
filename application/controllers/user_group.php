@@ -26,7 +26,7 @@ class User_group extends MY_Controller{
 	public function index(){
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            return;
+            die();
         }
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -42,7 +42,7 @@ class User_group extends MY_Controller{
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            return;
+            die();
         }
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -55,14 +55,12 @@ class User_group extends MY_Controller{
 
 	public function getList($offset){
 
-		//Pagination set up
 		$this->load->library('pagination');
 		$config['base_url'] = site_url('user_group/page');
         $config['total_rows'] = $this->User_group_model->getTotalNumUsers();
-        $config['per_page'] = 10;
+        $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
@@ -78,7 +76,19 @@ class User_group extends MY_Controller{
         $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
         $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
@@ -93,7 +103,6 @@ class User_group extends MY_Controller{
         } else {
             $this->data['success'] = '';
         }
-
 
         if(isset($_GET['filter_name'])){
         	$filter = array(
@@ -111,9 +120,7 @@ class User_group extends MY_Controller{
 
 		$this->data['main'] = 'user_group';
 		$this->render_page('template');
-
 	}
-
 
     public function update($user_group_id){
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -230,6 +237,9 @@ class User_group extends MY_Controller{
     }
 
     private function validateAccess(){
+        if($this->User_model->isAdmin()){
+            return true;
+        }
         if ($this->User_model->hasPermission('access', 'user_group')) {
             return true;
         } else {

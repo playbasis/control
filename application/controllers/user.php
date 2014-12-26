@@ -28,7 +28,7 @@ class User extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            return;
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -43,7 +43,7 @@ class User extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            return;
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -56,27 +56,19 @@ class User extends MY_Controller
 
     public function getList($offset){
 
-        //Added
         $client_id = $this->User_model->getClientId();
 
         $this->load->library('pagination');        
         $config['base_url'] = site_url('user/page');
-        $config['per_page'] = 10;
+        $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
         if($client_id){
-
-            $data = array(
-                'client_id'=>$client_id
-                );
-            $config['total_rows'] = $this->User_model->getTotalUserByClientId($data);
+            $config['total_rows'] = $this->User_model->getTotalUserByClientId(array('client_id' => $client_id));
         }else{
             $config['total_rows'] = $this->User_model->getTotalNumUsers();
         }
 
-        //End Added
-
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
@@ -92,8 +84,19 @@ class User extends MY_Controller
         $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
         $this->pagination->initialize($config);
 
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
@@ -129,16 +132,12 @@ class User extends MY_Controller
 
             $this->data['users'] = $UsersInfoForClientId;
 
-
         }else{
             $this->data['users'] = $this->User_model->fetchAllUsers($filter);
         }
-            
-
 
         $this->data['main'] = 'user';
         $this->render_page('template');
-        
     }
 
     public function update($user_id){
@@ -442,7 +441,13 @@ class User extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'user')) {
+        if($this->User_model->isAdmin()){
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'user') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'user')) {
             return true;
         } else {
             return false;
@@ -564,7 +569,7 @@ class User extends MY_Controller
     }
 
     public function register(){
-        
+
 //        $this->data['meta_description'] = $this->lang->line('meta_description');
 //        $this->data['main'] = 'register';
 //        $this->data['title'] = $this->lang->line('title');
@@ -706,7 +711,7 @@ class User extends MY_Controller
 
 //        $this->load->vars($this->data);
 //        $this->render_page('template');
-        redirect('login#register', 'refresh');
+        redirect('login'.($this->input->get('plan') ? '?plan='.$this->input->get('plan') : '').'#register', 'refresh');
     }
 
     /* new register flow (without captcha, plan and domain) */
@@ -723,12 +728,14 @@ class User extends MY_Controller
 
             $_POST['password'] = DEFAULT_PASSWORD;
             $_POST['password_confirm'] = DEFAULT_PASSWORD;
+            $plan_id = $this->input->get('plan');
+            if (empty($plan_id)) $plan_id = FREE_PLAN; // default is free plan
+            $plan = $this->Plan_model->getPlanById(new MongoId($plan_id));
 
             if($this->form_validation->run()){
+
                 if($user_id = $this->User_model->insertUser()){ // [1] firstly insert a user into "user"
                     $user_info = $this->User_model->getUserInfo($user_id);
-
-                    $plan = $this->Plan_model->getPlanById(new MongoId(FREE_PLAN));
 
                     $client_id = $this->Client_model->insertClient($this->input->post(), $plan); // [2] then insert a new client into "playbasis_client"
 

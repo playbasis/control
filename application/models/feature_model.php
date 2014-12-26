@@ -63,5 +63,18 @@ class Feature_model extends MY_Model
 
         return $results ? $results[0] : null;
     }
+
+    public function getFeatureExitsByClientId($client_id, $link) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('link', $link);
+        $this->mongo_db->limit(1);
+
+        $results = $this->mongo_db->get("playbasis_feature_to_client");
+
+        return (count($results) > 0) ? true : false;
+    }
 }
 ?>

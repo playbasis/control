@@ -26,6 +26,7 @@ class Goods extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -41,6 +42,7 @@ class Goods extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -500,7 +502,7 @@ class Goods extends MY_Controller
         $this->render_page('goods_ajax');
     }
 
-    private function _getList($offset, $per_page=10) {
+    private function _getList($offset, $per_page=NUMBER_OF_RECORDS_PER_PAGE) {
 
         $this->load->library('pagination');
 
@@ -630,8 +632,8 @@ class Goods extends MY_Controller
         $config['total_rows'] = $goods_total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
@@ -647,9 +649,19 @@ class Goods extends MY_Controller
         $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
         $this->pagination->initialize($config);
 
         $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['main'] = 'goods';
         $this->data['setting_group_id'] = $setting_group_id;
@@ -966,7 +978,13 @@ class Goods extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'goods')) {
+        if($this->User_model->isAdmin()){
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'goods') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'goods')) {
             return true;
         } else {
             return false;
@@ -1047,9 +1065,11 @@ class Goods extends MY_Controller
 
         /* loop insert into playbasis_goods */
         while (($line = fgets($handle)) !== false) {
-            $obj = explode(',', trim($line));
-            $name = $obj[0];
-            $code = isset($obj[1]) ? $obj[1] : $name;
+            $line = trim($line);
+            if (empty($line) || $line == ',') continue; // skip empty line
+            $obj = explode(',', $line);
+            $name = trim($obj[0]);
+            $code = trim(isset($obj[1]) ? $obj[1] : $name);
             $each = array_merge($template, array('name' => $name));
             $goods_id = $this->Goods_model->addGoods($each);
             $each = array_merge($each, array('code' => $code));

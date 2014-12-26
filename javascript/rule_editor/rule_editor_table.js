@@ -58,15 +58,13 @@ var ruleTableMan = {
 
       // Frequency
       var noFrequency = '';
-      if(this.complete == undefined || this.complete == '' ){
-        this.complete = 0;
+      if(this.usage == undefined || this.usage == '' ){
+        this.usage = 0;
         noFrequency = "no-frequency";
       }
-      if(this.partial == undefined || this.partial == '' ){
-        this.partial = 0;
-      }
-
-      var frequencyHtml = ' <strong class="frequency-icon '+noFrequency+' label" title="Rule has called / Rule has called but uncomplate" data-toggle="tooltip">'+this.complete+'<span> / '+this.partial+'</span></strong> ';
+      var str = 'This rule has been executed '+this.usage+' times';
+      if (this.usage_sync_date) str += ' (last synced: '+this.usage_sync_date+')';
+      var frequencyHtml = '<div style="display: none">'+this.name+'</div> <strong class="frequency-icon '+noFrequency+' label" title="'+str+'" data-toggle="tooltip">'+this.usage+'</strong> ';
       $(frequencyHtml).prependTo(ruleColumn);
       $('.frequency-icon').tooltip();
 
@@ -143,10 +141,18 @@ var ruleTableMan = {
 
     setTimeout(function() {
     if (jQuery().tablecloth) {
-      $("table." + ruleTableMan.targetTable ).tablecloth({ 
+      $("table." + ruleTableMan.targetTable ).tablecloth({
         sortable: true
       });
       ruleTableMan.tableclothed = true;
+      // fix sorting bug
+      var active = $("li.page_index_number.active");
+      if (active) {
+        var children = active.children();
+        if (children && children.length > 0) {
+          children[0].click();
+        }
+      }
     }
     else {
       console.log('tablecloth.js is not loaded');
@@ -282,7 +288,7 @@ ruleTableRow_statusMan = {
       }//End else if value is disable
     });//End Click
 
-  },
+  }
 }
 
 

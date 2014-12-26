@@ -69,7 +69,7 @@
                 <div class="span6">
                     <div class="box box-add-item condition-wrapper">
                         <div class="box-header overflow-visible">
-                            <h2><i class="icon-cog"></i><span class="break"></span>Condition</h2>
+                            <h2><i class="icon-cog"></i><span class="break"></span>Condition for Entry</h2>
                             <div class="box-icon box-icon-action">
                                 <a href="javascript:void(0)" class="btn btn-primary right add-condition-btn dropdown-toggle" data-toggle="dropdown"> + Add Condition</a>
                                 <ul class="dropdown-menu add-condition-menu" role="menu" aria-labelledby="dropdownMenu">
@@ -210,7 +210,7 @@
                     </div>
                     <div class="box box-add-item rewards-wrapper">
                         <div class="box-header overflow-visible">
-                            <h2><i class="icon-certificate"></i><span class="break"></span>Rewards</h2>
+                            <h2><i class="icon-certificate"></i><span class="break"></span>Rewards After Completing All the Missions</h2>
                             <div class="box-icon box-icon-action">
                                 <a href="javascript:void(0)" class="btn btn-primary right add-rewards-btn dropdown-toggle" data-toggle="dropdown"> + Add Reward</a>
                                 <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">
@@ -344,9 +344,9 @@
                                 <div class="span6">                                
                                     <div class="box box-add-item completion-wrapper">                                    
                                         <div class="box-header overflow-visible">                                        
-                                            <h2><i class="icon-trophy"></i><span class="break"></span>Completion</h2>                                        
+                                            <h2><i class="icon-trophy"></i><span class="break"></span>Condition for Completion</h2>
                                             <div class="box-icon box-icon-action">                                            
-                                                <a href="javascript:void(0)" class="btn btn-primary right add-completion-btn dropdown-toggle" data-toggle="dropdown"> + Add Completion</a>                                            
+                                                <a href="javascript:void(0)" class="btn btn-primary right add-completion-btn dropdown-toggle" data-toggle="dropdown"> + Add Condition</a>
                                                 <ul class="dropdown-menu add-completion-menu" role="menu" aria-labelledby="dropdownMenu">                                                
                                                     <li class="add-action"><a tabindex="-1" href="javascript:void(0)">ACTION</a></li>                                                
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                                
@@ -754,9 +754,9 @@
                             <div class="span6">\
                                 <div class="box box-add-item completion-wrapper">\
                                     <div class="box-header overflow-visible">\
-                                        <h2><i class="icon-trophy"></i><span class="break"></span>Completion</h2>\
+                                        <h2><i class="icon-trophy"></i><span class="break"></span>Condition for Completion</h2>\
                                         <div class="box-icon box-icon-action">\
-                                            <a href="javascript:void(0)" class="btn btn-primary right add-completion-btn dropdown-toggle" data-toggle="dropdown"> + Add Completion</a>\
+                                            <a href="javascript:void(0)" class="btn btn-primary right add-completion-btn dropdown-toggle" data-toggle="dropdown"> + Add Condition</a>\
                                             <ul class="dropdown-menu add-completion-menu" role="menu" aria-labelledby="dropdownMenu">\
                                                 <li class="add-action"><a tabindex="-1" href="javascript:void(0)" >ACTION</a></li>\
                                                 <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>\

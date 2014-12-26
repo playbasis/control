@@ -30,6 +30,7 @@ class App extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -43,6 +44,7 @@ class App extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -54,7 +56,7 @@ class App extends MY_Controller
 
     private function getList($offset) {
 
-        $per_page = 10;
+        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
 
@@ -159,8 +161,8 @@ class App extends MY_Controller
         $config['total_rows'] = $total;
         $config['per_page'] = $per_page;
         $config["uri_segment"] = 3;
-        $choice = $config["total_rows"] / $config["per_page"];
-        $config['num_links'] = round($choice);
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
         $config['next_link'] = 'Next';
         $config['next_tag_open'] = "<li class='page_index_nav next'>";
@@ -176,9 +178,19 @@ class App extends MY_Controller
         $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
         $this->pagination->initialize($config);
 
         $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['main'] = 'app';
@@ -232,7 +244,7 @@ class App extends MY_Controller
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
-                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -384,7 +396,7 @@ class App extends MY_Controller
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
-                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -454,7 +466,7 @@ class App extends MY_Controller
             }elseif(strtolower($this->input->post('platform')) == "android"){
                 $this->form_validation->set_rules('android_package_name', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean');
             }else{
-                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http');
+                $this->form_validation->set_rules('site_url', $this->lang->line('form_site'), 'trim|required|min_length[3]|max_length[100]|xss_clean|url_exists_without_http|ip_is_public');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
@@ -653,7 +665,13 @@ class App extends MY_Controller
     }
 
     private function validateAccess(){
-        if ($this->User_model->hasPermission('access', 'app')) {
+        if($this->User_model->isAdmin()){
+            return true;
+        }
+        $this->load->model('Feature_model');
+        $client_id = $this->User_model->getClientId();
+
+        if ($this->User_model->hasPermission('access', 'app') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'app')) {
             return true;
         } else {
             return false;

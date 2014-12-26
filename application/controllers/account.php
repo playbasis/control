@@ -206,6 +206,7 @@ class Account extends MY_Controller
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
 		}
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -286,6 +287,7 @@ class Account extends MY_Controller
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
 		}
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -334,6 +336,7 @@ class Account extends MY_Controller
 //
 //		if(!$this->validateAccess()){
 //			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+//          die();
 //		}
 //
 //		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -366,6 +369,7 @@ class Account extends MY_Controller
 
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
         }
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
@@ -373,6 +377,20 @@ class Account extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['heading_title'] = $this->lang->line('add_site_title');
         $this->data['main'] = 'partial/landingpage_partial';
+
+        /* find details of the subscribed plan of the client */
+        $plan_subscription = $this->Client_model->getPlanByClientId($this->User_model->getClientId());
+        $plan = $this->Plan_model->getPlanById($plan_subscription['plan_id']);
+        if (!array_key_exists('price', $plan)) {
+            $plan['price'] = DEFAULT_PLAN_PRICE;
+        }
+        $price = $plan['price'];
+        $plan_free_flag = $price <= 0;
+        $plan_paid_flag = !$plan_free_flag;
+        $this->data['plan'] = $plan;
+        $this->data['plan']['free_flag'] = $plan_free_flag;
+        $this->data['plan']['paid_enterprise_flag'] = $plan_free_flag && ($plan_subscription['plan_id'] != FREE_PLAN);
+        $this->data['plan']['paid_flag'] = $plan_paid_flag;
 
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -465,6 +483,7 @@ class Account extends MY_Controller
 
 		if(!$this->validateAccess()){
 			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
 		}
 
 		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -497,6 +516,7 @@ class Account extends MY_Controller
 //
 //		if(!$this->validateAccess()){
 //			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+//          die();
 //		}
 //
 //		$this->data['meta_description'] = $this->lang->line('meta_description');
@@ -590,6 +610,9 @@ class Account extends MY_Controller
 	}
 
 	private function validateAccess(){
+        if($this->User_model->isAdmin()){
+            return true;
+        }
 		if ($this->User_model->hasPermission('access', 'account')) {
 			return true;
 		} else {
