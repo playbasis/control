@@ -103,7 +103,6 @@ class Rule extends MY_Controller
         $this->render_page('template');
     }
 
-    /* TODO: unused, to be removed */
     public function jsonGetRules(){
         $adminGroup = $this->User_model->getAdminGroupID();
         $userGroup = $this->User_model->getUserGroupId();
@@ -121,6 +120,7 @@ class Rule extends MY_Controller
 
         $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId, array(
             'actionList' => $this->makeListOfId($actionList, 'specific_id'),
+            'actionNameDict' => $this->makeDict($actionList, 'specific_id', 'name'),
             'conditionList' => $this->makeListOfId($conditionList, 'id'),
             'rewardList' => $this->makeListOfId($rewardList, 'specific_id'),
         ));
@@ -310,6 +310,15 @@ class Rule extends MY_Controller
         $ret = array();
         foreach ($arr as $each) {
             $ret[] = $each[$field];
+        }
+        return $ret;
+    }
+
+    private function makeDict($arr, $keyField, $valField) {
+        if (!$arr || !is_array($arr)) return null;
+        $ret = array();
+        foreach ($arr as $each) {
+            $ret[$each[$keyField]] = $each[$valField];
         }
         return $ret;
     }

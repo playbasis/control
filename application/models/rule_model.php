@@ -391,7 +391,7 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'conditionList' => null, 'rewardList' => null)) {
+    public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'actionNameDict' => null, 'conditionList' => null, 'rewardList' => null)) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $output = array(
@@ -574,6 +574,7 @@ class Rule_model extends MY_Model
 
     private function checkRuleError($jigsaw_set, $params) {
         $actionList = $params['actionList'];
+        $actionNameDict = $params['actionNameDict'];
         $conditionList = $params['conditionList'];
         $rewardList = $params['rewardList'];
         $error = array();
@@ -585,6 +586,7 @@ class Rule_model extends MY_Model
                 $is_condition = false;
                 if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing';
                 else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid';
+                else if ($actionNameDict && (!array_key_exists($each['config']['action_id'], $actionNameDict)) || $actionNameDict[$each['config']['action_id']] !== $each['config']['action_name']) $error[] = 'action-name ['.$each['config']['action_name'].'] is invalid';
                 break;
             case 'CONDITION':
                 $is_condition = true;
