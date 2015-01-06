@@ -448,6 +448,7 @@ class Rule_model extends MY_Model
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
+                    $value['action_name'] = $this->getActionName($value['jigsaw_set']);
                     $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
@@ -553,6 +554,23 @@ class Rule_model extends MY_Model
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('jigsaw_log_precomp');
         return $results ? $results[0]['date_added'] : array();
+    }
+
+    private function getActionName($jigsaw_set) {
+        if (is_array($jigsaw_set)) foreach ($jigsaw_set as $each) {
+            switch ($each['category']) {
+                case 'ACTION':
+                    return $each['config']['action_name'];
+                    break;
+                case 'CONDITION':
+                    break;
+                case 'REWARD':
+                    break;
+                default:
+                    break;
+            }
+        }
+        return null;
     }
 
     private function checkRuleError($jigsaw_set, $params) {

@@ -136,9 +136,10 @@
                     <thead>
                     <tr>
                         <th class='tb_rule_th tb_rule_title'>Rule</th>
+                        <th class='tb_rule_th tb_rule_action_name'>Action</th>
                         <th class='tb_rule_th tb_rule_date'>Create Date</th>
                         <th class='tb_rule_th tb_rule_status' >Status</th>
-                        <th class='tb_rule_th tb_rule_action' >Action</th>
+                        <th class='tb_rule_th tb_rule_action' ></th>
                     </tr>
                     </thead>
                     <tbody>
