@@ -560,7 +560,7 @@ class Rule_model extends MY_Model
         if (is_array($jigsaw_set)) foreach ($jigsaw_set as $each) {
             switch ($each['category']) {
                 case 'ACTION':
-                    return $each['config']['action_name'];
+                    return $each['name'];
                     break;
                 case 'CONDITION':
                     break;
@@ -585,20 +585,25 @@ class Rule_model extends MY_Model
             switch ($each['category']) {
             case 'ACTION':
                 $is_condition = false;
-                if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing';
-                else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid';
-                else if ($actionNameDict && (!array_key_exists($each['config']['action_id'], $actionNameDict)) || $actionNameDict[$each['config']['action_id']] !== $each['config']['action_name']) $error[] = 'action-name ['.$each['config']['action_name'].'] is invalid';
+                if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing (config)';
+                else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid (config)';
+                else if ($actionNameDict && (!array_key_exists($each['config']['action_id'], $actionNameDict)) || $actionNameDict[$each['config']['action_id']] !== $each['config']['action_name']) $error[] = 'action-name ['.$each['config']['action_name'].'] is invalid (config)';
+                else if (empty($each['specific_id'])) $error[] = '[action_id] for '.$each['name'].' is missing';
+                else if (!$actionList || !in_array($each['specific_id'], $actionList)) $error[] = 'action ['.$each['name'].'] is invalid';
+                else if ($actionNameDict && (!array_key_exists($each['specific_id'], $actionNameDict)) || $actionNameDict[$each['specific_id']] !== $each['name']) $error[] = 'action-name ['.$each['name'].'] is invalid'; // used by API
                 break;
             case 'CONDITION':
                 $is_condition = true;
-                if (empty($each['config']['condition_id'])) $error[] = '[condition_id] for '.$each['description'].' is missing';
-                else if (!$conditionList || !in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition ['.$each['description'].'] is invalid';
+                if (empty($each['config']['condition_id'])) $error[] = '[condition_id] for '.$each['description'].' is missing (config)';
+                else if (!$conditionList || !in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition-config ['.$each['description'].'] is invalid (config) ['.$each['config']['condition_id'].']';
+                else if (empty($each['specific_id'])) $error[] = '[condition_id] for '.$each['description'].' is missing';
+                else if (!$conditionList || !in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition-config ['.$each['description'].'] is invalid ['.$each['config']['condition_id'].']';
                 break;
             case 'REWARD':
                 $is_condition = false;
                 $check_reward = true;
                 if (empty($each['specific_id'])) $error[] = '[reward_id] for '.$each['config']['reward_name'].' is missing';
-                else if (!$rewardList || !in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid';
+                else if (!$rewardList || !in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid ['.$each['specific_id'].']';
                 break;
             default:
                 break;
