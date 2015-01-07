@@ -587,10 +587,10 @@ class Rule_model extends MY_Model
                 $is_condition = false;
                 if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing (config)';
                 else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid (config)';
-                else if ($actionNameDict && (!array_key_exists($each['config']['action_id'], $actionNameDict)) || $actionNameDict[$each['config']['action_id']] !== $each['config']['action_name']) $error[] = 'action-name ['.$each['config']['action_name'].'] is invalid (config)';
+                //else if ($actionNameDict && (!array_key_exists($each['config']['action_id'], $actionNameDict)) || $actionNameDict[$each['config']['action_id']] !== $each['config']['action_name']) $error[] = 'action-name ['.$each['config']['action_name'].'] is invalid (config)';
                 else if (empty($each['specific_id'])) $error[] = '[action_id] for '.$each['name'].' is missing';
                 else if (!$actionList || !in_array($each['specific_id'], $actionList)) $error[] = 'action ['.$each['name'].'] is invalid';
-                else if ($actionNameDict && (!array_key_exists($each['specific_id'], $actionNameDict)) || $actionNameDict[$each['specific_id']] !== $each['name']) $error[] = 'action-name ['.$each['name'].'] is invalid'; // used by API
+                //else if ($actionNameDict && (!array_key_exists($each['specific_id'], $actionNameDict)) || $actionNameDict[$each['specific_id']] !== $each['name']) $error[] = 'action-name ['.$each['name'].'] is invalid'; // used by API
                 break;
             case 'CONDITION':
                 $is_condition = true;
