@@ -318,7 +318,7 @@ class Quiz extends REST2_Controller
         if (in_array($question_id, $completed_questions)) $this->response($this->error->setError('QUIZ_QUESTION_ALREADY_COMPLETED'), 200);
 
         /* get score from answering that option */
-        $score = $option['score'];
+        $score = intval($option['score']);
         $explanation = $option['explanation'];
         $acc_score = $result ? $result['value'] : 0;
         $total_score = $acc_score + $score;
