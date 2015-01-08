@@ -95,7 +95,7 @@ class Quiz_model extends MY_Model
                 'pb_player_id' => $pb_player_id,
                 'value' => $score,
                 'questions' => array($question_id),
-                'answers' => array($option_id),
+                'answers' => array('option_id' => $option_id, 'score' => $score, 'date_added' => $d),
                 'grade' => $grade,
                 'date_added' => $d,
                 'date_modified' => $d
@@ -104,14 +104,14 @@ class Quiz_model extends MY_Model
             $questions = $result['questions'];
             array_push($questions, $question_id);
             $answers = $result['answers'];
-            array_push($answers, $option_id);
+            array_push($answers, array('option_id' => $option_id, 'score' => $score, 'date_added' => $d));
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('quiz_id', $quiz_id);
             $this->mongo_db->where('pb_player_id', $pb_player_id);
             $this->mongo_db->set('questions', $questions);
             $this->mongo_db->set('answers', $answers);
-            $this->mongo_db->set('value', $score);
+            $this->mongo_db->set('value', $score + $result['value']);
             $this->mongo_db->set('grade', $grade);
             $this->mongo_db->set('date_modified', $d);
             return $this->mongo_db->update('playbasis_quiz_to_player');
