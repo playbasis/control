@@ -84,7 +84,7 @@ class Quiz_model extends MY_Model
         return $results['completed'];
     }
 
-    public function update_player_score($client_id, $site_id, $quiz_id, $pb_player_id, $question_id, $score, $grade) {
+    public function update_player_score($client_id, $site_id, $quiz_id, $pb_player_id, $question_id, $option_id, $score, $grade) {
         $d = new MongoDate(time());
         $result = $this->find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id);
         if (!$result) {
@@ -95,6 +95,7 @@ class Quiz_model extends MY_Model
                 'pb_player_id' => $pb_player_id,
                 'value' => $score,
                 'questions' => array($question_id),
+                'answers' => array($option_id),
                 'grade' => $grade,
                 'date_added' => $d,
                 'date_modified' => $d
@@ -102,11 +103,14 @@ class Quiz_model extends MY_Model
         } else {
             $questions = $result['questions'];
             array_push($questions, $question_id);
+            $answers = $result['answers'];
+            array_push($answers, $option_id);
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('quiz_id', $quiz_id);
             $this->mongo_db->where('pb_player_id', $pb_player_id);
             $this->mongo_db->set('questions', $questions);
+            $this->mongo_db->set('answers', $answers);
             $this->mongo_db->set('value', $score);
             $this->mongo_db->set('grade', $grade);
             $this->mongo_db->set('date_modified', $d);
