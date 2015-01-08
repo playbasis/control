@@ -36,7 +36,7 @@ class Quiz_model extends MY_Model
 
     public function find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('quiz_id','value','questions','grade','date_added','date_modified'));
+        $this->mongo_db->select(array('quiz_id','value','questions','answers','grade','date_added','date_modified'));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('quiz_id', $quiz_id);
         $this->mongo_db->where('pb_player_id', $pb_player_id);
@@ -87,6 +87,10 @@ class Quiz_model extends MY_Model
     public function update_player_score($client_id, $site_id, $quiz_id, $pb_player_id, $question_id, $option_id, $score, $grade) {
         $d = new MongoDate(time());
         $result = $this->find_quiz_by_quiz_and_player($client_id, $site_id, $quiz_id, $pb_player_id);
+        $questions = $result ? $result['questions'] : array();
+        $answers = $result ? $result['answers'] : array();
+        array_push($questions, $question_id);
+        array_push($answers, array('option_id' => $option_id, 'score' => $score, 'date_added' => $d));
         if (!$result) {
             return $this->mongo_db->insert('playbasis_quiz_to_player', array(
                 'client_id' => $client_id,
@@ -95,16 +99,12 @@ class Quiz_model extends MY_Model
                 'pb_player_id' => $pb_player_id,
                 'value' => $score,
                 'questions' => array($question_id),
-                'answers' => array('option_id' => $option_id, 'score' => $score, 'date_added' => $d),
+                'answers' => $answers,
                 'grade' => $grade,
                 'date_added' => $d,
                 'date_modified' => $d
             ));
         } else {
-            $questions = $result['questions'];
-            array_push($questions, $question_id);
-            $answers = $result['answers'];
-            array_push($answers, array('option_id' => $option_id, 'score' => $score, 'date_added' => $d));
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('quiz_id', $quiz_id);
