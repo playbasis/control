@@ -448,7 +448,7 @@ class Rule_model extends MY_Model
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
-                    $value['action_name'] = $this->getActionName($value['jigsaw_set']);
+                    $value['action_name'] = array_key_exists(strval($value["action_id"]), $params['actionNameDict']) ? $params['actionNameDict'][strval($value["action_id"])] : $this->getActionName($value['jigsaw_set']).'<span style="color: red">*</span>';
                     $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
@@ -585,12 +585,12 @@ class Rule_model extends MY_Model
             switch ($each['category']) {
             case 'ACTION':
                 $is_condition = false;
-                if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing (config)';
+                if (empty($each['specific_id'])) $error[] = '[action_id] for '.$each['name'].' is missing';
+                else if (!$actionList || !in_array($each['specific_id'], $actionList)) $error[] = 'action ['.$each['name'].'] is invalid';
+                //else if ($actionNameDict && (!array_key_exists($each['specific_id'], $actionNameDict)) || $actionNameDict[$each['specific_id']] !== $each['name']) $error[] = 'action-name ['.$each['name'].'] is invalid';
+                else if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing (config)';
                 else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid (config)';
                 //else if ($actionNameDict && (!array_key_exists($each['config']['action_id'], $actionNameDict)) || $actionNameDict[$each['config']['action_id']] !== $each['config']['action_name']) $error[] = 'action-name ['.$each['config']['action_name'].'] is invalid (config)';
-                else if (empty($each['specific_id'])) $error[] = '[action_id] for '.$each['name'].' is missing';
-                else if (!$actionList || !in_array($each['specific_id'], $actionList)) $error[] = 'action ['.$each['name'].'] is invalid';
-                //else if ($actionNameDict && (!array_key_exists($each['specific_id'], $actionNameDict)) || $actionNameDict[$each['specific_id']] !== $each['name']) $error[] = 'action-name ['.$each['name'].'] is invalid'; // used by API
                 break;
             case 'CONDITION':
                 $is_condition = true;
