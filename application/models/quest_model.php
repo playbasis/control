@@ -214,6 +214,20 @@ class Quest_model extends MY_Model
         return $records;
     }
 
+    public function insertQuestUsage($client_id, $site_id, $quest_id, $mission_id, $pb_player_id) {
+        $this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_quest_log', array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'quest_id' => $quest_id,
+            'mission_id' => $mission_id,
+            'pb_player_id' => $pb_player_id,
+            'date_added' => $mongoDate,
+            'date_modified' => $mongoDate,
+        ), array("w" => 0, "j" => false));
+    }
+
     private function change_image_path(&$item, $key)
     {
         if($key === "image"){
