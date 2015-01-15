@@ -79,6 +79,9 @@ class Quiz_model extends MY_Model{
     public function addQuizToClient($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if(isset($data['date_start']) && $data['date_start']) $data['date_start'] = new MongoDate(strtotime($data['date_start']));
+        if(isset($data['date_expire']) && $data['date_expire']) $data['date_expire'] = new MongoDate(strtotime($data['date_expire']));
+
         $data = array_merge($data, array(
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
