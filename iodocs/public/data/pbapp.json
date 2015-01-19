@@ -1662,6 +1662,73 @@
                             "Description": "SMS message, can use variable {{code}} for the actual code"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Send Push-Notification",
+                    "Synopsis": "Send push notification to a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Push/send",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "SMS message"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Send Push-Notification Coupon",
+                    "Synopsis": "Send coupon to a player via push notification.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Push/goods",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "ref_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "reference transaction id for redemption"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "SMS message, can use variable {{code}} for the actual code"
+                        }
+                    ]
                 }
             ]
         },
