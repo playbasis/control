@@ -391,7 +391,7 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'conditionList' => null, 'rewardList' => null)) {
+    public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'actionNameDict' => null, 'conditionList' => null, 'rewardList' => null)) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $output = array(
@@ -441,18 +441,6 @@ class Rule_model extends MY_Model
                 if ($usage) foreach ($usage as $each) {
                     $rules[$each['_id']['rule_id']->{'$id'}] = $each['n'];
                 }
-                /*$last = $this->getLastCalculateFrequencyTime();
-                foreach($results as $each) {
-                    $rules[$each['_id']->{'$id'}] = array('n' => count($each['jigsaw_set']), 'c' => 0);
-                }*/
-                /* rule usage processing (live) */
-                /*foreach ($this->calculateFrequency($siteObj, $last) as $each) {
-                    if (empty($each['_id']['rule_id'])) continue;
-                    $rule_id = $each['_id']['rule_id']->{'$id'};
-                    if ($each['n'] >= $rules[$rule_id]['n']) {
-                        $rules[$rule_id]['c']++;
-                    }
-                }*/
                 /* main process */
                 $output = $results;
                 foreach($output as  &$value){
@@ -460,12 +448,8 @@ class Rule_model extends MY_Model
                     $value['client_id'] = strval($value["client_id"]);
                     $value['site_id'] = strval($value["site_id"]);
                     $value['action_id'] = strval($value["action_id"]);
-                    //$n = $rules[$value['rule_id']]['n'];
-                    //$c = $rules[$value['rule_id']]['c'];
-                    //$batch = $this->countUsage($siteObj, $value["_id"], $n); // rule usage processing (batch)
-                    //$value['usage'] = $batch + $c; // batch + live
+                    $value['action_name'] = array_key_exists(strval($value["action_id"]), $params['actionNameDict']) ? $params['actionNameDict'][strval($value["action_id"])] : $this->getActionName($value['jigsaw_set']).'<span style="color: red">*</span>';
                     $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
-                    //$value['usage_sync_date'] = $last ? date('d M Y, H:i', $last->sec) : null;
                     $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
@@ -572,8 +556,26 @@ class Rule_model extends MY_Model
         return $results ? $results[0]['date_added'] : array();
     }
 
+    private function getActionName($jigsaw_set) {
+        if (is_array($jigsaw_set)) foreach ($jigsaw_set as $each) {
+            switch ($each['category']) {
+                case 'ACTION':
+                    return $each['name'];
+                    break;
+                case 'CONDITION':
+                    break;
+                case 'REWARD':
+                    break;
+                default:
+                    break;
+            }
+        }
+        return null;
+    }
+
     private function checkRuleError($jigsaw_set, $params) {
         $actionList = $params['actionList'];
+        $actionNameDict = $params['actionNameDict'];
         $conditionList = $params['conditionList'];
         $rewardList = $params['rewardList'];
         $error = array();
@@ -583,19 +585,25 @@ class Rule_model extends MY_Model
             switch ($each['category']) {
             case 'ACTION':
                 $is_condition = false;
-                if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing';
-                else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid';
+                if (empty($each['specific_id'])) $error[] = '[action_id] for '.$each['name'].' is missing';
+                else if (!$actionList || !in_array($each['specific_id'], $actionList)) $error[] = 'action ['.$each['name'].'] is invalid';
+                //else if ($actionNameDict && (!array_key_exists($each['specific_id'], $actionNameDict)) || $actionNameDict[$each['specific_id']] !== $each['name']) $error[] = 'action-name ['.$each['name'].'] is invalid';
+                else if (empty($each['config']['action_id'])) $error[] = '[action_id] for '.$each['config']['action_name'].' is missing (config)';
+                else if (!$actionList || !in_array($each['config']['action_id'], $actionList)) $error[] = 'action ['.$each['config']['action_name'].'] is invalid (config)';
+                //else if ($actionNameDict && (!array_key_exists($each['config']['action_id'], $actionNameDict)) || $actionNameDict[$each['config']['action_id']] !== $each['config']['action_name']) $error[] = 'action-name ['.$each['config']['action_name'].'] is invalid (config)';
                 break;
             case 'CONDITION':
                 $is_condition = true;
-                if (empty($each['config']['condition_id'])) $error[] = '[condition_id] for '.$each['description'].' is missing';
-                else if (!$conditionList || !in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition ['.$each['description'].'] is invalid';
+                if (empty($each['config']['condition_id'])) $error[] = '[condition_id] for '.$each['description'].' is missing (config)';
+                else if (!$conditionList || !in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition-config ['.$each['description'].'] is invalid (config) ['.$each['config']['condition_id'].']';
+                else if (empty($each['specific_id'])) $error[] = '[condition_id] for '.$each['description'].' is missing';
+                else if (!$conditionList || !in_array($each['config']['condition_id'], $conditionList)) $error[] = 'condition-config ['.$each['description'].'] is invalid ['.$each['config']['condition_id'].']';
                 break;
             case 'REWARD':
                 $is_condition = false;
                 $check_reward = true;
                 if (empty($each['specific_id'])) $error[] = '[reward_id] for '.$each['config']['reward_name'].' is missing';
-                else if (!$rewardList || !in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid';
+                else if (!$rewardList || !in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid ['.$each['specific_id'].']';
                 break;
             default:
                 break;

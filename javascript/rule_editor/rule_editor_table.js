@@ -44,6 +44,7 @@ var ruleTableMan = {
             title = $('<span>').html(this.name).appendTo(ruleColumn),
             description = $('<span>').html(this.description).appendTo(ruleColumn).hide(),
             tags = $('<span>').addClass('pull-right').appendTo(ruleColumn),
+          actionNameColumn = $('<td>').appendTo(row);
           createDateColumn = $('<td>').appendTo(row),
           modifiedDateColumn = $('<td>').appendTo(row).hide(),
           statusColumn = $('<td>').appendTo(row),
@@ -77,6 +78,9 @@ var ruleTableMan = {
             .html(this.toString())
         );
       });
+
+      // actionName section
+      actionNameColumn.html(this.action_name);
 
       // date section
       createDateColumn.html(this.date_added.substring(0, 10));

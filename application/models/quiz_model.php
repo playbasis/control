@@ -79,6 +79,13 @@ class Quiz_model extends MY_Model{
     public function addQuizToClient($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        if(isset($data['date_start'])) {
+            $data['date_start'] = $data['date_start'] ? new MongoDate(strtotime($data['date_start'])) : null;
+        }
+        if(isset($data['date_expire'])) {
+            $data['date_expire'] = $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null;
+        }
+
         $data = array_merge($data, array(
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
@@ -148,7 +155,6 @@ class Quiz_model extends MY_Model{
         $this->mongo_db->update('playbasis_quiz_to_client');
 
         return true;
-
     }
 
     public function delete($quiz_id){

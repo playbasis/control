@@ -217,6 +217,7 @@ ul.pbd_rule_unit_wrapper li .box{margin-top:0px;}
 
   .tb_rule_th{text-align: center; font-size: 1.1em;color: #444;}
   .tb_rule_title{ width: 350px}
+  .tb_rule_action_name{ width: 100px}
   .tb_rule_date{ width: 120px}
   .tb_rule_status{ width: 40px}
   .tb_rule_action{ width: 18px}
