@@ -14,7 +14,8 @@ class Goods_model extends MY_Model
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'deleted' => false
+            'deleted' => false,
+            'status' => true,
         ));
         if (!empty($nin)) $this->mongo_db->where_not_in('_id', $nin);
         $goods = $this->mongo_db->get('playbasis_goods_to_client');
