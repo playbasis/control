@@ -1545,10 +1545,17 @@
                         },
                         {
                             "Name": "message",
-                            "Required": "Y",
+                            "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "email message"
+                            "Description": "email message (either message or template_id is required)"
+                        },
+                        {
+                            "Name": "template_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message (either message or template_id is required)"
                         }
                     ]
                 },
@@ -1589,10 +1596,17 @@
                         },
                         {
                             "Name": "message",
-                            "Required": "Y",
+                            "Required": "N",
                             "Default": "",
                             "Type": "string",
                             "Description": "email message, can use variable {{code}} for the actual code"
+                        },
+                        {
+                            "Name": "template_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message (either message or template_id is required)"
                         }
                     ]
                 },
@@ -1619,10 +1633,17 @@
                         },
                         {
                             "Name": "message",
-                            "Required": "Y",
+                            "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "SMS message"
+                            "Description": "SMS message (either message or template_id is required)"
+                        },
+                        {
+                            "Name": "template_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message (either message or template_id is required)"
                         }
                     ]
                 },
@@ -1656,10 +1677,17 @@
                         },
                         {
                             "Name": "message",
-                            "Required": "Y",
+                            "Required": "N",
                             "Default": "",
                             "Type": "string",
                             "Description": "SMS message, can use variable {{code}} for the actual code"
+                        },
+                        {
+                            "Name": "template_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message (either message or template_id is required)"
                         }
                     ]
                 },
@@ -1686,10 +1714,17 @@
                         },
                         {
                             "Name": "message",
-                            "Required": "Y",
+                            "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "SMS message"
+                            "Description": "SMS message (either message or template_id is required)"
+                        },
+                        {
+                            "Name": "template_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message (either message or template_id is required)"
                         }
                     ]
                 },
@@ -1723,10 +1758,17 @@
                         },
                         {
                             "Name": "message",
-                            "Required": "Y",
+                            "Required": "N",
                             "Default": "",
                             "Type": "string",
                             "Description": "SMS message, can use variable {{code}} for the actual code"
+                        },
+                        {
+                            "Name": "template_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message (either message or template_id is required)"
                         }
                     ]
                 }
