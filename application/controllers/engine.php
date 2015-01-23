@@ -310,8 +310,10 @@ class Engine extends Quest
                     $input['pb_player_id'], $validToken['site_id']);
         }
 
+        $headers = $this->input->request_headers();
+        $action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
         if (!$input["test"])
-            $input['action_log_id'] = $this->tracker_model->trackAction($input); //track action
+            $input['action_log_id'] = $this->tracker_model->trackAction($input, $action_time); //track action
 
 		$client_id = $validToken['client_id'];
 		$site_id = $validToken['site_id'];
