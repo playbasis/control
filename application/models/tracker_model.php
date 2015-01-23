@@ -6,10 +6,12 @@ class Tracker_model extends MY_Model
 	{
 		parent::__construct();
 	}
-	public function trackAction($input)
+	public function trackAction($input, $action_time=null)
 	{
         $this->set_site_mongodb($input['site_id']);
-        $mongoDate = new MongoDate(time());
+        $current_time = time();
+        if ($action_time && $action_time > $current_time) $action_time = $current_time; // cannot be something from the future
+        $mongoDate = new MongoDate($action_time ? $action_time : $current_time);
         return $this->mongo_db->insert('playbasis_action_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
