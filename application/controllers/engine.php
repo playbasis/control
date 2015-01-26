@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH.'controllers/quest.php');
+
 //class Engine extends REST2_Controller
 class Engine extends Quest
 {
@@ -10,6 +11,7 @@ class Engine extends Quest
 		parent::__construct();
 		$this->load->model('auth_model');
 		$this->load->model('player_model');
+		$this->load->model('action_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
@@ -305,15 +307,17 @@ class Engine extends Quest
 	private function processRule($input, $validToken, $fbData, $twData)
 	{
 		if(!isset($input['player_id']) || !$input['player_id']) {
-            if (!$input["test"])
-                $input['player_id'] = $this->player_model->getClientPlayerId(
-                    $input['pb_player_id'], $validToken['site_id']);
-        }
+			if (!$input["test"])
+				$input['player_id'] = $this->player_model->getClientPlayerId(
+			$input['pb_player_id'], $validToken['site_id']);
+		}
 
-        $headers = $this->input->request_headers();
-        $action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
-        if (!$input["test"])
-            $input['action_log_id'] = $this->tracker_model->trackAction($input, $action_time); //track action
+		$headers = $this->input->request_headers();
+		$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
+		if (!$input["test"]) {
+			$input['action_log_id'] = $this->tracker_model->trackAction($input, $action_time); //track action
+			$input['action_log_time'] = $this->action_model->findActionLogTime($validToken['site_id'], $input['action_log_id']);
+		}
 
 		$client_id = $validToken['client_id'];
 		$site_id = $validToken['site_id'];
@@ -322,14 +326,14 @@ class Engine extends Quest
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
 
-        if ($input["test"])
-            $ruleSet = $this->client_model->getRuleSetById($input["rule_id"]);
-        else
-            $ruleSet = $this->client_model->getRuleSetByActionId(array(
-                'client_id' => $client_id,
-                'site_id' => $site_id,
-                'action_id' => $input['action_id']
-            ));
+		if ($input["test"])
+			$ruleSet = $this->client_model->getRuleSetById($input["rule_id"]);
+		else
+			$ruleSet = $this->client_model->getRuleSetByActionId(array(
+				'client_id' => $client_id,
+				'site_id' => $site_id,
+				'action_id' => $input['action_id']
+			));
 
 		$apiResult = array(
 			'events' => array()

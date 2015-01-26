@@ -28,7 +28,7 @@ class Player_model extends MY_Model
 		$this->config->load('playbasis');
 		$this->load->library('mongo_db');
 	}
-	public function createPlayer($data, $limit)
+	public function createPlayer($data, $limit=null)
 	{
         try {
             $this->checkClientUserLimitWarning(
@@ -802,6 +802,9 @@ class Player_model extends MY_Model
 	}
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
 	{
+		if(!$limit)
+			return; //client has no user limit
+
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
             'domain_name',
@@ -816,9 +819,6 @@ class Player_model extends MY_Model
         assert($result);
 		$result = $result[0];
         $domain_name_client = $result['domain_name'];
-
-		if(!$limit)
-			return; //client has no user limit
 
 		$last_send = $result['last_send_limit_users']?$result['last_send_limit_users']->sec:null;
 		$next_send = $last_send + (7 * 24 * 60 * 60); //next week from last send

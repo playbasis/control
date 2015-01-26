@@ -318,13 +318,13 @@ class Quiz extends REST2_Controller
         if (in_array($question_id, $completed_questions)) $this->response($this->error->setError('QUIZ_QUESTION_ALREADY_COMPLETED'), 200);
 
         /* get score from answering that option */
-        $score = $option['score'];
+        $score = intval($option['score']);
         $explanation = $option['explanation'];
         $acc_score = $result ? $result['value'] : 0;
         $total_score = $acc_score + $score;
 
         /* if this is the last question, then grade the player's score */
-        $grade = null;
+        $grade = array();
         if (count($completed_questions) + 1 >= count($quiz['questions'])) {
             $percent = ($total_score*1.0)/$total_max_score*100;
             foreach ($quiz['grades'] as $g) {
@@ -344,7 +344,7 @@ class Quiz extends REST2_Controller
         $grade['total_max_score'] = $total_max_score;
 
         /* update player's score */
-        $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $total_score, $grade);
+        $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $option_id, $score, $grade);
 
         /* publish the reward (if any) */
         if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz_id, $this->validToken['domain_name'], $reward);

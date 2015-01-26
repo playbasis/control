@@ -39,6 +39,22 @@ class Quest extends REST2_Controller
             'events_quests' => array()
         );
 
+        /* [quest usage] check quest usage against the associated plan */
+        if (!$test_id) {
+            try {
+                $this->client_model->permissionCheck(
+                    $client_id,
+                    $site_id,
+                    "others",
+                    "quest_usage"
+                );
+            } catch (Exception $e) {
+                /* we have to suppress LIMIT_EXCEED exception here because this quest processing is just a part of /Engine/rule call */
+                if ($e->getMessage() === "LIMIT_EXCEED") return $questResult; // stop processing next quest as we already hit the plan usage
+                throw $e; // otherwise, throw the error
+            }
+        }
+
         $badge_player_check = array();
         $player_badges = $this->player_model->getBadge($pb_player_id, $site_id);
         if($player_badges){
@@ -110,6 +126,14 @@ class Quest extends REST2_Controller
                                 if (!$test_id) {
                                     $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "finish");
                                     $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, $questResult);
+                                    /* [quest usage] increase usage value on client's account */
+                                    $this->quest_model->insertQuestUsage(
+                                        $client_id,
+                                        $site_id,
+                                        $q["quest_id"],
+                                        $m["mission_id"],
+                                        $pb_player_id
+                                    );
                                 }
 
                                 //for check total mission finish
@@ -154,6 +178,14 @@ class Quest extends REST2_Controller
                                 if (!$test_id) {
                                     $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"finish");
                                     $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, $questResult);
+                                    /* [quest usage] increase usage value on client's account */
+                                    $this->quest_model->insertQuestUsage(
+                                        $client_id,
+                                        $site_id,
+                                        $q["quest_id"],
+                                        $m["mission_id"],
+                                        $pb_player_id
+                                    );
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -179,6 +211,26 @@ class Quest extends REST2_Controller
                 if (!$test_id) {
                     $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken, $questResult);
                     $this->updateQuestStatusOfPlayer($pb_player_id, $q["quest_id"], $validToken, "finish");
+                    /* [quest usage] increase usage value on client's account */
+                    $this->quest_model->insertQuestUsage(
+                        $client_id,
+                        $site_id,
+                        $q["quest_id"],
+                        null,
+                        $pb_player_id
+                    );
+                    try {
+                        $this->client_model->permissionProcess(
+                            $client_id,
+                            $site_id,
+                            "others",
+                            "quest_usage"
+                        );
+                    } catch (Exception $e) {
+                        /* we have to suppress LIMIT_EXCEED exception here because this quest processing is just a part of /Engine/rule call */
+                        if ($e->getMessage() === "LIMIT_EXCEED") break; // stop processing next quest as we already hit the plan usage
+                        throw $e; // otherwise, throw the error
+                    }
                 }
             }
 

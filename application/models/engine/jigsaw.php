@@ -107,8 +107,7 @@ class jigsaw extends MY_Model
 			$exInfo['remaining_time'] = (int) $config['interval'];
 			return false;
 		}
-		$timeNow = time();
-//		$log = unserialize($result['input']);
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
 		$log = $result['input'];
 		if($config['interval'] == 0) //if config time = 0 reduce counter and return false
 		{
@@ -130,7 +129,7 @@ class jigsaw extends MY_Model
 			return false;
 		}
 		$lastTime = $result['date_added'];
-		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime->sec) : (int) (date_diff(new DateTime(), new DateTime(datetimeMongotoReadable($lastTime)))->d);
+		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime->sec) : (int) (date_diff(new DateTime($timeNow), new DateTime(datetimeMongotoReadable($lastTime)))->d);
 		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
 		$remainingTime = $log['remaining_time'];
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
@@ -176,8 +175,7 @@ class jigsaw extends MY_Model
 			$exInfo['remaining_cooldown'] = (int) $config['cooldown'];
 			return true;
 		}
-		$timeNow = time();
-//		$log = unserialize($result['input']);
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
 		$log = $result['input'];
 		$lastTime = $result['date_added'];
 		$timeDiff = (int) ($timeNow - $lastTime->sec);
@@ -199,7 +197,8 @@ class jigsaw extends MY_Model
 		assert(isset($config['timestamp']));
 		assert($input != false);
 		assert(is_array($input));
-		return (strtotime($config['timestamp']) > time());
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		return (strtotime($config['timestamp']) > $timeNow);
 	}
 	public function after($config, $input, &$exInfo = array())
 	{
@@ -208,7 +207,8 @@ class jigsaw extends MY_Model
 		assert(isset($config['timestamp']));
 		assert($input != false);
 		assert(is_array($input));
-		return (strtotime($config['timestamp']) < time());
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		return (strtotime($config['timestamp']) < $timeNow);
 	}
 	public function between($config, $input, &$exInfo = array())
 	{
@@ -218,6 +218,7 @@ class jigsaw extends MY_Model
 		assert(is_array($input));
 		assert(isset($config['start_time']));
 		assert(isset($config['end_time']));
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
 		$start = $config['start_time'];
 		$end = $config['end_time'];
 		$start = strtotime("1970-01-01 $start:00");
@@ -225,7 +226,7 @@ class jigsaw extends MY_Model
 		//check time range that crosses to the next day
 		if($end < $start)
 			$end = strtotime("1970-01-02 $end:00");
-		$now = strtotime("1970-01-01 " . date('H:i') . ":00");
+		$now = strtotime("1970-01-01 " . date('H:i', $timeNow) . ":00");
 		return ($start < $now && $now < $end);
 	}
 	public function daily($config, $input, &$exInfo = array())
@@ -241,7 +242,8 @@ class jigsaw extends MY_Model
 		if(!$result)
 			return true;
 		$lastTime = $result['date_added'];
-		$datediff = date_diff(new DateTime(), new DateTime(datetimeMongotoReadable($lastTime)));
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		$datediff = date_diff(new DateTime($timeNow), new DateTime(datetimeMongotoReadable($lastTime)));
 		//if more than 2 day
 		if($datediff->d > 1)
 			return true;
@@ -251,7 +253,7 @@ class jigsaw extends MY_Model
 		//if more than 1 day, according to current time
 		$settingTime = $config['time_of_day'];
 		$settingTime = strtotime("1970-01-01 $settingTime:00");
-		$currentTime = strtotime("1970-01-01 " . date('H:i') . ":00");
+		$currentTime = strtotime("1970-01-01 " . date('H:i', $timeNow) . ":00");
 		return $currentTime > $settingTime;
 	}
 	public function weekly($config, $input, &$exInfo = array())
@@ -270,9 +272,9 @@ class jigsaw extends MY_Model
 			$exInfo['next_trigger'] = strtotime("next " . $config['day_of_week'] . " " . $config['time_of_day']);
 			return true;
 		}
-//		$logInput = unserialize($result['input']);
 		$logInput = $result['input'];
-		if(strtotime('now') >= $logInput['next_trigger'])
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		if($timeNow >= $logInput['next_trigger'])
 		{
 			$exInfo['next_trigger'] = strtotime("next " . $config['day_of_week'] . " " . $config['time_of_day']);
 			return true;
@@ -297,9 +299,9 @@ class jigsaw extends MY_Model
 			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
 			return true;
 		}
-//		$logInput = unserialize($result['input']);
 		$logInput = $result['input'];
-		if(strtotime('now') >= $logInput['next_trigger'])
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		if($timeNow >= $logInput['next_trigger'])
 		{
 			$lastDateOfMonth = date('d', strtotime("last day of next month"));
 			$exInfo['next_trigger'] = $config['date_of_month'] > $lastDateOfMonth ? strtotime("last day of next month" . $config['time_of_day']) : strtotime("first day of next month " . $config['time_of_day']) + ($config['date_of_month'] - 1) * 3600 * 24;
@@ -330,9 +332,9 @@ class jigsaw extends MY_Model
 			$exInfo['next_trigger'] = $nextTrigger->getTimestamp();
 			return true;
 		}
-//		$logInput = unserialize($result['input']);
 		$logInput = $result['input'];
-		if(time() >= $logInput['next_trigger'])
+		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
+		if($timeNow >= $logInput['next_trigger'])
 		{
 			$nextTrigger = new DateTime();
 			$nextTrigger->setTimestamp($logInput['next_trigger']);
@@ -502,7 +504,6 @@ class jigsaw extends MY_Model
 //		}else{
 //			$match = (string) $compareUrl === (string) $inputUrl;
 //		}
-
 
         $match = (string) $compareUrl === (string) $inputUrl;
 
