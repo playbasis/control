@@ -316,7 +316,7 @@ class Engine extends Quest
 		$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
 		if (!$input["test"]) {
 			$input['action_log_id'] = $this->tracker_model->trackAction($input, $action_time); //track action
-			$input['action_log_time'] = $this->action_model->findActionLogTime($input['action_log_id']);
+			$input['action_log_time'] = $this->action_model->findActionLogTime($validToken['site_id'], $input['action_log_id']);
 		}
 
 		$client_id = $validToken['client_id'];
