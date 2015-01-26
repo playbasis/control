@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 class Action_model extends MY_Model
 {
 	public function __construct()
@@ -7,6 +8,7 @@ class Action_model extends MY_Model
 		parent::__construct();
 		$this->load->library('mongo_db');
 	}
+
 	public function listActions($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
@@ -24,30 +26,22 @@ class Action_model extends MY_Model
 
 	public function listActionsOnlyUsed($data)
 	{
-
 		/*
 		| -----------------------------------------------------------------------
 		| ACTIONS THAT ARE IN PLAYERS HAVE...
 		| -----------------------------------------------------------------------
 		*/
 		$rawUsedActions = $this->mongo_db->command(array('distinct'=>'playbasis_action_log', 'key'=>'action_id','query'=>array('client_id'=>$data['client_id'], 'site_id'=>$data['site_id'])));
-
 		$usedActions = $rawUsedActions['values'];
-
 		$this->set_site_mongodb($data['site_id']);
-
 		$this->mongo_db->select(array('name','icon'));
-
 		$this->mongo_db->select(array(),array('_id'));
-		
 		$this->mongo_db->where_in('action_id', $usedActions);
-
 		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 			'status' => true
 		));
-
 		$result = $this->mongo_db->get('playbasis_action_to_client');
 		if (!$result) $result = array();		
 
@@ -55,24 +49,17 @@ class Action_model extends MY_Model
 		| -----------------------------------------------------------------------
 		| ACTIONS THAT ARE IN RULE ENGINES BUT PLAYERS MAY OR MAY HAVE NOT HAVE THEM...
 		| -----------------------------------------------------------------------
-
 		$rawUsedActions = $this->getUsedActionByClientSiteId($data['client_id'], $data['site_id']);
-
 		$usedActions = $rawUsedActions['values'];
 		$this->set_site_mongodb($data['site_id']);
-
 		$this->mongo_db->select(array('name','icon'));
-
 		$this->mongo_db->select(array(),array('_id'));
-		
 		$this->mongo_db->where_in('action_id', $usedActions);
-
 		$this->mongo_db->where(array(
 			'client_id' => $data['client_id'],
 			'site_id' => $data['site_id'],
 			'status' => true
 		));
-
 		$result = $this->mongo_db->get('playbasis_action_to_client');
 		if (!$result) $result = array();
 		*/
@@ -83,7 +70,7 @@ class Action_model extends MY_Model
 	public function getUsedActionByClientSiteId($client_id, $site_id){
 		return $this->mongo_db->command(array('distinct'=>'playbasis_rule', 'key'=>'action_id','query'=>array('client_id'=>$client_id, 'site_id'=>$site_id,'active_status'=>true)));
 	}
-	
+
 	public function findAction($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
@@ -94,8 +81,18 @@ class Action_model extends MY_Model
 			'name' => strtolower($data['action_name'])
 		));
 		$result = $this->mongo_db->get('playbasis_action_to_client');
-		return $result ? $result[0]['action_id'] : array() ;
+		return $result ? $result[0]['action_id'] : array();
 	}
+
+	public function findActionLogTime($site_id, $_id)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('date_added'));
+		$this->mongo_db->where(array('_id' => $_id));
+		$result = $this->mongo_db->get('playbasis_action_log');
+		return $result && isset($result[0]['date_added']->sec) ? $result[0]['date_added']->sec : array();
+	}
+
 	public function actionLog($data, $action_name, $from=null, $to=null)
 	{
 		$this->set_site_mongodb($data['site_id']);
