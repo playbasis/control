@@ -20,7 +20,6 @@
 
                                     <input type="hidden" name="plan" >
                                     <input type="hidden" name="channel" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>">
-                                    
                                 
                 <?php echo form_close(); ?>
             
@@ -59,8 +58,9 @@
                             <li class="price"><p><?php echo $plan['name'] ?></p></li>
                             <li>
                               <ul class="options">
-                                <li><?php echo $plan['limit_others']['player'] ?> Register Users</li>
                                 <li><?php echo $plan['limit_others']['user'] ?> Admin Users</li>
+                                <li><?php echo $plan['limit_others']['player'] ?> Register Users</li>
+                                
                                 <li><?php echo !empty( $plan['limit_requests']['/player'] ) ? $plan['limit_requests']['/player'].' Player API Requests' : '-' ?> </li>
                                 <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                               </ul>
@@ -87,8 +87,8 @@
                                 <li class="price"><p><?php echo $plan['name'] ?></p></li>
                                 <li>
                                   <ul class="options">
-                                    <li><?php echo $plan['limit_others']['player'] ?> Register Users</li>
                                     <li><?php echo $plan['limit_others']['user'] ?> Admin Users</li>
+                                    <li><?php echo $plan['limit_others']['player'] ?> Register Users</li>
                                     <li><?php echo !empty( $plan['limit_requests']['/player'] ) ? $plan['limit_requests']['/player'].' Player API Requests' : '-' ?> </li>
                                     <li><?php echo !empty( $plan['limit_requests']['/engine'] ) ? $plan['limit_requests']['/engine'].' Engine API Requests' : '-' ?> </li>
                                   </ul>
@@ -107,17 +107,17 @@
 
                   <li class="plan plan-enterprise plan-right">
                         <ul class="planContainer">
-                          <li class="title"><h2>Call us</h2></li>
+                          <li class="title"><h2>Email Us</h2></li>
                           <li class="price"><p>ENTERPRISE</p></li>
                           <li>
                             <ul class="options">
+                              <li>Call us for Admin Users</li>
                               <li>- Register Users</li>
-                              <li>- Admin Users</li>
                               <li>- Player API Requests</li>
                               <li>- Engine API Requests</li>
                             </ul>
                           </li>
-                          <li class="button"><a href="mailto:info@playbasis.com">Call us</a></li>
+                          <li class="button"><a href="mailto:info@playbasis.com">Email us</a></li>
                         </ul>
                       </li>
                     
@@ -126,8 +126,8 @@
               </div>
               <!-- End plans -->
 
-    <div class="regis-plan-table-btn"><a href="javascript:void()">View Compare Plans</a></div>
-    <div class="regis-plan-table-wrapper" style="display:none">
+    <div class="regis-plan-table-btn"><a href="javascript:void(0);">View Compare Plans</a></div>
+    <div class="regis-plan-table-wrapper" style="display:block">
 
 
 
@@ -136,22 +136,15 @@
         <tbody>
           <tr class="table-header">
             <th>
-              FEATURES
+              Features
             </th>
+            <?php foreach ($plans as $key => $plan): ?>
             <th>
-              FREE
+              <?php echo $plan['name']; ?>
             </th>
+            <?php endforeach; ?>
             <th>
-              PRO 1
-            </th>
-            <th>
-              PRO 2
-            </th>
-            <th>
-              PRO 3
-            </th>
-            <th>
-              ENTERPRISE
+              Enterprise
             </th>
           </tr>
           <tr class="row-price">
@@ -166,9 +159,10 @@
               <?php else: ?>
                   <?php echo $plan['price']; ?> USD
              <?php endif; ?>
-             <?php endforeach; ?>
              </td>
-             <td>CALL US</td>
+             <?php endforeach; ?>
+             
+             <td>EMAIL US</td>
           </tr>
           <tr>
             <td colspan="6" class="row-head">
@@ -187,8 +181,9 @@
                 <?php else: ?>
                     <i class="fa fa-check"></i>
                <?php endif; ?>
-               <?php endforeach; ?>
                </td>
+               <?php endforeach; ?>
+               
                <td><i class="fa fa-check"></i></td>
 
           </tr>
@@ -203,8 +198,9 @@
                 <?php else: ?>
                     <i class="fa fa-minus"></i>
                <?php endif; ?>
-               <?php endforeach; ?>
                </td>
+               <?php endforeach; ?>
+               
                <td><i class="fa fa-check"></i></td>
           </tr>
           <tr>
@@ -231,86 +227,88 @@
           </tr>
           <tr>
             <th>
-              Admin interface
+              Apps
             </th>
             
            <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
+ 
+               <?php echo $plan['limit_others']['app'].' '; echo $plan['limit_others']['app'] >1 ? 'Apps' : 'App' ?> 
                </td>
-               <td><i class="fa fa-check"></i></td>
+
+               <?php endforeach; ?>
+               
+               <td>Email Us</td>
 
           </tr>
           <tr>
             <th>
-              Gamification Engine
+              Dashboard Admin Users
             </th>
             
             <?php foreach ($plans as $key => $plan): ?>
               <td>
                 <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
+                  <?php echo $plan['limit_others']['user'] ?> Admin User
                 <?php else: ?>
-                    <i class="fa fa-check"></i>
+                   <?php echo $plan['limit_others']['user'] ?> Admin Users
                <?php endif; ?>
-               <?php endforeach; ?>
                </td>
-               <td><i class="fa fa-check"></i></td>
+               <?php endforeach; ?>
+               <td>Email Us</td>
 
           </tr>
           <tr>
             <th>
-              User Profile
+              Rules Execution (monthly)
             </th>
             
           <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
+                 <?php echo number_format($plan['limit_others']['rule']) ?>
+                </td>
+          <?php endforeach; ?>
+               
+               <td>Email Us</td>
+
+          </tr>
+          <tr>
+            <th>
+              Activity Streams
+            </th>
+            
+           <?php foreach ($plans as $key => $plan): ?>
+              <td>
+                <?php 
+                if (in_array("Dashboard", $plan['feature_to_plan'])){
+                    echo '<i class="fa fa-check"></i>';
+                  }else{
+                    echo '<i class="fa fa-minus"></i>';
+                  }
+               ?>
                </td>
+               <?php endforeach; ?>
+               
                <td><i class="fa fa-check"></i></td>
 
           </tr>
           <tr>
             <th>
-              Engagement points
+              Levels
             </th>
             
            <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
+                <?php 
+                if (in_array("Level", $plan['feature_to_plan'])){
+                    echo '<i class="fa fa-check"></i>';
+                  }else{
+                    echo '<i class="fa fa-minus"></i>';
+                  }
+               ?>
                </td>
-               <td><i class="fa fa-check"></i></td>
-
-          </tr>
-          <tr>
-            <th>
-              Virtual Currencies
-            </th>
-            
-           <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
                <?php endforeach; ?>
-               </td>
+               
                <td><i class="fa fa-check"></i></td>
 
           </tr>
@@ -321,45 +319,54 @@
             
            <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
+                <?php 
+                if (in_array("Rewards", $plan['feature_to_plan'])){
+                    echo '<i class="fa fa-check"></i>';
+                  }else{
+                    echo '<i class="fa fa-minus"></i>';
+                  }
+               ?>
+                </td>
                <?php endforeach; ?>
-               </td>
+              
                <td><i class="fa fa-check"></i></td>
 
           </tr>
           <tr>
             <th>
-              Rules
+              Actions
             </th>
             
             <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
+                 <?php 
+                if (in_array("Action", $plan['feature_to_plan'])){
+                    echo '<i class="fa fa-check"></i>';
+                  }else{
+                    echo '<i class="fa fa-minus"></i>';
+                  }
+               ?>
                </td>
+               <?php endforeach; ?>
+               
                <td><i class="fa fa-check"></i></td>
 
           </tr>
           <tr>
             <th>
-              Capture &amp; store Users Actions
+              Widgets
             </th>
             
            <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
+                 <?php 
+                if (in_array("Widget", $plan['feature_to_plan'])){
+                    echo '<i class="fa fa-check"></i>';
+                  }else{
+                    echo '<i class="fa fa-minus"></i>';
+                  }
+               ?>
+               </td>
                <?php endforeach; ?>
                </td>
                <td><i class="fa fa-check"></i></td>
@@ -367,184 +374,43 @@
           </tr>
           <tr>
             <th>
-              Registered Users
+             Custom points
             </th>
 
 
             <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <p><span ><?php echo $plan['limit_others']['player'] ?> Users</span></p>
-                <?php else: ?>
-                   <p><span ><?php echo $plan['limit_others']['player'] ?> Users</span></p>
-               <?php endif; ?>
+                 <?php 
+                if (in_array("Custom Point", $plan['feature_to_plan'])){
+                    echo '<i class="fa fa-check"></i>';
+                  }else{
+                    echo '<i class="fa fa-minus"></i>';
+                  }
+               ?>
+               </td>
                <?php endforeach; ?>
                </td>
-               <td><p><span >Unlimited Users</span></p></td>
+               <td><i class="fa fa-check"></i></td>
 
 
 
           </tr>
           <tr>
             <th>
-              Allowed Requests per second to gamification API
+              Quiz
             </th>
             <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <p><span ><?php echo $plan['limit_requests']['/engine'] ?> Users</span></p>
-                <?php else: ?>
-                   <p><span ><?php echo $plan['limit_requests']['/engine'] ?> Users</span></p>
-               <?php endif; ?>
+                  <?php
+                     echo $plan['limit_others']['quiz'] == 0 ?  '<i class="fa fa-minus"></i>' : number_format($plan['limit_others']['quiz']);
+                  ?>
+              </td>
                <?php endforeach; ?>
-               </td>
-               <td><p><span >Unlimited</span></p></td>
+               
+               <td>Email Us</td>
 
           </tr>
-          <tr>
-            <th>
-              Leaderboards
-            </th>
-            
-             <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
-          <tr>
-            <th>
-              Live Feed
-            </th>
-            
-            <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
-          <tr>
-            <th>
-              History Feed
-            </th>
-            
-            <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
-          <tr>
-            <th>
-              Social CRM
-            </th>
-            
-            <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
-          <tr>
-            <th>
-              Reporting
-            </th>
-            
-           <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
-          <tr>
-            <th>
-              SDK
-            </th>
-
-            <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
-          <tr>
-            <th>
-              Levels
-            </th>
-            
-             <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
-          <tr>
-            <th>
-              Analytics &amp; insight
-            </th>
-            
-             <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-minus"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
-               <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
-
-          </tr>
+          
           <tr>
             
             <td colspan="6" class="row-head">
@@ -554,132 +420,87 @@
           </tr>
           <tr>
             <th>
-              Social login
+              Quests Execution (monthly)
             </th>
             
             <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-minus"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
+              <?php
+                 echo $plan['limit_others']['quest'] == 0 ?  '<i class="fa fa-minus"></i>' : number_format($plan['limit_others']['quest']);
+              ?> 
                <?php endforeach; ?>
                </td>
-               <td><i class="fa fa-check"></i></td>
+               <td>Email Us</td>
 
 
           </tr>
           <tr>
             <th>
-              Data Exporting capabilities
+              Sms API sending
             </th>
             
              <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
+                <?php
+                   echo $plan['limit_notifications']['sms'] == 0 ?  '<i class="fa fa-minus"></i>' : '<i class="fa fa-check"></i>';
+                ?> 
+                  </td>
                <?php endforeach; ?>
-               </td>
+             
                <td><i class="fa fa-check"></i></td>
 
 
           </tr>
           <tr>
             <th>
-              Quests &amp; Missions
+              Reward Store / Redeem Goods (monthly)
             </th>
             
             <?php foreach ($plans as $key => $plan): ?>
-
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  
-                  <?php if($plan['limit_others']['quest'] === 0 ): ?>
-                      <i class="fa fa-minus"></i>
-                  <?php else: ?>
-                       <?php if( !empty( $plan['limit_others']['quest'] ) ): ?>
-                            <p ><span ><?php echo $plan['limit_others']['quest']; ?><br>Quests</span></p>
-                        <?php else: ?>
-                            <p ><span >Unlimited<br>Quests</span></p>
-                        <?php endif; ?>
-                  <?php endif; ?>
-
-                <?php else: ?>
-                   
-                  <?php if($plan['limit_others']['quest'] === 0): ?>
-                      <i class="fa fa-minus"></i>
-                  <?php else: ?>
-                       <?php if( !empty( $plan['limit_others']['quest'] ) ): ?>
-                            <p ><span ><?php echo $plan['limit_others']['quest']; ?><br>Quests</span></p>
-                        <?php else: ?>
-                            <p ><span >Unlimited<br>Quests</span></p>
-                        <?php endif; ?>
-                  <?php endif; ?>
-
-               <?php endif; ?>
+                <?php
+                   echo $plan['limit_others']['redeem'] == 0 ?  '<i class="fa fa-minus"></i>' : number_format($plan['limit_others']['redeem']);
+                ?>
+                </td>
                <?php endforeach; ?>
-               </td>
-               <td><p><span >Unlimited<br>Quests</span></p>
+               
+               <td>Email Us</p>
 
           </tr>
           <tr>
             <th>
-              Rewards
+              Emails (monthly)
             </th>
             
          <?php foreach ($plans as $key => $plan): ?>
               <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-check"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
+                <?php
+                   echo $plan['limit_notifications']['email'] == 0 ?  '<i class="fa fa-minus"></i>' : number_format($plan['limit_notifications']['email']);
+                ?>
+                </td>
                <?php endforeach; ?>
-               </td>
-               <td><i class="fa fa-check"></i></td>
-
+               <td>Email Us</td>
           </tr>
           <tr>
             <th>
-              Reward Store
+              CRM
             </th>
-            
 
             <?php foreach ($plans as $key => $plan): ?>
 
               <td>
-                <?php if($plan['price'] == 0): ?>
+                  <?php 
+                 if (in_array("Audience", $plan['feature_to_plan'])){
+                     echo '<i class="fa fa-check"></i>';
+                   }else{
+                     echo '<i class="fa fa-minus"></i>';
+                   }
+                ?>
                   
-                  <?php if($plan['limit_others']['goods'] === 0 ): ?>
-                      <i class="fa fa-minus"></i>
-                  <?php else: ?>
-                       <?php if( !empty( $plan['limit_others']['goods'] ) ): ?>
-                            <p ><span ><?php echo $plan['limit_others']['goods']; ?><br>Goods</span></p>
-                        <?php else: ?>
-                            <p ><span >Unlimited<br>Goods</span></p>
-                        <?php endif; ?>
-                  <?php endif; ?>
-
-                <?php else: ?>
-                   
-                  <?php if($plan['limit_others']['goods'] === 0): ?>
-                      <i class="fa fa-minus"></i>
-                  <?php else: ?>
-                       <?php if( !empty( $plan['limit_others']['goods'] ) ): ?>
-                            <p ><span ><?php echo $plan['limit_others']['goods']; ?><br>Goods</span></p>
-                        <?php else: ?>
-                            <p ><span >Unlimited<br>Goods</span></p>
-                        <?php endif; ?>
-                  <?php endif; ?>
-
-               <?php endif; ?>
+                </td>
                <?php endforeach; ?>
-               </td>
-               <td><p><span >Unlimited<br>Goods</span></p>
+               
+               <td><i class="fa fa-check"></i></p>
 
 
            
@@ -687,37 +508,43 @@
           </tr>
           <tr>
             <th>
-              Messaging
+              Report
             </th>
             
             <?php foreach ($plans as $key => $plan): ?>
-              <td>
-                <?php if($plan['price'] == 0): ?>
-                  <i class="fa fa-minus"></i>
-                <?php else: ?>
-                    <i class="fa fa-check"></i>
-               <?php endif; ?>
+            <td>
+                  <?php 
+                 if (in_array("Report", $plan['feature_to_plan'])){
+                     echo '<i class="fa fa-check"></i>';
+                   }else{
+                     echo '<i class="fa fa-minus"></i>';
+                   }
+                ?>
+                </td>
                <?php endforeach; ?>
-               </td>
+               
                <td><i class="fa fa-check"></i></td>
 
           </tr>
           <tr>
             <th>
-              Emails
+             Insights
             </th>
 
 
             <?php foreach ($plans as $key => $plan): ?>
                  <td>
-                   <?php if($plan['price'] == 0): ?>
-                     <i class="fa fa-minus"></i>
-                   <?php else: ?>
-                       <p ><span ><?php echo $plan['limit_notifications']['email'] ?>  / Month</span></p>
-                  <?php endif; ?>
+                    <?php 
+                 if (in_array("Insights", $plan['feature_to_plan'])){
+                     echo '<i class="fa fa-check"></i>';
+                   }else{
+                     echo '<i class="fa fa-minus"></i>';
+                   }
+                ?>
+                 </td>
                   <?php endforeach; ?>
-                  </td>
-                  <td><p ><span >Unlimited / Month</span></p></td>
+                 
+                  <td><i class="fa fa-check"></i></td>
 
           </tr>
          
@@ -740,22 +567,14 @@
               <?php endforeach; ?>
 
               <td class="col-enterprise">
-                  <a href="mailto:info@playbasis.com">Call us</a>
-                </td>
+                  <a href="mailto:info@playbasis.com">Email Us</a>
+              </td>
 
           </tr>
         </tbody>
       </table>
       
     </div>
-
-
-
-
-
-
-
-
 
 
 
