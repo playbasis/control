@@ -19,6 +19,7 @@ class  MY_Controller  extends  CI_Controller  {
         $this->load->model('Player_model');
         $this->load->model('App_model');
         $this->load->model('Feature_model');
+        $this->load->model('Plan_model');
 
         $lang = get_lang($this->session, $this->config);
 
@@ -172,9 +173,7 @@ class  MY_Controller  extends  CI_Controller  {
                     }
                 }
                 $user_plan = $this->User_model->getPlan();
-                if (!array_key_exists('price', $user_plan)) {
-                    $user_plan['price'] = DEFAULT_PLAN_PRICE;
-                }
+                if (!array_key_exists('price', $user_plan)) $user_plan['price'] = DEFAULT_PLAN_PRICE;
                 $this->data['user_plan'] = $user_plan;
                 if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
                     $this->data['features'][] = array(
@@ -184,29 +183,24 @@ class  MY_Controller  extends  CI_Controller  {
                         'link' => 'sms'
                     );
                 }
+                $client = $this->Client_model->getClient($this->data['client_id']);
+                $this->data['account'] = $this->set_account($user_plan, $client);
 
                 $player_limit = $this->App_model->getPlanLimitById(
                     $this->data['site_id'],
                     $user_plan["_id"],
                     "others",
                     "player");
-
                 $usersCount = $this->Player_model->getTotalPlayers($this->data['site_id'], $this->data['client_id']);
-
                 $this->data['check_limit'] = array(
                     'limit_user' => $player_limit,
                     'total' => $usersCount
                 );
-
-                $client = $this->Client_model->getClientById($this->User_model->getClientId());
-                $this->data['user_plan_enterprise_flag'] = $user_plan['price'] <= 0 && $user_plan['_id'] != FREE_PLAN;
             }else{
                 if($this->data['client_id']){
                     // check to see if there is an associated plan, otherwise we output error no domain
                     $user_plan = $this->User_model->getPlan();
-                    if (!array_key_exists('price', $user_plan)) {
-                        $user_plan['price'] = DEFAULT_PLAN_PRICE;
-                    }
+                    if (!array_key_exists('price', $user_plan)) $user_plan['price'] = DEFAULT_PLAN_PRICE;
                     $this->data['user_plan'] = $user_plan;
                     if (!empty($user_plan)) {
                         if (array_key_exists('feature_to_plan', $user_plan)) foreach ($user_plan['feature_to_plan'] as $feature_id) {
@@ -232,7 +226,8 @@ class  MY_Controller  extends  CI_Controller  {
                     } else {
                         $this->data['check_domain_exists'] = false;
                     }
-                    $this->data['user_plan_enterprise_flag'] = $user_plan['price'] <= 0 && $user_plan['_id'] != FREE_PLAN;
+                    $client = $this->Client_model->getClient($this->data['client_id']);
+                    $this->data['account'] = $this->set_account($user_plan, $client);
                 }else{
                     // super admin
                     $features = $this->Feature_model->getFeatures();    
@@ -263,5 +258,23 @@ class  MY_Controller  extends  CI_Controller  {
             $this->load->vars($this->data);
             $this->load->view('no_domain');
         }
+    }
+
+    private function set_account($user_plan, $client) {
+        $is_free_plan = $user_plan['_id'] == FREE_PLAN;
+        $is_plan_price_gt_0 = $user_plan['price'] > 0;
+        $is_displayed_plan = in_array($user_plan['_id'], $this->Plan_model->getDisplayedPlans());
+        $client_has_date_billing = array_key_exists('date_billing', $client);
+        return array(
+            'is_free_plan' => $is_free_plan,
+            'is_paid_plan' => $is_plan_price_gt_0,
+            'is_pro_plan_pending' => !$is_free_plan && $is_plan_price_gt_0 && $is_displayed_plan && !$client_has_date_billing,
+            'is_pro_plan_paid' => !$is_free_plan && $is_plan_price_gt_0 && $is_displayed_plan && $client_has_date_billing,
+            'is_enterprise_plan_without_paypal' => !$is_free_plan && !$is_plan_price_gt_0,
+            'is_enterprise_plan_with_paypal_pending' => !$is_free_plan && $is_plan_price_gt_0 && !$is_displayed_plan && !$client_has_date_billing,
+            'is_enterprise_plan_with_paypal_paid' => !$is_free_plan && $is_plan_price_gt_0 && !$is_displayed_plan && $client_has_date_billing,
+            'is_already_subscribed' => $client_has_date_billing,
+            'is_something_wrong' => !$is_free_plan && $is_displayed_plan && !$is_plan_price_gt_0,
+        );
     }
 }

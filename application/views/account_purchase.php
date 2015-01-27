@@ -94,7 +94,8 @@
                                   </ul>
                                 </li>
                                 <li class="button">
-                                <?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose Plan</a><?php } else { ?><span class="plan-current-btn">Current Plan</span><?php } ?></li>
+                                <a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>"><?php echo ($plan['_id'] != $user_plan['_id'] ? 'Choose Plan' : 'Current Plan'); ?></a>
+                                </li>
                               </ul>
                             </li>
 
@@ -766,7 +767,7 @@
         
         $('.plan-btn').click(function(){
             $('input[name=plan]').val($(this).attr('data-plan-id'));
-            $('form#form').attr('action', '<?php echo site_url("account/".($user_plan_date_billing ? "upgrade" : "subscribe") ); ?>');
+            $('form#form').attr('action', '<?php echo site_url("account/".($account['is_already_subscribed'] ? "upgrade" : "subscribe") ); ?>');
 
             if( $(this).hasClass('free-plan-btn') ){
                 $('form#form').attr('method', 'POST');
