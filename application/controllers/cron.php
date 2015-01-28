@@ -68,15 +68,8 @@ $email = 'pechpras@playbasis.com';
 
 			/* get current associated plan of the client */
 			$myplan_id = $this->plan_model->getPlanIdByClientId($client_id); if (!$myplan_id) continue;
-			$myplan = $this->plan_model->getPlanById($myplan_id); if (!$myplan) continue;
-			if (!array_key_exists('price', $myplan)) {
-				$myplan['price'] = DEFAULT_PLAN_PRICE;
-			}
-			$free_flag = $myplan['price'] <= 0;
-
-			if ($free_flag) {
+			if ($myplan_id == FREE_PLAN) {
 				$email = $client['email'];
-$email = 'pechpras@playbasis.com';
 				$latest_sent = $this->email_model->findLatestSent(EMAIL_TYPE_NOTIFY_FREE_ACTIVE_CLIENTS, $client_id);
 				/* email should: (1) not be in black list and (2) we skip if we just recently sent this type of email, and (3) be sent more than 3 times  */
 				if (!$this->email_model->isEmailInBlackList($email) && (!$latest_sent || $this->utility->find_diff_in_days($latest_sent->sec, time()) >= DAYS_TO_SEND_ANOTHER_EMAIL) && $this->email_model->countSent(EMAIL_TYPE_NOTIFY_INACTIVE_CLIENTS, $client_id) < EMAIL_MAX_SENT) {
