@@ -66,12 +66,7 @@
                               </ul>
                             </li>
                             <li class="button">
-                            <?php if ($plan['_id'] != $user_plan['_id']) { ?>
-                              <a  href="javascript:void(0)" class="plan-btn free-plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">
-                                Choose Plan</a>
-                              <?php } else { ?>
-                                <span class="plan-current-btn">Current Plan</span>
-                              <?php } ?>
+                                <span class="plan-current-btn">Free Plan</span>
                               </li>
                           </ul>
                         </li>
@@ -154,7 +149,7 @@
 
             <?php foreach ($plans as $key => $plan): ?>
             <td>
-              <?php if($plan['price'] == 0): ?>
+              <?php if($plan['price'] <= 0): ?>
                 FREE
               <?php else: ?>
                   <?php echo $plan['price']; ?> USD
@@ -464,7 +459,7 @@
                 </td>
                <?php endforeach; ?>
                
-               <td>Email Us</p>
+               <td>Email Us</td>
 
           </tr>
           <tr>
@@ -500,7 +495,7 @@
                 </td>
                <?php endforeach; ?>
                
-               <td><i class="fa fa-check"></i></p>
+               <td><i class="fa fa-check"></i></td>
 
 
            
@@ -554,10 +549,9 @@
             </th>
 
             <?php foreach ($plans as $key => $plan): ?>
-              <?php if($plan['price'] == 0): ?>
+              <?php if($plan['price'] <= 0): ?>
                 <td class="col-try">
-                  <?php if ($plan['_id'] != $user_plan['_id']) { ?><a  href="javascript:void(0)" class="plan-btn" data-plan-id="<?php echo $plan['_id'] ?>">Choose</a><?php } else { ?><span class="plan-current-btn">Current</span><?php } ?>
-
+                  <span class="plan-current-btn">Free</span>
                 </td>
               <?php else: ?>
                   <td>
