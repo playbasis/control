@@ -112,8 +112,7 @@ class Payment_model extends MY_Model
 			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Plan Cancellation', $html);
 
 			/* change the client's plan to be a free plan */
-			$free_plan = $this->findFreePlan();
-			$this->changePlan($client, $myplan_id, $free_plan['_id']);
+			$this->changePlan($client, $myplan_id, new MongoId(FREE_PLAN));
 			log_message('info', 'Client '.$client_id.' has canceled the subscription and has been changed to free plan');
 			break;
 		default:
@@ -121,15 +120,6 @@ class Payment_model extends MY_Model
 			return false;
 		}
 		return true;
-	}
-
-	public function findFreePlan() {
-		$this->mongo_db->where('display', true);
-		$plans = $this->mongo_db->get("playbasis_plan");
-		if ($plans) foreach ($plans as $plan) {
-			if (!array_key_exists('price', $plan) || $plan['price'] == 0) return $plan;
-		}
-		return null;
 	}
 
 	public function getPlanIdByClientId($client_id) {
