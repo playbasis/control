@@ -56,9 +56,9 @@
           						<td><strong><?php echo $plan['name']; ?></strong>
           							 
 								<?php if ($plan['paid_enterprise_flag']) { ?> You are in an enterprise plan<?php } ?>
-								<?php if (!$plan['paid_enterprise_flag'] && $plan['free_flag']) { ?> You are in a free plan, please <a href="#" class="btn btn-success btn-mini">Upgrade Now</a><?php } ?>
+								<?php if (!$plan['paid_enterprise_flag'] && $plan['free_flag']) { ?> You are in a free plan, please <a href="<?php echo current_url();?>/subscribe" class="btn btn-success btn-mini">Upgrade Now</a><?php } ?>
 
-								<?php if ($plan['paid_flag'] && !$client['date_billing']) { ?> Before start using our service, please <a href="<?php echo current_url();?>/subscribe" class="btn btn-primary"><?php echo $this->lang->line('button_setup_payment_detail'); ?></a><?php } ?>
+								<?php if ($plan['paid_flag'] && !$client['date_billing']) { ?> Before start using our service, please <a href="<?php echo current_url();?>/pay" class="btn btn-primary"><?php echo $this->lang->line('button_setup_payment_detail'); ?></a><?php } ?>
                 
 								<?php if ($client['date_billing'] && !$plan['free_flag']) { ?>
 								<a href="<?php echo current_url();?>/changeplan" class="btn btn-default btn-mini">Change Plan</a>

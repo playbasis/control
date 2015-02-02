@@ -283,6 +283,46 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
+	public function pay() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+			die();
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+		$this->data['message'] = null;
+
+		$ci =& get_instance();
+
+		$selected_plan = $this->User_model->getPlan();
+		if (!array_key_exists('price', $selected_plan)) $selected_plan['price'] = DEFAULT_PLAN_PRICE;
+
+		$plan_free_flag = $selected_plan['price'] <= 0;
+		$date_today = time();
+		$days_total = array_key_exists('limit_others', $selected_plan) && array_key_exists('trial', $selected_plan['limit_others']) ? $selected_plan['limit_others']['trial'] : DEFAULT_TRIAL_DAYS;
+		$date_trial_end = strtotime("+".$days_total." day", $date_today);
+		$trial_days = $plan_free_flag ? 0 : $this->find_diff_in_days($date_today, $date_trial_end); // free account would not get trial days when they decide to subscribe
+
+		/* set the parameters for PayPal */
+		$this->data['params'] = array(
+			'plan_id' => $selected_plan['_id'],
+			'plan_name' => $selected_plan['name'],
+			'price' => $selected_plan['price'],
+			'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
+			'callback' => $ci->config->config['server'].'notification',
+			'modify' => false,
+		);
+
+		$this->data['heading_title'] = $this->lang->line('order_title');
+		$this->data['main'] = 'account_purchase_paypal';
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
 	public function cancel_subscription() {
 
 		if(!$this->validateAccess()){
