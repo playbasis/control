@@ -19,7 +19,7 @@ class Domain_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('domain_name', $regex);
         }
 
@@ -39,7 +39,7 @@ class Domain_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('domain_name', $regex);
         }
 
@@ -101,7 +101,7 @@ class Domain_model extends MY_Model
         $this->mongo_db->where('deleted', false);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('domain_name', $regex);
         }
 
@@ -120,7 +120,7 @@ class Domain_model extends MY_Model
         $this->mongo_db->where('deleted', false);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('domain_name', $regex);
         }
 

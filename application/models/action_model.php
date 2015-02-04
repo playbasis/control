@@ -20,7 +20,7 @@ class Action_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -75,7 +75,7 @@ class Action_model extends MY_Model
         if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
             $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-            $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
             $this->mongo_db->where('username', $regex);
             $users1 = $this->mongo_db->get("playbasis_player");
 
@@ -122,7 +122,7 @@ class Action_model extends MY_Model
          $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 
          if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-             $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+             $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
              $this->mongo_db->where('name', $regex);
          }
 
@@ -185,7 +185,7 @@ class Action_model extends MY_Model
         $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -217,7 +217,7 @@ class Action_model extends MY_Model
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -267,7 +267,7 @@ class Action_model extends MY_Model
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -284,7 +284,7 @@ class Action_model extends MY_Model
         if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
             $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-            $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
             $this->mongo_db->where('username', $regex);
             $users1 = $this->mongo_db->get("playbasis_player");
 
@@ -619,7 +619,8 @@ class Action_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         if(isset($data['username']) && $data['username'] != null){
-            $this->mongo_db->where('username', $data['username']);
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
+            $this->mongo_db->where('username', $regex);
             $player_info = $this->mongo_db->get('playbasis_player');
             $player_id = ($player_info)?$player_info[0]['_id']:null;
         }

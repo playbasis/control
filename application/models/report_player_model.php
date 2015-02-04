@@ -13,7 +13,7 @@ class Report_player_model extends MY_Model{
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
 		if (isset($data['username']) && $data['username'] != '') {
-            $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
             $this->mongo_db->where('username', $regex);
         }
 
@@ -24,9 +24,7 @@ class Report_player_model extends MY_Model{
         $result = $this->mongo_db->count('playbasis_player');
 
         return $result;
-
 	}
-
 
 	public function getReportPlayers($data){
 
@@ -37,7 +35,7 @@ class Report_player_model extends MY_Model{
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
 		if (isset($data['username']) && $data['username'] != '') {
-            $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
             $this->mongo_db->or_where(array('username' => $regex, 'email' => $data['username']));
         }
 
@@ -65,7 +63,6 @@ class Report_player_model extends MY_Model{
         $result = $this->mongo_db->get("playbasis_player");
 
         return $result;
-
 	}
 
     public function getAllSitesFromClient($client_id){
@@ -75,7 +72,5 @@ class Report_player_model extends MY_Model{
         $this->mongo_db->where('status', true);
 
         return $this->mongo_db->get('playbasis_client_site');
-
     }
-
 }

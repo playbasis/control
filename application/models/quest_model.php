@@ -25,7 +25,7 @@ class Quest_model extends MY_Model{
 		$this->mongo_db->order_by(array('sort_order' => 1));
 
 		if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-		    $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+		    $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
 		    $this->mongo_db->where('quest_name', $regex);
 		}
 

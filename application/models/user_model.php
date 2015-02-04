@@ -117,7 +117,7 @@ class User_model extends MY_Model
     public function insertUser(){
         $this->set_site_mongodb($this->site_id);
 
-        $regex = new MongoRegex("/^".preg_quote($this->input->post('email'))."$/i");
+        $regex = new MongoRegex("/^".preg_quote(utf8_strtolower($this->input->post('email')))."$/i");
         $this->mongo_db->where('username', $regex);
 
         if($this->mongo_db->count('user')==0){
@@ -249,7 +249,7 @@ class User_model extends MY_Model
         $this->set_site_mongodb($this->site_id);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('username', $regex);
         }
 
