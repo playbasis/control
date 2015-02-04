@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
+
+define('MAX_UPLOADED_FILE_SIZE', 3*1024*1024);
+
 class FileManager extends MY_Controller
 {
     public function __construct()
@@ -427,7 +430,7 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
-                if ($_FILES['image']['size'] > 300000) {
+                if ($_FILES['image']['size'] > MAX_UPLOADED_FILE_SIZE) {
                     $json['error'] = $this->lang->line('error_file_size');
                 }
 
@@ -505,7 +508,7 @@ class FileManager extends MY_Controller
                     $json['error'] = $this->lang->line('error_directory');
                 }
 
-                if ($_FILES['image']['size'] > 300000) {
+                if ($_FILES['image']['size'] > MAX_UPLOADED_FILE_SIZE) {
                     $json['error'] = $this->lang->line('error_file_size');
                 }
 
