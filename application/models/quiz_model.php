@@ -29,6 +29,7 @@ class Quiz_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array(),array('client_id','site_id','date_added','date_modified'));
         $this->mongo_db->where('_id', $quiz_id);
+        $this->mongo_db->where('site_id', $site_id);
         $results = $this->mongo_db->get('playbasis_quiz_to_client');
 
         return $results ? $results[0] : null;
@@ -40,6 +41,7 @@ class Quiz_model extends MY_Model
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('quiz_id', $quiz_id);
         $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_quiz_to_player');
 
         return $results ? $results[0] : null;
