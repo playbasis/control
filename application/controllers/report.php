@@ -25,6 +25,8 @@ define('ITEM_DATE_NOT_CONFIG', 'Not Set');
 define('ITEM_QTY_NOT_CONFIG', 'Inf.');
 define('REPORT_DATE_FORMAT', 'd M Y');
 
+define('PERCENT_UPDOWN_HIGH', 0.5);
+
 class Report extends CI_Controller
 {
     public function __construct()
@@ -368,7 +370,7 @@ class Report extends CI_Controller
 			$prefix.'TOTAL_PREV' => number_format($prev_val),
 			$prefix.'TOTAL_NUM' => $curr_val,
 			$prefix.'TOTAL_PREV_NUM' => $prev_val,
-			$prefix.'UPDOWN' => ($prev_val != 0 ? '<img src="'.$conf['static_image_url'].'/images/icon-'.($prev_val <= $curr_val ? 'up' : 'down').'.gif">' : ($curr_val != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
+			$prefix.'UPDOWN' => ($prev_val != 0 ? '<img src="'.$conf['static_image_url'].'/images/icon-'.($prev_val <= $curr_val ? 'up' : 'down').($prev_val*PERCENT_UPDOWN_HIGH <= $curr_val && $curr_val <= (1+PERCENT_UPDOWN_HIGH)*$prev_val ? '1' : '2').'.gif">' : ($curr_val != 0 ? '<span style="background-color:#95cc00;border-radius:4px;color:#fff;font-size:10px;padding:3px 5px">New</span>' : '')),
 			$prefix.'PERCENT' => ($prev_val != 0 || $curr_val != 0 ? '<strong style="font-size:12px;color:'.($prev_val <= $curr_val ? '#95cc00' : 'red').'">'.number_format(($prev_val != 0 ? ($curr_val - $prev_val)/(1.0*$prev_val) : 1)*100, 2).'%</strong>' : ''),
 			$prefix.'AVERAGE' => number_format($curr_val/7.0, 2),
 			$prefix.'AVERAGE_PREV' => number_format($prev_val/7.0, 2),
