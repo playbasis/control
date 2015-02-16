@@ -55,7 +55,7 @@ class Email extends MY_Controller
         $this->data['form'] = 'email/insert';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|xss_clean|max_length[1000]');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|xss_clean|max_length[30000]');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -99,7 +99,6 @@ class Email extends MY_Controller
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
-
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -107,10 +106,9 @@ class Email extends MY_Controller
             }
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
-               
-               
-                if ($this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
-
+                $c = $this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'));
+                $info = $this->Email_model->getTemplate($template_id);
+                if ($c === 0 || ($c === 1 && $info && $info['name'] == $this->input->post('name'))) {
                     $success = $this->Email_model->editTemplate($template_id, array_merge($this->input->post(), array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
