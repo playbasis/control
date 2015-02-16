@@ -79,9 +79,11 @@ class Email extends MY_Controller
                         redirect('/email', 'refresh');
                     } else {
                         $this->session->set_flashdata('fail', $this->lang->line('error_insert'));
+                        $this->data['message'] = $this->lang->line('error_insert');
                     }
                 } else {
                     $this->session->set_flashdata('fail', $this->lang->line('error_name_is_used'));
+                    $this->data['message'] = $this->lang->line('error_name_is_used');
                 }
             }
         }
@@ -122,9 +124,11 @@ class Email extends MY_Controller
                         redirect('/email', 'refresh');
                     } else {
                         $this->session->set_flashdata('fail', $this->lang->line('error_update'));
+                        $this->data['message'] = $this->lang->line('error_update');
                     }
                 } else {
                     $this->session->set_flashdata('fail', $this->lang->line('error_name_is_used'));
+                    $this->data['message'] = $this->lang->line('error_name_is_used');
                 }
             }
         }
