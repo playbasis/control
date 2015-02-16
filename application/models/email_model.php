@@ -10,6 +10,15 @@ class Email_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
+    public function getTemplateByName($site_id, $name){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->count("playbasis_email_to_client");
+    }
+
     public function listTemplatesBySiteId($site_id, $data = array()) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
