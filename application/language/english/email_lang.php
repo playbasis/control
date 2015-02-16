@@ -17,14 +17,14 @@ $lang['tab_colection']					= 'Collection';
 $lang['tab_assign']					= 'Assign';
 
 // Column
-$lang['column_name']            		= 'Name';
+$lang['column_name']            		= 'Template ID';
 $lang['column_body']            		= 'Body';
 $lang['column_sort_order']      		= 'Sort Order';
 $lang['column_status']          		= 'Status';
 $lang['column_action']          		= 'Action';
 
 // Entry
-$lang['entry_name']             		= 'Name';
+$lang['entry_name']             		= 'Template ID';
 $lang['entry_body']				= 'Message Body';
 $lang['entry_sort_order']           	= 'Sort Order';
 $lang['entry_status']         			= 'Status';
@@ -36,4 +36,5 @@ $lang['error_access']			= 'Warning: You do not have permission to access this pa
 $lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
 $lang['error_insert']            = 'Cannot insert a new template.';
 $lang['error_update']            = 'Cannot update the template.';
+$lang['error_name_is_used']            = 'Cannot update the template.';
 ?>

@@ -67,17 +67,21 @@ class Email extends MY_Controller
             }
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
-                $template_id = $this->Email_model->addTemplate(array_merge($this->input->post(), array(
-                    'client_id' => $this->User_model->getClientId(),
-                    'site_id' => $this->User_model->getSiteId(),
-                )));
+                if (!$this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
+                    $template_id = $this->Email_model->addTemplate(array_merge($this->input->post(), array(
+                        'client_id' => $this->User_model->getClientId(),
+                        'site_id' => $this->User_model->getSiteId(),
+                    )));
 
-                if ($template_id) {
-                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    if ($template_id) {
+                        $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                        redirect('/email', 'refresh');
+                    } else {
+                        $this->session->set_flashdata('fail', $this->lang->line('error_insert'));
+                    }
                 } else {
-                    $this->session->set_flashdata('fail', $this->lang->line('error_insert'));
+                    $this->session->set_flashdata('fail', $this->lang->line('error_name_is_used'));
                 }
-                redirect('/email', 'refresh');
             }
         }
         $this->getForm();
@@ -102,17 +106,21 @@ class Email extends MY_Controller
             }
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
-                $success = $this->Email_model->editTemplate($template_id, array_merge($this->input->post(), array(
-                    'client_id' => $this->User_model->getClientId(),
-                    'site_id' => $this->User_model->getSiteId(),
-                )));
+                if (!$this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
+                    $success = $this->Email_model->editTemplate($template_id, array_merge($this->input->post(), array(
+                        'client_id' => $this->User_model->getClientId(),
+                        'site_id' => $this->User_model->getSiteId(),
+                    )));
 
-                if ($success) {
-                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                    if ($success) {
+                        $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                        redirect('/email', 'refresh');
+                    } else {
+                        $this->session->set_flashdata('fail', $this->lang->line('error_update'));
+                    }
                 } else {
-                    $this->session->set_flashdata('fail', $this->lang->line('error_update'));
+                    $this->session->set_flashdata('fail', $this->lang->line('error_name_is_used'));
                 }
-                redirect('/email', 'refresh');
             }
         }
         $this->getForm($template_id);

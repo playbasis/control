@@ -10,17 +10,17 @@ class Email_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function listTemplatesBySiteId($site_id, $data = array()) {
+    public function getTemplateByName($site_id, $name){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
-            $this->mongo_db->where('name', $regex);
-        }
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->count("playbasis_email_to_client");
+    }
 
-        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-            $this->mongo_db->where('status', (bool)$data['filter_status']);
-        }
+    public function listTemplatesBySiteId($site_id, $data = array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $sort_data = array(
             '_id',
@@ -28,13 +28,17 @@ class Email_model extends MY_Model
             'status',
             'sort_order'
         );
-
+        $order = 1;
         if (isset($data['order']) && (utf8_strtolower($data['order']) == 'desc')) {
             $order = -1;
-        } else {
-            $order = 1;
         }
-
+        if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $this->mongo_db->where('name', $regex);
+        }
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
         if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
             $this->mongo_db->order_by(array($data['sort'] => $order));
         } else {
@@ -42,23 +46,15 @@ class Email_model extends MY_Model
         }
 
         if (isset($data['start']) || isset($data['limit'])) {
-            if ($data['start'] < 0) {
-                $data['start'] = 0;
-            }
-
-            if ($data['limit'] < 1) {
-                $data['limit'] = 20;
-            }
-
+            if ($data['start'] < 0) $data['start'] = 0;
+            if ($data['limit'] < 1) $data['limit'] = 20;
             $this->mongo_db->limit((int)$data['limit']);
             $this->mongo_db->offset((int)$data['start']);
         }
 
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('site_id', new MongoID($site_id));
-        $results = $this->mongo_db->get("playbasis_email_to_client");
-
-        return $results;
+        return $this->mongo_db->get("playbasis_email_to_client");
     }
 
     public function getTotalTemplatesBySiteId($site_id, $data) {
@@ -68,7 +64,6 @@ class Email_model extends MY_Model
             $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('name', $regex);
         }
-
         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
             $this->mongo_db->where('status', (bool)$data['filter_status']);
         }
@@ -99,18 +94,16 @@ class Email_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $templates = $this->mongo_db->get("playbasis_email_to_client");
-        if ($templates) {
-            $this->mongo_db->set("name", $data["name"]);
-            $this->mongo_db->set('client_id', new MongoID($data['client_id']));
-            $this->mongo_db->set('site_id', new MongoID($data['site_id']));
-            $this->mongo_db->set('status', (bool)$data['status']);
-            $this->mongo_db->set('sort_order', (int)$data['sort_order']);
-            $this->mongo_db->set('body', $data['body']);
-            $this->mongo_db->set("date_modified", new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-            $this->mongo_db->update('playbasis_email_to_client');
-        } else {
-            return false;
-        }
+        if (!$templates) return false;
+
+        $this->mongo_db->set("name", $data["name"]);
+        $this->mongo_db->set('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->set('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->set('status', (bool)$data['status']);
+        $this->mongo_db->set('sort_order', (int)$data['sort_order']);
+        $this->mongo_db->set('body', $data['body']);
+        $this->mongo_db->set("date_modified", new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->update('playbasis_email_to_client');
         return true;
     }
 
@@ -118,10 +111,15 @@ class Email_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($template_id));
+        $templates = $this->mongo_db->get("playbasis_email_to_client");
+        if (!$templates) return false;
+
+        $this->mongo_db->where('_id', new MongoID($template_id));
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
         $this->mongo_db->set('deleted', true);
         $this->mongo_db->set('status', false);
         $this->mongo_db->update('playbasis_email_to_client');
+        return true;
     }
 
     public function increaseSortOrder($template_id){
@@ -129,7 +127,6 @@ class Email_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $templates = $this->mongo_db->get('playbasis_email_to_client');
-
         if (!$templates) return false;
 
         $this->mongo_db->where('_id', new MongoID($template_id));
@@ -143,7 +140,6 @@ class Email_model extends MY_Model
 
         $this->mongo_db->where('_id', new MongoID($template_id));
         $templates = $this->mongo_db->get('playbasis_email_to_client');
-
         if (!$templates || $templates[0]['sort_order'] <= 0) return false;
 
         $this->mongo_db->where('_id', new MongoID($template_id));
