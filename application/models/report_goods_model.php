@@ -19,7 +19,7 @@ class Report_goods_model extends MY_Model{
 		if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
             $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-            $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
             $this->mongo_db->where('username', $regex);
             $users1 = $this->mongo_db->get("playbasis_player");
 
@@ -66,7 +66,7 @@ class Report_goods_model extends MY_Model{
 		if (isset($data['username']) && $data['username'] != '') {
             $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
             $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
-            $regex = new MongoRegex("/".utf8_strtolower($data['username'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['username']))."/i");
             $this->mongo_db->where('username', $regex);
             $users1 = $this->mongo_db->get("playbasis_player");
 

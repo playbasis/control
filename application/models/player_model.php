@@ -1152,7 +1152,7 @@ class Player_model extends MY_Model
         $this->benchmark->mark('isotope_filter_end');
         //echo "isotope_filter".$this->benchmark->elapsed_time('isotope_filter_start', 'isotope_filter_end');
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('first_name', $regex);
         }
 
@@ -1258,7 +1258,7 @@ class Player_model extends MY_Model
         $res = $this->filterMongoPlayer($data);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('first_name', $regex);
         }
 

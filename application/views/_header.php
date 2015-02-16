@@ -177,7 +177,7 @@ if (isset($username)) {
 
         <?php if (isset($username)) { ?>
             <ul class="nav pull-right">
-                <!--li><?php if (isset($user_plan) && $user_plan['price'] <= 0 && !$user_plan_enterprise_flag) { ?><a href="<?php echo site_url(); ?>/account/subscribe"  class="header-upgrade-btn">Upgrade Now</a><?php } ?></li-->
+                <!--li><?php if (isset($account) && $account['is_free_plan']) { ?><a href="<?php echo site_url(); ?>/account/subscribe"  class="header-upgrade-btn">Upgrade Now</a><?php } ?></li-->
 
                 <li class="dropdown">
                     <?php

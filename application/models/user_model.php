@@ -117,7 +117,8 @@ class User_model extends MY_Model
     public function insertUser(){
         $this->set_site_mongodb($this->site_id);
 
-        $this->mongo_db->where('username', $this->input->post('email'));
+        $regex = new MongoRegex("/^".preg_quote(utf8_strtolower($this->input->post('email')))."$/i");
+        $this->mongo_db->where('username', $regex);
 
         if($this->mongo_db->count('user')==0){
             if($this->input->post('user_group')){
@@ -166,14 +167,14 @@ class User_model extends MY_Model
                 'firstname' => $firstname,
                 'lastname' => $lastname,
                 'email' => $email,
-                'code' =>"",
+                'code' => "",
                 'ip' => $ip,
                 'status' => $status,
                 'database' => "core",
                 'date_added' => $date_added,
                 'random_key' => $random_key,
                 'password_key'=> null
-                );
+            );
 
             $this->load->library('parser');
             $this->load->library('email');
@@ -184,7 +185,7 @@ class User_model extends MY_Model
                 'password' => $insert_password,
                 'key' => $random_key,
                 'url'=> site_url('enable_user/?key='),
-                'base_url' =>site_url()
+                'base_url' => site_url()
             );
 
             if($insert_password == DEFAULT_PASSWORD){
@@ -199,8 +200,6 @@ class User_model extends MY_Model
         }else{
             return false;
         }
-
-        
     }
 
     private function email($to, $subject, $message) {
@@ -250,13 +249,13 @@ class User_model extends MY_Model
         $this->set_site_mongodb($this->site_id);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".utf8_strtolower($data['filter_name'])."/i");
+            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
             $this->mongo_db->where('username', $regex);
         }
 
-         if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
-             $this->mongo_db->where('status', (bool)$data['filter_status']);
-         }
+        if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+            $this->mongo_db->where('status', (bool)$data['filter_status']);
+        }
 
         if (isset($data['start']) || isset($data['limit'])) {
             if ($data['start'] < 0) {
@@ -371,17 +370,18 @@ class User_model extends MY_Model
     }
 
     public function login($u, $p){
-
         $this->set_site_mongodb(0);
         $this->mongo_db->select(array('salt'));
-        $this->mongo_db->where('username', db_clean($u, 255));
+        $regex = array('$regex' => new MongoRegex("/^".preg_quote(db_clean($u, 255))."$/i"));
+        $this->mongo_db->where('username', $regex);
         $this->mongo_db->limit(1);
         $Q = $this->mongo_db->get('user');
+
         if (count($Q) > 0) {
             $row = $Q[0];
 
             $this->mongo_db->select(array('_id','user_id','username','user_group_id','database','ip'));
-            $this->mongo_db->where('username', db_clean($u, 255));
+            $this->mongo_db->where('username', $regex);
             $this->mongo_db->where('password', db_clean(dohash($p, $row['salt']), 40));
             $this->mongo_db->where('status', true);
             $this->mongo_db->limit(1);
@@ -394,7 +394,7 @@ class User_model extends MY_Model
                 $data = array('salt' => db_clean($salt, 40),
                     'password' => db_clean(dohash($p, $salt), 40)
                 );
-                $this->mongo_db->where('username', db_clean($u, 255));
+                $this->mongo_db->where('username', $regex);
                 $this->mongo_db->set('last_login', date('Y-m-d H:i:s'));
                 $this->mongo_db->set($data);
                 $this->mongo_db->update('user');
