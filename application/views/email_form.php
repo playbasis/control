@@ -44,7 +44,38 @@
                             </tr>
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_body'); ?>:</td>
-                                <td><textarea name="body" id="body"><?php echo isset($body) ? $body : set_value('body'); ?></textarea></td>
+                                <td>
+                                    <div class="row">
+                                        <div class="span9">
+                                            <textarea name="body" id="body"><?php echo isset($body) ? $body : set_value('body'); ?></textarea>    
+                                        </div>
+                                        <div class="span3">
+                                            <h4> Code</h4>
+                                            <table cellpadding="5">
+                                                <tbody>
+                                                    <tr>
+                                                        <td width="50%" align="right"><small>Player First Name:</small></td>
+                                                        <td>{{first_name}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Player Last Name:</small></td>
+                                                        <td>{{last_name}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Player Email:</small></td>
+                                                        <td>{{email}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Coupon Code:</small></td>
+                                                        <td>{{code}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                        
+
+                                </td>
                             </tr>
                             <tr>
                                 <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
