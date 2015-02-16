@@ -38,30 +38,25 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (isset($emails)) { ?>
-                            <?php foreach ($emails as $email) { ?>
+                            <?php if (isset($templates)) { ?>
+                            <?php foreach ($templates as $email) { ?>
                             <tr <?php if (isset($email["is_template"]) && $email["is_template"]) {?> class="email_template" <?php } ?>>
                                 <td style="text-align: center;">
                                     <?php if ($email['selected']) { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $email['email_id']; ?>" checked="checked" />
+                                        <input type="checkbox" name="selected[]" value="<?php echo $email['_id']; ?>" checked="checked" />
                                     <?php } else { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $email['email_id']; ?>" />
+                                        <input type="checkbox" name="selected[]" value="<?php echo $email['_id']; ?>" />
                                     <?php } ?>
                                 </td>
                                 <td class="left"><?php echo $email['name']; ?></td>
-                                <td class="left"><?php echo $email['body']; ?></td>
+                                <td class="left"><?php echo $email['body']; ?>  </td>
                                 <td class="left"><?php echo ($email['status'])? "Enabled" : "Disabled"; ?></td>
                                 <td class="right"><?php echo $email['sort_order']; ?></td>
                                 <td class="right">
-                                    <?php if(!$client_id){?>
-                                        [ <?php echo anchor('email/update/'.$email['email_id'], 'Edit'); ?> ]
-                                    <?php }else{?>
-                                        <?php if(!(isset($email['sponsor']) && $email['sponsor'])){?> 
-                                            [ <?php echo anchor('email/update/'.$email['email_id'], 'Edit'); ?> ]
-                                        <?php }?>
-                                    <?php }?>
-                                    <?php echo anchor('email/increase_order/'.$email['email_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$email['email_id'], 'style'=>'text-decoration:none'));?>
-                                    <?php echo anchor('email/decrease_order/'.$email['email_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$email['email_id'], 'style'=>'text-decoration:none' ));?>
+                                    
+                                    [ <?php echo anchor('email/update/'.$email['_id'], 'Edit'); ?> ]
+                                    <?php echo anchor('email/increase_order/'.$email['_id'], '<i class="icon-chevron-down icon-large"></i>', array('class'=>'push_down', 'alt'=>$email['_id'], 'style'=>'text-decoration:none'));?>
+                                    <?php echo anchor('email/decrease_order/'.$email['_id'], '<i class="icon-chevron-up icon-large"></i>', array('class'=>'push_up', 'alt'=>$email['_id'], 'style'=>'text-decoration:none' ));?>
                                 </td>
                             </tr>
                                 <?php } ?>

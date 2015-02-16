@@ -12,7 +12,6 @@ class Email extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Badge_model');
         $this->load->model('Email_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -88,6 +87,7 @@ class Email extends MY_Controller
     }
 
     public function update($template_id) {
+
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -95,10 +95,11 @@ class Email extends MY_Controller
         $this->data['form'] = 'email/update/'.$template_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|xss_clean|max_length[1000]');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|xss_clean|max_length[9000]');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
+
             $this->data['message'] = null;
 
             if (!$this->validateModify()) {
@@ -106,13 +107,17 @@ class Email extends MY_Controller
             }
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
-                if (!$this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
+               
+               
+                if ($this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
+
                     $success = $this->Email_model->editTemplate($template_id, array_merge($this->input->post(), array(
                         'client_id' => $this->User_model->getClientId(),
                         'site_id' => $this->User_model->getSiteId(),
                     )));
 
                     if ($success) {
+
                         $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
                         redirect('/email', 'refresh');
                     } else {
@@ -154,11 +159,7 @@ class Email extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('badge/page');
-
-        $this->load->model('Badge_model');
-        $this->load->model('Image_model');
-        $this->load->model('Reward_model');
+        $config['base_url'] = site_url('email/page');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();

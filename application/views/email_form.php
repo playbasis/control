@@ -14,7 +14,9 @@
                 <div class="warning"><?php echo $this->session->flashdata('limit_reached'); ?></div>
                 </div>
             <?php }?>
-            <div id="tabs" class="htabs"><a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a><a href="#tab-data"><?php echo $this->lang->line('tab_data'); ?></a></div>
+            <div id="tabs" class="htabs">
+                <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
+            </div>
             <?php
             if(validation_errors() || isset($message)) {
                 ?>
@@ -42,94 +44,28 @@
                             </tr>
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_body'); ?>:</td>
-                                <td><textarea name="body" id="body"><?php echo isset($description) ? $description : set_value('body'); ?></textarea></td>
+                                <td><textarea name="body" id="body"><?php echo isset($body) ? $body : set_value('body'); ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
+                                <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
+                            </tr>
+                            <tr>
+                                <td><?php echo $this->lang->line('entry_status'); ?></td>
+                                <td><select name="status">
+                                    <?php if ($status) { ?>
+                                    <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } else { ?>
+                                    <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
+                                    <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
+                                    <?php } ?>
+                                </select></td>
                             </tr>
                         </table>
 
                 </div>
-                <div id="tab-data">
-                    <table class="form">
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_image'); ?>:</td>
-                            <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                                <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />
-                                <br /><a onclick="image_upload('image', 'thumb');"><?php echo $this->lang->line('text_browse'); ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $this->lang->line('no_image'); ?>'); $('#image').attr('value', '');"><?php echo $this->lang->line('text_clear'); ?></a></div></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_quantity'); ?>:</td>
-                            <td><input type="text" name="quantity" value="<?php echo isset($quantity) ? $quantity : set_value('quantity'); ?>" size="5" /></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_stackable'); ?>:</td>
-                            <td><select name="stackable">
-                                <?php if ($stackable || set_value('stackable')==1) { ?>
-                                <?php //if (set_value('stackable')==1) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_substract'); ?>:</td>
-                            <td><select name="substract">
-                                <?php if ($substract || set_value('substract')==1) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_sort_order'); ?>:</td>
-                            <td><input type="text" name="sort_order" value="<?php echo isset($sort_order) ? $sort_order : set_value('sort_order'); ?>" size="1" /></td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_claim'); ?></td>
-                            <td>
-                                <select name="claim">
-                                    <?php if ($claim || set_value('claim')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_redeem'); ?></td>
-                            <td>
-                                <select name="redeem">
-                                    <?php if ($redeem || set_value('redeem')==1) { ?>
-                                        <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } else { ?>
-                                        <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                        <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                    <?php } ?>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><?php echo $this->lang->line('entry_status'); ?></td>
-                            <td><select name="status">
-                                <?php if ($status) { ?>
-                                <option value="1" selected="selected"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } else { ?>
-                                <option value="1"><?php echo $this->lang->line('text_enabled'); ?></option>
-                                <option value="0" selected="selected"><?php echo $this->lang->line('text_disabled'); ?></option>
-                                <?php } ?>
-                            </select></td>
-                        </tr>
-                    </table>
-                </div>
+                
             <?php
             echo form_close();
             ?>
@@ -182,11 +118,3 @@ $('#tabs a').tabs();
 $('#languages a').tabs();
 //--></script>
 
-
-<script type="text/javascript">
-
-$("#sponsor").hover(function (){
-
-});
-
-</script>
