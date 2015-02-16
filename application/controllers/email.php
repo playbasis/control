@@ -61,11 +61,14 @@ class Email extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->data['message'] = null;
 
+          
+
             if (!$this->validateModify()) {
                     $this->data['message'] = $this->lang->line('error_permission');
             }
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
+
                 if (!$this->Email_model->getTemplateByName($this->User_model->getSiteId(), $this->input->post('name'))) {
                     $template_id = $this->Email_model->addTemplate(array_merge($this->input->post(), array(
                         'client_id' => $this->User_model->getClientId(),
@@ -83,6 +86,7 @@ class Email extends MY_Controller
                 }
             }
         }
+       
         $this->getForm();
     }
 
@@ -100,7 +104,7 @@ class Email extends MY_Controller
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
             $this->data['message'] = null;
-
+            
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
@@ -254,7 +258,7 @@ class Email extends MY_Controller
         }
 
         if ($this->input->post('body')) {
-            $this->data['body'] = htmlentities($this->input->post('body'));
+            $this->data['body'] = $this->input->post('body');
         } elseif (!empty($info)) {
             $this->data['body'] = htmlentities($info['body']);
         } else {

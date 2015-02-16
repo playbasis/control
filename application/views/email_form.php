@@ -14,6 +14,7 @@
                 <div class="warning"><?php echo $this->session->flashdata('limit_reached'); ?></div>
                 </div>
             <?php }?>
+
             <div id="tabs" class="htabs">
                 <a href="#tab-general"><?php echo $this->lang->line('tab_general'); ?></a>
             </div>
