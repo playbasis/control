@@ -8,7 +8,7 @@
 
                 <?php
                 $attributes = array('id' => 'form_sms');
-                echo form_open('sms',$attributes);
+                echo form_open('sms/setup',$attributes);
                 ?>
                 <table class="form">
                     <tr>

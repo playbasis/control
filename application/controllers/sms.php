@@ -30,6 +30,10 @@ class Sms extends MY_Controller
     }
 
     public function index() {
+        $this->setup();
+    }
+
+    public function setup() {
 
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
