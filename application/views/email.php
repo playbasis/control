@@ -38,7 +38,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <?php if (isset($templates)) { ?>
+                            <?php if (!empty($templates)) { ?>
                             <?php foreach ($templates as $email) { ?>
                             <tr <?php if (isset($email["is_template"]) && $email["is_template"]) {?> class="email_template" <?php } ?>>
                                 <td style="text-align: center;">
