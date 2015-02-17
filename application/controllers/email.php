@@ -17,6 +17,7 @@ class Email extends MY_Controller
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("email", $lang['folder']);
+        $this->lang->load("form_validation", $lang['folder']);
     }
 
     public function index() {
