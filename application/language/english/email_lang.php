@@ -12,10 +12,6 @@ $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
 $lang['text_no_results']				= 'You do not have any template created';
 
-// Tab
-$lang['tab_colection']					= 'Collection';
-$lang['tab_assign']					= 'Assign';
-
 // Column
 $lang['column_name']            		= 'Template ID';
 $lang['column_body']            		= 'Body';
