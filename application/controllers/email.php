@@ -56,7 +56,7 @@ class Email extends MY_Controller
         $this->data['form'] = 'email/insert';
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|max_length[30000]');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|max_length[30000]');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -101,7 +101,7 @@ class Email extends MY_Controller
         $this->data['form'] = 'email/update/'.$template_id;
 
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
-        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|max_length[30000]');
+        $this->form_validation->set_rules('body', $this->lang->line('entry_body'), 'trim|required|max_length[30000]');
         $this->form_validation->set_rules('sort_order', $this->lang->line('entry_sort_order'), 'numeric|trim|xss_clean|check_space|greater_than[-1]|less_than[2147483647]');
 
         if (($_SERVER['REQUEST_METHOD'] === 'POST')) {
