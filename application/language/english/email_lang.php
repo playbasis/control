@@ -36,5 +36,5 @@ $lang['error_access']			= 'Warning: You do not have permission to access this pa
 $lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
 $lang['error_insert']            = 'Cannot insert a new template.';
 $lang['error_update']            = 'Cannot update the template.';
-$lang['error_name_is_used']            = 'Cannot update the template.';
+$lang['error_name_is_used']            = 'This template ID is already in use.';
 ?>
