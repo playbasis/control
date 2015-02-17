@@ -158,7 +158,7 @@ class Email extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset) {
+    private function getList($offset, $ajax=false) {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
@@ -242,7 +242,11 @@ class Email extends MY_Controller
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
-        $this->render_page('template');
+        $this->render_page($ajax ? 'email_ajax' : 'template');
+    }
+
+    public function getListForAjax($offset) {
+        $this->getList($offset, true);
     }
 
     private function getForm($template_id=null) {
