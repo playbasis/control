@@ -37,6 +37,8 @@ class Rule extends MY_Controller
         include('action_data_log.php');
 
         $this->load->model('Badge_model');
+        $this->load->model('Email_model');
+        $this->load->model('Sms_model');
 
         $s_siteId = $this->User_model->getSiteId();
         $s_clientId = $this->User_model->getClientId();
@@ -63,17 +65,23 @@ class Rule extends MY_Controller
         $this->data['conditionList'] = json_encode(array());
         $this->data['rewardList'] = json_encode(array());
         $this->data['feedbackList'] = json_encode(array());
+        $this->data['emailList'] = json_encode(array());
+        $this->data['smsList'] = json_encode(array());
 
         if($s_clientId){
             $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
             $conditionList = $this->Rule_model->getConditionJigsawList($site_id, $client_id);
             $rewardList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
             $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id);
+            $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
+            $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
 
             $this->data['actionList'] = json_encode($actionList);
             $this->data['conditionList'] = json_encode($conditionList);
             $this->data['rewardList'] = json_encode($rewardList);
             $this->data['feedbackList'] = json_encode(array_merge($rewardList, $feedbackList));
+            $this->data['emailList'] = json_encode($emailList);
+            $this->data['smsList'] = json_encode($smsList);
         }
 
         $this->data['jsonIcons'] = json_encode($icons);
