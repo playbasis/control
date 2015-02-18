@@ -86,8 +86,8 @@ class Quest extends MY_Controller
             $this->data['quests'] = $this->Quest_model->getQuestsByClientSiteId($filter);
             /* query required variables for validation of quest & mission */
 	        $questList = $this->makeListOfId($this->data['quests'], '_id');
-            $actionList = $this->makeListOfId($this->Rule_model->getActionGigsawList($site_id, $client_id), 'specific_id');
-            $rewardList = $this->makeListOfId($this->Rule_model->getRewardGigsawList($site_id, $client_id), 'specific_id');
+            $actionList = $this->makeListOfId($this->Rule_model->getActionJigsawList($site_id, $client_id), 'specific_id');
+            $rewardList = $this->makeListOfId($this->Rule_model->getRewardJigsawList($site_id, $client_id), 'specific_id');
             $badgeList = $this->makeListOfId($this->Badge_model->getBadgeBySiteId(array('site_id' => $site_id->{'$id'})), 'badge_id');
 
             foreach($this->data['quests'] as &$quest){

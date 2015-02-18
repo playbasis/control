@@ -748,9 +748,11 @@ $('#new_reward_btn').live('click',function(event){
     event.preventDefault();
     var theModal = $('#newrule_reward_modal');
 
-    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+    //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Feedback,'feedback');
     theModal.modal('show');
-    oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+    //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+    oneRuleMan.openNodeSelectionDialogType = 'FEEDBACK';
 })
 
 //Event : Select option between 'Create Condition Node' and 'Create Reward Node'
@@ -785,6 +787,8 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             jsonItemSet = jsonString_Condition;
         else if(type === 'REWARD')
             jsonItemSet = jsonString_Reward;
+        else if(type === 'FEEDBACK')
+            jsonItemSet = jsonString_Feedback;
 
         //Find Item Match with selected Id
         var jsonItemSet = $.parseJSON(jsonItemSet)

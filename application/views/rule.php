@@ -439,6 +439,7 @@
     var jsonString_Action   = '<?php print_r($actionList);?>';
     var jsonString_Condition= '<?php print_r($conditionList);?>';
     var jsonString_Reward   = '<?php print_r($rewardList);?>';
+    var jsonString_Feedback = '<?php print_r($feedbackList);?>';
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet        = '<?php echo $requestParams; ?>';

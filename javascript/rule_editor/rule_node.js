@@ -62,6 +62,7 @@ Node.prototype.getHTML = function(){
         case 'ACTION':boxStyle = 'pbd_boxstyle_action'; boxIcon= 'fa-icon-bolt';break;
         case 'CONDITION':boxStyle = 'pbd_boxstyle_condition';boxIcon= 'fa-icon-time';break;
         case 'REWARD':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
+        case 'FEEDBACK':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
     }
 
     var htmlElement = '';
