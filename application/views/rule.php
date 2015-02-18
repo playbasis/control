@@ -440,6 +440,8 @@
     var jsonString_Condition= '<?php print_r($conditionList);?>';
     var jsonString_Reward   = '<?php print_r($rewardList);?>';
     var jsonString_Feedback = '<?php print_r($feedbackList);?>';
+    var jsonString_Email = '<?php print_r($emailList);?>';
+    var jsonString_Sms = '<?php print_r($smsList);?>';
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
     var requestedSet        = '<?php echo $requestParams; ?>';
