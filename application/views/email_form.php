@@ -67,6 +67,10 @@
                                                         <td>{{email}}</td>
                                                     </tr>
                                                     <tr>
+                                                        <td align="right"><small>Player Phone:</small></td>
+                                                        <td>{{phone}}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <td align="right"><small>Coupon Code:</small></td>
                                                         <td>{{code}}</td>
                                                     </tr>
