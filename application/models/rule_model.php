@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Rule_model extends MY_Model
 {
-    public function getActionGigsawList($siteId="",$clientId=""){
+    public function getActionJigsawList($siteId="",$clientId=""){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
@@ -61,7 +61,7 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getConditionGigsawList($siteId,$clientId){
+    public function getConditionJigsawList($siteId,$clientId){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
@@ -113,7 +113,7 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getRewardGigsawList($siteId,$clientId){
+    public function getRewardJigsawList($siteId,$clientId){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");

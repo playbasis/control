@@ -65,9 +65,9 @@ class Rule extends MY_Controller
         //$this->data['ruleList'] = json_encode(array());
 
         if($s_clientId){
-            $actionList = $this->Rule_model->getActionGigsawList($site_id, $client_id);
-            $conditionList = $this->Rule_model->getConditionGigsawList($site_id, $client_id);
-            $rewardList = $this->Rule_model->getRewardGigsawList($site_id, $client_id);
+            $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
+            $conditionList = $this->Rule_model->getConditionJigsawList($site_id, $client_id);
+            $rewardList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
 
             $this->data['actionList'] = json_encode($actionList);
             $this->data['conditionList'] = json_encode($conditionList);
@@ -114,9 +114,9 @@ class Rule extends MY_Controller
             $s_clientId = $this->User_model->getClientId();
         }
 
-        $actionList = $this->Rule_model->getActionGigsawList($s_siteId, $s_clientId);
-        $conditionList = $this->Rule_model->getConditionGigsawList($s_siteId, $s_clientId);
-        $rewardList = $this->Rule_model->getRewardGigsawList($s_siteId, $s_clientId);
+        $actionList = $this->Rule_model->getActionJigsawList($s_siteId, $s_clientId);
+        $conditionList = $this->Rule_model->getConditionJigsawList($s_siteId, $s_clientId);
+        $rewardList = $this->Rule_model->getRewardJigsawList($s_siteId, $s_clientId);
 
         $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId, array(
             'actionList' => $this->makeListOfId($actionList, 'specific_id'),
