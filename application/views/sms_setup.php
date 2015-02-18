@@ -4,6 +4,10 @@
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
         </div><!-- .heading -->
         <div class="content">
+                <div id="tabs" class="htabs">
+                    <a href="<?php echo site_url('sms');?>" style="display: inline;"><?php echo $this->lang->line('tab_general'); ?></a>
+                    <a href="<?php echo site_url('sms/setup');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_setup'); ?></a>
+                </div>
                 <img src="image/twilio_logo.png" width="120"/>
 
                 <?php

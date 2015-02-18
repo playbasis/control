@@ -46,9 +46,10 @@
                             <tr>
                                 <td><span class="required">*</span> <?php echo $this->lang->line('entry_body'); ?>:</td>
                                 <td>
-                                    <div class="row">
+                                    
                                         <div class="span9">
-                                            <textarea name="body" id="body"><?php echo isset($body) ? $body : set_value('body'); ?></textarea>    
+                                            <textarea name="body" id="body" rows="4" style="min-width:400px;"><?php echo isset($body) ? $body : set_value('body'); ?></textarea>
+                                            <br><strong class="sms-num"><span>0</span> / 160</strong>
                                         </div>
                                         <div class="span3">
                                             <h4> Code</h4>
@@ -67,13 +68,17 @@
                                                         <td>{{email}}</td>
                                                     </tr>
                                                     <tr>
+                                                        <td align="right"><small>Player Phone:</small></td>
+                                                        <td>{{phone}}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <td align="right"><small>Coupon Code:</small></td>
                                                         <td>{{code}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>
+                                    
                                         
 
                                 </td>
@@ -108,5 +113,21 @@
 <script type="text/javascript"><!--
 $('#tabs a').tabs();
 $('#languages a').tabs();
+
+$(function(){
+
+    $('.sms-num span').text( $('textarea#body').val().length );
+    $('.sms-num').css('color', '#000');
+    $('textarea#body').bind('input propertychange', function() {
+          $('.sms-num span').text( this.value.length );    
+          if(this.value.length > 160){
+            $('.sms-num').css('color', '#a94442');
+          }else{
+            $('.sms-num').css('color', '#000');
+          }
+    });
+
+    
+})
 //--></script>
 
