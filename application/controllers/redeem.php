@@ -143,7 +143,7 @@ class Redeem extends REST2_Controller
 
         if ($goods['per_user'] !== null) {
             $get_player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $site_id, $goods['goods_id']);
-            if ($get_player_goods['amount'] >= $goods['per_user']){
+            if (isset($get_player_goods['amount']) && $get_player_goods['amount'] >= $goods['per_user']){
                 throw new Exception('OVER_LIMIT_REDEEM');
             }
         }
