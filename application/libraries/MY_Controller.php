@@ -233,12 +233,14 @@ class  MY_Controller  extends  CI_Controller  {
                     // super admin
                     $features = $this->Feature_model->getFeatures();    
                     foreach ($features as $value) {
-                        $this->data['features'][] = array(
-                            'feature_id' => $value['_id'],
-                            'name' => $value['name'],
-                            'icon' => $value['icon'],
-                            'link' =>$value['link']
-                        );
+                        if($this->User_model->hasPermission('access', strtolower(implode("_",explode(" ", $value['link']))))){
+                            $this->data['features'][] = array(
+                                'feature_id' => $value['_id'],
+                                'name' => $value['name'],
+                                'icon' => $value['icon'],
+                                'link' =>$value['link']
+                            );
+                        }
                     }
 
                     $this->data['features'][] = array(
