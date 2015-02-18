@@ -61,12 +61,12 @@ class Rule extends MY_Controller
         $this->data['jsonConfig_siteId'] = $s_siteId;
         $this->data['jsonConfig_clientId'] = $s_clientId;
 
-        $this->data['actionList'] = json_encode(array());
-        $this->data['conditionList'] = json_encode(array());
-        $this->data['rewardList'] = json_encode(array());
-        $this->data['feedbackList'] = json_encode(array());
-        $this->data['emailList'] = json_encode(array());
-        $this->data['smsList'] = json_encode(array());
+        $this->data['actionList'] = array();
+        $this->data['conditionList'] = array();
+        $this->data['rewardList'] = array();
+        $this->data['feedbackList'] = array();
+        $this->data['emailList'] = array();
+        $this->data['smsList'] = array();
 
         if($s_clientId){
             $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
@@ -76,15 +76,15 @@ class Rule extends MY_Controller
             $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
             $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
 
-            $this->data['actionList'] = json_encode($actionList);
-            $this->data['conditionList'] = json_encode($conditionList);
-            $this->data['rewardList'] = json_encode($rewardList);
-            $this->data['feedbackList'] = json_encode(array_merge($rewardList, $feedbackList));
-            $this->data['emailList'] = json_encode($emailList);
-            $this->data['smsList'] = json_encode($smsList);
+            $this->data['actionList'] = $actionList;
+            $this->data['conditionList'] = $conditionList;
+            $this->data['rewardList'] = $rewardList;
+            $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
+            $this->data['emailList'] = $emailList;
+            $this->data['smsList'] = $smsList;
         }
 
-        $this->data['jsonIcons'] = json_encode($icons);
+        $this->data['jsonIcons'] = array();
         $this->data['requestParams'] = '&siteId='.$s_siteId.'&clientId='.$s_clientId;
         $this->data['main'] = 'rule';
 
@@ -99,7 +99,7 @@ class Rule extends MY_Controller
             foreach ($templates as $template) {
                 $name = $template["name"];
                 $this->data["ruleTemplate"][$name] = $template["rule_id"];
-            }    
+            }
         }
 
         $this->load->vars($this->data);

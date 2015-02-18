@@ -136,10 +136,10 @@ oneRuleMan = {
         targetDiv.empty();
 
         var detail = $('<ul class="pbd_list_selection "></ul>');
-        var list = $.parseJSON(jsonString);
+        var list = jsonString;
         /*temporary map : icon and itemlist*/
 
-        var icons = $.parseJSON(jsonConfig_icons);
+        var icons = jsonConfig_icons;
         if(icons != undefined){
 
             var cnt = 0;
@@ -790,8 +790,6 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
         else if(type === 'FEEDBACK')
             jsonItemSet = jsonString_Feedback;
 
-        //Find Item Match with selected Id
-        var jsonItemSet = $.parseJSON(jsonItemSet)
         for(var index in jsonItemSet){
             var item = jsonItemSet[index];
             if((id+'') == (item.specific_id+'')){

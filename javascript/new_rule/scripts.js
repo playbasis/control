@@ -107,7 +107,7 @@ function initRuleIsotopes($container) {
             template = Handlebars.templates['rule'];
 
             action_name = $(this).find('.rule-template-action > span').html().toLowerCase();
-            $.each( $.parseJSON(jsonString_Action), function(i,v) {
+            $.each(jsonString_Action, function(i,v) {
                 if ( v.name == action_name ) {
                     action_id = v.specific_id;
                     return false;
@@ -266,7 +266,7 @@ $(function(){
 
     // Handlebars!
     var template = Handlebars.templates['rule'],
-        icons = $.parseJSON(jsonConfig_icons),
+        icons = jsonConfig_icons,
         colors = {};
 
     console.log(jsonConfig_icons);

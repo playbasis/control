@@ -436,16 +436,16 @@
     var jsonConfig_clientId = '<?php echo $jsonConfig_clientId;?>';
     var jsonConfig_ActionId = undefined;
 
-    var jsonString_Action   = '<?php print_r($actionList);?>';
-    var jsonString_Condition= '<?php print_r($conditionList);?>';
-    var jsonString_Reward   = '<?php print_r($rewardList);?>';
-    var jsonString_Feedback = '<?php print_r($feedbackList);?>';
-    var jsonString_Email = '<?php print_r($emailList);?>';
-    var jsonString_Sms = '<?php print_r($smsList);?>';
+    var jsonString_Action    = <?php echo json_encode($actionList); ?>;
+    var jsonString_Condition = <?php echo json_encode($conditionList); ?>;
+    var jsonString_Reward    = <?php echo json_encode($rewardList); ?>;
+    var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
+    var jsonString_Email     = <?php echo json_encode($emailList); ?>;
+    var jsonString_Sms       = <?php echo json_encode($smsList); ?>;
 
     //var jsonString_RulesList= '<?php //print_r($ruleList);?>';
-    var requestedSet        = '<?php echo $requestParams; ?>';
-    var jsonConfig_icons   = '<?php echo $jsonIcons; ?>';
+    var requestedSet         = '<?php echo $requestParams; ?>';
+    var jsonConfig_icons     = <?php echo json_encode($jsonIcons); ?>;
     //########### End : Global variable for rule_e.js ##################/
 </script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/msgpack.js"></script>
