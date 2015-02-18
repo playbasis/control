@@ -608,18 +608,20 @@
     </div>
     <div class="modal-body">
         <div class="select-list">
-            <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
+            <?php
+                foreach ($emails as $key => $email) {
+                    if( empty( $email['status'] ) || $email['status'] == false ){
+                        continue;
+                    }
+            ?>
                 <label>
-
-                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-badge="<?php echo $badges[$i]['badge_id'] ?>">
-                    <div class="span1 text-center">
-                        <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
+                    <div class="select-item clearfix" data-id="<?php echo $key; ?>" data-id-email="<?php echo $email['_id'] ?>">
+                        <div class="span1 text-center">
+                            <input type="checkbox" name="selected[]" value="<?php echo $email['_id']; ?>">
+                        </div>
+                        <div class="span11 title"><?php echo $email['name'];?></div>
+                        <div class="data-email-body" style="display:none"><?php echo $email['body'] ?></div>
                     </div>
-                    <div class="span2 image text-center">
-                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                    </div>
-                    <div class="span9 title"><?php echo $badges[$i]['name'];?></div>
-                </div>
                 </label>
             <?php } ?>
         </div>
@@ -639,20 +641,22 @@
     </div>
     <div class="modal-body">
         <div class="select-list">
-            <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
-                <label>
-
-                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-badge="<?php echo $badges[$i]['badge_id'] ?>">
-                    <div class="span1 text-center">
-                        <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
-                    </div>
-                    <div class="span2 image text-center">
-                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
-                    </div>
-                    <div class="span9 title"><?php echo $badges[$i]['name'];?></div>
-                </div>
-                </label>
-            <?php } ?>
+             <?php
+                 foreach ($smses as $key => $sms) {
+                     if( empty( $sms['status'] ) || $sms['status'] == false ){
+                         continue;
+                     }
+             ?>
+                 <label>
+                     <div class="select-item clearfix" data-id="<?php echo $key; ?>" data-id-sms="<?php echo $sms['_id'] ?>" >
+                         <div class="span1 text-center">
+                             <input type="checkbox" name="selected[]" value="<?php echo $sms['_id']; ?>">
+                         </div>
+                         <div class="span11 title"><?php echo $sms['name'];?></div>
+                         <div class="data-sms-body" style="display:none"><?php echo $sms['body'] ?></div>
+                     </div>
+                 </label>
+             <?php } ?>
         </div>
     </div>
     <div class="modal-footer">
@@ -906,6 +910,8 @@
 
         function init_additem_event(target){
             $('.date').datepicker({dateFormat: 'yy-mm-dd'});
+
+            $('[data-toggle=modalObj]').modal({show:false});
 
             var type = target.type;
             var parent = target.parent || 'quests';
@@ -1506,10 +1512,11 @@ function selectEmailsItem(){
             
             if(wrapperObj.find('.emails-item-wrapper[data-id-email='+$(this).data('id-email')+']').length <= 0) {
 
-                var id = 123;//$(this).data('id-email');
+                var id = $(this).data('id-email');
                 var img = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
                 var typeElement = 'email';
+                var emailBody = $(this).find('.data-email-body').html();
 
                 if(parent == 'missions'){
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
@@ -1521,15 +1528,24 @@ function selectEmailsItem(){
                                     <input type="hidden" name="feedbacks['+id+'][feedback_type]" value = "EMAIL"/>'
                 }
 
+
+                var emailPreview = '<div id="modal-preview-'+parent+'-'+id+'"  class="modal hide fade modal-select in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">\
+                <div class="modal-header">\
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\
+                    <h4 id="myModalLabel">Preview: '+title+'</h4>\
+                </div>\
+                <div class="modal-body">'+emailBody+'</div>\
+            </div>'
+
                 var emailsItemHtml = '<div class="clearfix item-wrapper emails-item-wrapper" data-id-email="'+id+'">\
-                                    <h4 class="span10">'+title+'</h4>\
+                                    <h4 class="span10">'+title+' <a href="#" data-toggle="modal" data-backdrop="false" data-target="#modal-preview-'+parent+'-'+id+'">[Preview]</a></h4>\
                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
                                     <div class="clearfix"></div>\
                                     <div class="clearfix">\
-                                        <div class="span3">Subject</div>\
+                                        <div class="span3">Subject: </div>\
                                         <div class="span8">\
                                         '+inputHtml+'</div>\
-                                    </div>\
+                                    '+emailPreview+'</div>\
                 </div>';
                                     
 
@@ -1592,18 +1608,18 @@ function selectSmsesItem(){
             
             if(wrapperObj.find('.smses-item-wrapper[data-id-sms='+$(this).data('id-sms')+']').length <= 0) {
 
-                var id = 123;//$(this).data('id-sms');
+                var id = $(this).data('id-sms');
                 var img = $(this).find('.image img').attr('src');
                 var title = $(this).find('.title').html();
                 var typeElement = 'sms';
 
+                var smsBody = $(this).find('.data-sms-body').html();
+
                 if(parent == 'missions'){
-                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                    inputHtml = '<input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type_type]" value = "SMS"/>'
                 }else{
-                    inputHtml = '<input type="text" name ="feedbacks['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="feedbacks['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                    inputHtml = '<input type="hidden" name="feedbacks['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
                                     <input type="hidden" name="feedbacks['+id+'][feedback_type]" value = "SMS"/>'
                 }
 
@@ -1612,9 +1628,9 @@ function selectSmsesItem(){
                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
                                     <div class="clearfix"></div>\
                                     <div class="clearfix">\
-                                        <div class="span3">Subject</div>\
-                                        <div class="span8">\
-                                        '+inputHtml+'</div>\
+                                        <div class="span2">Body: </div>\
+                                        <div class="span10">'+inputHtml+'\
+                                        '+smsBody+'</div>\
                                     </div>\
                 </div>';
                                     
