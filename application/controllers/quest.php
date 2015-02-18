@@ -344,7 +344,8 @@ class Quest extends MY_Controller
             $editQuest = $this->Quest_model->getQuestByClientSiteId($data);
         }
 
-
+        $this->load->model('Email_model');
+        $this->load->model('Sms_model');
         $this->load->model('Image_model');
         $this->load->model('Level_model');
 
