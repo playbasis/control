@@ -218,6 +218,8 @@
                                   <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
                                   <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
                                   <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                  <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
+                                  <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
                                 </ul>
                                 <span class="break"></span>
                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
@@ -471,8 +473,11 @@
                                                 <ul class="dropdown-menu add-rewards-menu" role="menu" aria-labelledby="dropdownMenu">
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                              
                                                     <li class="add-exp"><a tabindex="-1" href="javascript:void(0)">EXP</a></li>                                              
-                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>                                              
-                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>                                            
+                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                                    <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                                     <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
+                                                    <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
+
                                                 </ul>                                            
                                                 <span class="break"></span>                                            
                                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>                                        
@@ -496,7 +501,7 @@
                                                         <h3>Exp <a class="remove"><i class="icon-remove-sign"></i></a></h3>
                                                         <label class="span4">Exp:</label><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][exp][reward_value]" placeholder="Exp" value = "<?php echo $mission['editExpRew']['reward_value'] ?>">
                                                         <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][exp][reward_type]" value="EXP">
-                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][exp][reward_id]" value="<?php echo $mission['editExpRew']['reward_id'] ?>"">
+                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][exp][reward_id]" value="<?php echo $mission['editExpRew']['reward_id'] ?>">
                                                     </div>
                                                 <?php } ?> <!-- end of editExpRew isset -->
 
@@ -592,6 +597,68 @@
         <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         <button class="btn btn-primary select-badge-btn" data-dismiss="modal">Select</button>
+    </div>
+</div>
+
+<!-- Modal Email -->
+<div id="modal-select-email" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select Email</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
+                <label>
+
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-badge="<?php echo $badges[$i]['badge_id'] ?>">
+                    <div class="span1 text-center">
+                        <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
+                    </div>
+                    <div class="span2 image text-center">
+                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                    </div>
+                    <div class="span9 title"><?php echo $badges[$i]['name'];?></div>
+                </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary select-email-btn" data-dismiss="modal">Select</button>
+    </div>
+</div>
+
+<!-- Modal SMS -->
+<div id="modal-select-sms" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select SMS</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
+                <label>
+
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-badge="<?php echo $badges[$i]['badge_id'] ?>">
+                    <div class="span1 text-center">
+                        <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
+                    </div>
+                    <div class="span2 image text-center">
+                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                    </div>
+                    <div class="span9 title"><?php echo $badges[$i]['name'];?></div>
+                </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary select-sms-btn" data-dismiss="modal">Select</button>
     </div>
 </div>
 
@@ -782,6 +849,8 @@
                                               <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>\
                                               <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
                                               <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
+                                               <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>\
+                                                <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>\
                                             </ul>\
                                             <span class="break"></span>\
                                             <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>\
@@ -864,7 +933,9 @@
             addExpObj = menuObj.find('.add-exp'),
             addCustomPointObj = menuObj.find('.add-custompoint'),
             addBadgeObj = menuObj.find('.add-badge'),
-            addActionObj = menuObj.find('.add-action');
+            addActionObj = menuObj.find('.add-action'),
+            addEmailObj = menuObj.find('.add-email'),
+            addSmsObj = menuObj.find('.add-sms')
 
             menuBtn.unbind().bind('click',function(data){
                 wrapperObj.find('.box-content').show();
@@ -935,10 +1006,50 @@
                     setModalBadgesItem(target);
                 });
             }
-
             $('.select-badge-btn').unbind().bind('click',function(data){
                 selectBadgesItem();
             });
+
+            //Add Email
+            if(containerObj.has('.emails-wrapper').length){
+                addEmailObj.removeClass('disabled');
+                addEmailObj.unbind().bind('click',function(data){
+                    setModalEmailsItem(target);
+                });
+                containerObj.find('.emails-wrapper .add-email-btn').bind('click',function(data){
+                    setModalEmailsItem(target);
+                });
+            }else{
+                addEmailObj.removeClass('disabled');
+                addEmailObj.unbind().bind('click',function(data){
+                    addEmails(target);
+                    setModalEmailsItem(target);
+                });
+            }
+            $('.select-email-btn').unbind().bind('click',function(data){
+                selectEmailsItem();
+            });
+
+            //Add Sms
+            if(containerObj.has('.smses-wrapper').length){
+                addSmsObj.removeClass('disabled');
+                addSmsObj.unbind().bind('click',function(data){
+                    setModalSmsesItem(target);
+                });
+                containerObj.find('.smses-wrapper .add-sms-btn').bind('click',function(data){
+                    setModalSmsesItem(target);
+                });
+            }else{
+                addSmsObj.removeClass('disabled');
+                addSmsObj.unbind().bind('click',function(data){
+                    addSmses(target);
+                    setModalSmsesItem(target);
+                });
+            }
+            $('.select-sms-btn').unbind().bind('click',function(data){
+                selectSmsesItem();
+            });
+          
 
             //Add Actions
 
@@ -1208,6 +1319,32 @@ function addBadges(target){
     render(target);
 }
 
+function addEmails(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+
+    var emailsHead = '<h3>Emails  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-email-btn">+ Add Emails</a></h3>';
+    var emailsHtml = '<div class="emails-wrapper '+type+'-type well">'+emailsHead+'<div class="item-container"></div></div>';
+
+    target.html = emailsHtml;
+
+    render(target);
+}
+
+function addSmses(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+
+    var smsesHead = '<h3>Smses  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-sms-btn">+ Add Smses</a></h3>';
+    var smsesHtml = '<div class="smses-wrapper '+type+'-type well">'+smsesHead+'<div class="item-container"></div></div>';
+
+    target.html = smsesHtml;
+
+    render(target);
+}
+
 function addActions(target){
     var type = target.type;
     var id = target.id || null;
@@ -1321,6 +1458,179 @@ function selectBadgesItem(){
         }
     })
 }
+
+
+
+// setModalEmailsItem
+function setModalEmailsItem(target){
+
+    setModalTarget($('#modal-select-email'),target);
+    var type = target.type;
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+    
+    $('#modal-select-email input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.emails-item-wrapper').each(function(){
+        var idEmailsSelect = $(this).data('id-email');
+        $('#modal-select-email .select-item[data-id-email='+idEmailsSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-email').modal('show');
+}
+
+function selectEmailsItem(){
+    var modalObj = $('#modal-select-email');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
+    var type = target.type;
+    var taget_id = target.id || null;
+    var parent = target.parent || 'quest';
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+    
+    $('#modal-select-email .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+            
+            if(wrapperObj.find('.emails-item-wrapper[data-id-email='+$(this).data('id-email')+']').length <= 0) {
+
+                var id = 123;//$(this).data('id-email');
+                var img = $(this).find('.image img').attr('src');
+                var title = $(this).find('.title').html();
+                var typeElement = 'email';
+
+                if(parent == 'missions'){
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type_type]" value = "EMAIL"/>'
+                }else{
+                    inputHtml = '<input type="text" name ="feedbacks['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="feedbacks['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="feedbacks['+id+'][feedback_type]" value = "EMAIL"/>'
+                }
+
+                var emailsItemHtml = '<div class="clearfix item-wrapper emails-item-wrapper" data-id-email="'+id+'">\
+                                    <h4 class="span10">'+title+'</h4>\
+                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
+                                    <div class="clearfix"></div>\
+                                    <div class="clearfix">\
+                                        <div class="span3">Subject</div>\
+                                        <div class="span8">\
+                                        '+inputHtml+'</div>\
+                                    </div>\
+                </div>';
+                                    
+
+                    wrapperObj.find('.emails-wrapper .item-container').append(emailsItemHtml);
+
+                    init_additem_event(target);
+            }
+        }else{
+            if(wrapperObj.find('.emails-item-wrapper[data-id-email='+$(this).data('id-email')+']').length >= 1) {
+                wrapperObj.find('.emails-item-wrapper[data-id-email='+$(this).data('id-email')+']').remove();
+            }
+        }
+    })
+}
+
+
+
+// setModalSmsesItem
+function setModalSmsesItem(target){
+
+    setModalTarget($('#modal-select-sms'),target);
+    var type = target.type;
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+    
+    $('#modal-select-sms input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.smses-item-wrapper').each(function(){
+        var idEmailsSelect = $(this).data('id-sms');
+        $('#modal-select-sms .select-item[data-id-sms='+idEmailsSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-sms').modal('show');
+}
+
+function selectSmsesItem(){
+    var modalObj = $('#modal-select-sms');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
+    var type = target.type;
+    var taget_id = target.id || null;
+    var parent = target.parent || 'quest';
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+    
+    $('#modal-select-sms .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+            
+            if(wrapperObj.find('.smses-item-wrapper[data-id-sms='+$(this).data('id-sms')+']').length <= 0) {
+
+                var id = 123;//$(this).data('id-sms');
+                var img = $(this).find('.image img').attr('src');
+                var title = $(this).find('.title').html();
+                var typeElement = 'sms';
+
+                if(parent == 'missions'){
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type_type]" value = "SMS"/>'
+                }else{
+                    inputHtml = '<input type="text" name ="feedbacks['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
+                                    <input type="hidden" name="feedbacks['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                    <input type="hidden" name="feedbacks['+id+'][feedback_type]" value = "SMS"/>'
+                }
+
+                var smsesItemHtml = '<div class="clearfix item-wrapper smses-item-wrapper" data-id-sms="'+id+'">\
+                                    <h4 class="span10">'+title+'</h4>\
+                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
+                                    <div class="clearfix"></div>\
+                                    <div class="clearfix">\
+                                        <div class="span3">Subject</div>\
+                                        <div class="span8">\
+                                        '+inputHtml+'</div>\
+                                    </div>\
+                </div>';
+                                    
+
+                    wrapperObj.find('.smses-wrapper .item-container').append(smsesItemHtml);
+
+                    init_additem_event(target);
+            }
+        }else{
+            if(wrapperObj.find('.smses-item-wrapper[data-id-sms='+$(this).data('id-sms')+']').length >= 1) {
+                wrapperObj.find('.smses-item-wrapper[data-id-sms='+$(this).data('id-sms')+']').remove();
+            }
+        }
+    })
+}
+
 
 // setModalCustompointsItem
 function setModalCustompointsItem(target){
