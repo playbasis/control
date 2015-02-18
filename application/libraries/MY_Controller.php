@@ -175,14 +175,14 @@ class  MY_Controller  extends  CI_Controller  {
                 $user_plan = $this->User_model->getPlan();
                 if (!array_key_exists('price', $user_plan)) $user_plan['price'] = DEFAULT_PLAN_PRICE;
                 $this->data['user_plan'] = $user_plan;
-                if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
+                /*if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
                     $this->data['features'][] = array(
                         'feature_id' => new MongoId(),
-                        'name' => 'Sms',
+                        'name' => 'Sms (old)',
                         'icon' => 'fa-mail-forward',
                         'link' => 'sms'
                     );
-                }
+                }*/
                 $client = $this->Client_model->getClient($this->data['client_id']);
                 $this->data['account'] = $this->set_account($user_plan, $client);
 
@@ -190,7 +190,8 @@ class  MY_Controller  extends  CI_Controller  {
                     $this->data['site_id'],
                     $user_plan["_id"],
                     "others",
-                    "player");
+                    "player"
+                );
                 $usersCount = $this->Player_model->getTotalPlayers($this->data['site_id'], $this->data['client_id']);
                 $this->data['check_limit'] = array(
                     'limit_user' => $player_limit,
@@ -215,14 +216,14 @@ class  MY_Controller  extends  CI_Controller  {
                             }
                         }
 
-                        if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
+                        /*if(isset($user_plan['limit_notifications']) && is_null($user_plan['limit_notifications']['sms'])){
                             $this->data['features'][] = array(
                                 'feature_id' => new MongoId(),
-                                'name' => 'Sms',
+                                'name' => 'Sms (old)',
                                 'icon' => 'fa-mail-forward',
                                 'link' => 'sms'
                             );
-                        }
+                        }*/
                     } else {
                         $this->data['check_domain_exists'] = false;
                     }
@@ -244,7 +245,7 @@ class  MY_Controller  extends  CI_Controller  {
                         'feature_id' => new MongoId(),
                         'name' => 'Sms',
                         'icon' => 'fa-mail-forward',
-                        'link' => 'sms'
+                        'link' => 'sms/setup'
                     );
                 }
                 //var_dump($features);
