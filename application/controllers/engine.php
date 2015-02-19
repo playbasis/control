@@ -396,10 +396,11 @@ class Engine extends Quest
                 else
                     $jigsaw_model = true;
 
-				/* [rule usage] increase rule usage counter if a reward is given on chunk-based basis */
-				if ($jigsaw['category'] === 'REWARD' && $last_jigsaw !== 'REWARD') $count++;
-
 				if($jigsaw_model) {
+
+					/* [rule usage] increase rule usage counter if a reward is given on chunk-based basis */
+					if ($jigsaw['category'] === 'REWARD' && $last_jigsaw !== 'REWARD') $count++;
+
 					if($jigsaw['category'] == 'REWARD') {
 						if(isset($exInfo['dynamic'])) {
 							//reward is a custom point
