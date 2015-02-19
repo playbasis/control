@@ -20,7 +20,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action'
 //			}
 //		},
-//
 //		review:{
 //			description:'When user wrote some review on target page or target product',
 //			field_desc:{
@@ -30,7 +29,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action'
 //			}
 //		},
-//
 //		read:{
 //			description:'When user read all content on target page or target product',
 //			field_desc:{
@@ -40,7 +38,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action'
 //			}
 //		},
-//
 //		like:{
 //			description:'When user click like on target page or target product',
 //			field_desc:{
@@ -50,7 +47,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
 //		share:{
 //			description:'When user share target page or target product',
 //			field_desc:{
@@ -60,8 +56,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
 //		want:{
 //			description:'When user click want on target page or target product',
 //			field_desc:{
@@ -71,8 +65,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
 //		love:{
 //			description:'When user click love on target page or target product',
 //			field_desc:{
@@ -82,8 +74,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
 //		spotreview:{
 //			description:'When user wrote some spot-review on target page or target place',
 //			field_desc:{
@@ -93,8 +83,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
 //		comment:{
 //			description:'When user wrote some comment on target page or target product',
 //			field_desc:{
@@ -104,8 +92,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
 //		following:{
 //			description:'When user has following some other users',
 //			field_desc:{
@@ -115,9 +101,6 @@ toolstip = {
 //				regex:'not-necessary'
 //			}
 //		},
-//
-//
-//
 //		follower:{
 //			description:'When user has following some other users',
 //			field_desc:{
@@ -127,10 +110,6 @@ toolstip = {
 //				regex:'not-necessary'
 //			}
 //		},
-//
-//
-//
-//
 //		pernah:{
 //			description:'When user have been to some places before',
 //			field_desc:{
@@ -140,8 +119,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
 //		timeonsite:{
 //			description:'How many time user spend on target page',
 //			field_desc:{
@@ -151,9 +128,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
-//
 //		mau:{
 //			description:'When user mau',
 //			field_desc:{
@@ -163,7 +137,6 @@ toolstip = {
 //				regex:'not-necessary'
 //			}
 //		},
-//
 //		fbstatus:{
 //			description:'When user post facebook status',
 //			field_desc:{
@@ -173,7 +146,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
 //		fbpost:{
 //			description:'When user post things you provided to they status',
 //			field_desc:{
@@ -183,9 +155,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
-//
-//
 //		fbcomment:{
 //			description:'When user comment something on facebook comment holder',
 //			field_desc:{
@@ -195,7 +164,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
 //		fblike:{
 //			description:'When user click like on facebook like button',
 //			field_desc:{
@@ -205,7 +173,6 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		},
-//
 //		tweet:{
 //			description:'When user tweet something to they timeline',
 //			field_desc:{
@@ -215,14 +182,9 @@ toolstip = {
 //				regex:'use regular expression when match the url string with “url” parameter given in the request to trigger this action with page url'
 //			}
 //		}
-
-
-
-		
 	},
 
 	condition:{
-
 		counter:{ 
 			description:'Each time a Counter is triggered, its count value will decrease by one. A counter will stop the rule and discard the action until the count reaches zero. A counter can have a timeout that will reset the count back to its original value.',
 			field_desc:{
@@ -232,30 +194,24 @@ toolstip = {
 				reset_timeout:'reset the timeout each time the counter is triggered'
 			}
 		},
-
-
 		cooldown:{ 
 			description:'Cooldown can limit the frequency that a user can trigger rules. Once a Cooldown is triggered, its timer starts. If the same Cooldown is triggered again by the same user before the timer reached zero, the Cooldown with stop the rule and discard the action; otherwise, the rule continues and the timer starts again.',
 			field_desc:{
 				cooldown:'The duration of the timer'
 			}
 		},
-
 		before:{ 
 			description:'When Before is triggered after the specified date and time, the rule will stop and the action will be discarded.',
 			field_desc:{
 				timestamp:'date and time that you want to stop allowing actions to go through'
 			}
 		},
-
 		after:{ 
 			description:'When After is triggered before the specified date and time, the rule will stop and the action will be discarded.',
 			field_desc:{
 				timestamp:'date and time that you want to start allowing actions to go through'
 			}
 		},
-
-
 		between:{ 
 			description:'When Between is triggered outside of the specified period of time, the rule will stop and the action will be discarded.',
 			field_desc:{
@@ -263,15 +219,12 @@ toolstip = {
 				end_time:'the end of the time period that actions can go through'
 			}
 		},
-
-
 		daily:{ 
 			description:'When Daily is triggered more than once a day, the rule will stop and the action will be discarded.',
 			field_desc:{
 				time_of_day:'time to start a new day, and allow an action to go through again'
 			}
 		},
-
 		weekly:{ 
 			description:'When Weekly is triggered more than once a week, the rule will stop and the action will be discarded.',
 			field_desc:{
@@ -279,7 +232,6 @@ toolstip = {
 				day_of_week:'day of week to start a new week, and allow an action to go through again'
 			}
 		},
-
 		monthly:{ 
 			description:'When Weekly is triggered more than once a month, the rule will stop and the action will be discarded.',
 			field_desc:{
@@ -287,24 +239,16 @@ toolstip = {
 				day_of_month:'date of month to start a new month, and allow an action to go through again'
 			}
 		},
-
-		every_n_day:{ 
+		every_n_day:{
 			description:'When EveryNDays is triggered more than once every N days, the rule will stop and the action will be discarded.',
 			field_desc:{
 				num_of_days:'time of day to start a new period, and allow an action to go through again',
 				time_of_day:'number of days before a new period begins, and allow an action to go through again'
 			}
 		}
-
-
 	},
 
-
-
-
-
 	reward:{
-
 		point:{ 
 			description:'Reward a user with the specified amount of points',
 			field_desc:{
@@ -312,7 +256,6 @@ toolstip = {
 				quantity:'amount of point to award'
 			}
 		},
-
 		exp:{ 
 			description:'Reward a user with the specified amount of exp',
 			field_desc:{
@@ -320,9 +263,6 @@ toolstip = {
 				quantity:'amount of exp to award'
 			}
 		},
-
-
-
 		badge:{ 
 			description:'Reward a badge to a user',
 			field_desc:{
@@ -331,8 +271,6 @@ toolstip = {
 				quantity:'amount to award (this is usually one, however, the same badge can be acquired more than once)'
 			}
 		},
-
-
 		level:{ 
 			description:'Reward a user with the specified amount of level',
 			field_desc:{
@@ -340,8 +278,6 @@ toolstip = {
 				quantity:'amount of level to award'
 			}
 		},
-
-
 		customPointReward:{ 
 			description:'Reward a user with the specified type and amount of point, where the type and/or amount of point to award can be dynamically calculated and passed in via POST parameters in the request to the /Engine/rule method.',
 			field_desc:{
@@ -349,16 +285,21 @@ toolstip = {
 				quantity:'amount of point to award'
 			}
 		}
+	},
 
-	
-		
+	feedback: {
+		email: {
+			description: 'Email',
+			field_desc: {
+				template_id: 'template id',
+				subject: 'email subject'
+			}
+		},
+		sms: {
+			description: 'SMS',
+			field_desc: {
+				template_id: 'template id'
+			}
+		}
 	}
-
-
 }
-
-
-
- 
-
-

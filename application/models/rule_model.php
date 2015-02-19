@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Rule_model extends MY_Model
 {
-    public function getActionGigsawList($siteId="",$clientId=""){
+    public function getActionJigsawList($siteId="",$clientId=""){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
@@ -61,7 +61,7 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getConditionGigsawList($siteId,$clientId){
+    public function getConditionJigsawList($siteId,$clientId){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
@@ -113,7 +113,7 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getRewardGigsawList($siteId,$clientId){
+    public function getRewardJigsawList($siteId,$clientId){
         if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
             filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
             throw new Exception("error_xor_client_site");
@@ -201,6 +201,69 @@ class Rule_model extends MY_Model
             //Exception stuff
         }
 
+        return $output;
+    }
+
+    public function getFeedbackJigsawList($siteId,$clientId){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $output = array();
+        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'email')) {
+            $type = 'email';
+            $output[] = array(
+                '_id' => $type,
+                'name' => $type,
+                'description' => 'Send '.$type,
+                'sort_order' => 10,
+                'status' => 1,
+                'specific_id' => $type,
+                'dataSet' => array(
+                    array(
+                        'field_type' => 'collection',
+                        'label' => 'Template id',
+                        'param_name' => 'template_id',
+                        'placeholder' => 'Template id',
+                        'sortOrder' => 0,
+                        'tooltips' => 'which template to use',
+                        'value' => 0,
+                    ),
+                    array(
+                        'field_type' => 'text',
+                        'label' => 'Subject',
+                        'param_name' => 'subject',
+                        'placeholder' => 'Subject',
+                        'sortOrder' => 0,
+                        'tooltips' => 'subject',
+                        'value' => '',
+                    ),
+                ),
+                'id' => $type,
+                'category' => 'FEEDBACK',
+            );
+        }
+        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'sms')) {
+            $type = 'sms';
+            $output[] = array(
+                '_id' => $type,
+                'name' => $type,
+                'description' => 'Send '.$type,
+                'sort_order' => 10,
+                'status' => 1,
+                'specific_id' => $type,
+                'dataSet' => array(
+                    array(
+                        'field_type' => 'collection',
+                        'label' => 'Template id',
+                        'param_name' => 'template_id',
+                        'placeholder' => 'Template id',
+                        'sortOrder' => 0,
+                        'tooltips' => 'which template to use',
+                        'value' => 0,
+                    ),
+                ),
+                'id' => $type,
+                'category' => 'FEEDBACK',
+            );
+        }
         return $output;
     }
 
