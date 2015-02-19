@@ -72,9 +72,9 @@ class Rule extends MY_Controller
             $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
             $conditionList = $this->Rule_model->getConditionJigsawList($site_id, $client_id);
             $rewardList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
-            $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id);
             $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
             $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
+            $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList);
 
             $this->data['actionList'] = $actionList;
             $this->data['conditionList'] = $conditionList;

@@ -204,10 +204,10 @@ class Rule_model extends MY_Model
         return $output;
     }
 
-    public function getFeedbackJigsawList($siteId,$clientId){
+    public function getFeedbackJigsawList($siteId, $clientId, $emailList, $smsList) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $output = array();
-        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'email')) {
+        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'email') && !empty($emailList)) {
             $type = 'email';
             $output[] = array(
                 '_id' => $type,
@@ -218,13 +218,14 @@ class Rule_model extends MY_Model
                 'specific_id' => $type,
                 'dataSet' => array(
                     array(
-                        'field_type' => 'collection',
+                        'field_type' => 'select',
                         'label' => 'Template id',
                         'param_name' => 'template_id',
                         'placeholder' => 'Template id',
                         'sortOrder' => 0,
                         'tooltips' => 'which template to use',
                         'value' => 0,
+                        'type' => $type,
                     ),
                     array(
                         'field_type' => 'text',
@@ -240,7 +241,7 @@ class Rule_model extends MY_Model
                 'category' => 'FEEDBACK',
             );
         }
-        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'sms')) {
+        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'sms') && !empty($smsList)) {
             $type = 'sms';
             $output[] = array(
                 '_id' => $type,
@@ -251,13 +252,14 @@ class Rule_model extends MY_Model
                 'specific_id' => $type,
                 'dataSet' => array(
                     array(
-                        'field_type' => 'collection',
+                        'field_type' => 'select',
                         'label' => 'Template id',
                         'param_name' => 'template_id',
                         'placeholder' => 'Template id',
                         'sortOrder' => 0,
                         'tooltips' => 'which template to use',
                         'value' => 0,
+                        'type' => $type,
                     ),
                 ),
                 'id' => $type,
@@ -626,8 +628,8 @@ class Rule_model extends MY_Model
                     return $each['name'];
                     break;
                 case 'CONDITION':
-                    break;
                 case 'REWARD':
+                case 'FEEDBACK':
                     break;
                 default:
                     break;
@@ -667,6 +669,10 @@ class Rule_model extends MY_Model
                 $check_reward = true;
                 if (empty($each['specific_id'])) $error[] = '[reward_id] for '.$each['config']['reward_name'].' is missing';
                 else if (!$rewardList || !in_array($each['specific_id'], $rewardList)) $error[] = 'reward ['.$each['config']['reward_name'].'] is invalid ['.$each['specific_id'].']';
+                break;
+            case 'FEEDBACK':
+                $is_condition = false;
+                $check_reward = true;
                 break;
             default:
                 break;

@@ -195,7 +195,7 @@ oneRuleMan = {
 
     validateAtLeastOneReward:function() {
         for(var index in oneRuleMan.nodeList){
-            if (oneRuleMan.nodeList[index].category == 'REWARD') return true;
+            if (['REWARD', 'FEEDBACK'].indexOf(oneRuleMan.nodeList[index].category) > -1) return true;
         }
         return false;
     },
