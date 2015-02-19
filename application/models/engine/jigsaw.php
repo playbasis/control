@@ -392,6 +392,29 @@ class jigsaw extends MY_Model
 		);
 		return true;
 	}
+	public function email($config, $input, &$exInfo = array())
+	{
+		return $this->feedback('email', $config, $input, $exInfo);
+	}
+	public function sms($config, $input, &$exInfo = array())
+	{
+		return $this->feedback('sms', $config, $input, $exInfo);
+	}
+	private function feedback($type, $config, $input, &$exInfo = array())
+	{
+		$this->set_site_mongodb($input['site_id']);
+		$this->mongo_db->where('status', true);
+		$this->mongo_db->where('site_id', $input['site_id']);
+		$this->mongo_db->where('link', $type);
+		$this->mongo_db->limit(1);
+		if ($this->mongo_db->count('playbasis_feature_to_client') > 0) {
+			$this->mongo_db->where('_id', new MongoId($config['template_id']));
+			$this->mongo_db->where('status', true);
+			$this->mongo_db->where('deleted', false);
+			return $this->mongo_db->count('playbasis_'.$type.'_to_client') > 0;
+		}
+		return false;
+	}
 	private function getMostRecentJigsaw($input, $fields)
 	{
 		assert(isset($input['site_id']));
