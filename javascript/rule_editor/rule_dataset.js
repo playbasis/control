@@ -99,7 +99,7 @@ DataSet = function(jsonArray, parent_id) {
                                 '<span class="edit_reward_type btn btn-info btn-mini"><i class="icon-gift icon-white"></i></span>&nbsp;',
 
                         'select':
-                            '<select name="' + v.param_name + '" placeholder="' + v.placeholder + '">' + generate_select_options(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</select>',
+                            '<select name="' + v.param_name + '" placeholder="' + v.placeholder + '" datatype="' + v.type + '">' + generate_select_options(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</select>',
 
                         'boolean':
                             '<input type="checkbox" class="input_boolean boolean" id="bool'+((new Date()).getMilliseconds()+1)+'" name="'+v.value+'" value="'+v.value+'" checked="'+_checkBool(v.value)+'" />',
@@ -677,6 +677,7 @@ DataSet = function(jsonArray, parent_id) {
                 var elm = $this.find('input'); // try to find "input" first
                 if (elm.length <= 0) elm = $this.find('select'); // if not found, then try to find "select"
                 obj.placeholder = elm.attr('placeholder');
+                if (elm.attr('datatype')) obj.type = elm.attr('datatype');
 
                 /*
                  * track to grand parent node to get node header
