@@ -263,7 +263,7 @@ class Report_reward extends MY_Controller{
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'report/action')) {
+        if ($this->User_model->hasPermission('access', 'report/action') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'report/action')) {
             return true;
         } else {
             return false;

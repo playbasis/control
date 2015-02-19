@@ -671,7 +671,7 @@ class App extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'app') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'app')) {
+        if ($this->User_model->hasPermission('access', 'app') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'app')) {
             return true;
         } else {
             return false;

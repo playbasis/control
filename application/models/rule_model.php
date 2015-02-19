@@ -207,7 +207,7 @@ class Rule_model extends MY_Model
     public function getFeedbackJigsawList($siteId, $clientId, $emailList, $smsList) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $output = array();
-        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'email') && !empty($emailList)) {
+        if ($this->Feature_model->getFeatureExistByClientId($clientId, 'email') && !empty($emailList)) {
             $type = 'email';
             $output[] = array(
                 '_id' => $type,
@@ -241,7 +241,7 @@ class Rule_model extends MY_Model
                 'category' => 'FEEDBACK',
             );
         }
-        if ($this->Feature_model->getFeatureExitsByClientId($clientId, 'sms') && !empty($smsList)) {
+        if ($this->Feature_model->getFeatureExistByClientId($clientId, 'sms') && !empty($smsList)) {
             $type = 'sms';
             $output[] = array(
                 '_id' => $type,
