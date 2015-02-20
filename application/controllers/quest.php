@@ -400,9 +400,9 @@ class Quest extends MY_Controller
 
         $this->data['point_id'] = $this->Quest_model->getPointId($data);
 
-        $this->data['emails'] = $this->Email_model->listTemplatesBySiteId($data['site_id']);
+        $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'email') ? $this->Email_model->listTemplatesBySiteId($data['site_id']) : null;
 
-        $this->data['smses'] = $this->Sms_model->listTemplatesBySiteId($data['site_id']);
+        $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'sms') ? $this->Sms_model->listTemplatesBySiteId($data['site_id']) : null;
 
         if($quest_id != null && isset($editQuest) && !empty($editQuest)){
             // $data['quest_id'] = $quest_id;
