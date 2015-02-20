@@ -218,8 +218,12 @@
                                   <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
                                   <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
                                   <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
+                                <?php if( $emails !== null ){ ?>
                                   <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
+                                  <?php } ?>
+                                  <?php if( $smses !== null ){ ?>
                                   <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
+                                    <?php } ?>
                                 </ul>
                                 <span class="break"></span>
                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>
@@ -609,7 +613,7 @@
     <div class="modal-body">
         <div class="select-list">
             <?php
-                foreach ($emails as $key => $email) {
+                if( is_array($emails) ) foreach ($emails as $key => $email) {
                     if( empty( $email['status'] ) || $email['status'] == false ){
                         continue;
                     }
@@ -853,8 +857,13 @@
                                               <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>\
                                               <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
                                               <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
+                                            <?php if( $emails !== null ){ ?>
                                                <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>\
+                                            <?php } ?>
+                                            <?php if( $smses !== null ){ ?>
                                                 <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>\
+                                            <?php } ?>
+
                                             </ul>\
                                             <span class="break"></span>\
                                             <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>\
