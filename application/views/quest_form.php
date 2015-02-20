@@ -863,7 +863,6 @@
                                             <?php if( $smses !== null ){ ?>
                                                 <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>\
                                             <?php } ?>
-
                                             </ul>\
                                             <span class="break"></span>\
                                             <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>\
