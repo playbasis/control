@@ -303,6 +303,10 @@ class Quiz extends MY_Controller
         $this->data['point_list'] = array();
         $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($data['site_id']);
 
+        $this->load->model('Feature_model');
+        $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'email') ? $this->Email_model->listTemplatesBySiteId($data['site_id']) : null;
+        $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'sms') ? $this->Sms_model->listTemplatesBySiteId($data['site_id']) : null;
+
         $this->data['client_id'] = $data['client_id'];
         $this->data['site_id'] = $data['site_id'];
 
