@@ -539,6 +539,82 @@
                                                         }
                                                         ?>
                                                     </div>
+                                                    <div id="email-panel">
+                                                        <?php
+                                                        if($emails){
+                                                            ?>
+                                                            <br>
+                                                            <button id="email-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_email'); ?></button>
+                                                            <div class="emails">
+                                                                <div class="reward-panel">
+                                                                    <?php
+                                                                    foreach($emails as $email){
+                                                                        ?>
+
+                                                                        <?php
+                                                                        $user_b = "";
+                                                                        foreach($badge_user_set as $b){
+                                                                            if($b["badge_id"] == $badge['badge_id']){
+                                                                                $user_b = $b["badge_value"];
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        ?>
+                                                                        <div class="each-email-template">
+                                                                        <label>
+                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>]" > <?php echo $email['name']; ?></h3>
+                                                                             <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>
+                                                                              <input type="text" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>
+                                                                          </label>
+                                                                        </div>
+                                                                    <?php
+                                                                    }
+                                                                    ?>
+                                                                </div>
+                                                            </div>
+                                                        <?php
+                                                        }
+                                                        ?>
+                                                    </div>
+
+                                                    <div id="sms-panel">
+                                                        <?php
+                                                        if($smses){
+                                                            ?>
+                                                            <br>
+                                                            <button id="sms-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_sms'); ?></button>
+                                                            <div class="smses">
+                                                                <div class="reward-panel">
+                                                                    <?php
+                                                                    foreach($smses as $sms){
+                                                                        ?>
+
+                                                                        <?php
+                                                                        $user_b = "";
+                                                                        foreach($badge_user_set as $b){
+                                                                            if($b["badge_id"] == $badge['badge_id']){
+                                                                                $user_b = $b["badge_value"];
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        ?>
+                                                                        <div class="each-sms-template">
+                                                                        <label>
+                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][sms][<?php echo $sms['_id']; ?>]" > <?php echo $sms['name']; ?></h3>
+                                                                          </label>
+                                                                        </div>
+                                                                    <?php
+                                                                    }
+                                                                    ?>
+                                                                </div>
+                                                            </div>
+                                                        <?php
+                                                        }
+                                                        ?>
+                                                    </div>
+
+                                                    
+
                                                 </div>
                                             </td>
                                         </tr>
@@ -570,10 +646,14 @@
         $(".point").hide();
         $(".badges").hide();
         $(".rewards").hide();
+        $(".emails").hide();
+        $(".smses").hide();
         $("#exp-entry").live('click', function() {$(this).parent().find(".exp").toggle()});
         $("#point-entry").live('click', function() {$(this).parent().find(".point").toggle()});
         $("#badge-entry").live('click', function() {$(this).parent().find(".badges").toggle()});
         $("#reward-entry").live('click', function() {$(this).parent().find(".rewards").toggle()});
+        $("#email-entry").live('click', function() {$(this).parent().find(".emails").toggle()});
+        $("#sms-entry").live('click', function() {$(this).parent().find(".smses").toggle()});
 
         $('#tabs a').tabs();
 
@@ -769,6 +849,58 @@
         <?php
         }
         ?>
+        </div>\
+        <div id="email-panel">\
+            <?php
+            if($emails){
+                ?>
+                <br>\
+                <button id="email-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_email'); ?></button>\
+                <div class="emails hide">\
+                    <div class="reward-panel">\
+                        <?php
+                        foreach($emails as $email){
+                            ?>
+                            <div class="each-email-template">\
+                            <label>\
+                            <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>]" > <?php echo $email['name']; ?></h3>\
+                             <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>\
+                              <input type="text" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>\
+                              </label>\
+                            </div>\
+                        <?php
+                        }
+                        ?>
+                    </div>\
+                </div>\
+            <?php
+            }
+            ?>
+        </div>\
+        <div id="smses-panel">\
+            <?php
+            if($smses){
+                ?>
+                <br>\
+                <button id="sms-entry" type="button" class="btn btn-success btn-large btn-block"><?php echo $this->lang->line('entry_sms'); ?></button>\
+                <div class="smses hide">\
+                    <div class="reward-panel">\
+                        <?php
+                        foreach($smses as $sms){
+                            ?>
+                            <div class="each-sms-template">\
+                            <label>\
+                            <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][sms][<?php echo $sms['_id']; ?>]" > <?php echo $sms['name']; ?></h3>\
+                              </label>\
+                            </div>\
+                        <?php
+                        }
+                        ?>
+                    </div>\
+                </div>\
+            <?php
+            }
+            ?>
         </div>\
         </div>\
         </td>\
