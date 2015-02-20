@@ -75,6 +75,10 @@ class Error extends CI_Model
             $errorData['message'] = "Invalid PayPal IPN";
             $errorData['error_code'] = '0808';
             break;
+        case 'TEMPLATE_NOT_FOUND':
+            $errorData['message'] = "Template cannot be found: ".$dataArray;
+            $errorData['error_code'] = '0809';
+            break;
         case 'INVALID_API_KEY_OR_SECRET':
             $errorData['message'] = "Invalid API-KEY OR API-SECRET";
             $errorData['error_code'] = '0001';
