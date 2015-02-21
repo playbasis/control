@@ -726,9 +726,8 @@ class Engine extends Quest
 		if (!$email) return false;
 
 		/* check blacklist */
-		$email = array($email);
 		$res = $this->email_model->isEmailInBlackList($email, $input['site_id']);
-		if ($res && count($res) == 1) if ($res[0]) return false; // banned
+		if ($res) return false; // banned
 
 		/* check valid template_id */
 		$template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);

@@ -91,7 +91,7 @@ class Pb_sms extends REST2_Controller
             /* check valid template_id */
             $message = null;
             if (!$not_template_id) {
-                $template = $this->sms_model->getTemplateById($validToken['site_id'], $this->input->post('template_id'));
+                $template = $this->sms_model->getTemplateByTemplateId($validToken['site_id'], $this->input->post('template_id'));
                 if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
                 $message = $template['body'];
             } else {
@@ -134,7 +134,7 @@ class Pb_sms extends REST2_Controller
             /* check valid template_id */
             $message = null;
             if (!$not_template_id) {
-                $template = $this->sms_model->getTemplateById($validToken['site_id'], $this->input->post('template_id'));
+                $template = $this->sms_model->getTemplateByTemplateId($validToken['site_id'], $this->input->post('template_id'));
                 if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
                 $message = $template['body'];
             } else {
