@@ -33,5 +33,14 @@ class Sms_model extends MY_Model
 
         return $results ? $results[0] : null;
     }
+
+    public function getTemplateById($site_id, $template_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('_id', new MongoId($template_id));
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
+        $results = $this->mongo_db->get('playbasis_sms_to_client');
+        return $results ? $results[0] : null;
+    }
 }
 ?>

@@ -16,11 +16,13 @@ class Engine extends Quest
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
+		$this->load->model('social_model');
+		$this->load->model('email_model');
+		$this->load->model('sms_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
-		$this->load->model('social_model');
 	}
 	public function getActionConfig_get()
 	{
@@ -389,7 +391,7 @@ class Engine extends Quest
 				$jigsawConfig = $jigsaw['config'];
 
 				//get class path to precess jigsaw
-                $processor = $this->client_model->getJigsawProcessor($jigsaw_id, $site_id);
+                $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
 
                 if (!$input["test"])
                     $jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
@@ -397,9 +399,10 @@ class Engine extends Quest
                     $jigsaw_model = true;
 
 				/* [rule usage] increase rule usage counter if a reward is given on chunk-based basis */
-				if ($jigsaw['category'] === 'REWARD' && $last_jigsaw !== 'REWARD') $count++;
+				if ($this->is_reward($jigsaw['category']) && !$this->is_reward($last_jigsaw)) $count++;
 
 				if($jigsaw_model) {
+
 					if($jigsaw['category'] == 'REWARD') {
 						if(isset($exInfo['dynamic'])) {
 							//reward is a custom point
@@ -601,10 +604,8 @@ class Engine extends Quest
                                 break;
                             }  // close switch($jigsawConfig['reward_name'])
                         }  // close if(isset($exInfo['dynamic']))
-
-                        //log jigsaw - reward
-                        if (!$input["test"])
-                            $this->client_model->log($input, $exInfo);
+                    } elseif($jigsaw['category'] == 'FEEDBACK') {
+                        $this->processFeedback($input);
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {
@@ -652,16 +653,15 @@ class Engine extends Quest
                                         '');
                             }  // close if (!$input["test"])
 						}  // close if(isset($exInfo['objective_complete']))*/
-
-						//log jigsaw - condition or action
-                        if (!$input["test"])
-                            $this->client_model->log($input, $exInfo);
 					}  // close if($jigsaw['category'] == 'REWARD')
+					// success, log jigsaw - ACTION, CONDITION, REWARD, or FEEDBACK
+					if (!$input["test"])
+						$this->client_model->log($input, $exInfo);
 				} else {  // jigsaw return false
-					if($jigsaw['category'] == 'REWARD') {
+					if($this->is_reward($jigsaw['category'])) {
 						continue;
 					} else {
-						//log jigsaw - condition or action
+						// fail, log jigsaw - ACTION or CONDITION
                         if (!$input["test"])
                             $this->client_model->log($input, $exInfo);
 						break;
@@ -691,6 +691,97 @@ class Engine extends Quest
 			}
 		}  // close foreach($ruleSet as $rule)
 		return $apiResult;
+	}
+	private function processFeedback($input) {
+		switch ($input['jigsaw_name']) {
+		case 'email':
+            $this->processEmail($input);
+			break;
+		case 'sms':
+            $this->processSms($input);
+			break;
+		default:
+            log_message('error', 'Unknown feedback: '.$input['jigsaw_name']);
+			break;
+		}
+	}
+	private function processEmail($input) {
+		/* check permission according to billing cycle */
+		$access = true;
+		try {
+			$this->client_model->permissionProcess(
+				$this->client_id,
+				$this->site_id,
+				"notifications",
+				"email"
+			);
+		} catch(Exception $e) {
+			if ($e->getMessage() == "LIMIT_EXCEED")
+				$access = false;
+		}
+		if (!$access) return false;
+
+		/* get email */
+		$email = $this->player_model->getEmail($input['site_id'], $input['pb_player_id']);
+		if (!$email) return false;
+
+		/* check blacklist */
+		$email = array($email);
+		$res = $this->email_model->isEmailInBlackList($email, $input['site_id']);
+		if ($res && count($res) == 1) if ($res[0]) return false; // banned
+
+		/* check valid template_id */
+		$template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+		if (!$template) return false;
+
+		/* send email */
+		$from = EMAIL_FROM;
+		$to = $email;
+		$subject = $input['input']['subject'];
+		$message = $template['body'];
+		$response = $this->utility->email($from, $to, $subject, $message);
+		$this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
+		return $response != false;
+	}
+	private function processSms($input) {
+		/* check permission according to billing cycle */
+		$access = true;
+		try {
+			$this->client_model->permissionProcess(
+				$this->client_id,
+				$this->site_id,
+				"notifications",
+				"sms"
+			);
+		} catch(Exception $e) {
+			if ($e->getMessage() == "LIMIT_EXCEED")
+				$access = false;
+		}
+		if (!$access) return false;
+
+		/* get phone number */
+		$phone = $this->player_model->getPhone($input['site_id'], $input['pb_player_id']);
+		if (!$phone) return false;
+
+		/* check valid template_id */
+		$template = $this->sms_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+		if (!$template) return false;
+
+		/* send SMS */
+		$this->config->load("twilio",TRUE);
+		$config = $this->sms_model->getSMSClient($input['client_id'], $input['site_id']);
+		$twilio = $this->config->item('twilio');
+		$config['api_version'] = $twilio['api_version'];
+		$this->load->library('twilio/twiliomini', $config);
+		$from = $config['number'];
+		$to = $phone;
+		$message = $template['body'];
+		$response = $this->twiliomini->sms($from, $to, $message);
+		$this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
+		return $response->IsError;
+	}
+	private function is_reward($category) {
+		return in_array($category, array('REWARD', 'FEEDBACK'));
 	}
 	public function test_get()
 	{

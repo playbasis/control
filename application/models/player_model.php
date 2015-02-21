@@ -1509,5 +1509,23 @@ class Player_model extends MY_Model
 
         return $ret;
     }
+
+    public function getById($site_id, $pb_player_id) {
+        $this->set_site_mongodb($site_id);
+
+        $this->mongo_db->where('_id', $pb_player_id);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function getEmail($site_id, $pb_player_id) {
+        $player = $this->getById($site_id, $pb_player_id);
+        return $player && isset($player['email']) ? $player['email'] : null;
+    }
+
+    public function getPhone($site_id, $pb_player_id) {
+        $player = $this->getById($site_id, $pb_player_id);
+        return $player && isset($player['phone_number']) ? $player['phone_number'] : null;
+    }
 }
 ?>

@@ -60,11 +60,12 @@ class Pb_sms extends REST2_Controller
 
     public function send_post()
     {
-        $required = $this->input->checkParam(array(
-            'player_id',
-            'message',
-        ));
+        $required = $this->input->checkParam(array('player_id'));
         if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $not_message = $this->input->checkParam(array('message'));
+        $not_template_id = $this->input->checkParam(array('template_id'));
+        if ($not_message && $not_template_id)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
         $cl_player_id = $this->input->post('player_id');
@@ -87,7 +88,15 @@ class Pb_sms extends REST2_Controller
                 $from = $sms_data['name'];
             }
 
-            $message = $this->input->post('message');
+            /* check valid template_id */
+            $message = null;
+            if (!$not_template_id) {
+                $template = $this->sms_model->getTemplateById($validToken['site_id'], $this->input->post('template_id'));
+                if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
+                $message = $template['body'];
+            } else {
+                $message = $this->input->post('message');
+            }
 
             $this->sendEngine('user', $from, $player['phone_number'], $message);
         }else{
@@ -97,12 +106,12 @@ class Pb_sms extends REST2_Controller
 
     public function send_goods_post()
     {
-        $required = $this->input->checkParam(array(
-            'player_id',
-            'ref_id',
-            'message'
-        ));
+        $required = $this->input->checkParam(array('player_id', 'ref_id'));
         if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $not_message = $this->input->checkParam(array('message'));
+        $not_template_id = $this->input->checkParam(array('template_id'));
+        if ($not_message && $not_template_id)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
         $cl_player_id = $this->input->post('player_id');
@@ -113,7 +122,6 @@ class Pb_sms extends REST2_Controller
         if(!$pb_player_id)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-
         $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
         if (!$player)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
@@ -123,7 +131,15 @@ class Pb_sms extends REST2_Controller
             $ref_id = $this->input->post('ref_id');
             $redeemData = $this->redeem_model->findByReferenceId('goods', new MongoId($ref_id));
 
-            $message = $this->input->post('message');
+            /* check valid template_id */
+            $message = null;
+            if (!$not_template_id) {
+                $template = $this->sms_model->getTemplateById($validToken['site_id'], $this->input->post('template_id'));
+                if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
+                $message = $template['body'];
+            } else {
+                $message = $this->input->post('message');
+            }
             $message = str_replace('{{code}}', $redeemData['code'], $message);
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
