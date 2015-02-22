@@ -64,6 +64,10 @@
                                                         <td>{{last_name}}</td>
                                                     </tr>
                                                     <tr>
+                                                        <td align="right"><small>Player ID:</small></td>
+                                                        <td>{{cl_player_id}}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <td align="right"><small>Player Email:</small></td>
                                                         <td>{{email}}</td>
                                                     </tr>
