@@ -69,7 +69,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td align="right"><small>Player Phone:</small></td>
-                                                        <td>{{phone}}</td>
+                                                        <td>{{phone_number}}</td>
                                                     </tr>
                                                     <tr>
                                                         <td align="right"><small>Coupon Code:</small></td>
