@@ -722,7 +722,8 @@ class Engine extends Quest
 		if (!$access) return false;
 
 		/* get email */
-		$email = $this->player_model->getEmail($input['site_id'], $input['pb_player_id']);
+		$player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+		$email = $player && isset($player['email']) ? $player['email'] : null;
 		if (!$email) return false;
 
 		/* check blacklist */
@@ -737,7 +738,7 @@ class Engine extends Quest
 		$from = EMAIL_FROM;
 		$to = $email;
 		$subject = $input['input']['subject'];
-		$message = $template['body'];
+		$message = $this->utility->replace_template_vars($template['body'], $player);
 		$response = $this->utility->email($from, $to, $subject, $message);
 		$this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
 		return $response != false;
@@ -759,7 +760,8 @@ class Engine extends Quest
 		if (!$access) return false;
 
 		/* get phone number */
-		$phone = $this->player_model->getPhone($input['site_id'], $input['pb_player_id']);
+		$player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+		$phone = $player && isset($player['phone_number']) ? $player['phone_number'] : null;
 		if (!$phone) return false;
 
 		/* check valid template_id */
@@ -774,7 +776,7 @@ class Engine extends Quest
 		$this->load->library('twilio/twiliomini', $config);
 		$from = $config['number'];
 		$to = $phone;
-		$message = $template['body'];
+		$message = $this->utility->replace_template_vars($template['body'], $player);
 		$response = $this->twiliomini->sms($from, $to, $message);
 		$this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
 		return $response->IsError;
