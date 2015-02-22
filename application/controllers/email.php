@@ -108,7 +108,7 @@ class Email extends REST2_Controller
 		} else {
 			$message = $this->input->post('message');
 		}
-		$message = str_replace('{{code}}', $redeemData['code'], $message);
+		$message = $this->utility->replace_template_vars($message, array_merge($player, array('code' => $redeemData['code'])));
 
 		/* variables */
 		$email = $player['email'];
@@ -167,6 +167,7 @@ class Email extends REST2_Controller
 		} else {
 			$message = $this->input->post('message');
 		}
+		$message = $this->utility->replace_template_vars($message, $player);
 
 		/* variables */
 		$email = $player['email'];

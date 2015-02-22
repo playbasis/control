@@ -155,5 +155,12 @@ class Utility extends CI_Model
 		$interval = $_from->diff($_to);
 		return $interval->format($fmt);
 	}
+
+	public function replace_template_vars($template, $data) {
+		foreach (array('first_name', 'last_name', 'cl_player_id', 'email', 'phone_number', 'code') as $var) {
+			if (isset($data[$var])) $template = str_replace('{{'.$var.'}}', $data[$var], $template);
+		}
+		return $template;
+	}
 }
 ?>

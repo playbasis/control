@@ -15,8 +15,6 @@ class Pb_sms extends REST2_Controller
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/node_stream', 'node');
-        $this->load->model('tool/error', 'error');
-        $this->load->model('tool/respond', 'resp');
     }
 
     private function sendEngine($type, $from, $to, $message)
@@ -97,6 +95,7 @@ class Pb_sms extends REST2_Controller
             } else {
                 $message = $this->input->post('message');
             }
+            $message = $this->utility->replace_template_vars($message, $player);
 
             $this->sendEngine('user', $from, $player['phone_number'], $message);
         }else{
@@ -140,7 +139,7 @@ class Pb_sms extends REST2_Controller
             } else {
                 $message = $this->input->post('message');
             }
-            $message = str_replace('{{code}}', $redeemData['code'], $message);
+            $message = $this->utility->replace_template_vars($message, array_merge($player, array('code' => $redeemData['code'])));
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
 
