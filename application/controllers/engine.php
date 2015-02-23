@@ -605,7 +605,8 @@ class Engine extends Quest
                             }  // close switch($jigsawConfig['reward_name'])
                         }  // close if(isset($exInfo['dynamic']))
                     } elseif($jigsaw['category'] == 'FEEDBACK') {
-                        $this->processFeedback($input);
+                        if (!$input["test"])
+                            $this->processFeedback($input);
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {
