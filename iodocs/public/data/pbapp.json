@@ -702,7 +702,7 @@
 						},
 						{
 							"Name": "limit",
-							"Required": "N",
+							"Required": "Y",
 							"Default": "20",
 							"Type": "integer",
 							"Description": "number of results to return"
@@ -757,7 +757,7 @@
 					"parameters": [
 						{
 							"Name": "limit",
-							"Required": "N",
+							"Required": "Y",
 							"Default": "20",
 							"Type": "integer",
 							"Description": "number of results to return for each point type"
