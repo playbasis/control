@@ -289,6 +289,41 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+                                <?php if(isset($editEmailRew)){ ?>
+                                    <div class="emails-wrapper rewards-type well">
+                                        <h3>Emails  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-email-btn">+ Add Emails</a></h3>
+                                        <div class="item-container">
+                                            <?php foreach($editEmailRew as $email){ ?>
+                                                <div class="clearfix item-wrapper emails-item-wrapper" data-id-template="<?php echo $email['template_id'] ?>">
+                                                    <div class="span7"><?php echo $email['feedback_data']['name'];?></div>
+                                                    <div class="span1">
+                                                        <small>value</small>
+                                                        <input type="text" name="feedbacks[<?php echo $email['template_id'] ?>][subject]" placeholder="Value" value="<?php echo $email['subject'] ?>">
+                                                        <input type="hidden" name="feedbacks[<?php echo $email['template_id'] ?>][template_id]" value="<?php echo $email['template_id'] ?>">
+                                                        <input type="hidden" name="feedbacks[<?php echo $email['template_id'] ?>][feedback_type]" value="EMAIL"></div>
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editSmsRew)){ ?>
+                                    <div class="smses-wrapper rewards-type well">
+                                        <h3>SMSes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-sms-btn">+ Add SMSes</a></h3>
+                                        <div class="item-container">
+                                            <?php foreach($editSmsRew as $sms){ ?>
+                                                <div class="clearfix item-wrapper smses-item-wrapper" data-id-template="<?php echo $sms['template_id'] ?>">
+                                                    <div class="span7"><?php echo $sms['feedback_data']['name'];?></div>
+                                                    <div class="span1">
+                                                        <small>value</small>
+                                                        <input type="hidden" name="feedbacks[<?php echo $sms['template_id'] ?>][template_id]" value="<?php echo $sms['template_id'] ?>">
+                                                        <input type="hidden" name="feedbacks[<?php echo $sms['template_id'] ?>][feedback_type]" value="SMS"></div>
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>
@@ -479,9 +514,8 @@
                                                     <li class="add-exp"><a tabindex="-1" href="javascript:void(0)">EXP</a></li>                                              
                                                     <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
                                                     <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
-                                                     <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
+                                                    <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
                                                     <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
-
                                                 </ul>                                            
                                                 <span class="break"></span>                                            
                                                 <a href="javaScript:void()" class="btn-minimize"><i class="icon-chevron-up"></i></a>                                        
@@ -532,7 +566,6 @@
                                                 <?php } ?> <!-- end of editCustomPointRew isset -->
 
                                                 <?php if(isset($mission['editBadgeRew'])){ ?>
-
                                                     <div class="badges-wrapper rewards-type well">
                                                         <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
                                                         <div class="item-container">
@@ -552,8 +585,46 @@
                                                             <?php } ?>
                                                         </div>
                                                     </div>
+                                                <?php } ?> <!-- end of editBadgeRew isset -->
 
-                                                <?php } ?> <!-- end of editCustomPointRew isset -->
+                                                <?php if(isset($mission['editEmailRew'])){ ?>
+                                                    <div class="emails-wrapper rewards-type well">
+                                                        <h3>Emails  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-email-btn">+ Add Emails</a></h3>
+                                                        <div class="item-container">
+                                                            <?php foreach($mission['editEmailRew'] as $email){ ?>
+                                                                <div class="clearfix item-wrapper emails-item-wrapper" data-id-template="<?php echo $email['template_id'] ?>">
+                                                                    <div class="span7"><?php echo $email['feedback_data']['name'] ?></div>
+                                                                    <div class="span1">
+                                                                        <small>value</small>
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][subject]" placeholder="Value" value="<?php echo $email['subject'] ?>">
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][template_id]" value="<?php echo $email['template_id'] ?>">
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][feedback_type]" value="EMAIL"></div>
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editEmailRew isset -->
+
+                                                <?php if(isset($mission['editSmsRew'])){ ?>
+                                                    <div class="smses-wrapper rewards-type well">
+                                                        <h3>SMSes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-sms-btn">+ Add SMSes</a></h3>
+                                                        <div class="item-container">
+                                                            <?php foreach($mission['editSmsRew'] as $sms){ ?>
+                                                                <div class="clearfix item-wrapper smses-item-wrapper" data-id-template="<?php echo $sms['template_id'] ?>">
+                                                                    <div class="span7"><?php echo $sms['feedback_data']['name'] ?></div>
+                                                                    <div class="span1">
+                                                                        <small>value</small>
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $sms['template_id'] ?>][template_id]" value="<?php echo $sms['template_id'] ?>">
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $sms['template_id'] ?>][feedback_type]" value="SMS"></div>
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editEmailRew isset -->
 
                                                 <h3 class="no-item">No Item</h3>
                                             </div><!-- .rewards-container -->
@@ -1351,7 +1422,7 @@ function addSmses(target){
     var id = target.id || null;
     var parent = target.parent || 'quest';
 
-    var smsesHead = '<h3>Smses  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-sms-btn">+ Add Smses</a></h3>';
+    var smsesHead = '<h3>Smses  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-sms-btn">+ Add SMSes</a></h3>';
     var smsesHtml = '<div class="smses-wrapper '+type+'-type well">'+smsesHead+'<div class="item-container"></div></div>';
 
     target.html = smsesHtml;
@@ -1527,13 +1598,13 @@ function selectEmailsItem(){
                 var emailBody = $(this).find('.data-email-body').html();
 
                 if(parent == 'missions'){
-                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type_type]" value = "EMAIL"/>'
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][feedbacks]['+id+'][subject]" placeholder="Value" value=""/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][template_id]" value="'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type]" value="EMAIL"/>'
                 }else{
-                    inputHtml = '<input type="text" name ="feedbacks['+id+']['+typeElement+'_subject]" placeholder="Value" value="1"/>\
-                                    <input type="hidden" name="feedbacks['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="feedbacks['+id+'][feedback_type]" value = "EMAIL"/>'
+                    inputHtml = '<input type="text" name ="feedbacks['+id+'][subject]" placeholder="Value" value=""/>\
+                                    <input type="hidden" name="feedbacks['+id+'][template_id]" value="'+id+'"/>\
+                                    <input type="hidden" name="feedbacks['+id+'][feedback_type]" value="EMAIL"/>'
                 }
 
 
@@ -1624,11 +1695,11 @@ function selectSmsesItem(){
                 var smsBody = $(this).find('.data-sms-body').html();
 
                 if(parent == 'missions'){
-                    inputHtml = '<input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type_type]" value = "SMS"/>'
+                    inputHtml = '<input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][template_id]" value="'+id+'"/>\
+                                    <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type]" value="SMS"/>'
                 }else{
-                    inputHtml = '<input type="hidden" name="feedbacks['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
-                                    <input type="hidden" name="feedbacks['+id+'][feedback_type]" value = "SMS"/>'
+                    inputHtml = '<input type="hidden" name="feedbacks['+id+'][template_id]" value="'+id+'"/>\
+                                    <input type="hidden" name="feedbacks['+id+'][feedback_type]" value="SMS"/>'
                 }
 
                 var smsesItemHtml = '<div class="clearfix item-wrapper smses-item-wrapper" data-id-sms="'+id+'">\

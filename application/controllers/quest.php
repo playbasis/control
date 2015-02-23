@@ -19,6 +19,8 @@ class Quest extends MY_Controller
         $this->load->model('Quest_model');
         $this->load->model('Plan_model');
         $this->load->model('Badge_model');
+        $this->load->model('Email_model');
+        $this->load->model('Sms_model');
         $this->load->model('Rule_model');
         $this->load->model('Permission_model');
 
@@ -189,11 +191,11 @@ class Quest extends MY_Controller
 
             if (!$this->data['message']) {
                 foreach($data as $key => $value){
-                    if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
+                    if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
                         $i = 0;
                         foreach($value as $k => $v){
                             foreach($v as $ke => &$item){
-                                if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
+                                if(in_array($ke, array('condition_id', 'reward_id', 'template_id')) && !empty($item)){
                                     $item = new MongoId($item);
                                 }
                             }
@@ -208,11 +210,18 @@ class Quest extends MY_Controller
                                 'site_id' => $site_id
                             );
                             unset($data[$key][$k]);
-                            if($key == 'condition'){
+                            switch ($key) {
+                            case 'condition':
                                 $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
-                            }
-                            if($key == 'rewards'){
+                                break;
+                            case 'rewards':
                                 $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
+                                break;
+                            case 'feedbacks':
+                                $v["feedback_data"] = $this->questObjectData($v, "feedback_type", "template_id", $qdata);
+                                break;
+                            default:
+                                break;
                             }
                             $data[$key][$i] = $v;
                             if($key == 'missions'){
@@ -239,11 +248,11 @@ class Quest extends MY_Controller
                             $data[$key][$im] = $val;
                             $data[$key][$im]['mission_id'] = new MongoId();
                             foreach($val as $k => $v){
-                                if($k == 'completion' || $k == 'rewards'){
+                                if(in_array($k, array('completion', 'rewards', 'feedbacks'))){
                                     $i = 0;
                                     foreach($v as $koo => $voo){
                                         foreach($voo as $kkk => &$vvv){
-                                            if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
+                                            if(in_array($kkk, array('completion_id', 'reward_id', 'template_id')) && !empty($vvv)){
                                                 $vvv = new MongoId($vvv);
                                             }
                                             if($kkk == 'completion_element_id'){
@@ -257,11 +266,18 @@ class Quest extends MY_Controller
                                             'site_id' => $site_id
                                         );
                                         unset($data[$key][$im][$k][$koo]);
-                                        if($k == 'completion'){
+                                        switch ($k) {
+                                        case 'completion':
                                             $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
-                                        }
-                                        if($k == 'rewards'){
+                                            break;
+                                        case 'rewards':
                                             $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
+                                            break;
+                                        case 'feedbacks':
+                                            $voo["feedback_data"] = $this->questObjectData($voo, "feedback_type", "template_id", $qdata);
+                                            break;
+                                        default:
+                                            break;
                                         }
                                         $data[$key][$im][$k][$i] = $voo;
 
@@ -327,6 +343,16 @@ class Quest extends MY_Controller
             $query_data['action_id'] = $object_data[$key_id];
             $action_detail = $this->Quest_model->getAction($query_data);
             $condition_data = $action_detail;
+            break;
+        case "EMAIL":
+            $query_data['template_id'] = $object_data[$key_id];
+            $template_detail = $this->Email_model->getTemplate($query_data['template_id']);
+            $condition_data = array('name' => isset($template_detail['name']) ? $template_detail['name'] : '', 'message' => $template_detail && isset($template_detail['body']) ? $template_detail['body'] : '');
+            break;
+        case "SMS":
+            $query_data['template_id'] = $object_data[$key_id];
+            $template_detail = $this->Sms_model->getTemplate($query_data['template_id']);
+            $condition_data = array('name' => isset($template_detail['name']) ? $template_detail['name'] : '', 'message' => $template_detail && isset($template_detail['body']) ? $template_detail['body'] : '');
             break;
         }
         return $condition_data;
@@ -558,6 +584,26 @@ class Quest extends MY_Controller
                 }
             }
 
+            if(isset($editQuest['feedbacks'])){
+                $countEmails = 0;
+                $countSmses = 0;
+                foreach($editQuest['feedbacks'] as $feedback){
+                    if($feedback['feedback_type'] == 'EMAIL'){
+                        $this->data['editEmailRew'][$countEmails]['feedback_type'] = $feedback['feedback_type'];
+                        $this->data['editEmailRew'][$countEmails]['template_id'] = isset($feedback['template_id'])?$feedback['template_id']:null;
+                        $this->data['editEmailRew'][$countEmails]['subject'] = isset($feedback['subject'])?$feedback['subject']:null;
+                        $this->data['editEmailRew'][$countEmails]['feedback_data'] = isset($feedback['feedback_data'])?$feedback['feedback_data']:null;
+                        $countEmails++;
+                    }
+                    if($feedback['feedback_type'] == 'SMS'){
+                        $this->data['editSmsRew'][$countSmses]['feedback_type'] = $feedback['feedback_type'];
+                        $this->data['editSmsRew'][$countSmses]['template_id'] = isset($feedback['template_id'])?$feedback['template_id']:null;
+                        $this->data['editSmsRew'][$countSmses]['feedback_data'] = isset($feedback['feedback_data'])?$feedback['feedback_data']:null;
+                        $countSmses++;
+                    }
+                }
+            }
+
             if(isset($editQuest['missions'])){
 
                 $missionCount = 0;
@@ -702,8 +748,27 @@ class Quest extends MY_Controller
                         }
                     }
 
-                    $missionCount++;
+                    $countEmails = 0;
+                    $countSmses = 0;
+                    if(isset($mission['feedbacks'])){
+                        foreach($mission['feedbacks'] as $rr){
+                            if($rr['feedback_type'] == 'EMAIL'){
+                                $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['feedback_type'] = $rr['feedback_type'];
+                                $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['template_id'] = $rr['template_id'];
+                                $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['subject'] = $rr['subject'];
+                                $this->data['editMission'][$missionCount]['editEmailRew'][$countEmails]['feedback_data'] = $rr['feedback_data'];
+                                $countEmails++;
+                            }
+                            if($rr['feedback_type'] == 'SMS'){
+                                $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_type'] = $rr['feedback_type'];
+                                $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['template_id'] = $rr['template_id'];
+                                $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_data'] = $rr['feedback_data'];
+                                $countEmails++;
+                            }
+                        }
+                    }
 
+                    $missionCount++;
                 }
             }
         }
@@ -754,34 +819,24 @@ class Quest extends MY_Controller
     }
 
     public function increase_order($quest_id){
-
         if($this->User_model->getClientId()){
             $client_id = $this->User_model->getClientId();
             $this->Quest_model->increaseOrderByOneClient($quest_id, $client_id);
         }else{
             $this->Quest_model->increaseOrderByOne($quest_id);
         }
-
-        // redirect('action', 'refresh');
-
         $json = array('success'=>'Okay!');
-
         $this->output->set_output(json_encode($json));
-
     }
 
     public function decrease_order($quest_id){
-
         if($this->User_model->getClientId()){
             $client_id = $this->User_model->getClientId();
             $this->Quest_model->decreaseOrderByOneClient($quest_id, $client_id);
         }else{
             $this->Quest_model->decreaseOrderByOne($quest_id);
         }
-        // redirect('action', 'refresh');
-
         $json = array('success'=>'Okay!');
-
         $this->output->set_output(json_encode($json));
     }
 
@@ -953,11 +1008,11 @@ class Quest extends MY_Controller
 
             if (!$this->data['message']) {
                 foreach($data as $key => $value){
-                    if($key == 'condition' || $key == 'rewards' || $key == 'missions'){
+                    if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
                         $i = 0;
                         foreach($value as $k => $v){
                             foreach($v as $ke => &$item){
-                                if(($ke == 'condition_id' || $ke == 'reward_id') && !empty($item)){
+                                if(in_array($ke, array('condition_id', 'reward_id', 'template_id')) && !empty($item)){
                                     $item = new MongoId($item);
                                 }
                             }
@@ -966,11 +1021,18 @@ class Quest extends MY_Controller
                                 'site_id' => $site_id
                             );
                             unset($data[$key][$k]);
-                            if($key == 'condition'){
+                            switch ($key) {
+                            case 'condition':
                                 $v["condition_data"] = $this->questObjectData($v, "condition_type", "condition_id", $qdata);
-                            }
-                            if($key == 'rewards'){
+                                break;
+                            case 'rewards':
                                 $v["reward_data"] = $this->questObjectData($v, "reward_type", "reward_id", $qdata);
+                                break;
+                            case 'feedbacks':
+                                $v["feedback_data"] = $this->questObjectData($v, "feedback_type", "template_id", $qdata);
+                                break;
+                            default:
+                                break;
                             }
                             $data[$key][$i] = $v;
                             if($key == 'missions'){
@@ -1001,11 +1063,11 @@ class Quest extends MY_Controller
                             }
 
                             foreach($val as $k => $v){
-                                if($k == 'completion' || $k == 'rewards'){
+                                if(in_array($k, array('completion', 'rewards', 'feedbacks'))){
                                     $i = 0;
                                     foreach($v as $koo => $voo){
                                         foreach($voo as $kkk => &$vvv){
-                                            if(($kkk == 'completion_id' || $kkk == 'reward_id') && !empty($vvv)){
+                                            if(in_array($kkk, array('completion_id', 'reward_id', 'template_id')) && !empty($vvv)){
                                                 $vvv = new MongoId($vvv);
                                             }
                                             if($kkk == 'completion_element_id'){
@@ -1021,11 +1083,18 @@ class Quest extends MY_Controller
                                             'site_id' => $site_id
                                         );
                                         unset($data[$key][$im][$k][$koo]);
-                                        if($k == 'completion'){
+                                        switch ($k) {
+                                        case 'completion':
                                             $voo["completion_data"] = $this->questObjectData($voo, "completion_type", "completion_id", $qdata);
-                                        }
-                                        if($k == 'rewards'){
+                                            break;
+                                        case 'rewards':
                                             $voo["reward_data"] = $this->questObjectData($voo, "reward_type", "reward_id", $qdata);
+                                            break;
+                                        case 'feedbacks':
+                                            $voo["feedback_data"] = $this->questObjectData($voo, "feedback_type", "template_id", $qdata);
+                                            break;
+                                        default:
+                                            break;
                                         }
                                         $data[$key][$im][$k][$i] = $voo;
 
@@ -1057,15 +1126,11 @@ class Quest extends MY_Controller
         }
 
         if(!empty($client_id) && !empty($site_id)){
-
             $this->getForm($quest_id);
-
         }
-
     }
 
     private function validateModify() {
-
         if ($this->User_model->hasPermission('modify', 'quest')) {
             return true;
         } else {
