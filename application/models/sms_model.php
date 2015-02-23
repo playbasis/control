@@ -96,6 +96,7 @@ class Sms_model extends MY_Model
         $templates = $this->mongo_db->get("playbasis_sms_to_client");
         if (!$templates) return false;
 
+        $this->mongo_db->where('_id', new MongoID($template_id));
         $this->mongo_db->set("name", $data["name"]);
         $this->mongo_db->set('client_id', new MongoID($data['client_id']));
         $this->mongo_db->set('site_id', new MongoID($data['site_id']));
