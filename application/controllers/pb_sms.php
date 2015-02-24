@@ -56,6 +56,24 @@ class Pb_sms extends REST2_Controller
         $this->response($this->error->setError('LIMIT_EXCEED'), 200);
     }
 
+    public function sendTo_post()
+    {
+        $required = $this->input->checkParam(array('phone_number', 'message'));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+        $validToken = $this->validToken;
+
+        if($this->input->post('from')){
+            $from = $this->input->post('from');
+        }else{
+            $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
+            $from = $sms_data['name'];
+        }
+
+        $this->sendEngine('user', $from, $this->input->post('phone_number'), $this->input->post('message'));
+    }
+
     public function send_post()
     {
         $required = $this->input->checkParam(array('player_id'));
