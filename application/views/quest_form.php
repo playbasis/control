@@ -294,14 +294,27 @@
                                         <h3>Emails  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-email-btn">+ Add Emails</a></h3>
                                         <div class="item-container">
                                             <?php foreach($editEmailRew as $email){ ?>
-                                                <div class="clearfix item-wrapper emails-item-wrapper" data-id-template="<?php echo $email['template_id'] ?>">
-                                                    <div class="span7"><?php echo $email['feedback_data']['name'];?></div>
-                                                    <div class="span1">
-                                                        <small>value</small>
-                                                        <input type="text" name="feedbacks[<?php echo $email['template_id'] ?>][subject]" placeholder="Value" value="<?php echo $email['subject'] ?>">
-                                                        <input type="hidden" name="feedbacks[<?php echo $email['template_id'] ?>][template_id]" value="<?php echo $email['template_id'] ?>">
-                                                        <input type="hidden" name="feedbacks[<?php echo $email['template_id'] ?>][feedback_type]" value="EMAIL"></div>
-                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+
+
+                                                <div class="clearfix item-wrapper emails-item-wrapper" data-id-email="<?php echo $email['template_id'] ?>">
+                                                        <h4 class="span10"><?php echo $email['feedback_data']['name'];?><a href="#" data-toggle="modal" data-backdrop="false" data-target="#modal-preview-quest-<?php echo $email['template_id'] ?>">[Preview]</a></h4>
+                                                        <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                        <div class="clearfix"></div>
+                                                        <div class="clearfix">
+                                                            <div class="span3">Subject: </div>
+                                                            <div class="span8">
+                                                                <input type="text" name ="feedbacks[<?php echo $email['template_id'] ?>][subject]" placeholder="Value" value="<?php echo $email['subject'] ?>"/>
+                                                                <input type="hidden" name="feedbacks[<?php echo $email['template_id'] ?>][template_id]" value="<?php echo $email['template_id'] ?>"/>
+                                                                <input type="hidden" name="feedbacks[<?php echo $email['template_id'] ?>][feedback_type]" value="EMAIL"/>
+                                                            </div>
+                                                            <div id="modal-preview-quest-<?php echo $email['template_id'] ?>"  class="modal hide fade modal-select in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                                    <h4 id="myModalLabel">Preview: <?php echo $email['feedback_data']['name'];?></h4>
+                                                                </div>
+                                                                <div class="modal-body"><?php echo $email['feedback_data']['message'];?></div>
+                                                            </div>
+                                                        </div>
                                                 </div>
                                             <?php } ?>
                                         </div>
@@ -312,14 +325,20 @@
                                         <h3>SMSes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-sms-btn">+ Add SMSes</a></h3>
                                         <div class="item-container">
                                             <?php foreach($editSmsRew as $sms){ ?>
-                                                <div class="clearfix item-wrapper smses-item-wrapper" data-id-template="<?php echo $sms['template_id'] ?>">
-                                                    <div class="span7"><?php echo $sms['feedback_data']['name'];?></div>
-                                                    <div class="span1">
-                                                        <small>value</small>
-                                                        <input type="hidden" name="feedbacks[<?php echo $sms['template_id'] ?>][template_id]" value="<?php echo $sms['template_id'] ?>">
-                                                        <input type="hidden" name="feedbacks[<?php echo $sms['template_id'] ?>][feedback_type]" value="SMS"></div>
-                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+
+                                            <div class="clearfix item-wrapper smses-item-wrapper" data-id-sms="<?php echo $sms['template_id'] ?>">
+                                                <h4 class="span10"><?php echo $sms['feedback_data']['name'];?></h4>
+                                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                <div class="clearfix"></div>
+                                                <div class="clearfix">
+                                                    <div class="span2">Body: </div>
+                                                    <div class="span10">
+                                                        <input type="hidden" name="feedbacks[<?php echo $sms['template_id'] ?>][template_id]" value="<?php echo $sms['template_id'] ?>"/>
+                                                        <input type="hidden" name="feedbacks[<?php echo $sms['template_id'] ?>][feedback_type]" value="SMS"/>
+                                                    <?php echo $sms['feedback_data']['message'];?></div>
                                                 </div>
+                                            </div>
+
                                             <?php } ?>
                                         </div>
                                     </div>
@@ -592,15 +611,25 @@
                                                         <h3>Emails  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-email-btn">+ Add Emails</a></h3>
                                                         <div class="item-container">
                                                             <?php foreach($mission['editEmailRew'] as $email){ ?>
-                                                                <div class="clearfix item-wrapper emails-item-wrapper" data-id-template="<?php echo $email['template_id'] ?>">
-                                                                    <div class="span7"><?php echo $email['feedback_data']['name'] ?></div>
-                                                                    <div class="span1">
-                                                                        <small>value</small>
-                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][subject]" placeholder="Value" value="<?php echo $email['subject'] ?>">
-                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][template_id]" value="<?php echo $email['template_id'] ?>">
-                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][feedback_type]" value="EMAIL"></div>
-                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>
-                                                                    </div>
+                                                                <div class="clearfix item-wrapper emails-item-wrapper" data-id-email="<?php echo $email['template_id'] ?>">
+                                                                        <h4 class="span10"><?php echo $email['feedback_data']['name'];?><a href="#" data-toggle="modal" data-backdrop="false" data-target="#modal-preview-mission-<?php echo $mission['mission_id'] ?>-<?php echo $email['template_id'] ?>">[Preview]</a></h4>
+                                                                        <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                                        <div class="clearfix"></div>
+                                                                        <div class="clearfix">
+                                                                            <div class="span3">Subject: </div>
+                                                                            <div class="span8">
+                                                                                <input type="text" name ="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][subject]" placeholder="Value" value="<?php echo $email['subject'] ?>"/>
+                                                                                <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][template_id]" value="<?php echo $email['template_id'] ?>"/>
+                                                                                <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $email['template_id'] ?>][feedback_type]" value="EMAIL"/>
+                                                                            </div>
+                                                                            <div id="modal-preview-mission-<?php echo $mission['mission_id'] ?>-<?php echo $email['template_id'] ?>"  class="modal hide fade modal-select in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                                                <div class="modal-header">
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                                                    <h4 id="myModalLabel">Preview: <?php echo $email['feedback_data']['name'];?></h4>
+                                                                                </div>
+                                                                                <div class="modal-body"><?php echo $email['feedback_data']['message'];?></div>
+                                                                            </div>
+                                                                        </div>
                                                                 </div>
                                                             <?php } ?>
                                                         </div>
@@ -611,14 +640,20 @@
                                                     <div class="smses-wrapper rewards-type well">
                                                         <h3>SMSes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-sms-btn">+ Add SMSes</a></h3>
                                                         <div class="item-container">
+
                                                             <?php foreach($mission['editSmsRew'] as $sms){ ?>
-                                                                <div class="clearfix item-wrapper smses-item-wrapper" data-id-template="<?php echo $sms['template_id'] ?>">
-                                                                    <div class="span7"><?php echo $sms['feedback_data']['name'] ?></div>
-                                                                    <div class="span1">
-                                                                        <small>value</small>
-                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $sms['template_id'] ?>][template_id]" value="<?php echo $sms['template_id'] ?>">
-                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $sms['template_id'] ?>][feedback_type]" value="SMS"></div>
-                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>
+
+
+                                                                <div class="clearfix item-wrapper smses-item-wrapper" data-id-sms="<?php echo $sms['template_id'] ?>">
+                                                                    <h4 class="span10"><?php echo $sms['feedback_data']['name'];?></h4>
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                                    <div class="clearfix"></div>
+                                                                    <div class="clearfix">
+                                                                        <div class="span2">Body: </div>
+                                                                        <div class="span10">
+                                                                            <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $sms['template_id'] ?>][template_id]" value="<?php echo $sms['template_id'] ?>"/>
+                                                                            <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][feedbacks][<?php echo $sms['template_id'] ?>][feedback_type]" value="SMS"/>
+                                                                        <?php echo  $sms['feedback_data']['message'] ?></div>
                                                                     </div>
                                                                 </div>
                                                             <?php } ?>
@@ -1601,14 +1636,20 @@ function selectEmailsItem(){
                     inputHtml = '<input type="text" name ="'+parent+'['+taget_id+'][feedbacks]['+id+'][subject]" placeholder="Value" value=""/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][template_id]" value="'+id+'"/>\
                                     <input type="hidden" name="'+parent+'['+taget_id+'][feedbacks]['+id+'][feedback_type]" value="EMAIL"/>'
+
+                    var modelPreviewId = 'modal-preview-'+parent+'-'+taget_id+'-'+id;
                 }else{
                     inputHtml = '<input type="text" name ="feedbacks['+id+'][subject]" placeholder="Value" value=""/>\
                                     <input type="hidden" name="feedbacks['+id+'][template_id]" value="'+id+'"/>\
                                     <input type="hidden" name="feedbacks['+id+'][feedback_type]" value="EMAIL"/>'
+
+                    var modelPreviewId = 'modal-preview-'+parent+'-'+id;
                 }
 
 
-                var emailPreview = '<div id="modal-preview-'+parent+'-'+id+'"  class="modal hide fade modal-select in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">\
+                
+
+                var emailPreview = '<div id="'+modelPreviewId+'"  class="modal hide fade modal-select in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">\
                 <div class="modal-header">\
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\
                     <h4 id="myModalLabel">Preview: '+title+'</h4>\
@@ -1617,7 +1658,7 @@ function selectEmailsItem(){
             </div>'
 
                 var emailsItemHtml = '<div class="clearfix item-wrapper emails-item-wrapper" data-id-email="'+id+'">\
-                                    <h4 class="span10">'+title+' <a href="#" data-toggle="modal" data-backdrop="false" data-target="#modal-preview-'+parent+'-'+id+'">[Preview]</a></h4>\
+                                    <h4 class="span10">'+title+' <a href="#" data-toggle="modal" data-backdrop="false" data-target="#'+modelPreviewId+'">[Preview]</a></h4>\
                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>\
                                     <div class="clearfix"></div>\
                                     <div class="clearfix">\
