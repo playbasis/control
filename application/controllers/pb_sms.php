@@ -68,7 +68,7 @@ class Pb_sms extends REST2_Controller
             $from = $this->input->post('from');
         }else{
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
-            $from = $sms_data['name'];
+            $from = isset($sms_data['name'])?$sms_data['name']:$sms_data['number'];
         }
 
         $this->sendEngine('user', $from, $this->input->post('phone_number'), $this->input->post('message'));
@@ -101,7 +101,7 @@ class Pb_sms extends REST2_Controller
                 $from = $this->input->post('from');
             }else{
                 $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
-                $from = $sms_data['name'];
+                $from = isset($sms_data['name'])?$sms_data['name']:$sms_data['number'];
             }
 
             /* check valid template_id */
