@@ -763,7 +763,7 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_type'] = $rr['feedback_type'];
                                 $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['template_id'] = $rr['template_id'];
                                 $this->data['editMission'][$missionCount]['editSmsRew'][$countSmses]['feedback_data'] = $rr['feedback_data'];
-                                $countEmails++;
+                                $countSmses++;
                             }
                         }
                     }
