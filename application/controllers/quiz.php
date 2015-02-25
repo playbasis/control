@@ -111,7 +111,7 @@ class Quiz extends REST2_Controller
         $result = convert_MongoId_id($result);
         //$result['date_start'] = $result['date_start'] ? $result['date_start']->sec : null;
         //$result['date_expire'] = $result['date_expire'] ? $result['date_expire']->sec : null;
-        $questions = $result['questions'];
+        $questions = isset($result['questions']) ? $result['questions'] : array();
         $total_max_score = 0;
         if (is_array($questions)) foreach ($questions as $question) {
             $total_max_score += $this->get_max_score_of_question($question['options']);
