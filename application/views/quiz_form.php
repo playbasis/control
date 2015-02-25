@@ -564,7 +564,7 @@
                                                                         <label>
                                                                             <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>]" > <?php echo $email['name']; ?></h3>
                                                                              <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>
-                                                                              <input type="text" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>
+                                                                              <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>
                                                                           </label>
                                                                         </div>
                                                                     <?php
