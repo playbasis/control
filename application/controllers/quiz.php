@@ -51,6 +51,8 @@ class Quiz extends REST2_Controller
         $this->load->model('player_model');
         $this->load->model('quiz_model');
         $this->load->model('reward_model');
+        $this->load->model('email_model');
+        $this->load->model('sms_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -349,6 +351,37 @@ class Quiz extends REST2_Controller
         /* publish the reward (if any) */
         if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz_id, $this->validToken['domain_name'], $reward);
 
+        /* send feedback as necessary */
+        if (isset($grade['feedbacks'])) {
+            foreach (array('email', 'sms') as $type) {
+                if (is_array($grade['feedbacks'][$type])) foreach ($grade['feedbacks'][$type] as $template_id => $val) {
+                    if (isset($val['checked']) && $val['checked']) {
+                        switch ($type) {
+                        case 'email':
+                            $this->processEmail(array(
+                                'client_id' => $this->client_id,
+                                'site_id' => $this->site_id,
+                                'pb_player_id' => $pb_player_id,
+                                'template_id' => $template_id,
+                                'subject' => $val['subject'],
+                            ));
+                            break;
+                        case 'sms':
+                            $this->processSms(array(
+                                'client_id' => $this->client_id,
+                                'site_id' => $this->site_id,
+                                'pb_player_id' => $pb_player_id,
+                                'template_id' => $template_id,
+                            ));
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         /* data */
         unset($grade['rewards']);
         $data = array(
@@ -605,6 +638,84 @@ class Quiz extends REST2_Controller
             if ($score > $max) $max = $score;
         }
         return $max;
+    }
+
+    private function processEmail($input) {
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "email"
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $access = false;
+        }
+        if (!$access) return false;
+
+        /* get email */
+        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+        $email = $player && isset($player['email']) ? $player['email'] : null;
+        if (!$email) return false;
+
+        /* check blacklist */
+        $res = $this->email_model->isEmailInBlackList($email, $input['site_id']);
+        if ($res) return false; // banned
+
+        /* check valid template_id */
+        $template = $this->email_model->getTemplateById($input['site_id'], $input['template_id']);
+        if (!$template) return false;
+
+        /* send email */
+        $from = EMAIL_FROM;
+        $to = $email;
+        $subject = $input['subject'];
+        $message = $this->utility->replace_template_vars($template['body'], $player);
+        $response = $this->utility->email($from, $to, $subject, $message);
+        $this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
+        return $response != false;
+    }
+
+    private function processSms($input) {
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "sms"
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $access = false;
+        }
+        if (!$access) return false;
+
+        /* get phone number */
+        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+        $phone = $player && isset($player['phone_number']) ? $player['phone_number'] : null;
+        if (!$phone) return false;
+
+        /* check valid template_id */
+        $template = $this->sms_model->getTemplateById($input['site_id'], $input['template_id']);
+        if (!$template) return false;
+
+        /* send SMS */
+        $this->config->load("twilio",TRUE);
+        $config = $this->sms_model->getSMSClient($input['client_id'], $input['site_id']);
+        $twilio = $this->config->item('twilio');
+        $config['api_version'] = $twilio['api_version'];
+        $this->load->library('twilio/twiliomini', $config);
+        $from = $config['number'];
+        $to = $phone;
+        $message = $this->utility->replace_template_vars($template['body'], $player);
+        $response = $this->twiliomini->sms($from, $to, $message);
+        $this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
+        return $response->IsError;
     }
 
     /**
