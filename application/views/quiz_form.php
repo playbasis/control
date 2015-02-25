@@ -1,3 +1,13 @@
+<?php
+function find_template($data, $type, $template_id) {
+    if (isset($data['feedbacks']) && array_key_exists($type, $data['feedbacks'])) foreach ($data['feedbacks'][$type] as $_template_id => $val) {
+        if ($_template_id == $template_id) {
+            return $val;
+        }
+    }
+    return false;
+}
+?>
 <link rel="stylesheet" href="<?php echo base_url();?>stylesheet/quiz/style.css">
 <script type="text/javascript" src="<?php echo base_url();?>javascript/md5.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/mongoid.js"></script>
@@ -562,9 +572,11 @@
                                                                         ?>
                                                                         <div class="each-email-template">
                                                                         <label>
-                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][checked]" > <?php echo $email['name']; ?></h3>
+                                                                            <?php $template = find_template($grade, 'email', $email['_id']); ?>
+                                                                            <?php $checked = $template && isset($template['checked']) && $template['checked']; ?>
+                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][checked]" <?php echo $checked ? 'checked' : ''; ?>> <?php echo $email['name']; ?></h3>
                                                                              <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>
-                                                                              <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>
+                                                                              <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="<?php echo $checked && isset($template['subject']) ? $template['subject'] : ''; ?>" /><br/>
                                                                           </label>
                                                                         </div>
                                                                     <?php
@@ -600,7 +612,9 @@
                                                                         ?>
                                                                         <div class="each-sms-template">
                                                                         <label>
-                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][sms][<?php echo $sms['_id']; ?>][checked]" > <?php echo $sms['name']; ?></h3>
+                                                                            <?php $template = find_template($grade, 'sms', $sms['_id']); ?>
+                                                                            <?php $checked = $template && isset($template['checked']) && $template['checked']; ?>
+                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][sms][<?php echo $sms['_id']; ?>][checked]" <?php echo $checked ? 'checked' : ''; ?>> <?php echo $sms['name']; ?></h3>
                                                                           </label>
                                                                         </div>
                                                                     <?php
