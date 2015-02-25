@@ -562,7 +562,7 @@
                                                                         ?>
                                                                         <div class="each-email-template">
                                                                         <label>
-                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>]" > <?php echo $email['name']; ?></h3>
+                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][checked]" > <?php echo $email['name']; ?></h3>
                                                                              <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>
                                                                               <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>
                                                                           </label>
@@ -600,7 +600,7 @@
                                                                         ?>
                                                                         <div class="each-sms-template">
                                                                         <label>
-                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][sms][<?php echo $sms['_id']; ?>]" > <?php echo $sms['name']; ?></h3>
+                                                                            <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][sms][<?php echo $sms['_id']; ?>][checked]" > <?php echo $sms['name']; ?></h3>
                                                                           </label>
                                                                         </div>
                                                                     <?php
