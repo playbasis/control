@@ -129,7 +129,7 @@ class jigsaw extends MY_Model
 			return false;
 		}
 		$lastTime = $result['date_added'];
-		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime->sec) : (int) (date_diff(new DateTime($timeNow), new DateTime(datetimeMongotoReadable($lastTime)))->d);
+		$timeDiff = ($log['interval_unit']) == 'second' ? (int) ($timeNow - $lastTime->sec) : (int) (date_diff(new DateTime("@$timeNow"), new DateTime(datetimeMongotoReadable($lastTime)))->d);
 		$resetUnit = ($log['interval_unit'] != $config['interval_unit']);
 		$remainingTime = $log['remaining_time'];
 		$reset = ($remainingTime >= 0) && ($timeDiff > $remainingTime);
@@ -243,7 +243,7 @@ class jigsaw extends MY_Model
 			return true;
 		$lastTime = $result['date_added'];
 		$timeNow = isset($input['action_log_time']) ? $input['action_log_time'] : time();
-		$datediff = date_diff(new DateTime($timeNow), new DateTime(datetimeMongotoReadable($lastTime)));
+		$datediff = date_diff(new DateTime("@$timeNow"), new DateTime(datetimeMongotoReadable($lastTime)));
 		//if more than 2 day
 		if($datediff->d > 1)
 			return true;
