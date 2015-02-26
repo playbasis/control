@@ -606,7 +606,7 @@ class Engine extends Quest
                         }  // close if(isset($exInfo['dynamic']))
                     } elseif($jigsaw['category'] == 'FEEDBACK') {
                         if (!$input["test"])
-                            $this->processFeedback($input);
+                            $this->processFeedback($input['jigsaw_name'], $input);
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {
@@ -692,95 +692,6 @@ class Engine extends Quest
 			}
 		}  // close foreach($ruleSet as $rule)
 		return $apiResult;
-	}
-	private function processFeedback($input) {
-		switch ($input['jigsaw_name']) {
-		case 'email':
-            $this->processEmail($input);
-			break;
-		case 'sms':
-            $this->processSms($input);
-			break;
-		default:
-            log_message('error', 'Unknown feedback: '.$input['jigsaw_name']);
-			break;
-		}
-	}
-	private function processEmail($input) {
-		/* check permission according to billing cycle */
-		$access = true;
-		try {
-			$this->client_model->permissionProcess(
-				$this->client_id,
-				$this->site_id,
-				"notifications",
-				"email"
-			);
-		} catch(Exception $e) {
-			if ($e->getMessage() == "LIMIT_EXCEED")
-				$access = false;
-		}
-		if (!$access) return false;
-
-		/* get email */
-		$player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
-		$email = $player && isset($player['email']) ? $player['email'] : null;
-		if (!$email) return false;
-
-		/* check blacklist */
-		$res = $this->email_model->isEmailInBlackList($email, $input['site_id']);
-		if ($res) return false; // banned
-
-		/* check valid template_id */
-		$template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
-		if (!$template) return false;
-
-		/* send email */
-		$from = EMAIL_FROM;
-		$to = $email;
-		$subject = $input['input']['subject'];
-		$message = $this->utility->replace_template_vars($template['body'], $player);
-		$response = $this->utility->email($from, $to, $subject, $message);
-		$this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
-		return $response != false;
-	}
-	private function processSms($input) {
-		/* check permission according to billing cycle */
-		$access = true;
-		try {
-			$this->client_model->permissionProcess(
-				$this->client_id,
-				$this->site_id,
-				"notifications",
-				"sms"
-			);
-		} catch(Exception $e) {
-			if ($e->getMessage() == "LIMIT_EXCEED")
-				$access = false;
-		}
-		if (!$access) return false;
-
-		/* get phone number */
-		$player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
-		$phone = $player && isset($player['phone_number']) ? $player['phone_number'] : null;
-		if (!$phone) return false;
-
-		/* check valid template_id */
-		$template = $this->sms_model->getTemplateById($input['site_id'], $input['input']['template_id']);
-		if (!$template) return false;
-
-		/* send SMS */
-		$this->config->load("twilio",TRUE);
-		$config = $this->sms_model->getSMSClient($input['client_id'], $input['site_id']);
-		$twilio = $this->config->item('twilio');
-		$config['api_version'] = $twilio['api_version'];
-		$this->load->library('twilio/twiliomini', $config);
-		$from = $config['number'];
-		$to = $phone;
-		$message = $this->utility->replace_template_vars($template['body'], $player);
-		$response = $this->twiliomini->sms($from, $to, $message);
-		$this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
-		return $response->IsError;
 	}
 	private function is_reward($category) {
 		return in_array($category, array('REWARD', 'FEEDBACK'));
