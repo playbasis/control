@@ -312,7 +312,7 @@ class Quest_model extends MY_Model{
 
     public function editQuestToClient($quest_id, $data){
 
-        /* update 'playbasis_quest_to_client' */
+        /* update fields in playbasis_quest_to_client */
         $this->mongo_db->where('_id', new MongoID($quest_id));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
@@ -326,12 +326,12 @@ class Quest_model extends MY_Model{
 
         $this->mongo_db->update('playbasis_quest_to_client');
 
-        /* update 'playbasis_quest_to_player' */
-        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('quest_id', new MongoId($quest_id));
+        /* update "missions" in playbasis_quest_to_player */
         if(isset($data['missions']) && !is_null($data['missions'])){
             foreach($data['missions'] as $m){
+                $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+                $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+                $this->mongo_db->where('quest_id', new MongoId($quest_id));
                 $this->mongo_db->where(array(
                     'quest_id' => new MongoId($quest_id),
                     'missions.mission_id' => new MongoId($m['mission_id']),
@@ -353,7 +353,19 @@ class Quest_model extends MY_Model{
                 $this->mongo_db->update_all('playbasis_quest_to_player');
             }
         }else{
-            $this->mongo_db->set(array('missions' => array())); 
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $this->mongo_db->where('quest_id', new MongoId($quest_id));
+            $this->mongo_db->set(array('missions' => array()));
+            $this->mongo_db->update_all('playbasis_quest_to_player');
+        }
+
+        /* update "feedbacks" in playbasis_quest_to_player */
+        if(isset($data['feedbacks']) && !is_null($data['feedbacks'])){
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $this->mongo_db->where('quest_id', new MongoId($quest_id));
+            $this->mongo_db->set(array('feedbacks' => $data['feedbacks']));
             $this->mongo_db->update_all('playbasis_quest_to_player');
         }
 
