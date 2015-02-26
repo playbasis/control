@@ -101,7 +101,8 @@ class Quest_model extends MY_Model
             "site_id" => $data["site_id"],
             "date_added" => new MongoDate(time()),
             "date_modified" => new MongoDate(time()),
-            "missions" => $data["missions"],
+            "missions" => isset($data["missions"]) ? $data["missions"] : array(),
+            "feedbacks" => isset($data["feedbacks"]) ? $data["feedbacks"] : array(),
             "pb_player_id" => $data["pb_player_id"],
             "quest_id" => $data["quest_id"],
             "status" => "join"
