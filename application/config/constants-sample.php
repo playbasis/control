@@ -69,5 +69,7 @@ define('EMAIL_FROM', 'no-reply@playbasis.com');
 define('NUMBER_OF_ADJACENT_PAGES', 6);
 define('NUMBER_OF_RECORDS_PER_PAGE', 10);
 
+define('API_SERVER', 'https://api.pbapp.net');
+define('NODE_SERVER', 'https://node.pbapp.net');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

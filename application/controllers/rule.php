@@ -202,7 +202,7 @@ class Rule extends MY_Controller
                 foreach ($jigsaw["dataSet"] as $dataSet) {
                     if ($dataSet["param_name"] == "url")
                         $result = $this->curl(
-                            $this->config->item("server") . "Engine/rule",
+                            API_SERVER."/Engine/rule",
                             array("rule_id" => strval($rule["_id"]),
                             "action" => $jigsaw["name"],
                             "url" => $dataSet["value"],

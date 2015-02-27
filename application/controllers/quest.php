@@ -1157,7 +1157,7 @@ class Quest extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $raw_result = $this->curl(
-            $this->config->item("server") . "Engine/quest",
+            API_SERVER."/Engine/quest",
             array("client_id" => strval($client_id),
                 "site_id" => strval($site_id),
                 "quest_id" => strval($quest_id)));

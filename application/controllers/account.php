@@ -225,8 +225,6 @@ class Account extends MY_Controller
 			if (!$this->check_valid_payment_channel($channel)) $this->data['message'] = 'Invalid payment channel';
 
 			if($this->form_validation->run() && $this->data['message'] == null){
-				$ci =& get_instance();
-
 				$selected_plan = $this->Plan_model->getPlanById(new MongoId($this->input->post('plan')));
 				if (!array_key_exists('price', $selected_plan)) {
 					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
@@ -260,7 +258,7 @@ class Account extends MY_Controller
 					'plan_name' => $selected_plan['name'],
 					'price' => $selected_plan['price'],
 					'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
-					'callback' => $ci->config->config['server'].'notification',
+					'callback' => API_SERVER.'/notification',
 					'modify' => $modify,
 				);
 
@@ -295,8 +293,6 @@ class Account extends MY_Controller
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 		$this->data['message'] = null;
 
-		$ci =& get_instance();
-
 		$selected_plan = $this->User_model->getPlan();
 		if (!array_key_exists('price', $selected_plan)) $selected_plan['price'] = DEFAULT_PLAN_PRICE;
 
@@ -312,7 +308,7 @@ class Account extends MY_Controller
 			'plan_name' => $selected_plan['name'],
 			'price' => $selected_plan['price'],
 			'trial_days' => $trial_days > MAX_ALLOWED_TRIAL_DAYS ? MAX_ALLOWED_TRIAL_DAYS : $trial_days,
-			'callback' => $ci->config->config['server'].'notification',
+			'callback' => API_SERVER.'/notification',
 			'modify' => false,
 		);
 

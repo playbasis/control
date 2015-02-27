@@ -354,7 +354,7 @@
 
 
 
-        $.ajax({url:"https://api.pbapp.net/Service/recent_point?api_key=<?php echo $api_key; ?>&show_login=true&show_quest=true&show_redeem=true&show_quiz=true",
+        $.ajax({url:"<?php echo API_SERVER; ?>/Service/recent_point?api_key=<?php echo $api_key; ?>&show_login=true&show_quest=true&show_redeem=true&show_quiz=true",
                 dataType: "json",
                 success:function(data){
 
