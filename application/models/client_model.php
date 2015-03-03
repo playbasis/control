@@ -375,7 +375,7 @@ class Client_model extends MY_Model
 	}
 	public function updateExpAndLevel($exp, $pb_player_id, $cl_player_id, $clientData)
 	{
-		assert($exp);
+		//assert($exp);
 		assert($pb_player_id);
 		assert($clientData);
 		assert(is_array($clientData));
