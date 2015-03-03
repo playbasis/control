@@ -103,5 +103,24 @@ class Email_model extends MY_Model
 		$this->mongo_db->where($where);
 		return $this->mongo_db->count('playbasis_email_log');
 	}
+
+	public function getTemplateById($site_id, $template_id) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where('_id', new MongoId($template_id));
+		$this->mongo_db->where('status', true);
+		$this->mongo_db->where('deleted', false);
+		$results = $this->mongo_db->get('playbasis_email_to_client');
+		return $results ? $results[0] : null;
+	}
+
+	public function getTemplateByTemplateId($site_id, $template_id) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where('name', $template_id);
+		$this->mongo_db->where('status', true);
+		$this->mongo_db->where('deleted', false);
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_email_to_client');
+		return $results ? $results[0] : null;
+	}
 }
 ?>

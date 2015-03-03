@@ -15,8 +15,6 @@ class Pb_sms extends REST2_Controller
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/node_stream', 'node');
-        $this->load->model('tool/error', 'error');
-        $this->load->model('tool/respond', 'resp');
     }
 
     private function sendEngine($type, $from, $to, $message)
@@ -41,15 +39,15 @@ class Pb_sms extends REST2_Controller
             // send SMS
             $this->config->load("twilio",TRUE);
             $config = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
-            $config['api_version'] = $this->config->item('twilio')['api_version'];
+            $twilio = $this->config->item('twilio');
+            $config['api_version'] = $twilio['api_version'];
             $this->load->library('twilio/twiliomini', $config);
 
             $response = $this->twiliomini->sms($from, $to, $message);
             $this->sms_model->log($validToken['client_id'], $validToken['site_id'], $type, $from, $to, $message, $response);
             if ($response->IsError) {
                 log_message('error', 'Error sending SMS using Twilio, response = '.print_r($response, true));
-
-                $this->response($this->error->setError('INTERNAL_ERROR'), 200);
+                $this->response($this->error->setError('INTERNAL_ERROR', $response), 200);
             }
             $this->benchmark->mark('send_end');
             $processing_time = $this->benchmark->elapsed_time('send_start', 'send_end');
@@ -78,11 +76,12 @@ class Pb_sms extends REST2_Controller
 
     public function send_post()
     {
-        $required = $this->input->checkParam(array(
-            'player_id',
-            'message',
-        ));
+        $required = $this->input->checkParam(array('player_id'));
         if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $not_message = $this->input->checkParam(array('message'));
+        $not_template_id = $this->input->checkParam(array('template_id'));
+        if ($not_message && $not_template_id)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
         $cl_player_id = $this->input->post('player_id');
@@ -105,7 +104,16 @@ class Pb_sms extends REST2_Controller
                 $from = isset($sms_data['name'])?$sms_data['name']:$sms_data['number'];
             }
 
-            $message = $this->input->post('message');
+            /* check valid template_id */
+            $message = null;
+            if (!$not_template_id) {
+                $template = $this->sms_model->getTemplateByTemplateId($validToken['site_id'], $this->input->post('template_id'));
+                if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
+                $message = $template['body'];
+            } else {
+                $message = $this->input->post('message');
+            }
+            $message = $this->utility->replace_template_vars($message, $player);
 
             $this->sendEngine('user', $from, $player['phone_number'], $message);
         }else{
@@ -115,12 +123,12 @@ class Pb_sms extends REST2_Controller
 
     public function send_goods_post()
     {
-        $required = $this->input->checkParam(array(
-            'player_id',
-            'ref_id',
-            'message'
-        ));
+        $required = $this->input->checkParam(array('player_id', 'ref_id'));
         if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $not_message = $this->input->checkParam(array('message'));
+        $not_template_id = $this->input->checkParam(array('template_id'));
+        if ($not_message && $not_template_id)
             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
         $cl_player_id = $this->input->post('player_id');
@@ -131,7 +139,6 @@ class Pb_sms extends REST2_Controller
         if(!$pb_player_id)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-
         $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
         if (!$player)
             $this->response($this->error->setError('USER_NOT_EXIST'), 200);
@@ -141,8 +148,16 @@ class Pb_sms extends REST2_Controller
             $ref_id = $this->input->post('ref_id');
             $redeemData = $this->redeem_model->findByReferenceId('goods', new MongoId($ref_id));
 
-            $message = $this->input->post('message');
-            $message = str_replace('{{code}}', $redeemData['code'], $message);
+            /* check valid template_id */
+            $message = null;
+            if (!$not_template_id) {
+                $template = $this->sms_model->getTemplateByTemplateId($validToken['site_id'], $this->input->post('template_id'));
+                if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
+                $message = $template['body'];
+            } else {
+                $message = $this->input->post('message');
+            }
+            $message = $this->utility->replace_template_vars($message, array_merge($player, array('code' => $redeemData['code'])));
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
 

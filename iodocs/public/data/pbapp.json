@@ -887,6 +887,13 @@
                             "Description": "access token returned from Auth"
                         },
                         {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
                             "Name": "reward",
                             "Required": "Y",
                             "Default": "",

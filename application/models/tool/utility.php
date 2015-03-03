@@ -66,7 +66,7 @@ class Utility extends CI_Model
 	/* require: $this->load->library('amazon_ses'); */
 	public function email($from, $to, $subject, $message, $message_alt=null, $attachments=array()) {
         $message_response = array();
-        foreach($to as $email){
+        if (is_array($to)) foreach($to as $email){
             $message_response[] = $this->_email(array(
                 'from' => $from,
                 'to' => trim($email),
@@ -76,177 +76,41 @@ class Utility extends CI_Model
                 'attachment' => $attachments,
             ));
             sleep(1);
+        } else {
+            $message_response = $this->_email(array(
+                'from' => $from,
+                'to' => trim($to),
+                'subject' => $subject,
+                'message' => $message,
+                'message_alt' => $message_alt,
+                'attachment' => $attachments,
+            ));
         }
         return $message_response;
-        /*if(count($to) > 10){
-            $email_prepare = array();
-            $emai_small_set = array();
-            foreach($to as $e){
-                if(count($emai_small_set) > 9){
-                    $email_prepare[] = $emai_small_set;
-                    $emai_small_set = array();
-                }
-                $emai_small_set[] = $e;
-            }
-
-            $message_response = array();
-
-            foreach($email_prepare as $email_small){
-                $message_response[] = $this->_email(array(
-                    'from' => $from,
-                    'to' => $email_small,
-                    'subject' => $subject,
-                    'message' => $message,
-                    'message_alt' => $message_alt,
-                    'attachment' => $attachments,
-                ));
-                sleep(1);
-            }
-
-            return $message_response;
-        }else{
-            return $this->_email(array(
-                'from' => $from,
-                'to' => $to,
-                'subject' => $subject,
-                'message' => $message,
-                'message_alt' => $message_alt,
-                'attachment' => $attachments,
-            ));
-        }*/
-	}
-
-	/* require: $this->load->library('amazon_ses'); */
-	public function email_with_cc($from, $to, $cc, $subject, $message, $message_alt=null, $attachments=array()) {
-        if(count($to) > 10 || count($cc) > 10){
-            $email_prepare_to = array();
-            $emai_small_set_to = array();
-            foreach($to as $e){
-                if(count($emai_small_set_to) > 9){
-                    $email_prepare_to[] = $emai_small_set_to;
-                    $emai_small_set_to = array();
-                }
-                $emai_small_set_to[] = $e;
-            }
-
-            $email_prepare_cc = array();
-            $emai_small_set_cc = array();
-            foreach($cc as $e){
-                if(count($emai_small_set_cc) > 9){
-                    $email_prepare_cc[] = $emai_small_set_cc;
-                    $emai_small_set_cc = array();
-                }
-                $emai_small_set_cc[] = $e;
-            }
-
-            $message_response = array();
-
-            if(count($email_prepare_to) > count($email_prepare_cc)){
-                $i = 0;
-                foreach($email_prepare_to as $email_small){
-                    $email_data = array(
-                        'from' => $from,
-                        'to' => $email_small,
-                        'subject' => $subject,
-                        'message' => $message,
-                        'message_alt' => $message_alt,
-                        'attachment' => $attachments,
-                    );
-
-                    if(isset($email_prepare_cc[$i])){
-                        $email_data['cc'] = $email_prepare_cc[$i];
-                    }
-
-                    $message_response[] = $this->_email($email_data);
-                    $i++;
-                    sleep(1);
-                }
-            }else{
-                $i = 0;
-                foreach($email_prepare_cc as $email_small){
-                    $email_data = array(
-                        'from' => $from,
-                        'cc' => $email_small,
-                        'subject' => $subject,
-                        'message' => $message,
-                        'message_alt' => $message_alt,
-                        'attachment' => $attachments,
-                    );
-
-                    if(isset($email_prepare_to[$i])){
-                        $email_data['to'] = $email_prepare_to[$i];
-                    }
-
-                    $message_response[] = $this->_email($email_data);
-                    $i++;
-                    sleep(1);
-                }
-            }
-
-            return $message_response;
-        }else{
-            return $this->_email(array(
-                'from' => $from,
-                'to' => $to,
-                'cc' => $cc,
-                'subject' => $subject,
-                'message' => $message,
-                'message_alt' => $message_alt,
-                'attachment' => $attachments,
-            ));
-        }
 	}
 
 	/* require: $this->load->library('amazon_ses'); */
 	public function email_bcc($from, $bcc, $subject, $message, $message_alt=null, $attachments=array()) {
-        /*if(count($bcc) > 10){
-            $email_prepare = array();
-            $emai_small_set = array();
-            foreach($bcc as $e){
-                if(count($emai_small_set) > 9){
-                    $email_prepare[] = $emai_small_set;
-                    $emai_small_set = array();
-                }
-                $emai_small_set[] = $e;
-            }
-
-            $message_response = array();
-
-            foreach($email_prepare as $email_small){
-                $message_response[] = $this->_email(array(
-                    'from' => $from,
-                    'bcc' => $email_small,
-                    'subject' => $subject,
-                    'message' => $message,
-                    'message_alt' => $message_alt,
-                    'attachment' => $attachments,
-                ));
-                sleep(1);
-            }
-
-            return $message_response;
-        }else{
-            return $this->_email(array(
-                'from' => $from,
-                'bcc' => $bcc,
-                'subject' => $subject,
-                'message' => $message,
-                'message_alt' => $message_alt,
-                'attachment' => $attachments,
-            ));
-        }*/
-
         $message_response = array();
-        foreach($bcc as $e){
+        if (is_array($bcc)) foreach($bcc as $email){
             $message_response[] =  $this->_email(array(
                 'from' => $from,
-                'bcc' => trim($e),
+                'bcc' => trim($email),
                 'subject' => $subject,
                 'message' => $message,
                 'message_alt' => $message_alt,
                 'attachment' => $attachments,
             ));
             sleep(1);
+        } else {
+            $message_response =  $this->_email(array(
+                'from' => $from,
+                'bcc' => trim($bcc),
+                'subject' => $subject,
+                'message' => $message,
+                'message_alt' => $message_alt,
+                'attachment' => $attachments,
+            ));
         }
         return $message_response;
 	}
@@ -267,8 +131,7 @@ class Utility extends CI_Model
 			default: break;
 			}
 		}
-//		$this->amazon_ses->bcc(EMAIL_DEBUG_MODE);
-		$this->amazon_ses->debug(true);
+		$this->amazon_ses->debug(EMAIL_DEBUG_MODE);
 		$response = $this->amazon_ses->send();
 		log_message('info', 'response = '.$response);
 		return $response;
@@ -291,6 +154,13 @@ class Utility extends CI_Model
 		$_to = new DateTime(date("Y-m-d", $to));
 		$interval = $_from->diff($_to);
 		return $interval->format($fmt);
+	}
+
+	public function replace_template_vars($template, $data) {
+		foreach (array('first_name', 'last_name', 'cl_player_id', 'email', 'phone_number', 'code') as $var) {
+			if (isset($data[$var])) $template = str_replace('{{'.$var.'}}', $data[$var], $template);
+		}
+		return $template;
 	}
 }
 ?>

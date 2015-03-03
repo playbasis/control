@@ -11,13 +11,15 @@ class Quest extends REST2_Controller
         $this->load->model('client_model');
         $this->load->model('tracker_model');
         $this->load->model('point_model');
+        $this->load->model('social_model');
+        $this->load->model('quest_model');
+        $this->load->model('reward_model');
+        $this->load->model('email_model');
+        $this->load->model('sms_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
         $this->load->model('tool/node_stream', 'node');
-        $this->load->model('social_model');
-        $this->load->model('quest_model');
-        $this->load->model('reward_model');
     }
 
     public function QuestProcess($pb_player_id, $validToken, $test_id=NULL){
@@ -126,6 +128,18 @@ class Quest extends REST2_Controller
                                 if (!$test_id) {
                                     $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, "finish");
                                     $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, $questResult);
+                                    /* process "feedbacks" */
+                                    if (isset($m["feedbacks"]) && is_array($m["feedbacks"])) foreach ($m["feedbacks"] as $feedback) {
+                                        $this->processFeedback($feedback["feedback_type"], array(
+                                            'client_id' => $client_id,
+                                            'site_id' => $site_id,
+                                            'pb_player_id' => $pb_player_id,
+                                            'input' => array(
+                                                'template_id' => $feedback["template_id"],
+                                                'subject' => isset($feedback["subject"]) ? $feedback["subject"] : null,
+                                            ),
+                                        ));
+                                    }
                                     /* [quest usage] increase usage value on client's account */
                                     $this->quest_model->insertQuestUsage(
                                         $client_id,
@@ -178,6 +192,18 @@ class Quest extends REST2_Controller
                                 if (!$test_id) {
                                     $this->updateMissionStatusOfPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken,"finish");
                                     $this->updateMissionRewardPlayer($pb_player_id, $q["quest_id"], $m["mission_id"], $validToken, $questResult);
+                                    /* process "feedbacks" */
+                                    if (isset($m["feedbacks"]) && is_array($m["feedbacks"])) foreach ($m["feedbacks"] as $feedback) {
+                                        $this->processFeedback($feedback["feedback_type"], array(
+                                            'client_id' => $client_id,
+                                            'site_id' => $site_id,
+                                            'pb_player_id' => $pb_player_id,
+                                            'input' => array(
+                                                'template_id' => $feedback["template_id"],
+                                                'subject' => isset($feedback["subject"]) ? $feedback["subject"] : null,
+                                            ),
+                                        ));
+                                    }
                                     /* [quest usage] increase usage value on client's account */
                                     $this->quest_model->insertQuestUsage(
                                         $client_id,
@@ -211,6 +237,18 @@ class Quest extends REST2_Controller
                 if (!$test_id) {
                     $this->updateQuestRewardPlayer($pb_player_id, $q["quest_id"], $validToken, $questResult);
                     $this->updateQuestStatusOfPlayer($pb_player_id, $q["quest_id"], $validToken, "finish");
+                    /* process "feedbacks" */
+                    if (isset($quest["feedbacks"]) && is_array($quest["feedbacks"])) foreach ($quest["feedbacks"] as $feedback) {
+                        $this->processFeedback($feedback["feedback_type"], array(
+                            'client_id' => $client_id,
+                            'site_id' => $site_id,
+                            'pb_player_id' => $pb_player_id,
+                            'input' => array(
+                                'template_id' => $feedback["template_id"],
+                                'subject' => isset($feedback["subject"]) ? $feedback["subject"] : null,
+                            ),
+                        ));
+                    }
                     /* [quest usage] increase usage value on client's account */
                     $this->quest_model->insertQuestUsage(
                         $client_id,
@@ -244,11 +282,9 @@ class Quest extends REST2_Controller
         }
 
         return $questResult;
-
     }
 
     private function checkConditionQuest($quest, $pb_player_id, $validToken){
-
         if(empty($quest)){
             $event = array(
                 'event_type' => 'QUEST_NOT_EXIT',
@@ -368,7 +404,6 @@ class Quest extends REST2_Controller
         }
 
         return $questEvent;
-
     }
 
     private function checkCompletionMission($quest, $mission, $pb_player_id, $validToken, $badge_player_check=array(), $player_mission=array()){
@@ -905,8 +940,7 @@ class Quest extends REST2_Controller
 
         // check quest_id input
         if (!$quest_id)
-            $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id"
-        )), 200);
+            $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id")), 200);
 
         // check user exists
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
@@ -932,8 +966,7 @@ class Quest extends REST2_Controller
         $quest = $this->quest_model->getQuest($data);
 
         if (!$quest) {
-            $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"),
-                200);
+            $this->response($this->error->setError("QUEST_JOIN_OR_CANCEL_NOTFOUND"), 200);
         }
 
         // check quest_to_client
@@ -963,7 +996,6 @@ class Quest extends REST2_Controller
         }
         $this->response($this->resp->setRespond(
             (isset($condition_quest) && $condition_quest) ? $condition_quest : array('events' => array('event_type' => 'QUEST_JOIN', 'quest_id' => $quest_id.""))), 200);
-
     }
 
     public function joinAll_post(){
@@ -1033,8 +1065,7 @@ class Quest extends REST2_Controller
 
         // check quest_id input
         if (!$quest_id)
-            $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id"
-        )), 200);
+            $this->response($this->error->setError("PARAMETER_MISSING", array("quest_id")), 200);
 
         // check user exists
         $pb_player_id = $this->player_model->getPlaybasisId(
@@ -1078,7 +1109,6 @@ class Quest extends REST2_Controller
         }
         $this->response($this->resp->setRespond(array('events' => array('event_type' => 'QUEST_UNJOIN', 'quest_id' => $quest_id.""))), 200);
     }
-
 
     public function mission_get($quest_id = '', $mission_id = ''){
         $data = $this->validToken;
@@ -1198,6 +1228,98 @@ class Quest extends REST2_Controller
             $resp['quests'] = $quests;
         }
         $this->response($this->resp->setRespond($resp), 200);
+    }
+
+    protected function processFeedback($type, $input) {
+        switch (strtolower($type)) {
+        case 'email':
+            $this->processEmail($input);
+            break;
+        case 'sms':
+            $this->processSms($input);
+            break;
+        default:
+            log_message('error', 'Unknown feedback type: '.$type);
+            break;
+        }
+    }
+
+    protected function processEmail($input) {
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "email"
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $access = false;
+        }
+        if (!$access) return false;
+
+        /* get email */
+        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+        $email = $player && isset($player['email']) ? $player['email'] : null;
+        if (!$email) return false;
+
+        /* check blacklist */
+        $res = $this->email_model->isEmailInBlackList($email, $input['site_id']);
+        if ($res) return false; // banned
+
+        /* check valid template_id */
+        $template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+        if (!$template) return false;
+
+        /* send email */
+        $from = EMAIL_FROM;
+        $to = $email;
+        $subject = $input['input']['subject'];
+        $message = $this->utility->replace_template_vars($template['body'], $player);
+        $response = $this->utility->email($from, $to, $subject, $message);
+        $this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
+        return $response != false;
+    }
+
+    protected function processSms($input) {
+        /* check permission according to billing cycle */
+        $access = true;
+        try {
+            $this->client_model->permissionProcess(
+                $this->client_id,
+                $this->site_id,
+                "notifications",
+                "sms"
+            );
+        } catch(Exception $e) {
+            if ($e->getMessage() == "LIMIT_EXCEED")
+                $access = false;
+        }
+        if (!$access) return false;
+
+        /* get phone number */
+        $player = $this->player_model->getById($input['site_id'], $input['pb_player_id']);
+        $phone = $player && isset($player['phone_number']) ? $player['phone_number'] : null;
+        if (!$phone) return false;
+
+        /* check valid template_id */
+        $template = $this->sms_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+        if (!$template) return false;
+
+        /* send SMS */
+        $this->config->load("twilio",TRUE);
+        $config = $this->sms_model->getSMSClient($input['client_id'], $input['site_id']);
+        $twilio = $this->config->item('twilio');
+        $config['api_version'] = $twilio['api_version'];
+        $this->load->library('twilio/twiliomini', $config);
+        $from = $config['number'];
+        $to = $phone;
+        $message = $this->utility->replace_template_vars($template['body'], $player);
+        $response = $this->twiliomini->sms($from, $to, $message);
+        $this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
+        return $response->IsError;
     }
 
     /**

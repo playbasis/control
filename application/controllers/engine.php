@@ -16,11 +16,13 @@ class Engine extends Quest
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
+		$this->load->model('social_model');
+		$this->load->model('email_model');
+		$this->load->model('sms_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/node_stream', 'node');
-		$this->load->model('social_model');
 	}
 	public function getActionConfig_get()
 	{
@@ -389,7 +391,7 @@ class Engine extends Quest
 				$jigsawConfig = $jigsaw['config'];
 
 				//get class path to precess jigsaw
-                $processor = $this->client_model->getJigsawProcessor($jigsaw_id, $site_id);
+                $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
 
                 if (!$input["test"])
                     $jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
@@ -397,9 +399,10 @@ class Engine extends Quest
                     $jigsaw_model = true;
 
 				/* [rule usage] increase rule usage counter if a reward is given on chunk-based basis */
-				if ($jigsaw['category'] === 'REWARD' && $last_jigsaw !== 'REWARD') $count++;
+				if ($this->is_reward($jigsaw['category']) && !$this->is_reward($last_jigsaw)) $count++;
 
 				if($jigsaw_model) {
+
 					if($jigsaw['category'] == 'REWARD') {
 						if(isset($exInfo['dynamic'])) {
 							//reward is a custom point
@@ -601,10 +604,9 @@ class Engine extends Quest
                                 break;
                             }  // close switch($jigsawConfig['reward_name'])
                         }  // close if(isset($exInfo['dynamic']))
-
-                        //log jigsaw - reward
+                    } elseif($jigsaw['category'] == 'FEEDBACK') {
                         if (!$input["test"])
-                            $this->client_model->log($input, $exInfo);
+                            $this->processFeedback($input['jigsaw_name'], $input);
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {
@@ -652,16 +654,15 @@ class Engine extends Quest
                                         '');
                             }  // close if (!$input["test"])
 						}  // close if(isset($exInfo['objective_complete']))*/
-
-						//log jigsaw - condition or action
-                        if (!$input["test"])
-                            $this->client_model->log($input, $exInfo);
 					}  // close if($jigsaw['category'] == 'REWARD')
+					// success, log jigsaw - ACTION, CONDITION, REWARD, or FEEDBACK
+					if (!$input["test"])
+						$this->client_model->log($input, $exInfo);
 				} else {  // jigsaw return false
-					if($jigsaw['category'] == 'REWARD') {
+					if($this->is_reward($jigsaw['category'])) {
 						continue;
 					} else {
-						//log jigsaw - condition or action
+						// fail, log jigsaw - ACTION or CONDITION
                         if (!$input["test"])
                             $this->client_model->log($input, $exInfo);
 						break;
@@ -691,6 +692,9 @@ class Engine extends Quest
 			}
 		}  // close foreach($ruleSet as $rule)
 		return $apiResult;
+	}
+	private function is_reward($category) {
+		return in_array($category, array('REWARD', 'FEEDBACK'));
 	}
 	public function test_get()
 	{

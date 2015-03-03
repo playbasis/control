@@ -78,9 +78,14 @@ class Email extends REST2_Controller
 		}
 
 		/* process parameters */
-		$required = $this->input->checkParam(array('player_id', 'ref_id', 'subject', 'message'));
+		$required = $this->input->checkParam(array('player_id', 'ref_id', 'subject'));
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$not_message = $this->input->checkParam(array('message'));
+		$not_template_id = $this->input->checkParam(array('template_id'));
+		if ($not_message && $not_template_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
 		$cl_player_id = $this->input->post('player_id');
 		$validToken = array_merge($this->validToken, array(
 			'cl_player_id' => $cl_player_id
@@ -94,13 +99,22 @@ class Email extends REST2_Controller
 		$ref_id = $this->input->post('ref_id');
 		$redeemData = $this->redeem_model->findByReferenceId('goods', new MongoId($ref_id));
 
+		/* check valid template_id */
+		$message = null;
+		if (!$not_template_id) {
+			$template = $this->email_model->getTemplateByTemplateId($validToken['site_id'], $this->input->post('template_id'));
+			if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
+			$message = $template['body'];
+		} else {
+			$message = $this->input->post('message');
+		}
+		$message = $this->utility->replace_template_vars($message, array_merge($player, array('code' => $redeemData['code'])));
+
 		/* variables */
 		$email = $player['email'];
 		$from = EMAIL_FROM;
 		$to = array($email);
 		$subject = $this->input->post('subject');
-		$message = $this->input->post('message');
-		$message = str_replace('{{code}}', $redeemData['code'], $message);
 
 		$this->processEmail($from, $to, null, $subject, $message);
 	}
@@ -125,8 +139,12 @@ class Email extends REST2_Controller
 		}
 
 		/* process parameters */
-		$required = $this->input->checkParam(array('player_id', 'subject', 'message'));
+		$required = $this->input->checkParam(array('player_id', 'subject'));
 		if ($required)
+			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+		$not_message = $this->input->checkParam(array('message'));
+		$not_template_id = $this->input->checkParam(array('template_id'));
+		if ($not_message && $not_template_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
 		$cl_player_id = $this->input->post('player_id');
@@ -140,12 +158,22 @@ class Email extends REST2_Controller
 		if (!$player)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
+		/* check valid template_id */
+		$message = null;
+		if (!$not_template_id) {
+			$template = $this->email_model->getTemplateByTemplateId($validToken['site_id'], $this->input->post('template_id'));
+			if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $this->input->post('template_id')), 200);
+			$message = $template['body'];
+		} else {
+			$message = $this->input->post('message');
+		}
+		$message = $this->utility->replace_template_vars($message, $player);
+
 		/* variables */
 		$email = $player['email'];
 		$from = EMAIL_FROM;
 		$to = array($email);
 		$subject = $this->input->post('subject');
-		$message = $this->input->post('message');
 
 		$this->processEmail($from, $to, null, $subject, $message);
 	}
