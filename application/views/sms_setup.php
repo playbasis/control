@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="<?php echo base_url();?>stylesheet/sms/style.css">
 <div id="content" class="span10">
     <div class="box">
         <div class="heading">
@@ -21,7 +22,7 @@
                             <?php
                             $options = array(
                                 "sandbox"=>"sandbox",
-                                "prod"=>"prod"
+                                "prod"=>"production"
                             );
                             echo form_dropdown('sms-mode', $options, set_value('sms-mode')?set_value('sms-mode'):(isset($sms['mode'])?$sms['mode']:'sandbox'));
                             ?>
