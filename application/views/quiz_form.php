@@ -575,9 +575,9 @@ function find_template($data, $type, $template_id) {
                                                                             <?php $template = find_template($grade, 'email', $email['_id']); ?>
                                                                             <?php $checked = $template && isset($template['checked']) && $template['checked']; ?>
                                                                             <h3><input type="checkbox" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][checked]" <?php echo $checked ? 'checked' : ''; ?>> <?php echo $email['name']; ?></h3>
+                                                                        </label>
                                                                              <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>
                                                                               <input type="text" name="quiz[grades][<?php echo $grade['grade_id']; ?>][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="<?php echo $checked && isset($template['subject']) ? $template['subject'] : ''; ?>" /><br/>
-                                                                          </label>
                                                                         </div>
                                                                     <?php
                                                                     }
@@ -878,9 +878,9 @@ function find_template($data, $type, $template_id) {
                             <div class="each-email-template">\
                             <label>\
                             <h3><input type="checkbox" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>]" > <?php echo $email['name']; ?></h3>\
+                            </label>\
                              <span class="label label-primary"><?php echo $this->lang->line('entry_subject'); ?></span>\
                               <input type="text" name="quiz[grades]['+countGrades+'][feedbacks][email][<?php echo $email['_id']; ?>][subject]" class="tooltips" size="100" value="" /><br/>\
-                              </label>\
                             </div>\
                         <?php
                         }
