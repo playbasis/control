@@ -473,7 +473,7 @@ class Level extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'level') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'level')) {
+        if ($this->User_model->hasPermission('access', 'level') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'level')) {
             return true;
         } else {
             return false;

@@ -311,83 +311,100 @@ class Quest_model extends MY_Model{
     }
 
     public function editQuestToClient($quest_id, $data){
-
-        /* update 'playbasis_quest_to_client' */
+        /* get previous values from playbasis_quest_to_client */
         $this->mongo_db->where('_id', new MongoID($quest_id));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $quests = $this->mongo_db->get('playbasis_quest_to_client');
+        $quest = $quests ? $quests[0] : null;
+        $mission_ids_old = array_map('index_mission_id', isset($quest['missions']) ? $quest['missions'] : array());
 
-        if(isset($data['quest_name']) && !is_null($data['quest_name'])){
-            $this->mongo_db->set('quest_name', $data['quest_name']);
-        }
-        if(isset($data['description']) && !is_null($data['description'])){
-            $this->mongo_db->set('description', $data['description']);
-        }
-
-        if(isset($data['hint']) && !is_null($data['hint'])){
-            $this->mongo_db->set('hint', $data['hint']);
-        }
-
-        if(isset($data['image']) && !is_null($data['image'])){
-            $this->mongo_db->set('image', $data['image']);
-        }
-
-        if(isset($data['mission_order']) && !is_null($data['mission_order'])){
-            $this->mongo_db->set('mission_order', $data['mission_order']);
-        }
-
-        if(isset($data['status']) && !is_null($data['status'])){
-            $this->mongo_db->set('status', $data['status']);
-        }
-
-        if(isset($data['sort_order']) && !is_null($data['sort_order'])){
-            $this->mongo_db->set('sort_order', $data['sort_order']);
-        }
-
-        if(isset($data['condition']) && !is_null($data['condition'])){
-            $this->mongo_db->set('condition', $data['condition']);
-        }
-
-        if(isset($data['rewards']) && !is_null($data['rewards'])){
-            $this->mongo_db->set('rewards', $data['rewards']);
-        }
-
-        if(isset($data['missions']) && !is_null($data['missions'])){
-            $this->mongo_db->set('missions', $data['missions']);
-        }
-
-        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
-
-        $this->mongo_db->update('playbasis_quest_to_client');
-
-        /* update 'playbasis_quest_to_player' */
+        /* update fields in playbasis_quest_to_client */
+        $this->mongo_db->where('_id', new MongoID($quest_id));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('quest_id', new MongoId($quest_id));
+        foreach (array('quest_name', 'description', 'hint', 'image', 'mission_order', 'status', 'sort_order', 'condition', 'rewards', 'feedbacks', 'missions') as $field) {
+            if(isset($data[$field]) && !is_null($data[$field])){
+                $this->mongo_db->set($field, $data[$field]);
+            }
+        }
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+        $this->mongo_db->update('playbasis_quest_to_client');
+
+        /* update "missions" in playbasis_quest_to_player */
+        $dt = new MongoDate(time());
         if(isset($data['missions']) && !is_null($data['missions'])){
             foreach($data['missions'] as $m){
-                $this->mongo_db->where(array(
-                    'quest_id' => new MongoId($quest_id),
-                    'missions.mission_id' => new MongoId($m['mission_id']),
-                ));
-                $this->mongo_db->set(array('missions.$.mission_name' => isset($m['mission_name'])?$m['mission_name']:''));
-                $this->mongo_db->set(array('missions.$.mission_number' => isset($m['mission_number'])?$m['mission_number']:''));
-                $this->mongo_db->set(array('missions.$.description' => isset($m['description'])?$m['description']:''));
-                $this->mongo_db->set(array('missions.$.hint' => isset($m['hint'])?$m['hint']:''));
-                $this->mongo_db->set(array('missions.$.image' => isset($m['image'])?$m['image']:''));
-                if(isset($m['completion'])){
-                    $this->mongo_db->set(array('missions.$.completion' => $m['completion']));
+                $mission_id = new MongoId($m['mission_id']);
+                if (($key = array_search($mission_id, $mission_ids_old)) !== false) { // edit a mission
+                    $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+                    $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+                    $this->mongo_db->where('quest_id', new MongoId($quest_id));
+                    $this->mongo_db->where_ne('deleted', true);
+                    $this->mongo_db->where('missions.mission_id', $mission_id);
+                    $this->mongo_db->set(array('missions.$.mission_name' => isset($m['mission_name'])?$m['mission_name']:''));
+                    $this->mongo_db->set(array('missions.$.mission_number' => isset($m['mission_number'])?$m['mission_number']:''));
+                    $this->mongo_db->set(array('missions.$.description' => isset($m['description'])?$m['description']:''));
+                    $this->mongo_db->set(array('missions.$.hint' => isset($m['hint'])?$m['hint']:''));
+                    $this->mongo_db->set(array('missions.$.image' => isset($m['image'])?$m['image']:''));
+                    if (isset($m['completion'])) $this->mongo_db->set(array('missions.$.completion' => $m['completion']));
+                    if (isset($m['rewards'])) $this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));
+                    if (isset($m['feedbacks'])) $this->mongo_db->set(array('missions.$.feedbacks' => $m['feedbacks']));
+                    $this->mongo_db->set('date_modified', $dt);
+                    $this->mongo_db->update_all('playbasis_quest_to_player');
+                    unset($mission_ids_old[$key]);
+                } else { // add a new mission
+                    $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+                    $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+                    $this->mongo_db->where('quest_id', new MongoId($quest_id));
+                    $this->mongo_db->where_ne('deleted', true);
+                    $this->mongo_db->push('missions', array_merge($m, array(
+                        'status' => (bool)$data["mission_order"] ? 'unjoin' : 'join',
+                        'date_modified' => $dt,
+                    )));
+                    $this->mongo_db->set('date_modified', $dt);
+                    $this->mongo_db->update_all('playbasis_quest_to_player');
                 }
-                if(isset($m['rewards'])){
-                    $this->mongo_db->set(array('missions.$.rewards' => $m['rewards']));
-                }
+            }
+            foreach ($mission_ids_old as $mission_id) { // for removed missions, set it to be "finish"
+                $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+                $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+                $this->mongo_db->where('quest_id', new MongoId($quest_id));
+                $this->mongo_db->where_ne('deleted', true);
+                $this->mongo_db->where('missions.mission_id', $mission_id);
+                $this->mongo_db->set(array('missions.$.completion' => array()));
+                $this->mongo_db->set(array('missions.$.rewards' => array()));
+                $this->mongo_db->set(array('missions.$.feedbacks' => array()));
+                $this->mongo_db->set(array('missions.$.status' => 'finish'));
+                $this->mongo_db->set(array('missions.$.date_modified' => $dt));
+                $this->mongo_db->set('date_modified', $dt);
                 $this->mongo_db->update_all('playbasis_quest_to_player');
             }
         }else{
-            $this->mongo_db->set(array('missions' => array())); 
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $this->mongo_db->where('quest_id', new MongoId($quest_id));
+            $this->mongo_db->where_ne('deleted', true);
+            $this->mongo_db->set(array('missions' => array()));
+            $this->mongo_db->set('date_modified', $dt);
+            $this->mongo_db->update_all('playbasis_quest_to_player');
+        }
+
+        /* update "feedbacks" in playbasis_quest_to_player */
+        if(isset($data['feedbacks']) && !is_null($data['feedbacks'])){
+            $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+            $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+            $this->mongo_db->where('quest_id', new MongoId($quest_id));
+            $this->mongo_db->where_ne('deleted', true);
+            $this->mongo_db->set(array('feedbacks' => $data['feedbacks']));
+            $this->mongo_db->set('date_modified', $dt);
             $this->mongo_db->update_all('playbasis_quest_to_player');
         }
 
         return true;
     }
+}
+
+function index_mission_id($obj) {
+    return $obj['mission_id'];
 }

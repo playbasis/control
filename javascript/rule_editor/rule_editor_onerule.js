@@ -136,10 +136,10 @@ oneRuleMan = {
         targetDiv.empty();
 
         var detail = $('<ul class="pbd_list_selection "></ul>');
-        var list = $.parseJSON(jsonString);
+        var list = jsonString;
         /*temporary map : icon and itemlist*/
 
-        var icons = $.parseJSON(jsonConfig_icons);
+        var icons = jsonConfig_icons;
         if(icons != undefined){
 
             var cnt = 0;
@@ -195,7 +195,7 @@ oneRuleMan = {
 
     validateAtLeastOneReward:function() {
         for(var index in oneRuleMan.nodeList){
-            if (oneRuleMan.nodeList[index].category == 'REWARD') return true;
+            if (['REWARD', 'FEEDBACK'].indexOf(oneRuleMan.nodeList[index].category) > -1) return true;
         }
         return false;
     },
@@ -748,9 +748,11 @@ $('#new_reward_btn').live('click',function(event){
     event.preventDefault();
     var theModal = $('#newrule_reward_modal');
 
-    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+    //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Feedback,'feedback');
     theModal.modal('show');
-    oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+    //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+    oneRuleMan.openNodeSelectionDialogType = 'FEEDBACK';
 })
 
 //Event : Select option between 'Create Condition Node' and 'Create Reward Node'
@@ -785,9 +787,9 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             jsonItemSet = jsonString_Condition;
         else if(type === 'REWARD')
             jsonItemSet = jsonString_Reward;
+        else if(type === 'FEEDBACK')
+            jsonItemSet = jsonString_Feedback;
 
-        //Find Item Match with selected Id
-        var jsonItemSet = $.parseJSON(jsonItemSet)
         for(var index in jsonItemSet){
             var item = jsonItemSet[index];
             if((id+'') == (item.specific_id+'')){

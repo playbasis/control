@@ -332,7 +332,7 @@ class Email extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'email') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'email')) {
+        if ($this->User_model->hasPermission('access', 'email') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'email')) {
             return true;
         } else {
             return false;

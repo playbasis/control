@@ -159,7 +159,7 @@ class Custompoints extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'custompoints') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'custompoints')) {
+        if ($this->User_model->hasPermission('access', 'custompoints') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'custompoints')) {
             return true;
         } else {
             return false;

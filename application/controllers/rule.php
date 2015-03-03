@@ -37,6 +37,8 @@ class Rule extends MY_Controller
         include('action_data_log.php');
 
         $this->load->model('Badge_model');
+        $this->load->model('Email_model');
+        $this->load->model('Sms_model');
 
         $s_siteId = $this->User_model->getSiteId();
         $s_clientId = $this->User_model->getClientId();
@@ -59,29 +61,30 @@ class Rule extends MY_Controller
         $this->data['jsonConfig_siteId'] = $s_siteId;
         $this->data['jsonConfig_clientId'] = $s_clientId;
 
-        $this->data['actionList'] = json_encode(array());
-        $this->data['conditionList'] = json_encode(array());
-        $this->data['rewardList'] = json_encode(array());
-        //$this->data['ruleList'] = json_encode(array());
+        $this->data['actionList'] = array();
+        $this->data['conditionList'] = array();
+        $this->data['rewardList'] = array();
+        $this->data['feedbackList'] = array();
+        $this->data['emailList'] = array();
+        $this->data['smsList'] = array();
 
         if($s_clientId){
-            $actionList = $this->Rule_model->getActionGigsawList($site_id, $client_id);
-            $conditionList = $this->Rule_model->getConditionGigsawList($site_id, $client_id);
-            $rewardList = $this->Rule_model->getRewardGigsawList($site_id, $client_id);
+            $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
+            $conditionList = $this->Rule_model->getConditionJigsawList($site_id, $client_id);
+            $rewardList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
+            $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
+            $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
+            $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList);
 
-            $this->data['actionList'] = json_encode($actionList);
-            $this->data['conditionList'] = json_encode($conditionList);
-            $this->data['rewardList'] = json_encode($rewardList);
-            /*$this->data['ruleList'] = json_encode(
-                $this->Rule_model->getRulesByCombinationId($site_id, $client_id, array(
-                    'actionList' => $this->makeListOfId($actionList, 'specific_id'),
-                    'conditionList' => $this->makeListOfId($conditionList, 'id'),
-                    'rewardList' => $this->makeListOfId($rewardList, 'specific_id'),
-                ))
-            );*/
+            $this->data['actionList'] = $actionList;
+            $this->data['conditionList'] = $conditionList;
+            $this->data['rewardList'] = $rewardList;
+            $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
+            $this->data['emailList'] = $emailList;
+            $this->data['smsList'] = $smsList;
         }
 
-        $this->data['jsonIcons'] = json_encode($icons);
+        $this->data['jsonIcons'] = array();
         $this->data['requestParams'] = '&siteId='.$s_siteId.'&clientId='.$s_clientId;
         $this->data['main'] = 'rule';
 
@@ -96,7 +99,7 @@ class Rule extends MY_Controller
             foreach ($templates as $template) {
                 $name = $template["name"];
                 $this->data["ruleTemplate"][$name] = $template["rule_id"];
-            }    
+            }
         }
 
         $this->load->vars($this->data);
@@ -114,9 +117,9 @@ class Rule extends MY_Controller
             $s_clientId = $this->User_model->getClientId();
         }
 
-        $actionList = $this->Rule_model->getActionGigsawList($s_siteId, $s_clientId);
-        $conditionList = $this->Rule_model->getConditionGigsawList($s_siteId, $s_clientId);
-        $rewardList = $this->Rule_model->getRewardGigsawList($s_siteId, $s_clientId);
+        $actionList = $this->Rule_model->getActionJigsawList($s_siteId, $s_clientId);
+        $conditionList = $this->Rule_model->getConditionJigsawList($s_siteId, $s_clientId);
+        $rewardList = $this->Rule_model->getRewardJigsawList($s_siteId, $s_clientId);
 
         $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId, array(
             'actionList' => $this->makeListOfId($actionList, 'specific_id'),
@@ -199,7 +202,7 @@ class Rule extends MY_Controller
                 foreach ($jigsaw["dataSet"] as $dataSet) {
                     if ($dataSet["param_name"] == "url")
                         $result = $this->curl(
-                            $this->config->item("server") . "Engine/rule",
+                            API_SERVER."/Engine/rule",
                             array("rule_id" => strval($rule["_id"]),
                             "action" => $jigsaw["name"],
                             "url" => $dataSet["value"],
@@ -330,7 +333,7 @@ class Rule extends MY_Controller
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'rule') &&  $this->Feature_model->getFeatureExitsByClientId($client_id, 'rule')) {
+        if ($this->User_model->hasPermission('access', 'rule') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'rule')) {
             return true;
         } else {
             return false;

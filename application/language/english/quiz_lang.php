@@ -28,6 +28,9 @@ $lang['entry_rewards']           		= 'Reward';
 $lang['entry_custom_point']           		= 'Custom Point';
 $lang['entry_start_date']				= 'Start Date';
 $lang['entry_expire_date']				= 'Expire Date';
+$lang['entry_email']				= 'Email';
+$lang['entry_subject']				= 'Subject';
+$lang['entry_sms']				= 'Sms';
 
 $lang['column_date_added']          			= 'Date Added';
 $lang['column_action']							= 'Action';

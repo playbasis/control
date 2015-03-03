@@ -74,3 +74,12 @@
 .grades-range{
     width: 40px;
 }
+
+
+.each-email-template,
+.each-sms-template{
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+    border-radius: 6px;
+}

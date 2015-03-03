@@ -39,7 +39,7 @@
 
 <script type="text/javascript" src="./notification/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
 <script type="text/javascript">
-    var urlHost = 'https://node.pbapp.net';
+    var urlHost = '<?php echo NODE_SERVER; ?>';
     var chHost = '<?php echo  preg_replace('/(http[s]?:\/\/)?([w]{3}\.)?/', '', ($domain)? $domain["domain_name"] : ''); ?>';
     // var chHost = 'playbasis.com';
 

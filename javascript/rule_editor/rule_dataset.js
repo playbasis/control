@@ -2,6 +2,19 @@ var DEBUG = false;
 //Dataset Draft
 //###############################
 
+var generate_select_options = function(arr, val) {
+    return Array.isArray(arr) ? arr.map(function(v) { return '<option value="' + v._id['$id'] + '"' + (v._id['$id'] == val ? ' selected' : '') + '>' + v.name + '</option>'; }).join("\n") : '';
+}
+
+var get_selected_option_text = function(arr, val) {
+    var name = '';
+    if (Array.isArray(arr)) for (var i=0; i < arr.length; i++) {
+        if (!name) name = arr[i].name; // default is first option
+        if (arr[i]._id['$id'] == val) return arr[i].name;
+    }
+    return name;
+}
+
 //rule_dataset.js
 DataSet = function(jsonArray, parent_id) {
     if(!jsonArray || !$.isArray(jsonArray)) {
@@ -85,6 +98,9 @@ DataSet = function(jsonArray, parent_id) {
                             BadgeSet.getBadgeImage(v.value)+'<input type="text" class="collection reward_type hide" placeholder="'+v.placeholder+'" value="'+v.value+'" />&nbsp;' +
                                 '<span class="edit_reward_type btn btn-info btn-mini"><i class="icon-gift icon-white"></i></span>&nbsp;',
 
+                        'select':
+                            '<select name="' + v.param_name + '" placeholder="' + v.placeholder + '" datatype="' + v.type + '">' + generate_select_options(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</select>',
+
                         'boolean':
                             '<input type="checkbox" class="input_boolean boolean" id="bool'+((new Date()).getMilliseconds()+1)+'" name="'+v.value+'" value="'+v.value+'" checked="'+_checkBool(v.value)+'" />',
 
@@ -148,6 +164,8 @@ DataSet = function(jsonArray, parent_id) {
 
                 if(v.field_type == "collection"){
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+BadgeSet.getBadgeImage(v.value)+'</span>');
+                }else if(v.field_type == "select"){
+                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</span>');
                 }
 
                 dataColumn.append(ruleText);
@@ -318,6 +336,12 @@ DataSet = function(jsonArray, parent_id) {
                         $thisrow.find(".pbd_rule_data #pbd_interval_unit option[value='"+unit+"']").attr("selected","selected");
                     }
 
+                    else if($thisrow.find('select').length > 0) {
+                        if(DEBUG)console.log('edit > select');
+                        rowText.hide();
+                        rowField.find('select').show();
+                    }
+
                     else {
                         /*
                          * Special case that never think before
@@ -368,7 +392,6 @@ DataSet = function(jsonArray, parent_id) {
                             //console.log('MONTHLY');
                         }
                         else {
-
                             // default case
                             if(DEBUG)console.log('edit > normal case');
                             rowField.find('input').val(rowText.html());
@@ -382,10 +405,8 @@ DataSet = function(jsonArray, parent_id) {
                     if(!window.isValid) {
                         // alert something
                         $('#errorModal').modal({'backdrop': false});
-
                         return;
                     }
-
 
                     $thisrow.find('.pbd_rule_action span#pbd_rule_action_edit').show();
                     $thisrow.find('.pbd_rule_action span#pbd_rule_action_save').hide();
@@ -397,7 +418,6 @@ DataSet = function(jsonArray, parent_id) {
                     if($thisrow.find('.collection').length > 0) {
                         if(DEBUG)console.log('save > collection');
 
-
                         //Set value from edit text to nornal text
                         var key = rowField.find('input').val();
                         rowText.html(key);
@@ -407,8 +427,6 @@ DataSet = function(jsonArray, parent_id) {
                         rowText.hide();
                         rowText.parent().find('img').remove();
                         rowText.parent().prepend(BadgeSet.getBadgeImage(key))
-
-
                     }
 
                     else if($thisrow.find('.timeout').length > 0) {
@@ -494,6 +512,12 @@ DataSet = function(jsonArray, parent_id) {
                         rowText.html(rowField.find('input').val());
                     }
 
+                    else if($thisrow.find('select').length > 0) {
+                        if(DEBUG)console.log('save > select');
+                        rowText.html(rowField.find('select option:selected').text());
+                        rowField.find('select').hide();
+                        rowText.show();
+                    }
 
                     else{
                         /*
@@ -524,9 +548,7 @@ DataSet = function(jsonArray, parent_id) {
                             //console.log('save > hello' );
                             rowText.html(rowField.find('input').val());
                         }
-
                     }
-
                 }
                 //  Action Cancel !!!!!
                 else{
@@ -538,8 +560,7 @@ DataSet = function(jsonArray, parent_id) {
 
                     // assume that pbd_rule_action_save
                     if($thisrow.find('.collection').length > 0) {
-                        if(DEBUG)console.log('save > collection');
-
+                        if(DEBUG)console.log('cancel > collection');
 
                         //Set value from edit text to nornal text
                         var key = rowText.html();
@@ -550,13 +571,11 @@ DataSet = function(jsonArray, parent_id) {
                         rowText.hide();
                         rowText.parent().find('img').remove();
                         rowText.parent().prepend(BadgeSet.getBadgeImage(key))
-
-
                     }
 
                     else if($thisrow.find('.timeout').length > 0) {
                         //incase of cool down cast value btw 'second' and other unit
-                        if(DEBUG)console.log('save > timeout');
+                        if(DEBUG)console.log('cancel > timeout');
 
                         var key = rowText.html();
                         var string_key = key.split(' ');
@@ -567,18 +586,18 @@ DataSet = function(jsonArray, parent_id) {
                     }
 
                     else if($thisrow.find('.idwithqty').length > 0) {
-                        if(DEBUG)console.log('save > idwithqty');
+                        if(DEBUG)console.log('cancel > idwithqty');
                         rowField.find('.reward_type').val(rowText.html());
                     }
 
                     else if($thisrow.find('.cooldown').length > 0) {
                         //incase of cool down cast value btw 'second' and other unit
-                        if(DEBUG)console.log('save > cooldown');
+                        if(DEBUG)console.log('cancel > cooldown');
                         $thisrow.find('.cooldown').val(rowText.html());
                     }
 
 //            else if($thisrow.find('.date_tween').length > 0) {
-//                if(DEBUG)console.log('save > date_tween');
+//                if(DEBUG)console.log('cancel > date_tween');
 //                rowText.html(
 //                    '<span class="date_tween1_tx sbtw">'+$thisrow.find('.date_tween1').val()
 //                        +'</span> to <span class="date_tween2_tx sbtw">'
@@ -588,7 +607,7 @@ DataSet = function(jsonArray, parent_id) {
 //            }
 
                     else if($thisrow.find('.input_boolean').length > 0) {
-                        if(DEBUG)console.log('save > input_boolean');
+                        if(DEBUG)console.log('cancel > input_boolean');
                         var boolInput = $thisrow.find('.input_boolean');
                         boolInput.val(rowText.html());
                     }
@@ -598,6 +617,11 @@ DataSet = function(jsonArray, parent_id) {
                         rowField.find('input').val(rowText.html());
                     }
 
+                    else if($thisrow.find('select').length > 0) {
+                        if(DEBUG)console.log('cancel > select');
+                        rowField.find('select').hide();
+                        rowText.show();
+                    }
 
                     else{
                         /*
@@ -618,7 +642,6 @@ DataSet = function(jsonArray, parent_id) {
                             //console.log('save > hello' );
                             rowField.find('input').val(rowText.html());
                         }
-
                     }
                 }
                 // console.log(this.id);
@@ -651,13 +674,16 @@ DataSet = function(jsonArray, parent_id) {
                 });
 
                 obj.label = $this.find('td')[0].innerHTML;
-                obj.placeholder = $this.find('input').attr('placeholder');
+                var elm = $this.find('input'); // try to find "input" first
+                if (elm.length <= 0) elm = $this.find('select'); // if not found, then try to find "select"
+                obj.placeholder = elm.attr('placeholder');
+                if (elm.attr('datatype')) obj.type = elm.attr('datatype');
 
                 /*
                  * track to grand parent node to get node header
                  * for formatting result to correct format for backend
                  */
-                var value = $this.find('input').val(),
+                var value = elm.val(),
                     $parent = $this.parent().parent().parent().parent().parent().parent(),
                     anotherType = $parent.find('.name_only').html();
 

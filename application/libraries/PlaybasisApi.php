@@ -16,12 +16,8 @@ class PlaybasisApi{
 
         $ci =& get_instance();
 
-	    $config = array();
-	    $ci->config->load('playbasis');
-		$config['server'] = $ci->config->config['server'];
-
         $this->_restClient = $ci->rest;
-        $this->_restClient->initialize($config);
+        $this->_restClient->initialize(array('server' => API_SERVER));
 
         //set_error_handler('handleError');
     }
