@@ -1551,7 +1551,8 @@ class Player_model extends MY_Model
     }
 
     public function insertFullContact($email, $detail) {
-        $this->mongo_db->insert('player', array_merge(array('_id' => $email), $detail));
+        $mongoDate = new MongoDate(time());
+        $this->mongo_db->insert('player', array_merge(array('_id' => $email, 'date_added' => $mongoDate, 'date_modified' => $mongoDate), $detail));
     }
 }
 ?>
