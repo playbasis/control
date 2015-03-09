@@ -1241,6 +1241,36 @@
                             "Description": "player id as used in client's website"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Reset a Player's Quest",
+                    "Synopsis": "Reset a quest done by a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quest/reset",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "quest_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id"
+                        }
+                    ]
                 }
             ]
         },
@@ -1435,6 +1465,36 @@
                             "Default": "5",
                             "Type": "string",
                             "Description": "limit number of players"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Reset a Player's Quiz",
+                    "Synopsis": "Reset a quiz done by a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quiz/reset",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "quiz_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz id"
                         }
                     ]
                 }
