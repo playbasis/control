@@ -259,7 +259,7 @@ $email = 'pechpras@playbasis.com';
 		foreach ($emails as $email) {
 			print($email."\n");
 			$resp = json_decode(file_get_contents(FULLCONTACT_API.'/v2/person.json?email='.$email.'&apiKey='.FULLCONTACT_API_KEY.'&webhookUrl='.FULLCONTACT_CALLBACK.'&webhookBody=json'));
-			if (!($resp && isset($resp['status']) && $resp['status'] == 202)) {
+			if (!($resp && isset($resp->status) && $resp->status == FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED)) {
 				print_r($resp);
 			}
 			usleep(1.0/FULLCONTACT_RATE_LIMIT*1000000);

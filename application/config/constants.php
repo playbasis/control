@@ -84,6 +84,8 @@ define('FULLCONTACT_API', 'https://api.fullcontact.com');
 define('FULLCONTACT_API_KEY', '697e1f82f0f3dcb7');
 define('FULLCONTACT_RATE_LIMIT', 6); // per sec
 define('FULLCONTACT_CALLBACK', 'http://requestb.in/151umvb1');
+define('FULLCONTACT_REQUEST_OK', 200);
+define('FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED', 202);
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
