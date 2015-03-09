@@ -187,6 +187,10 @@ $route['Sms/sendTo'] = 'pb_sms/sendTo';
 $route['Sms/send'] = 'pb_sms/send';
 $route['Sms/goods'] = 'pb_sms/send_goods';
 
+//notification API
+$route['notification/'.ANY_STRING] = 'notification/index/$1';
+$route['notification'] = 'notification/index';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';

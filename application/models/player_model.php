@@ -1549,5 +1549,9 @@ class Player_model extends MY_Model
     public function findNewEmails($emails) {
         return array_diff($emails, array_merge(array('no-reply@playbasis.com', 'info@playbasis.com'), $this->findProcessedEmails($emails)));
     }
+
+    public function insertFullContact($email, $detail) {
+        $this->mongo_db->insert('player', array_merge(array('_id' => $email), $detail));
+    }
 }
 ?>

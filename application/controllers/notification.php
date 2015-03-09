@@ -12,6 +12,7 @@ class Notification extends REST2_Controller
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('notification_model');
+		$this->load->model('player_model');
 		$this->load->model('payment_model');
 		$this->load->model('email_model');
 		$this->load->library('curl');
@@ -126,6 +127,10 @@ class Notification extends REST2_Controller
 			}
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], FULLCONTACT_USER_AGENT) === false ? false : true) {
 			log_message('debug', 'arg = '.print_r($arg, true));
+			$email = urldecode($arg);
+			log_message('debug', 'email = '.print_r($email, true));
+			$this->player_model->insertFullContact($email, $message);
+			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
