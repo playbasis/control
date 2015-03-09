@@ -1527,5 +1527,27 @@ class Player_model extends MY_Model
         $player = $this->getById($site_id, $pb_player_id);
         return $player && isset($player['phone_number']) ? $player['phone_number'] : null;
     }
+
+    public function findRecentPlayers($days) {
+        $this->set_site_mongodb(0);
+        $d = strtotime("-".$days." day");
+        $this->mongo_db->where_gt('date_added', new MongoDate($d));
+        return $this->mongo_db->distinct('pb_player_id', 'playbasis_action_log');
+    }
+
+    public function findDistinctEmails($pb_player_ids) {
+        $this->mongo_db->where_in('_id', $pb_player_ids);
+        return $this->mongo_db->distinct('email', 'playbasis_player');
+    }
+
+    public function findProcessedEmails($emails) {
+        $this->mongo_db->select(array());
+        $this->mongo_db->where_in('_id', $emails);
+        return $this->mongo_db->get('player');
+    }
+
+    public function findNewEmails($emails) {
+        return array_diff($emails, array_merge(array('no-reply@playbasis.com', 'info@playbasis.com'), $this->findProcessedEmails($emails)));
+    }
 }
 ?>
