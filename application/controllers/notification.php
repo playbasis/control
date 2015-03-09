@@ -23,7 +23,7 @@ class Notification extends REST2_Controller
 		$this->response($this->resp->setRespond($messages), 200);
 	}
 
-	public function index_post()
+	public function index_post($arg = null)
 	{
 		// headers = HTTP_X_AMZ_SNS_MESSAGE_TYPE, HTTP_X_AMZ_SNS_MESSAGE_ID, HTTP_X_AMZ_SNS_TOPIC_ARN, HTTP_X_AMZ_SNS_SUBSCRIPTION_ARN
 		// body = $this->request->body
@@ -124,6 +124,8 @@ class Notification extends REST2_Controller
 				log_message('error', 'Unknow return status from PayPal, response: '.$res);
 				$this->response($this->error->setError('INVALID_PAYPAL_IPN', $res), 200);
 			}
+		} else if (strpos($_SERVER['HTTP_USER_AGENT'], FULLCONTACT_USER_AGENT) === false ? false : true) {
+			log_message('debug', 'arg = '.print_r($arg, true));
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
