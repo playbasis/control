@@ -127,7 +127,7 @@ class Notification extends REST2_Controller
 			}
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], FULLCONTACT_USER_AGENT) === false ? false : true) {
 			log_message('debug', 'arg = '.print_r($arg, true));
-			$email = urldecode($arg);
+			$email = urlsafe_b64decode($arg);
 			log_message('debug', 'email = '.print_r($email, true));
 			$this->player_model->insertFullContact($email, $message);
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
@@ -203,5 +203,14 @@ class Notification extends REST2_Controller
 			$this->email_model->addIntoBlackList($this->site_id, $email, 'Complaint', $complaint['userAgent'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
 		}
 	}
+}
+
+function urlsafe_b64decode($string) {
+	$data = str_replace(array('-','_'), array('+','/'), $string);
+	$mod4 = strlen($data) % 4;
+	if ($mod4) {
+		$data .= substr('====', $mod4);
+	}
+	return base64_decode($data);
 }
 ?>

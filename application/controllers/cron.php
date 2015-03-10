@@ -258,12 +258,17 @@ $email = 'pechpras@playbasis.com';
 		$emails = $this->player_model->findNewEmails($emails);
 		foreach ($emails as $email) {
 			print($email."\n");
-			$resp = json_decode(file_get_contents(FULLCONTACT_API.'/v2/person.json?email='.$email.'&apiKey='.FULLCONTACT_API_KEY.'&webhookUrl='.str_replace('%s', urlencode($email), FULLCONTACT_CALLBACK_URL).'&webhookBody=json'));
+			$resp = json_decode(file_get_contents(FULLCONTACT_API.'/v2/person.json?email='.$email.'&apiKey='.FULLCONTACT_API_KEY.'&webhookUrl='.str_replace('%s', urlsafe_b64encode($email), FULLCONTACT_CALLBACK_URL).'&webhookBody=json'));
 			if (!($resp && isset($resp->status) && $resp->status == FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED)) {
 				print_r($resp);
 			}
 			usleep(1.0/FULLCONTACT_RATE_LIMIT*1000000);
 		}
 	}
+}
+
+function urlsafe_b64encode($string) {
+	$data = base64_encode($string);
+	return str_replace(array('+','/','='), array('-','_',''), $data);
 }
 ?>
