@@ -1543,7 +1543,7 @@ class Player_model extends MY_Model
     public function findProcessedEmails($emails) {
         $this->mongo_db->select(array());
         $this->mongo_db->where_in('_id', $emails);
-        return $this->mongo_db->get('player');
+        return $this->mongo_db->get('playbasis_player_fc');
     }
 
     public function findNewEmails($emails) {
@@ -1551,8 +1551,10 @@ class Player_model extends MY_Model
     }
 
     public function insertFullContact($email, $detail) {
-        $mongoDate = new MongoDate(time());
-        $this->mongo_db->insert('player', array_merge(array('_id' => $email, 'date_added' => $mongoDate, 'date_modified' => $mongoDate), $detail));
+        if ($detail && isset($detail['result'])) {
+            $mongoDate = new MongoDate(time());
+            $this->mongo_db->insert('playbasis_player_fc', array_merge(array('_id' => $email, 'date_added' => $mongoDate, 'date_modified' => $mongoDate), $detail['result']));
+        }
     }
 }
 ?>
