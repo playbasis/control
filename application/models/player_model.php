@@ -1528,6 +1528,13 @@ class Player_model extends MY_Model
         return $player && isset($player['phone_number']) ? $player['phone_number'] : null;
     }
 
+    public function findPlayersBySiteId($site_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('email'));
+        $this->mongo_db->where('site_id', $site_id);
+        return $this->mongo_db->get('playbasis_player');
+    }
+
     public function findRecentPlayers($days) {
         $this->set_site_mongodb(0);
         $d = strtotime("-".$days." day");
