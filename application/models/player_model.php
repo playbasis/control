@@ -1565,6 +1565,7 @@ class Player_model extends MY_Model
             if (!$records) {
                 $this->mongo_db->insert('playbasis_player_fc', array_merge(array('_id' => $email, 'date_added' => $mongoDate, 'date_modified' => $mongoDate), $detail['result']));
             } else {
+                if (isset($detail['result']['status']) && $detail['result']['status'] != 200) return;
                 $r = $records[0];
                 $this->mongo_db->where('_id', $email);
                 $this->mongo_db->delete('playbasis_player_fc');
