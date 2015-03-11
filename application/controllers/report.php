@@ -58,7 +58,6 @@ class Report extends CI_Controller
 	    $allowed_site_ids = array( // true = send email, false = will not send
 		    SITE_ID_DEMO => true,
 		    SITE_ID_MTD => true,
-		    SITE_ID_ASSOPOKER => true,
 		    SITE_ID_TRUE_MONEY => true,
 	    );
 	    $to_pbteam_email = array('devteam@playbasis.com', 'tanawat@playbasis.com', 'notjiam@gmail.com');
