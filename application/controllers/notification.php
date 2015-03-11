@@ -129,7 +129,7 @@ class Notification extends REST2_Controller
 			log_message('debug', 'arg = '.print_r($arg, true));
 			$email = urlsafe_b64decode($arg);
 			log_message('debug', 'email = '.print_r($email, true));
-			$this->player_model->insertFullContact($email, $message);
+			$this->player_model->insertOrUpdateFullContact($email, $message);
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);

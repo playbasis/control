@@ -1557,10 +1557,19 @@ class Player_model extends MY_Model
         return array_diff($emails, array_merge(array('no-reply@playbasis.com', 'info@playbasis.com'), array_map('index_id', $this->findProcessedEmails($emails))));
     }
 
-    public function insertFullContact($email, $detail) {
+    public function insertOrUpdateFullContact($email, $detail) {
         if ($detail && isset($detail['result'])) {
             $mongoDate = new MongoDate(time());
-            $this->mongo_db->insert('playbasis_player_fc', array_merge(array('_id' => $email, 'date_added' => $mongoDate, 'date_modified' => $mongoDate), $detail['result']));
+            $this->mongo_db->where('_id', $email);
+            $records = $this->mongo_db->get('playbasis_player_fc');
+            if (!$records) {
+                $this->mongo_db->insert('playbasis_player_fc', array_merge(array('_id' => $email, 'date_added' => $mongoDate, 'date_modified' => $mongoDate), $detail['result']));
+            } else {
+                $r = $records[0];
+                $this->mongo_db->where('_id', $email);
+                $this->mongo_db->delete('playbasis_player_fc');
+                $this->mongo_db->insert('playbasis_player_fc', array_merge(array('_id' => $email, 'date_added' => $r['date_added'], 'date_modified' => $mongoDate), $detail['result']));
+            }
         }
     }
 }
