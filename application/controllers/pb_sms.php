@@ -167,5 +167,38 @@ class Pb_sms extends REST2_Controller
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
     }
+
+    public function recent_get() {
+        /* process parameters */
+        $required = $this->input->checkParam(array('player_id'));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+        $cl_player_id = $this->input->get('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+        if (!$player)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $since = $this->input->get('since');
+        $results = $this->sms_model->recent($validToken['site_id'], isset($player['phone_number']) ? $player['phone_number'] : null, $since ? strtotime($since) : null);
+        array_walk_recursive($results, array($this, 'convert_mongo_date'));
+        $this->response($this->resp->setRespond($results), 200);
+    }
+
+    private function convert_mongo_date(&$item, $key) {
+        if (is_object($item)) {
+            if (get_class($item) === 'MongoId') {
+                $item = $item->{'$id'};
+            } else if (get_class($item) === 'MongoDate') {
+                $item = datetimeMongotoReadable($item);
+            }
+        }
+    }
 }
 ?>

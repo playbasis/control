@@ -52,5 +52,17 @@ class Sms_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_sms_to_client');
         return $results ? $results[0] : null;
     }
+
+    public function recent($site_id, $phone_number, $since) {
+        if (!$phone_number) return array();
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('message', 'date_added'));
+        $this->mongo_db->select(array(), array('_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('to', $phone_number);
+        if ($since) $this->mongo_db->where_gt('date_added', new MongoDate($since));
+        $this->mongo_db->order_by(array('date_added' => -1));
+        return $this->mongo_db->get('playbasis_sms_log');
+    }
 }
 ?>
