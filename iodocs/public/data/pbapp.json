@@ -1678,6 +1678,29 @@
                     ]
                 },
                 {
+                    "MethodName": "List Recent Email Sent to a Player",
+                    "Synopsis": "List recent email sent to a player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Email/recent",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "since",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "'datetime' format supported by strtotime"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Send SMS",
                     "Synopsis": "Send SMS to a player.",
                     "HTTPMethod": "POST",
@@ -1755,6 +1778,29 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "template message (either message or template_id is required)"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List Recent SMS Sent to a Player",
+                    "Synopsis": "List recent SMS sent to a player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Sms/recent",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "since",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "'datetime' format supported by strtotime"
                         }
                     ]
                 },
