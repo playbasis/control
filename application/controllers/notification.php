@@ -12,6 +12,7 @@ class Notification extends REST2_Controller
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('notification_model');
+		$this->load->model('player_model');
 		$this->load->model('payment_model');
 		$this->load->model('email_model');
 		$this->load->library('curl');
@@ -23,7 +24,7 @@ class Notification extends REST2_Controller
 		$this->response($this->resp->setRespond($messages), 200);
 	}
 
-	public function index_post()
+	public function index_post($arg = null)
 	{
 		// headers = HTTP_X_AMZ_SNS_MESSAGE_TYPE, HTTP_X_AMZ_SNS_MESSAGE_ID, HTTP_X_AMZ_SNS_TOPIC_ARN, HTTP_X_AMZ_SNS_SUBSCRIPTION_ARN
 		// body = $this->request->body
@@ -124,6 +125,12 @@ class Notification extends REST2_Controller
 				log_message('error', 'Unknow return status from PayPal, response: '.$res);
 				$this->response($this->error->setError('INVALID_PAYPAL_IPN', $res), 200);
 			}
+		} else if (strpos($_SERVER['HTTP_USER_AGENT'], FULLCONTACT_USER_AGENT) === false ? false : true) {
+			log_message('debug', 'arg = '.print_r($arg, true));
+			$email = urlsafe_b64decode($arg);
+			log_message('debug', 'email = '.print_r($email, true));
+			$this->player_model->insertOrUpdateFullContact($email, $message);
+			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
@@ -196,5 +203,14 @@ class Notification extends REST2_Controller
 			$this->email_model->addIntoBlackList($this->site_id, $email, 'Complaint', $complaint['userAgent'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
 		}
 	}
+}
+
+function urlsafe_b64decode($string) {
+	$data = str_replace(array('-','_'), array('+','/'), $string);
+	$mod4 = strlen($data) % 4;
+	if ($mod4) {
+		$data .= substr('====', $mod4);
+	}
+	return base64_decode($data);
 }
 ?>

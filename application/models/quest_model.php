@@ -224,6 +224,14 @@ class Quest_model extends MY_Model
         ), array("w" => 0, "j" => false));
     }
 
+    public function delete($client_id, $site_id, $pb_player_id, $quest_id) {
+        $this->set_site_mongodb($site_id);
+        if ($quest_id) $this->mongo_db->where('quest_id', new MongoId($quest_id));
+        $this->mongo_db->where('pb_player_id', new MongoId($pb_player_id));
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update_all('playbasis_quest_to_player');
+    }
+
     private function change_image_path(&$item, $key)
     {
         if($key === "image"){

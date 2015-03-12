@@ -1527,5 +1527,55 @@ class Player_model extends MY_Model
         $player = $this->getById($site_id, $pb_player_id);
         return $player && isset($player['phone_number']) ? $player['phone_number'] : null;
     }
+
+    public function findPlayersBySiteId($site_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('email'));
+        $this->mongo_db->where('site_id', $site_id);
+        return $this->mongo_db->get('playbasis_player');
+    }
+
+    public function findRecentPlayers($days) {
+        $this->set_site_mongodb(0);
+        $d = strtotime("-".$days." day");
+        $this->mongo_db->where_gt('date_added', new MongoDate($d));
+        return $this->mongo_db->distinct('pb_player_id', 'playbasis_action_log');
+    }
+
+    public function findDistinctEmails($pb_player_ids) {
+        $this->mongo_db->where_in('_id', $pb_player_ids);
+        return $this->mongo_db->distinct('email', 'playbasis_player');
+    }
+
+    public function findProcessedEmails($emails) {
+        $this->mongo_db->select(array());
+        $this->mongo_db->where_in('_id', $emails);
+        return $this->mongo_db->get('playbasis_player_fc');
+    }
+
+    public function findNewEmails($emails) {
+        return array_diff($emails, array_merge(array('no-reply@playbasis.com', 'info@playbasis.com'), array_map('index_id', $this->findProcessedEmails($emails))));
+    }
+
+    public function insertOrUpdateFullContact($email, $detail) {
+        if ($detail && isset($detail['result'])) {
+            $mongoDate = new MongoDate(time());
+            $this->mongo_db->where('_id', $email);
+            $records = $this->mongo_db->get('playbasis_player_fc');
+            if (!$records) {
+                $this->mongo_db->insert('playbasis_player_fc', array_merge(array('_id' => $email, 'date_added' => $mongoDate, 'date_modified' => $mongoDate), $detail['result']));
+            } else {
+                if (isset($detail['result']['status']) && $detail['result']['status'] != 200) return;
+                $r = $records[0];
+                $this->mongo_db->where('_id', $email);
+                $this->mongo_db->delete('playbasis_player_fc');
+                $this->mongo_db->insert('playbasis_player_fc', array_merge(array('_id' => $email, 'date_added' => $r['date_added'], 'date_modified' => $mongoDate), $detail['result']));
+            }
+        }
+    }
+}
+
+function index_id($obj) {
+    return $obj['_id'];
 }
 ?>

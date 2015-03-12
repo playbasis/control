@@ -122,5 +122,17 @@ class Email_model extends MY_Model
 		$results = $this->mongo_db->get('playbasis_email_to_client');
 		return $results ? $results[0] : null;
 	}
+
+	public function recent($site_id, $email, $since) {
+		if (!$email) return array();
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('subject', 'date_added'));
+		$this->mongo_db->select(array(), array('_id'));
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('to', $email);
+		if ($since) $this->mongo_db->where_gt('date_added', new MongoDate($since));
+		$this->mongo_db->order_by(array('date_added' => -1));
+		return $this->mongo_db->get('playbasis_email_log');
+	}
 }
 ?>

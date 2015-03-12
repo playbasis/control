@@ -1230,6 +1230,32 @@ class Quest extends REST2_Controller
         $this->response($this->resp->setRespond($resp), 200);
     }
 
+    /*
+     * reset quest
+     *
+     * @param player_id string player id of client
+     * @param quest_id string (optional) id of quest
+     * return array
+     */
+    public function reset_post(){
+        $this->benchmark->mark('start');
+
+        $player_id = $this->input->post('player_id') ? $this->input->post('player_id') : $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+
+        if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $quest_id = $this->input->post('quest_id') ? new MongoId($this->input->post('quest_id')) : null;
+        $results = $this->quest_model->delete($this->client_id, $this->site_id, $pb_player_id, $quest_id);
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
+    }
+
     protected function processFeedback($type, $input) {
         switch (strtolower($type)) {
         case 'email':

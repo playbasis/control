@@ -158,6 +158,7 @@ $route['Quest/available'] = 'quest/available';
 $route['Quest/'.ANY_STRING.'/available'] = 'quest/available/$1';
 $route['Quest/'.ANY_STRING.'/mission/'.ANY_STRING] = 'quest/mission/$1/$2';
 $route['Quest/joinAll'] = 'quest/joinAll';
+$route['Quest/reset'] = 'quest/reset';
 
 //quiz API
 $route['Quiz/list'] = 'quiz/list';
@@ -181,11 +182,17 @@ $route['Email/isBlackList'] = 'email/isBlackList';
 $route['Email/addBlackList'] = 'email/addBlackList';
 $route['Email/removeBlackList'] = 'email/removeBlackList';
 $route['Email/goods'] = 'email/send_goods';
+$route['Email/recent'] = 'email/recent';
 
 //sms API
 $route['Sms/sendTo'] = 'pb_sms/sendTo';
 $route['Sms/send'] = 'pb_sms/send';
 $route['Sms/goods'] = 'pb_sms/send_goods';
+$route['Sms/recent'] = 'pb_sms/recent';
+
+//notification API
+$route['notification/'.ANY_STRING] = 'notification/index/$1';
+$route['notification'] = 'notification/index';
 
 //misc
 //$route['test']	= 'playbasis/test';

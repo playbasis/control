@@ -10,6 +10,7 @@ define('RECENT_DAYS_SENDING_API_TO_BE_CONSIDERED_ACTIVE', 7);
 define('MONTHS_TO_STORE_IN_SERVICE_LOG', 3);
 define('S3_BUCKET', 'elasticbeanstalk-ap-southeast-1-007834438823');
 define('S3_FOLDER', 'log/playbasis_web_service_log');
+define('DAYS_TO_BECOME_ACTIVE', 3);
 
 class Cron extends CI_Controller
 {
@@ -17,6 +18,7 @@ class Cron extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('client_model');
+		$this->load->model('player_model');
 		$this->load->model('email_model');
 		$this->load->model('plan_model');
 		$this->load->model('service_model');
@@ -249,5 +251,42 @@ $email = 'pechpras@playbasis.com';
 			$this->jigsaw_model->storeFrequency($result);
 		}
 	}
+
+	public function pullFullContact() {
+		$results = $this->player_model->findRecentPlayers(DAYS_TO_BECOME_ACTIVE);
+		$emails = $this->player_model->findDistinctEmails($results);
+		$emails = $this->player_model->findNewEmails($emails);
+		foreach ($emails as $email) {
+			print($email."\n");
+			$resp = json_decode(file_get_contents(FULLCONTACT_API.'/v2/person.json?email='.$email.'&apiKey='.FULLCONTACT_API_KEY.'&webhookUrl='.str_replace('%s', urlsafe_b64encode($email), FULLCONTACT_CALLBACK_URL).'&webhookBody=json'));
+			if (!($resp && isset($resp->status) && $resp->status == FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED)) {
+				print_r($resp);
+			}
+			usleep(1.0/FULLCONTACT_RATE_LIMIT*1000000);
+		}
+	}
+
+	public function pullFullContactForDemo() {
+		$results = $this->player_model->findPlayersBySiteId(new MongoId(DEMO_SITE_ID));
+		$emails = array_map('index_email', $results);
+		$emails = $this->player_model->findNewEmails($emails);
+		foreach ($emails as $email) {
+			print($email."\n");
+			$resp = json_decode(file_get_contents(FULLCONTACT_API.'/v2/person.json?email='.$email.'&apiKey='.FULLCONTACT_API_KEY.'&webhookUrl='.str_replace('%s', urlsafe_b64encode($email), FULLCONTACT_CALLBACK_URL).'&webhookBody=json'));
+			if (!($resp && isset($resp->status) && $resp->status == FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED)) {
+				print_r($resp);
+			}
+			usleep(1.0/FULLCONTACT_RATE_LIMIT*1000000);
+		}
+	}
+}
+
+function urlsafe_b64encode($string) {
+	$data = base64_encode($string);
+	return str_replace(array('+','/','='), array('-','_',''), $data);
+}
+
+function index_email($obj) {
+	return $obj['email'];
 }
 ?>

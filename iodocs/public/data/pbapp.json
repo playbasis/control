@@ -1241,6 +1241,36 @@
                             "Description": "player id as used in client's website"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Reset a Player's Quest",
+                    "Synopsis": "Reset a quest done by a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quest/reset",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "quest_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quest id"
+                        }
+                    ]
                 }
             ]
         },
@@ -1437,6 +1467,36 @@
                             "Description": "limit number of players"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Reset a Player's Quiz",
+                    "Synopsis": "Reset a quiz done by a player.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Quiz/reset",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "quiz_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz id"
+                        }
+                    ]
                 }
             ]
         },
@@ -1618,6 +1678,29 @@
                     ]
                 },
                 {
+                    "MethodName": "List Recent Email Sent to a Player",
+                    "Synopsis": "List recent email sent to a player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Email/recent",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "since",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "'datetime' format supported by strtotime"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Send SMS",
                     "Synopsis": "Send SMS to a player.",
                     "HTTPMethod": "POST",
@@ -1695,6 +1778,29 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "template message (either message or template_id is required)"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List Recent SMS Sent to a Player",
+                    "Synopsis": "List recent SMS sent to a player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Sms/recent",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "since",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "'datetime' format supported by strtotime"
                         }
                     ]
                 },

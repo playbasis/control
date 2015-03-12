@@ -80,5 +80,14 @@ define('CACHE_ADAPTER', 'file');
 define('CACHE_KEY_VERSION', 'version-api');
 define('CACHE_TTL_IN_SEC', 10*60);
 
+define('FULLCONTACT_API', 'https://api.fullcontact.com');
+define('FULLCONTACT_API_KEY', '8f10cefa2030457a');
+define('FULLCONTACT_RATE_LIMIT', 1); // per sec
+define('FULLCONTACT_CALLBACK_URL', 'https://api.pbapp.net/notification/%s');
+define('FULLCONTACT_REQUEST_OK', 200);
+define('FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED', 202);
+define('FULLCONTACT_USER_AGENT', 'FullContact');
+
+define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

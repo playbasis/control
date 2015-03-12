@@ -152,7 +152,7 @@ class Quiz_model extends MY_Model
         $this->mongo_db->where('pb_player_id', $player_id);
         if($quiz_id){
             $this->mongo_db->where('quiz_id', $quiz_id);
-            $this->mongo_db->delete('playbasis_player');
+            $this->mongo_db->delete('playbasis_quiz_to_player');
         }else{
             $this->mongo_db->delete_all('playbasis_quiz_to_player');
         }
