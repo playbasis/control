@@ -59,6 +59,7 @@ class User_model extends MY_Model
         $find_salt = $this->getUserInfo($user_id);
         $salt = $find_salt['salt'];
 
+        $check_email = isset($data['email']) && !is_null($data['email']) && !$this->findEmail($data);
         $check_update = false;
         $this->mongo_db->where('_id', new MongoID($user_id));
 
@@ -82,12 +83,10 @@ class User_model extends MY_Model
             $check_update = true;
         }
 
-        if(isset($data['email']) && !is_null($data['email'])){
-            if(! $this->findEmail($data)){
-                $this->mongo_db->set('email', $data['email']);
-                $this->mongo_db->set('username', $data['email']);
-                $check_update = true;
-            }
+        if($check_email){
+            $this->mongo_db->set('email', $data['email']);
+            $this->mongo_db->set('username', $data['email']);
+            $check_update = true;
         }
         
         if(isset($data['status']) && !is_null($data['status'])){
