@@ -215,7 +215,7 @@ class Custompoints extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if(!$this->validateModify()){
-                $this->error['message'] = $this->lang->line('error_permission');
+                $this->data['message'] = $this->lang->line('error_permission');
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
