@@ -285,7 +285,7 @@ class Redeem extends REST2_Controller
                 array_push($redeemResult['events'], $event);
 
                 /* obtain coupon code */
-                $log_id = $this->redeem_model->exerciseCode('goods', $validToken['client_id'], $validToken['site_id'], $pb_player_id, $goodsData['code']);
+                $log_id = $this->redeem_model->exerciseCode('goods', $validToken['client_id'], $validToken['site_id'], $pb_player_id, array_key_exists('code', $goodsData) ? $goodsData['code'] : null);
                 $redeemResult = array_merge($redeemResult, array('log_id' => $log_id->{'$id'}));
 
                 // publish to node stream
