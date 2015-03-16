@@ -1530,7 +1530,7 @@ class Player_model extends MY_Model
 
     public function findPlayersBySiteId($site_id) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('email'));
+        $this->mongo_db->select(array('email', 'cl_player_id', 'username'));
         $this->mongo_db->where('site_id', $site_id);
         return $this->mongo_db->get('playbasis_player');
     }
