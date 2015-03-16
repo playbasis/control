@@ -145,7 +145,7 @@ class Rule extends MY_Controller
            !$this->input->post('clientId') &&
            !$this->input->post('state')){
             $this->jsonErrorResponse();
-            return ;
+            return;
         }
 
         //after clean channge disable to be 0 because 0-string is lost in network
@@ -153,6 +153,11 @@ class Rule extends MY_Controller
             $state='0';
         else
             $state='1';
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission'));
+            return;
+        }
 
         // $this->jsonResponse($params);
         $this->output->set_output(json_encode(
@@ -166,8 +171,14 @@ class Rule extends MY_Controller
     public function jsonSaveRule(){
         if(!$this->input->post('json')){
             $this->jsonErrorResponse();
-            return ;
+            return;
         }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission'));
+            return;
+        }
+
         $input = json_decode(html_entity_decode($this->input->post('json')),true);
         $this->output->set_output(json_encode($this->Rule_model->saveRule($input)));
     }
@@ -178,8 +189,14 @@ class Rule extends MY_Controller
         $site_id = $this->input->post("site_id");
         if(!$id){
             $this->jsonErrorResponse();
-            return ;
+            return;
         }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission'));
+            return;
+        }
+
         $this->output->set_output(json_encode(
             $this->Rule_model->cloneRule(
                 $id, $client_id, $site_id)));
@@ -230,7 +247,12 @@ class Rule extends MY_Controller
            !$this->input->post('siteId') &&
            !$this->input->post('clientId')){
             $this->jsonErrorResponse();
-            return ;
+            return;
+        }
+
+        if (!$this->validateModify()) {
+            $this->jsonErrorResponse($this->lang->line('error_permission'));
+            return;
         }
 
         $this->output->set_output(json_encode(
@@ -298,12 +320,12 @@ class Rule extends MY_Controller
         }
     }
 
-    function jsonErrorResponse(){
+    function jsonErrorResponse($msg='Error, invalid request format or missing parameter'){
         echo json_encode(
             array(
                 'error'=>1,
                 'success'=>false,
-                'msg'=>'Error , invalid request format or missing parameter'
+                'msg'=>$msg
             )
         );
     }
@@ -324,6 +346,14 @@ class Rule extends MY_Controller
             $ret[$each[$keyField]] = $each[$valField];
         }
         return $ret;
+    }
+
+    private function validateModify() {
+        if ($this->User_model->hasPermission('modify', 'rule')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function validateAccess(){

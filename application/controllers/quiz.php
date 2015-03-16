@@ -172,6 +172,10 @@ class Quiz extends MY_Controller
         }
 
         if($this->input->post()){
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
             $data = $this->input->post();
 
             $quiz = array();
@@ -371,7 +375,6 @@ class Quiz extends MY_Controller
     }
 
     private function validateModify() {
-
         if ($this->User_model->hasPermission('modify', 'quiz')) {
             return true;
         } else {

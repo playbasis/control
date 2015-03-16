@@ -3,8 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 class Custompoints extends MY_Controller
 {
-    
-
     public function __construct()
     {
         parent::__construct();
@@ -49,7 +47,6 @@ class Custompoints extends MY_Controller
         }
 
         $this->getList(0);
-        
     }
 
     public function insert(){
@@ -79,6 +76,10 @@ class Custompoints extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+           if(!$this->validateModify()){
+                $this->error['message'] = $this->lang->line('error_permission');
+           }
 
            if($this->form_validation->run() && $this->data['message'] == null){
                 $custompoints_data = $this->input->post();
@@ -110,7 +111,6 @@ class Custompoints extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
         $this->getList($offset);
-
     }
 
     private function getList($offset) {
@@ -150,6 +150,14 @@ class Custompoints extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function validateModify() {
+        if ($this->User_model->hasPermission('modify', 'custompoints')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function validateAccess(){
@@ -205,7 +213,12 @@ class Custompoints extends MY_Controller
         $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if($this->form_validation->run()){
+
+            if(!$this->validateModify()){
+                $this->error['message'] = $this->lang->line('error_permission');
+            }
+
+            if($this->form_validation->run() && $this->data['message'] == null){
                 $custompoints_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
@@ -217,8 +230,8 @@ class Custompoints extends MY_Controller
                 if($update){
                     redirect('/custompoints', 'refresh');
                 }
-            } 
-        }       
+            }
+        }
 
         $this->getForm($custompoints_id);
     }
@@ -230,11 +243,11 @@ class Custompoints extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->error['warning'] = null;
+        $this->error['message'] = null;
 
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
+        if ($this->input->post('selected') && $this->error['message'] == null) {
             foreach ($this->input->post('selected') as $reward_id) {
-                    $this->Custompoints_model->deleteCustompoints($reward_id); 
+                $this->Custompoints_model->deleteCustompoints($reward_id);
             }
 
             $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
