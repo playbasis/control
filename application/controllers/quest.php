@@ -3,10 +3,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/MY_Controller.php';
 
-
 class Quest extends MY_Controller
 {
-
 	public function __construct()
     {
         parent::__construct();
@@ -189,6 +187,10 @@ class Quest extends MY_Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $this->input->post();
 
+            if (!$this->validateModify()) {
+                $this->data['message'][] = $this->lang->line('error_permission');
+            }
+
             if (!$this->data['message']) {
                 foreach($data as $key => $value){
                     if(in_array($key, array('condition', 'rewards', 'feedbacks', 'missions'))){
@@ -305,10 +307,8 @@ class Quest extends MY_Controller
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
 
-
                 $this->Quest_model->addQuestToClient($data);
                 redirect('/quest', 'refresh');
-
             } // end validation and message == null
         }
         $this->getForm();
@@ -841,7 +841,6 @@ class Quest extends MY_Controller
     }
 
     public function _getListForAjax($offset) {
-
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
         $this->load->model('Image_model');
@@ -895,19 +894,18 @@ class Quest extends MY_Controller
     }
 
     public function delete() {
-
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->error['warning'] = null;
+        $this->error['message'] = null;
 
         if(!$this->validateModify()){
-            $this->error['warning'] = $this->lang->line('error_permission');
+            $this->error['message'] = $this->lang->line('error_permission');
         }
 
-        if ($this->input->post('selected') && $this->error['warning'] == null) {
+        if ($this->input->post('selected') && $this->error['message'] == null) {
 
             if($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()){
                 foreach ($this->input->post('selected') as $quest_id) {
@@ -936,10 +934,9 @@ class Quest extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
 
-        $this->error['warning'] = null;
-
         if(!$this->validateModify()){
-            $this->error['warning'] = $this->lang->line('error_permission');
+            $this->output->set_output(json_encode(array("success" => false, "message" => $this->lang->line('error_permission'))));
+            return;
         }
 
         $success = false;
@@ -1004,6 +1001,10 @@ class Quest extends MY_Controller
                 && isset($data['status'])
                 && $all_missions > $lmts['mission']) {
                 $this->data['message'][] = $this->lang->line('error_mission_limit');
+            }
+
+            if (!$this->validateModify()) {
+                $this->data['message'][] = $this->lang->line('error_permission');
             }
 
             if (!$this->data['message']) {
