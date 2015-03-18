@@ -354,7 +354,7 @@ class Quiz extends REST2_Controller
         /* send feedback as necessary */
         if (isset($grade['feedbacks'])) {
             foreach (array('email', 'sms') as $type) {
-                if (is_array($grade['feedbacks'][$type])) foreach ($grade['feedbacks'][$type] as $template_id => $val) {
+                if (isset($grade['feedbacks'][$type]) && is_array($grade['feedbacks'][$type])) foreach ($grade['feedbacks'][$type] as $template_id => $val) {
                     if (isset($val['checked']) && $val['checked']) {
                         switch ($type) {
                         case 'email':
