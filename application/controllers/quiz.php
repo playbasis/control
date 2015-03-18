@@ -576,21 +576,32 @@ class Quiz extends REST2_Controller
             switch ($event['reward_type']) {
             case 'badge':
                 $message = array('message' => $this->utility->getEventMessage('badge', '', '', $event['reward_data']['name']), 'badge' => $event['reward_data']);
+                $this->tracker_model->trackEvent('REWARD', $message['message'], array(
+                    'pb_player_id'	=> $pb_player_id,
+                    'client_id'		=> $client_id,
+                    'site_id'		=> $site_id,
+                    'quiz_id'		=> $quiz_id,
+                    'reward_type'	=> 'badge',
+                    'reward_id'	    => $this->player_model->get_reward_id_by_name($this->validToken, 'badge'),
+                    'reward_name'	=> $event['reward_type'],
+                    'item_id'	    => $event['reward_id'],
+                    'amount'	    => $event['value']
+                ));
                 break;
             default:
                 $message = array('message' => $this->utility->getEventMessage('point', $event['value'], $event['reward_type']), 'amount' => $event['value'], 'point' => $event['reward_type']);
+                $this->tracker_model->trackEvent('REWARD', $message['message'], array(
+                    'pb_player_id'	=> $pb_player_id,
+                    'client_id'		=> $client_id,
+                    'site_id'		=> $site_id,
+                    'quiz_id'		=> $quiz_id,
+                    'reward_type'	=> 'point',
+                    'reward_id'	    => $event['reward_id'],
+                    'reward_name'	=> $event['reward_type'],
+                    'amount'	    => $event['value']
+                ));
                 break;
             }
-            $this->tracker_model->trackEvent('REWARD', $message['message'], array(
-                'pb_player_id'	=> $pb_player_id,
-                'client_id'		=> $client_id,
-                'site_id'		=> $site_id,
-                'quiz_id'		=> $quiz_id,
-                'reward_type'	=> $event['reward_type'] === 'badge' ? 'badge' : 'point',
-                'reward_id'	    => $event['reward_id'],
-                'reward_name'	=> $event['reward_type'],
-                'amount'	    => $event['value']
-            ));
             break;
         }
         if ($message) {
