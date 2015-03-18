@@ -596,7 +596,6 @@ class Player_model extends MY_Model
 		$this->mongo_db->select(array('date_added'));
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $this->mongo_db->where('event_type', $eventType);
-
         if($reset){
             $reset_where = array();
             $reset_not_id = array();
@@ -608,9 +607,7 @@ class Player_model extends MY_Model
 
             $this->mongo_db->where(array('$or' => $reset_where));
         }
-
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
-
 		$result = $this->mongo_db->get('playbasis_event_log');
 
 		if($result)
@@ -981,7 +978,6 @@ class Player_model extends MY_Model
             $event['reward_id'] = $event['reward_id']."";
 		}
 
-
 		return $event_log;
     }
 
@@ -1349,12 +1345,17 @@ class Player_model extends MY_Model
 		}
 		return $result;
 	}
-	public function get_reward_id_of_point($data) {
+	public function get_reward_id_by_name($data, $name) {
 		$this->set_site_mongodb($data['site_id']);
-		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'name' => 'point');
+		$query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'name' => $name);
 		$this->mongo_db->select(array('reward_id'));
 		$this->mongo_db->where($query);
-		return $this->mongo_db->get('playbasis_reward_to_client');
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_reward_to_client');
+		return $results ? $results[0]['reward_id'] : null;
+	}
+	public function get_reward_id_of_point($data) {
+		return $this->get_reward_id_by_name($data, 'point');
 	}
 	public function playerWithEnoughCriteria($data, $criteria)
 	{
@@ -1376,9 +1377,9 @@ class Player_model extends MY_Model
 					}
 					break;
 				case 'point':
-					$id = $this->get_reward_id_of_point($data);
+					$reward_id = $this->get_reward_id_of_point($data);
 					if (is_array($v)) foreach ($v as $n) {
-						array_push($ids, $this->playerWithEnoughReward($data, $id[0]['reward_id'], $n));
+						array_push($ids, $this->playerWithEnoughReward($data, $reward_id, $n));
 						break;
 					}
 					break;
@@ -1530,7 +1531,7 @@ class Player_model extends MY_Model
 
     public function findPlayersBySiteId($site_id) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array('email'));
+        $this->mongo_db->select(array('email', 'cl_player_id', 'username'));
         $this->mongo_db->where('site_id', $site_id);
         return $this->mongo_db->get('playbasis_player');
     }
