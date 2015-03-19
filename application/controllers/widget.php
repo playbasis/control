@@ -46,7 +46,7 @@ class Widget extends MY_Controller
             //force use first web app platform
             $this->data['platform_data'] = $platform_data;
 
-            $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+            $points_data = $this->Custompoints_model->getCustompoints(array('client_id' => $client_id, 'site_id' => $site_id));
 
             $this->load->model('Client_model');
             $this->load->model('Plan_model');
@@ -75,7 +75,7 @@ class Widget extends MY_Controller
 
         if($client_id){
             $site_data = $this->App_model->getAppsBySiteId($site_id);
-            $points_data = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+            $points_data = $this->Custompoints_model->getCustompoints(array('client_id' => $client_id, 'site_id' => $site_id));
         }
 
         $this->data['site_data'] = $site_data;

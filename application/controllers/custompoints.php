@@ -115,22 +115,64 @@ class Custompoints extends MY_Controller
 
     private function getList($offset) {
 
-        $per_page = 10;
+        $site_id = $this->User_model->getSiteId();
+        $client_id = $this->User_model->getClientId();
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('custompoints/page');
+        $config['per_page'] = NUMBER_OF_RECORDS_PER_PAGE;
 
-        $site_id = $this->User_model->getSiteId();
-        $client_id = $this->User_model->getClientId();
+        $filter = array(
+            'limit' => $config['per_page'],
+            'start' => $offset,
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'sort' => 'name'
+        );
+        if(isset($_GET['filter_name'])){
+            $filter['filter_name'] = $_GET['filter_name'];
+        }
+
+        $config['base_url'] = site_url('custompoints/page');
 
         if($client_id){
             $this->data['client_id'] = $client_id;
 
-            $custompoints = $this->Custompoints_model->getCustompoints($client_id, $site_id);
+            $custompoints = $this->Custompoints_model->getCustompoints($filter);
 
             $this->data['custompoints'] = $custompoints;
+            $config['total_rows'] = $this->Custompoints_model->countCustompoints($client_id, $site_id);
         }
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
 
         if (isset($this->error['warning'])) {
             $this->data['error_warning'] = $this->error['warning'];
