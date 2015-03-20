@@ -184,6 +184,7 @@ class Player_model extends MY_Model
 			'site_id' => $clientData['site_id'],
 			'cl_player_id' => $clientData['cl_player_id']
 		));
+		$this->mongo_db->limit(1);
 		$id = $this->mongo_db->get('playbasis_player');
 		return ($id) ? $id[0]['_id'] : null;
 	}
@@ -219,9 +220,7 @@ class Player_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'badge_id' => null,
 		));
-		$result = $this->mongo_db->get('playbasis_reward_to_player');
-
-		return $result;
+		return $this->mongo_db->get('playbasis_reward_to_player');
 	}
 	public function getPlayerPoint($pb_player_id, $reward_id, $site_id)
 	{
@@ -235,9 +234,8 @@ class Player_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'reward_id' => $reward_id
 		));
-		$result = $this->mongo_db->get('playbasis_reward_to_player');
-
-		return $result;
+		$this->mongo_db->limit(1);
+		return $this->mongo_db->get('playbasis_reward_to_player');
 	}
     public function getPlayerPointFromDateTime($pb_player_id, $reward_id, $site_id, $starttime="", $endtime="")
     {
@@ -301,6 +299,7 @@ class Player_model extends MY_Model
         $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		if(!$result)
 			return $result;
@@ -324,6 +323,7 @@ class Player_model extends MY_Model
             'action_id' => $action_id
         ));
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		if(!$result)
 			return $result;
@@ -348,6 +348,7 @@ class Player_model extends MY_Model
 		));
         $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where($fields);
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		$result = ($result) ? $result[0] : array();
         if($result){
@@ -389,6 +390,7 @@ class Player_model extends MY_Model
         if ($starttime != '' || $endtime != '' ) {
             $this->mongo_db->where('date_added', $datecondition);
         }
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_action_log');
         $result = ($result) ? $result[0] : array();
         if($result){
@@ -431,6 +433,7 @@ class Player_model extends MY_Model
                     'site_id' => $site_id,
 //                    'deleted' => false
                 ));
+                $this->mongo_db->limit(1);
                 $result = $this->mongo_db->get('playbasis_badge_to_client');
 
                 if(!$result)
@@ -476,6 +479,7 @@ class Player_model extends MY_Model
             'badge_id' => $badge_id,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         if(!$result)
             return false;
@@ -487,6 +491,7 @@ class Player_model extends MY_Model
                 'pb_player_id'=>$pb_player_id,
                 'badge_id'=>$badge_id
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_reward_to_player');
 
             if(!$result)
@@ -519,6 +524,7 @@ class Player_model extends MY_Model
                 return $reward;
             }
         }
+        return false;
 	}
 	public function redeemBadge($pb_player_id, $badge_id, $site_id, $client_id)
 	{
@@ -547,6 +553,7 @@ class Player_model extends MY_Model
             'badge_id' => $badge_id,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         if(!$result)
             return false;
@@ -557,6 +564,7 @@ class Player_model extends MY_Model
                 'pb_player_id'=>$pb_player_id,
                 'badge_id'=>$badge_id
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_reward_to_player');
 
             if(!$result)
@@ -586,6 +594,7 @@ class Player_model extends MY_Model
                 return $reward;
             }
         }
+        return false;
 	}
 	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{
@@ -608,6 +617,7 @@ class Player_model extends MY_Model
             $this->mongo_db->where(array('$or' => $reset_where));
         }
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_event_log');
 
 		if($result)
@@ -822,10 +832,11 @@ class Player_model extends MY_Model
 			'client_id' => $client_id,
 			'_id' => $site_id
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_client_site');
-        assert($result);
+		assert($result);
 		$result = $result[0];
-        $domain_name_client = $result['domain_name'];
+		$domain_name_client = $result['domain_name'];
 
 		$last_send = $result['last_send_limit_users']?$result['last_send_limit_users']->sec:null;
 		$next_send = $last_send + (7 * 24 * 60 * 60); //next week from last send
@@ -949,7 +960,6 @@ class Player_model extends MY_Model
     	$this->mongo_db->select(array(), array('_id'));
     	$event_log = $this->mongo_db->get('playbasis_event_log');
 
-
 		foreach($event_log as &$event){
 			$actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
@@ -1006,8 +1016,8 @@ class Player_model extends MY_Model
 
         if(!$goods_list)
             return array();
-        $playerGoods = array();
 
+        $playerGoods = array();
         foreach($goods_list as $goods)
         {
             if(isset($goods['goods_id'])){
@@ -1023,6 +1033,7 @@ class Player_model extends MY_Model
                     'goods_id' => $goods['goods_id'],
                     'site_id' => $site_id,
                 ));
+                $this->mongo_db->limit(1);
                 $result = $this->mongo_db->get('playbasis_goods_to_client');
 
                 if(!$result)
@@ -1052,6 +1063,7 @@ class Player_model extends MY_Model
             'pb_player_id' => $pb_player_id,
             'goods_id' => $goods_id
         ));
+        $this->mongo_db->limit(1);
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
 
         if(!$goods)
@@ -1071,6 +1083,7 @@ class Player_model extends MY_Model
                 'goods_id' => $goods['goods_id'],
                 'site_id' => $site_id,
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_goods_to_client');
 
             if(!$result)
@@ -1493,6 +1506,7 @@ class Player_model extends MY_Model
             'missions.mission_id' => $mission_id
         ));
         $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
         return $result ? $result[0] : array();
     }
