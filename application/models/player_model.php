@@ -627,6 +627,45 @@ class Player_model extends MY_Model
 			'date_modified' => $mongoDate
 		));
 	}
+	private function removeDeletedPlayers($results, $limit, $rankedBy) {
+		$total = count($results);
+		$c = 0;
+		for ($i = 0; $i < $total; $i++) {
+			if ($c < $limit) {
+				$this->mongo_db->select(array('cl_player_id'));
+				if (isset($results[$i]['_id']['pb_player_id'])) {
+					$results[$i]['pb_player_id'] = $results[$i]['_id']['pb_player_id'];
+					unset($results[$i]['_id']);
+				}
+				$this->mongo_db->where(array('_id' => $results[$i]['pb_player_id']));
+				$p = $this->mongo_db->get('playbasis_player');
+				if ($p) {
+					$p = $p[0];
+					$results[$i]['player_id'] = $p['cl_player_id'];
+					$results[$i][$rankedBy] = $results[$i]['value'];
+					unset($results[$i]['cl_player_id']);
+					unset($results[$i]['value']);
+					$c++;
+				} else {
+					unset($results[$i]);
+				}
+			} else {
+				unset($results[$i]);
+			}
+		}
+		return array_values($results);
+	}
+	private function getRewardIdByName($client_id, $site_id, $name) {
+		$this->mongo_db->select(array('reward_id'));
+		$this->mongo_db->where(array(
+			'name' => $name,
+			'site_id' => $site_id,
+			'client_id' => $client_id
+		));
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_reward_to_client');
+		return $results ? $results[0]['reward_id'] : null;
+	}
 	public function getLeaderboardByLevel($limit, $client_id, $site_id) {
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('cl_player_id','first_name','last_name','username','image','exp','level'));
@@ -661,61 +700,56 @@ class Player_model extends MY_Model
 	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
 	{
-		//get reward id
+		$limit = intval($limit);
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('reward_id'));
-		$this->mongo_db->where(array(
-			'name' => $ranked_by,
-			'site_id' => $site_id,
-			'client_id' => $client_id
-		));
-		$result = $this->mongo_db->get('playbasis_reward_to_client');
-		if(!$result)
-			return array();
-		$result = $result[0];
-		//get points for the reward id
+		/* get reward_id */
+		$reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+		/* list top players */
 		$this->mongo_db->select(array(
-            'pb_player_id',
+			'pb_player_id',
 			'cl_player_id',
 			'value'
 		));
-        $this->mongo_db->select(array(),array('_id'));
+		$this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
-			'reward_id' => $result['reward_id'],
+			'reward_id' => $reward_id,
 			'client_id' => $client_id,
 			'site_id' => $site_id
 		));
 		$this->mongo_db->order_by(array('value' => 'desc'));
 		$this->mongo_db->limit($limit+5);
 		$result1 = $this->mongo_db->get('playbasis_reward_to_player');
-
-		$count = count($result1);
-        $check = 0;
-		for($i=0; $i < $count; ++$i)
-		{
-            if($check < $limit){
-                $this->mongo_db->where(array(
-                    '_id' => $result1[$i]['pb_player_id'],
-                    'client_id' => $client_id,
-                    'site_id' => $site_id
-                ));
-                $check_player = $this->mongo_db->count('playbasis_player');
-                if($check_player > 0){
-                    $result1[$i]['player_id'] = $result1[$i]['cl_player_id'];
-                    $result1[$i][$ranked_by] = $result1[$i]['value'];
-                    unset($result1[$i]['cl_player_id']);
-                    unset($result1[$i]['value']);
-                    $check++;
-                }else{
-                    unset($result1[$i]);
-                }
-            }else{
-                unset($result1[$i]);
-            }
-		}
-
-        $result = array_values($result1);
-		return $result;
+		return $this->removeDeletedPlayers($result1, $limit, $ranked_by);
+	}
+	public function getMonthlyLeaderboard($ranked_by, $limit, $client_id, $site_id) {
+		$limit = intval($limit);
+		$this->set_site_mongodb($site_id);
+		/* get reward_id */
+		$reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+		/* list top players */
+		$now = time();
+		$first = date('Y-m-01', $now);
+		$from = strtotime($first.' 00:00:00');
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+				),
+			),
+			array(
+				'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+			),
+			array(
+				'$sort' => array('value' => -1),
+			),
+			array(
+				'$limit' => $limit+5,
+			),
+		));
+		return $results ? $this->removeDeletedPlayers($results['result'], $limit, $ranked_by) : array();
 	}
 	public function sortPlayersByReward($client_id, $site_id, $reward_id, $limit=null) {
 		$this->mongo_db->select(array(
@@ -768,35 +802,11 @@ class Player_model extends MY_Model
 			$this->mongo_db->order_by(array('value' => 'desc'));
 			$this->mongo_db->limit($limit+5);
 			$ranking = $this->mongo_db->get('playbasis_reward_to_player');
-			$count = count($ranking);
-            $check = 0;
-			for($i=0; $i < $count; ++$i)
-			{
-                if($check < $limit){
-                    $this->mongo_db->where(array(
-                        '_id' => $ranking[$i]['pb_player_id'],
-                        'client_id' => $client_id,
-                        'site_id' => $site_id
-                    ));
-                    $check_player = $this->mongo_db->count('playbasis_player');
-                    if($check_player > 0){
-                        $ranking[$i]['player_id'] = $ranking[$i]['cl_player_id'];
-                        $ranking[$i][$name] = $ranking[$i]['value'];
-                        unset($ranking[$i]['cl_player_id']);
-                        unset($ranking[$i]['value']);
-                        $check++;
-                    }else{
-                        unset($ranking[$i]);
-                    }
-                }else{
-                    unset($ranking[$i]);
-                }
-			}
-            $ranking = array_values($ranking);
-			$result[$name] = $ranking;
+			$result[$name] = $this->removeDeletedPlayers($ranking, $limit, $name);
 		}
 		return $result;
 	}
+
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
 	{
 		if(!$limit)
