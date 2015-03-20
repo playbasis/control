@@ -995,6 +995,150 @@ class Player_model extends MY_Model
 		}
 		return $result;
 	}
+	public function getWeeklyPlayerReward($client_id, $site_id, $reward_id, $pb_player_id) {
+		$this->set_site_mongodb($site_id);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
+		}
+		/* list top players */
+		$now = time();
+		$totalDays = $this->getTotalDays(date('Y', $now), date('m', $now));
+		$daysPerWeek = round($totalDays/4.0);
+		$d = intval(date('d', $now));
+		$w = $this->getWeek($d, $daysPerWeek);
+		$d = $w*$daysPerWeek+1;
+		$first = date('Y-m-'.($d < 10 ? '0' : '').$d, $now);
+		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+					'pb_player_id' => $pb_player_id,
+				),
+			),
+			array(
+				'$group' => array('_id' => null, 'value' => array('$sum' => '$value'))
+			),
+		));
+		return $results && isset($results['result'][0]) ? $results['result'][0]['value'] : 0;
+	}
+	public function getMonthlyPlayerReward($client_id, $site_id, $reward_id, $pb_player_id) {
+		$this->set_site_mongodb($site_id);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
+		}
+		/* list top players */
+		$now = time();
+		$first = date('Y-m-01', $now);
+		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+					'pb_player_id' => $pb_player_id,
+				),
+			),
+			array(
+				'$group' => array('_id' => null, 'value' => array('$sum' => '$value'))
+			),
+		));
+		return $results && isset($results['result'][0]) ? $results['result'][0]['value'] : 0;
+	}
+	public function countWeeklyPlayersHigherReward($client_id, $site_id, $reward_id, $value) {
+		$this->set_site_mongodb($site_id);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
+		}
+		/* list top players */
+		$now = time();
+		$totalDays = $this->getTotalDays(date('Y', $now), date('m', $now));
+		$daysPerWeek = round($totalDays/4.0);
+		$d = intval(date('d', $now));
+		$w = $this->getWeek($d, $daysPerWeek);
+		$d = $w*$daysPerWeek+1;
+		$first = date('Y-m-'.($d < 10 ? '0' : '').$d, $now);
+		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+				),
+			),
+			array(
+				'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+			),
+			array(
+				'$match' => array(
+					'value' => array('$gt' => $value),
+				),
+			),
+			array(
+				'$group' => array('_id' => null, 'value' => array('$sum' => 1))
+			),
+		));
+		return $results ? $results['result'][0]['value'] : 0;
+	}
+	public function countMonthlyPlayersHigherReward($client_id, $site_id, $reward_id, $value) {
+		$this->set_site_mongodb($site_id);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
+		}
+		/* list top players */
+		$now = time();
+		$first = date('Y-m-01', $now);
+		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+				),
+			),
+			array(
+				'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+			),
+			array(
+				'$match' => array(
+					'value' => array('$gt' => $value),
+				),
+			),
+			array(
+				'$group' => array('_id' => null, 'value' => array('$sum' => 1))
+			),
+		));
+		return $results ? $results['result'][0]['value'] : 0;
+	}
 
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
 	{

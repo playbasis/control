@@ -837,10 +837,24 @@ class Player extends REST2_Controller
             $mode = $this->input->get('mode');
             switch ($mode) {
             case 'weekly':
-                /* TODO */
+                $value = $this->player_model->getWeeklyPlayerReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by), $pb_player_id);
+                $c = $this->player_model->countWeeklyPlayersHigherReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by), $value);
+                $player = array(
+                    'player_id' => $player_id,
+                    'rank' => $c+1,
+                    'ranked_by' => $ranked_by,
+                    'ranked_value' => $value,
+                );
                 break;
             case 'monthly':
-                /* TODO */
+                $value = $this->player_model->getMonthlyPlayerReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by), $pb_player_id);
+                $c = $this->player_model->countMonthlyPlayersHigherReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by), $value);
+                $player = array(
+                    'player_id' => $player_id,
+                    'rank' => $c+1,
+                    'ranked_by' => $ranked_by,
+                    'ranked_value' => $value,
+                );
                 break;
             default:
                 $players = $this->player_model->sortPlayersByReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by));
