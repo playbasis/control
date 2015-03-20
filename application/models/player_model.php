@@ -676,6 +676,21 @@ class Player_model extends MY_Model
 		$results = $this->mongo_db->get('playbasis_reward_to_client');
 		return $results ? $results[0]['reward_id'] : null;
 	}
+	private function getTotalDays($year, $month) {
+		$t = strtotime($year.'-'.(strlen($month) < 2 ? '0' : '').$month.'-15 00:00:00');
+		$next_month = strtotime('+1 month', $t);
+		$first = date('Y-m-01 00:00:00', $next_month);
+		$d = strtotime('-1 day', strtotime($first));
+		return intval(date('d', $d));
+	}
+	private function getWeek($d, $daysPerWeek=7) {
+		for ($w = 0; $w < 4; $w++) {
+			if ($d < ($w+1)*$daysPerWeek+1) {
+				return $w;
+			}
+		}
+		return 1;
+	}
 	public function getLeaderboardByLevel($limit, $client_id, $site_id) {
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array('cl_player_id','first_name','last_name','username','image','exp','level'));
@@ -730,6 +745,49 @@ class Player_model extends MY_Model
 		$this->mongo_db->limit($limit+5);
 		$result1 = $this->mongo_db->get('playbasis_reward_to_player');
 		return $this->removeDeletedPlayers($result1, $limit, $ranked_by);
+	}
+	public function getWeeklyLeaderboard($ranked_by, $limit, $client_id, $site_id) {
+		$limit = intval($limit);
+		$this->set_site_mongodb($site_id);
+		/* get reward_id */
+		$reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
+		}
+		/* list top players */
+		$now = time();
+		$totalDays = $this->getTotalDays(date('Y', $now), date('m', $now));
+		$daysPerWeek = round($totalDays/4.0);
+		$d = intval(date('d', $now));
+		$w = $this->getWeek($d, $daysPerWeek);
+		$d = $w*$daysPerWeek+1;
+		$first = date('Y-m-'.($d < 10 ? '0' : '').$d, $now);
+		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+				),
+			),
+			array(
+				'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+			),
+			array(
+				'$sort' => array('value' => -1),
+			),
+			array(
+				'$limit' => $limit+5,
+			),
+		));
+		return $results ? $this->removeDeletedPlayers($results['result'], $limit, $ranked_by) : array();
 	}
 	public function getMonthlyLeaderboard($ranked_by, $limit, $client_id, $site_id) {
 		$limit = intval($limit);
