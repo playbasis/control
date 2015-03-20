@@ -736,10 +736,18 @@ class Player_model extends MY_Model
 		$this->set_site_mongodb($site_id);
 		/* get reward_id */
 		$reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
+		}
 		/* list top players */
 		$now = time();
 		$first = date('Y-m-01', $now);
 		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
 		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
 			array(
 				'$match' => array(
