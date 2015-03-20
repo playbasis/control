@@ -484,15 +484,15 @@ function processRequest(req, res, next) {
 
         } else {
             // API uses OAuth, but this call doesn't require auth and the user isn't already authed, so just call it.
-            unsecuredCall();
+            unsecuredCall(req);
         }
     } else {
         // API does not use authentication
-        unsecuredCall();
+        unsecuredCall(req);
     }
 
     // Unsecured API Call helper
-    function unsecuredCall() {
+    function unsecuredCall(req) {
         console.log('Unsecured Call');
 
         if (['POST','PUT','DELETE'].indexOf(httpMethod) === -1) {
@@ -509,6 +509,15 @@ function processRequest(req, res, next) {
             }
             options.path += apiConfig.keyParam + '=' + apiKey;
         }
+
+        // Add IO-Docs parameter into options.path so that Playbasis API can know this is from IO-Docs
+        if (options.path.indexOf('?') !== -1) {
+            options.path += '&';
+        }
+        else {
+            options.path += '?';
+        }
+        options.path += 'iodocs=true';
 
         // Perform signature routine, if any.
         if (apiConfig.signature) {
@@ -559,6 +568,9 @@ function processRequest(req, res, next) {
         if (!options.headers['Content-Type'] && requestBody) {
             options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
+
+        /* forward real IP address to Playbasis API */
+        options.headers['X-Forwarded-For'] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
         if (config.debug) {
             console.log(util.inspect(options));
