@@ -706,6 +706,13 @@
 							"Default": "20",
 							"Type": "integer",
 							"Description": "number of results to return"
+						},
+						{
+							"Name": "mode",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "weekly, monthly (default is all-time)"
 						}
 					]
 				},
@@ -761,6 +768,13 @@
 							"Default": "20",
 							"Type": "integer",
 							"Description": "number of results to return for each point type"
+						},
+						{
+							"Name": "mode",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "weekly, monthly (default is all-time)"
 						}
 					]
 				},
