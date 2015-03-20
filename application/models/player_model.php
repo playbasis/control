@@ -184,6 +184,7 @@ class Player_model extends MY_Model
 			'site_id' => $clientData['site_id'],
 			'cl_player_id' => $clientData['cl_player_id']
 		));
+		$this->mongo_db->limit(1);
 		$id = $this->mongo_db->get('playbasis_player');
 		return ($id) ? $id[0]['_id'] : null;
 	}
@@ -219,9 +220,7 @@ class Player_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'badge_id' => null,
 		));
-		$result = $this->mongo_db->get('playbasis_reward_to_player');
-
-		return $result;
+		return $this->mongo_db->get('playbasis_reward_to_player');
 	}
 	public function getPlayerPoint($pb_player_id, $reward_id, $site_id)
 	{
@@ -235,9 +234,8 @@ class Player_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'reward_id' => $reward_id
 		));
-		$result = $this->mongo_db->get('playbasis_reward_to_player');
-
-		return $result;
+		$this->mongo_db->limit(1);
+		return $this->mongo_db->get('playbasis_reward_to_player');
 	}
     public function getPlayerPointFromDateTime($pb_player_id, $reward_id, $site_id, $starttime="", $endtime="")
     {
@@ -301,6 +299,7 @@ class Player_model extends MY_Model
         $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		if(!$result)
 			return $result;
@@ -324,6 +323,7 @@ class Player_model extends MY_Model
             'action_id' => $action_id
         ));
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		if(!$result)
 			return $result;
@@ -348,6 +348,7 @@ class Player_model extends MY_Model
 		));
         $this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where($fields);
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_action_log');
 		$result = ($result) ? $result[0] : array();
         if($result){
@@ -389,6 +390,7 @@ class Player_model extends MY_Model
         if ($starttime != '' || $endtime != '' ) {
             $this->mongo_db->where('date_added', $datecondition);
         }
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_action_log');
         $result = ($result) ? $result[0] : array();
         if($result){
@@ -431,6 +433,7 @@ class Player_model extends MY_Model
                     'site_id' => $site_id,
 //                    'deleted' => false
                 ));
+                $this->mongo_db->limit(1);
                 $result = $this->mongo_db->get('playbasis_badge_to_client');
 
                 if(!$result)
@@ -476,6 +479,7 @@ class Player_model extends MY_Model
             'badge_id' => $badge_id,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         if(!$result)
             return false;
@@ -487,6 +491,7 @@ class Player_model extends MY_Model
                 'pb_player_id'=>$pb_player_id,
                 'badge_id'=>$badge_id
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_reward_to_player');
 
             if(!$result)
@@ -519,6 +524,7 @@ class Player_model extends MY_Model
                 return $reward;
             }
         }
+        return false;
 	}
 	public function redeemBadge($pb_player_id, $badge_id, $site_id, $client_id)
 	{
@@ -547,6 +553,7 @@ class Player_model extends MY_Model
             'badge_id' => $badge_id,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_badge_to_client');
         if(!$result)
             return false;
@@ -557,6 +564,7 @@ class Player_model extends MY_Model
                 'pb_player_id'=>$pb_player_id,
                 'badge_id'=>$badge_id
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_reward_to_player');
 
             if(!$result)
@@ -586,6 +594,7 @@ class Player_model extends MY_Model
                 return $reward;
             }
         }
+        return false;
 	}
 	public function getLastEventTime($pb_player_id, $site_id, $eventType)
 	{
@@ -608,6 +617,7 @@ class Player_model extends MY_Model
             $this->mongo_db->where(array('$or' => $reset_where));
         }
 		$this->mongo_db->order_by(array('date_added' => 'desc'));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_event_log');
 
 		if($result)
@@ -626,6 +636,60 @@ class Player_model extends MY_Model
 			'date_added' => $mongoDate,
 			'date_modified' => $mongoDate
 		));
+	}
+	private function removeDeletedPlayers($results, $limit, $rankedBy) {
+		$total = count($results);
+		$c = 0;
+		for ($i = 0; $i < $total; $i++) {
+			if ($c < $limit) {
+				$this->mongo_db->select(array('cl_player_id'));
+				if (isset($results[$i]['_id']['pb_player_id'])) {
+					$results[$i]['pb_player_id'] = $results[$i]['_id']['pb_player_id'];
+					unset($results[$i]['_id']);
+				}
+				$this->mongo_db->where(array('_id' => $results[$i]['pb_player_id']));
+				$p = $this->mongo_db->get('playbasis_player');
+				if ($p) {
+					$p = $p[0];
+					$results[$i]['player_id'] = $p['cl_player_id'];
+					$results[$i][$rankedBy] = $results[$i]['value'];
+					unset($results[$i]['cl_player_id']);
+					unset($results[$i]['value']);
+					$c++;
+				} else {
+					unset($results[$i]);
+				}
+			} else {
+				unset($results[$i]);
+			}
+		}
+		return array_values($results);
+	}
+	private function getRewardIdByName($client_id, $site_id, $name) {
+		$this->mongo_db->select(array('reward_id'));
+		$this->mongo_db->where(array(
+			'name' => $name,
+			'site_id' => $site_id,
+			'client_id' => $client_id
+		));
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_reward_to_client');
+		return $results ? $results[0]['reward_id'] : null;
+	}
+	private function getTotalDays($year, $month) {
+		$t = strtotime($year.'-'.(strlen($month) < 2 ? '0' : '').$month.'-15 00:00:00');
+		$next_month = strtotime('+1 month', $t);
+		$first = date('Y-m-01 00:00:00', $next_month);
+		$d = strtotime('-1 day', strtotime($first));
+		return intval(date('d', $d));
+	}
+	private function getWeek($d, $daysPerWeek=7) {
+		for ($w = 0; $w < 4; $w++) {
+			if ($d < ($w+1)*$daysPerWeek+1) {
+				return $w;
+			}
+		}
+		return 1;
 	}
 	public function getLeaderboardByLevel($limit, $client_id, $site_id) {
 		$this->set_site_mongodb($site_id);
@@ -661,61 +725,107 @@ class Player_model extends MY_Model
 	}
 	public function getLeaderboard($ranked_by, $limit, $client_id, $site_id)
 	{
-		//get reward id
+		$limit = intval($limit);
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('reward_id'));
-		$this->mongo_db->where(array(
-			'name' => $ranked_by,
-			'site_id' => $site_id,
-			'client_id' => $client_id
-		));
-		$result = $this->mongo_db->get('playbasis_reward_to_client');
-		if(!$result)
-			return array();
-		$result = $result[0];
-		//get points for the reward id
+		/* get reward_id */
+		$reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+		/* list top players */
 		$this->mongo_db->select(array(
-            'pb_player_id',
+			'pb_player_id',
 			'cl_player_id',
 			'value'
 		));
-        $this->mongo_db->select(array(),array('_id'));
+		$this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where(array(
-			'reward_id' => $result['reward_id'],
+			'reward_id' => $reward_id,
 			'client_id' => $client_id,
 			'site_id' => $site_id
 		));
 		$this->mongo_db->order_by(array('value' => 'desc'));
 		$this->mongo_db->limit($limit+5);
 		$result1 = $this->mongo_db->get('playbasis_reward_to_player');
-
-		$count = count($result1);
-        $check = 0;
-		for($i=0; $i < $count; ++$i)
-		{
-            if($check < $limit){
-                $this->mongo_db->where(array(
-                    '_id' => $result1[$i]['pb_player_id'],
-                    'client_id' => $client_id,
-                    'site_id' => $site_id
-                ));
-                $check_player = $this->mongo_db->count('playbasis_player');
-                if($check_player > 0){
-                    $result1[$i]['player_id'] = $result1[$i]['cl_player_id'];
-                    $result1[$i][$ranked_by] = $result1[$i]['value'];
-                    unset($result1[$i]['cl_player_id']);
-                    unset($result1[$i]['value']);
-                    $check++;
-                }else{
-                    unset($result1[$i]);
-                }
-            }else{
-                unset($result1[$i]);
-            }
+		return $this->removeDeletedPlayers($result1, $limit, $ranked_by);
+	}
+	public function getWeeklyLeaderboard($ranked_by, $limit, $client_id, $site_id) {
+		$limit = intval($limit);
+		$this->set_site_mongodb($site_id);
+		/* get reward_id */
+		$reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
 		}
-
-        $result = array_values($result1);
-		return $result;
+		/* list top players */
+		$now = time();
+		$totalDays = $this->getTotalDays(date('Y', $now), date('m', $now));
+		$daysPerWeek = round($totalDays/4.0);
+		$d = intval(date('d', $now));
+		$w = $this->getWeek($d, $daysPerWeek);
+		$d = $w*$daysPerWeek+1;
+		$first = date('Y-m-'.($d < 10 ? '0' : '').$d, $now);
+		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+				),
+			),
+			array(
+				'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+			),
+			array(
+				'$sort' => array('value' => -1),
+			),
+			array(
+				'$limit' => $limit+5,
+			),
+		));
+		return $results ? $this->removeDeletedPlayers($results['result'], $limit, $ranked_by) : array();
+	}
+	public function getMonthlyLeaderboard($ranked_by, $limit, $client_id, $site_id) {
+		$limit = intval($limit);
+		$this->set_site_mongodb($site_id);
+		/* get reward_id */
+		$reward_id = $this->getRewardIdByName($client_id, $site_id, $ranked_by);
+		/* get latest RESET event for that reward_id (if exists) */
+		$reset = $this->getResetRewardEvent($site_id, $reward_id);
+		$resetTime = null;
+		if ($reset) {
+			$reset_time = array_values($reset);
+			$resetTime = $reset_time[0]->sec;
+		}
+		/* list top players */
+		$now = time();
+		$first = date('Y-m-01', $now);
+		$from = strtotime($first.' 00:00:00');
+		if ($resetTime && $resetTime > $from) $from = $resetTime;
+		$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+			array(
+				'$match' => array(
+					'event_type' => 'REWARD',
+					'site_id' => $site_id,
+					'reward_id' => $reward_id,
+					'date_added' => array('$gte' => new MongoDate($from)),
+				),
+			),
+			array(
+				'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+			),
+			array(
+				'$sort' => array('value' => -1),
+			),
+			array(
+				'$limit' => $limit+5,
+			),
+		));
+		return $results ? $this->removeDeletedPlayers($results['result'], $limit, $ranked_by) : array();
 	}
 	public function sortPlayersByReward($client_id, $site_id, $reward_id, $limit=null) {
 		$this->mongo_db->select(array(
@@ -768,35 +878,124 @@ class Player_model extends MY_Model
 			$this->mongo_db->order_by(array('value' => 'desc'));
 			$this->mongo_db->limit($limit+5);
 			$ranking = $this->mongo_db->get('playbasis_reward_to_player');
-			$count = count($ranking);
-            $check = 0;
-			for($i=0; $i < $count; ++$i)
-			{
-                if($check < $limit){
-                    $this->mongo_db->where(array(
-                        '_id' => $ranking[$i]['pb_player_id'],
-                        'client_id' => $client_id,
-                        'site_id' => $site_id
-                    ));
-                    $check_player = $this->mongo_db->count('playbasis_player');
-                    if($check_player > 0){
-                        $ranking[$i]['player_id'] = $ranking[$i]['cl_player_id'];
-                        $ranking[$i][$name] = $ranking[$i]['value'];
-                        unset($ranking[$i]['cl_player_id']);
-                        unset($ranking[$i]['value']);
-                        $check++;
-                    }else{
-                        unset($ranking[$i]);
-                    }
-                }else{
-                    unset($ranking[$i]);
-                }
-			}
-            $ranking = array_values($ranking);
-			$result[$name] = $ranking;
+			$result[$name] = $this->removeDeletedPlayers($ranking, $limit, $name);
 		}
 		return $result;
 	}
+	public function getWeeklyLeaderboards($limit, $client_id, $site_id) {
+		/* get all rewards */
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'reward_id',
+			'name'
+		));
+		$this->mongo_db->where(array(
+			'site_id' => $site_id,
+			'client_id' => $client_id,
+			'group' => 'POINT'
+		));
+		$rewards = $this->mongo_db->get('playbasis_reward_to_client');
+		if(!$rewards)
+			return array();
+		$now = time();
+		$totalDays = $this->getTotalDays(date('Y', $now), date('m', $now));
+		$daysPerWeek = round($totalDays/4.0);
+		$d = intval(date('d', $now));
+		$w = $this->getWeek($d, $daysPerWeek);
+		$d = $w*$daysPerWeek+1;
+		$first = date('Y-m-'.($d < 10 ? '0' : '').$d, $now);
+		$from = strtotime($first.' 00:00:00');
+		$result = array();
+		foreach ($rewards as $reward) {
+			$reward_id = $reward['reward_id'];
+			$name = $reward['name'];
+			/* get latest RESET event for that reward_id (if exists) */
+			$reset = $this->getResetRewardEvent($site_id, $reward_id);
+			$resetTime = null;
+			if ($reset) {
+				$reset_time = array_values($reset);
+				$resetTime = $reset_time[0]->sec;
+			}
+			/* list top players */
+			if ($resetTime && $resetTime > $from) $from = $resetTime;
+			$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+				array(
+					'$match' => array(
+						'event_type' => 'REWARD',
+						'site_id' => $site_id,
+						'reward_id' => $reward_id,
+						'date_added' => array('$gte' => new MongoDate($from)),
+					),
+				),
+				array(
+					'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+				),
+				array(
+					'$sort' => array('value' => -1),
+				),
+				array(
+					'$limit' => $limit+5,
+				),
+			));
+			$result[$name] = $results ? $this->removeDeletedPlayers($results['result'], $limit, $name) : array();
+		}
+		return $result;
+	}
+	public function getMonthlyLeaderboards($limit, $client_id, $site_id) {
+		/* get all rewards */
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'reward_id',
+			'name'
+		));
+		$this->mongo_db->where(array(
+			'site_id' => $site_id,
+			'client_id' => $client_id,
+			'group' => 'POINT'
+		));
+		$rewards = $this->mongo_db->get('playbasis_reward_to_client');
+		if(!$rewards)
+			return array();
+		$now = time();
+		$first = date('Y-m-01', $now);
+		$from = strtotime($first.' 00:00:00');
+		$result = array();
+		foreach ($rewards as $reward) {
+			$reward_id = $reward['reward_id'];
+			$name = $reward['name'];
+			/* get latest RESET event for that reward_id (if exists) */
+			$reset = $this->getResetRewardEvent($site_id, $reward_id);
+			$resetTime = null;
+			if ($reset) {
+				$reset_time = array_values($reset);
+				$resetTime = $reset_time[0]->sec;
+			}
+			/* list top players */
+			if ($resetTime && $resetTime > $from) $from = $resetTime;
+			$results = $this->mongo_db->aggregate('playbasis_event_log', array(
+				array(
+					'$match' => array(
+						'event_type' => 'REWARD',
+						'site_id' => $site_id,
+						'reward_id' => $reward_id,
+						'date_added' => array('$gte' => new MongoDate($from)),
+					),
+				),
+				array(
+					'$group' => array('_id' => array('pb_player_id' => '$pb_player_id'), 'value' => array('$sum' => '$value'))
+				),
+				array(
+					'$sort' => array('value' => -1),
+				),
+				array(
+					'$limit' => $limit+5,
+				),
+			));
+			$result[$name] = $results ? $this->removeDeletedPlayers($results['result'], $limit, $name) : array();
+		}
+		return $result;
+	}
+
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
 	{
 		if(!$limit)
@@ -812,10 +1011,11 @@ class Player_model extends MY_Model
 			'client_id' => $client_id,
 			'_id' => $site_id
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_client_site');
-        assert($result);
+		assert($result);
 		$result = $result[0];
-        $domain_name_client = $result['domain_name'];
+		$domain_name_client = $result['domain_name'];
 
 		$last_send = $result['last_send_limit_users']?$result['last_send_limit_users']->sec:null;
 		$next_send = $last_send + (7 * 24 * 60 * 60); //next week from last send
@@ -939,7 +1139,6 @@ class Player_model extends MY_Model
     	$this->mongo_db->select(array(), array('_id'));
     	$event_log = $this->mongo_db->get('playbasis_event_log');
 
-
 		foreach($event_log as &$event){
 			$actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
@@ -996,8 +1195,8 @@ class Player_model extends MY_Model
 
         if(!$goods_list)
             return array();
-        $playerGoods = array();
 
+        $playerGoods = array();
         foreach($goods_list as $goods)
         {
             if(isset($goods['goods_id'])){
@@ -1013,6 +1212,7 @@ class Player_model extends MY_Model
                     'goods_id' => $goods['goods_id'],
                     'site_id' => $site_id,
                 ));
+                $this->mongo_db->limit(1);
                 $result = $this->mongo_db->get('playbasis_goods_to_client');
 
                 if(!$result)
@@ -1042,6 +1242,7 @@ class Player_model extends MY_Model
             'pb_player_id' => $pb_player_id,
             'goods_id' => $goods_id
         ));
+        $this->mongo_db->limit(1);
         $goods = $this->mongo_db->get('playbasis_goods_to_player');
 
         if(!$goods)
@@ -1061,6 +1262,7 @@ class Player_model extends MY_Model
                 'goods_id' => $goods['goods_id'],
                 'site_id' => $site_id,
             ));
+            $this->mongo_db->limit(1);
             $result = $this->mongo_db->get('playbasis_goods_to_client');
 
             if(!$result)
@@ -1483,6 +1685,7 @@ class Player_model extends MY_Model
             'missions.mission_id' => $mission_id
         ));
         $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
         return $result ? $result[0] : array();
     }

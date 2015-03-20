@@ -792,13 +792,35 @@ class Player extends REST2_Controller
         if ($ranked_by == 'level') {
             $leaderboard = $this->player_model->getLeaderboardByLevel($limit, $this->validToken['client_id'], $this->validToken['site_id']);
         } else {
-            $leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $this->validToken['client_id'], $this->validToken['site_id']);
+            $mode = $this->input->get('mode');
+            switch ($mode) {
+            case 'weekly':
+                $leaderboard = $this->player_model->getWeeklyLeaderboard($ranked_by, $limit, $this->validToken['client_id'], $this->validToken['site_id']);
+                break;
+            case 'monthly':
+                $leaderboard = $this->player_model->getMonthlyLeaderboard($ranked_by, $limit, $this->validToken['client_id'], $this->validToken['site_id']);
+                break;
+            default: // all-time
+                $leaderboard = $this->player_model->getLeaderboard($ranked_by, $limit, $this->validToken['client_id'], $this->validToken['site_id']);
+                break;
+            }
         }
         $this->response($this->resp->setRespond($leaderboard), 200);
     }
     public function ranks_get($limit = 20)
     {
-        $leaderboards = $this->player_model->getLeaderboards($limit, $this->validToken['client_id'], $this->validToken['site_id']);
+        $mode = $this->input->get('mode');
+        switch ($mode) {
+        case 'weekly':
+            $leaderboards = $this->player_model->getWeeklyLeaderboards($limit, $this->validToken['client_id'], $this->validToken['site_id']);
+            break;
+        case 'monthly':
+            $leaderboards = $this->player_model->getMonthlyLeaderboards($limit, $this->validToken['client_id'], $this->validToken['site_id']);
+            break;
+        default: // all-time
+            $leaderboards = $this->player_model->getLeaderboards($limit, $this->validToken['client_id'], $this->validToken['site_id']);
+            break;
+        }
         $this->response($this->resp->setRespond($leaderboards), 200);
     }
     public function rankuser_get($player_id = '', $ranked_by = ''){
@@ -807,25 +829,37 @@ class Player extends REST2_Controller
     		    'ranked_by','player_id'
     		)), 200);
     	}else{
-    		$players = $this->player_model->sortPlayersByReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by));
-    		$cl_player_ids = array_map('index_cl_player_id', $players);
-    		$idx = array_search($player_id, $cl_player_ids);
-    		$player = ($idx !== false ? array(
-    			'player_id' => $player_id,
-    			'rank' => $idx+1,
-    			'ranked_by' => $ranked_by,
-    			'ranked_value' => $players[$idx]['value'],
-    		) : array(
-    			'player_id' => $player_id,
-    			'rank' => count($players)+1,
-    			'ranked_by' => $ranked_by,
-    			'ranked_value' => 0,
-    		));
-    		if(!empty($player)){
-    			$this->response($this->resp->setRespond($player), 200);	
-    		}else{
-    			$this->response($this->error->setError('USER_OR_REWARD_NOT_EXIST'), 200);
-    		}
+            $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+                'cl_player_id' => $player_id
+            )));
+            if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+            $mode = $this->input->get('mode');
+            switch ($mode) {
+            case 'weekly':
+                /* TODO */
+                break;
+            case 'monthly':
+                /* TODO */
+                break;
+            default:
+                $players = $this->player_model->sortPlayersByReward($this->validToken['client_id'], $this->validToken['site_id'], $this->reward_model->findByName($this->validToken, $ranked_by));
+                $cl_player_ids = array_map('index_cl_player_id', $players);
+                $idx = array_search($player_id, $cl_player_ids);
+                $player = ($idx !== false ? array(
+                    'player_id' => $player_id,
+                    'rank' => $idx+1,
+                    'ranked_by' => $ranked_by,
+                    'ranked_value' => $players[$idx]['value'],
+                ) : array(
+                    'player_id' => $player_id,
+                    'rank' => count($players)+1,
+                    'ranked_by' => $ranked_by,
+                    'ranked_value' => 0,
+                ));
+                break;
+            }
+            $this->response($this->resp->setRespond($player), 200);
     	}
     }
     public function level_get($level='')
