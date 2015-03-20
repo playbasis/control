@@ -484,15 +484,15 @@ function processRequest(req, res, next) {
 
         } else {
             // API uses OAuth, but this call doesn't require auth and the user isn't already authed, so just call it.
-            unsecuredCall(req);
+            unsecuredCall();
         }
     } else {
         // API does not use authentication
-        unsecuredCall(req);
+        unsecuredCall();
     }
 
     // Unsecured API Call helper
-    function unsecuredCall(req) {
+    function unsecuredCall() {
         console.log('Unsecured Call');
 
         if (['POST','PUT','DELETE'].indexOf(httpMethod) === -1) {
@@ -568,9 +568,6 @@ function processRequest(req, res, next) {
         if (!options.headers['Content-Type'] && requestBody) {
             options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
-
-        /* forward real IP address to Playbasis API */
-        options.headers['X-Forwarded-For'] = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
         if (config.debug) {
             console.log(util.inspect(options));
