@@ -12,6 +12,35 @@ class Tracker_model extends MY_Model
         $current_time = time();
         if ($action_time && $action_time > $current_time) $action_time = $current_time; // cannot be something from the future
         $mongoDate = new MongoDate($action_time ? $action_time : $current_time);
+        try {
+            $d = strtotime(date('Y-m-d', $mongoDate->sec));
+            /* insert into playbasis_player_dau */
+            $this->mongo_db->insert('playbasis_player_dau', array(
+                'pb_player_id'	=> $input['pb_player_id'],
+                'client_id'		=> $input['client_id'],
+                'site_id'		=> $input['site_id'],
+                'date_added'	=> new MongoDate($d)
+            ), array("w" => 0, "j" => false));
+            /* insert into playbasis_player_mau */
+            $curr = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
+            while ($curr != $d) {
+                $curr = strtotime(date('Y-m-d', strtotime('-1 day', $curr)));
+                $this->mongo_db->insert('playbasis_player_mau', array(
+                    'pb_player_id'	=> $input['pb_player_id'],
+                    'client_id'		=> $input['client_id'],
+                    'site_id'		=> $input['site_id'],
+                    'date_added'	=> new MongoDate($curr)
+                ), array("w" => 0, "j" => false));
+            }
+            $this->mongo_db->insert('playbasis_player_mau', array(
+                'pb_player_id'	=> $input['pb_player_id'],
+                'client_id'		=> $input['client_id'],
+                'site_id'		=> $input['site_id'],
+                'date_added'	=> new MongoDate($d)
+            ), array("w" => 0, "j" => false));
+        } catch(Exception $e) {
+            /* duplicate entries detected by MongoDB unique index, break early */
+        }
         return $this->mongo_db->insert('playbasis_action_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
