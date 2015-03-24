@@ -1100,7 +1100,7 @@ class Player_model extends MY_Model
 				'$group' => array('_id' => null, 'value' => array('$sum' => 1))
 			),
 		));
-		return $results ? $results['result'][0]['value'] : 0;
+		return $results && isset($results['result'][0]) ? $results['result'][0]['value'] : 0;
 	}
 	public function countMonthlyPlayersHigherReward($client_id, $site_id, $reward_id, $value) {
 		$this->set_site_mongodb($site_id);
@@ -1137,7 +1137,7 @@ class Player_model extends MY_Model
 				'$group' => array('_id' => null, 'value' => array('$sum' => 1))
 			),
 		));
-		return $results ? $results['result'][0]['value'] : 0;
+		return $results && isset($results['result'][0]) ? $results['result'][0]['value'] : 0;
 	}
 
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
