@@ -39,7 +39,8 @@ class Badge_model extends MY_Model
             'badge_id' => $data['badge_id'],
             'deleted' => false
         ));
-		$result = $this->mongo_db->get('playbasis_badge_to_client');
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_badge_to_client');
         if($result){
             $result[0]['badge_id'] = $result[0]['badge_id']."";
             $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
