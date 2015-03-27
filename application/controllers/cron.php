@@ -279,6 +279,28 @@ $email = 'pechpras@playbasis.com';
 			usleep(1.0/FULLCONTACT_RATE_LIMIT*1000000);
 		}
 	}
+
+	/* Improve quality of stored FullContact records by using Facebook/Twitter ID */
+	public function improveFullContactForDemo() {
+		$results = $this->player_model->findPlayersBySiteId(new MongoId(DEMO_SITE_ID));
+		foreach ($results as $result) {
+			print($result['email']."\n");
+			print($result['cl_player_id']."\n");
+			$idx = strpos($result['cl_player_id'], 'facebook');
+			if ($idx !== false) {
+				print(substr($result['cl_player_id'], 0, $idx)."\n");
+			}
+			$idx = strpos($result['cl_player_id'], 'twitter');
+			if ($idx !== false) {
+				print(substr($result['cl_player_id'], 0, $idx)."\n");
+				print($result['username']."\n");
+			}
+			// email with 404 and it is either facebook or twitter
+			// email with 200, no facebook and it is facebook
+			// email with 200, no twitter and it is twitter
+			// is there any case that email with 200, but has less social than what Playbasis actually has
+		}
+	}
 }
 
 function urlsafe_b64encode($string) {
