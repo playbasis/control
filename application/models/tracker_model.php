@@ -12,16 +12,35 @@ class Tracker_model extends MY_Model
         $current_time = time();
         if ($action_time && $action_time > $current_time) $action_time = $current_time; // cannot be something from the future
         $mongoDate = new MongoDate($action_time ? $action_time : $current_time);
-        try {
-            $d = strtotime(date('Y-m-d', $mongoDate->sec));
-            /* insert into playbasis_player_dau */
+        $d = strtotime(date('Y-m-d', $mongoDate->sec));
+        /* insert into playbasis_player_dau */
+        /*$this->mongo_db->select(array());
+        $this->mongo_db->where(array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'action_id'		=> $input['action_id'],
+            'date_added'	=> new MongoDate($d)
+        ));
+        $this->mongo_db->limit(1);
+        $r = $this->mongo_db->get('playbasis_player_dau');
+        if ($r) {
+            $r = $r[0];
+            $this->mongo_db->where(array('_id' => $r['_id']));
+            $this->mongo_db->inc('count', 1);
+            $this->mongo_db->update('playbasis_player_dau', array("w" => 0, "j" => false));
+        } else {
             $this->mongo_db->insert('playbasis_player_dau', array(
                 'pb_player_id'	=> $input['pb_player_id'],
                 'client_id'		=> $input['client_id'],
                 'site_id'		=> $input['site_id'],
+                'action_id'		=> $input['action_id'],
+                'count'			=> 0,
                 'date_added'	=> new MongoDate($d)
             ), array("w" => 0, "j" => false));
-            /* insert into playbasis_player_mau */
+        }*/
+        /* insert into playbasis_player_mau */
+        /*try {
             $curr = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
             while ($curr != $d) {
                 $curr = strtotime(date('Y-m-d', strtotime('-1 day', $curr)));
@@ -39,8 +58,8 @@ class Tracker_model extends MY_Model
                 'date_added'	=> new MongoDate($d)
             ), array("w" => 0, "j" => false));
         } catch(Exception $e) {
-            /* duplicate entries detected by MongoDB unique index, break early */
-        }
+            // duplicate entries detected by MongoDB unique index, break early
+        }*/
         return $this->mongo_db->insert('playbasis_action_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],

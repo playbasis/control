@@ -1140,6 +1140,19 @@ class Player_model extends MY_Model
 		return $results && isset($results['result'][0]) ? $results['result'][0]['value'] : 0;
 	}
 
+	public function listActionLog($d) {
+		$this->mongo_db->select(array(
+			'pb_player_id',
+			'client_id',
+			'site_id',
+			'action_id',
+			'date_added',
+		));
+		if ($d) $this->mongo_db->where_gt(array('date_added' => $d));
+		$this->mongo_db->order_by(array('date_added' => 'ASC'));
+		return $this->mongo_db->get('playbasis_action_log');
+	}
+
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
 	{
 		if(!$limit)
