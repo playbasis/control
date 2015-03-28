@@ -1151,7 +1151,7 @@ class Player_model extends MY_Model
 		if ($r) {
 			$r = $r[0];
 			$this->mongo_db->where(array('_id' => $r['_id']));
-			$this->mongo_db->set(array('date_added', $d));
+			$this->mongo_db->set('date_added', $d);
 			$this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
 		} else {
 			$this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d), array("w" => 0, "j" => false));
