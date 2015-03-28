@@ -1151,7 +1151,7 @@ class Player_model extends MY_Model
 		if ($r) {
 			$r = $r[0];
 			$this->mongo_db->where(array('_id' => $r['_id']));
-			$this->mongo_db->set(array('date_added', $d));
+			$this->mongo_db->set('date_added', $d);
 			$this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
 		} else {
 			$this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d), array("w" => 0, "j" => false));
@@ -1166,7 +1166,7 @@ class Player_model extends MY_Model
 			'action_id',
 			'date_modified',
 		));
-		if ($d) $this->mongo_db->where_gt(array('date_modified' => $d));
+		if ($d) $this->mongo_db->where_gt('date_modified', $d);
 		$this->mongo_db->order_by(array('date_modified' => 'ASC'));
 		return $this->mongo_db->get('playbasis_action_log', true);
 	}
