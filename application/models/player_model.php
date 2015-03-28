@@ -1140,6 +1140,24 @@ class Player_model extends MY_Model
 		return $results && isset($results['result'][0]) ? $results['result'][0]['value'] : 0;
 	}
 
+	public function findLatestProcessActionLogTime() {
+		$this->mongo_db->limit(1);
+		return $this->mongo_db->get('playbasis_player_dau_latest');
+	}
+
+	public function updateLatestProcessActionLogTime($d) {
+		$this->mongo_db->limit(1);
+		$r = $this->mongo_db->get('playbasis_player_dau_latest');
+		if ($r) {
+			$r = $r[0];
+			$this->mongo_db->where(array('_id' => $r['_id']));
+			$this->mongo_db->set(array('date_added', $d));
+			$this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
+		} else {
+			$this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d), array("w" => 0, "j" => false));
+		}
+	}
+
 	public function listActionLog($d) {
 		$this->mongo_db->select(array(
 			'pb_player_id',
@@ -1151,6 +1169,50 @@ class Player_model extends MY_Model
 		if ($d) $this->mongo_db->where_gt(array('date_added' => $d));
 		$this->mongo_db->order_by(array('date_added' => 'ASC'));
 		return $this->mongo_db->get('playbasis_action_log');
+	}
+
+	public function computeDau($action, $d) {
+		$this->mongo_db->select(array());
+		$this->mongo_db->where(array(
+			'pb_player_id'	=> $action['pb_player_id'],
+			'client_id'		=> $action['client_id'],
+			'site_id'		=> $action['site_id'],
+			'action_id'		=> $action['action_id'],
+			'date_added'	=> new MongoDate($d)
+		));
+		$this->mongo_db->limit(1);
+		$r = $this->mongo_db->get('playbasis_player_dau2');
+		if ($r) {
+			$r = $r[0];
+			$this->mongo_db->where(array('_id' => $r['_id']));
+			$this->mongo_db->inc('count', 1);
+			$this->mongo_db->update('playbasis_player_dau2', array("w" => 0, "j" => false));
+		} else {
+			$this->mongo_db->insert('playbasis_player_dau2', array(
+				'pb_player_id'	=> $action['pb_player_id'],
+				'client_id'		=> $action['client_id'],
+				'site_id'		=> $action['site_id'],
+				'action_id'		=> $action['action_id'],
+				'count'			=> 0,
+				'date_added'	=> new MongoDate($d)
+			), array("w" => 0, "j" => false));
+		}
+	}
+
+	public function computeMau($action, $d) {
+		$data = array();
+		$end = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
+		$cur = $d;
+		while ($cur != $end) {
+            $data[] = array(
+				'pb_player_id'	=> $action['pb_player_id'],
+				'client_id'		=> $action['client_id'],
+				'site_id'		=> $action['site_id'],
+				'date_added'	=> new MongoDate($cur)
+			);
+			$cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
+		}
+		return $this->mongo_db->batch_insert('playbasis_player_mau2', $data, array("w" => 0, "j" => false));
 	}
 
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)

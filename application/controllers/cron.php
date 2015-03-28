@@ -253,75 +253,13 @@ $email = 'pechpras@playbasis.com';
 	}
 
 	public function processActionLog() {
-		$start = $this->findLatestProcessActionLogTime();
+		$start = $this->player_model->findLatestProcessActionLogTime();
 		foreach ($this->player_model->listActionLog($start ? $start[0]['date_added'] : null) as $action) {
 			$d = strtotime(date('Y-m-d', $action['date_added']->sec));
-			$this->computeDau($action, $d);
-			$this->updateLatestProcessActionLogTime($action['date_added']);
-			$this->computeMau($action, $d);
+			$this->player_model->computeDau($action, $d);
+			$this->player_model->updateLatestProcessActionLogTime($action['date_added']);
+			$this->player_model->computeMau($action, $d);
 		}
-	}
-
-	private function findLatestProcessActionLogTime() {
-		$this->mongo_db->limit(1);
-		return $this->mongo_db->get('playbasis_player_dau_latest');
-	}
-
-	private function updateLatestProcessActionLogTime($d) {
-		$this->mongo_db->limit(1);
-		$r = $this->mongo_db->get('playbasis_player_dau_latest');
-		if ($r) {
-			$r = $r[0];
-			$this->mongo_db->where(array('_id' => $r['_id']));
-			$this->mongo_db->set(array('date_added', $d));
-			$this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
-		} else {
-			$this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d), array("w" => 0, "j" => false));
-		}
-	}
-
-	private function computeDau($action, $d) {
-		$this->mongo_db->select(array());
-		$this->mongo_db->where(array(
-			'pb_player_id'	=> $action['pb_player_id'],
-			'client_id'		=> $action['client_id'],
-			'site_id'		=> $action['site_id'],
-			'action_id'		=> $action['action_id'],
-			'date_added'	=> new MongoDate($d)
-		));
-		$this->mongo_db->limit(1);
-		$r = $this->mongo_db->get('playbasis_player_dau2');
-		if ($r) {
-			$r = $r[0];
-			$this->mongo_db->where(array('_id' => $r['_id']));
-			$this->mongo_db->inc('count', 1);
-			$this->mongo_db->update('playbasis_player_dau2', array("w" => 0, "j" => false));
-		} else {
-			$this->mongo_db->insert('playbasis_player_dau2', array(
-				'pb_player_id'	=> $action['pb_player_id'],
-				'client_id'		=> $action['client_id'],
-				'site_id'		=> $action['site_id'],
-				'action_id'		=> $action['action_id'],
-				'count'			=> 0,
-				'date_added'	=> new MongoDate($d)
-			), array("w" => 0, "j" => false));
-		}
-	}
-
-	private function computeMau($action, $d) {
-		$data = array();
-		$end = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
-		$cur = $d;
-		while ($cur != $end) {
-			$data[] = array(
-				'pb_player_id'	=> $action['pb_player_id'],
-				'client_id'		=> $action['client_id'],
-				'site_id'		=> $action['site_id'],
-				'date_added'	=> new MongoDate($cur)
-			);
-			$cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
-		}
-		return $this->mongo_db->batch_insert('playbasis_player_mau2', $data, array("w" => 0, "j" => false));
 	}
 
 	public function pullFullContact() {
