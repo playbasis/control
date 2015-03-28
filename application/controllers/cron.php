@@ -255,9 +255,9 @@ $email = 'pechpras@playbasis.com';
 	public function processActionLog() {
 		$start = $this->player_model->findLatestProcessActionLogTime();
 		foreach ($this->player_model->listActionLog($start ? $start[0]['date_added'] : null) as $action) {
-			$d = strtotime(date('Y-m-d', $action['date_added']->sec));
+			$d = strtotime(date('Y-m-d', $action['date_modified']->sec));
 			$this->player_model->computeDau($action, $d);
-			$this->player_model->updateLatestProcessActionLogTime($action['date_added']);
+			$this->player_model->updateLatestProcessActionLogTime($action['date_modified']);
 			$this->player_model->computeMau($action, $d);
 		}
 	}
