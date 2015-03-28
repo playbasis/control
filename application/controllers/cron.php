@@ -254,11 +254,18 @@ $email = 'pechpras@playbasis.com';
 
 	public function processActionLog() {
 		$start = $this->player_model->findLatestProcessActionLogTime();
-		foreach ($this->player_model->listActionLog($start ? $start[0]['date_added'] : null) as $action) {
-			$d = strtotime(date('Y-m-d', $action['date_modified']->sec));
-			$this->player_model->computeDau($action, $d);
-			$this->player_model->updateLatestProcessActionLogTime($action['date_modified']);
-			$this->player_model->computeMau($action, $d);
+		$cursor = $this->player_model->listActionLog($start ? $start[0]['date_added'] : null);
+		while ($cursor->hasNext()) {
+			try {
+				$action = $cursor->getNext();
+				$d = strtotime(date('Y-m-d', $action['date_modified']->sec));
+				$this->player_model->computeDau($action, $d);
+				$this->player_model->updateLatestProcessActionLogTime($action['date_modified']);
+				$this->player_model->computeMau($action, $d);
+			} catch (MongoCursorException $exception) {
+				log_message('error', 'Error when processing processActionLog: '.$exception->getMessage());
+				break;
+			}
 		}
 	}
 

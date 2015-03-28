@@ -1168,7 +1168,7 @@ class Player_model extends MY_Model
 		));
 		if ($d) $this->mongo_db->where_gt(array('date_modified' => $d));
 		$this->mongo_db->order_by(array('date_modified' => 'ASC'));
-		return $this->mongo_db->get('playbasis_action_log');
+		return $this->mongo_db->get('playbasis_action_log', true);
 	}
 
 	public function computeDau($action, $d) {
@@ -1193,7 +1193,7 @@ class Player_model extends MY_Model
 				'client_id'		=> $action['client_id'],
 				'site_id'		=> $action['site_id'],
 				'action_id'		=> $action['action_id'],
-				'count'			=> 0,
+				'count'			=> 1,
 				'date_added'	=> new MongoDate($d)
 			), array("w" => 0, "j" => false));
 		}
