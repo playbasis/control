@@ -35,7 +35,7 @@ class Tracker_model extends MY_Model
                 'client_id'		=> $input['client_id'],
                 'site_id'		=> $input['site_id'],
                 'action_id'		=> $input['action_id'],
-                'count'			=> 0,
+                'count'			=> 1,
                 'date_added'	=> new MongoDate($d)
             ), array("w" => 0, "j" => false));
         }*/

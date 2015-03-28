@@ -1193,7 +1193,7 @@ class Player_model extends MY_Model
 				'client_id'		=> $action['client_id'],
 				'site_id'		=> $action['site_id'],
 				'action_id'		=> $action['action_id'],
-				'count'			=> 0,
+				'count'			=> 1,
 				'date_added'	=> new MongoDate($d)
 			), array("w" => 0, "j" => false));
 		}
