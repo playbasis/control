@@ -1166,7 +1166,7 @@ class Player_model extends MY_Model
 			'action_id',
 			'date_modified',
 		));
-		if ($d) $this->mongo_db->where_gt(array('date_modified' => $d));
+		if ($d) $this->mongo_db->where_gt('date_modified', $d);
 		$this->mongo_db->order_by(array('date_modified' => 'ASC'));
 		return $this->mongo_db->get('playbasis_action_log', true);
 	}
