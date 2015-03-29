@@ -290,7 +290,7 @@ class Curl {
 // Set two default options, and merge any extra ones in
         if ( ! isset($this->options[CURLOPT_TIMEOUT]))
         {
-            $this->options[CURLOPT_TIMEOUT] = 60;
+            $this->options[CURLOPT_TIMEOUT] = 5*60;
         }
         if ( ! isset($this->options[CURLOPT_CONNECTTIMEOUT]))
         {
