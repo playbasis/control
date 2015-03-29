@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-function cmp1($a, $b) {
+function cmp_id($a, $b) {
     if ($a['_id'] == $b['_id']) {
         return 0;
     }
@@ -149,7 +149,7 @@ class Action_model extends MY_Model
 		if (is_array($_result)) foreach ($_result as $key => $value) {
 			array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
 		}
-		usort($result, 'cmp1');
+		usort($result, 'cmp_id');
 		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 'SKIP'));
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 'SKIP'));
 		return $result;
