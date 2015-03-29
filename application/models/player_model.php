@@ -1561,10 +1561,10 @@ class Player_model extends MY_Model
 				'$match' => $match,
 			),
 			array(
-				'$group' => array('_id' => array('date_added' => '$date_added'), 'value' => array('$sum' => '$count'))
+				'$group' => array('_id' => '$date_added', 'value' => array('$sum' => '$count'))
 			),
 		));
-		$_result = $_result ? $_result['results'] : array();
+		$_result = $_result ? $_result['result'] : array();
 		$result = array();
 		if (is_array($_result)) foreach ($_result as $key => $value) {
 			array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
@@ -1593,10 +1593,10 @@ class Player_model extends MY_Model
 				'$match' => $match,
 			),
 			array(
-				'$group' => array('_id' => array('date_added' => '$date_added'), 'value' => array('$sum' => 1))
+				'$group' => array('_id' => '$date_added', 'value' => array('$sum' => 1))
 			),
 		));
-		$_result = $_result ? $_result['results'] : array();
+		$_result = $_result ? $_result['result'] : array();
 		$result = array();
 		if (is_array($_result)) foreach ($_result as $key => $value) {
 			array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
