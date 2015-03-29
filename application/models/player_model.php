@@ -1150,12 +1150,14 @@ class Player_model extends MY_Model
 		$r = $this->mongo_db->get('playbasis_player_dau_latest');
 		if ($r) {
 			$r = $r[0];
+			if ($d->sec < $r['date_added']->sec) return false;
 			$this->mongo_db->where(array('_id' => $r['_id']));
 			$this->mongo_db->set('date_added', $d);
 			$this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
 		} else {
 			$this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d), array("w" => 0, "j" => false));
 		}
+		return true;
 	}
 
 	public function listActionLog($d) {
@@ -1181,14 +1183,14 @@ class Player_model extends MY_Model
 			'date_added'	=> new MongoDate($d)
 		));
 		$this->mongo_db->limit(1);
-		$r = $this->mongo_db->get('playbasis_player_dau2');
+		$r = $this->mongo_db->get('playbasis_player_dau');
 		if ($r) {
 			$r = $r[0];
 			$this->mongo_db->where(array('_id' => $r['_id']));
 			$this->mongo_db->inc('count', 1);
-			$this->mongo_db->update('playbasis_player_dau2', array("w" => 0, "j" => false));
+			$this->mongo_db->update('playbasis_player_dau', array("w" => 0, "j" => false));
 		} else {
-			$this->mongo_db->insert('playbasis_player_dau2', array(
+			$this->mongo_db->insert('playbasis_player_dau', array(
 				'pb_player_id'	=> $action['pb_player_id'],
 				'client_id'		=> $action['client_id'],
 				'site_id'		=> $action['site_id'],
@@ -1212,7 +1214,7 @@ class Player_model extends MY_Model
 			);
 			$cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
 		}
-		return $this->mongo_db->batch_insert('playbasis_player_mau2', $data, array("w" => 0, "j" => false));
+		return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false));
 	}
 
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
@@ -1522,7 +1524,7 @@ class Player_model extends MY_Model
 		return $n;
 	}
 
-	public function new_registration($data, $from=null, $to=null) {
+	public function new_registration1($data, $from=null, $to=null) {
 		$this->set_site_mongodb($data['site_id']);
 		$map = new MongoCode("function() { this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000)); emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+this.date_added.getDate()).slice(-2), 1); }");
 		$reduce = new MongoCode("function(key, values) { return Array.sum(values); }");
@@ -1543,6 +1545,51 @@ class Player_model extends MY_Model
 		return $result;
 	}
 
+	public function new_registration($data, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		$action_id = $this->findAction(array_merge($data, array('action_name' => 'register')));
+		if (!$action_id) return array();
+		$match = array(
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'action_id' => $action_id,
+		);
+		if (($from || $to) && !isset($match['date_added'])) $match['date_added'] = array();
+		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
+		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
+		$_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
+			array(
+				'$match' => $match,
+			),
+			array(
+				'$group' => array('_id' => '$date_added', 'value' => array('$sum' => 1))
+			),
+		));
+		$_result = $_result ? $_result['result'] : array();
+		$result = array();
+		if (is_array($_result)) foreach ($_result as $key => $value) {
+			array_push($result, array('_id' => date('Y-m-d', $value['_id']->sec), 'value' => $value['value']));
+		}
+		usort($result, 'cmp1');
+		if ($from && (!isset($result[0]['_id']) || $result[0]['_id'] != $from)) array_unshift($result, array('_id' => $from, 'value' => 0));
+		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 0));
+		return $result;
+	}
+
+	public function findAction($data)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->select(array('action_id'));
+		$this->mongo_db->where(array(
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'name' => strtolower($data['action_name'])
+		));
+		$this->mongo_db->limit(1);
+		$result = $this->mongo_db->get('playbasis_action_to_client');
+		return $result ? $result[0]['action_id'] : array();
+	}
+
 	/*public function daily_active_user_per_day($data, $from=null, $to=null) {
 		return $this->active_user_per_day($data, 1, $from, $to);
 	}*/
@@ -1556,7 +1603,7 @@ class Player_model extends MY_Model
 		if (($from || $to) && !isset($match['date_added'])) $match['date_added'] = array();
 		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
 		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
-		$_result = $this->mongo_db->aggregate('playbasis_player_dau2', array(
+		$_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
 			array(
 				'$match' => $match,
 			),
@@ -1588,7 +1635,7 @@ class Player_model extends MY_Model
 		if (($from || $to) && !isset($match['date_added'])) $match['date_added'] = array();
 		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
 		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
-		$_result = $this->mongo_db->aggregate('playbasis_player_mau2', array(
+		$_result = $this->mongo_db->aggregate('playbasis_player_mau', array(
 			array(
 				'$match' => $match,
 			),
@@ -1607,12 +1654,109 @@ class Player_model extends MY_Model
 		return $result;
 	}
 
-	public function monthy_active_user_per_week($data, $from=null, $to=null) {
+	/*public function monthy_active_user_per_week($data, $from=null, $to=null) {
 		return $this->active_user_per_week($data, 30, $from, $to);
+	}*/
+
+	public function monthy_active_user_per_week($data, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
+		$map = new MongoCode("function() {
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
+			var get_number_of_days = function(year, month) {
+				var monthStart = new Date(year, month, 1);
+				var monthEnd = new Date(year, month+1, 1);
+				return (monthEnd-monthStart)/(1000*60*60*24);
+			};
+			var days = get_number_of_days(this.date_added.getFullYear(), this.date_added.getMonth());
+			var week = Math.ceil(this.date_added.getDate()/7.0);
+			if (week > 4) week = 4;
+			var d = (week-1)*7+1;
+			emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2)+'-'+('0'+d).slice(-2), {a: [this.pb_player_id.toString()]});
+		}");
+		$reduce = new MongoCode("function(key, values) {
+			result = {a: []};
+			check = {};
+			values.forEach(function (v) {
+				v.a.forEach(function (e) {
+					if (!(e in check)) {
+						result.a.push(e);
+						check[e] = true;
+					}
+				})
+			});
+			return result;
+		}");
+		$match = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $match['date_added'] = array();
+		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
+		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
+		$_result = $this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_player_mau',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $match,
+			'out' => array('inline' => 1),
+		));
+		$_result = $_result ? $_result['results'] : array();
+		$result = array();
+		if (is_array($_result)) foreach ($_result as $key => $value) {
+			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
+		}
+		usort($result, 'cmp1');
+		$from2 = $from ? MY_Model::date_to_startdate_of_week($from) : null;
+		$to2 = $to ? MY_Model::date_to_startdate_of_week($to) : null;
+		if ($from2 && (!isset($result[0]['_id']) || $result[0]['_id'] != $from2)) array_unshift($result, array('_id' => $from2, 'value' => 0));
+		if ($to2 && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to2)) array_push($result, array('_id' => $to2, 'value' => 0));
+		return $result;
 	}
 
-	public function monthy_active_user_per_month($data, $from=null, $to=null) {
+	/*public function monthy_active_user_per_month($data, $from=null, $to=null) {
 		return $this->active_user_per_month($data, 30, $from, $to);
+	}*/
+
+	public function monthy_active_user_per_month($data, $from=null, $to=null) {
+		$this->set_site_mongodb($data['site_id']);
+		// http://stackoverflow.com/questions/15968465/mongo-map-reduce-error
+		$map = new MongoCode("function() {
+			this.date_added.setTime(this.date_added.getTime()-(-7*60*60*1000));
+			emit(this.date_added.getFullYear()+'-'+('0'+(this.date_added.getMonth()+1)).slice(-2), {a: [this.pb_player_id.toString()]});
+		}");
+		$reduce = new MongoCode("function(key, values) {
+			result = {a: []};
+			check = {};
+			values.forEach(function (v) {
+				v.a.forEach(function (e) {
+					if (!(e in check)) {
+						result.a.push(e);
+						check[e] = true;
+					}
+				})
+			});
+			return result;
+		}");
+		$match = array('client_id' => $data['client_id'], 'site_id' => $data['site_id']);
+		if ($from || $to) $match['date_added'] = array();
+		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
+		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
+		$_result = $this->mongo_db->command(array(
+			'mapReduce' => 'playbasis_player_mau',
+			'map' => $map,
+			'reduce' => $reduce,
+			'query' => $match,
+			'out' => array('inline' => 1),
+		));
+		$_result = $_result ? $_result['results'] : array();
+		$result = array();
+		if (is_array($_result)) foreach ($_result as $key => $value) {
+			array_push($result, array('_id' => $value['_id'], 'value' => count($value['value']['a'])));
+		}
+		usort($result, 'cmp1');
+		$from2 = $from ? MY_Model::get_year_month($from) : null;
+		$to2 = $to ? MY_Model::get_year_month($to) : null;
+		if ($from2 && (!isset($result[0]['_id']) || $result[0]['_id'] != $from2)) array_unshift($result, array('_id' => $from2, 'value' => 0));
+		if ($to2 && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to2)) array_push($result, array('_id' => $to2, 'value' => 0));
+		return $result;
 	}
 
 	private function active_user_per_day($data, $ndays, $from=null, $to=null) {
