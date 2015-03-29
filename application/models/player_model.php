@@ -1150,12 +1150,14 @@ class Player_model extends MY_Model
 		$r = $this->mongo_db->get('playbasis_player_dau_latest');
 		if ($r) {
 			$r = $r[0];
+			if ($d->sec < $r['date_added']->sec) return false;
 			$this->mongo_db->where(array('_id' => $r['_id']));
 			$this->mongo_db->set('date_added', $d);
 			$this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
 		} else {
 			$this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d), array("w" => 0, "j" => false));
 		}
+		return true;
 	}
 
 	public function listActionLog($d) {
@@ -1181,14 +1183,14 @@ class Player_model extends MY_Model
 			'date_added'	=> new MongoDate($d)
 		));
 		$this->mongo_db->limit(1);
-		$r = $this->mongo_db->get('playbasis_player_dau2');
+		$r = $this->mongo_db->get('playbasis_player_dau');
 		if ($r) {
 			$r = $r[0];
 			$this->mongo_db->where(array('_id' => $r['_id']));
 			$this->mongo_db->inc('count', 1);
-			$this->mongo_db->update('playbasis_player_dau2', array("w" => 0, "j" => false));
+			$this->mongo_db->update('playbasis_player_dau', array("w" => 0, "j" => false));
 		} else {
-			$this->mongo_db->insert('playbasis_player_dau2', array(
+			$this->mongo_db->insert('playbasis_player_dau', array(
 				'pb_player_id'	=> $action['pb_player_id'],
 				'client_id'		=> $action['client_id'],
 				'site_id'		=> $action['site_id'],
@@ -1212,7 +1214,7 @@ class Player_model extends MY_Model
 			);
 			$cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
 		}
-		return $this->mongo_db->batch_insert('playbasis_player_mau2', $data, array("w" => 0, "j" => false));
+		return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false));
 	}
 
 	private function checkClientUserLimitWarning($client_id, $site_id, $limit)
@@ -1556,7 +1558,7 @@ class Player_model extends MY_Model
 		if (($from || $to) && !isset($match['date_added'])) $match['date_added'] = array();
 		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
 		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
-		$_result = $this->mongo_db->aggregate('playbasis_player_dau2', array(
+		$_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
 			array(
 				'$match' => $match,
 			),
@@ -1588,7 +1590,7 @@ class Player_model extends MY_Model
 		if (($from || $to) && !isset($match['date_added'])) $match['date_added'] = array();
 		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
 		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
-		$_result = $this->mongo_db->aggregate('playbasis_player_mau2', array(
+		$_result = $this->mongo_db->aggregate('playbasis_player_mau', array(
 			array(
 				'$match' => $match,
 			),

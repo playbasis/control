@@ -136,7 +136,7 @@ class Action_model extends MY_Model
 		if (($from || $to) && !isset($match['date_added'])) $match['date_added'] = array();
 		if ($from) $match['date_added']['$gte'] = new MongoDate(strtotime($from.' 00:00:00'));
 		if ($to) $match['date_added']['$lte'] = new MongoDate(strtotime($to.' 23:59:59'));
-		$_result = $this->mongo_db->aggregate('playbasis_player_dau2', array(
+		$_result = $this->mongo_db->aggregate('playbasis_player_dau', array(
 			array(
 				'$match' => $match,
 			),
