@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+define('MAX_EXECUTION_TIME', 0);
+
 define('EMAIL_MAX_SENT', 3);
 define('DAYS_TO_BECOME_INACTIVE', 30);
 define('DAYS_TO_SEND_ANOTHER_EMAIL', 7);
@@ -253,6 +255,7 @@ $email = 'pechpras@playbasis.com';
 	}
 
 	public function processActionLog() {
+		set_time_limit(MAX_EXECUTION_TIME);
 		$start = $this->player_model->findLatestProcessActionLogTime();
 		$cursor = $this->player_model->listActionLog($start ? $start[0]['date_added'] : null);
 		while ($cursor->hasNext()) {
