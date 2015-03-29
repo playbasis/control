@@ -87,6 +87,7 @@ class Action_model extends MY_Model
 			'site_id' => $data['site_id'],
 			'name' => strtolower($data['action_name'])
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_action_to_client');
 		return $result ? $result[0]['action_id'] : array();
 	}
