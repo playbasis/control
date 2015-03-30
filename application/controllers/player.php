@@ -108,50 +108,6 @@ class Player extends REST2_Controller
         $this->response($this->resp->setRespond($player), 200);
     }*/
 
-//     public function list_post()
-//     {
-//         $required = $this->input->checkParam(array(
-//             'list_player_id'
-//         ));
-//         if($required)
-//             $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
-//         $list_player_id = explode(",", $this->input->post('list_player_id'));
-//         //read player information
-//         $player['player'] = $this->player_model->readListPlayer($list_player_id, $this->site_id, array(
-//             'cl_player_id',
-//             'username',
-//             'first_name',
-//             'last_name',
-//             'gender',
-//             'image',
-//             'email',
-//             'exp',
-//             'level',
-//             'date_added',
-//             'birth_date'
-//         ));
-
-//         foreach ($player['player'] as &$p){
-// //        	unset($p['_id']);
-//         	if(!isset($p['birth_date'])){
-//         		$p['birth_date'] = null;	
-//         	}else{
-//         		$p['birth_date'] = date('Y-m-d', $p['birth_date']->sec);
-//         	}
-//         	$p['registered'] = datetimeMongotoReadable($p['date_added']);
-//         	unset($p['date_added']);
-            
-//         	$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-// 			'cl_player_id' => $p['cl_player_id']
-// 			)));
-
-//         	$p['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
-//         	$p['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
-//         }
-
-//         $this->response($this->resp->setRespond($player), 200);
-//     }
-
     public function list_post()
     {
         $required = $this->input->checkParam(array(
@@ -182,9 +138,7 @@ class Player extends REST2_Controller
 		}     
 
         $this->response($this->resp->setRespond($player), 200);
-
     }
-
     
 	public function details_get($player_id = '')
 	{
@@ -311,6 +265,22 @@ class Player extends REST2_Controller
 		//get last login/logout
 		$player['player']['last_login'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
+		$this->response($this->resp->setRespond($player), 200);
+	}
+	public function status_get($player_id = '') {
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'player_id'
+			)), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+			'cl_player_id' => $player_id
+		)));
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		//read player information
+		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array('status'));
 		$this->response($this->resp->setRespond($player), 200);
 	}
 	public function register_post($player_id = '')
