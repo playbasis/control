@@ -52,6 +52,7 @@ $route['Player/'.ANY_STRING] = 'player/index/$1';
 $route['Player/'.ANY_STRING.'/data/all'] = 'player/details/$1';
 $route['Player'] = 'player/index/';
 $route['Player/list'] = 'player/list';
+$route['Player/'.ANY_STRING.'/status'] = 'player/status/$1';
 
 $route['Player/'.ANY_STRING.'/register'] = 'player/register/$1';
 $route['Player/register'] = 'player/register';

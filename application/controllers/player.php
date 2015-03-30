@@ -267,6 +267,22 @@ class Player extends REST2_Controller
 		$player['player']['last_logout'] = $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
 		$this->response($this->resp->setRespond($player), 200);
 	}
+	public function status_get($player_id = '') {
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'player_id'
+			)), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+			'cl_player_id' => $player_id
+		)));
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		//read player information
+		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array('status'));
+		$this->response($this->resp->setRespond($player), 200);
+	}
 	public function register_post($player_id = '')
 	{
 		$required = $this->input->checkParam(array(
