@@ -32,33 +32,30 @@ class Action extends REST2_Controller
 
 	public function log_get()
 	{
-        // Limit
-        $plan_id = $this->client_model->getPlanIdByClientId($this->validToken['client_id']);
-        $limit = $this->client_model->getPlanLimitById(
-            $this->validToken['site_id'],
-            $plan_id,
-            'others',
-            'insight'
-        );
+		// Limit
+		$plan_id = $this->client_model->getPlanIdByClientId($this->validToken['client_id']);
+		$limit = $this->client_model->getPlanLimitById(
+			$this->validToken['site_id'],
+			$plan_id,
+			'others',
+			'insight'
+		);
 
-        $now = new Datetime();
-        $startDate      = new DateTime($this->input->get('from', TRUE));
-        $endDate        = new DateTime($this->input->get('to', TRUE));
+		$now = new Datetime();
+		$startDate      = new DateTime($this->input->get('from', TRUE));
+		$endDate        = new DateTime($this->input->get('to', TRUE));
 
 		$log = array();
 		$prev = null;
 		$this->action_model->set_read_preference_secondary();
-		foreach ($this->action_model->listActions($this->validToken) as $key => $v) {
-			$action_name = $v['name'];
 			foreach ($this->action_model->actionLog(
-                $this->validToken,
-                $action_name,
-                $startDate->format('Y-m-d'),
-                $endDate->format('Y-m-d')) as $key => $value) {
-                    $dDiff = $now->diff(new DateTime($value["_id"]));
-                    if ($limit && $dDiff->days > $limit) {
-                        continue;
-                    }
+					$this->validToken,
+					$startDate->format('Y-m-d'),
+					$endDate->format('Y-m-d')) as $key => $value) {
+				$dDiff = $now->diff(new DateTime($value["_id"]));
+				if ($limit && $dDiff->days > $limit) {
+					continue;
+				}
 				$key = $value['_id'];
 				if ($prev) {
 					$d = $prev;
@@ -69,15 +66,10 @@ class Action extends REST2_Controller
 				}
 				$prev = $key;
 				if ($value['value'] != 'SKIP') {
-					if (array_key_exists($key, $log)) {
-						$log[$key][$action_name] = $value['value'];
-					} else {
-						$log[$key] = array($action_name => $value['value']);
-					}
+					$log[$key] = $value['value'];
 					if (array_key_exists('', $log[$key])) unset($log[$key]['']);
 				}
 			}
-		}
 		$this->action_model->set_read_preference_primary();
 		ksort($log);
 		$log2 = array();
@@ -86,6 +78,7 @@ class Action extends REST2_Controller
 		}
 		$this->response($this->resp->setRespond($log2), 200);
 	}
+
 	public function test_get()
 	{
 		echo '<pre>';
