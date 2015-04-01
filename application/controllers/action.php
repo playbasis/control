@@ -48,28 +48,28 @@ class Action extends REST2_Controller
 		$log = array();
 		$prev = null;
 		$this->action_model->set_read_preference_secondary();
-			foreach ($this->action_model->actionLog(
-					$this->validToken,
-					$startDate->format('Y-m-d'),
-					$endDate->format('Y-m-d')) as $key => $value) {
-				$dDiff = $now->diff(new DateTime($value["_id"]));
-				if ($limit && $dDiff->days > $limit) {
-					continue;
-				}
-				$key = $value['_id'];
-				if ($prev) {
-					$d = $prev;
-					while (strtotime($d) <= strtotime($key)) {
-						if (!array_key_exists($d, $log)) $log[$d] = array('' => true); // force output to be "{}" instead of "[]"
-						$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
-					}
-				}
-				$prev = $key;
-				if ($value['value'] != 'SKIP') {
-					$log[$key] = $value['value'];
-					if (array_key_exists('', $log[$key])) unset($log[$key]['']);
+		foreach ($this->action_model->actionLog(
+				$this->validToken,
+				$startDate->format('Y-m-d'),
+				$endDate->format('Y-m-d')) as $key => $value) {
+			$dDiff = $now->diff(new DateTime($value["_id"]));
+			if ($limit && $dDiff->days > $limit) {
+				continue;
+			}
+			$key = $value['_id'];
+			if ($prev) {
+				$d = $prev;
+				while (strtotime($d) <= strtotime($key)) {
+					if (!array_key_exists($d, $log)) $log[$d] = array('' => true); // force output to be "{}" instead of "[]"
+					$d = date('Y-m-d', strtotime('+1 day', strtotime($d)));
 				}
 			}
+			$prev = $key;
+			if ($value['value'] != 'SKIP') {
+				$log[$key] = $value['value'];
+				if (array_key_exists('', $log[$key])) unset($log[$key]['']);
+			}
+		}
 		$this->action_model->set_read_preference_primary();
 		ksort($log);
 		$log2 = array();
