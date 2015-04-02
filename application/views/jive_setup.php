@@ -30,10 +30,7 @@
                     </tr>
                     <?php } ?>
                 </table>
-                <?php if (isset($jive['jive_code'])) { ?>
-                    For some reasons, if the authorization has already been revoked, you still can re-authorize again.
-                <?php } ?>
-                <a href="<?php echo $jive['jive_url'].'/oauth2/authorize?client_id='.$jive['jive_client_id'].'&response_type=code&redirect_uri='.urlencode(current_url().'/authorize'); ?>" class="btn btn-success btn-mini">Authorize</a>
+                To obtain new authorization code, please <a href="<?php echo $jive['jive_url'].'/oauth2/authorize?client_id='.$jive['jive_client_id'].'&response_type=code&redirect_uri='.urlencode(current_url().'/authorize'); ?>" class="btn btn-success btn-mini">Authorize</a>
             <?php } else { ?>
                 Please download below Playbasis add-on package and then have an administrator install it on your Jive community website.
             <?php } ?>
