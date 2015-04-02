@@ -6,7 +6,7 @@
         <div class="content">
                 <div id="tabs" class="htabs">
                     <a href="<?php echo site_url('jive');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_setup'); ?></a>
-                    <a href="<?php echo site_url('jive/tokens');?>" style="display: inline;"><?php echo $this->lang->line('tab_tokens'); ?></a>
+                    <a href="<?php echo site_url('jive/events');?>" style="display: inline;"><?php echo $this->lang->line('tab_events'); ?></a>
                 </div>
 
             <?php if (isset($jive)) { ?>
