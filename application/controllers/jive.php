@@ -40,18 +40,11 @@ class Jive extends MY_Controller
     }
 
     public function authorize() {
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-
         $code = $this->input->get('code');
         if (!empty($code)) {
             $this->Jive_model->updateAuthorizationCode($this->User_model->getSiteId(), $code);
         }
-
-        $this->data['main'] = 'jive_setup';
-        $this->load->vars($this->data);
-        $this->render_page('template');
+        redirect('/jive', 'refresh');
     }
 
     public function insert() {
