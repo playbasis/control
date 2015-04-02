@@ -62,8 +62,8 @@ class Jive extends MY_Controller
             "author_affiliation" => "Playbasis Inc",
             "author_email" => "pechpras@playbasis.com",
 
-            "service_url" => "https://api.pbapp.net",
-            "redirect_url" => "https://www.pbapp.net/jive/authorize",
+            "service_url" => API_SERVER,
+            "redirect_url" => base_url()."/jive/authorize",
 	        "register_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
 	        "unregister_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
 
