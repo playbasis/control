@@ -48,7 +48,7 @@ class Jive extends MY_Controller
         $this->zip->add_dir('extra');
         $this->zip->add_dir('i18n');
         $this->zip->add_data('i18n/en.properties', '');
-        $this->zip->add_data('definition.json', '{"integrationUser": {"systemAdmin": false}}');
+        $this->zip->add_data('definition.json', json_encode(array('integrationUser' => array("systemAdmin" => false))));
         $this->zip->add_data('meta.json', json_encode(array(
             "package_version" => "1.0",
             "minimum_version" => "0000",
