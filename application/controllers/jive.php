@@ -39,6 +39,47 @@ class Jive extends MY_Controller
         $this->render_page('template');
     }
 
+    public function download() {
+        $this->load->library('zip');
+        $this->zip->add_dir('data');
+        $this->zip->add_data('data/extension-16.png', fread(fopen('image/default-image-16.png', 'r'), filesize('image/default-image-16.png')));
+        $this->zip->add_data('data/extension-48.png', fread(fopen('image/default-image-48.png', 'r'), filesize('image/default-image-48.png')));
+        $this->zip->add_data('data/extension-128.png', fread(fopen('image/default-image-128.png', 'r'), filesize('image/default-image-128.png')));
+        $this->zip->add_dir('extra');
+        $this->zip->add_dir('i18n');
+        $this->zip->add_data('i18n/en.properties', '');
+        $this->zip->add_data('definition.json', '{"integrationUser": {"systemAdmin": false}}');
+        $this->zip->add_data('meta.json', json_encode(array(
+            "package_version" => "1.0",
+            "minimum_version" => "0000",
+            "id" => "1f6ff58b-b15b-43da-95fd-e7b34efc14d9",
+	        "uuid" => "1f6ff58b-b15b-43da-95fd-e7b34efc14d9",
+            "type" => "client-app",
+            "name" => "Playbasis Events Listener",
+            "description" => "This add-on is to allow Playbasis to capture Jive events",
+
+	        "author" => "Thanakij Pechprasarn",
+            "author_affiliation" => "Playbasis Inc",
+            "author_email" => "pechpras@playbasis.com",
+
+            "service_url" => "https://api.pbapp.net",
+            "redirect_url" => "https://www.pbapp.net/jive/authorize",
+	        "register_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
+	        "unregister_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
+
+            "icon_16" => "extension-16.png",
+            "icon_48" => "extension-48.png",
+	        "icon_128" => "extension-128.png",
+
+            "website_url" => "http://playbasis.com",
+            "info_email" => "info@playbasis.com",
+            "status" => "available",
+            "released_on" => date('Y-m-d\TH:i:s.000O')
+        )));
+        $this->zip->archive(tempnam(sys_get_temp_dir(), 'Jive'));
+        $this->zip->download('Playbasis-events-listener.zip');
+    }
+
     public function authorize() {
         $code = $this->input->get('code');
         if (!empty($code)) {
