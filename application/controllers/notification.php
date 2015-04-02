@@ -15,6 +15,7 @@ class Notification extends REST2_Controller
 		$this->load->model('player_model');
 		$this->load->model('payment_model');
 		$this->load->model('email_model');
+		$this->load->model('jive_model');
 		$this->load->library('curl');
 	}
 
@@ -131,6 +132,17 @@ class Notification extends REST2_Controller
 			log_message('debug', 'email = '.print_r($email, true));
 			$this->player_model->insertOrUpdateFullContact($email, $message);
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
+		} else if (strpos($_SERVER['HTTP_USER_AGENT'], JIVE_USER_AGENT) === false ? false : true) {
+			if (array_key_exists('HTTP_X_TENANT_ID', $_SERVER)) {
+				/* process Jive webhook */
+			} else {
+				/* register/unregister */
+				log_message('debug', 'arg = '.print_r($arg, true));
+				$site_id = new MongoId($arg);
+				log_message('debug', 'site_id = '.print_r($site_id, true));
+				$this->handleJive($site_id, $message);
+			}
+			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
@@ -202,6 +214,19 @@ class Notification extends REST2_Controller
 			if ($this->email_model->isEmailInBlackList($email, $this->site_id)) continue;
 			$this->email_model->addIntoBlackList($this->site_id, $email, 'Complaint', $complaint['userAgent'], $complaint['complaintFeedbackType'], $complaint['feedbackId']);
 		}
+	}
+
+	private function handleJive($site_id, $message)
+	{
+		$ret = false;
+		if (!empty($message) && array_key_exists('tenantId', $message)) {
+			$this->jive_model->delete($site_id);
+			if (!array_key_exists('uninstalled', $message)) {
+				$this->jive_model->insert($site_id, $message);
+			}
+			$ret = true;
+		}
+		return $ret;
 	}
 }
 
