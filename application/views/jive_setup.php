@@ -23,12 +23,10 @@
                         <td>Jive URL :</td>
                         <td><?php echo $jive['jive_url']; ?></td>
                     </tr>
-                    <?php if (isset($jive['jive_code'])) { ?>
                     <tr>
                         <td>Authorization Code :</td>
-                        <td><?php echo $jive['jive_code']; ?></td>
+                        <td><?php echo isset($jive['jive_code']) ? $jive['jive_code'] : 'N/A'; ?></td>
                     </tr>
-                    <?php } ?>
                 </table>
                 To obtain new authorization code, please <a href="<?php echo $jive['jive_url'].'/oauth2/authorize?client_id='.$jive['jive_client_id'].'&response_type=code'; ?>" class="btn btn-success btn-mini">Authorize</a>
             <?php } else { ?>
