@@ -103,6 +103,12 @@ class REST
 		isset($config['ssl_cainfo']) && $this->ssl_cainfo = $config['ssl_cainfo'];
     }
 
+    public function set_http_auth($type, $user, $pass) {
+        $this->http_auth = $type;
+        $this->http_user = $user;
+        $this->http_pass = $pass;
+    }
+
 	/**
 	 * get
 	 *
