@@ -18,6 +18,8 @@ class Jive extends MY_Controller
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("jive", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
+
+        $this->_api = $this->jiveapi;
     }
 
     public function index() {
