@@ -82,7 +82,10 @@ class Jive extends MY_Controller
     public function authorize() {
         $code = $this->input->get('code');
         if (!empty($code)) {
-            $this->Jive_model->updateAuthorizationCode($this->User_model->getSiteId(), $code);
+            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $this->_api->initialize($jive['jive_url']);
+            $token = $this->_api->newToken($jive['jive_client_id'], $jive['jive_client_secret'], $code);
+            if ($token) $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
         }
         redirect('/jive', 'refresh');
     }

@@ -24,11 +24,18 @@
                         <td><?php echo $jive['jive_url']; ?></td>
                     </tr>
                     <tr>
-                        <td>Authorization Code :</td>
-                        <td><?php echo isset($jive['jive_code']) ? $jive['jive_code'] : 'N/A'; ?></td>
+                        <td>Token :</td>
+                        <td><?php echo isset($jive['token']) ? $jive['token']['access_token'] : 'N/A'; ?></td>
+                    </tr>
+                    <tr>
+                        <td>Token Expires :</td>
+                        <td><?php echo isset($jive['token']) ? date('d M Y H:i:s', $jive['token']['date_expire']->sec) : 'N/A'; ?></td>
                     </tr>
                 </table>
-                To obtain new authorization code, please <a href="<?php echo $jive['jive_url'].'/oauth2/authorize?client_id='.$jive['jive_client_id'].'&response_type=code'; ?>" class="btn btn-success btn-mini">Authorize</a>
+                <?php if (!isset($jive['token'])) { ?>
+                Please click the button below to authorize Playbasis a new token <br>
+                <a href="<?php echo $jive['jive_url'].'/oauth2/authorize?client_id='.$jive['jive_client_id'].'&response_type=code'; ?>" class="btn btn-success btn-mini">Authorize</a>
+                <?php } ?>
             <?php } else { ?>
                 Please download below Playbasis add-on package and then have an administrator install it on your Jive community website.
                 <a href="<?php echo site_url('jive/download');?>" class="btn btn-success btn-mini">Download</a>
