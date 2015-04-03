@@ -50,23 +50,23 @@ class Jive extends MY_Controller
             "package_version" => "1.0",
             "minimum_version" => "0000",
             "id" => "1f6ff58b-b15b-43da-95fd-e7b34efc14d9",
-	        "uuid" => "1f6ff58b-b15b-43da-95fd-e7b34efc14d9",
+            "uuid" => "1f6ff58b-b15b-43da-95fd-e7b34efc14d9",
             "type" => "client-app",
             "name" => "Playbasis Events Listener",
             "description" => "This add-on is to allow Playbasis to capture Jive events",
 
-	        "author" => "Thanakij Pechprasarn",
+            "author" => "Thanakij Pechprasarn",
             "author_affiliation" => "Playbasis Inc",
             "author_email" => "pechpras@playbasis.com",
 
             "service_url" => API_SERVER,
             "redirect_url" => base_url()."/jive/authorize",
-	        "register_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
-	        "unregister_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
+            "register_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
+            "unregister_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
 
             "icon_16" => "extension-16.png",
             "icon_48" => "extension-48.png",
-	        "icon_128" => "extension-128.png",
+            "icon_128" => "extension-128.png",
 
             "website_url" => "http://playbasis.com",
             "info_email" => "info@playbasis.com",
