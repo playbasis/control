@@ -103,6 +103,12 @@ class REST
 		isset($config['ssl_cainfo']) && $this->ssl_cainfo = $config['ssl_cainfo'];
     }
 
+    public function set_http_auth($type, $user, $pass) {
+        $this->http_auth = $type;
+        $this->http_user = $user;
+        $this->http_pass = $pass;
+    }
+
 	/**
 	 * get
 	 *
@@ -436,7 +442,10 @@ class REST
 
 		if (array_key_exists($returned_mime, $this->auto_detect_formats))
 		{
-			return $this->{'_'.$this->auto_detect_formats[$returned_mime]}($response);
+			$result = $this->{'_'.$this->auto_detect_formats[$returned_mime]}($response);
+			/* return original string if json_decoder cannot decode (ie. NULL is returned due to invalid JSON) */
+			if ($this->auto_detect_formats[$returned_mime] == 'json' && $result === null) return $response;
+			return $result;
 		}
 
 		return $response;

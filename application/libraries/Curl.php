@@ -206,8 +206,12 @@ class Curl {
 
     public function http_login($username = '', $password = '', $type = 'any')
     {
-        $this->option(CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($type)));
-        $this->option(CURLOPT_USERPWD, $username . ':' . $password);
+        if ($type == 'bearer') {
+            $this->http_header('Authorization', 'Bearer '.$username);
+        } else {
+            $this->option(CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($type)));
+            $this->option(CURLOPT_USERPWD, $username . ':' . $password);
+        }
         return $this;
     }
 

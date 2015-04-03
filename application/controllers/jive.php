@@ -18,6 +18,8 @@ class Jive extends MY_Controller
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("jive", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
+
+        $this->_api = $this->jiveapi;
     }
 
     public function index() {
@@ -80,9 +82,48 @@ class Jive extends MY_Controller
     public function authorize() {
         $code = $this->input->get('code');
         if (!empty($code)) {
-            $this->Jive_model->updateAuthorizationCode($this->User_model->getSiteId(), $code);
+            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $this->_api->initialize($jive['jive_url']);
+            $token = $this->_api->newToken($jive['jive_client_id'], $jive['jive_client_secret'], $code);
+            if ($token) $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
         }
         redirect('/jive', 'refresh');
+    }
+
+    public function events() {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
+            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            try {
+                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+            } catch (Exception $e) {
+                if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                    if ($token) {
+                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                    }
+                }
+            }
+            $webhooks = $this->_api->listWebhooks();
+            $places = $this->_api->listPlaces();
+
+            $this->data['jive'] = $jive;
+            $this->data['webhooks'] = $webhooks;
+            $this->data['places'] = $places;
+        }
+
+        $this->data['main'] = 'jive_events';
+        $this->load->vars($this->data);
+        $this->render_page('template');
     }
 
     public function insert() {
