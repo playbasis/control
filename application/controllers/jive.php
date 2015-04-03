@@ -41,14 +41,11 @@ class Jive extends MY_Controller
 
     public function download() {
         $this->load->library('zip');
-        $this->zip->add_dir('data');
         $this->zip->add_data('data/extension-16.png', fread(fopen('image/default-image-16.png', 'r'), filesize('image/default-image-16.png')));
         $this->zip->add_data('data/extension-48.png', fread(fopen('image/default-image-48.png', 'r'), filesize('image/default-image-48.png')));
         $this->zip->add_data('data/extension-128.png', fread(fopen('image/default-image-128.png', 'r'), filesize('image/default-image-128.png')));
-        $this->zip->add_dir('extra');
-        $this->zip->add_dir('i18n');
-        $this->zip->add_data('i18n/en.properties', '');
         $this->zip->add_data('definition.json', json_encode(array('integrationUser' => array("systemAdmin" => false))));
+        $this->zip->add_data('i18n/en.properties', '');
         $this->zip->add_data('meta.json', json_encode(array(
             "package_version" => "1.0",
             "minimum_version" => "0000",
