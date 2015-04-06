@@ -212,7 +212,7 @@ class Report extends CI_Controller
 		$arr = array();
 		$actions = $this->action_model->listActions($opts);
 		if (is_array($actions)) foreach ($actions as $action) {
-			$stat = $this->get_stat('', $conf, $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->action_model->actionLog($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from));
+			$stat = $this->get_stat('', $conf, $this->action_model->actionLogPerAction($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from))), $to), $this->action_model->actionLogPerAction($opts, $action['name'], date('Y-m-d', strtotime('+1 day', strtotime($from2))), $from));
 			if ($stat['TOTAL_NUM'] == 0 && $stat['TOTAL_PREV_NUM'] == 0) continue; // skip inactive data points
 			$arr[] = array_merge(
 				array(
