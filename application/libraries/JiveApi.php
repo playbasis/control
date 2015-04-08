@@ -42,11 +42,25 @@ class JiveApi {
         return (is_object($result) && isset($result->message)) || strpos($result, VALID_RESPONSE) === false ? false : true;
     }
 
-    public function listWebhooks() {
-        $result = $this->_get('api/core/v3/webhooks');
+    public function listWebhooks($recordsPerPage, $offset) {
+        $q = array('fields' => 'id,events,objects,callback,enabled', 'count' => $recordsPerPage, 'startIndex' => $offset);
+        $result = $this->_get('api/core/v3/webhooks', $q);
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
         $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
         return $result;
+    }
+
+    public function totalWebhooks() {
+        $offset = 0;
+        for (;;) {
+            $q = array('fields' => 'id', 'count' => JIVE_RECORDS_PER_PAGE, 'startIndex' => $offset);
+            $result = $this->_get('api/core/v3/webhooks', $q);
+            if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
+            $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
+            $offset += count($result->list);
+            if (!isset($result->links->next)) break;
+        }
+        return $offset;
     }
 
     public function createWebhook($placeId) {

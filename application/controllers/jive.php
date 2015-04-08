@@ -181,6 +181,51 @@ class Jive extends MY_Controller
         $this->render_page('template');
     }
 
+    public function webhook($offset=0) {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
+            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            try {
+                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+            } catch (Exception $e) {
+                if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                    if ($token) {
+                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                    }
+                }
+            }
+
+            if ($this->input->post('selected')) {
+                if (!$this->validateModify()) {
+                    $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                } else {
+                    foreach ($this->input->post('selected') as $webhookId) {
+                        $this->_api->deleteWebhook($webhookId);
+                    }
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                }
+            }
+
+            $this->data['jive'] = $jive;
+            $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
+            $this->getListWebhooks($offset);
+        } else {
+            $this->data['main'] = 'jive_place';
+            $this->load->vars($this->data);
+            $this->render_page('template');
+        }
+    }
+
     public function places($offset=0) {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -289,6 +334,117 @@ class Jive extends MY_Controller
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['main'] = 'jive_place';
+        $this->data['setting_group_id'] = $setting_group_id;
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
+    public function webhooks($offset=0) {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+        try {
+            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+        } catch (Exception $e) {
+            if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                if ($token) {
+                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                }
+            }
+        }
+        $this->data['jive'] = $jive;
+        $this->data['offset'] = $offset;
+        $this->getListWebhooks($offset);
+    }
+
+    private function getListWebhooks($offset) {
+        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('jive/webhooks');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $setting_group_id = $this->User_model->getAdminGroupID();
+
+        $this->data['templates'] = array();
+        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+
+        $webhooks = $this->_api->listWebhooks($per_page, $offset);
+        if ($this->session->userdata('total_webhooks') === false) $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
+        $total = $this->session->userdata('total_webhooks');
+
+        foreach ($webhooks->list as $webhook) {
+            $this->data['webhooks'][] = array(
+                'webhookID' => $webhook->id,
+                'events' => $webhook->events,
+                'objects' => isset($webhook->objects) ? $webhook->objects : null,
+                'callback' => $webhook->callback,
+                'status' => $webhook->enabled,
+                'selected' => ($this->input->post('selected') && in_array($webhook->webhookID, $this->input->post('selected'))),
+            );
+        }
+
+        if (isset($this->error['warning'])) {
+            $this->data['error_warning'] = $this->error['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
+        if (isset($this->session->data['success'])) {
+            $this->data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $this->data['success'] = '';
+        }
+
+        $config['total_rows'] = $total;
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
+
+        $this->data['main'] = 'jive_webhook';
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
