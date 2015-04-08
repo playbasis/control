@@ -29,7 +29,6 @@
                     <tbody>
                     <?php if ($places) { ?>
                         <?php foreach ($places as $place) { ?>
-                            <?php $place = (array) $place; ?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($place['selected']) && $place['selected']) { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $place['placeID']; ?>" checked="checked" />
@@ -41,7 +40,7 @@
                                 <td class="center"><?php echo $place['type']; ?></td>
                                 <td class="right"><?php echo $place['followerCount']; ?></td>
                                 <td class="right"><?php echo $place['viewCount']; ?></td>
-                                <td class="left"><?php echo isset($place['creator']) ? $place['creator']->displayName : ''; ?></td>
+                                <td class="left"><?php echo $place['creator']; ?></td>
                                 <td class="center"><?php echo ($place['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
                             </tr>
                         <?php } ?>
@@ -56,7 +55,13 @@
             <?php } else { ?>
                 Please set up your Jive community with Playbasis first.
             <?php } ?>
-
         </div><!-- .content -->
+        <div class="pagination">
+            <ul class='ul_rule_pagination_container'>
+                <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
+                <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
+                <?php echo $pagination_links; ?>
+            </ul>
+        </div>
     </div><!-- .box -->
 </div><!-- #content .span10 -->
