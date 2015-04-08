@@ -114,6 +114,14 @@ class Jive extends MY_Controller
                     }
                 }
             }
+
+            if ($this->input->post('selected')) {
+                foreach ($this->input->post('selected') as $placeId) {
+                    $this->_api->createWebhook($placeId);
+                }
+                $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
+            }
+
             $this->data['jive'] = $jive;
             $this->session->set_userdata('total_places', $this->_api->totalPlaces());
             $this->getListPlaces($offset);
