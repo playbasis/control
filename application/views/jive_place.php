@@ -41,7 +41,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if ($places) { ?>
+                    <?php if (isset($places)) { ?>
                         <?php foreach ($places as $place) { ?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($place['selected']) && $place['selected']) { ?>
