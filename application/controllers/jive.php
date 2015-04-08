@@ -116,10 +116,14 @@ class Jive extends MY_Controller
             }
 
             if ($this->input->post('selected')) {
-                foreach ($this->input->post('selected') as $placeId) {
-                    $this->_api->createWebhook($placeId);
+                if (!$this->validateModify()) {
+                    $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                } else {
+                    foreach ($this->input->post('selected') as $placeId) {
+                        $this->_api->createWebhook($placeId);
+                    }
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
                 }
-                $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
             }
 
             $this->data['jive'] = $jive;
