@@ -91,7 +91,7 @@ class Jive extends MY_Controller
         redirect('/jive', 'refresh');
     }
 
-    public function place() {
+    public function place($offset=0) {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -114,17 +114,14 @@ class Jive extends MY_Controller
                     }
                 }
             }
-            $webhooks = $this->_api->listWebhooks();
-            $places = $this->_api->listPlaces();
-
             $this->data['jive'] = $jive;
-            $this->data['webhooks'] = (array) $webhooks;
-            $this->data['places'] = $places->list;
+            $this->session->set_userdata('total_places', $this->_api->totalPlaces());
+            $this->getList($offset);
+        } else {
+            $this->data['main'] = 'jive_place';
+            $this->load->vars($this->data);
+            $this->render_page('template');
         }
-
-        $this->data['main'] = 'jive_place';
-        $this->load->vars($this->data);
-        $this->render_page('template');
     }
 
     public function insert() {
@@ -238,12 +235,38 @@ class Jive extends MY_Controller
         $this->getList(0);
     }
 
-    private function getListPlaces($offset, $ajax=false) {
+    public function page($offset=0) {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+        try {
+            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+        } catch (Exception $e) {
+            if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                if ($token) {
+                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                }
+            }
+        }
+        $this->data['jive'] = $jive;
+        $this->getList($offset);
+    }
+
+    private function getList($offset) {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('jive/place');
+        $config['base_url'] = site_url('jive/page');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -252,19 +275,21 @@ class Jive extends MY_Controller
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
 
-        $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'titleAsc');
+        $places = $this->_api->listPlaces($per_page, $offset);
+        if ($this->session->userdata('total_places') === false) $this->session->set_userdata('total_places', $this->_api->totalPlaces());
+        $total = $this->session->userdata('total_places');
 
-        $places = $this->_api->listPlaces($paging_data);
-        $total = $this->_api->totalPlaces($paging_data);
-
-        foreach ($places as $place) {
+        foreach ($places->list as $place) {
             $this->data['places'][] = array(
-                'placeID' => $place['placeID'],
-                'name' => $place['name'],
-                'body' => $place['body'],
-                'status' => $place['status'],
-                'sort_order'  => $place['sort_order'],
-                'selected' => ($this->input->post('selected') && in_array($place['placeID'], $this->input->post('selected'))),
+                'placeID' => $place->placeID,
+                'name' => $place->name,
+                'description' => isset($place->description) ? $place->description : '',
+                'type' => $place->type,
+                'followerCount' => $place->followerCount,
+                'viewCount' => $place->viewCount,
+                'creator' => isset($place->creator) ? (isset($place->creator->displayName) ? $place->creator->displayName : $place->creator->id) : '',
+                'status' => $place->status,
+                'selected' => ($this->input->post('selected') && in_array($place->placeID, $this->input->post('selected'))),
             );
         }
 
@@ -316,15 +341,11 @@ class Jive extends MY_Controller
         $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
-        $this->data['main'] = 'sms';
+        $this->data['main'] = 'jive_place';
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
-        $this->render_page($ajax ? 'sms_ajax' : 'template');
-    }
-
-    public function getListPlacesForAjax($offset) {
-        $this->getListPlaces($offset, true);
+        $this->render_page('template');
     }
 
     private function getForm($template_id=null) {

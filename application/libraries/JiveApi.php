@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 define('VALID_RESPONSE', "throw 'allowIllegalResourceCall is false.';");
+define('JIVE_RECORDS_PER_PAGE', 100);
 
 class JiveApi {
 
@@ -46,19 +47,35 @@ class JiveApi {
         return $result;
     }
 
-    public function listPlaces() {
-        $result = $this->_get('api/core/v3/places');
+    public function listPlaces($recordsPerPage, $offset, $type=null) {
+        $q = array('fields' => 'placeID,name,description,type,followerCount,viewCount,creator,status', 'count' => $recordsPerPage, 'startIndex' => $offset, 'sort' => 'titleAsc');
+        if ($type) $q = array_merge($q, array('filter' => 'type('.(is_array($type) ? implode(',', $type) : $type).')'));
+        $result = $this->_get('api/core/v3/places', $q);
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
         $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
         return $result;
     }
 
-    private function _get($uri,$params = array()) {
+    public function totalPlaces($type=null) {
+        $offset = 0;
+        for (;;) {
+            $q = array('fields' => 'id', 'count' => JIVE_RECORDS_PER_PAGE, 'startIndex' => $offset);
+            if ($type) $q = array_merge($q, array('filter' => 'type('.(is_array($type) ? implode(',', $type) : $type).')'));
+            $result = $this->_get('api/core/v3/places', $q);
+            if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
+            $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
+            $offset += count($result->list);
+            if (!isset($result->links->next)) break;
+        }
+        return $offset;
+    }
+
+    private function _get($uri, $params = array()) {
         $result = $this->_restClient->get($uri, $params);
         return $result;
     }
 
-    private function _post($uri,$params = array()) {
+    private function _post($uri, $params = array()) {
         $result = $this->_restClient->post($uri, $params);
         return $result;
     }

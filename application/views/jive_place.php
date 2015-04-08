@@ -17,32 +17,31 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="left"><?php echo $this->lang->line('column_type'); ?></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_description'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_total_followers'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_total_views'); ?></td>
-                        <td class="right" style="width:140px;"><?php echo $this->lang->line('column_creator'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_description'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_type'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_total_followers'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_total_views'); ?></td>
+                        <td class="center" style="width:140px;"><?php echo $this->lang->line('column_creator'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
                     <?php if ($places) { ?>
                         <?php foreach ($places as $place) { ?>
-                            <?php $place = (array) $place; ?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($place['selected']) && $place['selected']) { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $place['placeID']; ?>" checked="checked" />
                                     <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $place['placeID']; ?>" />
                                     <?php } ?></td>
-                                <td class="left"><?php echo $place['type']; ?></td>
                                 <td class="left"><?php echo $place['name']; ?></td>
-                                <td class="right"><?php echo $place['description']; ?></td>
+                                <td class="left"><?php echo $place['description']; ?></td>
+                                <td class="center"><?php echo $place['type']; ?></td>
                                 <td class="right"><?php echo $place['followerCount']; ?></td>
                                 <td class="right"><?php echo $place['viewCount']; ?></td>
-                                <td class="right"><?php echo isset($place['creator']) ? $place['creator']->displayName : ''; ?></td>
-                                <td class="right"><?php echo ($place['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
+                                <td class="left"><?php echo $place['creator']; ?></td>
+                                <td class="center"><?php echo ($place['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
@@ -56,7 +55,13 @@
             <?php } else { ?>
                 Please set up your Jive community with Playbasis first.
             <?php } ?>
-
         </div><!-- .content -->
+        <div class="pagination">
+            <ul class='ul_rule_pagination_container'>
+                <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
+                <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
+                <?php echo $pagination_links; ?>
+            </ul>
+        </div>
     </div><!-- .box -->
 </div><!-- #content .span10 -->

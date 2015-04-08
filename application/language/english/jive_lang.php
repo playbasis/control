@@ -19,11 +19,13 @@ $lang['tab_event']					= 'Event';
 $lang['tab_webhook']					= 'Webhook';
 
 // Column
-$lang['column_name']            		= 'Template ID';
-$lang['column_body']            		= 'Body';
-$lang['column_sort_order']      		= 'Sort Order';
+$lang['column_name']            		= 'Name';
+$lang['column_description']            		= 'Description';
+$lang['column_type']            		= 'Type';
+$lang['column_total_followers']            		= 'Total Followers';
+$lang['column_total_views']      		= 'Total Views';
+$lang['column_creator']          		= 'Creator';
 $lang['column_status']          		= 'Status';
-$lang['column_action']          		= 'Action';
 
 // Entry
 $lang['entry_name']             		= 'Template ID';
