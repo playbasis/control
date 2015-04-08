@@ -14,7 +14,9 @@ $lang['text_no_results']				= 'You do not have any template created';
 
 // Tab
 $lang['tab_setup']					= 'Set Up';
-$lang['tab_events']					= 'Events Setting';
+$lang['tab_place']					= 'Place';
+$lang['tab_event']					= 'Event';
+$lang['tab_webhook']					= 'Webhook';
 
 // Column
 $lang['column_name']            		= 'Template ID';

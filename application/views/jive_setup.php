@@ -6,7 +6,9 @@
         <div class="content">
                 <div id="tabs" class="htabs">
                     <a href="<?php echo site_url('jive');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_setup'); ?></a>
-                    <a href="<?php echo site_url('jive/events');?>" style="display: inline;"><?php echo $this->lang->line('tab_events'); ?></a>
+                    <a href="<?php echo site_url('jive/place');?>" style="display: inline;"><?php echo $this->lang->line('tab_place'); ?></a>
+                    <a href="<?php echo site_url('jive/event');?>" style="display: inline;"><?php echo $this->lang->line('tab_event'); ?></a>
+                    <a href="<?php echo site_url('jive/webhook');?>" style="display: inline;"><?php echo $this->lang->line('tab_webhook'); ?></a>
                 </div>
 
             <?php if (isset($jive)) { ?>
