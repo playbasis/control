@@ -303,6 +303,7 @@ class Jive extends MY_Controller
             }
         }
         $this->data['jive'] = $jive;
+        $this->data['offset'] = $offset;
         $this->getListPlaces($offset);
     }
 

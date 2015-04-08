@@ -12,7 +12,7 @@
                 </div>
 
             <?php if (isset($jive)) { ?>
-                <?php echo form_open('jive/place', array('id' => 'form')); ?>
+                <?php echo form_open('jive/place'.(isset($offset) ? '/'.$offset : ''), array('id' => 'form')); ?>
                 <table class="list">
                     <thead>
                     <tr>
