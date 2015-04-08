@@ -116,7 +116,7 @@ class Jive extends MY_Controller
             }
             $this->data['jive'] = $jive;
             $this->session->set_userdata('total_places', $this->_api->totalPlaces());
-            $this->getList($offset);
+            $this->getListPlaces($offset);
         } else {
             $this->data['main'] = 'jive_place';
             $this->load->vars($this->data);
@@ -235,7 +235,7 @@ class Jive extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function places($offset=0) {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -258,15 +258,15 @@ class Jive extends MY_Controller
             }
         }
         $this->data['jive'] = $jive;
-        $this->getList($offset);
+        $this->getListPlaces($offset);
     }
 
-    private function getList($offset) {
+    private function getListPlaces($offset) {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('jive/page');
+        $config['base_url'] = site_url('jive/places');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
