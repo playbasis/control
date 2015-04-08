@@ -3,10 +3,8 @@
 $lang['heading_title']          		= 'Jive Setup';
 
 // Text
-$lang['text_success']           		= 'You have successfully created a new template!';
-$lang['text_success_watch']           			= 'You have successfully watched the selected place(s)!';
-$lang['text_success_delete']           			= 'You have successfully deleted template(s)!';
-$lang['text_success_update']           	= 'You have successfully updated the template!';
+$lang['text_success_watch']           			= 'You have successfully created a new webhook for the selected place(s)!';
+$lang['text_success_delete']           			= 'You have successfully deleted webhook(s)!';
 $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
