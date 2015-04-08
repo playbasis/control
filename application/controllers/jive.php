@@ -238,12 +238,12 @@ class Jive extends MY_Controller
         $this->getList(0);
     }
 
-    private function getList($offset, $ajax=false) {
+    private function getListPlaces($offset, $ajax=false) {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('sms/page');
+        $config['base_url'] = site_url('jive/place');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -252,22 +252,20 @@ class Jive extends MY_Controller
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
 
-        $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
+        $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'titleAsc');
 
-        $templates = $this->Sms_model->listTemplatesBySiteId($site_id, $paging_data);
-        $total = $this->Sms_model->getTotalTemplatesBySiteId($site_id, $paging_data);
+        $places = $this->_api->listPlaces($paging_data);
+        $total = $this->_api->totalPlaces($paging_data);
 
-        foreach ($templates as $template) {
-            if(!$template['deleted']){
-                $this->data['templates'][] = array(
-                    '_id' => $template['_id'],
-                    'name' => $template['name'],
-                    'body' => $template['body'],
-                    'status' => $template['status'],
-                    'sort_order'  => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'], $this->input->post('selected'))),
-                );
-            }
+        foreach ($places as $place) {
+            $this->data['places'][] = array(
+                'placeID' => $place['placeID'],
+                'name' => $place['name'],
+                'body' => $place['body'],
+                'status' => $place['status'],
+                'sort_order'  => $place['sort_order'],
+                'selected' => ($this->input->post('selected') && in_array($place['placeID'], $this->input->post('selected'))),
+            );
         }
 
         if (isset($this->error['warning'])) {
@@ -325,8 +323,8 @@ class Jive extends MY_Controller
         $this->render_page($ajax ? 'sms_ajax' : 'template');
     }
 
-    public function getListForAjax($offset) {
-        $this->getList($offset, true);
+    public function getListPlacesForAjax($offset) {
+        $this->getListPlaces($offset, true);
     }
 
     private function getForm($template_id=null) {
