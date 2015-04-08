@@ -3,15 +3,13 @@
 $lang['heading_title']          		= 'Jive Setup';
 
 // Text
-$lang['text_success']           		= 'You have successfully created a new template!';
-$lang['text_success_watch']           			= 'You have successfully watched the selected place(s)!';
-$lang['text_success_delete']           			= 'You have successfully deleted template(s)!';
-$lang['text_success_update']           	= 'You have successfully updated the template!';
+$lang['text_success_watch']           			= 'You have successfully created a new webhook for the selected place(s)!';
+$lang['text_success_delete']           			= 'You have successfully deleted webhook(s)!';
 $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
 $lang['text_clear']             		= 'Clear Image';
-$lang['text_no_results']				= 'You do not have any template created';
+$lang['text_no_results']				= 'You do not have any record';
 
 // Tab
 $lang['tab_setup']					= 'Set Up';
@@ -27,6 +25,9 @@ $lang['column_total_followers']            		= 'Total Followers';
 $lang['column_total_views']      		= 'Total Views';
 $lang['column_creator']          		= 'Creator';
 $lang['column_status']          		= 'Status';
+$lang['column_events']          		= 'Events';
+$lang['column_places']          		= 'Places';
+$lang['column_callback']          		= 'Callback';
 
 // Entry
 $lang['entry_name']             		= 'Template ID';

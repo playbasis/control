@@ -9,9 +9,9 @@
         <div class="content">
                 <div id="tabs" class="htabs">
                     <a href="<?php echo site_url('jive');?>" style="display: inline;"><?php echo $this->lang->line('tab_setup'); ?></a>
-                    <a href="<?php echo site_url('jive/place');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_place'); ?></a>
+                    <a href="<?php echo site_url('jive/place');?>" style="display: inline;"><?php echo $this->lang->line('tab_place'); ?></a>
                     <a href="<?php echo site_url('jive/event');?>" style="display: inline;"><?php echo $this->lang->line('tab_event'); ?></a>
-                    <a href="<?php echo site_url('jive/webhook');?>" style="display: inline;"><?php echo $this->lang->line('tab_webhook'); ?></a>
+                    <a href="<?php echo site_url('jive/webhook');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_webhook'); ?></a>
                 </div>
 
             <?php if($this->session->flashdata('success')){ ?>
@@ -31,31 +31,25 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="center"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="center"><?php echo $this->lang->line('column_description'); ?></td>
-                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_type'); ?></td>
-                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_total_followers'); ?></td>
-                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_total_views'); ?></td>
-                        <td class="center" style="width:140px;"><?php echo $this->lang->line('column_creator'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_events'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_places'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_callback'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if (isset($places)) { ?>
-                        <?php foreach ($places as $place) { ?>
+                    <?php if (isset($webhooks)) { ?>
+                        <?php foreach ($webhooks as $webhook) { ?>
                             <tr>
-                                <td style="text-align: center;"><?php if (isset($place['selected']) && $place['selected']) { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $place['placeID']; ?>" checked="checked" />
+                                <td style="text-align: center;"><?php if (isset($webhook['selected']) && $webhook['selected']) { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookID']; ?>" checked="checked" />
                                     <?php } else { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $place['placeID']; ?>" />
+                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookID']; ?>" />
                                     <?php } ?></td>
-                                <td class="left"><?php echo $place['name']; ?></td>
-                                <td class="left"><?php echo $place['description']; ?></td>
-                                <td class="center"><?php echo $place['type']; ?></td>
-                                <td class="right"><?php echo $place['followerCount']; ?></td>
-                                <td class="right"><?php echo $place['viewCount']; ?></td>
-                                <td class="left"><?php echo $place['creator']; ?></td>
-                                <td class="center"><?php echo ($place['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
+                                <td class="left"><?php echo $webhook['events']; ?></td>
+                                <td class="left"><?php echo $webhook['objects']; ?></td>
+                                <td class="left"><?php echo $webhook['callback']; ?></td>
+                                <td class="center"><?php echo ($webhook['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
