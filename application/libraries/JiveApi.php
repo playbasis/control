@@ -35,7 +35,8 @@ class JiveApi {
 
     public function isValidResponse($result = null) {
         if (!$result) $result = $this->_get('api/core/v3/webhooks');
-        return strpos($result, VALID_RESPONSE) === false ? false : true;
+        if (is_object($result) && isset($result->message)) log_message('error', 'JiveApi, response = '.$result->message);
+        return (is_object($result) && isset($result->message)) || strpos($result, VALID_RESPONSE) === false ? false : true;
     }
 
     public function listWebhooks() {
