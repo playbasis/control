@@ -17,13 +17,13 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="left"><?php echo $this->lang->line('column_type'); ?></td>
-                        <td class="left"><?php echo $this->lang->line('column_name'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_description'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_total_followers'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_total_views'); ?></td>
-                        <td class="right" style="width:140px;"><?php echo $this->lang->line('column_creator'); ?></td>
-                        <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_name'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_description'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_type'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_total_followers'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_total_views'); ?></td>
+                        <td class="center" style="width:140px;"><?php echo $this->lang->line('column_creator'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -36,13 +36,13 @@
                                     <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $place['placeID']; ?>" />
                                     <?php } ?></td>
-                                <td class="left"><?php echo $place['type']; ?></td>
                                 <td class="left"><?php echo $place['name']; ?></td>
-                                <td class="right"><?php echo $place['description']; ?></td>
+                                <td class="left"><?php echo $place['description']; ?></td>
+                                <td class="center"><?php echo $place['type']; ?></td>
                                 <td class="right"><?php echo $place['followerCount']; ?></td>
                                 <td class="right"><?php echo $place['viewCount']; ?></td>
-                                <td class="right"><?php echo isset($place['creator']) ? $place['creator']->displayName : ''; ?></td>
-                                <td class="right"><?php echo ($place['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
+                                <td class="left"><?php echo isset($place['creator']) ? $place['creator']->displayName : ''; ?></td>
+                                <td class="center"><?php echo ($place['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
