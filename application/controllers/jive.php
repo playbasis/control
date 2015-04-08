@@ -62,6 +62,7 @@ class Jive extends MY_Controller
             "author_email" => "pechpras@playbasis.com",
 
             "service_url" => API_SERVER,
+            //"service_url" => 'https://api.pbapp.net',
             "redirect_url" => base_url()."/jive/authorize",
             "register_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
             "unregister_url" => "%serviceURL%/notification/".$this->User_model->getSiteId()->{'$id'},
@@ -90,7 +91,7 @@ class Jive extends MY_Controller
         redirect('/jive', 'refresh');
     }
 
-    public function events() {
+    public function place() {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -117,11 +118,11 @@ class Jive extends MY_Controller
             $places = $this->_api->listPlaces();
 
             $this->data['jive'] = $jive;
-            $this->data['webhooks'] = $webhooks;
-            $this->data['places'] = $places;
+            $this->data['webhooks'] = (array) $webhooks;
+            $this->data['places'] = $places->list;
         }
 
-        $this->data['main'] = 'jive_events';
+        $this->data['main'] = 'jive_place';
         $this->load->vars($this->data);
         $this->render_page('template');
     }
