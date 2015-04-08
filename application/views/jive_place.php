@@ -2,6 +2,9 @@
     <div class="box">
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
+            <div class="buttons">
+                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_watch'); ?></button>
+            </div>
         </div><!-- .heading -->
         <div class="content">
                 <div id="tabs" class="htabs">
@@ -11,8 +14,14 @@
                     <a href="<?php echo site_url('jive/webhook');?>" style="display: inline;"><?php echo $this->lang->line('tab_webhook'); ?></a>
                 </div>
 
+            <?php if($this->session->flashdata('success')){ ?>
+                <div class="content messages half-width">
+                    <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+                </div>
+            <?php }?>
+
             <?php if (isset($jive)) { ?>
-                <?php echo form_open('jive/place', array('id' => 'form')); ?>
+                <?php echo form_open('jive/place'.(isset($offset) ? '/'.$offset : ''), array('id' => 'form')); ?>
                 <table class="list">
                     <thead>
                     <tr>

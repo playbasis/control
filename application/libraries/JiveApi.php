@@ -7,6 +7,7 @@ class JiveApi {
 
     private $_restClient;
     private $_cacheClient;
+    private $jiveUrl;
 
     public function __construct($config = array())
     {
@@ -15,7 +16,8 @@ class JiveApi {
     }
 
     public function initialize($jiveUrl, $token = null) {
-        $this->_restClient->initialize(array('server' => $jiveUrl));
+        $this->jiveUrl = $jiveUrl;
+        $this->_restClient->initialize(array('server' => $this->jiveUrl));
         if ($token) {
             $this->_restClient->set_http_auth('bearer', $token, null);
             if (!$this->isValidResponse()) throw new Exception('TOKEN_EXPIRED');
@@ -42,6 +44,13 @@ class JiveApi {
 
     public function listWebhooks() {
         $result = $this->_get('api/core/v3/webhooks');
+        if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
+        $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
+        return $result;
+    }
+
+    public function createWebhook($placeId) {
+        $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'object' => $this->jiveUrl.'/api/core/v3/places/'.$placeId));
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
         $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
         return $result;

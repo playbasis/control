@@ -4,6 +4,7 @@ $lang['heading_title']          		= 'Jive Setup';
 
 // Text
 $lang['text_success']           		= 'You have successfully created a new template!';
+$lang['text_success_watch']           			= 'You have successfully watched the selected place(s)!';
 $lang['text_success_delete']           			= 'You have successfully deleted template(s)!';
 $lang['text_success_update']           	= 'You have successfully updated the template!';
 $lang['text_default']           		= 'Default';
@@ -42,9 +43,6 @@ $lang['error_insert']            = 'Cannot insert a new template.';
 $lang['error_update']            = 'Cannot update the template.';
 $lang['error_name_is_used']            = 'This template ID is already in use.';
 
-$lang['sms-mode']          	= 'Mode';
-$lang['sms-account_sid']          	= 'Account SID';
-$lang['sms-auth_token']          	= 'Auth Token';
-$lang['sms-number']          	= 'Number';
+$lang['button_watch']          	= 'Watch';
 
 ?>

@@ -114,14 +114,67 @@ class Jive extends MY_Controller
                     }
                 }
             }
+
+            if ($this->input->post('selected')) {
+                foreach ($this->input->post('selected') as $placeId) {
+                    $this->_api->createWebhook($placeId);
+                }
+                $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
+            }
+
             $this->data['jive'] = $jive;
             $this->session->set_userdata('total_places', $this->_api->totalPlaces());
-            $this->getList($offset);
+            $this->getListPlaces($offset);
         } else {
             $this->data['main'] = 'jive_place';
             $this->load->vars($this->data);
             $this->render_page('template');
         }
+    }
+
+    public function event() {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
+            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $this->data['jive'] = $jive;
+        }
+        $this->data['events'] = array(
+            array('id' => 'jive:user_account_created', 'type' => 'user_account', 'description' => 'User account has been created'),
+            array('id' => 'jive:user_account_deleted', 'type' => 'user_account', 'description' => 'User account has been deleted'),
+            array('id' => 'jive:user_account_disabled', 'type' => 'user_account', 'description' => 'User account has been disabled'),
+            array('id' => 'jive:user_account_enabled', 'type' => 'user_account', 'description' => 'User account has been enabled'),
+            array('id' => 'jive:user_account_invisible', 'type' => 'user_account', 'description' => 'User account has been invisible'),
+            array('id' => 'jive:user_account_visible', 'type' => 'user_account', 'description' => 'User account has been visible'),
+            array('id' => 'jive:user_profile_modified', 'type' => 'user_account', 'description' => 'User profile has been modified'),
+            array('id' => 'jive:user_type_modified', 'type' => 'user_account', 'description' => 'User type has been modified'),
+            array('id' => 'jive:user_session_login', 'type' => 'user_session', 'description' => 'User has logged in'),
+            array('id' => 'jive:user_session_logout', 'type' => 'user_session', 'description' => 'User has logged out'),
+            array('id' => 'jive:user_membership_added', 'type' => 'user_membership', 'description' => 'User membership has been added'),
+            array('id' => 'jive:user_membership_removed', 'type' => 'user_membership', 'description' => 'User membership has been removed'),
+            array('id' => 'jive:social_group_created', 'type' => 'social_group', 'description' => 'Social group has been created'),
+            array('id' => 'jive:social_group_renamed', 'type' => 'social_group', 'description' => 'Social group has been renamed'),
+            array('id' => 'jive:social_group_deleted', 'type' => 'social_group', 'description' => 'Social group has been deleted'),
+            array('id' => 'jive:stream_config_created', 'type' => 'stream', 'description' => 'Stream config has been created'),
+            array('id' => 'jive:stream_config_modified', 'type' => 'stream', 'description' => 'Stream config has been modified'),
+            array('id' => 'jive:stream_config_deleted', 'type' => 'stream', 'description' => 'Stream config has been deleted'),
+            array('id' => 'jive:stream_association_added', 'type' => 'stream', 'description' => 'Stream association has been added'),
+            array('id' => 'jive:stream_association_removed', 'type' => 'stream', 'description' => 'Stream association has been removed'),
+            array('id' => 'jive:webhook_created', 'type' => 'webhook', 'description' => 'Webhook has been created'),
+            array('id' => 'jive:webhook_deleted', 'type' => 'webhook', 'description' => 'Webhook has been deleted'),
+            array('id' => 'jive:webhook_enabled', 'type' => 'webhook', 'description' => 'Webhook has been enabled'),
+            array('id' => 'jive:webhook_disabled', 'type' => 'webhook', 'description' => 'Webhook has been disabled'),
+        );
+        $this->data['main'] = 'jive_event';
+        $this->load->vars($this->data);
+        $this->render_page('template');
     }
 
     public function insert() {
@@ -235,7 +288,7 @@ class Jive extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function places($offset=0) {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -258,15 +311,16 @@ class Jive extends MY_Controller
             }
         }
         $this->data['jive'] = $jive;
-        $this->getList($offset);
+        $this->data['offset'] = $offset;
+        $this->getListPlaces($offset);
     }
 
-    private function getList($offset) {
+    private function getListPlaces($offset) {
         $per_page = NUMBER_OF_RECORDS_PER_PAGE;
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('jive/page');
+        $config['base_url'] = site_url('jive/places');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
