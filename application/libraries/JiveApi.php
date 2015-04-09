@@ -70,13 +70,13 @@ class JiveApi {
     }
 
     public function createContentWebhook($placeId) {
-        $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'object' => $this->jiveUrl.'/api/core/v3/places/'.$placeId));
+        $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'object' => $this->jiveUrl.'/api/core/v3/places/'.$placeId), 'json');
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
         return $result;
     }
 
     public function createSystemWebhook($type, $action) {
-        $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'events' => is_array($type) ? implode(',', $type) : $type, 'verb' => $action));
+        $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'events' => is_array($type) ? implode(',', $type) : $type, 'verb' => $action), 'json');
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
         return $result;
     }
@@ -116,8 +116,8 @@ class JiveApi {
         return $result;
     }
 
-    private function _post($uri, $params = array()) {
-        $result = $this->_restClient->post($uri, json_encode($params), 'json');
+    private function _post($uri, $params = array(), $format = null) {
+        $result = $format && $format == 'json' ? $this->_restClient->post($uri, json_encode($params), 'json') : $this->_restClient->post($uri, $params);
         return $result;
     }
 
