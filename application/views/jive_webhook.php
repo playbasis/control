@@ -31,7 +31,7 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="center"><?php echo $this->lang->line('column_type'); ?></td>
+                        <td class="center" style="width:20px;"><?php echo $this->lang->line('column_type'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_description'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_callback'); ?></td>
                     </tr>
@@ -45,7 +45,7 @@
                                     <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookID']; ?>" />
                                     <?php } ?></td>
-                                <td class="left"><?php echo $webhook['events']; ?></td>
+                                <td class="center"><?php echo $webhook['events']; ?></td>
                                 <td class="left"><?php echo $webhook['object']; ?></td>
                                 <td class="left"><?php echo $webhook['callback']; ?></td>
                             </tr>
