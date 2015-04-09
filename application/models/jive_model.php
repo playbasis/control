@@ -30,5 +30,13 @@ class Jive_model extends MY_Model
         $this->mongo_db->set('date_modified', $d);
         return $this->mongo_db->update_all('playbasis_jive_to_client');
     }
+
+    public function findByTenantId($tenant_id) {
+        $this->mongo_db->where('jive_tenant_id', $tenant_id);
+        $this->mongo_db->where_nr('deleted', true);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_jive_to_client');
+        return $result ? $result[0] : array();
+    }
 }
 ?>

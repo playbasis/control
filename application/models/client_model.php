@@ -582,7 +582,6 @@ class Client_model extends MY_Model
             'reward_id' => new MongoId($input['reward_id'])
         ));
         $result = $this->mongo_db->get('playbasis_reward_to_client');
-
         return $result ? $result[0]['name'] : null;
     }
 
@@ -918,6 +917,14 @@ class Client_model extends MY_Model
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('date_expire', array('$exists' => true, '$lt' => new MongoDate($d)));
         return $this->mongo_db->get('playbasis_client');
+    }
+
+    public function findClientIdBySiteId($site_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('client_id'));
+        $this->mongo_db->where('_id', $site_id);
+        $result = $this->mongo_db->get('playbasis_client_site');
+        return $result ? $result[0]['client_id'] : array();
     }
 }
 ?>
