@@ -19,6 +19,7 @@ $lang['tab_event']					= 'Event';
 $lang['tab_webhook']					= 'Webhook';
 
 // Column
+$lang['column_id']            		= 'ID';
 $lang['column_name']            		= 'Name';
 $lang['column_description']            		= 'Description';
 $lang['column_type']            		= 'Type';
