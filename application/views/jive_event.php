@@ -36,7 +36,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
