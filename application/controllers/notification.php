@@ -1,5 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+require_once(APPPATH.'controllers/engine.php');
 
 /**
  * Notification Endpoint for (1) Amazon Simple Notification Service (SNS), (2) PayPal, (3) FullContact, (4) Jive
