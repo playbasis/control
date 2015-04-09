@@ -75,6 +75,12 @@ class JiveApi {
         return $result;
     }
 
+    public function createSystemWebhook($type, $action) {
+        $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'events' => is_array($type) ? implode(',', $type) : $type, 'verb' => $action));
+        if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
+        return $result;
+    }
+
     public function deleteWebhook($webhookId) {
         $result = $this->_delete('api/core/v3/webhooks/'.$webhookId);
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
