@@ -306,7 +306,7 @@ class Engine extends Quest
 		)));
 		return $eventMessage;
 	}
-	private function processRule($input, $validToken, $fbData, $twData)
+	protected function processRule($input, $validToken, $fbData, $twData)
 	{
 		if(!isset($input['player_id']) || !$input['player_id']) {
 			if (!$input["test"])

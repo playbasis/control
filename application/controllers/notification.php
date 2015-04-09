@@ -2,9 +2,10 @@
 require_once APPPATH . '/libraries/REST2_Controller.php';
 
 /**
- * Endpoint for Amazon Simple Notification Service (SNS)
+ * Notification Endpoint for (1) Amazon Simple Notification Service (SNS), (2) PayPal, (3) FullContact, (4) Jive
  */
-class Notification extends REST2_Controller
+//class Notification extends REST2_Controller
+class Notification extends Engine
 {
 	public function __construct()
 	{
@@ -12,6 +13,7 @@ class Notification extends REST2_Controller
 		$this->load->model('tool/respond', 'resp');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('notification_model');
+		$this->load->model('client_model');
 		$this->load->model('player_model');
 		$this->load->model('payment_model');
 		$this->load->model('email_model');
@@ -123,7 +125,7 @@ class Notification extends REST2_Controller
 				log_message('error', 'Invalid PayPal IPN message, response: '.$res);
 				$this->response($this->error->setError('INVALID_PAYPAL_IPN', $res), 200);
 			} else {
-				log_message('error', 'Unknow return status from PayPal, response: '.$res);
+				log_message('error', 'Unknown return status from PayPal, response: '.$res);
 				$this->response($this->error->setError('INVALID_PAYPAL_IPN', $res), 200);
 			}
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], FULLCONTACT_USER_AGENT) === false ? false : true) {
@@ -135,6 +137,59 @@ class Notification extends REST2_Controller
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], JIVE_USER_AGENT) === false ? false : true) {
 			if (array_key_exists('HTTP_X_TENANT_ID', $_SERVER)) {
 				/* process Jive webhook */
+				$tenent_id = $_SERVER['HTTP_X_TENANT_ID'];
+				$jive = $this->jive_model->findByTenantId($tenent_id);
+				if (!$jive) {
+					log_message('error', 'Unknown tenant ID: '.$tenent_id);
+					$this->response($this->error->setError('INVALID_JIVE_TENANT_ID', $tenent_id), 200);
+				}
+				if (!array_key_exists('activity', $message)) {
+					log_message('error', 'Invalid Jive message');
+					$this->response($this->error->setError('INVALID_JIVE_MESSAGE'), 200);
+				}
+				$activity = $message['activity'];
+				if (!array_key_exists('verb', $activity)) {
+					log_message('error', 'Missing jive:verb');
+					$this->response($this->error->setError('PARAMETER_MISSING', array('verb')), 200);
+				}
+				$site_id = new MongoId($jive['site_id']);
+				$client_id = $this->client_model->findClientIdBySiteId($site_id);
+				$validToken = array('client_id' => $client_id, 'site_id' => $site_id);
+				$actionName = $activity['verb'];
+				$url = isset($activity['object']['summary']) ? $activity['object']['summary'] : null;
+				$cl_player_id = $activity['actor']['id'];
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $cl_player_id)));
+				if (!$pb_player_id) {
+					$names = explode(' ', $activity['actor']['displayName']);
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+						'player_id' => $cl_player_id,
+						'image' => $activity['actor']['image'],
+						'email' => 'no-reply@playbasis.com',
+						'username' => $activity['actor']['jive']['username'],
+						'first_name' => isset($names[0]) ? $names[0] : null,
+						'last_name' => isset($names[1]) ? $names[1] : null,
+					)));
+				}
+				$action = $this->client_model->getAction(array(
+					'client_id' => $validToken['client_id'],
+					'site_id' => $validToken['site_id'],
+					'action_name' => $actionName
+				));
+				if (!$action) {
+					$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+				}
+				$actionId = $action['action_id'];
+				$actionIcon = $action['icon'];
+				$input = array_merge($validToken, array(
+					'player_id' => $cl_player_id,
+					'pb_player_id' => $pb_player_id,
+					'action_id' => $actionId,
+					'action_name' => $actionName,
+					'action_icon' => $actionIcon,
+					'url' => $url
+				));
+				$apiResult = $this->processRule($input, $validToken, null, null);
+				$this->response($this->resp->setRespond($apiResult), 200);
 			} else {
 				/* register/unregister */
 				log_message('debug', 'arg = '.print_r($arg, true));

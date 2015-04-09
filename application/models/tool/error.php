@@ -79,6 +79,14 @@ class Error extends CI_Model
             $errorData['message'] = "Template cannot be found: ".$dataArray;
             $errorData['error_code'] = '0809';
             break;
+        case 'INVALID_JIVE_TENANT_ID':
+            $errorData['message'] = "Invalid Jive tenant ID";
+            $errorData['error_code'] = '0810';
+            break;
+        case 'INVALID_JIVE_MESSAGE':
+            $errorData['message'] = "Invalid Jive message";
+            $errorData['error_code'] = '0811';
+            break;
         case 'INVALID_API_KEY_OR_SECRET':
             $errorData['message'] = "Invalid API-KEY OR API-SECRET";
             $errorData['error_code'] = '0001';
