@@ -2,6 +2,9 @@
     <div class="box">
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
+            <div class="buttons">
+                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_watch'); ?></button>
+            </div>
         </div><!-- .heading -->
         <div class="content">
                 <div id="tabs" class="htabs">
@@ -10,6 +13,17 @@
                     <a href="<?php echo site_url('jive/event');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_event'); ?></a>
                     <a href="<?php echo site_url('jive/webhook');?>" style="display: inline;"><?php echo $this->lang->line('tab_webhook'); ?></a>
                 </div>
+
+            <?php if($this->session->flashdata('success')){ ?>
+                <div class="content messages half-width">
+                    <div class="success"><?php echo $this->session->flashdata('success'); ?></div>
+                </div>
+            <?php }?>
+            <?php if($this->session->flashdata('fail')){ ?>
+                <div class="content messages half-width">
+                    <div class="warning"><?php echo $this->session->flashdata('fail'); ?></div>
+                </div>
+            <?php }?>
 
             <?php if (isset($jive)) { ?>
                 <?php echo form_open('jive/event', array('id' => 'form')); ?>
@@ -36,7 +50,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
@@ -46,5 +60,12 @@
                 Please set up your Jive community with Playbasis first.
             <?php } ?>
         </div><!-- .content -->
+        <div class="pagination">
+            <ul class='ul_rule_pagination_container'>
+                <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
+                <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
+                <?php echo $pagination_links; ?>
+            </ul>
+        </div>
     </div><!-- .box -->
 </div><!-- #content .span10 -->

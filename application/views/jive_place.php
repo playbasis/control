@@ -3,6 +3,7 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
+                <a href="javascript:void(o)" class="btn btn-logout" rel="popover" data-placement="bottom" data-content="- jive:created<br>- jive:modified<br>- jive:commented<br>- jive:replied<br>- jive:liked<br>- jive:outcome_set<br>" data-original-title="Lifecycle events and social actions">Supported Actions</a>
                 <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_watch'); ?></button>
             </div>
         </div><!-- .heading -->
@@ -60,7 +61,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
@@ -79,3 +80,18 @@
         </div>
     </div><!-- .box -->
 </div><!-- #content .span10 -->
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('[rel=popover]').popover({
+            html: true
+        });
+    });
+    $('body').on('click', function (e) {
+        $('[rel="popover"]').each(function () {
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                $(this).popover('hide');
+            }
+        });
+    });
+</script>

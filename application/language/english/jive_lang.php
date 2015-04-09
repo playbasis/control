@@ -3,7 +3,8 @@
 $lang['heading_title']          		= 'Jive Setup';
 
 // Text
-$lang['text_success_watch']           			= 'You have successfully created a new webhook for the selected place(s)!';
+$lang['text_success_watch_place']           			= 'You have successfully created a new webhook for the selected place(s)!';
+$lang['text_success_watch_event']           			= 'You have successfully created a new webhook for the selected event(s)!';
 $lang['text_success_delete']           			= 'You have successfully deleted webhook(s)!';
 $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
