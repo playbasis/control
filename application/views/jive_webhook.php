@@ -31,9 +31,9 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="center"><?php echo $this->lang->line('column_place'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_type'); ?></td>
+                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_description'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_callback'); ?></td>
-                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -45,14 +45,14 @@
                                     <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookID']; ?>" />
                                     <?php } ?></td>
+                                <td class="left"><?php echo $webhook['events']; ?></td>
                                 <td class="left"><?php echo $webhook['object']; ?></td>
                                 <td class="left"><?php echo $webhook['callback']; ?></td>
-                                <td class="center"><?php echo ($webhook['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="9"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="4"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
