@@ -506,8 +506,8 @@ class Jive extends MY_Controller
         foreach ($webhooks->list as $webhook) {
             $this->data['webhooks'][] = array(
                 'webhookID' => $webhook->id,
-                'events' => isset($webhook->events) ? $webhook->events : null,
-                'object' => isset($webhook->object) ? $webhook->object : null,
+                'events' => isset($webhook->events) && !empty($webhook->events) ? $webhook->events : 'place',
+                'object' => $webhook->object,
                 'callback' => $webhook->callback,
                 'selected' => ($this->input->post('selected') && in_array($webhook->webhookID, $this->input->post('selected'))),
             );
