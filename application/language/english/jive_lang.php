@@ -26,7 +26,7 @@ $lang['column_total_views']      		= 'Total Views';
 $lang['column_creator']          		= 'Creator';
 $lang['column_status']          		= 'Status';
 $lang['column_events']          		= 'Events';
-$lang['column_places']          		= 'Places';
+$lang['column_place']          		= 'Place';
 $lang['column_callback']          		= 'Callback';
 
 // Entry
@@ -39,11 +39,8 @@ $lang['entry_status']         			= 'Status';
 $lang['error_warning']          = 'Warning: Please check the form carefully for errors!';
 $lang['error_permission']       = 'Warning: You do not have permission to modify badges!';
 $lang['error_access']			= 'Warning: You do not have permission to access this page!';
-$lang['error_name']             = 'Category Name must be between 2 and 32 characters!';
-$lang['error_insert']            = 'Cannot insert a new template.';
-$lang['error_update']            = 'Cannot update the template.';
-$lang['error_name_is_used']            = 'This template ID is already in use.';
 
 $lang['button_watch']          	= 'Watch';
+$lang['button_delete']          	= 'Delete';
 
 ?>

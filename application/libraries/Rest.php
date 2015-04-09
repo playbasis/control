@@ -426,7 +426,10 @@ class REST
 		// It is a supported format, so just run its formatting method
 		if (array_key_exists($this->format, $this->supported_formats))
 		{
-			return $this->{"_".$this->format}($response);
+			$result = $this->{"_".$this->format}($response);
+			/* return original string if json_decoder cannot decode (ie. NULL is returned due to invalid JSON) */
+			if ($this->format == 'json' && $result === null) return $response;
+			return $result;
 		}
 
 		// Find out what format the data was returned in

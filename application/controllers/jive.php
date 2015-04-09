@@ -119,15 +119,25 @@ class Jive extends MY_Controller
                 if (!$this->validateModify()) {
                     $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
                 } else {
+                    $success = false;
+                    $fail = false;
                     foreach ($this->input->post('selected') as $placeId) {
-                        $this->_api->createWebhook($placeId);
+                        try {
+                            $this->_api->createContentWebhook($placeId);
+                            $success = true;
+                        } catch (Exception $e) {
+                            log_message('error', 'ERROR = '.$e->getMessage());
+                            $fail = $e->getMessage();
+                        }
                     }
-                    $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
+                    if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
+                    if ($fail) $this->session->set_flashdata('fail', $fail);
                 }
+            } else {
+                $this->session->set_userdata('total_places', $this->_api->totalPlaces());
             }
 
             $this->data['jive'] = $jive;
-            $this->session->set_userdata('total_places', $this->_api->totalPlaces());
             $this->getListPlaces($offset);
         } else {
             $this->data['main'] = 'jive_place';
@@ -249,7 +259,6 @@ class Jive extends MY_Controller
             }
         }
         $this->data['jive'] = $jive;
-        $this->data['offset'] = $offset;
         $this->getListPlaces($offset);
     }
 
@@ -264,8 +273,8 @@ class Jive extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $this->data['offset'] = $offset;
 
         $places = $this->_api->listPlaces($per_page, $offset);
         if ($this->session->userdata('total_places') === false) $this->session->set_userdata('total_places', $this->_api->totalPlaces());
@@ -285,15 +294,15 @@ class Jive extends MY_Controller
             );
         }
 
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
+        if (isset($this->session->data['fail'])) {
+            $this->data['fail'] = $this->session->data['fail'];
+            unset($this->session->data['fail']);
         } else {
-            $this->data['error_warning'] = '';
+            $this->data['fail'] = '';
         }
 
         if (isset($this->session->data['success'])) {
             $this->data['success'] = $this->session->data['success'];
-
             unset($this->session->data['success']);
         } else {
             $this->data['success'] = '';
@@ -363,7 +372,6 @@ class Jive extends MY_Controller
             }
         }
         $this->data['jive'] = $jive;
-        $this->data['offset'] = $offset;
         $this->getListWebhooks($offset);
     }
 
@@ -378,8 +386,8 @@ class Jive extends MY_Controller
         $site_id = $this->User_model->getSiteId();
         $setting_group_id = $this->User_model->getAdminGroupID();
 
-        $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $this->data['offset'] = $offset;
 
         $webhooks = $this->_api->listWebhooks($per_page, $offset);
         if ($this->session->userdata('total_webhooks') === false) $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
@@ -388,23 +396,22 @@ class Jive extends MY_Controller
         foreach ($webhooks->list as $webhook) {
             $this->data['webhooks'][] = array(
                 'webhookID' => $webhook->id,
-                'events' => $webhook->events,
-                'objects' => isset($webhook->objects) ? $webhook->objects : null,
+                'object' => isset($webhook->object) ? $webhook->object : null,
                 'callback' => $webhook->callback,
-                'status' => $webhook->enabled,
+                'status' => isset($webhook->enabled) && $webhook->enabled ? 'Active' : 'Inactive',
                 'selected' => ($this->input->post('selected') && in_array($webhook->webhookID, $this->input->post('selected'))),
             );
         }
 
-        if (isset($this->error['warning'])) {
-            $this->data['error_warning'] = $this->error['warning'];
+        if (isset($this->session->data['fail'])) {
+            $this->data['fail'] = $this->session->data['fail'];
+            unset($this->session->data['fail']);
         } else {
-            $this->data['error_warning'] = '';
+            $this->data['fail'] = '';
         }
 
         if (isset($this->session->data['success'])) {
             $this->data['success'] = $this->session->data['success'];
-
             unset($this->session->data['success']);
         } else {
             $this->data['success'] = '';

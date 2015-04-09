@@ -38,12 +38,18 @@ class JiveApi {
 
     public function isValidResponse($result = null) {
         if (!$result) $result = $this->_get('api/core/v3/webhooks');
-        if (is_object($result) && isset($result->message)) log_message('error', 'JiveApi, response = '.$result->message);
-        return (is_object($result) && isset($result->message)) || strpos($result, VALID_RESPONSE) === false ? false : true;
+        if (is_object($result) && isset($result->message)) {
+            log_message('error', 'JiveApi, response = '.$result->message);
+            return false;
+        }
+        if (is_object($result) && isset($result->error)) {
+            throw new Exception($result->error->message.' ('.$result->error->status.')');
+        }
+        return !is_object($result) && strpos($result, VALID_RESPONSE) === false ? false : true;
     }
 
     public function listWebhooks($recordsPerPage, $offset) {
-        $q = array('fields' => 'id,events,objects,callback,enabled', 'count' => $recordsPerPage, 'startIndex' => $offset);
+        $q = array('count' => $recordsPerPage, 'startIndex' => $offset);
         $result = $this->_get('api/core/v3/webhooks', $q);
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
         $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
@@ -63,8 +69,14 @@ class JiveApi {
         return $offset;
     }
 
-    public function createWebhook($placeId) {
+    public function createContentWebhook($placeId) {
         $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'object' => $this->jiveUrl.'/api/core/v3/places/'.$placeId));
+        if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
+        return $result;
+    }
+
+    public function deleteWebhook($webhookId) {
+        $result = $this->_delete('api/core/v3/webhooks/'.$webhookId);
         if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
         $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
         return $result;
@@ -99,7 +111,12 @@ class JiveApi {
     }
 
     private function _post($uri, $params = array()) {
-        $result = $this->_restClient->post($uri, $params);
+        $result = $this->_restClient->post($uri, json_encode($params), 'json');
+        return $result;
+    }
+
+    private function _delete($uri, $params = array()) {
+        $result = $this->_restClient->delete($uri, $params);
         return $result;
     }
 }

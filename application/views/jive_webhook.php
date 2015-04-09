@@ -3,7 +3,7 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_watch'); ?></button>
+                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_delete'); ?></button>
             </div>
         </div><!-- .heading -->
         <div class="content">
@@ -26,13 +26,12 @@
             <?php }?>
 
             <?php if (isset($jive)) { ?>
-                <?php echo form_open('jive/place'.(isset($offset) ? '/'.$offset : ''), array('id' => 'form')); ?>
+                <?php echo form_open('jive/webhook'.(isset($offset) ? '/'.$offset : ''), array('id' => 'form')); ?>
                 <table class="list">
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
-                        <td class="center"><?php echo $this->lang->line('column_events'); ?></td>
-                        <td class="center"><?php echo $this->lang->line('column_places'); ?></td>
+                        <td class="center"><?php echo $this->lang->line('column_place'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_callback'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                     </tr>
@@ -46,8 +45,7 @@
                                     <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookID']; ?>" />
                                     <?php } ?></td>
-                                <td class="left"><?php echo $webhook['events']; ?></td>
-                                <td class="left"><?php echo $webhook['objects']; ?></td>
+                                <td class="left"><?php echo $webhook['object']; ?></td>
                                 <td class="left"><?php echo $webhook['callback']; ?></td>
                                 <td class="center"><?php echo ($webhook['status']!=='Active')? $this->lang->line('text_disabled') : $this->lang->line('text_enabled'); ?></td>
                             </tr>
