@@ -101,6 +101,14 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
+        /* POST */
+        if ($this->input->post('selected')) {
+            if (!$this->validateModify()) {
+                $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('/jive/places'.($offset ? '/'.$offset : ''), 'refresh');
+            }
+        }
+
         if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
             $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
             try {
@@ -115,13 +123,11 @@ class Jive extends MY_Controller
                 }
             }
 
+            /* POST */
             if ($this->input->post('selected')) {
-                if (!$this->validateModify()) {
-                    $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                } else {
-                    $success = false;
-                    $fail = false;
-                    foreach ($this->input->post('selected') as $placeId) {
+                $success = false;
+                $fail = false;
+                foreach ($this->input->post('selected') as $placeId) {
                         try {
                             $this->_api->createContentWebhook($placeId);
                             $success = true;
@@ -129,15 +135,14 @@ class Jive extends MY_Controller
                             log_message('error', 'ERROR = '.$e->getMessage());
                             $fail = $e->getMessage();
                         }
-                    }
-                    if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
-                    if ($fail) $this->session->set_flashdata('fail', $fail);
                 }
-            } else {
-                $this->session->set_userdata('total_places', $this->_api->totalPlaces());
+                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
+                if ($fail) $this->session->set_flashdata('fail', $fail);
+                redirect('/jive/places'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
             $this->data['jive'] = $jive;
+            $this->session->set_userdata('total_places', $this->_api->totalPlaces());
             $this->getListPlaces($offset);
         } else {
             $this->data['main'] = 'jive_place';
@@ -201,6 +206,14 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
+        /* POST */
+        if ($this->input->post('selected')) {
+            if (!$this->validateModify()) {
+                $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('/jive/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
+            }
+        }
+
         if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
             $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
             try {
@@ -215,15 +228,22 @@ class Jive extends MY_Controller
                 }
             }
 
+            /* POST */
             if ($this->input->post('selected')) {
-                if (!$this->validateModify()) {
-                    $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                } else {
-                    foreach ($this->input->post('selected') as $webhookId) {
+                $success = false;
+                $fail = false;
+                foreach ($this->input->post('selected') as $webhookId) {
+                    try {
                         $this->_api->deleteWebhook($webhookId);
+                        $success = true;
+                    } catch (Exception $e) {
+                        log_message('error', 'ERROR = '.$e->getMessage());
+                        $fail = $e->getMessage();
                     }
-                    $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
                 }
+                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                if ($fail) $this->session->set_flashdata('fail', $fail);
+                redirect('/jive/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
             $this->data['jive'] = $jive;
@@ -292,20 +312,6 @@ class Jive extends MY_Controller
                 'status' => $place->status,
                 'selected' => ($this->input->post('selected') && in_array($place->placeID, $this->input->post('selected'))),
             );
-        }
-
-        if (isset($this->session->data['fail'])) {
-            $this->data['fail'] = $this->session->data['fail'];
-            unset($this->session->data['fail']);
-        } else {
-            $this->data['fail'] = '';
-        }
-
-        if (isset($this->session->data['success'])) {
-            $this->data['success'] = $this->session->data['success'];
-            unset($this->session->data['success']);
-        } else {
-            $this->data['success'] = '';
         }
 
         $config['total_rows'] = $total;
@@ -401,20 +407,6 @@ class Jive extends MY_Controller
                 'status' => isset($webhook->enabled) && $webhook->enabled ? 'Active' : 'Inactive',
                 'selected' => ($this->input->post('selected') && in_array($webhook->webhookID, $this->input->post('selected'))),
             );
-        }
-
-        if (isset($this->session->data['fail'])) {
-            $this->data['fail'] = $this->session->data['fail'];
-            unset($this->session->data['fail']);
-        } else {
-            $this->data['fail'] = '';
-        }
-
-        if (isset($this->session->data['success'])) {
-            $this->data['success'] = $this->session->data['success'];
-            unset($this->session->data['success']);
-        } else {
-            $this->data['success'] = '';
         }
 
         $config['total_rows'] = $total;
