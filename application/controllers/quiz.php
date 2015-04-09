@@ -656,8 +656,8 @@ class Quiz extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
-                $this->client_id,
-                $this->site_id,
+                $input['client_id'],
+                $input['site_id'],
                 "notifications",
                 "email"
             );
@@ -695,8 +695,8 @@ class Quiz extends REST2_Controller
         $access = true;
         try {
             $this->client_model->permissionProcess(
-                $this->client_id,
-                $this->site_id,
+                $input['client_id'],
+                $input['site_id'],
                 "notifications",
                 "sms"
             );

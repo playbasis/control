@@ -350,8 +350,8 @@ class Engine extends Quest
 		/* [rule usage] check rule usage against the associated plan */
 		if (!$input["test"]) {
 			$this->client_model->permissionCheck(
-				$this->client_id,
-				$this->site_id,
+				$client_id,
+				$site_id,
 				"others",
 				"rule"
 			);
@@ -676,15 +676,15 @@ class Engine extends Quest
 			/* [rule usage] increase usage value on client's account */
 			if (!$input["test"] && $count > 0) {
 				$this->client_model->insertRuleUsage(
-					$this->client_id,
-					$this->site_id,
+					$client_id,
+					$site_id,
 					$input['rule_id'],
 					$input['pb_player_id'],
 					$count
 				);
 				$this->client_model->permissionProcess(
-					$this->client_id,
-					$this->site_id,
+					$client_id,
+					$site_id,
 					"others",
 					"rule",
 					$count
