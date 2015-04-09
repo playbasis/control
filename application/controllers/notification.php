@@ -139,6 +139,7 @@ class Notification extends Engine
 			if (array_key_exists('HTTP_X_TENANT_ID', $_SERVER)) {
 				/* process Jive webhook */
 				$tenent_id = $_SERVER['HTTP_X_TENANT_ID'];
+				log_message('debug', 'tenent_id = '.$tenent_id);
 				$jive = $this->jive_model->findByTenantId($tenent_id);
 				if (!$jive) {
 					log_message('error', 'Unknown tenant ID: '.$tenent_id);
@@ -154,8 +155,8 @@ class Notification extends Engine
 					$this->response($this->error->setError('PARAMETER_MISSING', array('verb')), 200);
 				}
 				$site_id = new MongoId($jive['site_id']);
-				$client_id = $this->client_model->findClientIdBySiteId($site_id);
-				$validToken = array('client_id' => $client_id, 'site_id' => $site_id);
+				$site = $this->client_model->findBySiteId($site_id);
+				$validToken = array('client_id' => $site['client_id'], 'site_id' => $site_id, 'domain_name' => $site['domain_name']);
 				$actionName = $activity['verb'];
 				$url = isset($activity['object']['summary']) ? $activity['object']['summary'] : null;
 				$cl_player_id = $activity['actor']['id'];
@@ -187,7 +188,8 @@ class Notification extends Engine
 					'action_id' => $actionId,
 					'action_name' => $actionName,
 					'action_icon' => $actionIcon,
-					'url' => $url
+					'url' => $url,
+					'test' => false
 				));
 				$apiResult = $this->processRule($input, $validToken, null, null);
 				$this->response($this->resp->setRespond($apiResult), 200);
