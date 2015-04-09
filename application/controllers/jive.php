@@ -136,7 +136,7 @@ class Jive extends MY_Controller
                             $fail = $e->getMessage();
                         }
                 }
-                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch'));
+                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch_place'));
                 if ($fail) $this->session->set_flashdata('fail', $fail);
                 redirect('/jive/places'.($offset ? '/'.$offset : ''), 'refresh');
             }
@@ -151,7 +151,7 @@ class Jive extends MY_Controller
         }
     }
 
-    public function event() {
+    public function event($offset=0) {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -161,39 +161,54 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
+        /* POST */
+        if ($this->input->post('selected')) {
+            if (!$this->validateModify()) {
+                $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('/jive/events'.($offset ? '/'.$offset : ''), 'refresh');
+            }
+        }
+
         if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
             $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            try {
+                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+            } catch (Exception $e) {
+                if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                    if ($token) {
+                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                    }
+                }
+            }
+
+            /* POST */
+            if ($this->input->post('selected')) {
+                $success = false;
+                $fail = false;
+                foreach ($this->input->post('selected') as $eventId) {
+                    try {
+                        $this->_api->createSystemWebhook($this->Jive_model->getEventType($eventId), $eventId);
+                        $success = true;
+                    } catch (Exception $e) {
+                        log_message('error', 'ERROR = '.$e->getMessage());
+                        $fail = $e->getMessage();
+                    }
+                }
+                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch_event'));
+                if ($fail) $this->session->set_flashdata('fail', $fail);
+                redirect('/jive/events'.($offset ? '/'.$offset : ''), 'refresh');
+            }
+
             $this->data['jive'] = $jive;
+            $this->session->set_userdata('total_events', $this->Jive_model->totalEvents($this->User_model->getSiteId()));
+            $this->getListEvents($offset);
+        } else {
+            $this->data['main'] = 'jive_event';
+            $this->load->vars($this->data);
+            $this->render_page('template');
         }
-        $this->data['events'] = array(
-            array('id' => 'jive:user_account_created', 'type' => 'user_account', 'description' => 'User account has been created'),
-            array('id' => 'jive:user_account_deleted', 'type' => 'user_account', 'description' => 'User account has been deleted'),
-            array('id' => 'jive:user_account_disabled', 'type' => 'user_account', 'description' => 'User account has been disabled'),
-            array('id' => 'jive:user_account_enabled', 'type' => 'user_account', 'description' => 'User account has been enabled'),
-            array('id' => 'jive:user_account_invisible', 'type' => 'user_account', 'description' => 'User account has been invisible'),
-            array('id' => 'jive:user_account_visible', 'type' => 'user_account', 'description' => 'User account has been visible'),
-            array('id' => 'jive:user_profile_modified', 'type' => 'user_account', 'description' => 'User profile has been modified'),
-            array('id' => 'jive:user_type_modified', 'type' => 'user_account', 'description' => 'User type has been modified'),
-            array('id' => 'jive:user_session_login', 'type' => 'user_session', 'description' => 'User has logged in'),
-            array('id' => 'jive:user_session_logout', 'type' => 'user_session', 'description' => 'User has logged out'),
-            array('id' => 'jive:user_membership_added', 'type' => 'user_membership', 'description' => 'User membership has been added'),
-            array('id' => 'jive:user_membership_removed', 'type' => 'user_membership', 'description' => 'User membership has been removed'),
-            array('id' => 'jive:social_group_created', 'type' => 'social_group', 'description' => 'Social group has been created'),
-            array('id' => 'jive:social_group_renamed', 'type' => 'social_group', 'description' => 'Social group has been renamed'),
-            array('id' => 'jive:social_group_deleted', 'type' => 'social_group', 'description' => 'Social group has been deleted'),
-            array('id' => 'jive:stream_config_created', 'type' => 'stream', 'description' => 'Stream config has been created'),
-            array('id' => 'jive:stream_config_modified', 'type' => 'stream', 'description' => 'Stream config has been modified'),
-            array('id' => 'jive:stream_config_deleted', 'type' => 'stream', 'description' => 'Stream config has been deleted'),
-            array('id' => 'jive:stream_association_added', 'type' => 'stream', 'description' => 'Stream association has been added'),
-            array('id' => 'jive:stream_association_removed', 'type' => 'stream', 'description' => 'Stream association has been removed'),
-            array('id' => 'jive:webhook_created', 'type' => 'webhook', 'description' => 'Webhook has been created'),
-            array('id' => 'jive:webhook_deleted', 'type' => 'webhook', 'description' => 'Webhook has been deleted'),
-            array('id' => 'jive:webhook_enabled', 'type' => 'webhook', 'description' => 'Webhook has been enabled'),
-            array('id' => 'jive:webhook_disabled', 'type' => 'webhook', 'description' => 'Webhook has been disabled'),
-        );
-        $this->data['main'] = 'jive_event';
-        $this->load->vars($this->data);
-        $this->render_page('template');
     }
 
     public function webhook($offset=0) {
@@ -349,6 +364,95 @@ class Jive extends MY_Controller
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
         $this->data['main'] = 'jive_place';
+        $this->data['setting_group_id'] = $setting_group_id;
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
+    public function events($offset=0) {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+        try {
+            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+        } catch (Exception $e) {
+            if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                if ($token) {
+                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                }
+            }
+        }
+        $this->data['jive'] = $jive;
+        $this->getListEvents($offset);
+    }
+
+    private function getListEvents($offset) {
+        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
+
+        $this->load->library('pagination');
+
+        $config['base_url'] = site_url('jive/events');
+
+        $client_id = $this->User_model->getClientId();
+        $site_id = $this->User_model->getSiteId();
+        $setting_group_id = $this->User_model->getAdminGroupID();
+
+        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $this->data['offset'] = $offset;
+
+        $events = $this->Jive_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
+        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Jive_model->totalEvents($this->User_model->getSiteId()));
+        $total = $this->session->userdata('total_events');
+
+        foreach ($events as $event) {
+            $this->data['events'][] = array_merge($event, array('selected' => ($this->input->post('selected') && in_array($event['id'], $this->input->post('selected')))));
+        }
+
+        $config['total_rows'] = $total;
+        $config['per_page'] = $per_page;
+        $config["uri_segment"] = 3;
+
+        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = "<li class='page_index_nav next'>";
+        $config['next_tag_close'] = "</li>";
+
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+        $config['prev_tag_close'] = "</li>";
+
+        $config['num_tag_open'] = '<li class="page_index_number">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page_index_nav next">';
+        $config['first_tag_close'] = '</li>';
+
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page_index_nav prev">';
+        $config['last_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+        $this->data['pagination_links'] = $this->pagination->create_links();
+        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+        $this->data['pagination_total_rows'] = $config["total_rows"];
+
+        $this->data['main'] = 'jive_event';
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
