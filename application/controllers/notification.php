@@ -165,7 +165,7 @@ class Notification extends Engine
 					$names = explode(' ', $activity['actor']['displayName']);
 					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
 						'player_id' => $cl_player_id,
-						'image' => $activity['actor']['image'],
+						'image' => isset($activity['actor']['image']['url']) ? $activity['actor']['image']['url'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
 						'email' => 'no-reply@playbasis.com',
 						'username' => $activity['actor']['jive']['username'],
 						'first_name' => isset($names[0]) ? $names[0] : null,
