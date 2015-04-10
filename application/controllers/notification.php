@@ -192,6 +192,8 @@ class Notification extends Engine
 					'test' => false
 				));
 				$apiResult = $this->processRule($input, $validToken, null, null);
+				$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+				$apiResult = array_merge($apiResult, $apiQuestResult);
 				$this->response($this->resp->setRespond($apiResult), 200);
 			} else {
 				/* register/unregister */
