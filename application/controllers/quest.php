@@ -159,7 +159,7 @@ class Quest extends REST2_Controller
                                         $m["mission_id"],
                                         $pb_player_id
                                     );
-                                    /* fire mission-complete action */
+                                    /* fire complete-mission action */
                                     if ($completeMissionActionId) {
                                         $this->tracker_model->trackAction(array(
                                             'client_id' => $client_id,
@@ -234,7 +234,7 @@ class Quest extends REST2_Controller
                                         $m["mission_id"],
                                         $pb_player_id
                                     );
-                                    /* fire mission-complete action */
+                                    /* fire complete-mission action */
                                     if ($completeMissionActionId) {
                                         $this->tracker_model->trackAction(array(
                                             'client_id' => $client_id,
@@ -290,10 +290,10 @@ class Quest extends REST2_Controller
                         null,
                         $pb_player_id
                     );
-                    /* fire quest-complete action */
+                    /* fire complete-quest action */
                     $completeQuestActionId = $this->action_model->findAction(array(
-                        'client_id' => $validToken['client_id'],
-                        'site_id' => $validToken['site_id'],
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
                         'action_name' => COMPLETE_QUEST_ACTION,
                     ));
                     if ($completeQuestActionId) {
