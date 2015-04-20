@@ -197,6 +197,7 @@ class Service extends REST2_Controller
         $show_action = ($this->input->get('show_action'))?$this->input->get('show_action'):false;
         $show_social = ($this->input->get('show_social'))?$this->input->get('show_social'):false;
         $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
+        if ($player_id && !$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         if($limit > 500){
             $limit = 500;
