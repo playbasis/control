@@ -175,6 +175,7 @@ class Service_model extends MY_Model
                     'badge_id' => $event['item_id'],
                     'deleted' => false
                 ));
+                $this->mongo_db->limit(1);
                 $result = $this->mongo_db->get('playbasis_badge_to_client');
                 if(isset($result[0])){
                     $event['badge']['badge_id'] = $result[0]['badge_id']."";
@@ -208,6 +209,7 @@ class Service_model extends MY_Model
                 'site_id' => $returnThis['site_id'],
                 'name' => $returnThis['action_name']
             ));
+            $this->mongo_db->limit(1);
             $action = $this->mongo_db->get('playbasis_action_to_client');
 
             if($action){
