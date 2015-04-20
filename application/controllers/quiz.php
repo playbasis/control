@@ -2,6 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 
+define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
+
 function index_weight($obj) {
     return $obj['weight'];
 }
@@ -47,6 +49,7 @@ class Quiz extends REST2_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('action_model');
         $this->load->model('client_model');
         $this->load->model('player_model');
         $this->load->model('quiz_model');
@@ -334,6 +337,22 @@ class Quiz extends REST2_Controller
                     $grade = $g;
                     break;
                 }
+            }
+            /* fire complete-quiz action */
+            $completeQuizActionId = $this->action_model->findAction(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'action_name' => COMPLETE_QUIZ_ACTION,
+            ));
+            if ($completeQuizActionId) {
+                $this->tracker_model->trackAction(array(
+                    'client_id' => $this->client_id,
+                    'site_id' => $this->site_id,
+                    'pb_player_id' => $pb_player_id,
+                    'action_id' => $completeQuizActionId,
+                    'action_name' => COMPLETE_QUIZ_ACTION,
+                    'url' => $quiz_id,
+                ));
             }
         }
 
