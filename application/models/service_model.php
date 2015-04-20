@@ -84,6 +84,14 @@ class Service_model extends MY_Model
             $event_type[] = 'REDEEM';
         }
 
+        if($show_action){
+            $event_type[] = 'ACTION';
+        }
+
+        if($show_social){
+            $event_type[] = 'SOCIAL';
+        }
+
         $this->mongo_db->where_in('event_type', $event_type);
 
         if(!$show_quest){
