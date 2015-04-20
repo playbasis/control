@@ -94,6 +94,10 @@ class Service_model extends MY_Model
             $this->mongo_db->where('quiz_id', null);
         }
 
+        if($pb_player_id){
+            $this->mongo_db->where('pb_player_id', $pb_player_id);
+        }
+
         $this->mongo_db->where('site_id', $site_id);
 
         $this->mongo_db->limit((int)$limit);
