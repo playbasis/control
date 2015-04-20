@@ -9,7 +9,7 @@ class Service_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
-    public function getRecentPoint($site_id, $reward_id, $offset, $limit, $show_login=false, $show_quest=false, $show_redeem=false, $show_quiz=false){
+    public function getRecentPoint($site_id, $reward_id, $pb_player_id, $offset, $limit, $show_login=false, $show_quest=false, $show_redeem=false, $show_quiz=false, $show_action=false, $show_social=false){
 
         $this->set_site_mongodb($site_id);
 

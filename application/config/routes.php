@@ -145,6 +145,7 @@ $route['Player/mau_per_week'] = 'player/mauWeek';
 $route['Player/mau_per_month'] = 'player/mauMonth';
 
 //service API
+$route['Service/recent_point/'.ANY_STRING] = 'service/recent_point/$1';
 $route['Service/recent_point'] = 'service/recent_point';
 $route['Service/reset_point'] = 'service/reset_point';
 

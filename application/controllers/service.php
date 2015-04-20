@@ -9,6 +9,7 @@ class Service extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('service_model');
         $this->load->model('point_model');
+        $this->load->model('player_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -184,7 +185,7 @@ class Service extends REST2_Controller
 	}
 */
 
-    public function recent_point_get()
+    public function recent_point_get($player_id='')
     {
         $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
         $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
@@ -193,6 +194,9 @@ class Service extends REST2_Controller
         $show_quest = ($this->input->get('show_quest'))?$this->input->get('show_quest'):false;
         $show_redeem = ($this->input->get('show_redeem'))?$this->input->get('show_redeem'):false;
         $show_quiz = ($this->input->get('show_quiz'))?$this->input->get('show_quiz'):false;
+        $show_action = ($this->input->get('show_action'))?$this->input->get('show_action'):false;
+        $show_social = ($this->input->get('show_social'))?$this->input->get('show_social'):false;
+        $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
 
         if($limit > 500){
             $limit = 500;
@@ -211,7 +215,7 @@ class Service extends REST2_Controller
             $reward_id = null;
         }
 
-        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $offset, $limit, $show_login, $show_quest, $show_redeem, $show_quiz);
+        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $pb_player_id, $offset, $limit, $show_login, $show_quest, $show_redeem, $show_quiz, $show_action, $show_social);
 
         $this->response($this->resp->setRespond($respondThis), 200);
     }
