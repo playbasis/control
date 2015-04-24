@@ -16,7 +16,7 @@ class Tracker_model extends MY_Model
         //$this->computeDau($input, $d);
         //$this->updateLatestProcessActionLogTime($mongoDate);
         //$this->computeMau($input, $d);
-        return $this->mongo_db->insert('playbasis_action_log', array(
+        $action_log_id = $this->mongo_db->insert('playbasis_action_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
@@ -26,6 +26,19 @@ class Tracker_model extends MY_Model
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
+        $this->mongo_db->insert('playbasis_event_log', array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'event_type'	=> 'ACTION',
+            'action_log_id' => $action_log_id,
+            'action_id'		=> $input['action_id'],
+            'action_name'	=> $input['action_name'],
+            'url'			=> (isset($input['url'])) ? $input['url'] : null,
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ), array("w" => 0, "j" => false));
+        return $action_log_id;
     }
     public function trackEvent($type, $message, $input)
     {
