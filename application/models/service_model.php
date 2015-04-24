@@ -260,14 +260,20 @@ class Service_model extends MY_Model
             'client_id'		=> $client_id,
             'site_id'		=> $site_id,
             'event_type'	=> "RESET",
-            'action_log_id' => null,
-            'message'		=> null,
             'reward_id'		=> $reward_id,
             'reward_name'	=> $reward_name,
+            /*'action_log_id' => null,
+            'message'		=> null,
             'item_id'		=> null,
             'value'			=> null,
             'objective_id'	=> null,
             'objective_name'=> null,
+            'goods_id'		=> null,
+            'goods_name'	=> null,
+            'goods_log_id'  => null,
+            'quest_id'      => null,
+            'mission_id'    => null,
+            'quiz_id'       => null,*/
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
