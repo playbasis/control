@@ -233,7 +233,7 @@ class Service extends REST2_Controller
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 
-    public function like_activity($activity_id='')
+    public function like_activity_post($activity_id='')
     {
         if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
         $activity = $this->service_model->getEventById(new MongoId($activity_id));
@@ -253,7 +253,7 @@ class Service extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => true)), 200);
     }
 
-    public function comment_activity($activity_id='')
+    public function comment_activity_post($activity_id='')
     {
         if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
         $activity = $this->service_model->getEventById(new MongoId($activity_id));
