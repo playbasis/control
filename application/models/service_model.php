@@ -12,7 +12,7 @@ class Service_model extends MY_Model
     public function getEventById($site_id, $event_id) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('pb_player_id'));
-        $this->mongo_db->where('_id', $site_id);
+        $this->mongo_db->where('_id', $event_id);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_event_log');
         return $results ? $results[0] : array();
@@ -224,7 +224,7 @@ class Service_model extends MY_Model
 
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'from_pb_player_id'));
+        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'action_name', 'from_pb_player_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
 
         $event_log = $this->mongo_db->get('playbasis_event_log');
@@ -238,35 +238,61 @@ class Service_model extends MY_Model
 
             $event['_id'] = $event['_id']."";
 
-            $this->mongo_db->where('site_id', $site_id);
-            $this->mongo_db->where('_id', $event['pb_player_id']);
-            $this->mongo_db->select(array(
-                'cl_player_id',
-                'username',
-                'first_name',
-                'last_name',
-                'gender',
-                'image',
-                'exp',
-                'level'));
-            $this->mongo_db->select(array(), array('_id'));
-            $player = $this->mongo_db->get('playbasis_player');
-
-            $event['player'] = isset($player[0]) ? $player[0] : null;
-            if(!$event['player']){
-                unset($event_log[$key]);
-                continue;
-            }
-
-            $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
-
             if (!$date_added) $date_added = $event['date_added'];
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
-            if($actionAndStringFilter){
-                $event['action_name'] = $actionAndStringFilter['action_name'];
-                $event['string_filter'] = $actionAndStringFilter['url'];
-                $event['action_icon'] = $actionAndStringFilter['icon'];
+
+            if (isset($event['pb_player_id'])) {
+                $this->mongo_db->where('site_id', $site_id);
+                $this->mongo_db->where('_id', $event['pb_player_id']);
+                $this->mongo_db->select(array(
+                    'cl_player_id',
+                    'username',
+                    'first_name',
+                    'last_name',
+                    'gender',
+                    'image',
+                    'exp',
+                    'level'));
+                $this->mongo_db->select(array(), array('_id'));
+                $player = $this->mongo_db->get('playbasis_player');
+
+                $event['player'] = isset($player[0]) ? $player[0] : null;
+                unset($event['pb_player_id']);
+                if(!$event['player']){
+                    unset($event_log[$key]);
+                    continue;
+                }
             }
+
+            if (isset($event['from_pb_player_id'])) {
+                $this->mongo_db->where('site_id', $site_id);
+                $this->mongo_db->where('_id', $event['from_pb_player_id']);
+                $this->mongo_db->select(array(
+                    'cl_player_id',
+                    'username',
+                    'first_name',
+                    'last_name',
+                    'gender',
+                    'image',
+                    'exp',
+                    'level'));
+                $this->mongo_db->select(array(), array('_id'));
+                $player = $this->mongo_db->get('playbasis_player');
+
+                $event['from_player'] = isset($player[0]) ? $player[0] : null;
+                unset($event['from_pb_player_id']);
+            }
+
+            if (isset($event['action_log_id'])) {
+                $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
+                if($actionAndStringFilter){
+                    $event['action_name'] = $actionAndStringFilter['action_name'];
+                    $event['string_filter'] = $actionAndStringFilter['url'];
+                    $event['action_icon'] = $actionAndStringFilter['icon'];
+                }
+                unset($event['action_log_id']);
+            }
+
             if(isset($event['quest_id']) && $event['quest_id']){
                 if(isset($event['mission_id']) && $event['mission_id']){
                     $event['action_name'] = 'mission_reward';
@@ -274,49 +300,45 @@ class Service_model extends MY_Model
                     $event['action_name'] = 'quest_reward';
                 }
                 $event['action_icon'] = 'fa-trophy';
+                unset($event['quest_id']);
+                unset($event['mission_id']);
             }
             if(isset($event['goods_id']) && $event['goods_id']){
                 $event['action_name'] = 'redeem_goods';
                 $event['action_icon'] = 'fa-gift';
+                unset($event['goods_id']);
             }
             if(isset($event['quiz_id']) && $event['quiz_id']){
                 $event['action_name'] = 'quiz_reward';
                 $event['action_icon'] = 'fa-bar-chart';
+                unset($event['quiz_id']);
             }
-            if($event['event_type'] == 'LOGIN'){
-                $event['action_name'] = 'login';
-                $event['action_icon'] = 'fa-sign-in';
-            }
-            unset($event['action_log_id']);
-            unset($event['pb_player_id']);
-            unset($event['quest_id']);
-            unset($event['mission_id']);
-            unset($event['goods_id']);
-            unset($event['quiz_id']);
-            unset($event['event_type']);
 
-            $event['reward_id'] = $event['reward_id']."";
+            if (isset($event['reward_id'])) {
+                $event['reward_id'] = $event['reward_id']."";
 
-            if($event['reward_name'] == "badge"){
-                $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
-                $this->mongo_db->select(array(),array('_id'));
-                $this->mongo_db->where(array(
-                    'site_id' => $site_id,
-                    'badge_id' => $event['item_id'],
-                    'deleted' => false
-                ));
-                $this->mongo_db->limit(1);
-                $result = $this->mongo_db->get('playbasis_badge_to_client');
-                if(isset($result[0])){
-                    $event['badge']['badge_id'] = $result[0]['badge_id']."";
-                    $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
-                    $event['badge']['name'] = $result[0]['name'];
-                    $event['badge']['description'] = $result[0]['description'];
-                    $event['badge']['hint'] = $result[0]['hint'];
+                if($event['reward_name'] == "badge"){
+                    $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
+                    $this->mongo_db->select(array(),array('_id'));
+                    $this->mongo_db->where(array(
+                        'site_id' => $site_id,
+                        'badge_id' => $event['item_id'],
+                        'deleted' => false
+                    ));
+                    $this->mongo_db->limit(1);
+                    $result = $this->mongo_db->get('playbasis_badge_to_client');
+                    if(isset($result[0])){
+                        $event['badge']['badge_id'] = $result[0]['badge_id']."";
+                        $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
+                        $event['badge']['name'] = $result[0]['name'];
+                        $event['badge']['description'] = $result[0]['description'];
+                        $event['badge']['hint'] = $result[0]['hint'];
+                    }
                 }
             }
 
             unset($event['item_id']);
+            //unset($event['event_type']);
             array_push($events_output, $event);
         }
 

@@ -236,7 +236,7 @@ class Service extends REST2_Controller
     public function like_activity_post($activity_id='')
     {
         if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
-        $activity = $this->service_model->getEventById(new MongoId($activity_id));
+        $activity = $this->service_model->getEventById($this->site_id, new MongoId($activity_id));
         if (!$activity) $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
         $player_id = ($this->input->post('player_id'));
         if (!$player_id) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
@@ -256,7 +256,7 @@ class Service extends REST2_Controller
     public function comment_activity_post($activity_id='')
     {
         if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
-        $activity = $this->service_model->getEventById(new MongoId($activity_id));
+        $activity = $this->service_model->getEventById($this->site_id, new MongoId($activity_id));
         if (!$activity) $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
         $player_id = ($this->input->post('player_id'));
         if (!$player_id) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
