@@ -250,6 +250,7 @@ class Service extends REST2_Controller
             'action_name' => 'like',
             'message' => null,
         ));
+        $this->response($this->resp->setRespond(array('result' => true)), 200);
     }
 
     public function domain_get(){
