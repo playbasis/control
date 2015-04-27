@@ -241,24 +241,46 @@ class Service_model extends MY_Model
             if (!$date_added) $date_added = $event['date_added'];
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
 
-            $this->mongo_db->where('site_id', $site_id);
-            $this->mongo_db->where('_id', $event['pb_player_id']);
-            $this->mongo_db->select(array(
-                'cl_player_id',
-                'username',
-                'first_name',
-                'last_name',
-                'gender',
-                'image',
-                'exp',
-                'level'));
-            $this->mongo_db->select(array(), array('_id'));
-            $player = $this->mongo_db->get('playbasis_player');
+            if (isset($event['pb_player_id'])) {
+                $this->mongo_db->where('site_id', $site_id);
+                $this->mongo_db->where('_id', $event['pb_player_id']);
+                $this->mongo_db->select(array(
+                    'cl_player_id',
+                    'username',
+                    'first_name',
+                    'last_name',
+                    'gender',
+                    'image',
+                    'exp',
+                    'level'));
+                $this->mongo_db->select(array(), array('_id'));
+                $player = $this->mongo_db->get('playbasis_player');
 
-            $event['player'] = isset($player[0]) ? $player[0] : null;
-            if(!$event['player']){
-                unset($event_log[$key]);
-                continue;
+                $event['player'] = isset($player[0]) ? $player[0] : null;
+                unset($event['pb_player_id']);
+                if(!$event['player']){
+                    unset($event_log[$key]);
+                    continue;
+                }
+            }
+
+            if (isset($event['from_pb_player_id'])) {
+                $this->mongo_db->where('site_id', $site_id);
+                $this->mongo_db->where('_id', $event['from_pb_player_id']);
+                $this->mongo_db->select(array(
+                    'cl_player_id',
+                    'username',
+                    'first_name',
+                    'last_name',
+                    'gender',
+                    'image',
+                    'exp',
+                    'level'));
+                $this->mongo_db->select(array(), array('_id'));
+                $player = $this->mongo_db->get('playbasis_player');
+
+                $event['from_player'] = isset($player[0]) ? $player[0] : null;
+                unset($event['from_pb_player_id']);
             }
 
             if (isset($event['action_log_id'])) {
@@ -268,6 +290,7 @@ class Service_model extends MY_Model
                     $event['string_filter'] = $actionAndStringFilter['url'];
                     $event['action_icon'] = $actionAndStringFilter['icon'];
                 }
+                unset($event['action_log_id']);
             }
 
             if(isset($event['quest_id']) && $event['quest_id']){
@@ -277,26 +300,19 @@ class Service_model extends MY_Model
                     $event['action_name'] = 'quest_reward';
                 }
                 $event['action_icon'] = 'fa-trophy';
+                unset($event['quest_id']);
+                unset($event['mission_id']);
             }
             if(isset($event['goods_id']) && $event['goods_id']){
                 $event['action_name'] = 'redeem_goods';
                 $event['action_icon'] = 'fa-gift';
+                unset($event['goods_id']);
             }
             if(isset($event['quiz_id']) && $event['quiz_id']){
                 $event['action_name'] = 'quiz_reward';
                 $event['action_icon'] = 'fa-bar-chart';
+                unset($event['quiz_id']);
             }
-            if($event['event_type'] == 'LOGIN'){
-                $event['action_name'] = 'login';
-                $event['action_icon'] = 'fa-sign-in';
-            }
-            unset($event['action_log_id']);
-            unset($event['pb_player_id']);
-            unset($event['quest_id']);
-            unset($event['mission_id']);
-            unset($event['goods_id']);
-            unset($event['quiz_id']);
-            unset($event['event_type']);
 
             if (isset($event['reward_id'])) {
                 $event['reward_id'] = $event['reward_id']."";
@@ -322,6 +338,7 @@ class Service_model extends MY_Model
             }
 
             unset($event['item_id']);
+            //unset($event['event_type']);
             array_push($events_output, $event);
         }
 
