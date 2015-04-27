@@ -12,7 +12,7 @@ class Service_model extends MY_Model
     public function getEventById($site_id, $event_id) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('pb_player_id'));
-        $this->mongo_db->where('_id', $site_id);
+        $this->mongo_db->where('_id', $event_id);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_event_log');
         return $results ? $results[0] : array();
@@ -224,7 +224,7 @@ class Service_model extends MY_Model
 
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'from_pb_player_id'));
+        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'action_name', 'from_pb_player_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
 
         $event_log = $this->mongo_db->get('playbasis_event_log');
@@ -237,6 +237,9 @@ class Service_model extends MY_Model
             array_push($ids, $event['_id']);
 
             $event['_id'] = $event['_id']."";
+
+            if (!$date_added) $date_added = $event['date_added'];
+            $event['date_added'] = datetimeMongotoReadable($event['date_added']);
 
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('_id', $event['pb_player_id']);
@@ -260,9 +263,6 @@ class Service_model extends MY_Model
 
             if (isset($event['action_log_id'])) {
                 $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
-
-                if (!$date_added) $date_added = $event['date_added'];
-                $event['date_added'] = datetimeMongotoReadable($event['date_added']);
                 if($actionAndStringFilter){
                     $event['action_name'] = $actionAndStringFilter['action_name'];
                     $event['string_filter'] = $actionAndStringFilter['url'];
