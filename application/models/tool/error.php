@@ -131,6 +131,10 @@ class Error extends CI_Model
             $errorData["message"] = "The user has not enough reward";
             $errorData["error_code"] = "0207";
             break;
+        case 'EVENT_NOT_EXIST':
+            $errorData['message'] = "Event doesn't exist";
+            $errorData['error_code'] = '0208';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
