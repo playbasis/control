@@ -9,6 +9,15 @@ class Service_model extends MY_Model
         $this->load->library('mongo_db');
     }
 
+    public function getEventById($site_id, $event_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('pb_player_id'));
+        $this->mongo_db->where('_id', $site_id);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_event_log');
+        return $results ? $results[0] : array();
+    }
+
     public function getRecentPoint($site_id, $reward_id, $pb_player_id, $offset, $limit, $show_login=false, $show_quest=false, $show_redeem=false, $show_quiz=false, $show_action=false, $show_social=false){
 
         $this->set_site_mongodb($site_id);
