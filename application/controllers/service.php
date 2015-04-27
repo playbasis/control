@@ -9,6 +9,8 @@ class Service extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('service_model');
         $this->load->model('point_model');
+        $this->load->model('player_model');
+        $this->load->model('tracker_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -184,7 +186,7 @@ class Service extends REST2_Controller
 	}
 */
 
-    public function recent_point_get()
+    public function recent_point_get($player_id='')
     {
         $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
         $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
@@ -193,6 +195,8 @@ class Service extends REST2_Controller
         $show_quest = ($this->input->get('show_quest'))?$this->input->get('show_quest'):false;
         $show_redeem = ($this->input->get('show_redeem'))?$this->input->get('show_redeem'):false;
         $show_quiz = ($this->input->get('show_quiz'))?$this->input->get('show_quiz'):false;
+        $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
+        if ($player_id && !$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         if($limit > 500){
             $limit = 500;
@@ -211,9 +215,62 @@ class Service extends REST2_Controller
             $reward_id = null;
         }
 
-        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $offset, $limit, $show_login, $show_quest, $show_redeem, $show_quiz);
+        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $pb_player_id, $offset, $limit, $show_login, $show_quest, $show_redeem, $show_quiz);
 
         $this->response($this->resp->setRespond($respondThis), 200);
+    }
+
+    public function recent_activities_get($player_id='')
+    {
+        $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
+        $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
+
+        $show_social = ($this->input->get('show_social'))?$this->input->get('show_social'):false;
+        $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
+        if ($player_id && !$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset, $limit > 500 ? 500 : $limit, $pb_player_id, $show_social);
+        $this->response($this->resp->setRespond($respondThis), 200);
+    }
+
+    public function like_activity_post($activity_id='')
+    {
+        if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
+        $activity = $this->service_model->getEventById(new MongoId($activity_id));
+        if (!$activity) $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
+        $player_id = ($this->input->post('player_id'));
+        if (!$player_id) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+        $from_pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
+        $pb_player_id = $activity['pb_player_id'];
+        $this->tracker_model->trackSocial(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'pb_player_id' => $pb_player_id,
+            'from_pb_player_id' => $from_pb_player_id,
+            'action_name' => 'like',
+            'message' => null,
+        ));
+        $this->response($this->resp->setRespond(array('result' => true)), 200);
+    }
+
+    public function comment_activity_post($activity_id='')
+    {
+        if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
+        $activity = $this->service_model->getEventById(new MongoId($activity_id));
+        if (!$activity) $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
+        $player_id = ($this->input->post('player_id'));
+        if (!$player_id) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
+        $from_pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
+        $pb_player_id = $activity['pb_player_id'];
+        $this->tracker_model->trackSocial(array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'pb_player_id' => $pb_player_id,
+            'from_pb_player_id' => $from_pb_player_id,
+            'action_name' => 'comment',
+            'message' => $this->input->post('message'),
+        ));
+        $this->response($this->resp->setRespond(array('result' => true)), 200);
     }
 
     public function domain_get(){

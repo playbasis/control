@@ -1,12 +1,17 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+
+define('COMPLETE_MISSION_ACTION', 'complete-mission');
+define('COMPLETE_QUEST_ACTION', 'complete-quest');
+
 class Quest extends REST2_Controller
 {
     public function __construct()
     {
         parent::__construct();
         $this->load->model('auth_model');
+        $this->load->model('action_model');
         $this->load->model('player_model');
         $this->load->model('client_model');
         $this->load->model('tracker_model');
@@ -64,6 +69,12 @@ class Quest extends REST2_Controller
                 $badge_player_check[$b["badge_id"]] = $b["amount"];
             }
         }
+
+        $completeMissionActionId = $this->action_model->findAction(array(
+            'client_id' => $validToken['client_id'],
+            'site_id' => $validToken['site_id'],
+            'action_name' => COMPLETE_MISSION_ACTION,
+        ));
 
         foreach($quests as $q){
 
@@ -148,6 +159,17 @@ class Quest extends REST2_Controller
                                         $m["mission_id"],
                                         $pb_player_id
                                     );
+                                    /* fire complete-mission action */
+                                    if ($completeMissionActionId) {
+                                        $this->tracker_model->trackAction(array(
+                                            'client_id' => $client_id,
+                                            'site_id' => $site_id,
+                                            'pb_player_id' => $pb_player_id,
+                                            'action_id' => $completeMissionActionId,
+                                            'action_name' => COMPLETE_MISSION_ACTION,
+                                            'url' => $m["mission_id"],
+                                        ));
+                                    }
                                 }
 
                                 //for check total mission finish
@@ -212,6 +234,17 @@ class Quest extends REST2_Controller
                                         $m["mission_id"],
                                         $pb_player_id
                                     );
+                                    /* fire complete-mission action */
+                                    if ($completeMissionActionId) {
+                                        $this->tracker_model->trackAction(array(
+                                            'client_id' => $client_id,
+                                            'site_id' => $site_id,
+                                            'pb_player_id' => $pb_player_id,
+                                            'action_id' => $completeMissionActionId,
+                                            'action_name' => COMPLETE_MISSION_ACTION,
+                                            'url' => $m["mission_id"],
+                                        ));
+                                    }
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -257,6 +290,22 @@ class Quest extends REST2_Controller
                         null,
                         $pb_player_id
                     );
+                    /* fire complete-quest action */
+                    $completeQuestActionId = $this->action_model->findAction(array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'action_name' => COMPLETE_QUEST_ACTION,
+                    ));
+                    if ($completeQuestActionId) {
+                        $this->tracker_model->trackAction(array(
+                            'client_id' => $client_id,
+                            'site_id' => $site_id,
+                            'pb_player_id' => $pb_player_id,
+                            'action_id' => $completeQuestActionId,
+                            'action_name' => COMPLETE_QUEST_ACTION,
+                            'url' => $q["quest_id"],
+                        ));
+                    }
                     try {
                         $this->client_model->permissionProcess(
                             $client_id,

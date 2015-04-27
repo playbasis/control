@@ -2,6 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 
+define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
+
 function index_weight($obj) {
     return $obj['weight'];
 }
@@ -47,6 +49,7 @@ class Quiz extends REST2_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('action_model');
         $this->load->model('client_model');
         $this->load->model('player_model');
         $this->load->model('quiz_model');
@@ -335,6 +338,22 @@ class Quiz extends REST2_Controller
                     break;
                 }
             }
+            /* fire complete-quiz action */
+            $completeQuizActionId = $this->action_model->findAction(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'action_name' => COMPLETE_QUIZ_ACTION,
+            ));
+            if ($completeQuizActionId) {
+                $this->tracker_model->trackAction(array(
+                    'client_id' => $this->client_id,
+                    'site_id' => $this->site_id,
+                    'pb_player_id' => $pb_player_id,
+                    'action_id' => $completeQuizActionId,
+                    'action_name' => COMPLETE_QUIZ_ACTION,
+                    'url' => $quiz_id,
+                ));
+            }
         }
 
         /* check to see if grade has any reward associated with it */
@@ -349,7 +368,7 @@ class Quiz extends REST2_Controller
         $this->quiz_model->update_player_score($this->client_id, $this->site_id, $quiz_id, $pb_player_id, $question_id, $option_id, $score, $grade);
 
         /* publish the reward (if any) */
-        if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz_id, $this->validToken['domain_name'], $reward);
+        if (is_array($rewards)) foreach ($rewards as $reward) $this->publish_event($this->client_id, $this->site_id, $pb_player_id, $player_id, $quiz, $this->validToken['domain_name'], $reward);
 
         /* send feedback as necessary */
         if (isset($grade['feedbacks'])) {
@@ -564,13 +583,21 @@ class Quiz extends REST2_Controller
         return $events;
     }
 
-    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz_id, $domain_name, $event) {
+    private function publish_event($client_id, $site_id, $pb_player_id, $cl_player_id, $quiz, $domain_name, $event) {
         $message = null;
         if($event['value'] == 0 || empty($event['value']))return;
         
         switch ($event['event_type']) {
         case 'LEVEL_UP':
             $message = array('message' => $this->utility->getEventMessage('level', '', '', '', $event['value']), 'level' => $event['value']);
+            $this->tracker_model->trackEvent('LEVEL', $message['message'], array(
+                'client_id' => $client_id,
+                'site_id' => $site_id,
+                'pb_player_id' => $pb_player_id,
+                'player_id' => $cl_player_id,
+                'action_log_id' => null,
+                'amount' => $event['value']
+            ));
             break;
         case 'REWARD_RECEIVED':
             switch ($event['reward_type']) {
@@ -580,7 +607,7 @@ class Quiz extends REST2_Controller
                     'pb_player_id'	=> $pb_player_id,
                     'client_id'		=> $client_id,
                     'site_id'		=> $site_id,
-                    'quiz_id'		=> $quiz_id,
+                    'quiz_id'		=> $quiz['_id'],
                     'reward_type'	=> 'badge',
                     'reward_id'	    => $this->player_model->get_reward_id_by_name($this->validToken, 'badge'),
                     'reward_name'	=> $event['reward_type'],
@@ -594,7 +621,7 @@ class Quiz extends REST2_Controller
                     'pb_player_id'	=> $pb_player_id,
                     'client_id'		=> $client_id,
                     'site_id'		=> $site_id,
-                    'quiz_id'		=> $quiz_id,
+                    'quiz_id'		=> $quiz['_id'],
                     'reward_type'	=> 'point',
                     'reward_id'	    => $event['reward_id'],
                     'reward_name'	=> $event['reward_type'],
@@ -605,12 +632,46 @@ class Quiz extends REST2_Controller
             break;
         }
         if ($message) {
-            $this->node->publish(array(
-                'pb_player_id' => $pb_player_id,
-                'action_name' => 'quiz_reward',
-                'action_icon' => 'fa-trophy',
-                'message' => $message['message']
-            ), $domain_name, $site_id);
+            if ($event['event_type'] == 'LEVEL_UP') {
+                $this->node->publish(array(
+                    'client_id' => $client_id,
+                    'site_id' => $site_id,
+                    'pb_player_id' => $pb_player_id,
+                    'player_id' => $cl_player_id,
+                    'action_name' => 'quiz_reward',
+                    'action_icon' => 'fa-trophy',
+                    'message' => $message['message'],
+                    'level' => $event['value'],
+                    'quiz' => $quiz,
+                ), $domain_name, $site_id);
+            } else {
+                if ($event['reward_type'] == 'badge') {
+                    $this->node->publish(array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'pb_player_id' => $pb_player_id,
+                        'player_id' => $cl_player_id,
+                        'action_name' => 'quiz_reward',
+                        'action_icon' => 'fa-trophy',
+                        'message' => $message['message'],
+                        'badge' => $event['reward_data'],
+                        'quiz' => $quiz,
+                    ), $domain_name, $site_id);
+                } else {
+                    $this->node->publish(array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'pb_player_id' => $pb_player_id,
+                        'player_id' => $cl_player_id,
+                        'action_name' => 'quiz_reward',
+                        'action_icon' => 'fa-trophy',
+                        'message' => $message['message'],
+                        'amount' => $event['value'],
+                        'point' => $event['reward_type'],
+                        'quiz' => $quiz,
+                    ), $domain_name, $site_id);
+                }
+            }
         }
     }
 
