@@ -195,8 +195,6 @@ class Service extends REST2_Controller
         $show_quest = ($this->input->get('show_quest'))?$this->input->get('show_quest'):false;
         $show_redeem = ($this->input->get('show_redeem'))?$this->input->get('show_redeem'):false;
         $show_quiz = ($this->input->get('show_quiz'))?$this->input->get('show_quiz'):false;
-        $show_action = ($this->input->get('show_action'))?$this->input->get('show_action'):false;
-        $show_social = ($this->input->get('show_social'))?$this->input->get('show_social'):false;
         $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
         if ($player_id && !$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
@@ -217,8 +215,21 @@ class Service extends REST2_Controller
             $reward_id = null;
         }
 
-        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $pb_player_id, $offset, $limit, $show_login, $show_quest, $show_redeem, $show_quiz, $show_action, $show_social);
+        $respondThis['points'] = $this->service_model->getRecentPoint($this->site_id, $reward_id, $pb_player_id, $offset, $limit, $show_login, $show_quest, $show_redeem, $show_quiz);
 
+        $this->response($this->resp->setRespond($respondThis), 200);
+    }
+
+    public function recent_activities_get($player_id='')
+    {
+        $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
+        $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
+
+        $show_social = ($this->input->get('show_social'))?$this->input->get('show_social'):false;
+        $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
+        if ($player_id && !$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset, $limit > 500 ? 500 : $limit, $pb_player_id, $show_social);
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 
