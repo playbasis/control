@@ -111,7 +111,6 @@ class Service_model extends MY_Model
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
         $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id'));
-        $this->mongo_db->select(array(), array('_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
 
         $event_log = $this->mongo_db->get('playbasis_event_log');
@@ -119,6 +118,7 @@ class Service_model extends MY_Model
         $events_output = array();
 
         foreach($event_log as $key => &$event){
+            $event['_id'] = $event['_id']."";
 
             $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('_id', $event['pb_player_id']);
