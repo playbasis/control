@@ -1905,19 +1905,12 @@
             "name": "Service API",
             "methods": [
                 {
-                    "MethodName": "Recent Point",
-                    "Synopsis": "Returns recent activity points of all players",
+                    "MethodName": "Recent Activities",
+                    "Synopsis": "Returns recent activities",
                     "HTTPMethod": "GET",
-                    "URI": "/Service/recent_point",
+                    "URI": "/Service/recentActivities/:player_id",
                     "RequiresOAuth": "N",
                     "parameters": [
-                        {
-                            "Name": "point_name",
-                            "Required": "N",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "name of the point-based reward to query"
-                        },
                         {
                             "Name": "offset",
                             "Required": "N",
@@ -1931,6 +1924,73 @@
                             "Default": "20",
                             "Type": "integer",
                             "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "show_social",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "true | false, to attach social events on the activity feed"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Like Activity",
+                    "Synopsis": "Like activity",
+                    "HTTPMethod": "POST",
+                    "URI": "/Service/likeActivityFeed/:activity_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "activity_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id of the activity"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Comment Activity",
+                    "Synopsis": "Comment activity",
+                    "HTTPMethod": "POST",
+                    "URI": "/Service/commentActivityFeed/:activity_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "activity_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id of the activity"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "comment message"
                         }
                     ]
                 },
