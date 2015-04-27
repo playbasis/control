@@ -67,6 +67,22 @@ class Tracker_model extends MY_Model
             'date_modified' => $mongoDate
         ));
     }
+    public function trackSocial($input)
+    {
+        $this->set_site_mongodb($input['site_id']);
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_event_log', array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'event_type'	=> 'SOCIAL',
+            'from_pb_player_id'	=> $input['from_pb_player_id'],
+            'action_name'	=> (isset($input['action_name']))	? $input['action_name']	: null,
+            'message'		=> (isset($input['message']))	? $input['message']	: null,
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ));
+    }
     public function trackGoods($input)
     {
         $this->set_site_mongodb($input['site_id']);
