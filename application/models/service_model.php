@@ -258,15 +258,18 @@ class Service_model extends MY_Model
                 continue;
             }
 
-            $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
+            if (isset($event['action_log_id'])) {
+                $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
 
-            if (!$date_added) $date_added = $event['date_added'];
-            $event['date_added'] = datetimeMongotoReadable($event['date_added']);
-            if($actionAndStringFilter){
-                $event['action_name'] = $actionAndStringFilter['action_name'];
-                $event['string_filter'] = $actionAndStringFilter['url'];
-                $event['action_icon'] = $actionAndStringFilter['icon'];
+                if (!$date_added) $date_added = $event['date_added'];
+                $event['date_added'] = datetimeMongotoReadable($event['date_added']);
+                if($actionAndStringFilter){
+                    $event['action_name'] = $actionAndStringFilter['action_name'];
+                    $event['string_filter'] = $actionAndStringFilter['url'];
+                    $event['action_icon'] = $actionAndStringFilter['icon'];
+                }
             }
+
             if(isset($event['quest_id']) && $event['quest_id']){
                 if(isset($event['mission_id']) && $event['mission_id']){
                     $event['action_name'] = 'mission_reward';
@@ -295,24 +298,26 @@ class Service_model extends MY_Model
             unset($event['quiz_id']);
             unset($event['event_type']);
 
-            $event['reward_id'] = $event['reward_id']."";
+            if (isset($event['reward_id'])) {
+                $event['reward_id'] = $event['reward_id']."";
 
-            if($event['reward_name'] == "badge"){
-                $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
-                $this->mongo_db->select(array(),array('_id'));
-                $this->mongo_db->where(array(
-                    'site_id' => $site_id,
-                    'badge_id' => $event['item_id'],
-                    'deleted' => false
-                ));
-                $this->mongo_db->limit(1);
-                $result = $this->mongo_db->get('playbasis_badge_to_client');
-                if(isset($result[0])){
-                    $event['badge']['badge_id'] = $result[0]['badge_id']."";
-                    $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
-                    $event['badge']['name'] = $result[0]['name'];
-                    $event['badge']['description'] = $result[0]['description'];
-                    $event['badge']['hint'] = $result[0]['hint'];
+                if($event['reward_name'] == "badge"){
+                    $this->mongo_db->select(array('badge_id','image','name','description','hint','sponsor','claim','redeem'));
+                    $this->mongo_db->select(array(),array('_id'));
+                    $this->mongo_db->where(array(
+                        'site_id' => $site_id,
+                        'badge_id' => $event['item_id'],
+                        'deleted' => false
+                    ));
+                    $this->mongo_db->limit(1);
+                    $result = $this->mongo_db->get('playbasis_badge_to_client');
+                    if(isset($result[0])){
+                        $event['badge']['badge_id'] = $result[0]['badge_id']."";
+                        $event['badge']['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
+                        $event['badge']['name'] = $result[0]['name'];
+                        $event['badge']['description'] = $result[0]['description'];
+                        $event['badge']['hint'] = $result[0]['hint'];
+                    }
                 }
             }
 
