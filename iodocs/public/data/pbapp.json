@@ -1995,6 +1995,36 @@
                     ]
                 },
                 {
+                    "MethodName": "Recent Point",
+                    "Synopsis": "Returns recent points",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/recent_point",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "point_name",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "name of the point-based reward to query"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Reset Point",
                     "Synopsis": "Reset point of all players",
                     "HTTPMethod": "POST",
