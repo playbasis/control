@@ -150,8 +150,11 @@ $route['Service/recent_point'] = 'service/recent_point';
 $route['Service/recentActivities/'.ANY_STRING] = 'service/recent_activities/$1';
 $route['Service/recentActivities'] = 'service/recent_activities';
 $route['Service/detailActivityFeed/'.ANY_STRING] = 'service/detail_activity/$1';
+$route['Service/detailActivityFeed'] = 'service/detail_activity';
 $route['Service/likeActivityFeed/'.ANY_STRING] = 'service/like_activity/$1';
+$route['Service/likeActivityFeed'] = 'service/like_activity';
 $route['Service/commentActivityFeed/'.ANY_STRING] = 'service/comment_activity/$1';
+$route['Service/commentActivityFeed'] = 'service/comment_activity';
 $route['Service/reset_point'] = 'service/reset_point';
 
 //Quest
