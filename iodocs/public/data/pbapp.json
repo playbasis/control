@@ -1972,6 +1972,22 @@
                     ]
                 },
                 {
+                    "MethodName": "Detail Activity",
+                    "Synopsis": "Get detail activity",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/detailActivityFeed/:activity_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "activity_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id of the activity"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Like Activity",
                     "Synopsis": "Like activity",
                     "HTTPMethod": "POST",
