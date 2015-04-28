@@ -224,7 +224,7 @@ class Service_model extends MY_Model
 
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'action_name', 'from_pb_player_id'));
+        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'action_name', 'url', 'from_pb_player_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
 
         $event_log = $this->mongo_db->get('playbasis_event_log');
@@ -312,6 +312,28 @@ class Service_model extends MY_Model
                 $event['action_name'] = 'quiz_reward';
                 $event['action_icon'] = 'fa-bar-chart';
                 unset($event['quiz_id']);
+            }
+
+            if(isset($event['url'])){
+                switch ($event['action_name']) {
+                case COMPLETE_QUEST_ACTION:
+                    $quest_id = new MongoId($event['url']);
+                    $event['quest'] = $this->getQuest(array_merge($this->validToken, array('quest_id' => $quest_id)));
+                    unset($event['url']);
+                    break;
+                case COMPLETE_MISSION_ACTION:
+                    $mission_id = new MongoId($event['url']);
+                    $event['mission'] = $this->getMission(array_merge($this->validToken, array('mission_id' => $mission_id)));
+                    unset($event['url']);
+                    break;
+                case COMPLETE_QUIZ_ACTION:
+                    $quiz_id = new MongoId($event['url']);
+                    $event['quiz'] = $this->getQuiz($this->client_id, $site_id, $quiz_id);
+                    unset($event['url']);
+                    break;
+                default:
+                    break;
+                }
             }
 
             if (isset($event['reward_id'])) {
@@ -525,6 +547,83 @@ class Service_model extends MY_Model
         }
 
         return $ret;
+    }
+
+    /* copied from quest_model as model cannot call each other */
+    public function getQuest($data, $test=NULL)
+    {
+        //get quest
+        $this->set_site_mongodb($data['site_id']);
+
+        $criteria = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            '_id' => $data['quest_id'],
+        );
+
+        if (!$test)
+            $criteria["status"] = true;
+
+        $this->mongo_db->where($criteria);
+        //$this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
+
+        $result = $this->mongo_db->get('playbasis_quest_to_client');
+
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+        return $result;
+    }
+
+    /* copied from quest_model as model cannot call each other */
+    public function getMission($data)
+    {
+        //get mission
+        $this->set_site_mongodb($data['site_id']);
+
+        $this->mongo_db->select(array('missions.$'));
+        $this->mongo_db->where(array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            //'_id' => $data['quest_id'],
+            'missions.mission_id' => $data['mission_id'],
+            'status' => true
+        ));
+        //$this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_quest_to_client');
+
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+        return $result;
+    }
+
+    /* copied from quiz_model (find_by_id) as model cannot call each other */
+    public function getQuiz($client_id, $site_id, $quiz_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('name', 'image', 'status', 'description', 'deleted'));
+        $this->mongo_db->where('_id', $quiz_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $results = $this->mongo_db->get('playbasis_quiz_to_client');
+
+        $result = null;
+        if ($results) {
+            $result = $results[0];
+
+            if(!empty($result['image'])){
+                $pattern = '#^'.$this->config->item('IMG_PATH').'#';
+                preg_match($pattern, $result['image'], $matches);
+                if(!$matches){
+                    $result['image'] = $this->config->item('IMG_PATH').$result['image'];
+                }
+            }else{
+                $result['image'] = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+            unset($result['_id']);
+        }
+        return $result;
     }
 }
 ?>
