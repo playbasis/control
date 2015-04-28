@@ -1908,6 +1908,36 @@
                     "MethodName": "Recent Activities",
                     "Synopsis": "Returns recent activities",
                     "HTTPMethod": "GET",
+                    "URI": "/Service/recentActivities",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "show_social",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "true | false, to attach social events on the activity feed"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Recent Activities of Player",
+                    "Synopsis": "Returns recent activities of a player",
+                    "HTTPMethod": "GET",
                     "URI": "/Service/recentActivities/:player_id",
                     "RequiresOAuth": "N",
                     "parameters": [
@@ -1949,6 +1979,13 @@
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
                             "Name": "activity_id",
                             "Required": "Y",
                             "Default": "",
@@ -1971,6 +2008,13 @@
                     "URI": "/Service/commentActivityFeed/:activity_id",
                     "RequiresOAuth": "N",
                     "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
                         {
                             "Name": "activity_id",
                             "Required": "Y",
