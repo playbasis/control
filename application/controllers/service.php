@@ -233,6 +233,17 @@ class Service extends REST2_Controller
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 
+    public function detail_activity_get($activity_id='')
+    {
+        if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
+        $event_id = new MongoId($activity_id);
+        $activity = $this->service_model->getEventById($this->site_id, $event_id);
+        if (!$activity) $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
+
+        $respondThis['activity'] = $this->service_model->getSocialActivitiesOfEventId($this->client_id, $this->site_id, $event_id);
+        $this->response($this->resp->setRespond($respondThis), 200);
+    }
+
     public function like_activity_post($activity_id='')
     {
         if (!$activity_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
