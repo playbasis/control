@@ -223,7 +223,7 @@ class Service_model extends MY_Model
 
         $this->mongo_db->limit((int)$limit);
         $this->mongo_db->offset((int)$offset);
-        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'action_name', 'url', 'from_pb_player_id'));
+        $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'quiz_id', 'action_name', 'url', 'event_type', 'event_id', 'from_pb_player_id'));
         $this->mongo_db->order_by(array('date_added' => -1));
 
         $event_log = $this->mongo_db->get('playbasis_event_log');
@@ -233,7 +233,7 @@ class Service_model extends MY_Model
         $ids = array();
         $date_added = null;
         foreach($event_log as $key => &$event){
-            array_push($ids, $event['_id']);
+            $ids[$key] = $event['_id'];
             if (!$date_added) $date_added = $event['date_added'];
             $event = $this->format($site_id, $event);
             if (isset($event['player']) && empty($event['player'])) unset($event_log[$key]);
@@ -241,9 +241,9 @@ class Service_model extends MY_Model
         }
 
         if(!$pb_player_id && $ids){
-            $this->mongo_db->select(array('action_name', 'message', 'date_added', 'pb_player_id', 'from_pb_player_id'));
+            $this->mongo_db->select(array('action_name', 'message', 'date_added', 'pb_player_id', 'from_pb_player_id', 'event_id'));
             $this->mongo_db->where('event_type', 'SOCIAL');
-            $this->mongo_db->where_in('event_id', $ids);
+            $this->mongo_db->where_in('event_id', array_values($ids));
             $this->mongo_db->where_gte('date_added', $date_added);
             $results = $this->mongo_db->get('playbasis_event_log');
             /* TODO */
