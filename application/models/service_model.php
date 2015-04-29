@@ -349,6 +349,7 @@ class Service_model extends MY_Model
         if(isset($event['goods_id']) && $event['goods_id']){
             $event['action_name'] = 'redeem_goods';
             $event['action_icon'] = 'fa-gift';
+            $event['goods'] = $this->getGoods(array('site_id' => $site_id, 'goods_id' => $event['goods_id']));
             unset($event['goods_id']);
         }
         if(isset($event['quiz_id']) && $event['quiz_id']){
@@ -601,6 +602,41 @@ class Service_model extends MY_Model
         }
 
         return $ret;
+    }
+
+    /* copied from goods_model as model cannot call each other */
+    public function getGoods($data)
+    {
+        //get goods id
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('goods_id','image','name','description','date_start','date_expire','sponsor'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where(array(
+            //'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'goods_id' => $data['goods_id'],
+            //'deleted' => false
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+
+        if(isset($result[0]['goods_id']))
+        {
+            $result[0]['goods_id'] = $result[0]['goods_id']."";
+        }
+        if(isset($result[0]['date_start']))
+        {
+            $result[0]['date_start'] = datetimeMongotoReadable($result[0]['date_start']);
+        }
+        if(isset($result[0]['date_expire']))
+        {
+            $result[0]['date_expire'] = datetimeMongotoReadable($result[0]['date_expire']);
+        }
+        if(isset($result[0]['image']))
+        {
+            $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
+        }
+        return $result ? $result[0] : array();
     }
 
     /* copied from quest_model as model cannot call each other */
