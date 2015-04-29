@@ -361,12 +361,12 @@ class Service_model extends MY_Model
             switch ($event['action_name']) {
                 case COMPLETE_QUEST_ACTION:
                     $quest_id = new MongoId($event['url']);
-                    $event['quest'] = $this->getQuest(array_merge($this->validToken, array('quest_id' => $quest_id)));
+                    $event['quest'] = $this->getQuest(array('site_id' => $site_id, 'quest_id' => $quest_id));
                     unset($event['url']);
                     break;
                 case COMPLETE_MISSION_ACTION:
                     $mission_id = new MongoId($event['url']);
-                    $event['mission'] = $this->getMission(array_merge($this->validToken, array('mission_id' => $mission_id)));
+                    $event['mission'] = $this->getMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
                     unset($event['url']);
                     break;
                 case COMPLETE_QUIZ_ACTION:
@@ -610,7 +610,7 @@ class Service_model extends MY_Model
         $this->set_site_mongodb($data['site_id']);
 
         $criteria = array(
-            'client_id' => $data['client_id'],
+            //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             '_id' => $data['quest_id'],
         );
@@ -638,7 +638,7 @@ class Service_model extends MY_Model
 
         $this->mongo_db->select(array('missions.$'));
         $this->mongo_db->where(array(
-            'client_id' => $data['client_id'],
+            //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             //'_id' => $data['quest_id'],
             'missions.mission_id' => $data['mission_id'],
@@ -678,6 +678,18 @@ class Service_model extends MY_Model
             unset($result['_id']);
         }
         return $result;
+    }
+
+    private function change_image_path(&$item, $key)
+    {
+        if($key === "image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+
+        }
     }
 }
 ?>
