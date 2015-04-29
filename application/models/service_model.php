@@ -285,7 +285,10 @@ class Service_model extends MY_Model
 
     private function format($site_id, $event) {
         $event['_id'] = $event['_id']."";
-        $event['date_added'] = datetimeMongotoReadable($event['date_added']);
+
+        if (isset($event['date_added'])) {
+            $event['date_added'] = datetimeMongotoReadable($event['date_added']);
+        }
 
         if (isset($event['pb_player_id'])) {
             $this->mongo_db->where('_id', $event['pb_player_id']);
