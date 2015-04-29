@@ -233,23 +233,42 @@ class Service_model extends MY_Model
         $ids = array();
         $date_added = null;
         foreach($event_log as $key => &$event){
-            $ids[$key] = $event['_id'];
-            if (!$date_added) $date_added = $event['date_added'];
+            $ids[$event['_id'].""] = count($events_output)-1;
+            $date_added = $event['date_added'];
             $event = $this->format($site_id, $event);
             if (isset($event['player']) && empty($event['player'])) unset($event_log[$key]);
             array_push($events_output, $event);
         }
 
         if(!$pb_player_id && $ids){
-            $this->mongo_db->select(array('action_name', 'message', 'date_added', 'pb_player_id', 'from_pb_player_id', 'event_id'));
+            $this->mongo_db->select(array('action_name', 'event_id'));
             $this->mongo_db->where('event_type', 'SOCIAL');
-            $this->mongo_db->where_in('event_id', array_values($ids));
+            $this->mongo_db->where_in('event_id', $this->getArrayKeysInMongoId($ids));
             $this->mongo_db->where_gte('date_added', $date_added);
             $results = $this->mongo_db->get('playbasis_event_log');
-            /* TODO */
+            $group = array();
+            if ($results) foreach ($results as $event) {
+                $key = $event['event_id']."";
+                $event = $this->format($site_id, $event);
+                if (!array_key_exists($key, $group)) $group[$key] = array();
+                if (!array_key_exists($event['action_name'], $group[$key])) $group[$key][$event['action_name']] = 0;
+                $group[$key][$event['action_name']]++;
+            }
+            foreach ($group as $key => $value) {
+                $idx = $ids[$key];
+                $events_output[$idx]['socials'] = $value;
+            }
         }
 
         return $events_output;
+    }
+
+    private function getArrayKeysInMongoId($arr) {
+        $results = array();
+        foreach (array_keys($arr) as $value) {
+            array_push($results, new MongoId($value));
+        }
+        return $results;
     }
 
     private function format($site_id, $event) {
