@@ -244,7 +244,7 @@ class Service_model extends MY_Model
         $ids = array();
         $date_added = null;
         foreach($event_log as $key => &$event){
-            $ids[$event['_id'].""] = count($events_output)-1;
+            $ids[$event['_id'].""] = count($events_output);
             $date_added = $event['date_added'];
             if ($last_read) $event['have_read'] = $last_read->sec >= $date_added->sec;
             $event = $this->format($site_id, $event);
