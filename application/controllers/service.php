@@ -225,11 +225,10 @@ class Service extends REST2_Controller
         $offset = ($this->input->get('offset'))?$this->input->get('offset'):0;
         $limit = ($this->input->get('limit'))?$this->input->get('limit'):50;
 
-        $show_social = ($this->input->get('show_social'))?$this->input->get('show_social'):false;
         $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
         if ($player_id && !$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-        $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset, $limit > 500 ? 500 : $limit, $pb_player_id, $show_social);
+        $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset, $limit > 500 ? 500 : $limit, $pb_player_id);
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 
@@ -240,7 +239,7 @@ class Service extends REST2_Controller
         $activity = $this->service_model->getEventById($this->site_id, $event_id);
         if (!$activity) $this->response($this->error->setError('EVENT_NOT_EXIST'), 200);
 
-        $respondThis['activity'] = $this->service_model->getSocialActivitiesOfEventId($this->client_id, $this->site_id, $event_id);
+        $respondThis['activity'] = $this->service_model->getSocialActivitiesOfEventId($this->site_id, $event_id);
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 

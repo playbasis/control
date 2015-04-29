@@ -1902,7 +1902,7 @@
             ]
         },
         {
-            "name": "Service API",
+            "name": "Live Feed API",
             "methods": [
                 {
                     "MethodName": "Recent Activities",
@@ -1924,13 +1924,6 @@
                             "Default": "20",
                             "Type": "integer",
                             "Description": "number of results to return"
-                        },
-                        {
-                            "Name": "show_social",
-                            "Required": "N",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "true | false, to attach social events on the activity feed"
                         }
                     ]
                 },
@@ -1941,6 +1934,13 @@
                     "URI": "/Service/recentActivities/:player_id",
                     "RequiresOAuth": "N",
                     "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
                         {
                             "Name": "offset",
                             "Required": "N",
@@ -1954,20 +1954,6 @@
                             "Default": "20",
                             "Type": "integer",
                             "Description": "number of results to return"
-                        },
-                        {
-                            "Name": "player_id",
-                            "Required": "N",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "player id as used in client's website"
-                        },
-                        {
-                            "Name": "show_social",
-                            "Required": "N",
-                            "Default": "",
-                            "Type": "string",
-                            "Description": "true | false, to attach social events on the activity feed"
                         }
                     ]
                 },
@@ -2053,7 +2039,12 @@
                             "Description": "comment message"
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "name": "Service API",
+            "methods": [
                 {
                     "MethodName": "Recent Point",
                     "Synopsis": "Returns recent points",
