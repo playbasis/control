@@ -18,6 +18,15 @@ class Service_model extends MY_Model
         return $results ? $results[0] : array();
     }
 
+    public function getDateAddedOfEventById($site_id, $event_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('date_added'));
+        $this->mongo_db->where('_id', $event_id);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_event_log');
+        return $results ? $results[0]['date_added'] : array();
+    }
+
     public function getRecentPoint($site_id, $reward_id, $pb_player_id, $offset, $limit, $show_login=false, $show_quest=false, $show_redeem=false, $show_quiz=false){
 
         $this->set_site_mongodb($site_id);
@@ -206,8 +215,10 @@ class Service_model extends MY_Model
         return $events_output;
     }
 
-    public function getRecentActivities($site_id, $offset, $limit, $pb_player_id=null){
+    public function getRecentActivities($site_id, $offset, $limit, $pb_player_id=null, $last_read_activity_id=null){
         $this->set_site_mongodb($site_id);
+
+        $last_read = $last_read_activity_id ? $this->getDateAddedOfEventById($site_id, $last_read_activity_id) : null;
 
         $event_type = array('REWARD', 'REDEEM', 'ACTION');
         if ($pb_player_id) {
@@ -235,6 +246,7 @@ class Service_model extends MY_Model
         foreach($event_log as $key => &$event){
             $ids[$event['_id'].""] = count($events_output)-1;
             $date_added = $event['date_added'];
+            if ($last_read) $event['have_read'] = $last_read->sec >= $date_added->sec;
             $event = $this->format($site_id, $event);
             if (isset($event['player']) && empty($event['player'])) unset($event_log[$key]);
             array_push($events_output, $event);
