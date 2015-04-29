@@ -206,14 +206,13 @@ class Service_model extends MY_Model
         return $events_output;
     }
 
-    public function getRecentActivities($site_id, $offset, $limit, $pb_player_id=null, $show_social=false){
+    public function getRecentActivities($site_id, $offset, $limit, $pb_player_id=null){
         $this->set_site_mongodb($site_id);
 
         $event_type = array('REWARD', 'REDEEM', 'ACTION');
-        if ($show_social) {
+        if ($pb_player_id) {
             $event_type[] = 'SOCIAL';
         }
-
         $this->mongo_db->where_in('event_type', $event_type);
 
         if ($pb_player_id) {
@@ -236,12 +235,12 @@ class Service_model extends MY_Model
         foreach($event_log as $key => &$event){
             array_push($ids, $event['_id']);
             if (!$date_added) $date_added = $event['date_added'];
-            $event = $this->format($this->client_id, $site_id, $event);
+            $event = $this->format($site_id, $event);
             if (isset($event['player']) && empty($event['player'])) unset($event_log[$key]);
             array_push($events_output, $event);
         }
 
-        if(!$show_social && $ids){
+        if(!$pb_player_id && $ids){
             $this->mongo_db->select(array('action_name', 'message', 'date_added', 'pb_player_id', 'from_pb_player_id'));
             $this->mongo_db->where('event_type', 'SOCIAL');
             $this->mongo_db->where_in('event_id', $ids);
@@ -253,7 +252,7 @@ class Service_model extends MY_Model
         return $events_output;
     }
 
-    private function format($client_id, $site_id, $event) {
+    private function format($site_id, $event) {
         $event['_id'] = $event['_id']."";
         $event['date_added'] = datetimeMongotoReadable($event['date_added']);
 
@@ -338,7 +337,7 @@ class Service_model extends MY_Model
                     break;
                 case COMPLETE_QUIZ_ACTION:
                     $quiz_id = new MongoId($event['url']);
-                    $event['quiz'] = $this->getQuiz($client_id, $site_id, $quiz_id);
+                    $event['quiz'] = $this->getQuiz($site_id, $quiz_id);
                     unset($event['url']);
                     break;
                 default:
@@ -375,7 +374,7 @@ class Service_model extends MY_Model
         return $event;
     }
 
-    public function getSocialActivitiesOfEventId($client_id, $site_id, $event_id) {
+    public function getSocialActivitiesOfEventId($site_id, $event_id) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('reward_id', 'reward_name', 'item_id', 'value', 'message', 'date_added','action_log_id', 'pb_player_id', 'quest_id', 'mission_id', 'goods_id', 'event_type', 'quiz_id', 'action_name', 'url', 'from_pb_player_id'));
         $this->mongo_db->where('_id', $event_id);
@@ -383,14 +382,14 @@ class Service_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_event_log');
         $resp = null;
         if ($results) {
-            $resp = $this->format($client_id, $site_id, $results[0]);
+            $resp = $this->format($site_id, $results[0]);
             $this->mongo_db->select(array('action_name', 'message', 'date_added', 'pb_player_id', 'from_pb_player_id'));
             $this->mongo_db->where('event_type', 'SOCIAL');
             $this->mongo_db->where('event_id', $event_id);
             $this->mongo_db->where_gte('date_added', $results[0]['date_added']);
             $results = $this->mongo_db->get('playbasis_event_log');
             if ($results) foreach ($results as &$event) {
-                $event = $this->format($client_id, $site_id, $event);
+                $event = $this->format($site_id, $event);
             }
             $resp['socials'] = $results;
         }
@@ -622,7 +621,7 @@ class Service_model extends MY_Model
     }
 
     /* copied from quiz_model (find_by_id) as model cannot call each other */
-    public function getQuiz($client_id, $site_id, $quiz_id) {
+    public function getQuiz($site_id, $quiz_id) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('name', 'image', 'status', 'description', 'deleted'));
         $this->mongo_db->where('_id', $quiz_id);
