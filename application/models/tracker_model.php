@@ -76,6 +76,7 @@ class Tracker_model extends MY_Model
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
             'event_type'	=> 'SOCIAL',
+            'event_id'		=> $input['event_id'],
             'from_pb_player_id'	=> $input['from_pb_player_id'],
             'action_name'	=> (isset($input['action_name']))	? $input['action_name']	: null,
             'message'		=> (isset($input['message']))	? $input['message']	: null,
