@@ -251,11 +251,11 @@ class Service extends REST2_Controller
         $player_id = ($this->input->post('player_id'));
         if (!$player_id) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         $from_pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
-        $pb_player_id = $activity['pb_player_id'];
         $this->tracker_model->trackSocial(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
-            'pb_player_id' => $pb_player_id,
+            'event_id' => $activity['_id'],
+            'pb_player_id' => $activity['pb_player_id'],
             'from_pb_player_id' => $from_pb_player_id,
             'action_name' => 'like',
             'message' => null,
@@ -271,14 +271,14 @@ class Service extends REST2_Controller
         $player_id = ($this->input->post('player_id'));
         if (!$player_id) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         $from_pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
-        $pb_player_id = $activity['pb_player_id'];
         $this->tracker_model->trackSocial(array(
             'client_id' => $this->client_id,
             'site_id' => $this->site_id,
-            'pb_player_id' => $pb_player_id,
+            'event_id' => $activity['_id'],
+            'pb_player_id' => $activity['pb_player_id'],
             'from_pb_player_id' => $from_pb_player_id,
             'action_name' => 'comment',
-            'message' => $this->input->post('message'),
+            'message' => $this->input->post('message') ? $this->input->post('message') : null,
         ));
         $this->response($this->resp->setRespond(array('result' => true)), 200);
     }
