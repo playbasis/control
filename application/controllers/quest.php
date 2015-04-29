@@ -2,9 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 
-define('COMPLETE_MISSION_ACTION', 'complete-mission');
-define('COMPLETE_QUEST_ACTION', 'complete-quest');
-
 class Quest extends REST2_Controller
 {
     public function __construct()

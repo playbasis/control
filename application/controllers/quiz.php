@@ -2,8 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 
-define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
-
 function index_weight($obj) {
     return $obj['weight'];
 }
