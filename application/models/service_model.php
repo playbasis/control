@@ -244,7 +244,7 @@ class Service_model extends MY_Model
         $ids = array();
         $date_added = null;
         foreach($event_log as $key => &$event){
-            $ids[$event['_id'].""] = count($events_output)-1;
+            $ids[$event['_id'].""] = count($events_output);
             $date_added = $event['date_added'];
             if ($last_read) $event['have_read'] = $last_read->sec >= $date_added->sec;
             $event = $this->format($site_id, $event);
@@ -285,7 +285,10 @@ class Service_model extends MY_Model
 
     private function format($site_id, $event) {
         $event['_id'] = $event['_id']."";
-        $event['date_added'] = datetimeMongotoReadable($event['date_added']);
+
+        if (isset($event['date_added'])) {
+            $event['date_added'] = datetimeMongotoReadable($event['date_added']);
+        }
 
         if (isset($event['pb_player_id'])) {
             $this->mongo_db->where('_id', $event['pb_player_id']);
@@ -346,6 +349,7 @@ class Service_model extends MY_Model
         if(isset($event['goods_id']) && $event['goods_id']){
             $event['action_name'] = 'redeem_goods';
             $event['action_icon'] = 'fa-gift';
+            $event['goods'] = $this->getGoods(array('site_id' => $site_id, 'goods_id' => $event['goods_id']));
             unset($event['goods_id']);
         }
         if(isset($event['quiz_id']) && $event['quiz_id']){
@@ -358,12 +362,12 @@ class Service_model extends MY_Model
             switch ($event['action_name']) {
                 case COMPLETE_QUEST_ACTION:
                     $quest_id = new MongoId($event['url']);
-                    $event['quest'] = $this->getQuest(array_merge($this->validToken, array('quest_id' => $quest_id)));
+                    $event['quest'] = $this->getQuest(array('site_id' => $site_id, 'quest_id' => $quest_id));
                     unset($event['url']);
                     break;
                 case COMPLETE_MISSION_ACTION:
                     $mission_id = new MongoId($event['url']);
-                    $event['mission'] = $this->getMission(array_merge($this->validToken, array('mission_id' => $mission_id)));
+                    $event['mission'] = $this->getMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
                     unset($event['url']);
                     break;
                 case COMPLETE_QUIZ_ACTION:
@@ -600,6 +604,41 @@ class Service_model extends MY_Model
         return $ret;
     }
 
+    /* copied from goods_model as model cannot call each other */
+    public function getGoods($data)
+    {
+        //get goods id
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array('goods_id','image','name','description','date_start','date_expire','sponsor'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where(array(
+            //'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'goods_id' => $data['goods_id'],
+            //'deleted' => false
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_goods_to_client');
+
+        if(isset($result[0]['goods_id']))
+        {
+            $result[0]['goods_id'] = $result[0]['goods_id']."";
+        }
+        if(isset($result[0]['date_start']))
+        {
+            $result[0]['date_start'] = datetimeMongotoReadable($result[0]['date_start']);
+        }
+        if(isset($result[0]['date_expire']))
+        {
+            $result[0]['date_expire'] = datetimeMongotoReadable($result[0]['date_expire']);
+        }
+        if(isset($result[0]['image']))
+        {
+            $result[0]['image'] = $this->config->item('IMG_PATH') . $result[0]['image'];
+        }
+        return $result ? $result[0] : array();
+    }
+
     /* copied from quest_model as model cannot call each other */
     public function getQuest($data, $test=NULL)
     {
@@ -607,7 +646,7 @@ class Service_model extends MY_Model
         $this->set_site_mongodb($data['site_id']);
 
         $criteria = array(
-            'client_id' => $data['client_id'],
+            //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             '_id' => $data['quest_id'],
         );
@@ -635,7 +674,7 @@ class Service_model extends MY_Model
 
         $this->mongo_db->select(array('missions.$'));
         $this->mongo_db->where(array(
-            'client_id' => $data['client_id'],
+            //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             //'_id' => $data['quest_id'],
             'missions.mission_id' => $data['mission_id'],
@@ -675,6 +714,18 @@ class Service_model extends MY_Model
             unset($result['_id']);
         }
         return $result;
+    }
+
+    private function change_image_path(&$item, $key)
+    {
+        if($key === "image"){
+            if(!empty($item)){
+                $item = $this->config->item('IMG_PATH').$item;
+            }else{
+                $item = $this->config->item('IMG_PATH')."no_image.jpg";
+            }
+
+        }
     }
 }
 ?>
