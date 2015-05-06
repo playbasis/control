@@ -368,6 +368,7 @@ class Service_model extends MY_Model
                 case COMPLETE_MISSION_ACTION:
                     $mission_id = new MongoId($event['url']);
                     $event['mission'] = $this->getMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
+                    $event['quest'] = $this->getQuestByMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
                     unset($event['url']);
                     break;
                 case COMPLETE_QUIZ_ACTION:
@@ -649,10 +650,8 @@ class Service_model extends MY_Model
             //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             '_id' => $data['quest_id'],
+            //'status' => true
         );
-
-        if (!$test)
-            $criteria["status"] = true;
 
         $this->mongo_db->where($criteria);
         //$this->mongo_db->where_ne('deleted', true);
@@ -678,7 +677,30 @@ class Service_model extends MY_Model
             'site_id' => $data['site_id'],
             //'_id' => $data['quest_id'],
             'missions.mission_id' => $data['mission_id'],
-            'status' => true
+            //'status' => true
+        ));
+        //$this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_quest_to_client');
+
+        $result = $result ? $result[0] : array();
+
+        array_walk_recursive($result, array($this, "change_image_path"));
+        return $result;
+    }
+
+    /* copied from quest_model as model cannot call each other */
+    public function getQuestByMission($data)
+    {
+        //get mission
+        $this->set_site_mongodb($data['site_id']);
+
+        $this->mongo_db->where(array(
+            //'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            //'_id' => $data['quest_id'],
+            'missions.mission_id' => $data['mission_id'],
+            //'status' => true
         ));
         //$this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
