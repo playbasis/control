@@ -758,7 +758,7 @@ class Quest extends REST2_Controller
     }
 
     private function trackQuest($player_id, $validToken, $data_reward, $quest_id, $mission_id=null){
-        if($data_reward['reward_type'] == 'CUSTOM_POINT'){
+        if($data_reward['reward_type'] == 'CUSTOM_POINT' || $data_reward['reward_type'] == 'EXP'){
             $reward_type = 'point';
         }else{
             $reward_type = strtolower($data_reward['reward_type']);
