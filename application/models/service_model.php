@@ -218,7 +218,7 @@ class Service_model extends MY_Model
     public function getRecentActivities($site_id, $offset, $limit, $pb_player_id=null, $last_read_activity_id=null){
         $this->set_site_mongodb($site_id);
 
-        $last_read = $last_read_activity_id ? $this->getDateAddedOfEventById($site_id, $last_read_activity_id) : null;
+        $last_read = $last_read_activity_id ? $this->getDateAddedOfEventById($site_id, new MongoId($last_read_activity_id)) : null;
 
         $event_type = array('REWARD', 'REDEEM', 'ACTION');
         if ($pb_player_id) {
