@@ -60,6 +60,7 @@
                 Please set up your Jive community with Playbasis first.
             <?php } ?>
         </div><!-- .content -->
+        <?php if (isset($jive)) { ?>
         <div class="pagination">
             <ul class='ul_rule_pagination_container'>
                 <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
@@ -67,5 +68,6 @@
                 <?php echo $pagination_links; ?>
             </ul>
         </div>
+        <?php } ?>
     </div><!-- .box -->
 </div><!-- #content .span10 -->
