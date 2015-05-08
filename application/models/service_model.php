@@ -683,7 +683,8 @@ class Service_model extends MY_Model
         //get mission
         $this->set_site_mongodb($data['site_id']);
 
-        $this->mongo_db->select(array('missions.$.mission_id', 'missions.$.mission_name', 'missions.$.mission_number', 'missions.$.description', 'missions.$.image'));
+        //$this->mongo_db->select(array('missions.$.mission_id', 'missions.$.mission_name', 'missions.$.mission_number', 'missions.$.description', 'missions.$.image'));
+        $this->mongo_db->select(array('missions.$'));
         $this->mongo_db->where(array(
             //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -699,7 +700,12 @@ class Service_model extends MY_Model
 
         if ($result) {
             array_walk_recursive($result, array($this, "change_image_path"));
-            $result['mission_id'] = $result['mission_id']."";
+            if (isset($result['missions'])) foreach ($result['missions'] as &$mission) {
+                $mission['mission_id'] = $mission['mission_id']."";
+                unset($mission['hint']);
+                unset($mission['completion']);
+                unset($mission['rewards']);
+            }
         }
 
         return $result;
