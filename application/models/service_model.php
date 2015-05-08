@@ -698,14 +698,13 @@ class Service_model extends MY_Model
 
         $result = $result ? $result[0] : array();
 
-        if ($result) {
+        if ($result && isset($result['missions'])) {
+            $result = $result['missions'][0];
             array_walk_recursive($result, array($this, "change_image_path"));
-            if (isset($result['missions'])) foreach ($result['missions'] as &$mission) {
-                $mission['mission_id'] = $mission['mission_id']."";
-                unset($mission['hint']);
-                unset($mission['completion']);
-                unset($mission['rewards']);
-            }
+            $result['mission_id'] = $result['mission_id']."";
+            unset($result['hint']);
+            unset($result['completion']);
+            unset($result['rewards']);
         }
 
         return $result;
