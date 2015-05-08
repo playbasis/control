@@ -284,7 +284,14 @@ class Service_model extends MY_Model
     }
 
     private function format($site_id, $event) {
-        $event['_id'] = $event['_id']."";
+        if (isset($event['_id'])) {
+            $event['id'] = $event['_id']."";
+            unset($event['_id']);
+        }
+
+        if (isset($event['event_id'])) {
+            $event['event_id'] = $event['event_id']."";
+        }
 
         if (isset($event['date_added'])) {
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
@@ -645,7 +652,7 @@ class Service_model extends MY_Model
     {
         //get quest
         $this->set_site_mongodb($data['site_id']);
-
+        $this->mongo_db->select(array('quest_name', 'image', 'status', 'description', 'deleted'));
         $criteria = array(
             //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -661,7 +668,12 @@ class Service_model extends MY_Model
 
         $result = $result ? $result[0] : array();
 
-        array_walk_recursive($result, array($this, "change_image_path"));
+        if ($result) {
+            array_walk_recursive($result, array($this, "change_image_path"));
+            $result['id'] = $result['_id']."";
+            unset($result['_id']);
+        }
+
         return $result;
     }
 
@@ -671,7 +683,7 @@ class Service_model extends MY_Model
         //get mission
         $this->set_site_mongodb($data['site_id']);
 
-        $this->mongo_db->select(array('missions.$'));
+        $this->mongo_db->select(array('missions.$.mission_id', 'missions.$.mission_name', 'missions.$.mission_number', 'missions.$.description', 'missions.$.image'));
         $this->mongo_db->where(array(
             //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -685,7 +697,11 @@ class Service_model extends MY_Model
 
         $result = $result ? $result[0] : array();
 
-        array_walk_recursive($result, array($this, "change_image_path"));
+        if ($result) {
+            array_walk_recursive($result, array($this, "change_image_path"));
+            $result['mission_id'] = $result['mission_id']."";
+        }
+
         return $result;
     }
 
@@ -694,7 +710,7 @@ class Service_model extends MY_Model
     {
         //get mission
         $this->set_site_mongodb($data['site_id']);
-
+        $this->mongo_db->select(array('quest_name', 'image', 'status', 'description', 'deleted'));
         $this->mongo_db->where(array(
             //'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
@@ -708,7 +724,12 @@ class Service_model extends MY_Model
 
         $result = $result ? $result[0] : array();
 
-        array_walk_recursive($result, array($this, "change_image_path"));
+        if ($result) {
+            array_walk_recursive($result, array($this, "change_image_path"));
+            $result['id'] = $result['_id']."";
+            unset($result['_id']);
+        }
+
         return $result;
     }
 
@@ -733,6 +754,8 @@ class Service_model extends MY_Model
             }else{
                 $result['image'] = $this->config->item('IMG_PATH')."no_image.jpg";
             }
+
+            $result['id'] = $result['_id']."";
             unset($result['_id']);
         }
         return $result;
