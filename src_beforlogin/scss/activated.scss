@@ -10,3 +10,37 @@
 		margin-right: auto;
 	}
 }
+
+// account-verify-wrapper
+.account-verify-wrapper {
+	.modal-card-head > img{
+		margin-top: 10px;
+	}
+	.form{
+		input.form-control{
+		  height: 35px;
+		  width: auto;
+		  display: inline;
+		  border-radius: 0;
+		}
+		.input-group{
+		  margin-left: auto;
+		  margin-right: auto;
+		  button{
+		    background: #f05a1b;
+		    border-radius: 0;
+		    border: none;
+		    height: 35px;
+		    line-height: 35px;
+		    padding: 0 12px;
+		  }
+		}
+		input.code-input{
+		  width: 120px;
+		}
+		.error{
+			color: #f05a1b;
+			font-size: 12px;
+		}
+	}
+}

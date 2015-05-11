@@ -573,7 +573,7 @@ class Account extends MY_Controller
 		$this->data['form'] = 'account/setup_mobile';
 
 		$this->load->vars($this->data);
-		$this->render_page('template');
+		$this->render_page('template_beforelogin');
 	}
 
 	public function request_code() {

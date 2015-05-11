@@ -424,7 +424,7 @@ table {
 
 .pbf-form {
   padding: 10px;
-  color: white;
+  color: #fff;
   background: #556270;
 }
 .pbf-form fieldset {
@@ -487,7 +487,7 @@ table {
   width: 100%;
   padding: 6px;
   box-sizing: border-box;
-  background: white;
+  background: #fff;
   border-radius: 5px;
   border: transparent solid 5px;
   transition: all .5s ease-in-out;
@@ -601,7 +601,6 @@ table {
   0% {
     bottom: 10px;
   }
-
   100% {
     bottom: 36px;
   }
@@ -688,7 +687,6 @@ table {
     padding: 0;
     margin: 0 0 0;
   }
-
   60% {
     opacity: 0;
     transform: scale(0);
@@ -696,7 +694,6 @@ table {
     padding: 20px;
     margin: 0 0 20px;
   }
-
   100% {
     opacity: 1;
     transform: scale(1);
@@ -713,7 +710,6 @@ table {
     padding: 20px;
     margin: 0 0 20px;
   }
-
   40% {
     opacity: 0;
     transform: scale(0);
@@ -721,7 +717,6 @@ table {
     padding: 20px;
     margin: 0 0 20px;
   }
-
   100% {
     opacity: 0;
     transform: scale(0);
@@ -940,6 +935,35 @@ table {
   margin-right: auto;
 }
 
+.account-verify-wrapper .modal-card-head > img {
+  margin-top: 10px;
+}
+.account-verify-wrapper .form input.form-control {
+  height: 35px;
+  width: auto;
+  display: inline;
+  border-radius: 0;
+}
+.account-verify-wrapper .form .input-group {
+  margin-left: auto;
+  margin-right: auto;
+}
+.account-verify-wrapper .form .input-group button {
+  background: #f05a1b;
+  border-radius: 0;
+  border: none;
+  height: 35px;
+  line-height: 35px;
+  padding: 0 12px;
+}
+.account-verify-wrapper .form input.code-input {
+  width: 120px;
+}
+.account-verify-wrapper .form .error {
+  color: #f05a1b;
+  font-size: 12px;
+}
+
 /* ==========================================================================
    Modal Card
 /* ========================================================================== */
@@ -988,37 +1012,4 @@ table {
   }
 }
 
-
-/* something wrong page*/
-.somethingwrong-page {
-    width: 100%;
-    padding: 0;
-    overflow: hidden;
-    position: relative;
-    border-radius: 10px;
-    background: #556270;
-}
-
-.somethingwrong-benefits {
-    width: 100%;
-    float: left;
-    z-index: 1;
-    position: relative;
-    color: #fff;
-}
-
-#pb-registration .somethingwrong-benefits .benefits-block h4{
-    color: #ff5b16;
-}
-
-.somethingwrong-benefits .benefits-block{
-    min-height: 100px;
-}
-
-
-@media (min-width: 768px){
-    #pb-registration .registration-benefits .somethingwrong-benefits {
-        width: 37.5%;
-    }
-}
-
+/*# sourceMappingURL=styles.css.map */
