@@ -115,24 +115,28 @@ class Dashboard extends MY_Controller
         /* check to see if 'dashboard' menu is enabled for non-superadmin users */
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
             $this->load->model('Feature_model');
-            if ($this->User_model->getSiteId()) {
-                $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
-                $is_default_enabled = $this->is_default_enabled($features);
-                if (!$is_default_enabled) {
-                    $second_default = $this->find_second_default($features);
-                    if ($second_default) redirect('/'.$second_default, 'refresh'); /* if it isn't, then we select second menu for the user */
-                }
-            } else {
-                $user_plan = $this->User_model->getPlan();
-                if (!empty($user_plan)) {
-                    if (array_key_exists('feature_to_plan', $user_plan)) {
-                        if (is_array($user_plan['feature_to_plan']) && count($user_plan['feature_to_plan']) > 0) {
+            if ($this->User_model->getMobile()) {
+                if ($this->User_model->getSiteId()) {
+                    $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
+                    $is_default_enabled = $this->is_default_enabled($features);
+                    if (!$is_default_enabled) {
+                        $second_default = $this->find_second_default($features);
+                        if ($second_default) redirect('/'.$second_default, 'refresh'); /* if it isn't, then we select second menu for the user */
+                    }
+                } else {
+                    $user_plan = $this->User_model->getPlan();
+                    if (!empty($user_plan)) {
+                        if (array_key_exists('feature_to_plan', $user_plan)) {
+                            if (is_array($user_plan['feature_to_plan']) && count($user_plan['feature_to_plan']) > 0) {
 //                            $value = $this->Feature_model->getFeatureName("Account");
 //                            if($value) redirect('/'.$value['link'], 'refresh'); /* if it isn't, then we select second menu for the user */
-                            redirect('account/first_app', 'refresh');
+                                redirect('account/first_app', 'refresh');
+                            }
                         }
                     }
                 }
+            } else {
+                redirect('account/setup_mobile', 'refresh');
             }
         }
 
