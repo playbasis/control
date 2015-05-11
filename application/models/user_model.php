@@ -814,6 +814,7 @@ class User_model extends MY_Model
         $this->set_site_mongodb($this->site_id);
         $this->mongo_db->select(array('mobile'));
         $this->mongo_db->where('_id', $client_id);
+        $this->mongo_db->where('mobile', array('$regex' => new MongoRegex("/^\+[0-9]+/")));
         $results = $this->mongo_db->get('playbasis_client');
         return $results ? $results[0]['mobile'] : null;
     }
