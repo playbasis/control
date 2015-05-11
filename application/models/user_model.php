@@ -10,6 +10,7 @@ class User_model extends MY_Model
     private $permission = array();
     private $database;
     private $admin_group_id;
+    private $mobile;
 
     public function __construct(){
         parent::__construct();
@@ -23,6 +24,7 @@ class User_model extends MY_Model
             $this->client_id = $this->session->userdata('client_id');
             $this->site_id = $this->session->userdata('site_id');
             $this->permission = $this->session->userdata('permission');
+            $this->mobile = $this->session->userdata('mobile');
 
             if($this->session->userdata('ip') != $_SERVER['REMOTE_ADDR']){
                 // update new ip //
@@ -441,6 +443,7 @@ class User_model extends MY_Model
 
                     // $this->site_id
                     $this->site_id = $this->fetchSiteId($this->client_id);
+                    $this->mobile = $this->findMobileByClientId($this->client_id);
 
                     $this->set_site_mongodb($this->site_id);
 
@@ -453,7 +456,7 @@ class User_model extends MY_Model
                     $this->session->set_userdata('site_id',$this->site_id );
                     $this->session->set_userdata('permission',$this->permission );
                     $this->session->set_userdata('ip',$ip );
-
+                    $this->session->set_userdata('mobile',$this->mobile );
                 }else {
                     $this->logout();
                 }
@@ -473,6 +476,7 @@ class User_model extends MY_Model
         $this->session->unset_userdata('database');
         $this->session->unset_userdata('permission');
         $this->session->unset_userdata('ip');
+        $this->session->unset_userdata('mobile');
         $this->session->unset_userdata('admin_group_id');
         $this->session->unset_userdata('multi_login');
 
@@ -483,6 +487,7 @@ class User_model extends MY_Model
         $this->user_group_id = '';
         $this->database = '';
         $this->permission = '';
+        $this->mobile = '';
         $this->admin_group_id = '';
     }
 
@@ -543,6 +548,7 @@ class User_model extends MY_Model
 
                 // $this->site_id
                 $this->site_id = $this->fetchSiteId($this->client_id);
+                $mobile = $this->findMobileByClientId($this->client_id);
 
                 $this->set_site_mongodb($this->site_id);
 
@@ -555,6 +561,7 @@ class User_model extends MY_Model
                 $this->session->set_userdata('site_id',$this->site_id );
                 $this->session->set_userdata('permission',$this->permission );
                 $this->session->set_userdata('ip',$ip );
+                $this->session->set_userdata('mobile',$mobile );
 
                 return true;
             }
@@ -596,6 +603,10 @@ class User_model extends MY_Model
 
     public function getClientDatabase() {
         return isset($this->database) ? $this->database : "core";
+    }
+
+    public function getMobile() {
+        return $this->mobile;
     }
 
     public function getAdminGroupID(){
@@ -797,6 +808,14 @@ class User_model extends MY_Model
         $plan = $plan?$plan[0]:array();
 
         return $plan;
+    }
+
+    public function findMobileByClientId($client_id) {
+        $this->set_site_mongodb($this->site_id);
+        $this->mongo_db->select(array('mobile'));
+        $this->mongo_db->where('_id', $client_id);
+        $results = $this->mongo_db->get('playbasis_client');
+        return $results ? $results[0]['mobile'] : null;
     }
 }
 ?>
