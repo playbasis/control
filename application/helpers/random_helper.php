@@ -38,4 +38,18 @@ if ( ! function_exists('get_random_password'))
         return $password;
     }
 
+    function get_random_code($length=6, $use_lower_case=true, $use_upper_case=false, $use_numbers=false)
+    {
+        $selection = '';
+        if ($use_lower_case) $selection .= "aeuoyibcdfghjklmnpqrstvwxz";
+        if ($use_upper_case) $selection .= strtoupper("aeuoyibcdfghjklmnpqrstvwxz");
+        if ($use_numbers) $selection .= "1234567890";
+
+        $password = "";
+        for($i=0; $i<$length; $i++) {
+            $password .= $selection[(rand() % strlen($selection))];
+        }
+
+        return $password;
+    }
 }  
