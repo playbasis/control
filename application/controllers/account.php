@@ -548,6 +548,34 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
+	public function setup_mobile() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+			die();
+		}
+
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->data['message'] = null;
+
+            /* TODO */
+            // check auth code from SMS
+            // if OK, then update mobile
+            // and redirect
+		}
+
+		$this->data['heading_title'] = $this->lang->line('setup_mobile_title');
+		$this->data['main'] = 'account_mobile';
+		$this->data['form'] = 'account/setup_mobile';
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
 //	public function start() {
 //
 //		if(!$this->validateAccess()){

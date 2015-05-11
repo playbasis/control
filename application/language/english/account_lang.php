@@ -8,6 +8,7 @@ $lang['cancel_title']          				= 'Cancel Subscription';
 $lang['add_site_title']          				= 'Add a Site Name';
 $lang['choose_plan_title']          				= 'Choose a Plan';
 $lang['start_title']          				= 'Start';
+$lang['setup_mobile_title']          				= 'Setup 2-Step Authentication';
 
 // Text
 $lang['text_name']						= 'Name';
