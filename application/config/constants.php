@@ -70,6 +70,7 @@ define('EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE', 'notifyNearLimitUsage');
 define('EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION', 'remindClientsToSetupSubscription');
 define('EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD', 'remindClientsEndOfTrialPeriod');
 define('EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD', 'notifyClientsShutdownAPI');
+define('EMAIL_TYPE_CLIENT_REGISTRATION', 'listClientRegistration');
 define('EMAIL_TYPE_REPORT', 'report');
 define('EMAIL_BCC_PLAYBASIS_EMAIL', 'pascal@playbasis.com');
 
