@@ -576,7 +576,7 @@ class Account extends MY_Controller
 					$this->session->unset_userdata('verify-code');
 					redirect('dashboard', 'refresh');
 				} else {
-					$this->data['message'] = 'Please make a request to generate authorization code first';
+					$this->data['message'] = 'You have inserted an invalid authorization code';
 				}
 			}
 		}
