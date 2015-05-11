@@ -603,7 +603,7 @@ class Account extends MY_Controller
 			$mobile = $this->input->post('phone_number');
 
 			if($this->form_validation->run() && $this->data['message'] == null){
-				$code = get_random_password(5,5);
+				$code = get_random_password(5,5,true,true);
 				$this->session->set_userdata('verify-mobile', $mobile);
 				$this->session->set_userdata('verify-code', $code);
 				$ret = $this->sendSMS($mobile, 'Your authorization code is: '.$code.', Playbasis');
