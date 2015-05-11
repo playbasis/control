@@ -1,12 +1,12 @@
 <div class="activated-wrapper account-verify-wrapper">
 	<div class="activated-content modal-card">
 		<div class="modal-card-head" >
-			<h3>Verify You Account</h3>
+			<h3>Please verify You Account</h3>
 			<img src="<?php echo base_url();?>image/beforelogin/header-account-verify.png">
 		</div>
 		<div class="modal-card-content" >
-			<h3>Please verify your account</h3>
-			<p>We will sent the verify sms code to:</p>
+			<!-- <h3>Please verify your account</h3> -->
+			<p>Provide your mobile phone number <br>and receive the validation code by SMS.</p>
 			<form class="form" id="form_phonenumber">
 				<div class="form-group input-group">
 					<input type="tel" class="form-control phone-number" ><button type="submit" class="btn btn-primary">Requests Code </button>
@@ -16,7 +16,7 @@
 			
 			<hr>
 			<p>
-				Enter the code received.
+				Enter the code received in the field below.
 				<form class="form" id="form_verify" method="POST">
 					<div class="form-group input-group">
 						<input type="text" class="form-control code-input" ><button type="submit" class="btn btn-primary">OK <i class="fa fa-arrow-right"></i> </button>
@@ -26,7 +26,7 @@
 			</p>
 			<hr>
 			<p>
-				No message received? <a href="mailto:support@playbasis.com">support@playbasis.com</a>
+				No SMS received? Please contact <a href="mailto:support@playbasis.com">support@playbasis.com</a>
 			</p>
 		</div>
 	</div>
