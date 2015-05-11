@@ -19,7 +19,7 @@
 				Enter the code received.
 				<form class="form" id="form_verify" method="POST">
 					<div class="form-group input-group">
-						<input type="text" class="form-control code-input" ><button type="submit" class="btn btn-primary">OK <i class="fa fa-arrow-right"></i> </button>
+						<input type="text" class="form-control code-input" name="code"><button type="submit" class="btn btn-primary">OK <i class="fa fa-arrow-right"></i> </button>
 					</div>
 					<div class="error" style="display:none"></div>
 				</form>

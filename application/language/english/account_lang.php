@@ -55,6 +55,7 @@ $lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';
 $lang['form_effective_date']						= 'Effective Date';
 $lang['form_phone_number']						= 'Phone Number';
+$lang['form_code']						= 'Authorization Code';
 
 // Entry
 $lang['entry_site']         = 'Site Name';

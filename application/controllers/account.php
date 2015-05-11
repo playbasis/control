@@ -562,10 +562,23 @@ class Account extends MY_Controller
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$this->data['message'] = null;
 
-            /* TODO */
-            // check auth code from SMS
-            // if OK, then update mobile
-            // and redirect
+			$this->form_validation->set_rules('code', $this->lang->line('form_code'), 'trim|required');
+			$code = $this->input->post('code');
+
+			$code_generated = $this->session->userdata('verify-code');
+			if (empty($code_generated)) $this->data['message'] = 'Please make a request to generate authorization code first';
+
+			if($this->form_validation->run() && $this->data['message'] == null){
+				if ($code_generated == $code) {
+					$mobile = $this->session->userdata('verify-mobile');
+					$this->User_model->updateMobile($this->User_model->getClientId(), $mobile);
+					$this->session->unset_userdata('verify-mobile');
+					$this->session->unset_userdata('verify-code');
+					redirect('dashboard', 'refresh');
+				} else {
+					$this->data['message'] = 'Please make a request to generate authorization code first';
+				}
+			}
 		}
 
 		$this->data['heading_title'] = $this->lang->line('setup_mobile_title');
