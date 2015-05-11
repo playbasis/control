@@ -586,19 +586,35 @@ class Account extends MY_Controller
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$this->data['message'] = null;
 
-			$this->form_validation->set_rules('mobile', $this->lang->line('mobile'), 'trim|required');
-			$mobile = $this->input->post('mobile');
+			$this->form_validation->set_rules('phone_number', $this->lang->line('form_phone_number'), 'trim|required');
+			$mobile = $this->input->post('phone_number');
 
 			if($this->form_validation->run() && $this->data['message'] == null){
-				/* TODO */
-				// generate random "code"
-				// save "mobile", "code" into user session
-				// send SMS message containing "code" to "mobile"
-				echo json_encode(array('status' => 'success', 'message' => 'Authorization code has been sent.'));
+				$code = get_random_password(5,5);
+				$this->session->set_userdata('verify-mobile', $mobile);
+				$this->session->set_userdata('verify-code', $code);
+				$ret = $this->sendSMS($mobile, 'Your authorization code is: '.$code.', Playbasis');
+				if ($ret) {
+					echo json_encode(array('status' => 'success', 'message' => 'Authorization code has been sent.'));
+				} else {
+					echo json_encode(array('status' => 'failure', 'message' => 'There is a problem sending an SMS.'));
+				}
+			} else {
+				echo json_encode(array('status' => 'failure', 'message' => 'Mobile phone number is required.'));
 			}
 		} else {
 			echo json_encode(array('status' => 'failure', 'message' => 'Only POST request is supported.'));
 		}
+		exit();
+	}
+
+	private function sendSMS($to, $message) {
+		$this->config->load("twilio",TRUE);
+		$config = $this->config->item('twilio');
+		$this->load->library('twilio/twiliomini', $config);
+		$from = isset($config['name']) ? $config['name'] : $config['number'];
+		$response = $this->twiliomini->sms($from, $to, $message);
+		return $response && !$response->IsError;
 	}
 
 //	public function start() {

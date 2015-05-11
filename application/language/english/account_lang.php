@@ -54,6 +54,7 @@ $lang['form_channel']						= 'Payment Channel';
 $lang['form_price']						= 'Monthly Price';
 $lang['form_product']						= 'Product';
 $lang['form_effective_date']						= 'Effective Date';
+$lang['form_phone_number']						= 'Phone Number';
 
 // Entry
 $lang['entry_site']         = 'Site Name';
