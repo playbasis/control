@@ -576,6 +576,31 @@ class Account extends MY_Controller
 		$this->render_page('template');
 	}
 
+	public function request_code() {
+
+		if(!$this->validateAccess()){
+			echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+			die();
+		}
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$this->data['message'] = null;
+
+			$this->form_validation->set_rules('mobile', $this->lang->line('mobile'), 'trim|required');
+			$mobile = $this->input->post('mobile');
+
+			if($this->form_validation->run() && $this->data['message'] == null){
+				/* TODO */
+				// generate random "code"
+				// save "mobile", "code" into user session
+				// send SMS message containing "code" to "mobile"
+				echo json_encode(array('status' => 'success', 'message' => 'Authorization code has been sent.'));
+			}
+		} else {
+			echo json_encode(array('status' => 'failure', 'message' => 'Only POST request is supported.'));
+		}
+	}
+
 //	public function start() {
 //
 //		if(!$this->validateAccess()){
