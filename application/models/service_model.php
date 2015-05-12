@@ -154,7 +154,7 @@ class Service_model extends MY_Model
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
             if($actionAndStringFilter){
                 $event['action_name'] = $actionAndStringFilter['action_name'];
-                $event['string_filter'] = $actionAndStringFilter['url'];
+                $event['string_filter'] = $actionAndStringFilter['url']."";
                 $event['action_icon'] = $actionAndStringFilter['icon'];
             }
             if(isset($event['quest_id']) && $event['quest_id']){
@@ -220,7 +220,19 @@ class Service_model extends MY_Model
 
         $last_read = $last_read_activity_id ? $this->getDateAddedOfEventById($site_id, new MongoId($last_read_activity_id)) : null;
 
-        $event_type = array('REWARD', 'REDEEM', 'ACTION');
+        $reset = $this->getResetRewardEvent($site_id);
+        if($reset){
+            $reset_where = array();
+            $reset_not_id = array();
+            foreach($reset as $k => $v){
+                $reset_not_id[] = new MongoId($k);
+                $reset_where[] = array('reward_id' => new MongoId($k), 'date_added' => array('$gte' => $v));
+            }
+            $reset_where[] = array('reward_id' => array('$nin' => $reset_not_id));
+            $this->mongo_db->where(array('$or' => $reset_where));
+        }
+
+        $event_type = array('REWARD', 'REDEEM', 'ACTION', 'LEVEL');
         if ($pb_player_id) {
             $event_type[] = 'SOCIAL';
         }
@@ -337,7 +349,7 @@ class Service_model extends MY_Model
             $actionAndStringFilter = $this->getActionNameAndStringFilter($event['action_log_id']);
             if($actionAndStringFilter){
                 $event['action_name'] = $actionAndStringFilter['action_name'];
-                $event['string_filter'] = $actionAndStringFilter['url'];
+                $event['string_filter'] = $actionAndStringFilter['url']."";
                 $event['action_icon'] = $actionAndStringFilter['icon'];
             }
             unset($event['action_log_id']);
