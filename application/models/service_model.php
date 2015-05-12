@@ -232,7 +232,7 @@ class Service_model extends MY_Model
             $this->mongo_db->where(array('$or' => $reset_where));
         }
 
-        $event_type = array('REWARD', 'REDEEM', 'ACTION');
+        $event_type = array('REWARD', 'REDEEM', 'ACTION', 'LEVEL');
         if ($pb_player_id) {
             $event_type[] = 'SOCIAL';
         }
