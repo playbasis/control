@@ -220,6 +220,18 @@ class Service_model extends MY_Model
 
         $last_read = $last_read_activity_id ? $this->getDateAddedOfEventById($site_id, new MongoId($last_read_activity_id)) : null;
 
+        $reset = $this->getResetRewardEvent($site_id);
+        if($reset){
+            $reset_where = array();
+            $reset_not_id = array();
+            foreach($reset as $k => $v){
+                $reset_not_id[] = new MongoId($k);
+                $reset_where[] = array('reward_id' => new MongoId($k), 'date_added' => array('$gte' => $v));
+            }
+            $reset_where[] = array('reward_id' => array('$nin' => $reset_not_id));
+            $this->mongo_db->where(array('$or' => $reset_where));
+        }
+
         $event_type = array('REWARD', 'REDEEM', 'ACTION');
         if ($pb_player_id) {
             $event_type[] = 'SOCIAL';
