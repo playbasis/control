@@ -342,6 +342,23 @@ $email = 'pechpras@playbasis.com';
 
 		unlink($tmpfname);
 	}
+
+	public function notifyClientsToSetupMobile() {
+		$clients = $this->client_model->listAllActiveClientsWithoutMobile();
+		if ($clients) foreach ($clients as $client) {
+			$client_id = $client['_id'];
+			$email = $client['email'];
+$email = 'pechpras@playbasis.com';
+
+			/* email */
+			$from = EMAIL_FROM;
+			$to = $email;
+			$subject = '[Playbasis] Please Verify Your Phone Number';
+			$html = $this->parser->parse('message_verify_mobile.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name']), true);
+			$response = $this->utility->email($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html, null);
+			$this->email_model->log(EMAIL_TYPE_CLIENT_REGISTRATION, $client_id, null, $response, $from, $to, $subject, $html);
+		}
+	}
 }
 
 function urlsafe_b64encode($string) {

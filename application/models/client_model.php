@@ -875,6 +875,14 @@ class Client_model extends MY_Model
         return $this->mongo_db->get('playbasis_client');
     }
 
+    public function listAllActiveClientsWithoutMobile($site_id=0) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('_id', 'first_name', 'last_name', 'email', 'company', 'date_added', 'mobile'));
+        $this->mongo_db->where(array('status' => true, 'deleted' => false));
+        $this->mongo_db->where('mobile', array('$not' => new MongoRegex("/^\+[0-9]+/")));
+        return $this->mongo_db->get('playbasis_client');
+    }
+
     public function listAllActivesSites($site_id=0) {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('client_id', '_id'));
