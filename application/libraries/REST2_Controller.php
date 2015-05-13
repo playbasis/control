@@ -112,6 +112,14 @@ abstract class REST2_Controller extends REST_Controller
                     "INTERNAL_ERROR", array()), 200);
             }
         }
+
+        /* 1.5 Check if mobile phone has been set-up for free accounts */
+        $myplan_id = $this->client_model->getPlanIdByClientId($this->client_id);
+        if ($myplan_id == FREE_PLAN) {
+            if (!$this->client_model->hasSetUpMobile($this->client_id) && time() >= strtotime(DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE)) {
+                $this->response($this->error->setError("SETUP_MOBILE"), 200);
+            }
+        }
 	}
 
 	/**

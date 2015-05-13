@@ -33,6 +33,7 @@ class Client_model extends MY_Model
             'site_id' => $clientData['site_id'],
             'name' => $clientData['action_name']
         ));
+        $this->mongo_db->limit(1);
         $id = $this->mongo_db->get('playbasis_action_to_client');
         return ($id && $id[0]) ? $id[0] : array();
     }
@@ -50,6 +51,7 @@ class Client_model extends MY_Model
 			'site_id' => $clientData['site_id'],
 			'name' => $clientData['action_name']
 		));
+		$this->mongo_db->limit(1);
 		$id = $this->mongo_db->get('playbasis_action_to_client');
 		return ($id && $id[0]) ? $id[0]['action_id'] : 0;
 	}
@@ -67,6 +69,7 @@ class Client_model extends MY_Model
             'site_id' => $clientData['site_id'],
             'action_id' => $clientData['action_id']
         ));
+        $this->mongo_db->limit(1);
         $id = $this->mongo_db->get('playbasis_action_to_client');
         return ($id && $id[0]) ? $id[0]['name'] : '';
     }
@@ -127,6 +130,7 @@ class Client_model extends MY_Model
 		$this->mongo_db->where(array(
 			'jigsaw_id' => $jigsawId
 		));
+		$this->mongo_db->limit(1);
 		$jigsawProcessor = $this->mongo_db->get('playbasis_game_jigsaw_to_client');
         if($jigsawProcessor){
             assert($jigsawProcessor);
@@ -180,6 +184,7 @@ class Client_model extends MY_Model
 			'reward_id' => $rewardId,
 			'site_id' => $siteId
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		assert($result);
 		$result = $result[0];
@@ -202,6 +207,7 @@ class Client_model extends MY_Model
 			'site_id' => $input['site_id'],
 			'name' => strtolower($rewardName)
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		$customRewardId = null;
 		if($result && $result[0])
@@ -219,6 +225,7 @@ class Client_model extends MY_Model
 			//	'site_id' => $input['site_id']
 			//));
 			//$this->mongo_db->order_by(array('reward_id' => 'desc'));
+			//$this->mongo_db->limit(1);
 			//$result = $this->mongo_db->get('playbasis_reward_to_client');
 			//$result = $result[0];
 			//$customRewardId = $result['reward_id'] + 1;
@@ -309,6 +316,7 @@ class Client_model extends MY_Model
 			'badge_id' => $badgeId,
 			'deleted' => false
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_badge_to_client');
 		if(!$result)
 			return;
@@ -397,6 +405,7 @@ class Client_model extends MY_Model
 		$this->mongo_db->where($clientData);
 		$this->mongo_db->where_lte('exp', intval($newExp));
 		$this->mongo_db->order_by(array('level' => 'desc'));
+		$this->mongo_db->limit(1);
 		$level = $this->mongo_db->get('playbasis_client_exp_table');
 		if(!$level || !$level[0] || !$level[0]['level'])
 		{
@@ -404,6 +413,7 @@ class Client_model extends MY_Model
 			$this->mongo_db->select(array('level'));
 			$this->mongo_db->where_lte('exp', intval($newExp));
 			$this->mongo_db->order_by(array('level' => 'desc'));
+			$this->mongo_db->limit(1);
 			$level = $this->mongo_db->get('playbasis_exp_table');
 			assert($level);
 		}
@@ -482,6 +492,7 @@ class Client_model extends MY_Model
             'badge_id' => $badgeId,
 			'deleted' => false
 		));
+		$this->mongo_db->limit(1);
 		$badge = $this->mongo_db->get('playbasis_badge_to_client');
 		if(!$badge)
 			return null;
@@ -506,6 +517,7 @@ class Client_model extends MY_Model
             'goods_id' => $goodsId,
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_goods_to_client');
         if(!$result)
             return;
@@ -581,6 +593,7 @@ class Client_model extends MY_Model
             'site_id' => $input['site_id'],
             'reward_id' => new MongoId($input['reward_id'])
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_reward_to_client');
         return $result ? $result[0]['name'] : null;
     }
@@ -881,6 +894,14 @@ class Client_model extends MY_Model
         $this->mongo_db->where(array('status' => true, 'deleted' => false));
         $this->mongo_db->where('mobile', array('$not' => new MongoRegex("/^\+[0-9]+/")));
         return $this->mongo_db->get('playbasis_client');
+    }
+
+    public function hasSetUpMobile($client_id, $site_id=0) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('_id', $client_id);
+        $this->mongo_db->where(array('status' => true, 'deleted' => false));
+        $this->mongo_db->where('mobile', array('$regex' => new MongoRegex("/^\+[0-9]+/")));
+        return $this->mongo_db->count('playbasis_client') > 0;
     }
 
     public function listAllActivesSites($site_id=0) {
