@@ -108,7 +108,7 @@ class Error extends CI_Model
             $errorData['error_code'] = '0200';
             break;
         case 'USER_ALREADY_EXIST':
-            $errorData['message'] = "User alredy exist";
+            $errorData['message'] = "User already exist";
             $errorData['error_code'] = '0201';
             break;
         case 'TOO_MANY_USERS':
@@ -192,7 +192,7 @@ class Error extends CI_Model
             $errorData['error_code'] = '1004';
             break;
         default:
-            $errorData['message'] = "Unknow";
+            $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';
             break;
         }
