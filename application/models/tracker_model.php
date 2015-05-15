@@ -136,7 +136,8 @@ class Tracker_model extends MY_Model
 
         if ($input['reward_type'] == 'BADGE') {
             $input['reward_name'] = 'badge';
-            $input['item_id'] = $this->get_reward_id_by_name(array('client_id' => $input['client_id'], 'site_id' => $input['site_id']), 'badge');
+            $input['item_id'] = $input['reward_id'];
+            $input['reward_id'] = $this->get_reward_id_by_name(array('client_id' => $input['client_id'], 'site_id' => $input['site_id']), 'badge');
         } // reward_name should be "badge" in playbasis_event_log
         return $this->trackEvent('REWARD', $input['message'], $input);
     }
