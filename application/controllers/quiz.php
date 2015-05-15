@@ -607,9 +607,9 @@ class Quiz extends REST2_Controller
                     'site_id'		=> $site_id,
                     'quiz_id'		=> $quiz['_id'],
                     'reward_type'	=> 'badge',
-                    'reward_id'	    => $this->player_model->get_reward_id_by_name($this->validToken, 'badge'),
+                    'reward_id'	    => $event['reward_id'],
                     'reward_name'	=> $event['reward_type'],
-                    'item_id'	    => $event['reward_id'],
+                    'item_id'	    => $this->player_model->get_reward_id_by_name($this->validToken, 'badge'),
                     'amount'	    => $event['value']
                 ));
                 break;

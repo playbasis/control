@@ -387,7 +387,8 @@ class Service_model extends MY_Model
                 case COMPLETE_MISSION_ACTION:
                     $mission_id = new MongoId($event['url']);
                     $event['mission'] = $this->getMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
-                    $event['quest'] = $this->getQuestByMission(array('site_id' => $site_id, 'mission_id' => $mission_id));
+                    $quest_id = $this->getQuestIdByMissionId(array('site_id' => $site_id, 'mission_id' => $mission_id));
+                    $event['quest'] = $this->getQuest(array('site_id' => $site_id, 'quest_id' => $quest_id));
                     unset($event['url']);
                     break;
                 case COMPLETE_QUIZ_ACTION:
@@ -720,6 +721,19 @@ class Service_model extends MY_Model
         }
 
         return $result;
+    }
+
+    public function getQuestIdByMissionId($data)
+    {
+        $this->set_site_mongodb($data['site_id']);
+        $this->mongo_db->select(array());
+        $this->mongo_db->where(array(
+            'site_id' => $data['site_id'],
+            'missions.mission_id' => $data['mission_id'],
+        ));
+        $this->mongo_db->limit(1);
+        $result = $this->mongo_db->get('playbasis_quest_to_client');
+        return $result ? $result[0]['_id'] : array();
     }
 
     /* copied from quest_model as model cannot call each other */

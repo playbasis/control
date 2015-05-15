@@ -134,8 +134,22 @@ class Tracker_model extends MY_Model
             'date_modified' => $mongoDate
         ));
 
-        if ($input['reward_type'] == 'BADGE') $input['reward_name'] = 'badge'; // reward_name should be "badge" in playbasis_event_log
+        if ($input['reward_type'] == 'BADGE') {
+            $input['reward_name'] = 'badge';
+            $input['item_id'] = $this->get_reward_id_by_name(array('client_id' => $input['client_id'], 'site_id' => $input['site_id']), 'badge');
+        } // reward_name should be "badge" in playbasis_event_log
         return $this->trackEvent('REWARD', $input['message'], $input);
+    }
+
+    /* copied from player_model as model cannot call each other */
+    public function get_reward_id_by_name($data, $name) {
+        $this->set_site_mongodb($data['site_id']);
+        $query = array('client_id' => $data['client_id'], 'site_id' => $data['site_id'], 'name' => $name);
+        $this->mongo_db->select(array('reward_id'));
+        $this->mongo_db->where($query);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_reward_to_client');
+        return $results ? $results[0]['reward_id'] : null;
     }
 
     /* copied from player_model as model cannot call each other */
