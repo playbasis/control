@@ -857,6 +857,22 @@
                     ]
                 },
                 {
+                    "MethodName": "All Quests of Player",
+                    "Synopsis": "List of all available quests of the client as well as the status of the player if joined.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/questAll/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Quest Reward History",
                     "Synopsis": "Returns quest reward history of player",
                     "HTTPMethod": "GET",
