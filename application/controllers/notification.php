@@ -19,6 +19,7 @@ class Notification extends Engine
 		$this->load->model('payment_model');
 		$this->load->model('email_model');
 		$this->load->model('jive_model');
+		$this->load->model('lithium_model');
 		$this->load->library('curl');
 	}
 
@@ -175,6 +176,17 @@ class Notification extends Engine
 				$this->handleJive($site_id, $message);
 			}
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
+		} else if (strpos($_SERVER['HTTP_USER_AGENT'], LITHIUM_USER_AGENT) === false ? false : true) {
+			/* process Lithium events */
+			$site_id = $this->lithium_model->findSiteIdByToken($message['token']);
+			$event_type = $message['event_type'];
+			$actionName = 'lithium:'.$event_type;
+			$url = null;
+			$player = array(
+				'cl_player_id' => '[cl_player_id]'
+			);
+			$apiResult = $this->rule($site_id, $actionName, $url, $player);
+			$this->response($this->resp->setRespond($apiResult), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
@@ -271,7 +283,7 @@ class Notification extends Engine
 				'player_id' => $cl_player_id,
 				'image' => isset($player['image']) ? $player['image'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
 				'email' => isset($player['email']) ? $player['email'] : 'no-reply@playbasis.com',
-				'username' => isset($player['username']) ? $player['username'] : null,
+				'username' => isset($player['username']) ? $player['username'] : $cl_player_id,
 				'first_name' => isset($player['first_name']) ? $player['first_name'] : null,
 				'last_name' => isset($player['last_name']) ? $player['last_name'] : null,
 			)));
