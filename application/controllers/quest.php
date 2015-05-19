@@ -1310,6 +1310,7 @@ class Quest extends REST2_Controller
                     }
                 }
             }
+            $quest['id'] = $quest['_id'];
             unset($quest['_id']);
         }
 
