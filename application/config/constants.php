@@ -92,6 +92,8 @@ define('FULLCONTACT_USER_AGENT', 'FullContact');
 
 define('JIVE_USER_AGENT', 'Jive SBS');
 
+define('LITHIUM_USER_AGENT', 'Jakarta Commons-HttpClient/3.1');
+
 define('COMPLETE_MISSION_ACTION', 'complete-mission');
 define('COMPLETE_QUEST_ACTION', 'complete-quest');
 define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
