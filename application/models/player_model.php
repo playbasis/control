@@ -448,6 +448,15 @@ class Player_model extends MY_Model
         }
 		return $playerBadges;
 	}
+	public function getBadgeCount($site_id, $pb_player_id, $badge_id)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('value'));
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('badge_id', $badge_id);
+		$badges = $this->mongo_db->get('playbasis_reward_to_player');
+		return $badges ? $badges[0]['value'] : 0;
+	}
 	public function claimBadge($pb_player_id, $badge_id, $site_id, $client_id)
 	{
 
