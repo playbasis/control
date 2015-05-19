@@ -155,45 +155,17 @@ class Notification extends Engine
 					$this->response($this->error->setError('PARAMETER_MISSING', array('verb')), 200);
 				}
 				$site_id = new MongoId($jive['site_id']);
-				$site = $this->client_model->findBySiteId($site_id);
-				$validToken = array('client_id' => $site['client_id'], 'site_id' => $site_id, 'domain_name' => $site['domain_name']);
 				$actionName = $activity['verb'];
 				$url = isset($activity['object']['summary']) ? $activity['object']['summary'] : null;
-				$cl_player_id = $activity['actor']['id'];
-				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $cl_player_id)));
-				if (!$pb_player_id) {
-					$names = explode(' ', $activity['actor']['displayName']);
-					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-						'player_id' => $cl_player_id,
-						'image' => isset($activity['actor']['image']['url']) ? $activity['actor']['image']['url'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
-						'email' => 'no-reply@playbasis.com',
-						'username' => $activity['actor']['jive']['username'],
-						'first_name' => isset($names[0]) ? $names[0] : null,
-						'last_name' => isset($names[1]) ? $names[1] : null,
-					)));
-				}
-				$action = $this->client_model->getAction(array(
-					'client_id' => $validToken['client_id'],
-					'site_id' => $validToken['site_id'],
-					'action_name' => $actionName
-				));
-				if (!$action) {
-					$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-				}
-				$actionId = $action['action_id'];
-				$actionIcon = $action['icon'];
-				$input = array_merge($validToken, array(
-					'player_id' => $cl_player_id,
-					'pb_player_id' => $pb_player_id,
-					'action_id' => $actionId,
-					'action_name' => $actionName,
-					'action_icon' => $actionIcon,
-					'url' => $url,
-					'test' => false
-				));
-				$apiResult = $this->processRule($input, $validToken, null, null);
-				$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
-				$apiResult = array_merge($apiResult, $apiQuestResult);
+				$names = explode(' ', $activity['actor']['displayName']);
+				$player = array(
+					'cl_player_id' => $activity['actor']['id'],
+					'username' => $activity['actor']['jive']['username'],
+					'image' => isset($activity['actor']['image']['url']) ? $activity['actor']['image']['url'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
+					'first_name' => isset($names[0]) ? $names[0] : '[first_name]',
+					'last_name' => isset($names[1]) ? $names[1] : '[last_name]',
+				);
+				$apiResult = $this->rule($site_id, $actionName, $url, $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
 			} else {
 				/* register/unregister */
@@ -287,6 +259,45 @@ class Notification extends Engine
 			$ret = true;
 		}
 		return $ret;
+	}
+
+	protected function rule($site_id, $actionName, $url, $player) {
+		$site = $this->client_model->findBySiteId($site_id);
+		$validToken = array('client_id' => $site['client_id'], 'site_id' => $site_id, 'domain_name' => $site['domain_name']);
+		$cl_player_id = $player['cl_player_id'];
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $cl_player_id)));
+		if (!$pb_player_id) {
+			$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+				'player_id' => $cl_player_id,
+				'image' => isset($player['image']) ? $player['image'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
+				'email' => isset($player['email']) ? $player['email'] : 'no-reply@playbasis.com',
+				'username' => isset($player['username']) ? $player['username'] : null,
+				'first_name' => isset($player['first_name']) ? $player['first_name'] : null,
+				'last_name' => isset($player['last_name']) ? $player['last_name'] : null,
+			)));
+		}
+		$action = $this->client_model->getAction(array(
+			'client_id' => $validToken['client_id'],
+			'site_id' => $validToken['site_id'],
+			'action_name' => $actionName
+		));
+		if (!$action) {
+			$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+		}
+		$actionId = $action['action_id'];
+		$actionIcon = $action['icon'];
+		$input = array_merge($validToken, array(
+			'player_id' => $cl_player_id,
+			'pb_player_id' => $pb_player_id,
+			'action_id' => $actionId,
+			'action_name' => $actionName,
+			'action_icon' => $actionIcon,
+			'url' => $url,
+			'test' => false
+		));
+		$apiResult = $this->processRule($input, $validToken, null, null);
+		$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+		return array_merge($apiResult, $apiQuestResult);
 	}
 }
 
