@@ -23,9 +23,8 @@ class Quest_model extends MY_Model
 
         $this->mongo_db->where($criteria);
         $this->mongo_db->where_ne('deleted', true);
-
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
-
         $result = $result ? $result[0] : array();
 
         array_walk_recursive($result, array($this, "change_image_path"));
@@ -61,8 +60,8 @@ class Quest_model extends MY_Model
             'status' => true
         ));
         $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_quest_to_client');
-
         $result = $result ? $result[0] : array();
 
         array_walk_recursive($result, array($this, "change_image_path"));
@@ -120,8 +119,8 @@ class Quest_model extends MY_Model
             $this->mongo_db->where_in('status', $data['status']);
         }
         $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_quest_to_player');
-
         $result = $result ? $result[0] : array();
 
         array_walk_recursive($result, array($this, "change_image_path"));
@@ -141,7 +140,6 @@ class Quest_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_quest_to_player');
 
         array_walk_recursive($result, array($this, "change_image_path"));
-
         return $result;
     }
 
