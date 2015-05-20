@@ -825,6 +825,11 @@ class User_model extends MY_Model
         $this->mongo_db->where('_id', $client_id);
         $this->mongo_db->set('mobile', $mobile);
         $this->mongo_db->update('playbasis_client');
+
+        if ($this->client_id == $client_id) {
+            $this->mobile = $mobile;
+            $this->session->set_userdata('mobile',$this->mobile );
+        }
     }
 }
 ?>
