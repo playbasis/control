@@ -1,3 +1,20 @@
+<?php
+if(validation_errors() || isset($message)) {
+?>
+    <div class="content messages half-width">
+        <?php
+        echo validation_errors('<div class="warning">','</div>');
+
+        if (isset($message) && $message) {
+            ?>
+            <div class="warning"><?php echo $message; ?></div>
+        <?php
+        }
+        ?>
+    </div>
+<?php
+}
+?>
 <div class="activated-wrapper account-verify-wrapper">
 	<div class="activated-content modal-card">
 		<div class="modal-card-head" >
@@ -9,7 +26,7 @@
 			<p>Provide your mobile phone number <br>and receive the validation code by SMS.</p>
 			<form class="form" id="form_phonenumber">
 				<div class="form-group input-group">
-					<input type="tel" class="form-control phone-number" ><button type="submit" class="btn btn-primary">Requests Code </button>
+					<input type="tel" class="form-control phone-number"><button type="submit" class="btn btn-primary">Requests Code </button>
 				</div>
 				<div class="error" style="display:none"></div>
 			</form>
