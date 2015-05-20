@@ -350,6 +350,9 @@ $email = 'pechpras@playbasis.com';
 			$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 
+			$myplan_id = $this->client_model->getPlanIdByClientId($client_id);
+			if ($myplan_id != FREE_PLAN) continue;
+
 			/* email */
 			$from = EMAIL_FROM;
 			$to = $email;
