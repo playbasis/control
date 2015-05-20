@@ -134,7 +134,7 @@ class Tracker_model extends MY_Model
             'date_modified' => $mongoDate
         ));
 
-        if ($input['reward_type'] == 'badge') $input['reward_name'] = 'badge'; // reward_name should be "badge" in playbasis_event_log
+        if ($input['reward_type'] == 'BADGE') $input['reward_name'] = 'badge'; // reward_name should be "badge" in playbasis_event_log
         return $this->trackEvent('REWARD', $input['message'], $input);
     }
 
