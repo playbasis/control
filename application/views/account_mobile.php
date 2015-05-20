@@ -26,7 +26,7 @@ if(validation_errors() || isset($message)) {
 			<p>Provide your mobile phone number <br>and receive the validation code by SMS.</p>
 			<form class="form" id="form_phonenumber">
 				<div class="form-group input-group">
-					<input type="tel" class="form-control phone-number"><button type="submit" class="btn btn-primary">Requests Code </button>
+					<input type="tel" class="form-control phone-number" placeholder="+66123456789"><button type="submit" class="btn btn-primary">Requests Code </button>
 				</div>
 				<div class="error" style="display:none"></div>
 			</form>
