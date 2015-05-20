@@ -574,7 +574,7 @@ class Account extends MY_Controller
 					$this->User_model->updateMobile($this->User_model->getClientId(), $mobile);
 					$this->session->unset_userdata('verify-mobile');
 					$this->session->unset_userdata('verify-code');
-					redirect('dashboard', 'refresh');
+					redirect('.', 'refresh');
 				} else {
 					$this->data['message'] = 'You have inserted an invalid authorization code';
 				}
