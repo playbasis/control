@@ -355,7 +355,7 @@ $email = 'pechpras@playbasis.com';
 			$to = $email;
 			$subject = '[Playbasis] Please Verify Your Account';
 			$html = $this->parser->parse('message_verify_mobile.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'date' => date('M d, Y', strtotime(DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE))), true);
-			$response = $this->utility->email($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html, null);
+			$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
 			$this->email_model->log(EMAIL_TYPE_CLIENT_REGISTRATION, $client_id, null, $response, $from, $to, $subject, $html);
 		}
 	}
