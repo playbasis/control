@@ -572,7 +572,6 @@ class Account extends MY_Controller
 				if ($code_generated == $code) {
 					$mobile = $this->session->userdata('verify-mobile');
 					$this->User_model->updateMobile($this->User_model->getClientId(), $mobile);
-					$this->session->set_userdata('mobile', $mobile);
 					$this->session->unset_userdata('verify-mobile');
 					$this->session->unset_userdata('verify-code');
 					redirect('dashboard', 'refresh');
