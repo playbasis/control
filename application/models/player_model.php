@@ -1366,7 +1366,7 @@ class Player_model extends MY_Model
             $event['date_added'] = datetimeMongotoReadable($event['date_added']);
 			if($actionAndStringFilter){
 				$event['action_name'] = $actionAndStringFilter['action_name'];
-				$event['string_filter'] = $actionAndStringFilter['url'];	
+				$event['string_filter'] = $actionAndStringFilter['url']."";
 			}
             if(isset($event['quest_id']) && $event['quest_id']){
                 if(isset($event['mission_id']) && $event['mission_id']){

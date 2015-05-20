@@ -321,6 +321,44 @@ $email = 'pechpras@playbasis.com';
 			// is there any case that email with 200, but has less social than what Playbasis actually has
 		}
 	}
+
+	public function listClientRegistration() {
+		$tmpfname = tempnam('/tmp', 'listClientRegistration');
+		$fp = fopen($tmpfname, 'w');
+		$clients = $this->client_model->listAllActiveClients();
+		if ($clients) foreach ($clients as $client) {
+			fputcsv($fp, array($client['_id']."", $client['first_name'], $client['last_name'], $client['company'], $client['email'], datetimeMongotoReadable($client['date_added'])));
+		}
+		fclose($fp);
+
+		/* email */
+		$from = EMAIL_FROM;
+		$to = array('pechpras@playbasis.com', 'jirawat@playbasis.com', 'pascal@playbasis.com');
+		$subject = '[Playbasis] Dashboard User Registration';
+		$message = 'The attachment is a CSV file for the data about current user registration (as of '.date('Y-m-d').').';
+		$html = $this->parser->parse('message.html', array('firstname' => 'Playbasis', 'lastname' => 'Team', 'message' => $message), true);
+		$response = $this->utility->email($from, $to, $subject, $html, $message, array($tmpfname => 'user-registration_'.date('Y-m-d').'.csv'));
+		$this->email_model->log(EMAIL_TYPE_CLIENT_REGISTRATION, null, null, $response, $from, $to, $subject, $html);
+
+		unlink($tmpfname);
+	}
+
+	public function notifyClientsToSetupMobile() {
+		$clients = $this->client_model->listAllActiveClientsWithoutMobile();
+		if ($clients) foreach ($clients as $client) {
+			$client_id = $client['_id'];
+			$email = $client['email'];
+$email = 'pechpras@playbasis.com';
+
+			/* email */
+			$from = EMAIL_FROM;
+			$to = $email;
+			$subject = '[Playbasis] Please Verify Your Phone Number';
+			$html = $this->parser->parse('message_verify_mobile.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name']), true);
+			$response = $this->utility->email($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html, null);
+			$this->email_model->log(EMAIL_TYPE_CLIENT_REGISTRATION, $client_id, null, $response, $from, $to, $subject, $html);
+		}
+	}
 }
 
 function urlsafe_b64encode($string) {

@@ -1902,11 +1902,159 @@
             ]
         },
         {
+            "name": "Live Feed API",
+            "methods": [
+                {
+                    "MethodName": "Recent Activities",
+                    "Synopsis": "Returns recent activities",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/recentActivities",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Recent Activities of Player",
+                    "Synopsis": "Returns recent activities of a player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/recentActivities/:player_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "offset",
+                            "Required": "N",
+                            "Default": "0",
+                            "Type": "integer",
+                            "Description": "number of records starting"
+                        },
+                        {
+                            "Name": "limit",
+                            "Required": "N",
+                            "Default": "20",
+                            "Type": "integer",
+                            "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "last_read_activity_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "last activity id that you have read"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Detail Activity",
+                    "Synopsis": "Get detail activity",
+                    "HTTPMethod": "GET",
+                    "URI": "/Service/detailActivityFeed/:activity_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "activity_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id of the activity"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Like Activity",
+                    "Synopsis": "Like activity",
+                    "HTTPMethod": "POST",
+                    "URI": "/Service/likeActivityFeed/:activity_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "activity_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id of the activity"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Comment Activity",
+                    "Synopsis": "Comment activity",
+                    "HTTPMethod": "POST",
+                    "URI": "/Service/commentActivityFeed/:activity_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "activity_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "id of the activity"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "message",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "comment message"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "Service API",
             "methods": [
                 {
                     "MethodName": "Recent Point",
-                    "Synopsis": "Returns recent activity points of all players",
+                    "Synopsis": "Returns recent points",
                     "HTTPMethod": "GET",
                     "URI": "/Service/recent_point",
                     "RequiresOAuth": "N",

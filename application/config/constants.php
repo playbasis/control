@@ -70,6 +70,8 @@ define('EMAIL_TYPE_NOTIFY_NEAR_LIMIT_USAGE', 'notifyNearLimitUsage');
 define('EMAIL_TYPE_REMIND_TO_SETUP_SUBSCRIPTION', 'remindClientsToSetupSubscription');
 define('EMAIL_TYPE_REMIND_END_OF_TRIAL_PERIOD', 'remindClientsEndOfTrialPeriod');
 define('EMAIL_TYPE_NOTIFY_API_ACCESS_SHUTDOWN_PERIOD', 'notifyClientsShutdownAPI');
+define('EMAIL_TYPE_CLIENT_REGISTRATION', 'listClientRegistration');
+define('EMAIL_TYPE_NOTIFY_CLIENT_SETUP_MOBILE', 'notifyClientsToSetupMobile');
 define('EMAIL_TYPE_REPORT', 'report');
 define('EMAIL_BCC_PLAYBASIS_EMAIL', 'pascal@playbasis.com');
 
@@ -89,6 +91,10 @@ define('FULLCONTACT_REQUEST_WEBHOOK_ACCEPTED', 202);
 define('FULLCONTACT_USER_AGENT', 'FullContact');
 
 define('JIVE_USER_AGENT', 'Jive SBS');
+
+define('COMPLETE_MISSION_ACTION', 'complete-mission');
+define('COMPLETE_QUEST_ACTION', 'complete-quest');
+define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
 
 define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
 /* End of file constants.php */

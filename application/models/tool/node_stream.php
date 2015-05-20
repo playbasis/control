@@ -93,8 +93,9 @@ class Node_stream extends MY_Model
 		}
 		$activityFormat['object']['level'] = isset($data['level']) ? $data['level'] : NULL;
 		$activityFormat['object']['point'] = isset($data['point']) ? $data['point'] : NULL;
-        $activityFormat['object']['mission'] = isset($data['mission']) ? $data['mission'] : NULL;
-        $activityFormat['object']['quest'] = isset($data['quest']) ? $data['quest'] : NULL;
+		$activityFormat['object']['mission'] = isset($data['mission']) ? $data['mission'] : NULL;
+		$activityFormat['object']['quest'] = isset($data['quest']) ? $data['quest'] : NULL;
+		$activityFormat['object']['quiz'] = isset($data['quiz']) ? $data['quiz'] : NULL;
 		$activityFormat['object']['amount'] = isset($data['amount']) ? $data['amount'] : NULL;
 		$activityFormat['object']['objective'] = isset($data['objective']) ? $data['objective'] : NULL;
 		return $activityFormat;

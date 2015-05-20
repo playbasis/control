@@ -13,54 +13,10 @@ class Tracker_model extends MY_Model
         if ($action_time && $action_time > $current_time) $action_time = $current_time; // cannot be something from the future
         $mongoDate = new MongoDate($action_time ? $action_time : $current_time);
         $d = strtotime(date('Y-m-d', $mongoDate->sec));
-        /* insert into playbasis_player_dau */
-        /*$this->mongo_db->select(array());
-        $this->mongo_db->where(array(
-            'pb_player_id'	=> $input['pb_player_id'],
-            'client_id'		=> $input['client_id'],
-            'site_id'		=> $input['site_id'],
-            'action_id'		=> $input['action_id'],
-            'date_added'	=> new MongoDate($d)
-        ));
-        $this->mongo_db->limit(1);
-        $r = $this->mongo_db->get('playbasis_player_dau');
-        if ($r) {
-            $r = $r[0];
-            $this->mongo_db->where(array('_id' => $r['_id']));
-            $this->mongo_db->inc('count', 1);
-            $this->mongo_db->update('playbasis_player_dau', array("w" => 0, "j" => false));
-        } else {
-            $this->mongo_db->insert('playbasis_player_dau', array(
-                'pb_player_id'	=> $input['pb_player_id'],
-                'client_id'		=> $input['client_id'],
-                'site_id'		=> $input['site_id'],
-                'action_id'		=> $input['action_id'],
-                'count'			=> 1,
-                'date_added'	=> new MongoDate($d)
-            ), array("w" => 0, "j" => false));
-        }*/
-        /* insert into playbasis_player_mau */
-        /*try {
-            $curr = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
-            while ($curr != $d) {
-                $curr = strtotime(date('Y-m-d', strtotime('-1 day', $curr)));
-                $this->mongo_db->insert('playbasis_player_mau', array(
-                    'pb_player_id'	=> $input['pb_player_id'],
-                    'client_id'		=> $input['client_id'],
-                    'site_id'		=> $input['site_id'],
-                    'date_added'	=> new MongoDate($curr)
-                ), array("w" => 0, "j" => false));
-            }
-            $this->mongo_db->insert('playbasis_player_mau', array(
-                'pb_player_id'	=> $input['pb_player_id'],
-                'client_id'		=> $input['client_id'],
-                'site_id'		=> $input['site_id'],
-                'date_added'	=> new MongoDate($d)
-            ), array("w" => 0, "j" => false));
-        } catch(Exception $e) {
-            // duplicate entries detected by MongoDB unique index, break early
-        }*/
-        return $this->mongo_db->insert('playbasis_action_log', array(
+        //$this->computeDau($input, $d);
+        //$this->updateLatestProcessActionLogTime($mongoDate);
+        //$this->computeMau($input, $d);
+        $action_log_id = $this->mongo_db->insert('playbasis_action_log', array(
             'pb_player_id'	=> $input['pb_player_id'],
             'client_id'		=> $input['client_id'],
             'site_id'		=> $input['site_id'],
@@ -70,6 +26,19 @@ class Tracker_model extends MY_Model
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
+        $this->mongo_db->insert('playbasis_event_log', array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'event_type'	=> 'ACTION',
+            'action_log_id' => $action_log_id,
+            'action_id'		=> $input['action_id'],
+            'action_name'	=> $input['action_name'],
+            'url'			=> (isset($input['url'])) ? $input['url'] : null,
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ), array("w" => 0, "j" => false));
+        return $action_log_id;
     }
     public function trackEvent($type, $message, $input)
     {
@@ -94,6 +63,23 @@ class Tracker_model extends MY_Model
             'quest_id'      => (isset($input['quest_id']))	? $input['quest_id']	: null,
             'mission_id'    => (isset($input['mission_id']))	? $input['mission_id']	: null,
             'quiz_id'       => (isset($input['quiz_id']))	? $input['quiz_id']	: null,
+            'date_added'	=> $mongoDate,
+            'date_modified' => $mongoDate
+        ));
+    }
+    public function trackSocial($input)
+    {
+        $this->set_site_mongodb($input['site_id']);
+        $mongoDate = new MongoDate(time());
+        return $this->mongo_db->insert('playbasis_event_log', array(
+            'pb_player_id'	=> $input['pb_player_id'],
+            'client_id'		=> $input['client_id'],
+            'site_id'		=> $input['site_id'],
+            'event_type'	=> 'SOCIAL',
+            'event_id'		=> $input['event_id'],
+            'from_pb_player_id'	=> $input['from_pb_player_id'],
+            'action_name'	=> (isset($input['action_name']))	? $input['action_name']	: null,
+            'message'		=> (isset($input['message']))	? $input['message']	: null,
             'date_added'	=> $mongoDate,
             'date_modified' => $mongoDate
         ));
@@ -148,7 +134,68 @@ class Tracker_model extends MY_Model
             'date_modified' => $mongoDate
         ));
 
+        if ($input['reward_type'] == 'badge') $input['reward_name'] = 'badge'; // reward_name should be "badge" in playbasis_event_log
         return $this->trackEvent('REWARD', $input['message'], $input);
+    }
+
+    /* copied from player_model as model cannot call each other */
+    public function updateLatestProcessActionLogTime($d) {
+        $this->mongo_db->limit(1);
+        $r = $this->mongo_db->get('playbasis_player_dau_latest');
+        if ($r) {
+            $r = $r[0];
+            if ($d->sec < $r['date_added']->sec) return false;
+            $this->mongo_db->where(array('_id' => $r['_id']));
+            $this->mongo_db->set('date_added', $d);
+            $this->mongo_db->update('playbasis_player_dau_latest', array("w" => 0, "j" => false));
+        } else {
+            $this->mongo_db->insert('playbasis_player_dau_latest', array('date_added' => $d), array("w" => 0, "j" => false));
+        }
+        return true;
+    }
+    /* copied from player_model as model cannot call each other */
+    public function computeDau($action, $d) {
+        $this->mongo_db->select(array());
+        $this->mongo_db->where(array(
+            'pb_player_id'	=> $action['pb_player_id'],
+            'client_id'		=> $action['client_id'],
+            'site_id'		=> $action['site_id'],
+            'action_id'		=> $action['action_id'],
+            'date_added'	=> new MongoDate($d)
+        ));
+        $this->mongo_db->limit(1);
+        $r = $this->mongo_db->get('playbasis_player_dau');
+        if ($r) {
+            $r = $r[0];
+            $this->mongo_db->where(array('_id' => $r['_id']));
+            $this->mongo_db->inc('count', 1);
+            $this->mongo_db->update('playbasis_player_dau', array("w" => 0, "j" => false));
+        } else {
+            $this->mongo_db->insert('playbasis_player_dau', array(
+                'pb_player_id'	=> $action['pb_player_id'],
+                'client_id'		=> $action['client_id'],
+                'site_id'		=> $action['site_id'],
+                'action_id'		=> $action['action_id'],
+                'count'			=> 1,
+                'date_added'	=> new MongoDate($d)
+            ), array("w" => 0, "j" => false));
+        }
+    }
+    /* copied from player_model as model cannot call each other */
+    public function computeMau($action, $d) {
+        $data = array();
+        $end = strtotime(date('Y-m-d', strtotime('+30 day', $d)));
+        $cur = $d;
+        while ($cur != $end) {
+            $data[] = array(
+                'pb_player_id'	=> $action['pb_player_id'],
+                'client_id'		=> $action['client_id'],
+                'site_id'		=> $action['site_id'],
+                'date_added'	=> new MongoDate($cur)
+            );
+            $cur = strtotime(date('Y-m-d', strtotime('+1 day', $cur)));
+        }
+        return $this->mongo_db->batch_insert('playbasis_player_mau', $data, array("w" => 0, "j" => false));
     }
 }
 ?>
