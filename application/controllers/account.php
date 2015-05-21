@@ -578,7 +578,7 @@ class Account extends MY_Controller
 					$this->User_model->updateMobile($this->User_model->getClientId(), $mobile);
 					$this->session->unset_userdata('verify-mobile');
 					$this->session->unset_userdata('verify-code');
-					redirect('dashboard', 'refresh');
+					redirect('.', 'refresh');
 				} else {
 					$this->data['message'] = 'You have inserted an invalid authorization code';
 				}
@@ -607,10 +607,10 @@ class Account extends MY_Controller
 			$mobile = $this->input->post('phone_number');
 
 			if($this->form_validation->run() && $this->data['message'] == null){
-				$code = get_random_password(5,5);
+				$code = get_random_code(5,false,false,true);
 				$this->session->set_userdata('verify-mobile', $mobile);
 				$this->session->set_userdata('verify-code', $code);
-				$ret = $this->sendSMS($mobile, 'Your authorization code is: '.$code.', Playbasis');
+				$ret = $this->sendSMS($mobile, 'Your Playbasis authorization code is: '.$code.'');
 				if ($ret) {
 					echo json_encode(array('status' => 'success', 'message' => 'Authorization code has been sent.'));
 				} else {

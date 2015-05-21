@@ -115,7 +115,8 @@ class Dashboard extends MY_Controller
         /* check to see if 'dashboard' menu is enabled for non-superadmin users */
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
             $this->load->model('Feature_model');
-            if ($this->User_model->getMobile()) {
+            $user_plan = $this->User_model->getPlan();
+            if ($user_plan['_id'] != FREE_PLAN || $this->User_model->getMobile()) {
                 if ($this->User_model->getSiteId()) {
                     $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
                     $is_default_enabled = $this->is_default_enabled($features);
@@ -136,6 +137,7 @@ class Dashboard extends MY_Controller
                     }
                 }
             } else {
+                /* if you are free accounts, then you have to set up your mobile number */
                 redirect('account/setup_mobile', 'refresh');
             }
         }
