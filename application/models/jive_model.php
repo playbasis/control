@@ -37,7 +37,7 @@ class Jive_model extends MY_Model {
         return $this->mongo_db->count("playbasis_jive_to_client") > 0;
     }
 
-    public function getJiveRegistration($site_id) {
+    public function getRegistration($site_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->select(array('jive_tenant_id', 'jive_client_id', 'jive_client_secret', 'jive_url', 'token'));
         $this->mongo_db->where('site_id', new MongoID($site_id));

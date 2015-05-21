@@ -33,7 +33,7 @@ class Jive extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
         if ($this->Jive_model->hasValidRegistration($this->User_model->getSiteId())) {
-            $this->data['jive'] = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $this->data['jive'] = $this->Jive_model->getRegistration($this->User_model->getSiteId());
         }
 
         $this->data['main'] = 'jive_setup';
@@ -83,7 +83,7 @@ class Jive extends MY_Controller
     public function authorize() {
         $code = $this->input->get('code');
         if (!empty($code)) {
-            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
             $this->_api->initialize($jive['jive_url']);
             $token = $this->_api->newToken($jive['jive_client_id'], $jive['jive_client_secret'], $code);
             if ($token) $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
@@ -110,7 +110,7 @@ class Jive extends MY_Controller
         }
 
         if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
             try {
                 $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
             } catch (Exception $e) {
@@ -170,7 +170,7 @@ class Jive extends MY_Controller
         }
 
         if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
             try {
                 $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
             } catch (Exception $e) {
@@ -230,7 +230,7 @@ class Jive extends MY_Controller
         }
 
         if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
             try {
                 $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
             } catch (Exception $e) {
@@ -281,7 +281,7 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
         try {
             $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
         } catch (Exception $e) {
@@ -380,7 +380,7 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
         try {
             $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
         } catch (Exception $e) {
@@ -469,7 +469,7 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getJiveRegistration($this->User_model->getSiteId());
+        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
         try {
             $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
         } catch (Exception $e) {
