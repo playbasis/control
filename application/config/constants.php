@@ -92,10 +92,14 @@ define('FULLCONTACT_USER_AGENT', 'FullContact');
 
 define('JIVE_USER_AGENT', 'Jive SBS');
 
+define('LITHIUM_USER_AGENT', 'Jakarta Commons-HttpClient/3.1');
+
 define('COMPLETE_MISSION_ACTION', 'complete-mission');
 define('COMPLETE_QUEST_ACTION', 'complete-quest');
 define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
 
 define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
+
+define('DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE', '2015-06-01');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

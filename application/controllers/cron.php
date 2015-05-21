@@ -333,7 +333,7 @@ $email = 'pechpras@playbasis.com';
 
 		/* email */
 		$from = EMAIL_FROM;
-		$to = array('pechpras@playbasis.com', 'jirawat@playbasis.com', 'pascal@playbasis.com');
+		$to = array('pechpras@playbasis.com', 'pascal@playbasis.com');
 		$subject = '[Playbasis] Dashboard User Registration';
 		$message = 'The attachment is a CSV file for the data about current user registration (as of '.date('Y-m-d').').';
 		$html = $this->parser->parse('message.html', array('firstname' => 'Playbasis', 'lastname' => 'Team', 'message' => $message), true);
@@ -350,12 +350,15 @@ $email = 'pechpras@playbasis.com';
 			$email = $client['email'];
 $email = 'pechpras@playbasis.com';
 
+			$myplan_id = $this->client_model->getPlanIdByClientId($client_id);
+			if ($myplan_id != FREE_PLAN) continue;
+
 			/* email */
 			$from = EMAIL_FROM;
 			$to = $email;
-			$subject = '[Playbasis] Please Verify Your Phone Number';
-			$html = $this->parser->parse('message_verify_mobile.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name']), true);
-			$response = $this->utility->email($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html, null);
+			$subject = '[Playbasis] Please Verify Your Account';
+			$html = $this->parser->parse('message_verify_mobile.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'date' => date('M d, Y', strtotime(DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE))), true);
+			$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
 			$this->email_model->log(EMAIL_TYPE_CLIENT_REGISTRATION, $client_id, null, $response, $from, $to, $subject, $html);
 		}
 	}

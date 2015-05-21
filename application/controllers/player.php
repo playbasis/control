@@ -15,6 +15,7 @@ class Player extends REST2_Controller
 		$this->load->model('level_model');
 		$this->load->model('reward_model');
 		$this->load->model('quest_model');
+		$this->load->model('badge_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -702,6 +703,23 @@ class Player extends REST2_Controller
 		//get player badge
 		$badgeList = $this->player_model->getBadge($pb_player_id, $this->site_id);
 		$this->response($this->resp->setRespond($badgeList), 200);
+	}
+	public function badgeAll_get($player_id = '')
+	{
+		$pb_player_id = null;
+		if ($player_id) {
+			$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+				'cl_player_id' => $player_id
+			)));
+			if(!$pb_player_id)
+				$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+		$badges = $this->badge_model->getAllBadges($this->validToken);
+		if ($badges && $pb_player_id) foreach ($badges as &$badge) {
+			$c = $this->player_model->getBadgeCount($this->site_id, $pb_player_id, new MongoId($badge['badge_id']));
+			$badge['amount'] = $c;
+		}
+		$this->response($this->resp->setRespond($badges), 200);
 	}
 	public function claimBadge_post($player_id='', $badge_id='')
 	{

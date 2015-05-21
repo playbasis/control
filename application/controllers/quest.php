@@ -1276,6 +1276,48 @@ class Quest extends REST2_Controller
         $this->response($this->resp->setRespond($resp), 200);
     }
 
+    public function questAll_get($player_id = 0)
+    {
+        $pb_player_id = null;
+        $badge_player_check = null;
+        if ($player_id) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+                'cl_player_id' => $player_id
+            )));
+            if(!$pb_player_id)
+                $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+            $badge_player_check = array();
+            $player_badges = $this->player_model->getBadge($pb_player_id, $this->site_id);
+            if($player_badges){
+                foreach($player_badges as $b){
+                    $badge_player_check[$b["badge_id"]] = $b["amount"];
+                }
+            }
+        }
+
+        $quests = $this->quest_model->getQuests($this->validToken);
+        array_walk_recursive($quests, array($this, "convert_mongo_object"));
+        foreach ($quests as &$quest) {
+            if ($pb_player_id) {
+                $quest_player = $this->quest_model->getPlayerQuest(array('site_id' => $this->site_id, 'pb_player_id' => $pb_player_id, 'quest_id' => new MongoId($quest['_id'])));
+                if ($quest_player) {
+                    $quest['player_status'] = $quest_player['status'];
+                    foreach($quest_player["missions"] as $k=>$m){
+                        $quest["missions"][$k]["date_modified"] = isset($m["date_modified"])?$m["date_modified"]:"";
+                        $quest["missions"][$k]["status"] = isset($m["status"])?$m["status"]:"";
+                        $quest["missions"][$k]["pending"] = $this->checkCompletionMission($quest, $m, $pb_player_id, $this->validToken, $badge_player_check, $m);
+                    }
+                }
+            }
+            $quest['quest_id'] = $quest['_id'];
+            unset($quest['_id']);
+        }
+
+        $resp['quests'] = $quests;
+        $this->response($this->resp->setRespond($resp), 200);
+    }
+
     /*
      * reset quest
      *

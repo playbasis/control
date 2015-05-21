@@ -409,47 +409,53 @@ class Player_model extends MY_Model
 			'claimed',
 			'redeemed'
 		));
-        $this->mongo_db->select(array(),array('_id'));
+		$this->mongo_db->select(array(),array('_id'));
 		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where_ne('badge_id', null);
 		$badges = $this->mongo_db->get('playbasis_reward_to_player');
-        if(!$badges)
-            return array();
+		if(!$badges)
+			return array();
 		$playerBadges = array();
 
 		foreach($badges as $badge)
         {
-            if(isset($badge['badge_id'])){
+            //get badge data
+            $this->mongo_db->select(array(
+                'image',
+                'name',
+                'description',
+                'hint',
+            ));
+            $this->mongo_db->select(array(),array('_id'));
+            $this->mongo_db->where(array(
+                'badge_id' => $badge['badge_id'],
+                'site_id' => $site_id,
+//                'deleted' => false
+            ));
+            $this->mongo_db->limit(1);
+            $result = $this->mongo_db->get('playbasis_badge_to_client');
+            if(!$result) continue;
 
-                //get badge data
-                $this->mongo_db->select(array(
-                    'image',
-                    'name',
-                    'description',
-                    'hint',
-                ));
-                $this->mongo_db->select(array(),array('_id'));
-                $this->mongo_db->where(array(
-                    'badge_id' => $badge['badge_id'],
-                    'site_id' => $site_id,
-//                    'deleted' => false
-                ));
-                $this->mongo_db->limit(1);
-                $result = $this->mongo_db->get('playbasis_badge_to_client');
-
-                if(!$result)
-                    continue;
-                $result = $result[0];
-                $badge['badge_id'] = $badge['badge_id']."";
-                $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
-                $badge['name'] = $result['name'];
-                $badge['description'] = $result['description'];
-                $badge['amount'] = $badge['value'];
-                $badge['hint'] = $result['hint'];
-                unset($badge['value']);
-                array_push($playerBadges, $badge);
-            }
+            $result = $result[0];
+            $badge['badge_id'] = $badge['badge_id']."";
+            $badge['image'] = $this->config->item('IMG_PATH') . $result['image'];
+            $badge['name'] = $result['name'];
+            $badge['description'] = $result['description'];
+            $badge['amount'] = $badge['value'];
+            $badge['hint'] = $result['hint'];
+            unset($badge['value']);
+            array_push($playerBadges, $badge);
         }
 		return $playerBadges;
+	}
+	public function getBadgeCount($site_id, $pb_player_id, $badge_id)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('value'));
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$this->mongo_db->where('badge_id', $badge_id);
+		$badges = $this->mongo_db->get('playbasis_reward_to_player');
+		return $badges ? $badges[0]['value'] : 0;
 	}
 	public function claimBadge($pb_player_id, $badge_id, $site_id, $client_id)
 	{

@@ -95,6 +95,8 @@ $route['Player/action'] = 'player/action/';
 
 $route['Player/'.ANY_STRING.'/badge'] = 'player/badge/$1';
 $route['Player/badge'] = 'player/badge/0';
+$route['Player/'.ANY_STRING.'/badgeAll'] = 'player/badgeAll/$1';
+$route['Player/badgeAll'] = 'player/badgeAll';
 $route['Player/'.ANY_STRING.'/badge/'.ANY_STRING.'/claim'] = 'player/claimBadge/$1/$2';
 $route['Player/'.ANY_STRING.'/badge/'.ANY_STRING.'/redeem'] = 'player/redeemBadge/$1/$2';
 
@@ -102,6 +104,9 @@ $route['Player/'.ANY_STRING.'/goods'] = 'player/goods/$1';
 
 $route['Player/quest'] = 'quest/questOfPlayer';
 $route['Player/quest/'.ANY_STRING] = 'quest/questOfPlayer/$1';
+
+$route['Player/questAll'] = 'quest/questAll';
+$route['Player/questAll/'.ANY_STRING] = 'quest/questAll/$1';
 
 $route['Player/'.ANY_STRING.'/deduct'] = 'player/deduct_reward/$1';
 

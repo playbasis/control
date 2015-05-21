@@ -584,22 +584,6 @@
 						}
 					]
 				},
-				{
-					"MethodName": "Badge",
-					"Synopsis": "Returns information about all the badges that a player has earned.",
-					"HTTPMethod": "GET",
-					"URI": "/Player/:id/badge",
-					"RequiresOAuth": "N",
-					"parameters": [
-						{
-							"Name": "id",
-							"Required": "Y",
-							"Default": "",
-							"Type": "string",
-							"Description": "player id as used in client's website"
-						}
-					]
-				},
                 {
                     "MethodName": "Level",
                     "Synopsis": "Returns detail of level.",
@@ -624,6 +608,38 @@
                     "RequiresOAuth": "N",
                     "parameters": [
 
+                    ]
+                },
+                {
+                    "MethodName": "Badge",
+                    "Synopsis": "Returns information about all the badges that a player has earned.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/badge",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "All Badges",
+                    "Synopsis": "Returns information about all the badges of the client as well as the amount that a player may earn.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/badgeAll",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
                     ]
                 },
 				{
@@ -849,6 +865,22 @@
                     "parameters": [
                         {
                             "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "All Quests of Player",
+                    "Synopsis": "List of all available quests of the client as well as the status of the player if joined.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/questAll/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
