@@ -565,6 +565,10 @@ class Account extends MY_Controller
 			$this->form_validation->set_rules('code', $this->lang->line('form_code'), 'trim|required');
 			$code = $this->input->post('code');
 
+			if( empty($code) ){
+				$this->data['message'] = 'Please provide an authorization code';				
+			}
+
 			$code_generated = $this->session->userdata('verify-code');
 			if (empty($code_generated)) $this->data['message'] = 'Please make a request to generate authorization code first';
 

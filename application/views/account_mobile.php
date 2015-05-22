@@ -38,7 +38,9 @@ if(validation_errors() || isset($message)) {
 					<div class="form-group input-group">
 						<input type="text" class="form-control code-input" name="code"><button type="submit" class="btn btn-primary">OK <i class="fa fa-arrow-right"></i> </button>
 					</div>
-					<div class="error" style="display:none"></div>
+					<div class="error" style="display:block">
+						<?php echo isset($message) ? $message : '' ; ?>
+					</div>
 				</form>
 			</p>
 			<hr>
@@ -86,10 +88,21 @@ if(validation_errors() || isset($message)) {
 		            },
 		            success:function(data){
 		                console.log(data);
-		                setTimeout(function(){
+		                if( data.status == 'success' ){
+		                		setTimeout(function(){
+		                			$('.phone-number').attr('disabled', false);
+		                			$('#form_phonenumber button').text('Resend Code').attr('disabled', false);	
+		                		},5000);
+		                }else{
+		                	if( data.message ){
+		                		$('#form_phonenumber .error').text(data.message).slideDown();
+		                	}else{
+		                		$('#form_phonenumber .error').text('Phone number invalid').slideDown();
+		                	}
 		                	$('.phone-number').attr('disabled', false);
 		                	$('#form_phonenumber button').text('Resend Code').attr('disabled', false);	
-		                },5000);
+		                }
+		                
 		            }
 		        });
 		    }
