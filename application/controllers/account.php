@@ -15,6 +15,7 @@ class Account extends MY_Controller
 //		$this->load->model('Domain_model');
 		$this->load->model('App_model');
 		$this->load->model('Plan_model');
+		$this->load->model('Sms_model');
 
 		if(!$this->User_model->isLogged()){
 			redirect('/login', 'refresh');
@@ -631,6 +632,7 @@ class Account extends MY_Controller
 		$this->load->library('twilio/twiliomini', $config);
 		$from = isset($config['name']) ? $config['name'] : $config['number'];
 		$response = $this->twiliomini->sms($from, $to, $message);
+		$this->Sms_model->log($this->User_model->getClientId(), $this->User_model->getSiteId(), 'sys', $from, $to, $message, $response);
 		return $response && !$response->IsError;
 	}
 
