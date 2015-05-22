@@ -1,20 +1,3 @@
-<?php
-if(validation_errors() || isset($message)) {
-?>
-    <div class="content messages half-width">
-        <?php
-        echo validation_errors('<div class="warning">','</div>');
-
-        if (isset($message) && $message) {
-            ?>
-            <div class="warning"><?php echo $message; ?></div>
-        <?php
-        }
-        ?>
-    </div>
-<?php
-}
-?>
 <div class="activated-wrapper account-verify-wrapper">
 	<div class="activated-content modal-card">
 		<div class="modal-card-head" >
