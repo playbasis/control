@@ -621,7 +621,9 @@ class Account extends MY_Controller
 					echo json_encode(array('status' => 'failure', 'message' => 'There is a problem sending an SMS.'));
 				}
 			} else {
-				echo json_encode(array('status' => 'failure', 'message' => 'Mobile phone number is required.'));
+				$message = 'Mobile phone number is required.';
+				if ($this->data['message']) $message = $this->data['message'];
+				echo json_encode(array('status' => 'failure', 'message' => $message));
 			}
 		} else {
 			echo json_encode(array('status' => 'failure', 'message' => 'Only POST request is supported.'));
