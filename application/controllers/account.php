@@ -607,6 +607,9 @@ class Account extends MY_Controller
 			$this->form_validation->set_rules('phone_number', $this->lang->line('form_phone_number'), 'trim|required');
 			$mobile = $this->input->post('phone_number');
 
+			$c = $this->user_model->usedMobile($mobile);
+			if ($c) $this->data['message'] = 'This number has already been used for sign-up';
+
 			if($this->form_validation->run() && $this->data['message'] == null){
 				$code = get_random_code(5,false,false,true);
 				$this->session->set_userdata('verify-mobile', $mobile);

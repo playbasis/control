@@ -831,5 +831,12 @@ class User_model extends MY_Model
             $this->session->set_userdata('mobile',$this->mobile );
         }
     }
+
+    public function usedMobile($mobile) {
+        $this->set_site_mongodb($this->site_id);
+
+        $this->mongo_db->where('mobile', $mobile);
+        return $this->mongo_db->count('playbasis_client');
+    }
 }
 ?>
