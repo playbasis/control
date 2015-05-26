@@ -461,6 +461,7 @@ class jigsaw extends MY_Model
 			'badge_id' => $badgeId,
 			'deleted' => false
 		));
+		$this->mongo_db->limit(1);
 		$badgeInfo = $this->mongo_db->get('playbasis_badge_to_client');
 		if(!$badgeInfo || !$badgeInfo[0])
 			return false;
@@ -487,6 +488,7 @@ class jigsaw extends MY_Model
 			'reward_id' => $rewardId,
 			'site_id' => $siteId
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		$result = $result[0];
 		if(is_null($result['limit'])){
