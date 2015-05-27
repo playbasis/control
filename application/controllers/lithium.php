@@ -27,12 +27,12 @@ class Lithium extends MY_Controller
         $this->_api->logout();
     }
 
-    public function insert() {
+    public function index() {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
-        $this->data['form'] = 'lithium/insert';
+        $this->data['form'] = 'lithium/';
 
         $this->form_validation->set_rules('lithium_url', $this->lang->line('entry_lithium_url'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('lithium_username', $this->lang->line('entry_lithium_username'), 'trim|required|xss_clean|max_length[160]');
@@ -57,7 +57,7 @@ class Lithium extends MY_Controller
         $this->getForm($this->Lithium_model->getRegistration($this->User_model->getSiteId()));
     }
 
-    public function index() {
+    public function setup() {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
