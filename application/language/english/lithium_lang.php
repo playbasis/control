@@ -32,10 +32,13 @@ $lang['column_place']          		= 'Place';
 $lang['column_callback']          		= 'Callback';
 
 // Entry
-$lang['entry_name']             		= 'Template ID';
-$lang['entry_body']				= 'Message Body';
-$lang['entry_sort_order']           	= 'Sort Order';
-$lang['entry_status']         			= 'Status';
+$lang['entry_lithium_url']             		= 'Lithium URL';
+$lang['entry_lithium_username']				= 'Lithium Username';
+$lang['entry_lithium_password']           	= 'Lithium Password';
+$lang['entry_lithium_client_id']				= 'Client ID';
+$lang['entry_lithium_client_secret']           	= 'Client Secret';
+$lang['entry_http_auth_username']         			= 'HTTP Basic Auth (Username)';
+$lang['entry_http_auth_password']         			= 'HTTP Basic Auth (Password)';
 
 // Error
 $lang['error_warning']          = 'Warning: Please check the form carefully for errors!';

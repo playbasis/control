@@ -27,6 +27,36 @@ class Lithium extends MY_Controller
         $this->_api->logout();
     }
 
+    public function insert() {
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'lithium/insert';
+
+        $this->form_validation->set_rules('lithium_url', $this->lang->line('entry_lithium_url'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('lithium_username', $this->lang->line('entry_lithium_username'), 'trim|required|xss_clean|max_length[160]');
+        $this->form_validation->set_rules('lithium_password', $this->lang->line('entry_lithium_password'), 'trim|required|xss_clean');
+
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $this->data['message'] = null;
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($this->form_validation->run() && $this->data['message'] == null) {
+                if (!$this->Lithium_model->hasValidRegistration($this->User_model->getSiteId())) {
+                    $this->Lithium_model->insertRegistration($this->User_model->getSiteId(), $this->input->post());
+                } else {
+                    $this->Lithium_model->updateRegistration($this->User_model->getSiteId(), $this->input->post());
+                }
+            }
+        }
+
+        $this->getForm($this->Lithium_model->getRegistration($this->User_model->getSiteId()));
+    }
+
     public function index() {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
@@ -40,7 +70,6 @@ class Lithium extends MY_Controller
         if ($this->Lithium_model->hasValidRegistration($this->User_model->getSiteId())) {
             $this->data['lithium'] = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
         }
-
         $this->data['main'] = 'lithium_setup';
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -356,6 +385,56 @@ class Lithium extends MY_Controller
 
         $this->data['main'] = 'jive_webhook';
         $this->data['setting_group_id'] = $setting_group_id;
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
+    private function getForm($info = null) {
+        if ($this->input->post('lithium_url')) {
+            $this->data['lithium_url'] = $this->input->post('lithium_url');
+        } elseif (!empty($info)) {
+            $this->data['lithium_url'] = $info['lithium_url'];
+        } else {
+            $this->data['lithium_url'] = '';
+        }
+
+        if ($this->input->post('lithium_username')) {
+            $this->data['lithium_username'] = $this->input->post('lithium_username');
+        } elseif (!empty($info)) {
+            $this->data['lithium_username'] = $info['lithium_username'];
+        } else {
+            $this->data['lithium_username'] = '';
+        }
+
+        if ($this->input->post('lithium_password')) {
+            $this->data['lithium_password'] = $this->input->post('lithium_password');
+        } elseif (!empty($info)) {
+            $this->data['lithium_password'] = $info['lithium_password'];
+        } else {
+            $this->data['lithium_password'] = '';
+        }
+
+        if ($this->input->post('http_auth_username')) {
+            $this->data['http_auth_username'] = $this->input->post('http_auth_username');
+        } elseif (!empty($info)) {
+            $this->data['http_auth_username'] = $info['http_auth_username'];
+        } else {
+            $this->data['http_auth_username'] = '';
+        }
+
+        if ($this->input->post('http_auth_password')) {
+            $this->data['http_auth_password'] = $this->input->post('http_auth_password');
+        } elseif (!empty($info)) {
+            $this->data['http_auth_password'] = $info['http_auth_password'];
+        } else {
+            $this->data['http_auth_password'] = '';
+        }
+
+        $this->data['client_id'] = $this->User_model->getClientId();
+        $this->data['site_id'] = $this->User_model->getSiteId();
+
+        $this->data['main'] = 'lithium_form';
 
         $this->load->vars($this->data);
         $this->render_page('template');
