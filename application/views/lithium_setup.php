@@ -13,16 +13,16 @@
             <?php if (isset($lithium)) { ?>
                 <table class="form">
                     <tr>
+                        <td>Lithium URL :</td>
+                        <td><?php echo $lithium['lithium_url']; ?></td>
+                    </tr>
+                    <tr>
                         <td>Client ID :</td>
                         <td><?php echo $lithium['lithium_client_id']; ?></td>
                     </tr>
                     <tr>
                         <td>Client Secret :</td>
                         <td><?php echo $lithium['lithium_client_secret']; ?></td>
-                    </tr>
-                    <tr>
-                        <td>Lithium URL :</td>
-                        <td><?php echo $lithium['lithium_url']; ?></td>
                     </tr>
                     <tr>
                         <td>Token :</td>
@@ -41,8 +41,8 @@
                 Please provide information about your Lithium setup.
                 <table class="form">
                     <tr>
-                        <td>URL :</td>
-                        <td><?php echo $lithium['lithium_client_id']; ?></td>
+                        <td>Lithium URL :</td>
+                        <td><?php echo $lithium['lithium_url']; ?></td>
                     </tr>
                     <tr>
                         <td>Client ID :</td>
@@ -51,10 +51,6 @@
                     <tr>
                         <td>Client Secret :</td>
                         <td><?php echo $lithium['lithium_client_secret']; ?></td>
-                    </tr>
-                    <tr>
-                        <td>Lithium URL :</td>
-                        <td><?php echo $lithium['lithium_url']; ?></td>
                     </tr>
                     <tr>
                         <td>Token :</td>
