@@ -327,7 +327,7 @@ $email = 'pechpras@playbasis.com';
 		$fp = fopen($tmpfname, 'w');
 		$clients = $this->client_model->listAllActiveClients();
 		if ($clients) foreach ($clients as $client) {
-			fputcsv($fp, array($client['_id']."", $client['first_name'], $client['last_name'], $client['company'], $client['email'], datetimeMongotoReadable($client['date_added'])));
+			fputcsv($fp, array($client['_id']."", $client['first_name'], $client['last_name'], $client['company'], $client['email'], $client['mobile'], datetimeMongotoReadable($client['date_added'])));
 		}
 		fclose($fp);
 
