@@ -20,18 +20,44 @@ class Lithium_model extends MY_Model {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where_ne('deleted', true);
-        $this->mongo_db->where_ne('deleted', true);
         return $this->mongo_db->count("playbasis_lithium_to_client") > 0;
     }
 
     public function getRegistration($site_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->select(array('login', 'password', 'basicAuth', 'tenant_id', 'lithium_client_id', 'lithium_client_secret', 'lithium_url', 'token'));
+        $this->mongo_db->select(array('lithium_url', 'lithium_username', 'lithium_password', 'http_auth_username', 'http_auth_password', 'tenant_id', 'lithium_client_id', 'lithium_client_secret', 'token'));
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_lithium_to_client");
         return $results ? $results[0] : null;
+    }
+
+    public function insertRegistration($site_id, $lithium) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        return $this->mongo_db->insert('playbasis_lithium_to_client', array(
+            'lithium_url' => $lithium['lithium_url'],
+            'lithium_username' => $lithium['lithium_username'],
+            'lithium_password' => $lithium['lithium_password'],
+            'http_auth_username' => isset($lithium['http_auth_username']) ? $lithium['http_auth_username'] : null,
+            'http_auth_password' => isset($lithium['http_auth_password']) ? $lithium['http_auth_password'] : null,
+            'date_added' => $date_added,
+            'date_modified' => $date_added,
+        ));
+    }
+
+    public function updateRegistration($site_id, $lithium) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $date_modified = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->set('lithium_url', $lithium['lithium_url']);
+        $this->mongo_db->set('lithium_username', $lithium['lithium_username']);
+        $this->mongo_db->set('lithium_password', $lithium['lithium_password']);
+        if (isset($lithium['http_auth_username'])) $this->mongo_db->set('http_auth_username', $lithium['http_auth_username']);
+        if (isset($lithium['http_auth_password'])) $this->mongo_db->set('http_auth_password', $lithium['http_auth_password']);
+        $this->mongo_db->set('date_modified', $date_modified);
+        $this->mongo_db->update('playbasis_lithium_to_client');
     }
 
     public function updateToken($site_id, $token) {
