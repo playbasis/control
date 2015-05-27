@@ -12,7 +12,6 @@ class Lithium extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Jive_model');
         $this->load->model('Lithium_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -78,10 +77,10 @@ class Lithium extends MY_Controller
     public function authorize() {
         $code = $this->input->get('code');
         if (!empty($code)) {
-            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-            $this->_api->initialize($jive['jive_url']);
-            $token = $this->_api->newToken($jive['jive_client_id'], $jive['jive_client_secret'], $code);
-            if ($token) $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+            $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
+            $this->_api->initialize($lithium['lithium_url']);
+            $token = $this->_api->newToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $code);
+            if ($token) $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
         }
         redirect('/lithium', 'refresh');
     }
@@ -100,20 +99,20 @@ class Lithium extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/jive/events'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/events'.($offset ? '/'.$offset : ''), 'refresh');
             }
         }
 
-        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
+        if ($this->Lithium_model->hasToken($this->User_model->getSiteId())) {
+            $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
             try {
-                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+                $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
             } catch (Exception $e) {
                 if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                    $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
                     if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                        $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
                     }
                 }
             }
@@ -124,7 +123,7 @@ class Lithium extends MY_Controller
                 $fail = false;
                 foreach ($this->input->post('selected') as $eventId) {
                     try {
-                        $this->_api->subscribeEvent($this->Jive_model->getEventType($eventId), $eventId);
+                        $this->_api->subscribeEvent($this->Lithium_model->getEventType($eventId), $eventId);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -133,14 +132,14 @@ class Lithium extends MY_Controller
                 }
                 if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch_event'));
                 if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/jive/events'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/events'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['jive'] = $jive;
-            $this->session->set_userdata('total_events', $this->Jive_model->totalEvents($this->User_model->getSiteId()));
+            $this->data['lithium'] = $lithium;
+            $this->session->set_userdata('total_events', $this->Lithium_model->totalEvents($this->User_model->getSiteId()));
             $this->getListEvents($offset);
         } else {
-            $this->data['main'] = 'jive_event';
+            $this->data['main'] = 'lithium_event';
             $this->load->vars($this->data);
             $this->render_page('template');
         }
@@ -160,20 +159,20 @@ class Lithium extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/jive/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/subscriptions'.($offset ? '/'.$offset : ''), 'refresh');
             }
         }
 
-        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
+        if ($this->Lithium_model->hasToken($this->User_model->getSiteId())) {
+            $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
             try {
-                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+                $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
             } catch (Exception $e) {
                 if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                    $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
                     if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                        $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
                     }
                 }
             }
@@ -182,9 +181,9 @@ class Lithium extends MY_Controller
             if ($this->input->post('selected')) {
                 $success = false;
                 $fail = false;
-                foreach ($this->input->post('selected') as $webhookId) {
+                foreach ($this->input->post('selected') as $subscriptionId) {
                     try {
-                        $this->_api->unsubscribeEvent($webhookId);
+                        $this->_api->unsubscribeEvent($subscriptionId);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -193,14 +192,14 @@ class Lithium extends MY_Controller
                 }
                 if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
                 if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/jive/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/subscriptions'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['jive'] = $jive;
-            $this->session->set_userdata('total_webhooks', $this->_api->totalSubscriptions());
+            $this->data['lithium'] = $lithium;
+            $this->session->set_userdata('total_subscriptions', $this->_api->totalSubscriptions());
             $this->getListSubscriptions($offset);
         } else {
-            $this->data['main'] = 'jive_place';
+            $this->data['main'] = 'lithium_subscription';
             $this->load->vars($this->data);
             $this->render_page('template');
         }
@@ -216,19 +215,19 @@ class Lithium extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
+        $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
         try {
-            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+            $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
         } catch (Exception $e) {
             if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
                 if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                    $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
                 }
             }
         }
-        $this->data['jive'] = $jive;
+        $this->data['lithium'] = $lithium;
         $this->getListEvents($offset);
     }
 
@@ -237,7 +236,7 @@ class Lithium extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('jive/events');
+        $config['base_url'] = site_url('lithium/events');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -246,8 +245,8 @@ class Lithium extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['offset'] = $offset;
 
-        $events = $this->Jive_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
-        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Jive_model->totalEvents($this->User_model->getSiteId()));
+        $events = $this->Lithium_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
+        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Lithium_model->totalEvents($this->User_model->getSiteId()));
         $total = $this->session->userdata('total_events');
 
         foreach ($events as $event) {
@@ -288,7 +287,7 @@ class Lithium extends MY_Controller
         $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
-        $this->data['main'] = 'jive_event';
+        $this->data['main'] = 'lithium_event';
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
@@ -305,19 +304,19 @@ class Lithium extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
+        $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
         try {
-            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
+            $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
         } catch (Exception $e) {
             if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
+                $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
                 if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
+                    $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
                 }
             }
         }
-        $this->data['jive'] = $jive;
+        $this->data['lithium'] = $lithium;
         $this->getListSubscriptions($offset);
     }
 
@@ -326,7 +325,7 @@ class Lithium extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config['base_url'] = site_url('jive/webhooks');
+        $config['base_url'] = site_url('lithium/subscriptions');
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -335,17 +334,17 @@ class Lithium extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['offset'] = $offset;
 
-        $webhooks = $this->_api->listSubscriptions($per_page, $offset);
-        if ($this->session->userdata('total_webhooks') === false) $this->session->set_userdata('total_webhooks', $this->_api->totalSubscriptions());
-        $total = $this->session->userdata('total_webhooks');
+        $subscriptions = $this->_api->listSubscriptions($per_page, $offset);
+        if ($this->session->userdata('total_subscriptions') === false) $this->session->set_userdata('total_subscriptions', $this->_api->totalSubscriptions());
+        $total = $this->session->userdata('total_subscriptions');
 
-        foreach ($webhooks->list as $webhook) {
-            $this->data['webhooks'][] = array(
-                'webhookID' => $webhook->id,
-                'events' => isset($webhook->events) && !empty($webhook->events) ? $webhook->events : 'place',
-                'object' => $webhook->object,
-                'callback' => $webhook->callback,
-                'selected' => ($this->input->post('selected') && in_array($webhook->webhookID, $this->input->post('selected'))),
+        foreach ($subscriptions->list as $subscription) {
+            $this->data['subscriptions'][] = array(
+                'subscriptionID' => $subscription->id,
+                'events' => $subscription->events,
+                'object' => $subscription->object,
+                'callback' => $subscription->callback,
+                'selected' => ($this->input->post('selected') && in_array($subscription->subscriptionID, $this->input->post('selected'))),
             );
         }
 
@@ -383,7 +382,7 @@ class Lithium extends MY_Controller
         $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
         $this->data['pagination_total_rows'] = $config["total_rows"];
 
-        $this->data['main'] = 'jive_webhook';
+        $this->data['main'] = 'lithium_subscription';
         $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
