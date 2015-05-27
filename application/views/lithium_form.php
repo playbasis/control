@@ -15,6 +15,11 @@
                 </div>
             <?php }?>
 
+            <div id="tabs" class="htabs">
+                <a href="<?php echo site_url('lithium');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_setup'); ?></a>
+                <a href="<?php echo site_url('lithium/event');?>" style="display: inline;"><?php echo $this->lang->line('tab_event'); ?></a>
+                <a href="<?php echo site_url('lithium/subscription');?>" style="display: inline;"><?php echo $this->lang->line('tab_subscription'); ?></a>
+            </div>
             <?php
             if(validation_errors() || isset($message)) {
                 ?>
