@@ -4,16 +4,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Lithium_model extends MY_Model {
 
     protected $events = array(
-        array('id' => 'jive:UserRegistered', 'type' => 'user', 'description' => 'User has registered'),
-        array('id' => 'jive:UserCreate', 'type' => 'user', 'description' => 'User account has been created'),
-        array('id' => 'jive:UserSignOn', 'type' => 'user', 'description' => 'User has signed on'),
-        array('id' => 'jive:UserUpdate', 'type' => 'user', 'description' => 'User profile has been updated'),
-        array('id' => 'jive:UserSignOff', 'type' => 'user', 'description' => 'User has signed off'),
-        array('id' => 'jive:MessageCreate', 'type' => 'message', 'description' => 'Message has been created'),
-        array('id' => 'jive:MessageUpdate', 'type' => 'message', 'description' => 'Message has been edited'),
-        array('id' => 'jive:MessageMove', 'type' => 'message', 'description' => 'Message has been moved'),
-        array('id' => 'jive:MessageDelete', 'type' => 'message', 'description' => 'Message has been deleted'),
-        array('id' => 'jive:MessageRootPublished', 'type' => 'message', 'description' => 'Message has been published'),
+        array('id' => 'UserRegistered', 'type' => 'user', 'description' => 'User has registered'),
+        array('id' => 'UserCreate', 'type' => 'user', 'description' => 'User account has been created'),
+        array('id' => 'UserSignOn', 'type' => 'user', 'description' => 'User has signed on'),
+        array('id' => 'UserUpdate', 'type' => 'user', 'description' => 'User profile has been updated'),
+        array('id' => 'UserSignOff', 'type' => 'user', 'description' => 'User has signed off'),
+        array('id' => 'MessageCreate', 'type' => 'message', 'description' => 'Message has been created'),
+        array('id' => 'MessageUpdate', 'type' => 'message', 'description' => 'Message has been edited'),
+        array('id' => 'MessageMove', 'type' => 'message', 'description' => 'Message has been moved'),
+        array('id' => 'MessageDelete', 'type' => 'message', 'description' => 'Message has been deleted'),
+        array('id' => 'MessageRootPublished', 'type' => 'message', 'description' => 'Message has been published'),
     );
 
     public function hasValidRegistration($site_id) {
