@@ -490,8 +490,8 @@ class Player extends REST2_Controller
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('login');
 		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
-			'client_id' => $this->validToken['client_id'],
-			'site_id' => $this->validToken['site_id'],
+			'client_id' => $this->client_id,
+			'site_id' => $this->site_id,
 			'pb_player_id' => $pb_player_id,
 			'action_log_id' => null
 		));
@@ -502,6 +502,14 @@ class Player extends REST2_Controller
 			'action_icon' => 'fa-sign-in',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
+
+		/* Optionally, keep track of session */
+		$session_id = $this->input->post('session_id');
+		$session_expires_in = $this->input->post('session_expires_in');
+		if ($session_id) {
+			$this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id, $session_expires_in);
+		}
+
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function logout_post($player_id = '')
@@ -531,7 +539,58 @@ class Player extends REST2_Controller
 			'action_icon' => 'fa-sign-out',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
+
+		/* Optionally, remove session */
+		$session_id = $this->input->post('session_id');
+		if ($session_id) {
+			$this->player_model->logout($this->client_id, $this->site_id, $session_id);
+		}
+
 		$this->response($this->resp->setRespond(), 200);
+	}
+	public function sessions_get($player_id = '')
+	{
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'player_id'
+			)), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+			'cl_player_id' => $player_id
+		)));
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+		/* List all active sessions of the player */
+		$sessions = $this->player_model->listSessions($this->client_id, $this->site_id, $pb_player_id);
+
+		$this->response($this->resp->setRespond($sessions), 200);
+	}
+	public function session_get($session_id = '')
+	{
+		if(!$session_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'session_id'
+			)), 200);
+
+		/* Find a player given login session ID */
+		$session = $this->player_model->findBySessionId($this->client_id, $this->site_id, $session_id);
+		if(!$session)
+			$this->response($this->error->setError('SESSION_NOT_VALID'), 200);
+		$player = $this->player_model->readPlayer($session['pb_player_id'], $this->site_id, array(
+			'cl_player_id',
+			'username',
+			'first_name',
+			'last_name',
+			'gender',
+			'image',
+			'exp',
+			'level',
+			'date_added',
+			'birth_date'
+		));
+
+		$this->response($this->resp->setRespond($player), 200);
 	}
 	public function points_get($player_id = '')
 	{
