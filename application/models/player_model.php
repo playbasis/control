@@ -2235,6 +2235,8 @@ class Player_model extends MY_Model
     public function listSessions($client_id, $site_id, $pb_player_id) {
         $this->set_site_mongodb($site_id);
         $mongoDate = new MongoDate(time());
+        $this->mongo_db->select(array('session_id','date_expire'));
+        $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where('pb_player_id', $pb_player_id);
         $reset_where = array(
@@ -2242,7 +2244,11 @@ class Player_model extends MY_Model
             array('date_expire' => null)
         );
         $this->mongo_db->where(array('$or' => $reset_where));
-        return $this->mongo_db->get('playbasis_player_session');
+        $sessions = $this->mongo_db->get('playbasis_player_session');
+        if ($sessions) foreach ($sessions as &$session) {
+            if ($session['date_expire']) $session['date_expire'] = datetimeMongotoReadable($session['date_expire']);
+        }
+        return $sessions;
     }
 
     public function findBySessionId($client_id, $site_id, $session_id, $active_only=true) {
