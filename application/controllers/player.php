@@ -566,6 +566,32 @@ class Player extends REST2_Controller
 
 		$this->response($this->resp->setRespond($sessions), 200);
 	}
+	public function session_get($session_id = '')
+	{
+		if(!$session_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'session_id'
+			)), 200);
+
+		/* Find a player given login session ID */
+		$session = $this->player_model->findBySessionId($this->client_id, $this->site_id, $session_id);
+		if(!$session)
+			$this->response($this->error->setError('SESSION_NOT_VALID'), 200);
+		$player = $this->player_model->readPlayer($session['pb_player_id'], $this->site_id, array(
+			'cl_player_id',
+			'username',
+			'first_name',
+			'last_name',
+			'gender',
+			'image',
+			'exp',
+			'level',
+			'date_added',
+			'birth_date'
+		));
+
+		$this->response($this->resp->setRespond($player), 200);
+	}
 	public function points_get($player_id = '')
 	{
 		if(!$player_id)

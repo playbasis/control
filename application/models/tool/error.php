@@ -139,6 +139,10 @@ class Error extends CI_Model
             $errorData['message'] = "Event doesn't exist";
             $errorData['error_code'] = '0208';
             break;
+        case 'SESSION_NOT_VALID':
+            $errorData['message'] = "Session is invalid";
+            $errorData['error_code'] = '0209';
+            break;
         case 'ACTION_NOT_FOUND':
             $errorData['message'] = "Action not available";
             $errorData['error_code'] = '0301';
