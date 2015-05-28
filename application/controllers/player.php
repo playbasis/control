@@ -539,6 +539,13 @@ class Player extends REST2_Controller
 			'action_icon' => 'fa-sign-out',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
+
+		/* Optionally, remove session */
+		$session_id = $this->input->post('session_id');
+		if ($session_id) {
+			$this->player_model->logout($this->client_id, $this->site_id, $session_id);
+		}
+
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function points_get($player_id = '')

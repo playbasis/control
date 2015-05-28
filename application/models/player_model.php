@@ -2224,6 +2224,13 @@ class Player_model extends MY_Model
             $this->mongo_db->update('playbasis_player_session');
         }
     }
+
+    public function logout($client_id, $site_id, $session_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('session_id', $session_id);
+        return $this->mongo_db->delete('playbasis_player_session');
+    }
 }
 
 function index_id($obj) {
