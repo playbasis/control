@@ -45,7 +45,7 @@ $lang['error_warning']          = 'Warning: Please check the form carefully for 
 $lang['error_permission']       = 'Warning: You do not have permission to modify badges!';
 $lang['error_access']			= 'Warning: You do not have permission to access this page!';
 
-$lang['button_watch']          	= 'Watch';
+$lang['button_subscribe']          	= 'Subscribe';
 $lang['button_delete']          	= 'Delete';
 
 ?>

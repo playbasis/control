@@ -3,7 +3,7 @@
         <div class="heading">
             <h1><img src="image/category.png" alt="" /> <?php echo $heading_title; ?></h1>
             <div class="buttons">
-                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_watch'); ?></button>
+                <button class="btn btn-info" onclick="$('#form').submit();" type="button"><?php echo $this->lang->line('button_subscribe'); ?></button>
             </div>
         </div><!-- .heading -->
         <div class="content">
