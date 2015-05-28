@@ -19,11 +19,28 @@ class Lithium extends MY_Controller
         $this->lang->load("lithium", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
 
-        $this->_api = $this->lithiumapi;
-        $this->_api->initialize('http://community.stage.starhub.com/');
-        $this->_api->setHttpAuth('basic', 'starhub', 'ewoPzus7*er');
-        $this->_api->login('pascal', 'staging_123');
-        $this->_api->logout();
+        $this->_api = null;
+        if ($this->Lithium_model->hasValidRegistration($this->User_model->getSiteId())) {
+            $this->_api = $this->lithiumapi;
+            $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
+            if (isset($lithium['token']['access_token'])) { // $this->Lithium_model->hasToken($this->User_model->getSiteId())
+                try {
+                    $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
+                } catch (Exception $e) {
+                    if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                        $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
+                        if ($token) {
+                            $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                            $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
+                        }
+                    }
+                }
+            } else if (!empty($lithium['lithium_username'])) {
+                $this->_api->initialize($lithium['lithium_url']);
+                if (!empty($lithium['http_auth_username'])) $this->_api->setHttpAuth('basic', $lithium['http_auth_username'], $lithium['http_auth_password']);
+                $this->_api->login($lithium['lithium_username'], $lithium['lithium_password']);
+            }
+        }
     }
 
     public function index() {
@@ -103,20 +120,7 @@ class Lithium extends MY_Controller
             }
         }
 
-        if ($this->Lithium_model->hasToken($this->User_model->getSiteId())) {
-            $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
-                    if ($token) {
-                        $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_api) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
@@ -135,7 +139,7 @@ class Lithium extends MY_Controller
                 redirect('/lithium/events'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['lithium'] = $lithium;
+            $this->data['lithium'] = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
             $this->session->set_userdata('total_events', $this->Lithium_model->totalEvents($this->User_model->getSiteId()));
             $this->getListEvents($offset);
         } else {
