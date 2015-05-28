@@ -490,8 +490,8 @@ class Player extends REST2_Controller
 		//trigger and log event
 		$eventMessage = $this->utility->getEventMessage('login');
 		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
-			'client_id' => $this->validToken['client_id'],
-			'site_id' => $this->validToken['site_id'],
+			'client_id' => $this->client_id,
+			'site_id' => $this->site_id,
 			'pb_player_id' => $pb_player_id,
 			'action_log_id' => null
 		));
@@ -502,6 +502,14 @@ class Player extends REST2_Controller
 			'action_icon' => 'fa-sign-in',
 			'message' => $eventMessage
 		), $this->validToken['domain_name'], $this->validToken['site_id']);
+
+		/* Optionally, keep track of session */
+		$session_id = $this->input->post('session_id');
+		$session_expires_in = $this->input->post('session_expires_in');
+		if ($session_id) {
+			$this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id, $session_expires_in);
+		}
+
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function logout_post($player_id = '')
