@@ -427,6 +427,13 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "session id of the player"
+						},
+						{
+							"Name": "session_expires_in",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "session expires in seconds"
 						}
 					]
 				},
