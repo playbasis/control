@@ -2231,6 +2231,19 @@ class Player_model extends MY_Model
         $this->mongo_db->where('session_id', $session_id);
         return $this->mongo_db->delete('playbasis_player_session');
     }
+
+    public function listSessions($client_id, $site_id, $pb_player_id) {
+        $this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $reset_where = array(
+            array('date_expire' => array('$gt' => $mongoDate)),
+            array('date_expire' => null)
+        );
+        $this->mongo_db->where(array('$or' => $reset_where));
+        return $this->mongo_db->get('playbasis_player_session');
+    }
 }
 
 function index_id($obj) {

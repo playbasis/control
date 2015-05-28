@@ -67,6 +67,8 @@ $route['Player/'.ANY_STRING.'/login'] = 'player/login/$1';
 $route['Player/login'] = 'player/login';
 $route['Player/'.ANY_STRING.'/logout'] = 'player/logout/$1';
 $route['Player/logout'] = 'player/logout';
+$route['Player/'.ANY_STRING.'/sessions'] = 'player/sessions/$1';
+$route['Player/sessions'] = 'player/sessions';
 
 $route['Player/rank/'.ANY_STRING.'/'.ANY_NUMBER] = 'player/rank/$1/$2';
 $route['Player/rank/'.ANY_STRING] = 'player/rank/$1/20';

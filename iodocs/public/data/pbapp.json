@@ -461,6 +461,22 @@
 					]
 				},
 				{
+					"MethodName": "List Active Player Sessions",
+					"Synopsis": "List active sessions of a player in Playbasis system.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/sessions",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
 					"MethodName": "Points",
 					"Synopsis": "Returns information about all point-based rewards that a player currently have.",
 					"HTTPMethod": "GET",
