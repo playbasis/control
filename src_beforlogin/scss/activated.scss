@@ -11,6 +11,13 @@
 	}
 }
 
+.intl-tel-input .flag-dropdown{
+	z-index: 100;
+	text-align: left;
+}
+.intl-tel-input .country-list{
+	width: 400px;
+}
 // account-verify-wrapper
 .account-verify-wrapper {
 	.modal-card-head > img{
@@ -33,6 +40,7 @@
 		    height: 35px;
 		    line-height: 35px;
 		    padding: 0 12px;
+		    vertical-align: top;
 		  }
 		}
 		input.code-input{

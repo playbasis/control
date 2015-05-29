@@ -935,6 +935,15 @@ table {
   margin-right: auto;
 }
 
+.intl-tel-input .flag-dropdown {
+  z-index: 100;
+  text-align: left;
+}
+
+.intl-tel-input .country-list {
+  width: 400px;
+}
+
 .account-verify-wrapper .modal-card-head > img {
   margin-top: 10px;
 }
@@ -955,6 +964,7 @@ table {
   height: 35px;
   line-height: 35px;
   padding: 0 12px;
+  vertical-align: top;
 }
 .account-verify-wrapper .form input.code-input {
   width: 120px;

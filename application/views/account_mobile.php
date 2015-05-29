@@ -9,7 +9,8 @@
 			<p>Provide your mobile phone number <br>and receive the validation code by SMS.</p>
 			<form class="form" id="form_phonenumber">
 				<div class="form-group input-group">
-					<input type="tel" class="form-control phone-number" placeholder="+66123456789"><button type="submit" class="btn btn-primary">Requests Code </button>
+					<input id="phone" type="tel"  class="form-control phone-number" >
+					<button type="submit" class="btn btn-primary">Requests Code </button>
 				</div>
 				<div class="error" style="display:none"></div>
 			</form>
@@ -19,6 +20,7 @@
 				Enter the code received in the field below.
 				<form class="form" id="form_verify" method="POST">
 					<div class="form-group input-group">
+						
 						<input type="text" class="form-control code-input" name="code"><button type="submit" class="btn btn-primary">OK <i class="fa fa-arrow-right"></i> </button>
 					</div>
 					<div class="error" style="display:block">
@@ -34,10 +36,19 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script>
+<link rel="stylesheet" href="<?php echo base_url();?>javascript/intlTelInput/css/intlTelInput.css">
+<!-- <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script> -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/intlTelInput/js/intlTelInput.js"></script>
 <script type="text/javascript">
 //baseUrlPath
+	$("#phone").intlTelInput({
+		defaultCountry: "auto",
+		nationalMode: false,
+	  	utilsScript: "<?php echo base_url();?>javascript/intlTelInput/js/utils.js"
+	});
 	$(document).ready(function(){
+
 		$('#form_phonenumber').submit(function(e){
 			e.preventDefault();
 
@@ -48,17 +59,15 @@
 
 		    	var user_phone_number = $('.phone-number').val();
 
+		    	// var filter = /\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d| 2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]| 4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/;
 
-		    	var filter = /\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d| 2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]| 4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/;
-
-		    if( user_phone_number == null || user_phone_number == '' || !filter.test(user_phone_number) ){
-		        
+		    	// if( user_phone_number == null || user_phone_number == '' || !filter.test(user_phone_number) ){
 		        // alert(user_phone_number);
-		        $('#form_phonenumber .error').text('Phone number invalid').slideDown();
-		        $('#form_phonenumber button').attr('disabled', false);
-		        $('.phone-number').attr('disabled', false);
-
-		    }else{
+		        // $('#form_phonenumber .error').text('Phone number invalid').slideDown();
+		        // $('#form_phonenumber button').attr('disabled', false);
+		        // $('.phone-number').attr('disabled', false);
+			// }
+		    
 		    	  
 		    	  $('#form_phonenumber button').text('sending...');
 
@@ -88,7 +97,7 @@
 		                
 		            }
 		        });
-		    }
+		    
 		});
 
 
