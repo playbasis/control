@@ -420,6 +420,20 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "session_id",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "session id of the player"
+						},
+						{
+							"Name": "session_expires_in",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "session expires in seconds"
 						}
 					]
 				},
@@ -443,6 +457,45 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "player id as used in client's website"
+						},
+						{
+							"Name": "session_id",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "session id of the player"
+						}
+					]
+				},
+				{
+					"MethodName": "List Active Player Sessions",
+					"Synopsis": "List active sessions of a player in Playbasis system.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/:id/sessions",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "player id as used in client's website"
+						}
+					]
+				},
+				{
+					"MethodName": "Find a Player by Session",
+					"Synopsis": "Find a player given session ID.",
+					"HTTPMethod": "GET",
+					"URI": "/Player/session/:session_id",
+					"RequiresOAuth": "N",
+					"parameters": [
+						{
+							"Name": "session_id",
+							"Required": "Y",
+							"Default": "",
+							"Type": "string",
+							"Description": "session id"
 						}
 					]
 				},

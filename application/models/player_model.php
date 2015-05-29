@@ -2202,6 +2202,71 @@ class Player_model extends MY_Model
             }
         }
     }
+
+    public function login($client_id, $site_id, $pb_player_id, $session_id, $session_expires_in) {
+        $this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
+        $date_expire = null;
+        if ($session_expires_in) {
+            $session_expires_in = intval($session_expires_in);
+            $date_expire = new MongoDate(time()+$session_expires_in);
+        }
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('session_id', $session_id);
+        $c = $this->mongo_db->count('playbasis_player_session');
+        if (!$c) {
+            $this->mongo_db->insert('playbasis_player_session', array('client_id' => $client_id, 'site_id' => $site_id, 'session_id' => $session_id, 'pb_player_id' => $pb_player_id, 'date_added' => $mongoDate, 'date_modified' => $mongoDate, 'date_expire' => $date_expire));
+        } else {
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('session_id', $session_id);
+            $this->mongo_db->set('date_expire', $date_expire);
+            $this->mongo_db->set('date_modified', $mongoDate);
+            $this->mongo_db->update('playbasis_player_session');
+        }
+    }
+
+    public function logout($client_id, $site_id, $session_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('session_id', $session_id);
+        return $this->mongo_db->delete('playbasis_player_session');
+    }
+
+    public function listSessions($client_id, $site_id, $pb_player_id) {
+        $this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
+        $this->mongo_db->select(array('session_id','date_expire'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('pb_player_id', $pb_player_id);
+        $reset_where = array(
+            array('date_expire' => array('$gt' => $mongoDate)),
+            array('date_expire' => null)
+        );
+        $this->mongo_db->where(array('$or' => $reset_where));
+        $sessions = $this->mongo_db->get('playbasis_player_session');
+        if ($sessions) foreach ($sessions as &$session) {
+            if ($session['date_expire']) $session['date_expire'] = datetimeMongotoReadable($session['date_expire']);
+        }
+        return $sessions;
+    }
+
+    public function findBySessionId($client_id, $site_id, $session_id, $active_only=true) {
+        $this->set_site_mongodb($site_id);
+        $mongoDate = new MongoDate(time());
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('session_id', $session_id);
+        if ($active_only) {
+            $reset_where = array(
+                array('date_expire' => array('$gt' => $mongoDate)),
+                array('date_expire' => null)
+            );
+            $this->mongo_db->where(array('$or' => $reset_where));
+        }
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_player_session');
+        return $results ? $results[0] : null;
+    }
 }
 
 function index_id($obj) {
