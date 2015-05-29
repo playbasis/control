@@ -43,8 +43,8 @@
 <script type="text/javascript">
 //baseUrlPath
 	$("#phone").intlTelInput({
-		defaultCountry: "auto",
-		// nationalMode: false,
+		// defaultCountry: "auto",
+		nationalMode: false,
 	  	utilsScript: "<?php echo base_url();?>javascript/intlTelInput/js/utils.js"
 	});
 	$(document).ready(function(){
