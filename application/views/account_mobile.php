@@ -37,8 +37,8 @@
 </div>
 
 <link rel="stylesheet" href="<?php echo base_url();?>javascript/intlTelInput/css/intlTelInput.css">
-<!-- <script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script> -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/custom/jquery-1.7.2.min.js"></script>
+
 <script type="text/javascript" src="<?php echo base_url();?>javascript/intlTelInput/js/intlTelInput.js"></script>
 <script type="text/javascript">
 //baseUrlPath
