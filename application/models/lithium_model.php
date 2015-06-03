@@ -90,5 +90,12 @@ class Lithium_model extends MY_Model {
         }
         return false;
     }
+
+    public function saveSubscriptions($site_id, $subscriptions) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->delete_all("playbasis_lithium_subscription");
+        return $this->mongo_db->batch_insert('playbasis_lithium_subscription', $subscriptions, array("w" => 0, "j" => false));
+    }
 }
 ?>
