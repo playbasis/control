@@ -80,12 +80,8 @@ class Lithium_model extends MY_Model {
         return $this->mongo_db->count("playbasis_lithium_to_client") > 0;
     }
 
-    public function listEvents($site_id, $per_page, $offset) {
-        return array_slice($this->events, $offset, $per_page);
-    }
-
-    public function totalEvents($site_id) {
-        return count($this->events);
+    public function listEvents($site_id) {
+        return $this->events;
     }
 
     public function getEventType($eventId) {
