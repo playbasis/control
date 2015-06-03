@@ -206,6 +206,7 @@ class Lithium extends MY_Controller
 
     private function getListSubscriptions() {
         $subscriptions = $this->_api->subscriptions();
+        $this->Lithium_model->saveSubscriptions($this->User_model->getSiteId(), $this->formatSubscription($subscriptions));
         foreach ($subscriptions as $subscription) {
             $id = $subscription->event_type->{'$'};
             $this->data['subscriptions'][] = array(
@@ -269,6 +270,23 @@ class Lithium extends MY_Controller
 
         $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    private function formatSubscription($subscriptions) {
+        $arr = array();
+        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        if ($subscriptions) foreach ($subscriptions as $subscription) {
+            $arr[] = array(
+                'client_id' => $this->User_model->getClientId(),
+                'site_id' => $this->User_model->getSiteId(),
+                'token' => $subscription->token->{'$'},
+                'event' => $subscription->event_type->{'$'},
+                'callback_url' => $subscription->callback_url->{'$'},
+                'date_added' => $d,
+                'date_modified' => $d,
+            );
+        }
+        return $arr;
     }
 
     private function validateModify() {
