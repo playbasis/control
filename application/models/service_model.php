@@ -215,7 +215,7 @@ class Service_model extends MY_Model
         return $events_output;
     }
 
-    public function getRecentActivities($site_id, $offset, $limit, $pb_player_id=null, $last_read_activity_id=null){
+    public function getRecentActivities($site_id, $offset, $limit, $pb_player_id=null, $last_read_activity_id=null, $mode='all'){
         $this->set_site_mongodb($site_id);
 
         $last_read = $last_read_activity_id ? $this->getDateAddedOfEventById($site_id, new MongoId($last_read_activity_id)) : null;
@@ -233,12 +233,12 @@ class Service_model extends MY_Model
         }
 
         $event_type = array('REWARD', 'REDEEM', 'ACTION', 'LEVEL');
-        if ($pb_player_id) {
+        if ($mode != 'all') {
             $event_type[] = 'SOCIAL';
         }
         $this->mongo_db->where_in('event_type', $event_type);
 
-        if ($pb_player_id) {
+        if ($mode != 'all') {
             $this->mongo_db->where('pb_player_id', $pb_player_id);
         }
 
@@ -264,7 +264,8 @@ class Service_model extends MY_Model
             array_push($events_output, $event);
         }
 
-        if(!$pb_player_id && $ids){
+        if($mode == 'all' && $ids){
+            /* "socials" for counting number of like/comment for each livefeed event */
             $this->mongo_db->select(array('action_name', 'event_id'));
             $this->mongo_db->where('event_type', 'SOCIAL');
             $this->mongo_db->where_in('event_id', $this->getArrayKeysInMongoId($ids));
@@ -282,20 +283,20 @@ class Service_model extends MY_Model
                 $idx = $ids[$key];
                 $events_output[$idx]['socials'] = $value;
             }
-        }
 
-        /* count how many times the player has like/comment each livefeed event */
-        if($pb_player_id){
-            $this->mongo_db->select(array('action_name', 'event_id'));
-            $this->mongo_db->where('event_type', 'SOCIAL');
-            $this->mongo_db->where_in('event_id', $this->getArrayKeysInMongoId($ids));
-            $this->mongo_db->where('from_pb_player_id', $pb_player_id);
-            $results = $this->mongo_db->get('playbasis_event_log');
-            if ($results) foreach ($results as $event) {
-                $key = $event['event_id']."";
-                $idx = $ids[$key];
-                if (!array_key_exists($event['action_name'], $events_output[$idx])) $events_output[$idx][$event['action_name']] = 0;
-                $events_output[$idx][$event['action_name']]++;
+            /* count how many times a given player has like/comment each livefeed event */
+            if($pb_player_id){
+                $this->mongo_db->select(array('action_name', 'event_id'));
+                $this->mongo_db->where('event_type', 'SOCIAL');
+                $this->mongo_db->where_in('event_id', $this->getArrayKeysInMongoId($ids));
+                $this->mongo_db->where('from_pb_player_id', $pb_player_id);
+                $results = $this->mongo_db->get('playbasis_event_log');
+                if ($results) foreach ($results as $event) {
+                    $key = $event['event_id']."";
+                    $idx = $ids[$key];
+                    if (!array_key_exists($event['action_name'], $events_output[$idx])) $events_output[$idx][$event['action_name']] = 0;
+                    $events_output[$idx][$event['action_name']]++;
+                }
             }
         }
 

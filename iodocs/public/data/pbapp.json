@@ -2009,6 +2009,20 @@
                             "Default": "20",
                             "Type": "integer",
                             "Description": "number of results to return"
+                        },
+                        {
+                            "Name": "last_read_activity_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "last activity id that you have read"
+                        },
+                        {
+                            "Name": "mode",
+                            "Required": "Y",
+                            "Default": "all",
+                            "Type": "string",
+                            "Description": "specify 'all'"
                         }
                     ]
                 },
@@ -2021,7 +2035,7 @@
                     "parameters": [
                         {
                             "Name": "player_id",
-                            "Required": "N",
+                            "Required": "Y",
                             "Default": "",
                             "Type": "string",
                             "Description": "player id as used in client's website"
@@ -2046,6 +2060,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "last activity id that you have read"
+                        },
+                        {
+                            "Name": "mode",
+                            "Required": "Y",
+                            "Default": "player",
+                            "Type": "string",
+                            "Description": "specify 'player'"
                         }
                     ]
                 },
