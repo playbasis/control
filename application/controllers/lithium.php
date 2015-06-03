@@ -102,7 +102,7 @@ class Lithium extends MY_Controller
         redirect('/lithium', 'refresh');
     }
 
-    public function event($offset=0) {
+    public function event() {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -116,7 +116,7 @@ class Lithium extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/lithium/events'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/event', 'refresh');
             }
         }
 
@@ -127,21 +127,20 @@ class Lithium extends MY_Controller
                 $fail = false;
                 foreach ($this->input->post('selected') as $eventId) {
                     try {
-                        $this->_api->subscribeEvent($this->Lithium_model->getEventType($eventId), $eventId);
+                        $this->_api->subscribe($eventId);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
                         $fail = $e->getMessage();
                     }
                 }
-                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch_event'));
+                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_subscribe_event'));
                 if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/lithium/events'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/event', 'refresh');
             }
 
             $this->data['lithium'] = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
-            $this->session->set_userdata('total_events', $this->Lithium_model->totalEvents($this->User_model->getSiteId()));
-            $this->getListEvents($offset);
+            $this->getListEvents();
         } else {
             $this->data['main'] = 'lithium_event';
             $this->load->vars($this->data);
@@ -149,7 +148,7 @@ class Lithium extends MY_Controller
         }
     }
 
-    public function subscription($offset=0) {
+    public function subscription() {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -163,31 +162,18 @@ class Lithium extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/lithium/subscriptions'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/subscription', 'refresh');
             }
         }
 
-        if ($this->Lithium_model->hasToken($this->User_model->getSiteId())) {
-            $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
-                    if ($token) {
-                        $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_api) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
                 $fail = false;
-                foreach ($this->input->post('selected') as $subscriptionId) {
+                foreach ($this->input->post('selected') as $token) {
                     try {
-                        $this->_api->unsubscribeEvent($subscriptionId);
+                        $this->_api->unsubscribe($token);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -196,12 +182,11 @@ class Lithium extends MY_Controller
                 }
                 if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
                 if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/lithium/subscriptions'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/lithium/subscription', 'refresh');
             }
 
-            $this->data['lithium'] = $lithium;
-            $this->session->set_userdata('total_subscriptions', $this->_api->totalSubscriptions());
-            $this->getListSubscriptions($offset);
+            $this->data['lithium'] = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
+            $this->getListSubscriptions();
         } else {
             $this->data['main'] = 'lithium_subscription';
             $this->load->vars($this->data);
@@ -209,186 +194,29 @@ class Lithium extends MY_Controller
         }
     }
 
-    public function events($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            die();
-        }
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-
-        $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
-                if ($token) {
-                    $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['lithium'] = $lithium;
-        $this->getListEvents($offset);
-    }
-
-    private function getListEvents($offset) {
-        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
-
-        $this->load->library('pagination');
-
-        $config['base_url'] = site_url('lithium/events');
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-        $setting_group_id = $this->User_model->getAdminGroupID();
-
-        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
-        $this->data['offset'] = $offset;
-
-        $events = $this->Lithium_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
-        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Lithium_model->totalEvents($this->User_model->getSiteId()));
-        $total = $this->session->userdata('total_events');
-
+    private function getListEvents() {
+        $events = $this->Lithium_model->listEvents($this->User_model->getSiteId());
         foreach ($events as $event) {
             $this->data['events'][] = array_merge($event, array('selected' => ($this->input->post('selected') && in_array($event['id'], $this->input->post('selected')))));
         }
-
-        $config['total_rows'] = $total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
-
-        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
-
-        $config['next_link'] = 'Next';
-        $config['next_tag_open'] = "<li class='page_index_nav next'>";
-        $config['next_tag_close'] = "</li>";
-
-        $config['prev_link'] = 'Prev';
-        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
-        $config['prev_tag_close'] = "</li>";
-
-        $config['num_tag_open'] = '<li class="page_index_number">';
-        $config['num_tag_close'] = '</li>';
-
-        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
-        $config['cur_tag_close'] = '</a></li>';
-
-        $config['first_link'] = 'First';
-        $config['first_tag_open'] = '<li class="page_index_nav next">';
-        $config['first_tag_close'] = '</li>';
-
-        $config['last_link'] = 'Last';
-        $config['last_tag_open'] = '<li class="page_index_nav prev">';
-        $config['last_tag_close'] = '</li>';
-
-        $this->pagination->initialize($config);
-
-        $this->data['pagination_links'] = $this->pagination->create_links();
-        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
-        $this->data['pagination_total_rows'] = $config["total_rows"];
-
         $this->data['main'] = 'lithium_event';
-        $this->data['setting_group_id'] = $setting_group_id;
-
         $this->load->vars($this->data);
         $this->render_page('template');
     }
 
-    public function subscriptions($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            die();
-        }
-
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-
-        $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($lithium['lithium_client_id'], $lithium['lithium_client_secret'], $lithium['token']['refresh_token']);
-                if ($token) {
-                    $this->Lithium_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($lithium['lithium_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['lithium'] = $lithium;
-        $this->getListSubscriptions($offset);
-    }
-
-    private function getListSubscriptions($offset) {
-        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
-
-        $this->load->library('pagination');
-
-        $config['base_url'] = site_url('lithium/subscriptions');
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-        $setting_group_id = $this->User_model->getAdminGroupID();
-
-        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
-        $this->data['offset'] = $offset;
-
-        $subscriptions = $this->_api->listSubscriptions($per_page, $offset);
-        if ($this->session->userdata('total_subscriptions') === false) $this->session->set_userdata('total_subscriptions', $this->_api->totalSubscriptions());
-        $total = $this->session->userdata('total_subscriptions');
-
-        foreach ($subscriptions->list as $subscription) {
+    private function getListSubscriptions() {
+        $subscriptions = $this->_api->subscriptions();
+        foreach ($subscriptions as $subscription) {
+            $id = $subscription->event_type->{'$'};
             $this->data['subscriptions'][] = array(
-                'subscriptionID' => $subscription->id,
-                'events' => $subscription->events,
-                'object' => $subscription->object,
-                'callback' => $subscription->callback,
-                'selected' => ($this->input->post('selected') && in_array($subscription->subscriptionID, $this->input->post('selected'))),
+                'id' => $id,
+                'type' => $this->Lithium_model->getEventType($id),
+                'token' => $subscription->token->{'$'},
+                'callback' => $subscription->callback_url->{'$'},
+                'selected' => ($this->input->post('selected') && in_array($id, $this->input->post('selected'))),
             );
         }
-
-        $config['total_rows'] = $total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
-
-        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
-
-        $config['next_link'] = 'Next';
-        $config['next_tag_open'] = "<li class='page_index_nav next'>";
-        $config['next_tag_close'] = "</li>";
-
-        $config['prev_link'] = 'Prev';
-        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
-        $config['prev_tag_close'] = "</li>";
-
-        $config['num_tag_open'] = '<li class="page_index_number">';
-        $config['num_tag_close'] = '</li>';
-
-        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
-        $config['cur_tag_close'] = '</a></li>';
-
-        $config['first_link'] = 'First';
-        $config['first_tag_open'] = '<li class="page_index_nav next">';
-        $config['first_tag_close'] = '</li>';
-
-        $config['last_link'] = 'Last';
-        $config['last_tag_open'] = '<li class="page_index_nav prev">';
-        $config['last_tag_close'] = '</li>';
-
-        $this->pagination->initialize($config);
-
-        $this->data['pagination_links'] = $this->pagination->create_links();
-        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
-        $this->data['pagination_total_rows'] = $config["total_rows"];
-
         $this->data['main'] = 'lithium_subscription';
-        $this->data['setting_group_id'] = $setting_group_id;
-
         $this->load->vars($this->data);
         $this->render_page('template');
     }
