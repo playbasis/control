@@ -30,6 +30,7 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                        <td class="center" style="width:20px;"><?php echo $this->lang->line('column_id'); ?></td>
                         <td class="center" style="width:20px;"><?php echo $this->lang->line('column_type'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_description'); ?></td>
                     </tr>
@@ -43,6 +44,7 @@
                                     <?php } else { ?>
                                         <input type="checkbox" name="selected[]" value="<?php echo $event['id']; ?>" />
                                     <?php } ?></td>
+                                <td class="center"><?php echo $event['id']; ?></td>
                                 <td class="center"><?php echo $event['type']; ?></td>
                                 <td class="left"><?php echo $event['description']; ?></td>
                             </tr>
@@ -59,14 +61,5 @@
                 Please set up your Lithium community with Playbasis first.
             <?php } ?>
         </div><!-- .content -->
-        <?php if (isset($lithium)) { ?>
-        <div class="pagination">
-            <ul class='ul_rule_pagination_container'>
-                <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
-                <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
-                <?php echo $pagination_links; ?>
-            </ul>
-        </div>
-        <?php } ?>
     </div><!-- .box -->
 </div><!-- #content .span10 -->

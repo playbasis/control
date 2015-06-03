@@ -3,9 +3,8 @@
 $lang['heading_title']          		= 'Lithium Setup';
 
 // Text
-$lang['text_success_watch_place']           			= 'You have successfully created a new webhook for the selected place(s)!';
-$lang['text_success_watch_event']           			= 'You have successfully created a new webhook for the selected event(s)!';
-$lang['text_success_delete']           			= 'You have successfully deleted webhook(s)!';
+$lang['text_success_subscribe_event']           			= 'You have successfully subscribed for the selected event(s)!';
+$lang['text_success_delete']           			= 'You have successfully deleted subscription(s)!';
 $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
@@ -14,7 +13,6 @@ $lang['text_no_results']				= 'You do not have any record';
 
 // Tab
 $lang['tab_setup']					= 'Set Up';
-$lang['tab_place']					= 'Place';
 $lang['tab_event']					= 'Event';
 $lang['tab_subscription']					= 'Subscription';
 
@@ -23,12 +21,7 @@ $lang['column_id']            		= 'ID';
 $lang['column_name']            		= 'Name';
 $lang['column_description']            		= 'Description';
 $lang['column_type']            		= 'Type';
-$lang['column_total_followers']            		= 'Total Followers';
-$lang['column_total_views']      		= 'Total Views';
-$lang['column_creator']          		= 'Creator';
-$lang['column_status']          		= 'Status';
-$lang['column_events']          		= 'Events';
-$lang['column_place']          		= 'Place';
+$lang['column_token']            		= 'Token';
 $lang['column_callback']          		= 'Callback';
 
 // Entry
