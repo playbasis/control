@@ -229,7 +229,10 @@ class Service extends REST2_Controller
         $pb_player_id = $player_id ? $this->player_model->getPlaybasisId(array_merge($this->validToken, array('cl_player_id' => $player_id))) : null;
         if ($player_id && !$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
-        $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset, $limit > 500 ? 500 : $limit, $pb_player_id, $last_read_activity_id);
+        $mode = $this->input->get('mode') ? $this->input->get('mode') : 'all';
+        if ($mode != 'all' && !$pb_player_id) $this->response($this->error->setError('PARAMETER_MISSING', array('activity_id')), 200);
+
+        $respondThis['activities'] = $this->service_model->getRecentActivities($this->site_id, $offset, $limit > 500 ? 500 : $limit, $pb_player_id, $last_read_activity_id, $mode);
         $this->response($this->resp->setRespond($respondThis), 200);
     }
 
