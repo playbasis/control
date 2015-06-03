@@ -284,6 +284,21 @@ class Service_model extends MY_Model
             }
         }
 
+        /* count how many times the player has like/comment each livefeed event */
+        if($pb_player_id){
+            $this->mongo_db->select(array('action_name', 'event_id'));
+            $this->mongo_db->where('event_type', 'SOCIAL');
+            $this->mongo_db->where_in('event_id', $this->getArrayKeysInMongoId($ids));
+            $this->mongo_db->where('from_pb_player_id', $pb_player_id);
+            $results = $this->mongo_db->get('playbasis_event_log');
+            if ($results) foreach ($results as $event) {
+                $key = $event['event_id']."";
+                $idx = $ids[$key];
+                if (!array_key_exists($event['action_name'], $events_output[$idx])) $events_output[$idx][$event['action_name']] = 0;
+                $events_output[$idx][$event['action_name']]++;
+            }
+        }
+
         return $events_output;
     }
 
