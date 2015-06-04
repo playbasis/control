@@ -213,14 +213,22 @@ class Notification extends Engine
 					$image = $lithium['lithium_url'].'/'.$path;
 					$email = $info->email->{'$'};
 					$username = $info->login->{'$'};
-					$player = array(
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
 						'player_id' => $player_id,
 						'image' => $image,
 						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
 						'username' => $username
-					);
-					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, $player));
+					)));
 				}
+				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+					'cl_player_id',
+					'username',
+					'first_name',
+					'last_name',
+					'email',
+					'image'
+				));
+				/* track event */
 				$eventMessage = $this->utility->getEventMessage('login');
 				$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
 					'client_id' => $validToken['client_id'],
@@ -228,6 +236,9 @@ class Notification extends Engine
 					'pb_player_id' => $pb_player_id,
 					'action_log_id' => null
 				));
+				/* process rule */
+				$apiResult = $this->rule($validToken['site_id'], 'lithium:login', null, $player);
+				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
 			case 'UserUpdate':
 				break;
