@@ -87,6 +87,14 @@ class Error extends CI_Model
             $errorData['message'] = "Invalid Jive message";
             $errorData['error_code'] = '0811';
             break;
+        case 'LITHIUM_RECORD_NOT_FOUND':
+            $errorData['message'] = "Lithium record is not found";
+            $errorData['error_code'] = '0812';
+            break;
+        case 'LITHIUM_SUBSCRIPTION_RECORD_NOT_FOUND':
+            $errorData['message'] = "Lithium subscription record is not found";
+            $errorData['error_code'] = '0813';
+            break;
         case 'INVALID_API_KEY_OR_SECRET':
             $errorData['message'] = "Invalid API-KEY OR API-SECRET";
             $errorData['error_code'] = '0001';
