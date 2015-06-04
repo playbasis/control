@@ -11,8 +11,6 @@ class Notification extends Engine
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('tool/respond', 'resp');
-		$this->load->model('tool/error', 'error');
 		$this->load->model('notification_model');
 		$this->load->model('client_model');
 		$this->load->model('player_model');
@@ -20,6 +18,10 @@ class Notification extends Engine
 		$this->load->model('email_model');
 		$this->load->model('jive_model');
 		$this->load->model('lithium_model');
+		$this->load->model('tool/error', 'error');
+		$this->load->model('tool/utility', 'utility');
+		$this->load->model('tool/respond', 'resp');
+		$this->load->model('tool/node_stream', 'node');
 		$this->load->library('curl');
 	}
 
@@ -219,6 +221,13 @@ class Notification extends Engine
 					);
 					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, $player));
 				}
+				$eventMessage = $this->utility->getEventMessage('login');
+				$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
+					'client_id' => $validToken['client_id'],
+					'site_id' => $validToken['site_id'],
+					'pb_player_id' => $pb_player_id,
+					'action_log_id' => null
+				));
 				break;
 			case 'UserUpdate':
 				break;
