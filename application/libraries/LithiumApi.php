@@ -104,6 +104,12 @@ class LithiumApi {
         return $result;
     }
 
+    public function user($id) {
+        $result = $this->_get('users/id/'.$id, array_merge($this->sessionKey, $this->response));
+        if (!$this->isSuccess($result)) throw new Exception('[Lithium] "user" failed: '.print_r($this->getError($result),true));
+        return $result->response->user;
+    }
+
     private function build_query_string($arr) {
         $s = null;
         if (is_array($arr)) {
