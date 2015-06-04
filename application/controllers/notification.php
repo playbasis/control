@@ -177,16 +177,57 @@ class Notification extends Engine
 			}
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], LITHIUM_USER_AGENT) === false ? false : true) {
-			/* process Lithium events */
+			$this->load->library('restclient');
+			$this->load->library('lithiumapi');
+			/* initialization */
 			$site_id = $this->lithium_model->findSiteIdByToken($message['token']);
-			$event_type = $message['event_type'];
-			$actionName = 'lithium:'.$event_type;
+			$lithium = $this->lithium_model->getRegistration($site_id);
+			if (!$lithium) $this->response($this->error->setError('LITHIUM_RECORD_NOT_FOUND'), 200);
+			$this->lithiumapi->initialize($lithium['lithium_url']);
+			if (!empty($lithium['http_auth_username'])) $this->lithiumapi->setHttpAuth('basic', $lithium['http_auth_username'], $lithium['http_auth_password']);
+			$this->lithiumapi->login($lithium['lithium_username'], $lithium['lithium_password']);
+			/* process Lithium events */
+			switch ($message['event_type']) {
+			case 'UserRegistered':
+				break;
+			case 'UserCreate':
+				break;
+			case 'UserSignOn':
+				$user = simplexml_load_string($message['user']);
+				$info = $this->lithiumapi->user($user->id);
+				break;
+			case 'UserUpdate':
+				break;
+			case 'UserSignOff':
+				break;
+			case 'MessageCreate':
+				break;
+			case 'MessageUpdate':
+				break;
+			case 'MessageMove':
+				break;
+			case 'MessageDelete':
+				break;
+			case 'MessageRootPublished':
+				break;
+			case 'ImageCreated':
+				break;
+			case 'ImageUpdated':
+				break;
+			case 'EscalateThread':
+				break;
+			case 'SendPrivateMessage':
+				break;
+			default:
+				break;
+			}
+			/*$actionName = 'lithium:'.$event_type;
 			$url = null;
 			$player = array(
 				'cl_player_id' => '[cl_player_id]'
 			);
 			$apiResult = $this->rule($site_id, $actionName, $url, $player);
-			$this->response($this->resp->setRespond($apiResult), 200);
+			$this->response($this->resp->setRespond($apiResult), 200);*/
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
