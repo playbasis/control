@@ -8,13 +8,13 @@ class Lithium_model extends MY_Model
         $this->config->load('playbasis');
     }
 
-    public function findSiteIdByToken($token) {
-        $this->mongo_db->select(array('site_id'));
+    public function findSubscription($token) {
+        $this->mongo_db->select(array('client_id', 'site_id', 'event'));
         $this->mongo_db->where('token', $token);
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_lithium_subscription');
-        return $result ? $result[0]['site_id'] : array();
+        return $result ? $result[0] : array();
     }
 
     public function getRegistration($site_id) {

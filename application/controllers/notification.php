@@ -179,13 +179,21 @@ class Notification extends Engine
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], LITHIUM_USER_AGENT) === false ? false : true) {
 			$this->load->library('restclient');
 			$this->load->library('lithiumapi');
-			/* initialization */
-			$site_id = $this->lithium_model->findSiteIdByToken($message['token']);
-			$lithium = $this->lithium_model->getRegistration($site_id);
+
+			/* init: look into event subscription record and map client-site */
+			$record = $this->lithium_model->findSubscription($message['token']);
+			if (!$record) $this->response($this->error->setError('LITHIUM_SUBSCRIPTION_RECORD_NOT_FOUND'), 200);
+			$validToken = array('client_id' => $record['client_id'], 'site_id' => $record['site_id']);
+
+			/* init: find lithium setting record */
+			$lithium = $this->lithium_model->getRegistration($validToken['site_id']);
 			if (!$lithium) $this->response($this->error->setError('LITHIUM_RECORD_NOT_FOUND'), 200);
+
+			/* init: initialize LithiumApi */
 			$this->lithiumapi->initialize($lithium['lithium_url']);
 			if (!empty($lithium['http_auth_username'])) $this->lithiumapi->setHttpAuth('basic', $lithium['http_auth_username'], $lithium['http_auth_password']);
 			$this->lithiumapi->login($lithium['lithium_username'], $lithium['lithium_password']);
+
 			/* process Lithium events */
 			switch ($message['event_type']) {
 			case 'UserRegistered':
@@ -194,7 +202,23 @@ class Notification extends Engine
 				break;
 			case 'UserSignOn':
 				$user = simplexml_load_string($message['user']);
-				$info = $this->lithiumapi->user($user->id);
+				$player_id = $this->mapPlayer($user->id, 'lithium');
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+				if (!$pb_player_id) {
+					$info = $this->lithiumapi->user($user->id);
+					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+					$path = $this->resolveLithiumUserProfileAvatar($avatar);
+					$image = $lithium['lithium_url'].'/'.$path;
+					$email = $info->email->{'$'};
+					$username = $info->login->{'$'};
+					$player = array(
+						'player_id' => $player_id,
+						'image' => $image,
+						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+						'username' => $username
+					);
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, $player));
+				}
 				break;
 			case 'UserUpdate':
 				break;
@@ -230,6 +254,32 @@ class Notification extends Engine
 			$this->response($this->resp->setRespond($apiResult), 200);*/
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
+	}
+
+	private function mapPlayer($id, $service) {
+		$player_id = $id;
+		switch ($service) {
+		case 'jive':
+		case 'lithium':
+		default:
+			$player_id = $id.'@'.$service;
+			break;
+		}
+		return $player_id;
+	}
+
+	private function getLithiumUserProfile($user, $key) {
+		foreach ($user->profiles->profile as $each) {
+			if ($each->name == $key) {
+				return $each->{'$'};
+			}
+		}
+		return null;
+	}
+
+	private function resolveLithiumUserProfileAvatar($avatar) {
+		list($theme, $collection, $name) = explode('/', str_replace('avatar:', '', $avatar));
+		return '/t5/image/serverpage/avatar-name/'.$name.'/avatar-theme/'.$theme.'/avatar-collection/'.$collection.'/avatar-display-size/profile';
 	}
 
 	private function convertToJson($str)
