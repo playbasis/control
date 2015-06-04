@@ -14,6 +14,11 @@ class Lithium_model extends MY_Model {
         array('id' => 'MessageMove', 'type' => 'message', 'description' => 'Message has been moved'),
         array('id' => 'MessageDelete', 'type' => 'message', 'description' => 'Message has been deleted'),
         array('id' => 'MessageRootPublished', 'type' => 'message', 'description' => 'Message has been published'),
+        /*array('id' => 'ImageCreated', 'type' => 'image', 'description' => 'Image has been created'),
+        array('id' => 'ImageUpdated', 'type' => 'image', 'description' => 'Image has been update'),
+        array('id' => 'ImageUpdated', 'type' => 'image', 'description' => 'Image has been update'),
+        array('id' => 'EscalateThread', 'type' => 'thread', 'description' => 'Thread has been escalated'),
+        array('id' => 'SendPrivateMessage', 'type' => 'message', 'description' => 'Private message has been sent'),*/
     );
 
     public function hasValidRegistration($site_id) {
