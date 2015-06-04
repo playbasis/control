@@ -2001,7 +2001,7 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "player id as used in client's website (required when mode=player)"
+                            "Description": "player id as used in client's website (required when mode='player')"
                         },
                         {
                             "Name": "offset",
@@ -2026,10 +2026,10 @@
                         },
                         {
                             "Name": "mode",
-                            "Required": "Y",
+                            "Required": "N",
                             "Default": "all",
                             "Type": "string",
-                            "Description": "specify 'all' or 'player'"
+                            "Description": "specify 'all' or 'player' (default is 'all')"
                         }
                     ]
                 },
