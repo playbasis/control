@@ -1997,34 +1997,11 @@
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
-                            "Name": "offset",
-                            "Required": "N",
-                            "Default": "0",
-                            "Type": "integer",
-                            "Description": "number of records starting"
-                        },
-                        {
-                            "Name": "limit",
-                            "Required": "N",
-                            "Default": "20",
-                            "Type": "integer",
-                            "Description": "number of results to return"
-                        }
-                    ]
-                },
-                {
-                    "MethodName": "Recent Activities of Player",
-                    "Synopsis": "Returns recent activities of a player",
-                    "HTTPMethod": "GET",
-                    "URI": "/Service/recentActivities/:player_id",
-                    "RequiresOAuth": "N",
-                    "parameters": [
-                        {
                             "Name": "player_id",
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "player id as used in client's website"
+                            "Description": "player id as used in client's website (required when mode='player')"
                         },
                         {
                             "Name": "offset",
@@ -2046,6 +2023,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "last activity id that you have read"
+                        },
+                        {
+                            "Name": "mode",
+                            "Required": "N",
+                            "Default": "all",
+                            "Type": "string",
+                            "Description": "specify 'all' or 'player' (default is 'all')"
                         }
                     ]
                 },
