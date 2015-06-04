@@ -16,5 +16,14 @@ class Lithium_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_lithium_subscription');
         return $result ? $result[0]['site_id'] : array();
     }
+
+    public function getRegistration($site_id) {
+        $this->mongo_db->select(array('lithium_url', 'lithium_username', 'lithium_password', 'http_auth_username', 'http_auth_password', 'tenant_id', 'lithium_client_id', 'lithium_client_secret', 'token'));
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_lithium_to_client");
+        return $results ? $results[0] : null;
+    }
 }
 ?>
