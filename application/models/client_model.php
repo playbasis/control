@@ -649,13 +649,13 @@ class Client_model extends MY_Model
         $result = $this->mongo_db->get("playbasis_client");
         if (!$result || !isset($result[0]['date_start'])) return array("date_start" => null, "date_expire" => null);
         $init_date_start = $result[0]['date_start']->sec;
-        $init_date_expire = strtotime("+1 m", $init_date_start);
+        $init_date_expire = strtotime("+1 month", $init_date_start);
         $curr = $init_date_expire;
         $today = time();
         while ($curr < $today) {
-            $curr = strtotime("+1 m", $curr);
+            $curr = strtotime("+1 month", $curr);
         }
-        return array('date_start' => new MongoDate(strtotime("-1 m", $curr)), 'date_expire' => new MongoDate($curr));
+        return array('date_start' => new MongoDate(strtotime("-1 month", $curr)), 'date_expire' => new MongoDate($curr));
     }
 
     /**
