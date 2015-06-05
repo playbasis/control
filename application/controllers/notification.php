@@ -264,13 +264,6 @@ class Notification extends Engine
 				$this->response($this->error->setError('NOT_IMPLEMENTED'), 200);
 				break;
 			}
-			/*$actionName = 'lithium:'.$event_type;
-			$url = null;
-			$player = array(
-				'cl_player_id' => '[cl_player_id]'
-			);
-			$apiResult = $this->rule($site_id, $actionName, $url, $player);
-			$this->response($this->resp->setRespond($apiResult), 200);*/
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
