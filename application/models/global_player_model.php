@@ -134,20 +134,6 @@ class Global_Player_model extends MY_Model
         $this->mongo_db->set($fieldData);
         return $this->mongo_db->update('global_player');
     }
-    public function updateClientSite($data)
-    {
-        $mongoDate = new MongoDate(time());
-        return $this->mongo_db->insert('global_player_to_client', array(
-
-            'player_id'     => $data['player_id'],
-            'client_id'     => $data['client_id'],
-            'site_id'	    => $data['site_id'],
-            'status'        => $data['status'],
-            'date_added'	=> $mongoDate,
-            'date_modified' => $mongoDate,
-
-        ));
-    }
     public function readGlobalPlayer($id, $fields=null)
     {
         if(!$id)
@@ -183,17 +169,16 @@ class Global_Player_model extends MY_Model
     public function requestClientSite($data)
     {
         $mongoDate = new MongoDate(time());
-        return 'okokokok';
-        /*return $this->mongo_db->insert('global_player_to_client', array(
+        return $this->mongo_db->insert('global_player_to_client', array(
 
-            'player_id' => $data['player_id'],
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
+            'player_id' => new MongoId($data['player_id']),
+            'client_id' => new MongoId($data['client_id']),
+            'site_id' => new MongoId($data['site_id']),
             'status' => false,
             'date_added' => $mongoDate,
             'date_modified' => $mongoDate,
 
-        ));*/
+        ));
 
     }
     public function searchClient($data)
@@ -247,4 +232,21 @@ class Global_Player_model extends MY_Model
         }
         return $menus;
     }
+    public function chooseService($data)
+    {
+        $mongoDate = new MongoDate(time());
+
+        $this->mongo_db->insert('playbasis_service_to_player', array(
+
+            'player_id' => new MongoId($data['player_id']),
+            'site_id' => new MongoId($data['site_id']),
+            'feature_id' => new MongoId($data['feature_id']),
+            'service_id' => $data['service_id'],
+            'status' => $data['status'],
+            'date_added' => $mongoDate,
+            'date_modified' => $mongoDate,
+
+        ));
+    }
+
 }

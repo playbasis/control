@@ -76,15 +76,20 @@ class GlobalPlayer extends REST2_Controller
         $menus =$this->global_player_model->searchFeatureForClient($client_id,$site_id);
         foreach($menus as $menu)
         {
-            echo($menu['name']."\r\n");
+            echo($menu['name'].' : '.$menu['_id']."\r\n");
         }
     }
     public function service_post()
     {
-        $feature_id = $this->input->post('feature_id');
-        $status = $this->input->post('status');
+        $serviceInfo = array(
+            'player_id' => $this->input->post('player_id'),
+            'feature_id' => $this->input->post('feature_id'),
+            'site_id' => $this->input->post('site_id'),
+            'service_id' => $this->input->post('service_id'),
+            'status' => $this->input->post('status')
+        );
+        $this->global_player_model->chooseService($serviceInfo);
 
-        echo('service');
     }
     public function index_get($player_id = '')
     {
