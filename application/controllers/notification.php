@@ -179,8 +179,8 @@ class Notification extends Engine
 			}
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], LITHIUM_USER_AGENT) === false ? false : true) {
-			$this->load->library('restclient');
-			$this->load->library('lithiumapi');
+			$this->load->library('RestClient');
+			$this->load->library('LithiumApi');
 
 			/* init: look into event subscription record and map client-site */
 			$record = $this->lithium_model->findSubscription($message['token']);
