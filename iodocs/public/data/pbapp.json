@@ -1102,7 +1102,31 @@
                             "Description": "amount of the goods to redeem"
                         }
                     ]
-                }
+                },
+                {
+                    "MethodName": "Sponsored Goods List Info",
+                    "Synopsis": "Returns information about all available sponsored goods.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Goods/sponsor",
+                    "RequiresOAuth": "N",
+                    "parameters": []
+                },
+                {
+                    "MethodName": "Sponsored Goods Info",
+                    "Synopsis": "Returns information about the sponsored goods with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Goods/sponsor/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods id to query"
+                        }
+                    ]
+                },
             ]
         },
         {
