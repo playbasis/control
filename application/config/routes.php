@@ -43,6 +43,24 @@ define('ANY_NUMBER','([0-9]+)');
 
 $route['default_controller'] = "welcome/playbasis";
 
+//global player API
+$route['GlobalPlayer/'.ANY_STRING.'/register'] = 'globalplayer/register/$1';
+$route['GlobalPlayer/register/'] = 'globalplayer/register/';
+
+$route['GlobalPlayer/'.ANY_STRING.'/login'] = 'globalplayer/login/$1';
+$route['GlobalPlayer/login/'] = 'globalplayer/login/';
+
+$route['GlobalPlayer/'.ANY_STRING.'/join'] = 'globalplayer/join/$1';
+$route['GlobalPlayer/join/'] = 'globalplayer/join/';
+
+$route['GlobalPlayer/'.ANY_STRING.'/searchClientSite'] = 'globalplayer/searchClientSite/$1';
+$route['GlobalPlayer/searchClientSite/'] = 'globalplayer/searchClientSite/';
+
+$route['GlobalPlayer/'.ANY_STRING.'/feature'] = 'globalplayer/feature/$1';
+$route['GlobalPlayer/feature/'] = 'globalplayer/feature/';
+
+$route['GlobalPlayer/'.ANY_STRING.'/feature'] = 'globalplayer/service/$1';
+$route['GlobalPlayer/service/'] = 'globalplayer/service/';
 //auth API
 $route['Auth'] = 'auth';
 $route['Auth/renew'] = 'auth/renew';

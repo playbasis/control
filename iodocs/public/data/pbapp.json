@@ -1,6 +1,204 @@
 {
 	"endpoints": [
-		{
+      {
+        "name" : "Global Player API",
+        "methods":[
+          {
+            "MethodName": "Register",
+            "Synopsis": "Register a Playbasis player.",
+            "HTTPMethod": "POST",
+            "URI": "/GlobalPlayer/register",
+            "RequiresOAuth": "N",
+            "parameters": [
+              {
+                "Name": "username",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "username of the player"
+              },
+              {
+                "Name": "password",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "password of the player"
+              },
+              {
+                "Name": "email",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "email address of the player"
+              },
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              }
+            ]
+          },
+          {
+            "MethodName": "Login",
+            "Synopsis": "Tell Playbasis system that a player has logged in.",
+            "HTTPMethod": "POST",
+            "URI": "/GlobalPlayer/login",
+            "RequiresOAuth": "N",
+            "parameters": [
+              {
+                "Name": "username",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "username of the player"
+              },
+              {
+                "Name": "password",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "password of the player"
+              },
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              }
+            ]
+          },
+          {
+            "MethodName": "Search via Company",
+            "Synopsis": "Search client id via company name",
+            "HTTPMethod": "POST",
+            "URI": "/GlobalPlayer/searchClientSite",
+            "RequiresOAuth": "N",
+            "parameters": [
+              {
+                "Name": "company",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "company name as keyword for search"
+              },
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              }
+            ]
+          },
+          {
+            "MethodName": "Join Client Site",
+            "Synopsis": "Send request from player",
+            "HTTPMethod": "POST",
+            "URI": "/GlobalPlayer/join",
+            "RequiresOAuth": "N",
+            "parameters": [
+              {
+                "Name": "player_id",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "player id"
+              },
+              {
+                "Name": "client_id",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "client id"
+              },
+              {
+                "Name": "site_id",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "site_id"
+              },
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              }
+            ]
+          },
+          {
+            "MethodName": "Client Feature",
+            "Synopsis": "List all feature for client",
+            "HTTPMethod": "POST",
+            "URI": "/GlobalPlayer/feature",
+            "RequiresOAuth": "N",
+            "parameters": [
+              {
+                "Name": "client_id",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "client id"
+              },
+              {
+                "Name": "site_id",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "site id"
+              },
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              }
+            ]
+          },
+          {
+            "MethodName": "Client Service",
+            "Synopsis": "Enable or Disable each service for client",
+            "HTTPMethod": "POST",
+            "URI": "/GlobalPlayer/service",
+            "RequiresOAuth": "N",
+            "parameters": [
+              {
+                "Name": "feature_id",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "feature id"
+              },
+              {
+                "Name": "status",
+                "Required": "Y",
+                "Default": "",
+                "Type": "enumerated",
+                "EnumeratedList": [
+                  "TRUE",
+                  "FALSE"
+                ],
+                "Description": "enable = true , disable = false"
+              },
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              }
+            ]
+          }
+
+
+        ]
+      },
+      {
 			"name": "Auth API",
 			"methods": [
 				{
