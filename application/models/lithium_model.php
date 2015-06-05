@@ -99,6 +99,7 @@ class Lithium_model extends MY_Model {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->delete_all("playbasis_lithium_subscription");
+        if (!$subscriptions) return null;
         return $this->mongo_db->batch_insert('playbasis_lithium_subscription', $subscriptions, array("w" => 0, "j" => false));
     }
 }
