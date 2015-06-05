@@ -111,6 +111,10 @@ class Error extends CI_Model
             $errorData['message'] = "Please set up mobile phone on dashboard";
             $errorData['error_code'] = '0004';
             break;
+        case 'NOT_IMPLEMENTED':
+            $errorData['message'] = "There is no implementation for the requested service";
+            $errorData['error_code'] = '0005';
+            break;
         case 'USER_NOT_EXIST':
             $errorData['message'] = "User doesn't exist";
             $errorData['error_code'] = '0200';

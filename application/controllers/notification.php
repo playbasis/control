@@ -243,6 +243,8 @@ class Notification extends Engine
 			case 'UserUpdate':
 				break;
 			case 'UserSignOff':
+				/* Lithium always send us anonymous user <user type="user" href="/users/id/-1"> */
+				$this->response($this->resp->setRespond(), 200);
 				break;
 			case 'MessageCreate':
 				break;
@@ -255,14 +257,11 @@ class Notification extends Engine
 			case 'MessageRootPublished':
 				break;
 			case 'ImageCreated':
-				break;
 			case 'ImageUpdated':
-				break;
 			case 'EscalateThread':
-				break;
 			case 'SendPrivateMessage':
-				break;
 			default:
+				$this->response($this->error->setError('NOT_IMPLEMENTED'), 200);
 				break;
 			}
 			/*$actionName = 'lithium:'.$event_type;
