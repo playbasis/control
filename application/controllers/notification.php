@@ -257,14 +257,11 @@ class Notification extends Engine
 			case 'MessageRootPublished':
 				break;
 			case 'ImageCreated':
-				break;
 			case 'ImageUpdated':
-				break;
 			case 'EscalateThread':
-				break;
 			case 'SendPrivateMessage':
-				break;
 			default:
+				$this->response($this->error->setError('NOT_IMPLEMENTED'), 200);
 				break;
 			}
 			/*$actionName = 'lithium:'.$event_type;
