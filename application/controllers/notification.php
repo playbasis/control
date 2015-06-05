@@ -201,8 +201,6 @@ class Notification extends Engine
 			switch ($event_type) {
 			case 'UserRegistered':
 				break;
-			case 'UserCreate':
-				break;
 			case 'UserSignOn':
 			case 'UserUpdate':
 				/* parse payload */
@@ -263,6 +261,7 @@ class Notification extends Engine
 				break;
 			case 'MessageRootPublished':
 				break;
+			case 'UserCreate':
 			case 'ImageCreated':
 			case 'ImageUpdated':
 			case 'EscalateThread':
