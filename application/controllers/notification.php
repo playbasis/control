@@ -197,14 +197,40 @@ class Notification extends Engine
 			$this->lithiumapi->login($lithium['lithium_username'], $lithium['lithium_password']);
 
 			/* process Lithium events */
-			switch ($message['event_type']) {
+			$event_type = $message['event_type'];
+			switch ($event_type) {
 			case 'UserRegistered':
-				break;
-			case 'UserCreate':
+				/* parse payload */
+				$user = simplexml_load_string($message['user']);
+				/* map Lithium ID to player ID */
+				$player_id = $this->mapPlayer($user->id, 'lithium');
+				/* create a new player */
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+				if (!$pb_player_id) {
+					$info = $this->lithiumapi->user($user->id);
+					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+					$path = $this->resolveLithiumUserProfileAvatar($avatar);
+					$image = $lithium['lithium_url'].'/'.$path;
+					$email = $info->email->{'$'};
+					$username = $info->login->{'$'};
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+						'player_id' => $player_id,
+						'image' => $image,
+						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+						'username' => $username
+					)));
+				} else {
+					$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
+				}
+				$this->response($this->resp->setRespond(), 200);
 				break;
 			case 'UserSignOn':
+			case 'UserUpdate':
+				/* parse payload */
 				$user = simplexml_load_string($message['user']);
+				/* map Lithium ID to player ID */
 				$player_id = $this->mapPlayer($user->id, 'lithium');
+				/* read player info */
 				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
 				if (!$pb_player_id) {
 					$info = $this->lithiumapi->user($user->id);
@@ -228,19 +254,21 @@ class Notification extends Engine
 					'email',
 					'image'
 				));
-				/* track event */
-				$eventMessage = $this->utility->getEventMessage('login');
-				$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
-					'client_id' => $validToken['client_id'],
-					'site_id' => $validToken['site_id'],
-					'pb_player_id' => $pb_player_id,
-					'action_log_id' => null
-				));
+				$actionName = 'lithium:updateprofile';
+				if ($event_type == 'UserSignOn') {
+					/* track event */
+					$eventMessage = $this->utility->getEventMessage('login');
+					$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
+						'client_id' => $validToken['client_id'],
+						'site_id' => $validToken['site_id'],
+						'pb_player_id' => $pb_player_id,
+						'action_log_id' => null
+					));
+					$actionName = 'lithium:login';
+				}
 				/* process rule */
-				$apiResult = $this->rule($validToken['site_id'], 'lithium:login', null, $player);
+				$apiResult = $this->rule($validToken['site_id'], $actionName, null, $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
-				break;
-			case 'UserUpdate':
 				break;
 			case 'UserSignOff':
 				/* Lithium always send us anonymous user <user type="user" href="/users/id/-1"> */
@@ -256,6 +284,7 @@ class Notification extends Engine
 				break;
 			case 'MessageRootPublished':
 				break;
+			case 'UserCreate':
 			case 'ImageCreated':
 			case 'ImageUpdated':
 			case 'EscalateThread':
@@ -264,13 +293,6 @@ class Notification extends Engine
 				$this->response($this->error->setError('NOT_IMPLEMENTED'), 200);
 				break;
 			}
-			/*$actionName = 'lithium:'.$event_type;
-			$url = null;
-			$player = array(
-				'cl_player_id' => '[cl_player_id]'
-			);
-			$apiResult = $this->rule($site_id, $actionName, $url, $player);
-			$this->response($this->resp->setRespond($apiResult), 200);*/
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
