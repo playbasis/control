@@ -82,6 +82,7 @@ class Goods_model extends MY_Model
             'goods_id' => $data['goods_id'],
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_goods_to_client');
 
         if(isset($result[0]['redeem']))
@@ -416,6 +417,7 @@ class Goods_model extends MY_Model
 			'site_id' => $site_id,
 			'name' => strtolower($name)
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		return $result ? $result[0]['reward_id'] : array();
 	}
@@ -424,6 +426,7 @@ class Goods_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'goods_id' => $goods_id,
 		));
+		$this->mongo_db->limit(1);
 		$playerRecord = $this->mongo_db->get('playbasis_goods_to_player');
 		return $playerRecord ? $playerRecord[0] : null;
 	}
@@ -432,6 +435,7 @@ class Goods_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'reward_id' => $reward_id
 		));
+		$this->mongo_db->limit(1);
 		$playerRecord = $this->mongo_db->get('playbasis_reward_to_player');
 		return $playerRecord ? $playerRecord[0] : null;
 	}
