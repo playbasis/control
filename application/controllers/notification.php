@@ -200,6 +200,29 @@ class Notification extends Engine
 			$event_type = $message['event_type'];
 			switch ($event_type) {
 			case 'UserRegistered':
+				/* parse payload */
+				$user = simplexml_load_string($message['user']);
+				/* map Lithium ID to player ID */
+				$player_id = $this->mapPlayer($user->id, 'lithium');
+				/* create a new player */
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+				if (!$pb_player_id) {
+					$info = $this->lithiumapi->user($user->id);
+					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+					$path = $this->resolveLithiumUserProfileAvatar($avatar);
+					$image = $lithium['lithium_url'].'/'.$path;
+					$email = $info->email->{'$'};
+					$username = $info->login->{'$'};
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+						'player_id' => $player_id,
+						'image' => $image,
+						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+						'username' => $username
+					)));
+				} else {
+					$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
+				}
+				$this->response($this->resp->setRespond(), 200);
 				break;
 			case 'UserSignOn':
 			case 'UserUpdate':
