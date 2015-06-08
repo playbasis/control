@@ -5,17 +5,17 @@ class Lithium_model extends MY_Model {
 
     protected $events = array(
         array('id' => 'UserRegistered', 'type' => 'user', 'description' => 'User has registered'),
-        array('id' => 'UserCreate', 'type' => 'user', 'description' => 'User account has been created'),
         array('id' => 'UserSignOn', 'type' => 'user', 'description' => 'User has signed on'),
         array('id' => 'UserUpdate', 'type' => 'user', 'description' => 'User profile has been updated'),
-        array('id' => 'UserSignOff', 'type' => 'user', 'description' => 'User has signed off'),
+        array('id' => 'ImageCreated', 'type' => 'image', 'description' => 'Image has been created'),
+        array('id' => 'ImageUpdated', 'type' => 'image', 'description' => 'Image has been update'),
         array('id' => 'MessageCreate', 'type' => 'message', 'description' => 'Message has been created'),
         array('id' => 'MessageUpdate', 'type' => 'message', 'description' => 'Message has been edited'),
         array('id' => 'MessageMove', 'type' => 'message', 'description' => 'Message has been moved'),
         array('id' => 'MessageDelete', 'type' => 'message', 'description' => 'Message has been deleted'),
         array('id' => 'MessageRootPublished', 'type' => 'message', 'description' => 'Message has been published'),
-        /*array('id' => 'ImageCreated', 'type' => 'image', 'description' => 'Image has been created'),
-        array('id' => 'ImageUpdated', 'type' => 'image', 'description' => 'Image has been update'),
+        /*array('id' => 'UserCreate', 'type' => 'user', 'description' => 'User account has been created'),
+        array('id' => 'UserSignOff', 'type' => 'user', 'description' => 'User has signed off'),
         array('id' => 'EscalateThread', 'type' => 'thread', 'description' => 'Thread has been escalated'),
         array('id' => 'SendPrivateMessage', 'type' => 'message', 'description' => 'Private message has been sent'),*/
     );
