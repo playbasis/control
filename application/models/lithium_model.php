@@ -41,6 +41,7 @@ class Lithium_model extends MY_Model {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         return $this->mongo_db->insert('playbasis_lithium_to_client', array(
+            'site_id' => $site_id,
             'lithium_url' => $lithium['lithium_url'],
             'lithium_username' => $lithium['lithium_username'],
             'lithium_password' => $lithium['lithium_password'],
