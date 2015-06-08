@@ -210,6 +210,49 @@ class Redeem extends REST2_Controller
         $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
     }
 
+    public function sponsorGroup_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'group'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        //get playbasis player id from client player id
+        $cl_player_id = $this->input->post('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $group = $this->input->post('group');
+
+        $amount = $this->input->post('amount') ? (int)$this->input->post('amount') : 1;
+
+        $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
+        if ($goods) {
+            for ($i=0; $i < MAX_REDEEM_TRIES; $i++) { // try to redeem for a few times before giving up
+                log_message('debug', 'random = '.$goods['goods_id']);
+                /* actual redemption */
+                try {
+                    $redeemResult = $this->redeem($validToken['site_id'], $pb_player_id, $goods, $amount, $validToken, false, true);
+                    $this->response($this->resp->setRespond($redeemResult), 200);
+                } catch (Exception $e) {
+                    if ($e->getMessage() == 'OVER_LIMIT_REDEEM') continue; // this goods_id has been assigned to this player too often!, try next one
+                    else if ($e->getMessage() == 'GOODS_NOT_ENOUGH') continue; // there may be a collision, try next one
+                    else if ($e->getMessage() == 'GOODS_NOT_FOUND') continue; // this should not happen, but if this is the case, then try next one
+                    else
+                        $this->response($this->error->setError(
+                            "INTERNAL_ERROR", array()), 200);
+                }
+                $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
+            }
+        }
+        $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+    }
+
     private function redeem($site_id, $pb_player_id, $goods, $amount, $validToken, $validate=true, $is_sponsor=false) {
         if (!$goods) throw new Exception('GOODS_NOT_FOUND');
 

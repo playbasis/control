@@ -235,13 +235,13 @@ class Goods_model extends MY_Model
 		if ($limit !== null) $this->mongo_db->limit($limit);
 		return $this->mongo_db->get('playbasis_goods_to_client');
 	}
-	public function getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount) {
-		$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, 0, 1);
+	public function getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
+		$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, 0, 1);
 		if ($goodsList) {
 			if ($this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount)) {
-				$total = $this->getTotalGoodsByGroup($client_id, $site_id, $group);
+				$total = $this->getTotalGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group);
 				$offset = rand(0, $total-1); // randomly pick one
-				$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, $offset, 1);
+				$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, $offset, 1);
 				return $goodsList ? $goodsList[0] : null;
 			}
 		}
