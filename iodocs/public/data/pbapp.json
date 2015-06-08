@@ -1135,7 +1135,7 @@
                     "RequiresOAuth": "N",
                     "parameters": [
                         {
-                            "Name": "id",
+                            "Name": "player_id",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
