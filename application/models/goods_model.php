@@ -247,11 +247,11 @@ class Goods_model extends MY_Model
 		}
 		return null;
 	}
-	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount) {
-		$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, 0, 1);
+	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
+		$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, 0, 1);
 		if ($goodsList) {
 			if ($this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount)) {
-				return $this->getTotalGoodsByGroup($client_id, $site_id, $group);
+				return $this->getTotalGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group);
 			}
 		}
 		return 0; // unavailable

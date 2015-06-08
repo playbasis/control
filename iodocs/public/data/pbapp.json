@@ -1128,6 +1128,36 @@
                     ]
                 },
                 {
+                    "MethodName": "Sponsored Goods Group Available",
+                    "Synopsis": "Find number of available sponsored Goods given group.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Redeem/sponsorGroup",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "group",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods group"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to redeem"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Personalized Sponsored Goods Info",
                     "Synopsis": "Returns specific sponsored goods for a given player.",
                     "HTTPMethod": "GET",
