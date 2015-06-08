@@ -162,17 +162,6 @@ class Goods_model extends MY_Model
 		$this->mongo_db->where_in('_id', $data['in']);
 		return $this->mongo_db->get('playbasis_goods_to_client');
 	}
-	public function totalRedemption($data, $goods_id)
-	{
-		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select(array('pb_player_id','value'));
-		$this->mongo_db->where(array(
-			'client_id' => $data['client_id'],
-			'site_id' => $data['site_id'],
-		));
-		$this->mongo_db->where_in('goods_id', is_array($goods_id) ? $goods_id : array($goods_id));
-		return $this->mongo_db->get('playbasis_goods_to_player');
-	}
 	public function redeemLogDistinctPlayer($data, $goods_id, $from=null, $to=null)
 	{
 		$this->set_site_mongodb($data['site_id']);
