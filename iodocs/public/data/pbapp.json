@@ -1715,6 +1715,43 @@
                             "Description": "amount of the goods to redeem"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Redeem Sponsor",
+                    "Synopsis": "Redeem Sponsor Goods for a client’s website.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/sponsor",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "goods_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods id of goods store"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to give to player"
+                        }
+                    ]
                 }
             ]
         },

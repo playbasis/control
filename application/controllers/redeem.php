@@ -69,6 +69,52 @@ class Redeem extends REST2_Controller
         $this->response($this->resp->setRespond($redeemResult), 200);
     }
 
+    public function sponsor_post($option = 0)
+    {
+        $this->benchmark->mark('goods_redeem_start');
+
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'goods_id'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        //get playbasis player id from client player id
+        $cl_player_id = $this->input->post('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $goods_id = $this->input->post('goods_id');
+        $goods = $this->goods_model->getGoods(array_merge($validToken, array(
+            'goods_id' => new MongoId($goods_id)
+        )), true);
+
+        $amount = $this->input->post('amount') ? (int)$this->input->post('amount') : 1;
+
+        $redeemResult = null;
+        try {
+            $redeemResult = $this->redeem($validToken['site_id'], $pb_player_id, $goods, $amount, $validToken, true);
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            switch ($msg) {
+                case 'GOODS_NOT_FOUND':
+                    $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+                    break;
+                case 'OVER_LIMIT_REDEEM':
+                    $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
+                    break;
+            }
+        }
+
+        $this->benchmark->mark('goods_redeem_end');
+        $redeemResult['processing_time'] = $this->benchmark->elapsed_time('goods_redeem_start', 'goods_redeem_end');
+        $this->response($this->resp->setRespond($redeemResult), 200);
+    }
+
     public function goodsGroup_get()
     {
         $required = $this->input->checkParam(array(
@@ -138,20 +184,20 @@ class Redeem extends REST2_Controller
         $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
     }
 
-    private function redeem($site_id, $pb_player_id, $goods, $amount, $validToken, $validate=true) {
+    private function redeem($site_id, $pb_player_id, $goods, $amount, $validToken, $validate=true, $is_sponsor=false) {
         if (!$goods) throw new Exception('GOODS_NOT_FOUND');
 
         if ($goods['per_user'] !== null) {
-            $get_player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $site_id, $goods['goods_id']);
+            $get_player_goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $is_sponsor ? null : $site_id, $goods['goods_id']);
             if (isset($get_player_goods['amount']) && $get_player_goods['amount'] >= $goods['per_user']){
                 throw new Exception('OVER_LIMIT_REDEEM');
             }
         }
 
-        return $this->processRedeem($pb_player_id, $goods, $amount, $validToken, $validate);
+        return $this->processRedeem($pb_player_id, $goods, $amount, $validToken, $validate, $is_sponsor);
     }
 
-    private function processRedeem($pb_player_id, $goods, $amount, $validToken, $validate=true)
+    private function processRedeem($pb_player_id, $goods, $amount, $validToken, $validate=true, $is_sponsor=false)
     {
         $redeemResult = array(
             'events' => array()
@@ -256,9 +302,10 @@ class Redeem extends REST2_Controller
         }
 
         if(!(isset($redeemResult['events']) && count($redeemResult['events']) > 0)){
+            $validToken_ad = array('client_id' => null, 'site_id' => null);
             /* re-fetch the goods given goods_id */
-            $goodsData = $this->goods_model->getGoods(array_merge($validToken, array(
-                    'goods_id' => new MongoId($goods['goods_id'])))
+            $goodsData = $this->goods_model->getGoods(array_merge($is_sponsor ? $validToken_ad : $validToken, array(
+                'goods_id' => new MongoId($goods['goods_id'])))
             );
             if(!$goodsData) {
                 log_message('error', 'Cannot find goods using goods_id = '.$goods['goods_id']);
@@ -276,7 +323,7 @@ class Redeem extends REST2_Controller
                 );
 
                 /* give goods reward, if exists */
-                $this->getRedeemGoods($pb_player_id, $goodsData, $amount, $validToken);
+                $this->getRedeemGoods($pb_player_id, $goodsData, $amount, $validToken, $is_sponsor);
                 $event = array(
                     'event_type' => 'GOODS_RECEIVED',
                     'goods_data' => $goodsData,
@@ -294,6 +341,7 @@ class Redeem extends REST2_Controller
                     'pb_player_id' => $pb_player_id,
                     'goods_id' => new MongoId($goodsData['goods_id']),
                     'goods_name' => $goodsData['name'],
+                    'is_sponsor' => $is_sponsor,
                     'amount' => $amount,
                     'redeem' => $goodsData['redeem'],
                     'action_name' => 'redeem_goods',
@@ -348,11 +396,11 @@ class Redeem extends REST2_Controller
         return (int)$goods['quantity'] >= (int)$amount;
     }
 
-    private function getRedeemGoods($pb_player_id, $goods, $amount, $validToken){
+    private function getRedeemGoods($pb_player_id, $goods, $amount, $validToken, $is_sponsor){
         $this->load->model('client_model');
 
         $goods_id = new MongoId($goods['goods_id']);
-        $this->client_model->updateplayerGoods($goods_id, $amount, $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id']);
+        $this->client_model->updateplayerGoods($goods_id, $amount, $pb_player_id, $validToken['cl_player_id'], $validToken['client_id'], $validToken['site_id'], $is_sponsor);
 
         if(isset($goods['redeem']['point']["point_value"]) && ($goods['redeem']['point']["point_value"] > 0)){
             $input = array_merge($validToken, array(
