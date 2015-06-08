@@ -141,6 +141,32 @@ class Redeem extends REST2_Controller
         $this->response($this->resp->setRespond($n), 200);
     }
 
+    public function sponsorGroup_get()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'group'
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        //get playbasis player id from client player id
+        $cl_player_id = $this->input->get('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        $group = $this->input->get('group');
+
+        $amount = $this->input->get('amount') ? (int)$this->input->get('amount') : 1;
+
+        $n = $this->goods_model->countGoodsByGroup($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount, true);
+
+        $this->response($this->resp->setRespond($n), 200);
+    }
+
     public function goodsGroup_post()
     {
         $required = $this->input->checkParam(array(
