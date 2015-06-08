@@ -8,6 +8,7 @@ class Goods extends REST2_Controller
         parent::__construct();
         $this->load->model('auth_model');
         $this->load->model('goods_model');
+        $this->load->model('player_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
@@ -111,6 +112,58 @@ class Goods extends REST2_Controller
             }
             $this->response($this->resp->setRespond($goodsList), 200);
         }
+    }
+
+    public function personalizedSponsor_get() {
+        $validToken_ad = array('client_id' => null, 'site_id' => null);
+        /* check required 'player_id' */
+        $required = $this->input->checkParam(array(
+            'player_id',
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        $cl_player_id = $this->input->get('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        /* process group */
+        $results = $this->goods_model->getGroupsAggregate($validToken_ad['site_id']);
+        $ids = array();
+        $group_name = array();
+        foreach ($results as $i => $result) {
+            $group = $result['_id']['group'];
+            $quantity = $result['quantity'];
+            $list = $result['list'];
+            $first = array_shift($list); // skip first one
+            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+            $ids = array_merge($ids, $list);
+        }
+        /* goods list */
+        $goodsList = $this->goods_model->getAllGoods($validToken_ad, $ids);
+        $goods['goods'] = $this->recommend($pb_player_id, $goodsList);
+        $goods['goods']['is_group'] = array_key_exists('group', $goods['goods']);
+        if ($goods['goods']['is_group']) {
+            $group = $goods['goods']['group'];
+            foreach ($group_name as $each) {
+                if ($each['group'] == $group) {
+                    $goods['goods']['quantity'] = $each['quantity'];
+                    break;
+                }
+            }
+        }
+        $this->response($this->resp->setRespond($goods), 200);
+    }
+
+    private function recommend($pb_player_id, $goodsList) {
+        if (!$goodsList) return null;
+        /* TODO: integrate machine learning algorithm instead of randomly picking a goods */
+        $idx = rand(0, count($goodsList)-1);
+        return $this->goods_model->getGoods(array_merge(array('client_id' => null, 'site_id' => null), array(
+            'goods_id' => new MongoId($goodsList[$idx]['goods_id'])
+        )));
     }
 }
 ?>
