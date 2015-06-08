@@ -87,7 +87,6 @@ class Goods_model extends MY_Model
 
         if(isset($result[0]['redeem']))
         {
-
             if(isset($result[0]['redeem']['badge'])){
                 $redeem = array();
                 foreach($result[0]['redeem']['badge'] as $k => $v){
@@ -108,6 +107,7 @@ class Goods_model extends MY_Model
                         'site_id' => $data['site_id'],
                         'reward_id' => new MongoId($k),
                     ));
+                    $this->mongo_db->limit(1);
                     $custom = $this->mongo_db->get('playbasis_reward_to_client');
                     if(isset($custom[0]['name'])){
                         $redeem_inside = array();
