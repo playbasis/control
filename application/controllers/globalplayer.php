@@ -107,6 +107,18 @@ class GlobalPlayer extends REST2_Controller
             )), 200);
         echo('index_post');
     }
+    public function deviceRegistration_post()
+    {
+        //echo('device');exit;
+        $deviceInfo =  array(
+            'player_id' => $this->input->post('player_id'),
+            'site_id' => $this->input->post('site_id'),
+            'device_token' => $this->input->post('device_token') ,
+            'device_description' => $this->input->post('device_description')
+        );
+        //print_r($deviceInfo);exit;
+        $this->global_player_model->storeDeviceToken($deviceInfo);
+    }
 
 }
 
