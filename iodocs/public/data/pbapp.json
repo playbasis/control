@@ -1980,6 +1980,43 @@
                             "Description": "amount of the goods to give to player"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Redeem Sponsored Goods Group",
+                    "Synopsis": "Redeem Sponsored Goods given group.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/sponsorGroup",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "group",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods group"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to redeem"
+                        }
+                    ]
                 }
             ]
         },
