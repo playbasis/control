@@ -501,7 +501,7 @@ class Client_model extends MY_Model
 		$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
 		return $badge;
 	}
-    public function updateplayerGoods($goodsId, $quantity, $pbPlayerId, $clPlayerId, $client_id, $site_id)
+    public function updateplayerGoods($goodsId, $quantity, $pbPlayerId, $clPlayerId, $client_id, $site_id, $is_sponsor=false)
     {
         assert(isset($goodsId));
         assert(isset($quantity));
@@ -512,8 +512,8 @@ class Client_model extends MY_Model
             'quantity'
         ));
         $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
+            'client_id' => $is_sponsor ? null : $client_id,
+            'site_id' => $is_sponsor ? null : $site_id,
             'goods_id' => $goodsId,
             'deleted' => false
         ));
@@ -548,8 +548,8 @@ class Client_model extends MY_Model
         // END NEW -->
         $this->mongo_db->set('quantity', $remainingQuantity);
         $this->mongo_db->set('date_modified', $mongoDate);
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('client_id', $is_sponsor ? null : $client_id);
+        $this->mongo_db->where('site_id', $is_sponsor ? null : $site_id);
         $this->mongo_db->where('goods_id', $goodsId);
         $this->mongo_db->update('playbasis_goods_to_client');
 
@@ -577,6 +577,7 @@ class Client_model extends MY_Model
                 'client_id' => $client_id,
                 'site_id' => $site_id,
                 'goods_id' => $goodsId,
+                'is_sponsor' => $is_sponsor,
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
