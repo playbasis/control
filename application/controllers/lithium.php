@@ -38,7 +38,12 @@ class Lithium extends MY_Controller
             } else if (!empty($lithium['lithium_username'])) {
                 $this->_api->initialize($lithium['lithium_url']);
                 if (!empty($lithium['http_auth_username'])) $this->_api->setHttpAuth('basic', $lithium['http_auth_username'], $lithium['http_auth_password']);
-                $this->_api->login($lithium['lithium_username'], $lithium['lithium_password']);
+                try {
+                    $this->_api->login($lithium['lithium_username'], $lithium['lithium_password']);
+                } catch (Exception $e) {
+                    $this->data['message'] = $e->getMessage();
+                    $this->_api = null;
+                }
             }
         }
     }
