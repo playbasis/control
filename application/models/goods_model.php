@@ -67,7 +67,7 @@ class Goods_model extends MY_Model
         }
         return $goods;
     }
-    public function getGoods($data)
+    public function getGoods($data, $is_sponsor=false)
     {
         //get goods id
         $this->set_site_mongodb($data['site_id']);
@@ -77,8 +77,8 @@ class Goods_model extends MY_Model
         ));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
+            'client_id' => $is_sponsor ? null : $data['client_id'],
+            'site_id' => $is_sponsor ? null : $data['site_id'],
             'goods_id' => $data['goods_id'],
             'deleted' => false
         ));
