@@ -954,6 +954,80 @@ class Player extends REST2_Controller
         $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
+    public function contact_get($player_id=0, $N=10) {
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        /* FIXME: random conact from randomeuser.me */
+        $players = array();
+        $i = 0;
+        while ($i < $N) {
+            $player = json_decode(file_get_contents('http://api.randomuser.me/'));
+            if (!isset($player->results[0]->user)) continue;
+            $user = $player->results[0]->user;
+            $user->cl_player_id = $i+1000;
+            $user->first_name = $user->name->first;
+            $user->last_name = $user->name->last;
+            $user->phone = $user->cell;
+            $user->image = $user->picture->thumbnail;
+            $user->gender = $user->gender == 'male' ? 1 : 0;
+            $user->birth_date = date(DATE_ISO8601, intval($user->dob));
+            $user->registered = date(DATE_ISO8601, intval($user->registered));
+            $user->type = $this->getSource($user);
+            switch ($user->type) {
+                case 'phone':
+                    unset($user->email);
+                    break;
+                case 'g+':
+                case 'fb':
+                case 'tw':
+                case 'gmail':
+                default:
+                    unset($user->phone);
+                    break;
+            }
+            unset($user->name);
+            unset($user->location);
+            unset($user->picture);
+            unset($user->password);
+            unset($user->salt);
+            unset($user->md5);
+            unset($user->sha1);
+            unset($user->sha256);
+            unset($user->dob);
+            unset($user->cell);
+            unset($user->SSN);
+            unset($user->PPS);
+            unset($user->BSN);
+            unset($user->TFN);
+            unset($user->DNI);
+            unset($user->NINO);
+            unset($user->HETU);
+            unset($user->INSEE);
+            unset($user->nationality);
+            unset($user->version);
+            array_push($players, $user);
+            $i++;
+        }
+
+        $this->response($this->resp->setRespond($players), 200);
+    }
+    private function getSource($user) {
+        $r = rand(0, 100);
+        if ($r <= 5) return 'g+';
+        if ($r <= 15) return 'tw';
+        if ($r <= 25) return 'gmail';
+        if ($r <= 50) return 'fb';
+        return 'phone';
+    }
     public function deduct_reward_post($player_id) {
         /* param "player_id" */
         $pb_player_id = $this->player_model->getPlaybasisId(array(
