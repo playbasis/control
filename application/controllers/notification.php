@@ -2,6 +2,8 @@
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH.'controllers/engine.php');
 
+define('LITHIUM_EPSILON', 2);
+
 /**
  * Notification Endpoint for (1) Amazon Simple Notification Service (SNS), (2) PayPal, (3) FullContact, (4) Jive
  */
@@ -278,7 +280,12 @@ class Notification extends Engine
 				/* parse payload */
 				$msg = simplexml_load_string($message['message']);
 				/* map Lithium ID to player ID */
-				$id = $this->getLithiumId($msg->last_edit_author->{'@attributes'}->href);
+				$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
+				/* determine action */
+				$actionName = 'lithium:createmessage';
+				if ($this->getAttribute($msg->parent, 'href')) {
+					$actionName = 'lithium:reply';
+				}
 				/* read player info */
 				$player_id = $this->mapPlayer($id, 'lithium');
 				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
@@ -304,10 +311,6 @@ class Notification extends Engine
 					'email',
 					'image'
 				));
-				$actionName = 'lithium:createmessage';
-				if (isset($msg->parent->{'@attributes'}) && !empty($msg->parent->{'@attributes'}->href)) {
-					$actionName = 'lithium:reply';
-				}
 				/* process rule */
 				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body, $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
@@ -325,9 +328,10 @@ class Notification extends Engine
 				} else {
 					$this->lithium_model->updateMessage($validToken, $msgId, $msg);
 				}
-				/* check if this is "like/unlike" or "edit/tag" */
-				if ($msg->kudos->count != $m['kudos']) { // "like", "unlike"
-					if ($msg->kudos->count < $m['kudos']) {
+				/* determine action */
+				$count = intval($msg->kudos->count.'');
+				if ($count != $m['kudos']) { // "like", "unlike"
+					if ($count < $m['kudos']) {
 						/* then we know that this is "unlike" */
 						$this->response($this->resp->setRespond(), 200); /* and because we have no clue who unlikes, we simply skip processing */
 					}
@@ -337,11 +341,12 @@ class Notification extends Engine
 					$actionName = 'lithium:like';
 				} else { // "edit", "tag"
 					/* map Lithium ID to player ID */
-					$id = $this->getLithiumId($msg->last_edit_author->{'@attributes'}->href);
+					$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
 					$info = $this->lithiumapi->user($id);
 					/* check if it is "edit" */
-					$last_visit = $info->last_visit_time;
-					if ($msg->last_edit_time != $last_visit) {
+					$last_visit = $info->last_visit_time->{'$'};
+					// Lithium does not guarantee that $msg->last_edit_time and $user->last_visit will be the same
+					if (abs(strtotime($msg->last_edit_time.'') - strtotime($last_visit)) > LITHIUM_EPSILON) { // so we have to use abs(diff) here
 						/* then we know that this it not "edit", but "tag" action */
 						$this->response($this->resp->setRespond(), 200); /* and because we have no clue who tags it, we simply skip processing */
 					}
@@ -427,6 +432,13 @@ class Notification extends Engine
 			}
 		}
 		return $max;
+	}
+
+	private function getAttribute($xml, $key) {
+		foreach($xml->attributes() as $a => $b) {
+			if ($key == $a) return $b;
+		}
+		return null;
 	}
 
 	private function resolveLithiumUserProfileAvatar($avatar) {

@@ -29,7 +29,7 @@ class Lithium_model extends MY_Model
     public function getMessage($data) {
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-        $this->mongo_db->where('message_id', $data['message_id']);
+        $this->mongo_db->where('message_id', $data['message_id'].'');
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_lithium_message_to_client");
         return $results ? $results[0] : null;
@@ -40,8 +40,8 @@ class Lithium_model extends MY_Model
         return $this->mongo_db->insert('playbasis_lithium_message_to_client', array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'message_id' => $message->id,
-            'kudos' => $message->kudos->count,
+            'message_id' => $message->id.'',
+            'kudos' => intval($message->kudos->count.''),
             'date_added' => $d,
             'date_modified' => $d
         ));
@@ -51,8 +51,8 @@ class Lithium_model extends MY_Model
         $d = new MongoDate(time());
         $this->mongo_db->where('client_id', $data['client_id']);
         $this->mongo_db->where('site_id', $data['site_id']);
-        $this->mongo_db->where('message_id', $message_id);
-        $this->mongo_db->set('kudos', $message->kudos->count);
+        $this->mongo_db->where('message_id', $message_id.'');
+        $this->mongo_db->set('kudos', intval($message->kudos->count.''));
         $this->mongo_db->set('date_modified', $d);
         return $this->mongo_db->update_all('playbasis_lithium_message_to_client');
     }
