@@ -116,8 +116,10 @@ $route['Player/'.ANY_STRING.'/deduct'] = 'player/deduct_reward/$1';
 
 $route['Player/rankuser/'.ANY_STRING.'/'.ANY_STRING] = 'player/rankuser/$1/$2';
 
-$route['Player/'.ANY_STRING.'/contact'] = 'player/contact/$1';
-$route['Player/contact'] = 'player/contact';
+$route['Player/'.ANY_STRING.'/contact'] = 'player/contact/$1/10';
+$route['Player/'.ANY_STRING.'/contact/'.ANY_NUMBER] = 'player/contact/$1/$2';
+$route['Player/contact'] = 'player/contact/0/10';
+$route['Player/contact/'.ANY_NUMBER] = 'player/contact/0/$1';
 
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';

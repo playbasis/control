@@ -954,7 +954,7 @@ class Player extends REST2_Controller
         $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
-    public function contact_get($player_id=0) {
+    public function contact_get($player_id=0, $N=10) {
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'player_id'
@@ -969,7 +969,7 @@ class Player extends REST2_Controller
         /* FIXME: random conact from randomeuser.me */
         $players = array();
         $i = 0;
-        while ($i < 10) {
+        while ($i < $N) {
             $player = json_decode(file_get_contents('http://api.randomuser.me/'));
             if (!isset($player->results[0]->user)) continue;
             $user = $player->results[0]->user;
@@ -1011,6 +1011,7 @@ class Player extends REST2_Controller
             unset($user->DNI);
             unset($user->NINO);
             unset($user->HETU);
+            unset($user->INSEE);
             unset($user->nationality);
             unset($user->version);
             array_push($players, $user);
