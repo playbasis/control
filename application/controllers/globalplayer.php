@@ -1,12 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 class GlobalPlayer extends REST2_Controller
 {
     public function __construct()
     {
         parent::__construct();
         $this->load->model('global_player_model');
+        $this->load->model('push_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -119,7 +121,21 @@ class GlobalPlayer extends REST2_Controller
         //print_r($deviceInfo);exit;
         $this->global_player_model->storeDeviceToken($deviceInfo);
     }
+    public function directMsg_post()
+    {
+        $temp = new DateTime('now');
+        $notificationInfo = array(
+            'device_token' => $this->input->post('device_token'),
+            'messages' => $this->input->post('msg'),
+            'badge_number' => 9
+        );
+        print_r($notificationInfo);
+        //print_r($temp);
+        $this->push_model->initail($notificationInfo);
+        //$this->push_model->server($notificationInfo);
+        echo('Send Notification Success');
 
+    }
 }
 
 ?>

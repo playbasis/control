@@ -238,6 +238,37 @@
               }
 
             ]
+          },
+          {
+            "MethodName": "Direct Msg to Device",
+            "Synopsis": "Direct message to mobile device",
+            "HTTPMethod": "POST",
+            "URI": "/GlobalPlayer/directMsg",
+            "RequiresOAuth": "N",
+            "parameters": [
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              },
+              {
+                "Name": "msg",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "message for notification"
+              },
+              {
+                "Name": "device_token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "device_token"
+              }
+
+            ]
           }
 
 

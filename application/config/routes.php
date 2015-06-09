@@ -64,6 +64,11 @@ $route['GlobalPlayer/service/'] = 'globalplayer/service/';
 
 $route['GlobalPlayer/'.ANY_STRING.'/deviceRegistration'] = 'globalplayer/deviceRegistration/$1';
 $route['GlobalPlayer/deviceRegistration/'] = 'globalplayer/deviceRegistration/';
+
+$route['GlobalPlayer/'.ANY_STRING.'/directMsg'] = 'globalplayer/directMsg/$1';
+$route['GlobalPlayer/directMsg/'] = 'globalplayer/directMsg/';
+
+
 //auth API
 $route['Auth'] = 'auth';
 $route['Auth/renew'] = 'auth/renew';
