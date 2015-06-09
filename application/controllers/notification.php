@@ -279,8 +279,8 @@ class Notification extends Engine
 				$msg = simplexml_load_string($message['message']);
 				/* map Lithium ID to player ID */
 				$id = $this->getLithiumId($msg->last_edit_author->{'@attributes'}->href);
-				$player_id = $this->mapPlayer($id, 'lithium');
 				/* read player info */
+				$player_id = $this->mapPlayer($id, 'lithium');
 				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
 				if (!$pb_player_id) {
 					$info = $this->lithiumapi->user($id);
@@ -312,7 +312,68 @@ class Notification extends Engine
 				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body, $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
-			case 'MessageUpdate': // lithium:editmessage, lithium:like, lithium:unlike
+			case 'MessageUpdate': // lithium:editmessage, lithium:like
+				/* parse payload */
+				$msg = simplexml_load_string($message['message']);
+				$msgId = $msg->id;
+				/* check if we've already stored this message */
+				$m = $this->lithium_model->getMessage(array_merge($validToken, array('message_id' => $msgId)));
+				if (!$m) {
+					$this->lithium_model->insertMessage($validToken, $msg);
+					/* because we don't have previous info, it is best to skip processing */
+					$this->response($this->resp->setRespond(), 200);
+				} else {
+					$this->lithium_model->updateMessage($validToken, $msgId, $msg);
+				}
+				/* check if this is "like/unlike" or "edit/tag" */
+				if ($msg->kudos->count != $m['kudos']) { // "like", "unlike"
+					if ($msg->kudos->count < $m['kudos']) {
+						/* then we know that this is "unlike" */
+						$this->response($this->resp->setRespond(), 200); /* and because we have no clue who unlikes, we simply skip processing */
+					}
+					$givers = $this->lithiumapi->kudosGivers($msgId);
+					$info = $this->findLatest($givers);
+					$id = $info->id;
+					$actionName = 'lithium:like';
+				} else { // "edit", "tag"
+					/* map Lithium ID to player ID */
+					$id = $this->getLithiumId($msg->last_edit_author->{'@attributes'}->href);
+					$info = $this->lithiumapi->user($id);
+					/* check if it is "edit" */
+					$last_visit = $info->last_visit_time;
+					if ($msg->last_edit_time != $last_visit) {
+						/* then we know that this it not "edit", but "tag" action */
+						$this->response($this->resp->setRespond(), 200); /* and because we have no clue who tags it, we simply skip processing */
+					}
+					$actionName = 'lithium:updatemessage';
+				}
+				/* read player info */
+				$player_id = $this->mapPlayer($id, 'lithium');
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+				if (!$pb_player_id) {
+					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+					$path = $this->resolveLithiumUserProfileAvatar($avatar);
+					$image = $lithium['lithium_url'].'/'.$path;
+					$email = $info->email->{'$'};
+					$username = $info->login->{'$'};
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+						'player_id' => $player_id,
+						'image' => $image,
+						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+						'username' => $username
+					)));
+				}
+				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+					'cl_player_id',
+					'username',
+					'first_name',
+					'last_name',
+					'email',
+					'image'
+				));
+				/* process rule */
+				$apiResult = $this->rule($validToken['site_id'], $actionName, null, $player);
+				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
 			case 'MessageDelete': // lithium:removemessage
 				// delete by you
@@ -356,6 +417,16 @@ class Notification extends Engine
 			}
 		}
 		return null;
+	}
+
+	private function findLatest($users) {
+		$max = null;
+		foreach ($users as $user) {
+			if (!$max || $max->last_visit_time < $user->last_visit_time) {
+				$max = $user;
+			}
+		}
+		return $max;
 	}
 
 	private function resolveLithiumUserProfileAvatar($avatar) {
