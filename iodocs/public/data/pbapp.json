@@ -1187,6 +1187,22 @@
                     "parameters": []
                 },
                 {
+                    "MethodName": "Rule Detail",
+                    "Synopsis": "Get the detail of the rule.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Engine/rule/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "rule id"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Rule",
                     "Synopsis": "Process an action through all the game rules defined for a client’s website.",
                     "HTTPMethod": "POST",
