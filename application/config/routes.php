@@ -47,6 +47,9 @@ $route['default_controller'] = "welcome/playbasis";
 $route['GlobalPlayer/'.ANY_STRING.'/mytest'] = 'globalplayer/mytest/$1';
 $route['GlobalPlayer/mytest/'] = 'globalplayer/mytest/';
 
+$route['GlobalPlayer/'.ANY_STRING.'/test'] = 'globalplayer/test/$1';
+$route['GlobalPlayer/test/'] = 'globalplayer/test/';
+
 $route['GlobalPlayer/'.ANY_STRING.'/register'] = 'globalplayer/register/$1';
 $route['GlobalPlayer/register/'] = 'globalplayer/register/';
 
