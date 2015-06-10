@@ -277,7 +277,13 @@
             "URI": "/Universe/mytest",
             "RequiresOAuth": "N",
             "parameters": [
-
+              {
+                "Name": "token",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "access token returned from Auth"
+              }
 
             ]
           }
