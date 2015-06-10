@@ -7,6 +7,7 @@ class Universe extends REST2_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('global_player_model');
         $this->load->model('auth_model');
         $this->load->model('client_model');
         $this->load->model('player_model');
@@ -88,7 +89,7 @@ class Universe extends REST2_Controller
     }
     public function mytest_get()
     {
-        echo "mytest success";
+        echo("mytest success");
     }
     public function register_post()
     {
