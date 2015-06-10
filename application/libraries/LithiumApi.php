@@ -110,6 +110,12 @@ class LithiumApi {
         return $result->response->user;
     }
 
+    public function kudosGivers($messageId) {
+        $result = $this->_get('messages/id/'.$messageId.'/kudos/givers', array_merge($this->sessionKey, $this->response));
+        if (!$this->isSuccess($result)) throw new Exception('[Lithium] "kudosGivers" failed: '.print_r($this->getError($result),true));
+        return $result->response->users;
+    }
+
     private function build_query_string($arr) {
         $s = null;
         if (is_array($arr)) {

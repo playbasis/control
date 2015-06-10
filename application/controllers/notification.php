@@ -2,6 +2,8 @@
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH.'controllers/engine.php');
 
+define('LITHIUM_EPSILON', 2);
+
 /**
  * Notification Endpoint for (1) Amazon Simple Notification Service (SNS), (2) PayPal, (3) FullContact, (4) Jive
  */
@@ -222,10 +224,10 @@ class Notification extends Engine
 				} else {
 					$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
 				}
-				$this->response($this->resp->setRespond(), 200);
+				$this->response($this->resp->setRespond($pb_player_id), 200);
 				break;
-			case 'UserSignOn':
-			case 'UserUpdate':
+			case 'UserSignOn': // lithium:login
+			case 'UserUpdate': // lithium:updateprofile
 				/* parse payload */
 				$user = simplexml_load_string($message['user']);
 				/* map Lithium ID to player ID */
@@ -270,20 +272,119 @@ class Notification extends Engine
 				$apiResult = $this->rule($validToken['site_id'], $actionName, null, $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
-			case 'UserSignOff':
+			case 'UserSignOff': // lithium:logout
 				/* Lithium always send us anonymous user <user type="user" href="/users/id/-1"> */
 				$this->response($this->resp->setRespond(), 200);
 				break;
-			case 'MessageCreate':
+			case 'MessageCreate': // lithium:createmessage, lithium:reply
+				/* parse payload */
+				$msg = simplexml_load_string($message['message']);
+				/* map Lithium ID to player ID */
+				$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
+				/* determine action */
+				$actionName = 'lithium:createmessage';
+				if ($this->getAttribute($msg->parent, 'href')) {
+					$actionName = 'lithium:reply';
+				}
+				/* read player info */
+				$player_id = $this->mapPlayer($id, 'lithium');
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+				if (!$pb_player_id) {
+					$info = $this->lithiumapi->user($id);
+					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+					$path = $this->resolveLithiumUserProfileAvatar($avatar);
+					$image = $lithium['lithium_url'].'/'.$path;
+					$email = $info->email->{'$'};
+					$username = $info->login->{'$'};
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+						'player_id' => $player_id,
+						'image' => $image,
+						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+						'username' => $username
+					)));
+				}
+				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+					'cl_player_id',
+					'username',
+					'first_name',
+					'last_name',
+					'email',
+					'image'
+				));
+				/* process rule */
+				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body, $player);
+				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
-			case 'MessageUpdate':
+			case 'MessageUpdate': // lithium:editmessage, lithium:like
+				/* parse payload */
+				$msg = simplexml_load_string($message['message']);
+				$msgId = $msg->id;
+				/* check if we've already stored this message */
+				$m = $this->lithium_model->getMessage(array_merge($validToken, array('message_id' => $msgId)));
+				if (!$m) {
+					$this->lithium_model->insertMessage($validToken, $msg);
+					/* because we don't have previous info, it is best to skip processing */
+					$this->response($this->resp->setRespond(), 200);
+				} else {
+					$this->lithium_model->updateMessage($validToken, $msgId, $msg);
+				}
+				/* determine action */
+				$count = intval($msg->kudos->count.'');
+				if ($count != $m['kudos']) { // "like", "unlike"
+					if ($count < $m['kudos']) {
+						/* then we know that this is "unlike" */
+						$this->response($this->resp->setRespond(), 200); /* and because we have no clue who unlikes, we simply skip processing */
+					}
+					$givers = $this->lithiumapi->kudosGivers($msgId);
+					$info = $this->findLatest($givers);
+					$id = $info->id;
+					$actionName = 'lithium:like';
+				} else { // "edit", "tag"
+					/* map Lithium ID to player ID */
+					$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
+					$info = $this->lithiumapi->user($id);
+					/* check if it is "edit" */
+					$last_visit = $info->last_visit_time->{'$'};
+					// Lithium does not guarantee that $msg->last_edit_time and $user->last_visit will be the same
+					if (abs(strtotime($msg->last_edit_time.'') - strtotime($last_visit)) > LITHIUM_EPSILON) { // so we have to use abs(diff) here
+						/* then we know that this it not "edit", but "tag" action */
+						$this->response($this->resp->setRespond(), 200); /* and because we have no clue who tags it, we simply skip processing */
+					}
+					$actionName = 'lithium:updatemessage';
+				}
+				/* read player info */
+				$player_id = $this->mapPlayer($id, 'lithium');
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+				if (!$pb_player_id) {
+					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+					$path = $this->resolveLithiumUserProfileAvatar($avatar);
+					$image = $lithium['lithium_url'].'/'.$path;
+					$email = $info->email->{'$'};
+					$username = $info->login->{'$'};
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+						'player_id' => $player_id,
+						'image' => $image,
+						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+						'username' => $username
+					)));
+				}
+				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+					'cl_player_id',
+					'username',
+					'first_name',
+					'last_name',
+					'email',
+					'image'
+				));
+				/* process rule */
+				$apiResult = $this->rule($validToken['site_id'], $actionName, null, $player);
+				$this->response($this->resp->setRespond($apiResult), 200);
+				break;
+			case 'MessageDelete': // lithium:removemessage
+				// delete by you
 				break;
 			case 'MessageMove':
-				break;
-			case 'MessageDelete':
-				break;
 			case 'MessageRootPublished':
-				break;
 			case 'UserCreate':
 			case 'ImageCreated':
 			case 'ImageUpdated':
@@ -309,11 +410,33 @@ class Notification extends Engine
 		return $player_id;
 	}
 
+	private function getLithiumId($href) {
+		$arr = explode('/', $href);
+		return $arr ? intval($arr[count($arr)-1]) : $href;
+	}
+
 	private function getLithiumUserProfile($user, $key) {
 		foreach ($user->profiles->profile as $each) {
 			if ($each->name == $key) {
 				return $each->{'$'};
 			}
+		}
+		return null;
+	}
+
+	private function findLatest($users) {
+		$max = null;
+		foreach ($users as $user) {
+			if (!$max || $max->last_visit_time < $user->last_visit_time) {
+				$max = $user;
+			}
+		}
+		return $max;
+	}
+
+	private function getAttribute($xml, $key) {
+		foreach($xml->attributes() as $a => $b) {
+			if ($key == $a) return $b;
 		}
 		return null;
 	}
