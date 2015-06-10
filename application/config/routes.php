@@ -52,28 +52,28 @@ $route['Universe/mau_per_day'] = 'universe/mauDay';
 $route['Universe/mytest'] = 'universe/mytest';
 
 $route['Universe/'.ANY_STRING.'/register'] = 'universe/register/$1';
-$route['Universe/register/'] = 'universe/register/';
+$route['Universe/register'] = 'universe/register';
 
 $route['Universe/'.ANY_STRING.'/login'] = 'universe/login/$1';
-$route['Universe/login/'] = 'universe/login/';
+$route['Universe/login'] = 'universe/login';
 
 $route['Universe/'.ANY_STRING.'/join'] = 'universe/join/$1';
-$route['Universe/join/'] = 'universe/join/';
+$route['Universe/join'] = 'universe/join';
 
 $route['Universe/'.ANY_STRING.'/searchClientSite'] = 'universe/searchClientSite/$1';
-$route['Universe/searchClientSite/'] = 'universe/searchClientSite/';
+$route['Universe/searchClientSite'] = 'universe/searchClientSite';
 
 $route['Universe/'.ANY_STRING.'/feature'] = 'universe/feature/$1';
-$route['Universe/feature/'] = 'universe/feature/';
+$route['Universe/feature'] = 'universe/feature';
 
 $route['Universe/'.ANY_STRING.'/feature'] = 'universe/service/$1';
-$route['Universe/service/'] = 'universe/service/';
+$route['Universe/service'] = 'universe/service';
 
 $route['Universe/'.ANY_STRING.'/deviceRegistration'] = 'universe/deviceRegistration/$1';
-$route['Universe/deviceRegistration/'] = 'universe/deviceRegistration/';
+$route['Universe/deviceRegistration'] = 'universe/deviceRegistration';
 
 $route['Universe/'.ANY_STRING.'/directMsg'] = 'universe/directMsg/$1';
-$route['Universe/directMsg/'] = 'universe/directMsg/';
+$route['Universe/directMsg'] = 'universe/directMsg';
 
 
 
