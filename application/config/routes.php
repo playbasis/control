@@ -44,35 +44,36 @@ define('ANY_NUMBER','([0-9]+)');
 $route['default_controller'] = "welcome/playbasis";
 
 //global player API
-$route['GlobalPlayer/'.ANY_STRING.'/mytest'] = 'globalplayer/mytest/$1';
-$route['GlobalPlayer/mytest/'] = 'globalplayer/mytest/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/test'] = 'globalplayer/test/$1';
-$route['GlobalPlayer/test/'] = 'globalplayer/test/';
+//$route['Universe/'.ANY_STRING.'/test'] = 'universe/test/$1';
+$route['Universe/test'] = 'universe/test';
+$route['Universe/mau'] = 'universe/mau';
+$route['Universe/mau_per_day'] = 'universe/mauDay';
+$route['Universe/mytest'] = 'universe/mytest';
 
-$route['GlobalPlayer/'.ANY_STRING.'/register'] = 'globalplayer/register/$1';
-$route['GlobalPlayer/register/'] = 'globalplayer/register/';
+$route['Universe/'.ANY_STRING.'/register'] = 'universe/register/$1';
+$route['Universe/register/'] = 'universe/register/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/login'] = 'globalplayer/login/$1';
-$route['GlobalPlayer/login/'] = 'globalplayer/login/';
+$route['Universe/'.ANY_STRING.'/login'] = 'universe/login/$1';
+$route['Universe/login/'] = 'universe/login/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/join'] = 'globalplayer/join/$1';
-$route['GlobalPlayer/join/'] = 'globalplayer/join/';
+$route['Universe/'.ANY_STRING.'/join'] = 'universe/join/$1';
+$route['Universe/join/'] = 'universe/join/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/searchClientSite'] = 'globalplayer/searchClientSite/$1';
-$route['GlobalPlayer/searchClientSite/'] = 'globalplayer/searchClientSite/';
+$route['Universe/'.ANY_STRING.'/searchClientSite'] = 'universe/searchClientSite/$1';
+$route['Universe/searchClientSite/'] = 'universe/searchClientSite/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/feature'] = 'globalplayer/feature/$1';
-$route['GlobalPlayer/feature/'] = 'globalplayer/feature/';
+$route['Universe/'.ANY_STRING.'/feature'] = 'universe/feature/$1';
+$route['Universe/feature/'] = 'universe/feature/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/feature'] = 'globalplayer/service/$1';
-$route['GlobalPlayer/service/'] = 'globalplayer/service/';
+$route['Universe/'.ANY_STRING.'/feature'] = 'universe/service/$1';
+$route['Universe/service/'] = 'universe/service/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/deviceRegistration'] = 'globalplayer/deviceRegistration/$1';
-$route['GlobalPlayer/deviceRegistration/'] = 'globalplayer/deviceRegistration/';
+$route['Universe/'.ANY_STRING.'/deviceRegistration'] = 'universe/deviceRegistration/$1';
+$route['Universe/deviceRegistration/'] = 'universe/deviceRegistration/';
 
-$route['GlobalPlayer/'.ANY_STRING.'/directMsg'] = 'globalplayer/directMsg/$1';
-$route['GlobalPlayer/directMsg/'] = 'globalplayer/directMsg/';
+$route['Universe/'.ANY_STRING.'/directMsg'] = 'universe/directMsg/$1';
+$route['Universe/directMsg/'] = 'universe/directMsg/';
 
 
 

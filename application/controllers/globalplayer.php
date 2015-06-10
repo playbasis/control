@@ -86,7 +86,7 @@ class GlobalPlayer extends REST2_Controller
 		$player['player']['cl_player_id'] = $player_id;
 		$this->response($this->resp->setRespond($player), 200);
 	}
-    public function mytest_get()
+    public function mytest_get($data='')
     {
         echo "mytest success";
     }
