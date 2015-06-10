@@ -328,7 +328,7 @@ class Engine extends Quest
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
 
-		if ($input["test"])
+		if (isset($input["rule_id"]))
 			$ruleSet = $this->client_model->getRuleSetById($input["rule_id"]);
 		else
 			$ruleSet = $this->client_model->getRuleSetByActionId(array(
