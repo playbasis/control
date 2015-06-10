@@ -381,7 +381,40 @@ class Notification extends Engine
 				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
 			case 'MessageDelete': // lithium:removemessage
-				// delete by you
+				/* parse payload */
+				$msg = simplexml_load_string($message['message']);
+				/* map Lithium ID to player ID */
+				$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
+				/* determine action */
+				$actionName = 'lithium:removemessage';
+				/* read player info */
+				$player_id = $this->mapPlayer($id, 'lithium');
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+				if (!$pb_player_id) {
+					$info = $this->lithiumapi->user($id);
+					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+					$path = $this->resolveLithiumUserProfileAvatar($avatar);
+					$image = $lithium['lithium_url'].'/'.$path;
+					$email = $info->email->{'$'};
+					$username = $info->login->{'$'};
+					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+						'player_id' => $player_id,
+						'image' => $image,
+						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+						'username' => $username
+					)));
+				}
+				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+					'cl_player_id',
+					'username',
+					'first_name',
+					'last_name',
+					'email',
+					'image'
+				));
+				/* process rule */
+				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body, $player);
+				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
 			case 'MessageMove':
 			case 'MessageRootPublished':
