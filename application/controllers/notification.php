@@ -314,7 +314,7 @@ class Notification extends Engine
 					'image'
 				));
 				/* process rule */
-				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body, $player);
+				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body.'', $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
 			case 'MessageUpdate': // lithium:editmessage, lithium:like
@@ -415,7 +415,7 @@ class Notification extends Engine
 					'image'
 				));
 				/* process rule */
-				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body, $player);
+				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body.'', $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
 				break;
 			case 'MessageMove':
