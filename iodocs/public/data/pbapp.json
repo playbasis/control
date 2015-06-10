@@ -1234,6 +1234,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "amount of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward quantity"
+                        },
+                        {
+                            "Name": "rule_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "if needed, you can also specify a rule id so that rule engine will only process against that rule"
                         }
                     ]
                 }
