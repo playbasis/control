@@ -251,6 +251,7 @@ class Global_Player_model extends MY_Model
     public function storeDeviceToken($data)
     {
         $mongoDate = new MongoDate(time());
+
         $this->mongo_db->insert('global_player_device', array(
 
             'player_id' => new MongoId($data['player_id']),
