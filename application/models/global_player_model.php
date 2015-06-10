@@ -1,5 +1,6 @@
 <?php
-class Global_Player_model extends MY_Model
+defined('BASEPATH') OR exit('No direct script access allowed');
+class Global_Player_Model extends MY_Model
 {
     public function __construct()
     {
