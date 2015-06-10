@@ -73,6 +73,17 @@ class Client_model extends MY_Model
         $id = $this->mongo_db->get('playbasis_action_to_client');
         return ($id && $id[0]) ? $id[0]['name'] : '';
     }
+    public function getRuleDetail($clientData, $rule_id) {
+        $this->set_site_mongodb($clientData['site_id']);
+        $this->mongo_db->select(array('name', 'description', 'action_id', 'jigsaw_set', 'active_status', 'tags'));
+        $this->mongo_db->where(array(
+            'client_id' => $clientData['client_id'],
+            'site_id' => $clientData['site_id'],
+            '_id' => new MongoId($rule_id)
+        ));
+        $id = $this->mongo_db->get('playbasis_rule');
+        return $id ? $id[0] : '';
+    }
     /*
      * get RuleSet by _id from plybasis_rule
      * @param string | MongoId $id

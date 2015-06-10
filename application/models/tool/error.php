@@ -207,6 +207,10 @@ class Error extends CI_Model
             $errorData['message'] = "Question has already been completed by the player";
             $errorData['error_code'] = '1004';
             break;
+        case 'RULE_NOT_FOUND':
+            $errorData['message'] = "Rule not available";
+            $errorData['error_code'] = '1101';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';

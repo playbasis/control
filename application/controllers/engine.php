@@ -83,14 +83,18 @@ class Engine extends Quest
 		}
 		$this->response($this->resp->setRespond($actionConfig), 200);
 	}
-	public function rule_get($option = 0)
+	public function rule_get($rule_id=0)
 	{
-		if($option != 'facebook')
-		{
-			$this->response($this->error->setError('ACCESS_DENIED'), 200);
-		}
-		$challenge = $this->input->get('hub_challenge');
-		echo $challenge;
+		if(!$rule_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array('rule_id')), 200);
+		$rule = $this->client_model->getRuleDetail($this->validToken, $rule_id);
+		if(!$rule)
+			$this->response($this->error->setError('RULE_NOT_FOUND'), 200);
+		$rule['id'] = $rule['_id'].'';
+		unset($rule['_id']);
+		$rule['action'] = $this->action_model->findActionName($this->validToken['site_id'], $rule['action_id']);
+		unset($rule['action_id']);
+		$this->response($this->resp->setRespond($rule), 200);
 	}
 
     /*
