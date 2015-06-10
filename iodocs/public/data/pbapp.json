@@ -7,7 +7,7 @@
             "MethodName": "Register",
             "Synopsis": "Register a Playbasis player.",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/register",
+            "URI": "/Universe/register",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -44,7 +44,7 @@
             "MethodName": "Login",
             "Synopsis": "Tell Playbasis system that a player has logged in.",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/login",
+            "URI": "/Universe/login",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -74,7 +74,7 @@
             "MethodName": "Search via Company",
             "Synopsis": "Search client id via company name",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/searchClientSite",
+            "URI": "/Universe/searchClientSite",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -97,7 +97,7 @@
             "MethodName": "Join Client Site",
             "Synopsis": "Send request from player",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/join",
+            "URI": "/Universe/join",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -134,7 +134,7 @@
             "MethodName": "Client Feature",
             "Synopsis": "List all feature for client",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/feature",
+            "URI": "/Universe/feature",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -164,7 +164,7 @@
             "MethodName": "Client Service",
             "Synopsis": "Enable or Disable each service for client",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/service",
+            "URI": "/Universe/service",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -198,7 +198,7 @@
             "MethodName": "Device Registration",
             "Synopsis": "Register for your device ",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/deviceRegistration",
+            "URI": "/Universe/deviceRegistration",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -243,7 +243,7 @@
             "MethodName": "Direct Msg to Device",
             "Synopsis": "Direct message to mobile device",
             "HTTPMethod": "POST",
-            "URI": "/GlobalPlayer/directMsg",
+            "URI": "/Universe/directMsg",
             "RequiresOAuth": "N",
             "parameters": [
               {
@@ -267,6 +267,17 @@
                 "Type": "string",
                 "Description": "device_token"
               }
+
+            ]
+          },
+          {
+            "MethodName": "My Test",
+            "Synopsis": "test",
+            "HTTPMethod": "GET",
+            "URI": "/Universe/mytest",
+            "RequiresOAuth": "N",
+            "parameters": [
+
 
             ]
           }
