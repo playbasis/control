@@ -85,15 +85,56 @@ class Engine extends Quest
 	}
 	public function rule_get($rule_id=0)
 	{
+		/* check parameters */
 		if(!$rule_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array('rule_id')), 200);
+		$pb_player_id = null;
+		$player_id = $this->input->get('player_id');
+		if ($player_id !== false) {
+			$pb_player_id = $this->player_model->getPlaybasisId(array(
+				'client_id' => $this->client_id,
+				'site_id' => $this->site_id,
+				'cl_player_id' => $player_id,
+			));
+			if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+
+		/* get rule detail */
 		$rule = $this->client_model->getRuleDetail($this->validToken, $rule_id);
 		if(!$rule)
 			$this->response($this->error->setError('RULE_NOT_FOUND'), 200);
+
+		/* format output */
 		$rule['id'] = $rule['_id'].'';
 		unset($rule['_id']);
-		$rule['action'] = $this->action_model->findActionName($this->validToken['site_id'], $rule['action_id']);
+		$rule['action'] = $this->action_model->findActionName($this->site_id, $rule['action_id']);
 		unset($rule['action_id']);
+
+		/* find current state of rule execution of the player */
+		if ($pb_player_id && isset($rule['jigsaw_set'])) {
+			$input = array(
+				'site_id' => $this->site_id,
+				'pb_player_id' => $pb_player_id,
+				'rule_id' => new MongoId($rule['id']),
+			);
+			foreach ($rule['jigsaw_set'] as &$jigsaw) {
+				try {
+					$jigsaw_id = new MongoId($jigsaw['id']);
+				} catch (MongoException $ex) {
+					$jigsaw_id = "";
+				}
+				$input['jigsaw_id'] = $jigsaw_id;
+				$input['jigsaw_name'] = $jigsaw['name'];
+				$input['jigsaw_category'] = $jigsaw['category'];
+				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
+				$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
+					'input',
+					'date_added'
+				));
+				array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
+			}
+		}
+
 		$this->response($this->resp->setRespond($rule), 200);
 	}
 
@@ -738,6 +779,23 @@ class Engine extends Quest
 		//$result = $this->jigsaw_model->checkReward($reward_id, $token['site_id']);
 		//var_dump($result);
 		echo '</pre>';
+	}
+
+	/**
+	 * Use with array_walk and array_walk_recursive.
+	 * Recursive iterable items to modify array's value
+	 * from MongoId to string and MongoDate to readable date
+	 * @param mixed $item this is reference
+	 * @param string $key
+	 */
+	private function convert_mongo_object(&$item, $key) {
+		if (is_object($item)) {
+			if (get_class($item) === 'MongoId') {
+				$item = $item->{'$id'};
+			} else if (get_class($item) === 'MongoDate') {
+				$item =  datetimeMongotoReadable($item);
+			}
+		}
 	}
 }
 ?>
