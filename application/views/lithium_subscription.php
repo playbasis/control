@@ -25,33 +25,35 @@
             <?php }?>
 
             <?php if (isset($lithium)) { ?>
-                <?php echo form_open('lithium/subscription'.(isset($offset) ? '/'.$offset : ''), array('id' => 'form')); ?>
+                <?php echo form_open('lithium/subscription', array('id' => 'form')); ?>
                 <table class="list">
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
+                        <td class="center" style="width:20px;"><?php echo $this->lang->line('column_id'); ?></td>
                         <td class="center" style="width:20px;"><?php echo $this->lang->line('column_type'); ?></td>
-                        <td class="center" style="width:100px;"><?php echo $this->lang->line('column_description'); ?></td>
+                        <td class="center" style="width:20px;"><?php echo $this->lang->line('column_token'); ?></td>
                         <td class="center" style="width:100px;"><?php echo $this->lang->line('column_callback'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php if (isset($webhooks)) { ?>
-                        <?php foreach ($webhooks as $webhook) { ?>
+                    <?php if (isset($subscriptions)) { ?>
+                        <?php foreach ($subscriptions as $subscription) { ?>
                             <tr>
-                                <td style="text-align: center;"><?php if (isset($webhook['selected']) && $webhook['selected']) { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookID']; ?>" checked="checked" />
+                                <td style="text-align: center;"><?php if (isset($subscription['selected']) && $subscription['selected']) { ?>
+                                        <input type="checkbox" name="selected[]" value="<?php echo $subscription['token']; ?>" checked="checked" />
                                     <?php } else { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookID']; ?>" />
+                                        <input type="checkbox" name="selected[]" value="<?php echo $subscription['token']; ?>" />
                                     <?php } ?></td>
-                                <td class="center"><?php echo $webhook['events']; ?></td>
-                                <td class="left"><?php echo $webhook['object']; ?></td>
-                                <td class="left"><?php echo $webhook['callback']; ?></td>
+                                <td class="center"><?php echo $subscription['id']; ?></td>
+                                <td class="center"><?php echo $subscription['type']; ?></td>
+                                <td class="left"><?php echo $subscription['token']; ?></td>
+                                <td class="left"><?php echo $subscription['callback']; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="4"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="5"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>
@@ -61,14 +63,5 @@
                 Please set up your Lithium community with Playbasis first.
             <?php } ?>
         </div><!-- .content -->
-        <?php if (isset($lithium)) { ?>
-        <div class="pagination">
-            <ul class='ul_rule_pagination_container'>
-                <li class="page_index_number active"><a>Total Records:</a></li> <li class="page_index_number"><a><?php echo number_format($pagination_total_rows); ?></a></li>
-                <li class="page_index_number active"><a>(<?php echo number_format($pagination_total_pages); ?> Pages)</a></li>
-                <?php echo $pagination_links; ?>
-            </ul>
-        </div>
-        <?php } ?>
     </div><!-- .box -->
 </div><!-- #content .span10 -->

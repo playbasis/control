@@ -16,6 +16,7 @@ class LithiumApi {
         $ci =& get_instance();
         $this->_restClient = $ci->rest;
         $this->response = array('restapi.response_format' => JSON_RESPONSE, 'restapi.format_detail' => 'full_list_element');
+        $this->callback = array('event.callback_url' => API_SERVER.'/notification');
     }
 
     public function initialize($lithiumUrl, $token = null) {
@@ -23,7 +24,6 @@ class LithiumApi {
         $this->_restClient->initialize(array('server' => $this->lithiumUrl));
         if ($token) {
             $this->setHttpAuth('bearer', $token, null);
-            if (!$this->isValidResponse()) throw new Exception('TOKEN_EXPIRED');
         }
     }
 
@@ -86,50 +86,32 @@ class LithiumApi {
         $this->_restClient->set_http_auth($type, $username, $password);
     }
 
-    public function isValidResponse($result = null) {
-        if (!$result) $result = $this->_get('api/core/v3/webhooks');
-        if (is_object($result) && isset($result->message)) {
-            log_message('error', 'JiveApi, response = '.$result->message);
-            return false;
-        }
-        if (is_object($result) && isset($result->error)) {
-            throw new Exception($result->error->message.' ('.$result->error->status.')');
-        }
-        return !is_object($result) && strpos($result, VALID_RESPONSE) === false ? false : true;
+    public function subscriptions() {
+        $result = $this->_get('events/subscriptions', array_merge($this->sessionKey, $this->response));
+        if (!$this->isSuccess($result)) throw new Exception('[Lithium] "subscriptions" failed: '.print_r($this->getError($result),true));
+        return $result->response->eventsubscriptions->eventsubscription;
     }
 
-    public function listSubscriptions($recordsPerPage, $offset) {
-        $q = array('count' => $recordsPerPage, 'startIndex' => $offset);
-        $result = $this->_get('api/core/v3/webhooks', $q);
-        if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
-        $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
+    public function subscribe($eventId) {
+        $result = $this->_post('events/subscriptions/events/name/'.$eventId.'/subscribe'.'?'.$this->build_query_string(array_merge($this->sessionKey, $this->response, $this->callback)));
+        if (!$this->isSuccess($result)) throw new Exception('[Lithium] "subscribe" failed: '.print_r($this->getError($result),true));
         return $result;
     }
 
-    public function totalSubscriptions() {
-        $offset = 0;
-        for (;;) {
-            $q = array('fields' => 'id', 'count' => JIVE_RECORDS_PER_PAGE, 'startIndex' => $offset);
-            $result = $this->_get('api/core/v3/webhooks', $q);
-            if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
-            $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
-            $offset += count($result->list);
-            if (!isset($result->links->next)) break;
+    public function unsubscribe($token) {
+        $result = $this->_post('events/subscriptions/token/'.$token.'/unsubscribe'.'?'.$this->build_query_string(array_merge($this->sessionKey, $this->response)));
+        if (!$this->isSuccess($result)) throw new Exception('[Lithium] "unsubscribe" failed: '.print_r($this->getError($result),true));
+        return $result;
+    }
+
+    private function build_query_string($arr) {
+        $s = null;
+        if (is_array($arr)) {
+            $_arr = array();
+            foreach ($arr as $k => $v) $_arr[] = $k.'='.$v;
+            $s = implode('&', $_arr);
         }
-        return $offset;
-    }
-
-    public function subscribeEvent($type, $action) {
-        $result = $this->_post('api/core/v3/webhooks', array('callback' => API_SERVER.'/notification', 'events' => is_array($type) ? implode(',', $type) : $type, 'verb' => $action), 'json');
-        if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
-        return $result;
-    }
-
-    public function unsubscribeEvent($webhookId) {
-        $result = $this->_delete('api/core/v3/webhooks/'.$webhookId);
-        if (!$this->isValidResponse($result)) throw new Exception('TOKEN_EXPIRED');
-        $result = json_decode(str_replace(VALID_RESPONSE, '', $result));
-        return $result;
+        return $s;
     }
 
     private function _get($uri, $params = array()) {
@@ -138,7 +120,7 @@ class LithiumApi {
     }
 
     private function _post($uri, $params = array(), $format = null) {
-        $result = $format && $format == 'json' ? $this->_restClient->post(REST_API.$uri, json_encode($params), 'json') : $this->_restClient->post($uri, $params);
+        $result = $format && $format == 'json' ? $this->_restClient->post(REST_API.$uri, json_encode($params), 'json') : $this->_restClient->post(REST_API.$uri, $params);
         return $result;
     }
 

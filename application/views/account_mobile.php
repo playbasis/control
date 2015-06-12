@@ -1,7 +1,7 @@
 <div class="activated-wrapper account-verify-wrapper">
 	<div class="activated-content modal-card">
 		<div class="modal-card-head" >
-			<h3>Please verify You Account</h3>
+			<h3>Please verify Your Account</h3>
 			<img src="<?php echo base_url();?>image/beforelogin/header-account-verify.png">
 		</div>
 		<div class="modal-card-content" >
@@ -10,7 +10,7 @@
 			<form class="form" id="form_phonenumber">
 				<div class="form-group input-group">
 					<input id="phone" type="tel"  class="form-control phone-number" >
-					<button type="submit" class="btn btn-primary">Requests Code </button>
+					<button type="submit" class="btn btn-primary">Request Code </button>
 				</div>
 				<div class="error" style="display:none"></div>
 			</form>

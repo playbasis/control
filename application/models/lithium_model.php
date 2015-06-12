@@ -5,15 +5,19 @@ class Lithium_model extends MY_Model {
 
     protected $events = array(
         array('id' => 'UserRegistered', 'type' => 'user', 'description' => 'User has registered'),
-        array('id' => 'UserCreate', 'type' => 'user', 'description' => 'User account has been created'),
         array('id' => 'UserSignOn', 'type' => 'user', 'description' => 'User has signed on'),
         array('id' => 'UserUpdate', 'type' => 'user', 'description' => 'User profile has been updated'),
-        array('id' => 'UserSignOff', 'type' => 'user', 'description' => 'User has signed off'),
         array('id' => 'MessageCreate', 'type' => 'message', 'description' => 'Message has been created'),
         array('id' => 'MessageUpdate', 'type' => 'message', 'description' => 'Message has been edited'),
-        array('id' => 'MessageMove', 'type' => 'message', 'description' => 'Message has been moved'),
         array('id' => 'MessageDelete', 'type' => 'message', 'description' => 'Message has been deleted'),
+        /*array('id' => 'UserCreate', 'type' => 'user', 'description' => 'User account has been created'),
+        array('id' => 'UserSignOff', 'type' => 'user', 'description' => 'User has signed off'),
+        array('id' => 'ImageCreated', 'type' => 'image', 'description' => 'Image has been created'),
+        array('id' => 'ImageUpdated', 'type' => 'image', 'description' => 'Image has been update'),
+        array('id' => 'MessageMove', 'type' => 'message', 'description' => 'Message has been moved'),
         array('id' => 'MessageRootPublished', 'type' => 'message', 'description' => 'Message has been published'),
+        array('id' => 'EscalateThread', 'type' => 'thread', 'description' => 'Thread has been escalated'),
+        array('id' => 'SendPrivateMessage', 'type' => 'message', 'description' => 'Private message has been sent'),*/
     );
 
     public function hasValidRegistration($site_id) {
@@ -37,6 +41,7 @@ class Lithium_model extends MY_Model {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $date_added = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         return $this->mongo_db->insert('playbasis_lithium_to_client', array(
+            'site_id' => $site_id,
             'lithium_url' => $lithium['lithium_url'],
             'lithium_username' => $lithium['lithium_username'],
             'lithium_password' => $lithium['lithium_password'],
@@ -80,12 +85,8 @@ class Lithium_model extends MY_Model {
         return $this->mongo_db->count("playbasis_lithium_to_client") > 0;
     }
 
-    public function listEvents($site_id, $per_page, $offset) {
-        return array_slice($this->events, $offset, $per_page);
-    }
-
-    public function totalEvents($site_id) {
-        return count($this->events);
+    public function listEvents($site_id) {
+        return $this->events;
     }
 
     public function getEventType($eventId) {
@@ -93,6 +94,14 @@ class Lithium_model extends MY_Model {
             if ($event['id'] == $eventId) return $event['type'];
         }
         return false;
+    }
+
+    public function saveSubscriptions($site_id, $subscriptions) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->delete_all("playbasis_lithium_subscription");
+        if (!$subscriptions) return null;
+        return $this->mongo_db->batch_insert('playbasis_lithium_subscription', $subscriptions, array("w" => 0, "j" => false));
     }
 }
 ?>
