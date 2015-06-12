@@ -10,17 +10,18 @@ class Push_model extends MY_Model
     }
     public function initail($data)
     {
+
+
         // Instantiate a new ApnsPHP_Push object
         $push = new ApnsPHP_Push(
             ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
-            '/Applications/MAMP/htdocs/api/application/libraries/ApnsPHP/Certificates/apple_push_notification_production.pem'
+            APPPATH.'libraries/ApnsPHP/Certificates/apple_push_notification_production.pem'
         );
-
         // Set the Provider Certificate passphrase
         // $push->setProviderCertificatePassphrase('test');
             $push->setProviderCertificatePassphrase('playbasis_dash');
         // Set the Root Certificate Autority to verify the Apple remote peer
-                $push->setRootCertificationAuthority('/Applications/MAMP/htdocs/api/application/libraries/ApnsPHP/Certificates/entrust_2048_ca.cer');
+                $push->setRootCertificationAuthority(APPPATH.'libraries/ApnsPHP/Certificates/entrust_2048_ca.cer');
 
         // Connect to the Apple Push Notification Service
                 $push->connect();
@@ -42,7 +43,8 @@ class Push_model extends MY_Model
                 $message->setSound();
 
         // Set a custom property
-                $message->setCustomProperty('acme2', array('bang', 'whiz'));
+                //$message->setCustomProperty('acme2', array('bang', 'whiz'));
+                $message->setCustomProperty('DataInfo', $data['data']);
 
         // Set another custom property
                 $message->setCustomProperty('acme3', array('bing', 'bong'));

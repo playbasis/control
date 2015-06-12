@@ -8,6 +8,7 @@ class Universe extends REST2_Controller
     {
         parent::__construct();
         $this->load->model('global_player_model');
+        $this->load->model('push_model');
         $this->load->model('auth_model');
         $this->load->model('client_model');
         $this->load->model('player_model');
@@ -89,6 +90,7 @@ class Universe extends REST2_Controller
     }
     public function mytest_get()
     {
+
         echo("mytest success");
     }
     public function register_post()
@@ -100,6 +102,7 @@ class Universe extends REST2_Controller
 
         );
         $this->global_player_model->createGlobalPlayer($playerInfo,null);
+        $this->response($this->resp->setRespond(''), 200);
 
     }
     public function login_post()
@@ -109,9 +112,8 @@ class Universe extends REST2_Controller
             'password' => $this->input->post('password')
         );
         $result = $this->global_player_model->loginAction($playerInfo,'login');
-        //echo('login success');
         $result = $result[0];
-        echo($result['_id']);
+        $this->response($this->resp->setRespond($result['_id']), 200);
     }
     public function join_post()
     {
@@ -122,7 +124,7 @@ class Universe extends REST2_Controller
         );
 
         $this->global_player_model->requestClientSite($joinInfo);
-        echo('Send request success');
+        $this->response($this->resp->setRespond(''), 200);
 
     }
     public function searchClientSite_post()
@@ -132,6 +134,7 @@ class Universe extends REST2_Controller
             'company' => $keyword
         );
         $results = $this->global_player_model->searchClient($keyword);
+
 
         foreach($results as $result)
         {
@@ -144,6 +147,7 @@ class Universe extends REST2_Controller
 
             }
         }
+        $this->response($this->resp->setRespond(''), 200);
 
     }
     public function feature_post()
@@ -157,6 +161,7 @@ class Universe extends REST2_Controller
         {
             echo($menu['name'].' : '.$menu['_id']."\r\n");
         }
+        $this->response($this->resp->setRespond(''), 200);
     }
     public function service_post()
     {
@@ -168,6 +173,7 @@ class Universe extends REST2_Controller
             'status' => $this->input->post('status')
         );
         $this->global_player_model->chooseService($serviceInfo);
+        $this->response($this->resp->setRespond(''), 200);
 
     }
     public function deviceRegistration_post()
@@ -181,20 +187,28 @@ class Universe extends REST2_Controller
         );
         //print_r($deviceInfo);exit;
         $this->global_player_model->storeDeviceToken($deviceInfo);
+        $this->response($this->resp->setRespond(''), 200);
     }
     public function directMsg_post()
     {
         $temp = new DateTime('now');
+        $data = array(
+            'title' => $this->input->post('msg'),
+            'reward' => 'badge',
+            'type' => 'popup',
+            'status' => 'confirm'
+        );
         $notificationInfo = array(
             'device_token' => $this->input->post('device_token'),
             'messages' => $this->input->post('msg'),
-            'badge_number' => 9
+            'data' => $data,//$this->input->post('data'),
+            'badge_number' => 1
         );
         print_r($notificationInfo);
         //print_r($temp);
         $this->push_model->initail($notificationInfo);
         //$this->push_model->server($notificationInfo);
-        echo('Send Notification Success');
+        $this->response($this->resp->setRespond(''), 200);
 
     }
     public function dauDay_get()
