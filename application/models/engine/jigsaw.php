@@ -415,7 +415,7 @@ class jigsaw extends MY_Model
 		}
 		return false;
 	}
-	private function getMostRecentJigsaw($input, $fields)
+	public function getMostRecentJigsaw($input, $fields)
 	{
 		assert(isset($input['site_id']));
 		$this->set_site_mongodb($input['site_id']);
