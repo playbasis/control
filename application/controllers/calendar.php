@@ -12,7 +12,7 @@ class Calendar extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Google_model');
+        $this->load->model('Googles_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -20,7 +20,7 @@ class Calendar extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->load->library('GoogleApi');
-        $this->record = $this->Google_model->getRegistration($this->User_model->getSiteId());
+        $this->record = $this->Googles_model->getRegistration($this->User_model->getSiteId());
         $this->_client = null;
         $this->_gcal = null;
         if ($this->record) {
@@ -96,7 +96,7 @@ class Calendar extends MY_Controller
                 }
 
                 if(/*$this->form_validation->run() &&*/ $this->data['message'] == null){
-                    $this->Google_model->insertRegistration($data->installed->auth_uri, $data->installed->client_id, $data->installed->client_secret);
+                    $this->Googles_model->insertRegistration($data->installed->auth_uri, $data->installed->client_id, $data->installed->client_secret);
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
                     redirect('/calendar', 'refresh');
                 }
@@ -115,7 +115,7 @@ class Calendar extends MY_Controller
         if (!empty($code)) {
             try {
                 $accessToken = $this->_client->authenticate($code);
-                if ($accessToken) $this->Google_model->updateToken($this->User_model->getSiteId(), (array)$accessToken);
+                if ($accessToken) $this->Googles_model->updateToken($this->User_model->getSiteId(), (array)$accessToken);
             } catch (Exception $e) {
                 $this->session->set_flashdata('fail', $this->lang->line('text_fail_authorized_code').': '.$e->getMessage());
             }
@@ -195,7 +195,7 @@ class Calendar extends MY_Controller
                 $fail = false;
                 foreach ($this->input->post('selected') as $eventId) {
                     try {
-                        $this->_api->createSystemWebhook($this->Google_model->getEventType($eventId), $eventId);
+                        $this->_api->createSystemWebhook($this->Googles_model->getEventType($eventId), $eventId);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -208,7 +208,7 @@ class Calendar extends MY_Controller
             }
 
             $this->data['calendar'] = $this->record;
-            $this->session->set_userdata('total_events', $this->Google_model->totalEvents($this->User_model->getSiteId()));
+            $this->session->set_userdata('total_events', $this->Googles_model->totalEvents($this->User_model->getSiteId()));
             $this->getListEvents($offset);
         } else {
             $this->data['main'] = 'calendar_event';
@@ -379,8 +379,8 @@ class Calendar extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['offset'] = $offset;
 
-        $events = $this->Google_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
-        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Google_model->totalEvents($this->User_model->getSiteId()));
+        $events = $this->Googles_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
+        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Googles_model->totalEvents($this->User_model->getSiteId()));
         $total = $this->session->userdata('total_events');
 
         foreach ($events as $event) {
