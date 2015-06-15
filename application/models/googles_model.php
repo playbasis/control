@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Google_model extends MY_Model {
+class Googles_model extends MY_Model {
 
     protected $events = array(
         array('id' => 'google:user_account_created', 'type' => 'user_account', 'description' => 'User account has been created'),

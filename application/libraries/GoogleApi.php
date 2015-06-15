@@ -61,4 +61,30 @@ class GoogleApi
     public function calendar() {
         return new Google_Service_Calendar($this->_client);
     }
+
+    public function listCalendar($gcal) {
+        $calendarList = $gcal->calendarList->listCalendarList();
+        $l = array();
+        while (true) {
+            foreach ($calendarList->getItems() as $calendarListEntry) {
+                array_push($l, array('id' => $calendarListEntry->getId(), 'summary' => $calendarListEntry->getSummary(), 'description' => $calendarListEntry->getDescription()));
+            }
+            $pageToken = $calendarList->getNextPageToken();
+            if ($pageToken) {
+                $optParams = array('pageToken' => $pageToken);
+                $calendarList = $this->_gcal->calendarList->listCalendarList($optParams);
+            } else {
+                break;
+            }
+        }
+        return $l;
+    }
+
+    public function watchCalendar($gcal, $calendarId, $data) {
+        $model = new Google_Service_Calendar_Channel();
+        $model->setId($data['site_id'].'');
+        $model->setType('web_hook');
+        $model->setAddress($data['callback']);
+        $gcal->events->watch($calendarId, $model);
+    }
 }
