@@ -12,12 +12,32 @@ class Calendar extends MY_Controller
             redirect('/login', 'refresh');
         }
 
-        $this->load->model('Calendar_model');
+        $this->load->model('Google_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("calendar", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
+
+        $this->load->library('GoogleApi');
+        $this->record = $this->Google_model->getRegistration($this->User_model->getSiteId());
+        $this->_client = null;
+        $this->_gcal = null;
+        if ($this->record) {
+            $this->_client = $this->googleapi->initialize($this->record['google_client_id'], $this->record['google_client_secret'], base_url().'/calendar/authorize');
+            if (isset($this->record['token'])) {
+                $this->_gcal = $this->_client->setAccessToken($this->record['token'])->calendar();
+                /*// Print the next 10 events on the user's calendar.
+                $calendarId = 'primary';
+                $optParams = array(
+                    'maxResults' => 10,
+                    'orderBy' => 'startTime',
+                    'singleEvents' => TRUE,
+                    'timeMin' => date('c'),
+                );
+                $results = $this->_gcal->events->listEvents($calendarId, $optParams);*/
+            }
+        }
 
         $this->_api = $this->jiveapi;
     }
@@ -32,10 +52,59 @@ class Calendar extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        if ($this->Calendar_model->hasValidRegistration($this->User_model->getSiteId())) {
-            $this->data['calendar'] = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $this->data['message'] = null;
+
+            if (empty($_FILES) || !isset($_FILES['file']['tmp_name'])) {
+                $this->data['message'] = $this->lang->line('error_file');
+            }
+
+            if (isset($_FILES['file']['name']) && empty($_FILES['file']['name'])) {
+                $this->data['message'] = $this->lang->line('error_file');
+            }
+
+            if(isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] != '') {
+                $maxsize    = 2097152;
+                $csv_mimetypes = array(
+                    'text/csv',
+                    'text/plain',
+                    'application/csv',
+                    'text/comma-separated-values',
+                    'application/excel',
+                    'application/vnd.ms-excel',
+                    'application/vnd.msexcel',
+                    'text/anytext',
+                    'application/octet-stream',
+                    'application/txt',
+                );
+
+                if(($_FILES['file']['size'] >= $maxsize) || ($_FILES["file"]["size"] == 0)) {
+                    $this->data['message'] = $this->lang->line('error_file_too_large');
+                }
+
+                if(!in_array($_FILES['file']['type'], $csv_mimetypes) && (!empty($_FILES["file"]["type"]))) {
+                    $this->data['message'] = $this->lang->line('error_type_accepted');
+                }
+
+                $json = file_get_contents($_FILES['file']['tmp_name']);
+                if (!$json) {
+                    $this->data['message'] = $this->lang->line('error_upload');
+                }
+                $data = json_decode($json);
+                if (!$data || !isset($data->installed) || !isset($data->installed->auth_uri) || !isset($data->installed->client_id) || !isset($data->installed->client_secret)) {
+                    $this->data['message'] = $this->lang->line('error_json');
+                }
+
+                if(/*$this->form_validation->run() &&*/ $this->data['message'] == null){
+                    $this->Google_model->insertRegistration($data->installed->auth_uri, $data->installed->client_id, $data->installed->client_secret);
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
+                    redirect('/calendar', 'refresh');
+                }
+            }
         }
 
+        $this->data['form'] = 'calendar/';
+        $this->data['calendar'] = $this->record;
         $this->data['main'] = 'calendar_setup';
         $this->load->vars($this->data);
         $this->render_page('template');
@@ -44,10 +113,12 @@ class Calendar extends MY_Controller
     public function authorize() {
         $code = $this->input->get('code');
         if (!empty($code)) {
-            $calendar = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
-            $this->_api->initialize($calendar['google_url']);
-            $token = $this->_api->newToken($calendar['google_client_id'], $calendar['google_client_secret'], $code);
-            if ($token) $this->Calendar_model->updateToken($this->User_model->getSiteId(), (array)$token);
+            try {
+                $accessToken = $this->_client->authenticate($code);
+                if ($accessToken) $this->Google_model->updateToken($this->User_model->getSiteId(), (array)$accessToken);
+            } catch (Exception $e) {
+                $this->session->set_flashdata('fail', $this->lang->line('text_fail_authorized_code').': '.$e->getMessage());
+            }
         }
         redirect('/calendar', 'refresh');
     }
@@ -70,20 +141,7 @@ class Calendar extends MY_Controller
             }
         }
 
-        if ($this->Calendar_model->hasToken($this->User_model->getSiteId())) {
-            $calendar = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($calendar['google_url'], $calendar['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($calendar['google_client_id'], $calendar['google_client_secret'], $calendar['token']['refresh_token']);
-                    if ($token) {
-                        $this->Calendar_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($calendar['google_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_gcal) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
@@ -102,7 +160,7 @@ class Calendar extends MY_Controller
                 redirect('/calendar/places'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['calendar'] = $calendar;
+            $this->data['calendar'] = $this->record;
             $this->session->set_userdata('total_places', $this->_api->totalPlaces());
             $this->getListPlaces($offset);
         } else {
@@ -130,27 +188,14 @@ class Calendar extends MY_Controller
             }
         }
 
-        if ($this->Calendar_model->hasToken($this->User_model->getSiteId())) {
-            $calendar = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($calendar['google_url'], $calendar['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($calendar['google_client_id'], $calendar['google_client_secret'], $calendar['token']['refresh_token']);
-                    if ($token) {
-                        $this->Calendar_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($calendar['google_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_gcal) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
                 $fail = false;
                 foreach ($this->input->post('selected') as $eventId) {
                     try {
-                        $this->_api->createSystemWebhook($this->Calendar_model->getEventType($eventId), $eventId);
+                        $this->_api->createSystemWebhook($this->Google_model->getEventType($eventId), $eventId);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -162,8 +207,8 @@ class Calendar extends MY_Controller
                 redirect('/calendar/events'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['calendar'] = $calendar;
-            $this->session->set_userdata('total_events', $this->Calendar_model->totalEvents($this->User_model->getSiteId()));
+            $this->data['calendar'] = $this->record;
+            $this->session->set_userdata('total_events', $this->Google_model->totalEvents($this->User_model->getSiteId()));
             $this->getListEvents($offset);
         } else {
             $this->data['main'] = 'calendar_event';
@@ -190,20 +235,7 @@ class Calendar extends MY_Controller
             }
         }
 
-        if ($this->Calendar_model->hasToken($this->User_model->getSiteId())) {
-            $calendar = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($calendar['google_url'], $calendar['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($calendar['google_client_id'], $calendar['google_client_secret'], $calendar['token']['refresh_token']);
-                    if ($token) {
-                        $this->Calendar_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($calendar['google_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_gcal) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
@@ -222,7 +254,7 @@ class Calendar extends MY_Controller
                 redirect('/calendar/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['calendar'] = $calendar;
+            $this->data['calendar'] = $this->record;
             $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
             $this->getListWebhooks($offset);
         } else {
@@ -242,19 +274,7 @@ class Calendar extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $calendar = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($calendar['google_url'], $calendar['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($calendar['google_client_id'], $calendar['google_client_secret'], $calendar['token']['refresh_token']);
-                if ($token) {
-                    $this->Calendar_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($calendar['google_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['calendar'] = $calendar;
+        $this->data['calendar'] = $this->record;
         $this->getListPlaces($offset);
     }
 
@@ -341,19 +361,7 @@ class Calendar extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $calendar = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($calendar['google_url'], $calendar['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($calendar['google_client_id'], $calendar['google_client_secret'], $calendar['token']['refresh_token']);
-                if ($token) {
-                    $this->Calendar_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($calendar['google_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['calendar'] = $calendar;
+        $this->data['calendar'] = $this->record;
         $this->getListEvents($offset);
     }
 
@@ -371,8 +379,8 @@ class Calendar extends MY_Controller
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $this->data['offset'] = $offset;
 
-        $events = $this->Calendar_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
-        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Calendar_model->totalEvents($this->User_model->getSiteId()));
+        $events = $this->Google_model->listEvents($this->User_model->getSiteId(), $per_page, $offset);
+        if ($this->session->userdata('total_events') === false) $this->session->set_userdata('total_events', $this->Google_model->totalEvents($this->User_model->getSiteId()));
         $total = $this->session->userdata('total_events');
 
         foreach ($events as $event) {
@@ -430,19 +438,7 @@ class Calendar extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $calendar = $this->Calendar_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($calendar['google_url'], $calendar['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($calendar['google_client_id'], $calendar['google_client_secret'], $calendar['token']['refresh_token']);
-                if ($token) {
-                    $this->Calendar_model->updateToken($this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($calendar['google_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['calendar'] = $calendar;
+        $this->data['calendar'] = $this->record;
         $this->getListWebhooks($offset);
     }
 
