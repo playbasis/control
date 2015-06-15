@@ -123,7 +123,7 @@ class Calendar extends MY_Controller
         redirect('/calendar', 'refresh');
     }
 
-    public function place($offset=0) {
+    public function place() {
         if(!$this->validateAccess()){
             echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
             die();
@@ -137,7 +137,7 @@ class Calendar extends MY_Controller
         if ($this->input->post('selected')) {
             if (!$this->validateModify()) {
                 $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
-                redirect('/calendar/places'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/calendar/place', 'refresh');
             }
         }
 
@@ -147,22 +147,21 @@ class Calendar extends MY_Controller
                 $success = false;
                 $fail = false;
                 foreach ($this->input->post('selected') as $placeId) {
-                        try {
-                            $this->_api->createContentWebhook($placeId);
-                            $success = true;
-                        } catch (Exception $e) {
-                            log_message('error', 'ERROR = '.$e->getMessage());
-                            $fail = $e->getMessage();
-                        }
+                    try {
+                        $this->_api->createContentWebhook($placeId);
+                        $success = true;
+                    } catch (Exception $e) {
+                        log_message('error', 'ERROR = '.$e->getMessage());
+                        $fail = $e->getMessage();
+                    }
                 }
                 if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_watch_place'));
                 if ($fail) $this->session->set_flashdata('fail', $fail);
-                redirect('/calendar/places'.($offset ? '/'.$offset : ''), 'refresh');
+                redirect('/calendar/place', 'refresh');
             }
 
             $this->data['calendar'] = $this->record;
-            $this->session->set_userdata('total_places', $this->_api->totalPlaces());
-            $this->getListPlaces($offset);
+            $this->getListPlaces();
         } else {
             $this->data['main'] = 'calendar_place';
             $this->load->vars($this->data);
@@ -264,88 +263,19 @@ class Calendar extends MY_Controller
         }
     }
 
-    public function places($offset=0) {
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
-            die();
-        }
+    private function getListPlaces() {
+        $places = $this->_client->listCalendar($this->_gcal);
 
-        $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['title'] = $this->lang->line('title');
-        $this->data['heading_title'] = $this->lang->line('heading_title');
-
-        $this->data['calendar'] = $this->record;
-        $this->getListPlaces($offset);
-    }
-
-    private function getListPlaces($offset) {
-        $per_page = NUMBER_OF_RECORDS_PER_PAGE;
-
-        $this->load->library('pagination');
-
-        $config['base_url'] = site_url('calendar/places');
-
-        $client_id = $this->User_model->getClientId();
-        $site_id = $this->User_model->getSiteId();
-        $setting_group_id = $this->User_model->getAdminGroupID();
-
-        $this->data['user_group_id'] = $this->User_model->getUserGroupId();
-        $this->data['offset'] = $offset;
-
-        $places = $this->_api->listPlaces($per_page, $offset);
-        if ($this->session->userdata('total_places') === false) $this->session->set_userdata('total_places', $this->_api->totalPlaces());
-        $total = $this->session->userdata('total_places');
-
-        foreach ($places->list as $place) {
+        foreach ($places as $place) {
             $this->data['places'][] = array(
-                'placeID' => $place->placeID,
-                'name' => $place->name,
-                'description' => isset($place->description) ? $place->description : '',
-                'type' => $place->type,
-                'followerCount' => $place->followerCount,
-                'viewCount' => $place->viewCount,
-                'creator' => isset($place->creator) ? (isset($place->creator->displayName) ? $place->creator->displayName : $place->creator->id) : '',
-                'status' => $place->status,
+                'placeID' => $place['id'],
+                'name' => $place['summary'],
+                'description' => $place['description'],
                 'selected' => ($this->input->post('selected') && in_array($place->placeID, $this->input->post('selected'))),
             );
         }
 
-        $config['total_rows'] = $total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
-
-        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
-
-        $config['next_link'] = 'Next';
-        $config['next_tag_open'] = "<li class='page_index_nav next'>";
-        $config['next_tag_close'] = "</li>";
-
-        $config['prev_link'] = 'Prev';
-        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
-        $config['prev_tag_close'] = "</li>";
-
-        $config['num_tag_open'] = '<li class="page_index_number">';
-        $config['num_tag_close'] = '</li>';
-
-        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
-        $config['cur_tag_close'] = '</a></li>';
-
-        $config['first_link'] = 'First';
-        $config['first_tag_open'] = '<li class="page_index_nav next">';
-        $config['first_tag_close'] = '</li>';
-
-        $config['last_link'] = 'Last';
-        $config['last_tag_open'] = '<li class="page_index_nav prev">';
-        $config['last_tag_close'] = '</li>';
-
-        $this->pagination->initialize($config);
-
-        $this->data['pagination_links'] = $this->pagination->create_links();
-        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
-        $this->data['pagination_total_rows'] = $config["total_rows"];
-
         $this->data['main'] = 'calendar_place';
-        $this->data['setting_group_id'] = $setting_group_id;
 
         $this->load->vars($this->data);
         $this->render_page('template');
