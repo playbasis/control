@@ -253,17 +253,29 @@ class Global_Player_Model extends MY_Model
     {
         $mongoDate = new MongoDate(time());
 
-        $this->mongo_db->insert('global_player_device', array(
-
+        $this->mongo_db->select(null);
+        $this->mongo_db->where(array(
             'player_id' => new MongoId($data['player_id']),
             'site_id' => new MongoId($data['site_id']),
-            'device_token' => $data['device_token'],
-            'device_description' => $data['device_description'],
-            'status' => true,//$data['status'],
-            'date_added' => $mongoDate,
-            'date_modified' => $mongoDate,
-
+            'device_token' => $data['device_token']
         ));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('global_player_device');
+        if(!$results)
+        {
+            $this->mongo_db->insert('global_player_device', array(
+
+                'player_id' => new MongoId($data['player_id']),
+                'site_id' => new MongoId($data['site_id']),
+                'device_token' => $data['device_token'],
+                'device_description' => $data['device_description'],
+                'status' => true,//$data['status'],
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate,
+
+            ));
+        }
+
     }
 
 }
