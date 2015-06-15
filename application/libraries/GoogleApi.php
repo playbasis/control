@@ -79,4 +79,12 @@ class GoogleApi
         }
         return $l;
     }
+
+    public function watchCalendar($gcal, $calendarId, $data) {
+        $model = new Google_Service_Calendar_Channel();
+        $model->setId($data['site_id'].'');
+        $model->setType('web_hook');
+        $model->setAddress($data['callback']);
+        $gcal->events->watch($calendarId, $model);
+    }
 }
