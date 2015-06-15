@@ -10,6 +10,7 @@ class Engine extends Quest
 	{
 		parent::__construct();
 		$this->load->model('auth_model');
+        $this->load->model('push_model');
 		$this->load->model('player_model');
 		$this->load->model('action_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
@@ -603,6 +604,19 @@ class Engine extends Quest
                                 log_message('error', 'Unknown reward: '.$jigsawConfig['reward_name']);
                                 break;
                             }  // close switch($jigsawConfig['reward_name'])
+
+                            /////////// push notification to mobile device /////////////////////
+
+                            $notificationInfo = array(
+                                'device_token' => '6ee6e48f947fbd2f43321d803448e64230c6f5b76ee44416672737d8ed342efa',
+                                'messages' => $eventMessage,//$this->input->post('msg'),
+                                'data' => '',// $data,//$this->input->post('data'),
+                                'badge_number' => 1
+                            );
+                            $this->push_model->initail($notificationInfo);
+
+                            //////////  end of push notification to mobile device  /////////////////////
+
                         }  // close if(isset($exInfo['dynamic']))
                     } elseif($jigsaw['category'] == 'FEEDBACK') {
                         if (!$input["test"])

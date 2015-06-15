@@ -371,6 +371,7 @@ abstract class ApnsPHP_Abstract
 	protected function _connect()
 	{
 		$sURL = $this->_aServiceURLs[$this->_nEnvironment];
+
 		unset($aURLs);
 
 		$this->_log("INFO: Trying {$sURL}...");

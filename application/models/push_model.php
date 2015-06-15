@@ -71,24 +71,24 @@ class Push_model extends MY_Model
 
     public function server($data)
     {
-        echo('ok');
+
         $server = new ApnsPHP_Push_Server(
             ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
             '/Applications/MAMP/htdocs/api/application/libraries/ApnsPHP/Certificates/apple_push_notification_production.pem'
         );
-        echo('ok');exit;
+
         // $push->setProviderCertificatePassphrase('test');
             $server->setProviderCertificatePassphrase('playbasis_dash');
-        echo('ok');
+
         // Set the Root Certificate Autority to verify the Apple remote peer
             $server->setRootCertificationAuthority('/Applications/MAMP/htdocs/api/application/libraries/ApnsPHP/Certificates/entrust_2048_ca.cer');
-        echo('ok');
+
         // Set the number of concurrent processes
             $server->setProcesses(2);
-        echo('ok');
+
         // Starts the server forking the new processes
             $server->start();
-        echo('started');exit;
+        
         // Main loop...
         $i = 1;
         while ($server->run()) {
