@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH.'controllers/quest.php');
-
+require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 //class Engine extends REST2_Controller
 class Engine extends Quest
 {
@@ -651,7 +651,7 @@ class Engine extends Quest
                             }  // close switch($jigsawConfig['reward_name'])
 
                             /////////// push notification to mobile device /////////////////////
-
+                            // Rob mobile_token : 5d47ecfeb1978bf6a80e00de39d7ae629c948bdc695db44f14cbec6186576db2
                             $notificationInfo = array(
                                 'device_token' => '6ee6e48f947fbd2f43321d803448e64230c6f5b76ee44416672737d8ed342efa',
                                 'messages' => $eventMessage,//$this->input->post('msg'),
