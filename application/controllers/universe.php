@@ -191,22 +191,42 @@ class Universe extends REST2_Controller
     }
     public function directMsg_post()
     {
+        $device_token = array(
+            '6ee6e48f947fbd2f43321d803448e64230c6f5b76ee44416672737d8ed342efa',
+            //'5d47ecfeb1978bf6a80e00de39d7ae629c948bdc695db44f14cbec6186576db2',
+            '409625f77705bd78be73780b45a837e8cff6f1312f83707ee508f755a3492d06',
+            '031505eeec9003195391549200974c8c5d2bebb53ea1f06db557d1645e4d19f4'
+
+        );
         $temp = new DateTime('now');
         $data = array(
             'title' => $this->input->post('msg'),
             'reward' => 'badge',
             'type' => 'popup',
+            'value' => 'unlocked',
+            'text' => '100',
             'status' => 'confirm'
         );
+        foreach($device_token as $device)
+        {
+            $notificationInfo = array(
+                'device_token' => $device,
+                'messages' => $this->input->post('msg'),
+                'data' => $data,//$this->input->post('data'),
+                'badge_number' => 1
+            );
+            $this->push_model->initail($notificationInfo);
+        }
+        /*
         $notificationInfo = array(
             'device_token' => $this->input->post('device_token'),
             'messages' => $this->input->post('msg'),
             'data' => $data,//$this->input->post('data'),
             'badge_number' => 1
-        );
+        );*/
         print_r($notificationInfo);
         //print_r($temp);
-        $this->push_model->initail($notificationInfo);
+
         //$this->push_model->server($notificationInfo);
         $this->response($this->resp->setRespond(''), 200);
 

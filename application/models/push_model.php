@@ -88,7 +88,7 @@ class Push_model extends MY_Model
 
         // Starts the server forking the new processes
             $server->start();
-        
+
         // Main loop...
         $i = 1;
         while ($server->run()) {
