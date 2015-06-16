@@ -163,8 +163,10 @@ class Notification extends Engine
 				$actionName = $activity['verb'];
 				$url = isset($activity['object']['summary']) ? $activity['object']['summary'] : null;
 				$names = explode(' ', $activity['actor']['displayName']);
+				$arr = explode('/', $activity['actor']['id']);
+				$cl_player_id = $arr[count($arr)-1].'@jive';
 				$player = array(
-					'cl_player_id' => $activity['actor']['id'],
+					'cl_player_id' => $cl_player_id,
 					'username' => $activity['actor']['jive']['username'],
 					'image' => isset($activity['actor']['image']['url']) ? $activity['actor']['image']['url'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
 					'first_name' => isset($names[0]) ? $names[0] : '[first_name]',
