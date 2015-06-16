@@ -179,7 +179,7 @@ class Calendar extends MY_Controller
                 'placeID' => $place['id'],
                 'name' => $place['summary'],
                 'description' => $place['description'],
-                'selected' => ($this->input->post('selected') && in_array($place->placeID, $this->input->post('selected'))),
+                'selected' => ($this->input->post('selected') && in_array($place['id'], $this->input->post('selected'))),
             );
         }
 
