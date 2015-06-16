@@ -53,5 +53,18 @@ class Googles_model extends MY_Model {
         $this->mongo_db->where_ne('deleted', true);
         return $this->mongo_db->count("playbasis_google_to_client") > 0;
     }
+
+    public function insertWebhook($calendar_id, $callback_url) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        return $this->mongo_db->insert('playbasis_google_subscription', array(
+            'client_id' => $this->session->userdata('client_id'),
+            'site_id' => $this->session->userdata('site_id'),
+            'calendar_id' => $calendar_id,
+            'callback_url' => $callback_url,
+            'date_added' => $d,
+            'date_modified' => $d
+        ));
+    }
 }
 ?>

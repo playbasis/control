@@ -147,8 +147,10 @@ class Calendar extends MY_Controller
                 $success = false;
                 $fail = false;
                 foreach ($this->input->post('selected') as $placeId) {
+                    $callback_url = API_SERVER.'/notification';
                     try {
-                        $this->_client->watchCalendar($this->_gcal, $placeId, array('site_id' => $this->User_model->getSiteId(), 'callback' => API_SERVER.'/notification'));
+                        $this->_client->watchCalendar($this->_gcal, $placeId, array('site_id' => $this->User_model->getSiteId(), 'callback_url' => $callback_url));
+                        $this->Googles_model->insertWebhook($placeId, $callback_url);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
