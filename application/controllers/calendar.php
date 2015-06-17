@@ -29,8 +29,6 @@ class Calendar extends MY_Controller
                 $this->_gcal = $this->_client->setAccessToken($this->record['token'])->calendar();
             }
         }
-
-        $this->_api = $this->jiveapi;
     }
 
     public function index() {
