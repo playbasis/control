@@ -208,7 +208,7 @@ class Calendar extends MY_Controller
     }
 
     private function getListPlaces() {
-        $places = $this->_client->listCalendar($this->_gcal);
+        $places = $this->_client->listCalendars($this->_gcal);
 
         foreach ($places as $place) {
             $this->data['places'][] = array(
