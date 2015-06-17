@@ -192,7 +192,20 @@ class Calendar extends MY_Controller
         if ($this->_gcal) {
             /* POST */
             if ($this->input->post('selected')) {
-
+                $success = false;
+                $fail = false;
+                foreach ($this->input->post('selected') as $resource_id) {
+                    try {
+                        $this->_client->unwatchCalendar($this->_gcal, $this->User_model->getSiteId().'', $resource_id);
+                        $this->Googles_model->removeWebhook($resource_id);
+                        $success = true;
+                    } catch (Exception $e) {
+                        log_message('error', 'ERROR = '.$e->getMessage());
+                        $fail = $e->getMessage();
+                    }
+                }
+                if ($success) $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+                if ($fail) $this->session->set_flashdata('fail', $fail);
                 redirect('/calendar/webhook', 'refresh');
             }
 
@@ -229,7 +242,7 @@ class Calendar extends MY_Controller
 
         foreach ($webhooks as $webhook) {
             $this->data['webhooks'][] = array(
-                'webhookId' => $webhook['calendar_id'],
+                'webhookId' => $webhook['resource_id'],
                 'callback_url' => $webhook['callback_url'],
                 'selected' => ($this->input->post('selected') && in_array($webhook['calendar_id'], $this->input->post('selected'))),
             );

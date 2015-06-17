@@ -87,4 +87,11 @@ class GoogleApi
         $model->setAddress($data['callback_url']);
         $gcal->events->watch($calendarId, $model);
     }
+
+    public function unwatchCalendar($gcal, $channelId, $resourceId) {
+        $model = new Google_Service_Calendar_Channel();
+        $model->setId($channelId);
+        $model->setResourceId($resourceId);
+        $gcal->channels->stop($model);
+    }
 }
