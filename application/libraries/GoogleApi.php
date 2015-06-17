@@ -82,9 +82,10 @@ class GoogleApi
 
     public function watchCalendar($gcal, $calendarId, $data) {
         $model = new Google_Service_Calendar_Channel();
-        $model->setId($data['site_id'].'');
+        $model->setId($data['id']);
         $model->setType('web_hook');
         $model->setAddress($data['callback_url']);
+        $model->setToken($calendarId);
         $gcal->events->watch($calendarId, $model);
     }
 

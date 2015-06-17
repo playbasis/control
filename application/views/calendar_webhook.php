@@ -31,7 +31,9 @@
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="center" style="width:10px;"><?php echo $this->lang->line('column_id'); ?></td>
+                        <td class="center" style="width:10px;"><?php echo $this->lang->line('column_resource_uri'); ?></td>
                         <td class="center" style="width:20px;"><?php echo $this->lang->line('column_callback'); ?></td>
+                        <td class="center" style="width:10px;"><?php echo $this->lang->line('column_date_expire'); ?></td>
                     </tr>
                     </thead>
                     <tbody>
@@ -39,17 +41,19 @@
                         <?php foreach ($webhooks as $webhook) { ?>
                             <tr>
                                 <td style="text-align: center;"><?php if (isset($webhook['selected']) && $webhook['selected']) { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookId']; ?>" checked="checked" />
+                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['resource_id']; ?>" checked="checked" />
                                     <?php } else { ?>
-                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['webhookId']; ?>" />
+                                        <input type="checkbox" name="selected[]" value="<?php echo $webhook['resource_id']; ?>" />
                                     <?php } ?></td>
-                                <td class="left"><?php echo $webhook['webhookId']; ?></td>
+                                <td class="left"><?php echo $webhook['calendar_id']; ?></td>
+                                <td class="left"><?php echo $webhook['resource_uri']; ?></td>
                                 <td class="left"><?php echo $webhook['callback_url']; ?></td>
+                                <td class="left"><?php echo $webhook['date_expire']; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="3"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="5"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>

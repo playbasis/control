@@ -27,19 +27,8 @@ class Calendar extends MY_Controller
             $this->_client = $this->googleapi->initialize($this->record['google_client_id'], $this->record['google_client_secret'], base_url().'/calendar/authorize');
             if (isset($this->record['token'])) {
                 $this->_gcal = $this->_client->setAccessToken($this->record['token'])->calendar();
-                /*// Print the next 10 events on the user's calendar.
-                $calendarId = 'primary';
-                $optParams = array(
-                    'maxResults' => 10,
-                    'orderBy' => 'startTime',
-                    'singleEvents' => TRUE,
-                    'timeMin' => date('c'),
-                );
-                $results = $this->_gcal->events->listEvents($calendarId, $optParams);*/
             }
         }
-
-        $this->_api = $this->jiveapi;
     }
 
     public function index() {
@@ -149,7 +138,7 @@ class Calendar extends MY_Controller
                 foreach ($this->input->post('selected') as $placeId) {
                     $callback_url = API_SERVER.'/notification';
                     try {
-                        $this->_client->watchCalendar($this->_gcal, $placeId, array('site_id' => $this->User_model->getSiteId(), 'callback_url' => $callback_url));
+                        $this->_client->watchCalendar($this->_gcal, $placeId, array('id' => $this->User_model->getSiteId().'', 'callback_url' => $callback_url));
                         $this->Googles_model->insertWebhook($placeId, $callback_url);
                         $success = true;
                     } catch (Exception $e) {
@@ -242,8 +231,11 @@ class Calendar extends MY_Controller
 
         foreach ($webhooks as $webhook) {
             $this->data['webhooks'][] = array(
-                'webhookId' => $webhook['resource_id'],
+                'calendar_id' => $webhook['calendar_id'],
+                'resource_id' => $webhook['resource_id'],
+                'resource_uri' => $webhook['resource_uri'],
                 'callback_url' => $webhook['callback_url'],
+                'date_expire' => $webhook['date_expire'] ? date('d M Y H:M:s', $webhook['date_expire']->sec) : null,
                 'selected' => ($this->input->post('selected') && in_array($webhook['calendar_id'], $this->input->post('selected'))),
             );
         }

@@ -3,17 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Googles_model extends MY_Model {
 
-    public function hasValidRegistration($site_id) {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('site_id', new MongoID($site_id));
-        $this->mongo_db->where_ne('deleted', true);
-        return $this->mongo_db->count("playbasis_google_to_client") > 0;
-    }
-
     public function getRegistration($site_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->select(array('google_tenant_id', 'google_client_id', 'google_client_secret', 'google_url', 'token'));
-        $this->mongo_db->where('site_id', new MongoID($site_id));
+        $this->mongo_db->select(array('google_client_id', 'google_client_secret', 'google_url', 'token'));
+        $this->mongo_db->where('site_id', $site_id);
         $this->mongo_db->where_ne('deleted', true);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get("playbasis_google_to_client");
@@ -44,14 +37,6 @@ class Googles_model extends MY_Model {
         $this->mongo_db->set('token', $token);
         $this->mongo_db->set('date_modified', $d);
         $this->mongo_db->update("playbasis_google_to_client");
-    }
-
-    public function hasToken($site_id) {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('site_id', new MongoID($site_id));
-        $this->mongo_db->where_exists('token');
-        $this->mongo_db->where_ne('deleted', true);
-        return $this->mongo_db->count("playbasis_google_to_client") > 0;
     }
 
     public function insertWebhook($calendar_id, $callback_url) {

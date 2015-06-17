@@ -24,11 +24,9 @@ $lang['column_id']            		= 'ID';
 $lang['column_name']            		= 'Name';
 $lang['column_description']            		= 'Description';
 $lang['column_type']            		= 'Type';
-$lang['column_total_followers']            		= 'Total Followers';
-$lang['column_total_views']      		= 'Total Views';
-$lang['column_creator']          		= 'Creator';
 $lang['column_status']          		= 'Status';
-$lang['column_events']          		= 'Events';
+$lang['column_resource_uri']          		= 'Resource';
+$lang['column_date_expire']          		= 'Expiration Date';
 $lang['column_place']          		= 'Place';
 $lang['column_callback']          		= 'Callback';
 
