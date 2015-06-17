@@ -171,6 +171,40 @@ class Calendar extends MY_Controller
         }
     }
 
+    public function webhook() {
+        if(!$this->validateAccess()){
+            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+            die();
+        }
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        /* POST */
+        if ($this->input->post('selected')) {
+            if (!$this->validateModify()) {
+                $this->session->set_flashdata('fail', $this->lang->line('error_permission'));
+                redirect('/calendar/webhook', 'refresh');
+            }
+        }
+
+        if ($this->_gcal) {
+            /* POST */
+            if ($this->input->post('selected')) {
+
+                redirect('/calendar/webhook', 'refresh');
+            }
+
+            $this->data['calendar'] = $this->record;
+            $this->getListWebhooks();
+        } else {
+            $this->data['main'] = 'calendar_webhook';
+            $this->load->vars($this->data);
+            $this->render_page('template');
+        }
+    }
+
     private function getListPlaces() {
         $places = $this->_client->listCalendar($this->_gcal);
 
@@ -184,6 +218,25 @@ class Calendar extends MY_Controller
         }
 
         $this->data['main'] = 'calendar_place';
+        $this->data['form'] = 'calendar/place';
+
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+
+    private function getListWebhooks() {
+        $webhooks = $this->Googles_model->listWebhooks();
+
+        foreach ($webhooks as $webhook) {
+            $this->data['webhooks'][] = array(
+                'webhookId' => $webhook['calendar_id'],
+                'callback_url' => $webhook['callback_url'],
+                'selected' => ($this->input->post('selected') && in_array($webhook['calendar_id'], $this->input->post('selected'))),
+            );
+        }
+
+        $this->data['main'] = 'calendar_webhook';
+        $this->data['form'] = 'calendar/webhook';
 
         $this->load->vars($this->data);
         $this->render_page('template');

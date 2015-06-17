@@ -10,6 +10,7 @@
                 <div id="tabs" class="htabs">
                     <a href="<?php echo site_url('calendar');?>" style="display: inline;"><?php echo $this->lang->line('tab_setup'); ?></a>
                     <a href="<?php echo site_url('calendar/place');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_place'); ?></a>
+                    <a href="<?php echo site_url('calendar/webhook');?>" style="display: inline;"><?php echo $this->lang->line('tab_webhook'); ?></a>
                 </div>
 
             <?php if($this->session->flashdata('success')){ ?>
@@ -24,7 +25,7 @@
             <?php }?>
 
             <?php if (isset($calendar)) { ?>
-                <?php echo form_open('calendar/place'.(isset($offset) ? '/'.$offset : ''), array('id' => 'form')); ?>
+                <?php echo form_open('calendar/place', array('id' => 'form')); ?>
                 <table class="list">
                     <thead>
                     <tr>

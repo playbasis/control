@@ -66,5 +66,13 @@ class Googles_model extends MY_Model {
             'date_modified' => $d
         ));
     }
+
+    public function listWebhooks() {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
+        $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
+        $this->mongo_db->where(array('$or' => array(array('date_expire' => array('$gt' => new MongoDate(time()))), array('date_start' => null))));
+        return $this->mongo_db->get("playbasis_google_subscription");
+    }
 }
 ?>
