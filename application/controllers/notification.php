@@ -434,8 +434,11 @@ class Notification extends Engine
 			}
 		} else if (strpos($_SERVER['HTTP_USER_AGENT'], GOOGLE_USER_AGENT) === false ? false : true) {
 			$this->load->library('GoogleApi');
-			$site_id = new MongoId($_SERVER['HTTP_X_GOOG_CHANNEL_ID']);
-			$calendar_id = $_SERVER['HTTP_X_GOOG_CHANNEL_TOKEN'];
+			$channel_id = $_SERVER['HTTP_X_GOOG_CHANNEL_ID'];
+			$site_id = new MongoId($_SERVER['HTTP_X_GOOG_CHANNEL_TOKEN']);
+			$subscription = $this->googles_model->getSubscription($site_id, $channel_id);
+			if (!$subscription) $this->response($this->error->setError('NOT_SETUP_GOOGLE'), 200);
+			$calendar_id = $subscription['calendar_id'];
 			$resource_id = $_SERVER['HTTP_X_GOOG_RESOURCE_ID'];
 			$resource_uri = $_SERVER['HTTP_X_GOOG_RESOURCE_URI'];
 			$date_expire = isset($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION']) ? new MongoDate(strtotime($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION'])) : null;
@@ -452,7 +455,11 @@ class Notification extends Engine
 			case 'sync':
 				/* set resource_id, resource_uri and date_expire for this webhook channel */
 				$this->googles_model->updateWebhook($site_id, $calendar_id, $resource_id, $resource_uri, $date_expire);
-				/* TODO: do full sync on that resource and store sync token */
+				$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
+				$changes = $this->googleapi->listEvents($service, $calendar_id, $syncToken);
+				/* do full sync on that resource and store sync token */
+				//$this->googles_model->insertEvents($site_id, $calendar_id, $changes);
+				$this->googles_model->storeSyncToken($site_id, $calendar_id, $syncToken);
 				break;
 			case 'exists':
 				break;
