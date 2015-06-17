@@ -138,7 +138,7 @@ class Calendar extends MY_Controller
                 foreach ($this->input->post('selected') as $placeId) {
                     $callback_url = API_SERVER.'/notification';
                     try {
-                        $this->_client->watchCalendar($this->_gcal, $placeId, array('site_id' => $this->User_model->getSiteId(), 'callback_url' => $callback_url));
+                        $this->_client->watchCalendar($this->_gcal, $placeId, array('id' => $this->User_model->getSiteId().'', 'callback_url' => $callback_url));
                         $this->Googles_model->insertWebhook($placeId, $callback_url);
                         $success = true;
                     } catch (Exception $e) {
@@ -231,8 +231,11 @@ class Calendar extends MY_Controller
 
         foreach ($webhooks as $webhook) {
             $this->data['webhooks'][] = array(
-                'webhookId' => $webhook['resource_id'],
+                'calendar_id' => $webhook['calendar_id'],
+                'resource_id' => $webhook['resource_id'],
+                'resource_uri' => $webhook['resource_uri'],
                 'callback_url' => $webhook['callback_url'],
+                'date_expire' => $webhook['date_expire'] ? date('d M Y H:M:s', $webhook['date_expire']->sec) : null,
                 'selected' => ($this->input->post('selected') && in_array($webhook['calendar_id'], $this->input->post('selected'))),
             );
         }
