@@ -62,6 +62,38 @@ class GoogleApi
         return new Google_Service_Calendar($this->_client);
     }
 
+    public function listEvents($gcal, $calendarId, &$syncToken, $maxResults=10) {
+        $events = array();
+        $optParams = array(
+            'maxResults' => $maxResults,
+            //'orderBy' => 'startTime',
+            'singleEvents' => TRUE,
+            //'timeMin' => date('c'),
+        );
+        if ($syncToken) {
+            $optParams = array_merge($optParams, array('syncToken' => $syncToken));
+        }
+        $eventList = $gcal->events->listEvents($calendarId, $optParams);
+        while (true) {
+            foreach ($eventList->getItems() as $eventEntry) {
+                array_push($events, $eventEntry);
+            }
+            $pageToken = $eventList->getNextPageToken();
+            if ($pageToken) {
+                if (isset($optParams['pageToken'])) {
+                    $optParams['pageToken'] = $pageToken;
+                } else {
+                    $optParams = array_merge($optParams, array('pageToken' => $pageToken));
+                }
+                $eventList = $gcal->events->listEvents($calendarId, $optParams);
+            } else {
+                break;
+            }
+        }
+        $syncToken = $eventList->getNextSyncToken();
+        return $events;
+    }
+
     public function listCalendar($gcal) {
         $calendarList = $gcal->calendarList->listCalendarList();
         $l = array();
@@ -72,7 +104,7 @@ class GoogleApi
             $pageToken = $calendarList->getNextPageToken();
             if ($pageToken) {
                 $optParams = array('pageToken' => $pageToken);
-                $calendarList = $this->_gcal->calendarList->listCalendarList($optParams);
+                $calendarList = $gcal->calendarList->listCalendarList($optParams);
             } else {
                 break;
             }
