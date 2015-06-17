@@ -39,14 +39,6 @@ class Googles_model extends MY_Model {
         $this->mongo_db->update("playbasis_google_to_client");
     }
 
-    public function hasToken($site_id) {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-        $this->mongo_db->where('site_id', new MongoID($site_id));
-        $this->mongo_db->where_exists('token');
-        $this->mongo_db->where_ne('deleted', true);
-        return $this->mongo_db->count("playbasis_google_to_client") > 0;
-    }
-
     public function insertWebhook($calendar_id, $callback_url) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
