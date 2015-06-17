@@ -20,6 +20,7 @@ class Notification extends Engine
 		$this->load->model('email_model');
 		$this->load->model('jive_model');
 		$this->load->model('lithium_model');
+		$this->load->model('googles_model');
 		$this->load->model('tool/error', 'error');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->model('tool/respond', 'resp');
@@ -429,6 +430,36 @@ class Notification extends Engine
 			case 'SendPrivateMessage':
 			default:
 				$this->response($this->error->setError('NOT_IMPLEMENTED'), 200);
+				break;
+			}
+		} else if (strpos($_SERVER['HTTP_USER_AGENT'], GOOGLE_USER_AGENT) === false ? false : true) {
+			$this->load->library('GoogleApi');
+			$site_id = new MongoId($_SERVER['HTTP_X_GOOG_CHANNEL_ID']);
+			$calendar_id = $_SERVER['HTTP_X_GOOG_CHANNEL_TOKEN'];
+			$resource_id = $_SERVER['HTTP_X_GOOG_RESOURCE_ID'];
+			$resource_uri = $_SERVER['HTTP_X_GOOG_RESOURCE_URI'];
+			$date_expire = isset($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION']) ? new MongoDate(strtotime($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION'])) : null;
+			$service = null;
+			$record = $this->googles_model->getRegistration($site_id);
+			if ($record) {
+				$client = $this->googleapi->initialize($record['google_client_id'], $record['google_client_secret']);
+				if (isset($record['token'])) {
+					$service = $client->setAccessToken($record['token'])->calendar();
+				}
+			}
+			if (!$service) $this->response($this->error->setError('NOT_SETUP_GOOGLE'), 200);
+			switch ($_SERVER['HTTP_X_GOOG_RESOURCE_STATE']) {
+			case 'sync':
+				/* set resource_id, resource_uri and date_expire for this webhook channel */
+				$this->googles_model->updateWebhook($site_id, $calendar_id, $resource_id, $resource_uri, $date_expire);
+				/* TODO: do full sync on that resource and store sync token */
+				break;
+			case 'exists':
+				break;
+			case 'not_exists':
+				break;
+			default:
+				$this->response($this->error->setError('UNSUPPORTED_RESOURCE_STATE'), 200);
 				break;
 			}
 		}
