@@ -72,7 +72,7 @@ class GoogleApi
             $pageToken = $calendarList->getNextPageToken();
             if ($pageToken) {
                 $optParams = array('pageToken' => $pageToken);
-                $calendarList = $this->_gcal->calendarList->listCalendarList($optParams);
+                $calendarList = $gcal->calendarList->listCalendarList($optParams);
             } else {
                 break;
             }
