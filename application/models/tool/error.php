@@ -115,6 +115,14 @@ class Error extends CI_Model
             $errorData['message'] = "There is no implementation for the requested service";
             $errorData['error_code'] = '0005';
             break;
+        case 'UNSUPPORTED_RESOURCE_STATE':
+            $errorData['message'] = "Unsupported resource state";
+            $errorData['error_code'] = '0006';
+            break;
+        case 'NOT_SETUP_GOOGLE':
+            $errorData['message'] = "Google API setup cannot be found";
+            $errorData['error_code'] = '0007';
+            break;
         case 'USER_NOT_EXIST':
             $errorData['message'] = "User doesn't exist";
             $errorData['error_code'] = '0200';
