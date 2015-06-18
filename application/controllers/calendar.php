@@ -20,7 +20,7 @@ class Calendar extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->load->library('GoogleApi');
-        $this->record = $this->Googles_model->getRegistration($this->User_model->getSiteId());
+        $this->record = $this->Googles_model->getRegistration();
         $this->_client = null;
         $this->_gcal = null;
         if ($this->record) {
@@ -138,8 +138,9 @@ class Calendar extends MY_Controller
                 foreach ($this->input->post('selected') as $placeId) {
                     $callback_url = API_SERVER.'/notification';
                     try {
-                        $this->_client->watchCalendar($this->_gcal, $placeId, array('id' => $this->User_model->getSiteId().'', 'callback_url' => $callback_url));
-                        $this->Googles_model->insertWebhook($placeId, $callback_url);
+                        $channel_id = get_random_code(12,true,true,true);
+                        $this->_client->watchCalendar($this->_gcal, $placeId, $channel_id, array('site_id' => $this->User_model->getSiteId().'', 'callback_url' => $callback_url));
+                        $this->Googles_model->insertWebhook($placeId, $channel_id, $callback_url);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -184,9 +185,11 @@ class Calendar extends MY_Controller
                 $success = false;
                 $fail = false;
                 foreach ($this->input->post('selected') as $resource_id) {
+                    $subscription = $this->Googles_model->getSubscription($resource_id);
+                    $channel_id = $subscription['channel_id'];
                     try {
-                        $this->_client->unwatchCalendar($this->_gcal, $this->User_model->getSiteId().'', $resource_id);
-                        $this->Googles_model->removeWebhook($resource_id);
+                        $this->_client->unwatchCalendar($this->_gcal, $channel_id, $resource_id);
+                        $this->Googles_model->removeWebhook($channel_id, $resource_id);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -208,7 +211,7 @@ class Calendar extends MY_Controller
     }
 
     private function getListPlaces() {
-        $places = $this->_client->listCalendar($this->_gcal);
+        $places = $this->_client->listCalendars($this->_gcal);
 
         foreach ($places as $place) {
             $this->data['places'][] = array(
@@ -232,10 +235,11 @@ class Calendar extends MY_Controller
         foreach ($webhooks as $webhook) {
             $this->data['webhooks'][] = array(
                 'calendar_id' => $webhook['calendar_id'],
-                'resource_id' => $webhook['resource_id'],
-                'resource_uri' => $webhook['resource_uri'],
+                'channel_id' => $webhook['channel_id'],
+                'resource_id' => isset($webhook['resource_id']) ? $webhook['resource_id'] : null,
+                'resource_uri' => isset($webhook['resource_uri']) ? $webhook['resource_uri'] : null,
                 'callback_url' => $webhook['callback_url'],
-                'date_expire' => $webhook['date_expire'] ? date('d M Y H:M:s', $webhook['date_expire']->sec) : null,
+                'date_expire' => isset($webhook['date_expire']) && $webhook['date_expire'] ? date('d M Y H:M:s', $webhook['date_expire']->sec) : null,
                 'selected' => ($this->input->post('selected') && in_array($webhook['calendar_id'], $this->input->post('selected'))),
             );
         }
