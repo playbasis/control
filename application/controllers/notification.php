@@ -439,7 +439,6 @@ class Notification extends Engine
 			$site_id = new MongoId($_SERVER['HTTP_X_GOOG_CHANNEL_TOKEN']);
 			$subscription = $this->googles_model->getSubscription($site_id, $channel_id);
 			if (!$subscription) $this->response($this->error->setError('NOT_SETUP_GOOGLE'), 200);
-			$calendar_id = $subscription['calendar_id'];
 			$resource_id = $_SERVER['HTTP_X_GOOG_RESOURCE_ID'];
 			$resource_uri = $_SERVER['HTTP_X_GOOG_RESOURCE_URI'];
 			$date_expire = isset($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION']) ? new MongoDate(strtotime($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION'])) : null;
@@ -448,43 +447,58 @@ class Notification extends Engine
 			if ($record) {
 				$client = $this->googleapi->initialize($record['google_client_id'], $record['google_client_secret']);
 				if (isset($record['token'])) {
-					$service = $client->setAccessToken($record['token'])->calendar();
+					if (isset($subscription['calendar_id'])) {
+						$service = $client->setAccessToken($record['token'])->calendar();
+					}
+				} else {
+					$this->response($this->error->setError('NOT_TOKEN_GOOGLE'), 200);
 				}
 			}
-			if (!$service) $this->response($this->error->setError('NOT_SETUP_GOOGLE'), 200);
 			switch ($_SERVER['HTTP_X_GOOG_RESOURCE_STATE']) {
 			case 'sync':
-				/* set resource_id, resource_uri and date_expire for this channel_id */
-				$this->googles_model->updateWebhook($site_id, $channel_id, $resource_id, $resource_uri, $date_expire);
-				$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
-				if (!$syncToken) { // never sync
-					/* for the 1st time, we do a full sync on that calendar */
-					$events = array();
-					$nextSyncToken = $this->googleapi->listEvents($service, $calendar_id, $events, array('timeMin' => date('c', strtotime('previous month')))); // only on recent events though
-					$this->googles_model->insertEvents($site_id, $calendar_id, $this->extractEvents($events));
-					$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
+				if (isset($subscription['calendar_id'])) {
+					$calendar_id = $subscription['calendar_id'];
+					/* set resource_id, resource_uri and date_expire for this channel_id */
+					$this->googles_model->updateWebhook($site_id, $channel_id, $resource_id, $resource_uri, $date_expire);
+					$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
+					if (!$syncToken) { // never sync
+						/* for the 1st time, we do a full sync on that calendar */
+						$events = array();
+						$nextSyncToken = $this->googleapi->listEvents($service, $calendar_id, $events, array('timeMin' => date('c', strtotime('previous month')))); // only on recent events though
+						$this->googles_model->insertEvents($site_id, $calendar_id, $this->extractEvents($events));
+						$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
+					}
+				} else {
+					$this->response($this->error->setError('NOT_SUPPORTED_GOOGLE_SERVICE'), 200);
 				}
 				break;
 			case 'exists':
 				/* TODO: there can be multiple messages at the same time, transaction is needed here */
 				/* transaction begins */
-				$changes = array();
-				$events = array();
-				$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
-				$nextSyncToken = $this->googleapi->listEvents($service, $calendar_id, $events, $syncToken ? array('syncToken' => $syncToken) : array());
-				foreach ($events as $event) {
-					$newEvent = $this->extractEvent($event);
-					$event_id = $newEvent['event_id'];
-					$oldEvent = $this->googles_model->getEvent($site_id, $calendar_id, $event_id);
-					if ($newEvent['event']['status'] != EVENT_CANCELLED) {
-						$this->googles_model->insertOrUpdateEvent($site_id, $calendar_id, $newEvent);
-					} else {
-						$this->googles_model->removeEvent($site_id, $calendar_id, $event_id);
+				if (isset($subscription['calendar_id'])) {
+					$calendar_id = $subscription['calendar_id'];
+					/* determine what's new */
+					$changes = array();
+					$events = array();
+					$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
+					$nextSyncToken = $this->googleapi->listEvents($service, $calendar_id, $events, $syncToken ? array('syncToken' => $syncToken) : array());
+					/* calculate difference */
+					foreach ($events as $event) {
+						$newEvent = $this->extractEvent($event);
+						$event_id = $newEvent['event_id'];
+						$oldEvent = $this->googles_model->getEvent($site_id, $calendar_id, $event_id);
+						if ($newEvent['event']['status'] != EVENT_CANCELLED) {
+							$this->googles_model->insertOrUpdateEvent($site_id, $calendar_id, $newEvent);
+						} else {
+							$this->googles_model->removeEvent($site_id, $calendar_id, $event_id);
+						}
+						$change = $this->diffEvent(isset($oldEvent['event']) ? $oldEvent['event'] : null, $newEvent['event']);
+						array_push($changes, $change);
 					}
-					$change = $this->diffEvent(isset($oldEvent['event']) ? $oldEvent['event'] : null, $newEvent['event']);
-					array_push($changes, $change);
+					$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
+				} else {
+					$this->response($this->error->setError('NOT_SUPPORTED_GOOGLE_SERVICE'), 200);
 				}
-				$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
 				/* TODO: processing the changes and submit actions to rule engine */
 				/* transaction ends */
 				break;
