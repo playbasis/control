@@ -454,7 +454,7 @@ class Notification extends Engine
 			switch ($_SERVER['HTTP_X_GOOG_RESOURCE_STATE']) {
 			case 'sync':
 				/* set resource_id, resource_uri and date_expire for this webhook channel */
-				$this->googles_model->updateWebhook($site_id, $calendar_id, $resource_id, $resource_uri, $date_expire);
+				$this->googles_model->updateWebhook($site_id, $channel_id, $resource_id, $resource_uri, $date_expire);
 				$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
 				$changes = $this->googleapi->listEvents($service, $calendar_id, $syncToken);
 				/* do full sync on that resource and store sync token */
@@ -469,6 +469,7 @@ class Notification extends Engine
 				$this->response($this->error->setError('UNSUPPORTED_RESOURCE_STATE'), 200);
 				break;
 			}
+			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
