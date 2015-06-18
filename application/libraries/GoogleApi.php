@@ -62,16 +62,14 @@ class GoogleApi
         return new Google_Service_Calendar($this->_client);
     }
 
-    public function listEvents($gcal, $calendarId, &$syncToken, $maxResults=10) {
-        $events = array();
+    public function listEvents($gcal, $calendarId, &$events, $opts=array('timeMin' => null, 'syncToken' => null, 'maxResults' => 10)) {
         $optParams = array(
-            'maxResults' => $maxResults,
-            //'orderBy' => 'startTime',
             'singleEvents' => TRUE,
-            //'timeMin' => date('c'),
         );
-        if ($syncToken) {
-            $optParams = array_merge($optParams, array('syncToken' => $syncToken));
+        foreach (array('timeMin', 'syncToken', 'maxResults') as $key) {
+            if (isset($opts[$key]) && $opts[$key]) {
+                $optParams = array_merge($optParams, array($key => $opts[$key]));
+            }
         }
         $eventList = $gcal->events->listEvents($calendarId, $optParams);
         while (true) {
@@ -90,8 +88,7 @@ class GoogleApi
                 break;
             }
         }
-        $syncToken = $eventList->getNextSyncToken();
-        return $events;
+        return $eventList->getNextSyncToken();
     }
 
     public function listCalendars($gcal) {
@@ -99,7 +96,7 @@ class GoogleApi
         $l = array();
         while (true) {
             foreach ($calendarList->getItems() as $calendarListEntry) {
-                array_push($l, array('id' => $calendarListEntry->getId(), 'summary' => $calendarListEntry->getSummary(), 'description' => $calendarListEntry->getDescription()));
+                array_push($l, array('calendar_id' => $calendarListEntry->getId(), 'summary' => $calendarListEntry->getSummary(), 'description' => $calendarListEntry->getDescription()));
             }
             $pageToken = $calendarList->getNextPageToken();
             if ($pageToken) {
