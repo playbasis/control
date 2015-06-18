@@ -67,7 +67,7 @@ class GoogleApi
         $l = array();
         while (true) {
             foreach ($calendarList->getItems() as $calendarListEntry) {
-                array_push($l, array('id' => $calendarListEntry->getId(), 'summary' => $calendarListEntry->getSummary(), 'description' => $calendarListEntry->getDescription()));
+                array_push($l, array('calendar_id' => $calendarListEntry->getId(), 'summary' => $calendarListEntry->getSummary(), 'description' => $calendarListEntry->getDescription()));
             }
             $pageToken = $calendarList->getNextPageToken();
             if ($pageToken) {

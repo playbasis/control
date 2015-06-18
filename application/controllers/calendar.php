@@ -215,7 +215,7 @@ class Calendar extends MY_Controller
 
         foreach ($places as $place) {
             $this->data['places'][] = array(
-                'placeID' => $place['id'],
+                'placeID' => $place['calendar_id'],
                 'name' => $place['summary'],
                 'description' => $place['description'],
                 'selected' => ($this->input->post('selected') && in_array($place['id'], $this->input->post('selected'))),
