@@ -31,6 +31,8 @@
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="center" style="width:10px;"><?php echo $this->lang->line('column_id'); ?></td>
+                        <td class="center" style="width:10px;"><?php echo $this->lang->line('column_channel_id'); ?></td>
+                        <td class="center" style="width:10px;"><?php echo $this->lang->line('column_resource_id'); ?></td>
                         <td class="center" style="width:10px;"><?php echo $this->lang->line('column_resource_uri'); ?></td>
                         <td class="center" style="width:20px;"><?php echo $this->lang->line('column_callback'); ?></td>
                         <td class="center" style="width:10px;"><?php echo $this->lang->line('column_date_expire'); ?></td>
@@ -46,6 +48,8 @@
                                         <input type="checkbox" name="selected[]" value="<?php echo $webhook['resource_id']; ?>" />
                                     <?php } ?></td>
                                 <td class="left"><?php echo $webhook['calendar_id']; ?></td>
+                                <td class="left"><?php echo $webhook['channel_id']; ?></td>
+                                <td class="left"><?php echo $webhook['resource_id']; ?></td>
                                 <td class="left"><?php echo $webhook['resource_uri']; ?></td>
                                 <td class="left"><?php echo $webhook['callback_url']; ?></td>
                                 <td class="left"><?php echo $webhook['date_expire']; ?></td>
@@ -53,7 +57,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="5"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="7"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                     <?php } ?>
                     </tbody>

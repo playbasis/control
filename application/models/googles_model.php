@@ -71,10 +71,11 @@ class Googles_model extends MY_Model {
         return $this->mongo_db->get("playbasis_google_subscription");
     }
 
-    public function removeWebhook($resource_id) {
+    public function removeWebhook($channel_id, $resource_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $this->session->userdata('client_id'));
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
+        $this->mongo_db->where('channel_id', $channel_id);
         $this->mongo_db->where('resource_id', $resource_id);
         $this->mongo_db->delete('playbasis_google_subscription');
     }

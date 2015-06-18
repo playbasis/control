@@ -186,9 +186,10 @@ class Calendar extends MY_Controller
                 $fail = false;
                 foreach ($this->input->post('selected') as $resource_id) {
                     $subscription = $this->Googles_model->getSubscription($resource_id);
+                    $channel_id = $subscription['channel_id'];
                     try {
-                        $this->_client->unwatchCalendar($this->_gcal, $subscription['channel_id'], $resource_id);
-                        $this->Googles_model->removeWebhook($resource_id);
+                        $this->_client->unwatchCalendar($this->_gcal, $channel_id, $resource_id);
+                        $this->Googles_model->removeWebhook($channel_id, $resource_id);
                         $success = true;
                     } catch (Exception $e) {
                         log_message('error', 'ERROR = '.$e->getMessage());
@@ -234,6 +235,7 @@ class Calendar extends MY_Controller
         foreach ($webhooks as $webhook) {
             $this->data['webhooks'][] = array(
                 'calendar_id' => $webhook['calendar_id'],
+                'channel_id' => $webhook['channel_id'],
                 'resource_id' => isset($webhook['resource_id']) ? $webhook['resource_id'] : null,
                 'resource_uri' => isset($webhook['resource_uri']) ? $webhook['resource_uri'] : null,
                 'callback_url' => $webhook['callback_url'],
