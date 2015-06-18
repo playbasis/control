@@ -469,6 +469,7 @@ class Notification extends Engine
 				$this->response($this->error->setError('UNSUPPORTED_RESOURCE_STATE'), 200);
 				break;
 			}
+			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
