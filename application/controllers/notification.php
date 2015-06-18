@@ -482,18 +482,21 @@ class Notification extends Engine
 					$events = array();
 					$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
 					$nextSyncToken = $this->googleapi->listEvents($service, $calendar_id, $events, $syncToken ? array('syncToken' => $syncToken) : array());
-					/* calculate difference */
+					/* process the updated */
 					foreach ($events as $event) {
 						$newEvent = $this->extractEvent($event);
 						$event_id = $newEvent['event_id'];
 						$oldEvent = $this->googles_model->getEvent($site_id, $calendar_id, $event_id);
+						/* update the events in the database */
 						if ($newEvent['event']['status'] != EVENT_CANCELLED) {
 							$this->googles_model->insertOrUpdateEvent($site_id, $calendar_id, $newEvent);
 						} else {
 							$this->googles_model->removeEvent($site_id, $calendar_id, $event_id);
 						}
-						$change = $this->diffEvent(isset($oldEvent['event']) ? $oldEvent['event'] : null, $newEvent['event']);
-						array_push($changes, $change);
+						/* calculate difference */
+						foreach ($this->diffEvent(isset($oldEvent['event']) ? $oldEvent['event'] : null, $newEvent['event']) as $change) {
+							array_push($changes, $change);
+						}
 					}
 					$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
 				} else {
@@ -550,6 +553,136 @@ class Notification extends Engine
 	}
 
 	private function diffEvent($oldEvent, $newEvent) {
+		$results = array();
+		$oldCount = isset($oldEvent['attendees']) ? count($oldEvent['attendees']) : 0;
+		$newCount = isset($newEvent['attendees']) ? count($newEvent['attendees']) : 0;
+		if (!$oldEvent) { // calendar:create
+			array_push($results, array(
+				'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+				'action' => 'calendar:create',
+				'url' => $newEvent['summary'],
+			));
+		} else if ($newEvent['status'] == EVENT_CANCELLED) { // calendar:delete
+			array_push($results, array(
+				'player_id' => $this->mapPlayer($oldEvent['creator'], 'google'),
+				'action' => 'calendar:delete',
+				'url' => $oldEvent['summary'],
+			));
+		} else if ($oldCount > 0 || $newCount > 0) {
+			if ($oldCount < $newCount) { // calendar:invite
+				array_push($results, array(
+					'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+					'action' => 'calendar:invite',
+					'url' => null,
+				));
+				$attendee = $this->findDistinctAttendee($newEvent['attendees'], $oldEvent['attendees']);
+				array_push($results, array(
+					'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+					'action' => 'calendar:invited',
+					'url' => null,
+				));
+			} else if ($oldCount > $newCount) { // calendar:uninvite
+				array_push($results, array(
+					'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+					'action' => 'calendar:disinvite',
+					'url' => null,
+				));
+				$attendee = $this->findDistinctAttendee($oldEvent['attendees'], $newEvent['attendees']);
+				array_push($results, array(
+					'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+					'action' => 'calendar:disinvited',
+					'url' => null,
+				));
+			} else { // if #attendees are equal, we simply assume they are the same set of attendees
+				$success = false;
+				$total = 0;
+				$accepted = 0;
+				foreach ($newEvent['attendees'] as $i => $attendee) {
+					if ($attendee['email'] != $newEvent['creator']) { // count only real attendees (without creator)
+						if ($attendee['email'] == $oldEvent['attendees'][$i]['email']) {
+							if ($attendee['responseStatus'] == 'accepted') $accepted++;
+							if ($attendee['responseStatus'] != $oldEvent['attendees'][$i]['responseStatus']) {
+								switch ($attendee['responseStatus']) { // needsAction, accepted, tentative, declined
+								case 'accepted':
+									array_push($results, array(
+										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+										'action' => 'calendar:accept',
+										'url' => null,
+									));
+									array_push($results, array(
+										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+										'action' => 'calendar:accepted',
+										'url' => null,
+									));
+									$success = true;
+									break;
+								case 'tentative':
+									array_push($results, array(
+										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+										'action' => 'calendar:mayaccept',
+										'url' => null,
+									));
+									array_push($results, array(
+										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+										'action' => 'calendar:mayaccepted',
+										'url' => null,
+									));
+									$success = true;
+									break;
+								case 'declined':
+									array_push($results, array(
+										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+										'action' => 'calendar:decline',
+										'url' => null,
+									));
+									array_push($results, array(
+										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+										'action' => 'calendar:declined',
+										'url' => null,
+									));
+									$success = true;
+									break;
+								}
+							}
+						}
+						$total++;
+					}
+				}
+				if ($total > 0 && $accepted == $total) {
+					array_push($results, array(
+						'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+						'action' => 'calendar:100accepted',
+						'url' => null,
+					));
+				}
+				if (!$success) { // it is an updated calendar without any change in a list of attendees
+					array_push($results, array(
+						'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+						'action' => 'calendar:update',
+						'url' => $newEvent['summary'],
+					));
+				}
+			}
+		} else {
+			array_push($results, array(
+				'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+				'action' => 'calendar:update',
+				'url' => $newEvent['summary'],
+			));
+		}
+		return $results;
+	}
+
+	private function findDistinctAttendee($largers, $smallers) {
+		$emails = array();
+		foreach ($smallers as $attendee) {
+			array_push($emails, $attendee['email']);
+		}
+		foreach ($largers as $attendee) {
+			if (!in_array($attendee['email'], $emails)) {
+				return $attendee;
+			}
+		}
 		return null;
 	}
 
@@ -558,6 +691,7 @@ class Notification extends Engine
 		switch ($service) {
 		case 'jive':
 		case 'lithium':
+		case 'google':
 		default:
 			$player_id = $id.'@'.$service;
 			break;
