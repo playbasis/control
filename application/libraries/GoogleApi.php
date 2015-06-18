@@ -94,7 +94,7 @@ class GoogleApi
         return $events;
     }
 
-    public function listCalendar($gcal) {
+    public function listCalendars($gcal) {
         $calendarList = $gcal->calendarList->listCalendarList();
         $l = array();
         while (true) {
