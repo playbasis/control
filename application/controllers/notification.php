@@ -3,6 +3,7 @@ require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH.'controllers/engine.php');
 
 define('LITHIUM_EPSILON', 2);
+define('EVENT_CANCELLED', 'cancelled');
 
 /**
  * Notification Endpoint for (1) Amazon Simple Notification Service (SNS), (2) PayPal, (3) FullContact, (4) Jive
@@ -453,17 +454,42 @@ class Notification extends Engine
 			if (!$service) $this->response($this->error->setError('NOT_SETUP_GOOGLE'), 200);
 			switch ($_SERVER['HTTP_X_GOOG_RESOURCE_STATE']) {
 			case 'sync':
-				/* set resource_id, resource_uri and date_expire for this webhook channel */
+				/* set resource_id, resource_uri and date_expire for this channel_id */
 				$this->googles_model->updateWebhook($site_id, $channel_id, $resource_id, $resource_uri, $date_expire);
 				$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
-				$changes = $this->googleapi->listEvents($service, $calendar_id, $syncToken);
-				/* do full sync on that resource and store sync token */
-				//$this->googles_model->insertEvents($site_id, $calendar_id, $changes);
-				$this->googles_model->storeSyncToken($site_id, $calendar_id, $syncToken);
+				if (!$syncToken) { // never sync
+					/* for the 1st time, we do a full sync on that calendar */
+					$events = array();
+					$nextSyncToken = $this->googleapi->listEvents($service, $calendar_id, $events, array('timeMin' => date('c', strtotime('previous month')))); // only on recent events though
+					$this->googles_model->insertEvents($site_id, $calendar_id, $this->extractEvents($events));
+					$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
+				}
 				break;
 			case 'exists':
+				/* TODO: there can be multiple messages at the same time, transaction is needed here */
+				/* transaction begins */
+				$changes = array();
+				$events = array();
+				$syncToken = $this->googles_model->getSyncToken($site_id, $calendar_id);
+				$nextSyncToken = $this->googleapi->listEvents($service, $calendar_id, $events, $syncToken ? array('syncToken' => $syncToken) : array());
+				foreach ($events as $event) {
+					$newEvent = $this->extractEvent($event);
+					$event_id = $newEvent['event_id'];
+					$oldEvent = $this->googles_model->getEvent($site_id, $calendar_id, $event_id);
+					if ($newEvent['event']['status'] != EVENT_CANCELLED) {
+						$this->googles_model->insertOrUpdateEvent($site_id, $calendar_id, $newEvent);
+					} else {
+						$this->googles_model->removeEvent($site_id, $calendar_id, $event_id);
+					}
+					$change = $this->diffEvent(isset($oldEvent['event']) ? $oldEvent['event'] : null, $newEvent['event']);
+					array_push($changes, $change);
+				}
+				$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
+				/* TODO: processing the changes and submit actions to rule engine */
+				/* transaction ends */
 				break;
 			case 'not_exists':
+				$this->response($this->error->setError('NOT_IMPLEMENTED'), 200);
 				break;
 			default:
 				$this->response($this->error->setError('UNSUPPORTED_RESOURCE_STATE'), 200);
@@ -472,6 +498,45 @@ class Notification extends Engine
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
+	}
+
+	private function extractEvents($events) {
+		$_events = array();
+		foreach ($events as $event) {
+			array_push($_events, $this->extractEvent($event));
+		}
+		return $_events;
+	}
+
+	private function extractEvent($event) {
+		$_creator = null;
+		$_attendees = null;
+		if ($event->getStatus() != EVENT_CANCELLED) {
+			$creator = $event->getCreator();
+			$_creator = $creator->getEmail();
+			$_attendees = array();
+			$attendees = $event->getAttendees();
+			if ($attendees) foreach ($attendees as $attendee) {
+				array_push($_attendees, array(
+					'email' => $attendee->getEmail(),
+					'responseStatus' => $attendee->getResponseStatus(), // needsAction, accepted, tentative, declined
+				));
+			}
+		}
+		$entry = array(
+			'creator' => $_creator,
+			'attendees' => $_attendees,
+			'summary' => $event->getSummary(),
+			'status' => $event->getStatus(), // confirmed, cancelled
+		);
+		return array(
+			'event_id' => $event->getId(),
+			'event' => $entry,
+		);
+	}
+
+	private function diffEvent($oldEvent, $newEvent) {
+		return null;
 	}
 
 	private function mapPlayer($id, $service) {

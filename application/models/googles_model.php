@@ -45,36 +45,11 @@ class Googles_model extends MY_Model {
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
         $l = array();
         foreach ($events as $event) {
-            $entry = array(
-                'attendees' => $event->getAttendees(),
-                'attendeesOmitted' => $event->getAttendeesOmitted(),
-                'colorId' => $event->getColorId(),
-                'created' => $event->getCreated(),
-                'creator' => $event->getCreator()->getId(),
-                'description' => $event->getDescription(),
-                'end' => $event->getEnd()->getDateTime(),
-                'endTimeUnspecified' => $event->getEndTimeUnspecified(),
-                'etag' => $event->getEtag(),
-                'guestsCanModify' => $event->getGuestsCanModify(),
-                'iCalUID' => $event->getICalUID(),
-                'id' => $event->getId(),
-                'kind' => $event->getKind(),
-                'location' => $event->getLocation(),
-                'organizer' => $event->getOrganizer()->getId(),
-                'originalStartTime' => $event->getOriginalStartTime(),
-                'recurrence' => $event->getRecurrence(),
-                'recurringEventId' => $event->getRecurringEventId(),
-                'sequence' => $event->getSequence(),
-                'source' => $event->getSource(),
-                'start' => $event->getStart()->getDateTime(),
-                'status' => $event->getStatus(),
-                'summary' => $event->getSummary(),
-                'updated' => $event->getUpdated(),
-            );
             array_push($l, array(
                 'site_id' => $site_id,
                 'calendar_id' => $calendar_id,
-                'event' => $entry,
+                'event_id' => $event['event_id'],
+                'event' => $event['event'],
                 'date_added' => $d,
                 'date_modified' => $d,
             ));
@@ -82,16 +57,67 @@ class Googles_model extends MY_Model {
         return $this->mongo_db->batch_insert('playbasis_calendar_events', $l, array("w" => 0, "j" => false));
     }
 
+    public function getEvent($site_id, $calendar_id, $event_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('calendar_id', $calendar_id);
+        $this->mongo_db->where('event_id', $event_id);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_calendar_events");
+        return $results ? $results[0] : null;
+    }
+
+    public function insertOrUpdateEvent($site_id, $calendar_id, $event) {
+        $this->set_site_mongodb($site_id);
+        $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+        $event_id = $event['event_id'];
+        $entry = $this->getEvent($site_id, $calendar_id, $event_id);
+        if (!$entry) {
+            $this->mongo_db->insert('playbasis_calendar_events', array(
+                'site_id' => $site_id,
+                'calendar_id' => $calendar_id,
+                'event_id' => $event_id,
+                'event' => $event['event'],
+                'date_added' => $d,
+                'date_modified' => $d,
+            ));
+        } else {
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('calendar_id', $calendar_id);
+            $this->mongo_db->where('event_id', $event_id);
+            $this->mongo_db->set('event', $event['event']);
+            $this->mongo_db->set('date_modified', $d);
+            $this->mongo_db->update('playbasis_calendar_events');
+        }
+    }
+
+    public function removeEvent($site_id, $calendar_id, $event_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('calendar_id', $calendar_id);
+        $this->mongo_db->where('event_id', $event_id);
+        return $this->mongo_db->delete('playbasis_calendar_events');
+    }
+
     public function storeSyncToken($site_id, $calendar_id, $syncToken) {
         $this->set_site_mongodb($site_id);
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
-        return $this->mongo_db->insert('playbasis_calendar_token', array(
-            'site_id' => $site_id,
-            'calendar_id' => $calendar_id,
-            'sync_token' => $syncToken,
-            'date_added' => $d,
-            'date_modified' => $d
-        ));
+        $entry = $this->getSyncToken($site_id, $calendar_id);
+        if (!$entry) {
+            $this->mongo_db->insert('playbasis_calendar_token', array(
+                'site_id' => $site_id,
+                'calendar_id' => $calendar_id,
+                'sync_token' => $syncToken,
+                'date_added' => $d,
+                'date_modified' => $d
+            ));
+        } else {
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('calendar_id', $calendar_id);
+            $this->mongo_db->set('sync_token', $syncToken);
+            $this->mongo_db->set('date_modified', $d);
+            $this->mongo_db->update('playbasis_calendar_token');
+        }
     }
 
     public function getSyncToken($site_id, $calendar_id) {
