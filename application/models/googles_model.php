@@ -85,13 +85,25 @@ class Googles_model extends MY_Model {
     public function storeSyncToken($site_id, $calendar_id, $syncToken) {
         $this->set_site_mongodb($site_id);
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
-        return $this->mongo_db->insert('playbasis_calendar_token', array(
-            'site_id' => $site_id,
-            'calendar_id' => $calendar_id,
-            'sync_token' => $syncToken,
-            'date_added' => $d,
-            'date_modified' => $d
-        ));
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('calendar_id', $calendar_id);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get("playbasis_calendar_token");
+        if (!$results) {
+            $this->mongo_db->insert('playbasis_calendar_token', array(
+                'site_id' => $site_id,
+                'calendar_id' => $calendar_id,
+                'sync_token' => $syncToken,
+                'date_added' => $d,
+                'date_modified' => $d
+            ));
+        } else {
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('calendar_id', $calendar_id);
+            $this->mongo_db->set('sync_token', $syncToken);
+            $this->mongo_db->set('date_modified', $d);
+            $this->mongo_db->update('playbasis_calendar_token');
+        }
     }
 
     public function getSyncToken($site_id, $calendar_id) {
