@@ -3,6 +3,7 @@ require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH.'controllers/engine.php');
 
 define('LITHIUM_EPSILON', 2);
+define('EVENT_CANCELLED', 'cancelled');
 
 /**
  * Notification Endpoint for (1) Amazon Simple Notification Service (SNS), (2) PayPal, (3) FullContact, (4) Jive
@@ -475,7 +476,11 @@ class Notification extends Engine
 					$newEvent = $this->extractEvent($event);
 					$event_id = $newEvent['event_id'];
 					$oldEvent = $this->googles_model->getEvent($site_id, $calendar_id, $event_id);
-					$this->googles_model->insertOrUpdateEvent($site_id, $calendar_id, $newEvent);
+					if ($newEvent['event']['status'] != EVENT_CANCELLED) {
+						$this->googles_model->insertOrUpdateEvent($site_id, $calendar_id, $newEvent);
+					} else {
+						$this->googles_model->removeEvent($site_id, $calendar_id, $event_id);
+					}
 					$change = $this->diffEvent(isset($oldEvent['event']) ? $oldEvent['event'] : null, $newEvent['event']);
 					array_push($changes, $change);
 				}
@@ -504,15 +509,19 @@ class Notification extends Engine
 	}
 
 	private function extractEvent($event) {
-		$creator = $event->getCreator();
-		$_creator = $creator->getEmail();
-		$_attendees = array();
-		$attendees = $event->getAttendees();
-		if ($attendees) foreach ($attendees as $attendee) {
-			array_push($_attendees, array(
-				'email' => $attendee->getEmail(),
-				'responseStatus' => $attendee->getResponseStatus(), // needsAction, accepted, tentative, declined
-			));
+		$_creator = null;
+		$_attendees = null;
+		if ($event->getStatus() != EVENT_CANCELLED) {
+			$creator = $event->getCreator();
+			$_creator = $creator->getEmail();
+			$_attendees = array();
+			$attendees = $event->getAttendees();
+			if ($attendees) foreach ($attendees as $attendee) {
+				array_push($_attendees, array(
+					'email' => $attendee->getEmail(),
+					'responseStatus' => $attendee->getResponseStatus(), // needsAction, accepted, tentative, declined
+				));
+			}
 		}
 		$entry = array(
 			'creator' => $_creator,

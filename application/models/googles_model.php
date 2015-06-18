@@ -91,6 +91,14 @@ class Googles_model extends MY_Model {
         }
     }
 
+    public function removeEvent($site_id, $calendar_id, $event_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('calendar_id', $calendar_id);
+        $this->mongo_db->where('event_id', $event_id);
+        return $this->mongo_db->delete('playbasis_calendar_events');
+    }
+
     public function storeSyncToken($site_id, $calendar_id, $syncToken) {
         $this->set_site_mongodb($site_id);
         $d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
