@@ -239,7 +239,7 @@ class Calendar extends MY_Controller
                 'resource_id' => isset($webhook['resource_id']) ? $webhook['resource_id'] : null,
                 'resource_uri' => isset($webhook['resource_uri']) ? $webhook['resource_uri'] : null,
                 'callback_url' => $webhook['callback_url'],
-                'date_expire' => isset($webhook['date_expire']) && $webhook['date_expire'] ? date('d M Y H:M:s', $webhook['date_expire']->sec) : null,
+                'date_expire' => isset($webhook['date_expire']) && $webhook['date_expire'] ? date('d M Y H:m:s', $webhook['date_expire']->sec) : null,
                 'selected' => ($this->input->post('selected') && in_array($webhook['calendar_id'], $this->input->post('selected'))),
             );
         }
