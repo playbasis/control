@@ -502,6 +502,7 @@ class Notification extends Engine
 					}
 					$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
 					/* processing the changes and submit actions to rule engine */
+					$apiResults = array();
 					foreach ($changes as $change) {
 						$player_id = $change['player_id'];
 						$actionName = $change['action'];
@@ -527,8 +528,9 @@ class Notification extends Engine
 						));
 						/* process rule */
 						$apiResult = $this->rule($validToken['site_id'], $actionName, $url, $player);
-						$this->response($this->resp->setRespond($apiResult), 200);
+						array_push($apiResults, $apiResult);
 					}
+					$this->response($this->resp->setRespond($apiResults), 200);
 				} else {
 					$this->response($this->error->setError('NOT_SUPPORTED_GOOGLE_SERVICE'), 200);
 				}
