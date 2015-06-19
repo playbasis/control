@@ -278,7 +278,7 @@ class Notification extends Engine
 				break;
 			case 'UserSignOff': // lithium:logout
 				/* Lithium always send us anonymous user <user type="user" href="/users/id/-1"> */
-				$this->response($this->resp->setRespond(), 200);
+				$this->response($this->resp->setRespond('NOT_IMPLEMENTED'), 200);
 				break;
 			case 'MessageCreate': // lithium:createmessage, lithium:reply
 				/* parse payload */
