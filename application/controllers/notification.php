@@ -166,7 +166,7 @@ class Notification extends Engine
 				$url = isset($activity['object']['summary']) ? $activity['object']['summary'] : null;
 				$names = explode(' ', $activity['actor']['displayName']);
 				$arr = explode('/', $activity['actor']['id']);
-				$cl_player_id = $arr[count($arr)-1].'@jive';
+				$cl_player_id = $this->mapPlayer($arr[count($arr)-1], 'jive');
 				$player = array(
 					'cl_player_id' => $cl_player_id,
 					'username' => $activity['actor']['jive']['username'],
