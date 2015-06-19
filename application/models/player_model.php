@@ -208,6 +208,28 @@ class Player_model extends MY_Model
 		$this->mongo_db->limit($limit);
 		return $this->mongo_db->get('playbasis_player');
 	}
+	public function findPlayerFromService($validToken, $player_id, $service) {
+		$this->set_site_mongodb($validToken['site_id']);
+		$this->mongo_db->where('client_id', $validToken['client_id']);
+		$this->mongo_db->where('site_id', $validToken['site_id']);
+		$this->mongo_db->where('player_id', $player_id);
+		$this->mongo_db->where('service', $service);
+		$this->mongo_db->limit(1);
+		return $this->mongo_db->get('playbasis_player_service');
+	}
+	public function insertPlayerService($validToken, $pb_player_id, $player_id, $service) {
+		$this->set_site_mongodb($validToken['site_id']);
+		$mongoDate = new MongoDate(time());
+		return $this->mongo_db->insert('playbasis_player_service', array(
+			'client_id' => $validToken['client_id'],
+			'site_id' => $validToken['site_id'],
+			'pb_player_id' => $pb_player_id,
+			'player_id' => $player_id,
+			'service' => $service,
+			'date_added' => $mongoDate,
+			'date_modified' => $mongoDate,
+		));
+	}
 	public function getPlayerPoints($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);

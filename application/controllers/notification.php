@@ -161,19 +161,23 @@ class Notification extends Engine
 					log_message('error', 'Missing jive:verb');
 					$this->response($this->error->setError('PARAMETER_MISSING', array('verb')), 200);
 				}
-				$site_id = new MongoId($jive['site_id']);
+				$site_id = $jive['site_id'];
+				$validToken = array('client_id' => $jive['client_id'], 'site_id' => $site_id);
 				$actionName = $activity['verb'];
 				$url = isset($activity['object']['summary']) ? $activity['object']['summary'] : null;
+				/* read player info */
 				$names = explode(' ', $activity['actor']['displayName']);
 				$arr = explode('/', $activity['actor']['id']);
-				$cl_player_id = $arr[count($arr)-1].'@jive';
-				$player = array(
-					'cl_player_id' => $cl_player_id,
+				$player_id = $arr[count($arr)-1];
+				$player = $this->getPlayerFromService($validToken, array(
+					'player_id' => $player_id,
 					'username' => $activity['actor']['jive']['username'],
+					'email' => 'no-reply@playbasis.com',
 					'image' => isset($activity['actor']['image']['url']) ? $activity['actor']['image']['url'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
 					'first_name' => isset($names[0]) ? $names[0] : '[first_name]',
 					'last_name' => isset($names[1]) ? $names[1] : '[last_name]',
-				);
+				), 'jive');
+				/* process rule */
 				$apiResult = $this->rule($site_id, $actionName, $url, $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
 			} else {
@@ -208,58 +212,45 @@ class Notification extends Engine
 			case 'UserRegistered':
 				/* parse payload */
 				$user = simplexml_load_string($message['user']);
-				/* map Lithium ID to player ID */
-				$player_id = $this->mapPlayer($user->id, 'lithium');
-				/* create a new player */
-				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
-				if (!$pb_player_id) {
-					$info = $this->lithiumapi->user($user->id);
-					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
-					$path = $this->resolveLithiumUserProfileAvatar($avatar);
-					$image = $lithium['lithium_url'].'/'.$path;
-					$email = $info->email->{'$'};
-					$username = $info->login->{'$'};
-					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-						'player_id' => $player_id,
-						'image' => $image,
-						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
-						'username' => $username
-					)));
-				} else {
-					$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
-				}
-				$this->response($this->resp->setRespond($pb_player_id), 200);
+				/* read player info */
+				$player_id = $user->id->{'$'};
+				$info = $this->lithiumapi->user($player_id);
+				$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+				$path = $this->resolveLithiumUserProfileAvatar($avatar);
+				$image = $lithium['lithium_url'].'/'.$path;
+				$email = $info->email->{'$'};
+				$username = $info->login->{'$'};
+				$player = $this->getPlayerFromService($validToken, array(
+					'player_id' => $player_id,
+					'username' => $username,
+					'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+					'image' => $image,
+					'first_name' => $username,
+					'last_name' => '[last_name]',
+				), 'lithium');
+				$this->response($this->resp->setRespond($player['_id']), 200);
 				break;
 			case 'UserSignOn': // lithium:login
 			case 'UserUpdate': // lithium:updateprofile
 				/* parse payload */
 				$user = simplexml_load_string($message['user']);
-				/* map Lithium ID to player ID */
-				$player_id = $this->mapPlayer($user->id, 'lithium');
 				/* read player info */
-				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
-				if (!$pb_player_id) {
-					$info = $this->lithiumapi->user($user->id);
-					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
-					$path = $this->resolveLithiumUserProfileAvatar($avatar);
-					$image = $lithium['lithium_url'].'/'.$path;
-					$email = $info->email->{'$'};
-					$username = $info->login->{'$'};
-					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-						'player_id' => $player_id,
-						'image' => $image,
-						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
-						'username' => $username
-					)));
-				}
-				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
-					'cl_player_id',
-					'username',
-					'first_name',
-					'last_name',
-					'email',
-					'image'
-				));
+				$player_id = $user->id->{'$'};
+				$info = $this->lithiumapi->user($player_id);
+				$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+				$path = $this->resolveLithiumUserProfileAvatar($avatar);
+				$image = $lithium['lithium_url'].'/'.$path;
+				$email = $info->email->{'$'};
+				$username = $info->login->{'$'};
+				$player = $this->getPlayerFromService($validToken, array(
+					'player_id' => $player_id,
+					'username' => $username,
+					'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+					'image' => $image,
+					'first_name' => $username,
+					'last_name' => '[last_name]',
+				), 'lithium');
+				/* determine action */
 				$actionName = 'lithium:updateprofile';
 				if ($event_type == 'UserSignOn') {
 					/* track event */
@@ -267,7 +258,7 @@ class Notification extends Engine
 					$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
 						'client_id' => $validToken['client_id'],
 						'site_id' => $validToken['site_id'],
-						'pb_player_id' => $pb_player_id,
+						'pb_player_id' => $player['_id'],
 						'action_log_id' => null
 					));
 					$actionName = 'lithium:login';
@@ -278,45 +269,34 @@ class Notification extends Engine
 				break;
 			case 'UserSignOff': // lithium:logout
 				/* Lithium always send us anonymous user <user type="user" href="/users/id/-1"> */
-				$this->response($this->resp->setRespond(), 200);
+				$this->response($this->resp->setRespond('NOT_IMPLEMENTED'), 200);
 				break;
 			case 'MessageCreate': // lithium:createmessage, lithium:reply
 				/* parse payload */
 				$msg = simplexml_load_string($message['message']);
 				/* store this new message into our database */
 				$this->lithium_model->insertMessage($validToken, $msg);
-				/* map Lithium ID to player ID */
-				$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
 				/* determine action */
 				$actionName = 'lithium:createmessage';
 				if ($this->getAttribute($msg->parent, 'href')) {
 					$actionName = 'lithium:reply';
 				}
 				/* read player info */
-				$player_id = $this->mapPlayer($id, 'lithium');
-				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
-				if (!$pb_player_id) {
-					$info = $this->lithiumapi->user($id);
-					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
-					$path = $this->resolveLithiumUserProfileAvatar($avatar);
-					$image = $lithium['lithium_url'].'/'.$path;
-					$email = $info->email->{'$'};
-					$username = $info->login->{'$'};
-					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-						'player_id' => $player_id,
-						'image' => $image,
-						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
-						'username' => $username
-					)));
-				}
-				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
-					'cl_player_id',
-					'username',
-					'first_name',
-					'last_name',
-					'email',
-					'image'
-				));
+				$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
+				$info = $this->lithiumapi->user($id);
+				$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+				$path = $this->resolveLithiumUserProfileAvatar($avatar);
+				$image = $lithium['lithium_url'].'/'.$path;
+				$email = $info->email->{'$'};
+				$username = $info->login->{'$'};
+				$player = $this->getPlayerFromService($validToken, array(
+					'player_id' => $id,
+					'username' => $username,
+					'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+					'image' => $image,
+					'first_name' => $username,
+					'last_name' => '[last_name]',
+				), 'lithium');
 				/* process rule */
 				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body.'', $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
@@ -359,29 +339,19 @@ class Notification extends Engine
 					$actionName = 'lithium:editmessage';
 				}
 				/* read player info */
-				$player_id = $this->mapPlayer($id, 'lithium');
-				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
-				if (!$pb_player_id) {
-					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
-					$path = $this->resolveLithiumUserProfileAvatar($avatar);
-					$image = $lithium['lithium_url'].'/'.$path;
-					$email = $info->email->{'$'};
-					$username = $info->login->{'$'};
-					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-						'player_id' => $player_id,
-						'image' => $image,
-						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
-						'username' => $username
-					)));
-				}
-				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
-					'cl_player_id',
-					'username',
-					'first_name',
-					'last_name',
-					'email',
-					'image'
-				));
+				$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+				$path = $this->resolveLithiumUserProfileAvatar($avatar);
+				$image = $lithium['lithium_url'].'/'.$path;
+				$email = $info->email->{'$'};
+				$username = $info->login->{'$'};
+				$player = $this->getPlayerFromService($validToken, array(
+					'player_id' => $id,
+					'username' => $username,
+					'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+					'image' => $image,
+					'first_name' => $username,
+					'last_name' => '[last_name]',
+				), 'lithium');
 				/* process rule */
 				$apiResult = $this->rule($validToken['site_id'], $actionName, null, $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
@@ -389,35 +359,24 @@ class Notification extends Engine
 			case 'MessageDelete': // lithium:removemessage
 				/* parse payload */
 				$msg = simplexml_load_string($message['message']);
-				/* map Lithium ID to player ID */
-				$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
 				/* determine action */
 				$actionName = 'lithium:removemessage';
 				/* read player info */
-				$player_id = $this->mapPlayer($id, 'lithium');
-				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
-				if (!$pb_player_id) {
-					$info = $this->lithiumapi->user($id);
-					$avatar = $this->getLithiumUserProfile($info, 'url_icon');
-					$path = $this->resolveLithiumUserProfileAvatar($avatar);
-					$image = $lithium['lithium_url'].'/'.$path;
-					$email = $info->email->{'$'};
-					$username = $info->login->{'$'};
-					$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-						'player_id' => $player_id,
-						'image' => $image,
-						'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
-						'username' => $username
-					)));
-				}
-				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
-					'cl_player_id',
-					'username',
-					'first_name',
-					'last_name',
-					'email',
-					'image'
-				));
+				$id = $this->getLithiumId($this->getAttribute($msg->last_edit_author, 'href'));
+				$info = $this->lithiumapi->user($id);
+				$avatar = $this->getLithiumUserProfile($info, 'url_icon');
+				$path = $this->resolveLithiumUserProfileAvatar($avatar);
+				$image = $lithium['lithium_url'].'/'.$path;
+				$email = $info->email->{'$'};
+				$username = $info->login->{'$'};
+				$player = $this->getPlayerFromService($validToken, array(
+					'player_id' => $id,
+					'username' => $username,
+					'email' => !empty($email) ? $email : 'no-reply@playbasis.com',
+					'image' => $image,
+					'first_name' => $username,
+					'last_name' => '[last_name]',
+				), 'lithium');
 				/* process rule */
 				$apiResult = $this->rule($validToken['site_id'], $actionName, $msg->body.'', $player);
 				$this->response($this->resp->setRespond($apiResult), 200);
@@ -507,25 +466,14 @@ class Notification extends Engine
 						$player_id = $change['player_id'];
 						$actionName = $change['action'];
 						$url = $change['url'];
-						$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
-						if (!$pb_player_id) {
-							$email = $change['email'];
-							$username = $change['email'];
-							$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-								'player_id' => $player_id,
-								'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
-								'email' => $email,
-								'username' => $username
-							)));
-						}
-						$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
-							'cl_player_id',
-							'username',
-							'first_name',
-							'last_name',
-							'email',
-							'image'
-						));
+						$player = $this->getPlayerFromService($validToken, array(
+							'player_id' => $player_id,
+							'username' => $change['email'],
+							'email' => $change['email'],
+							'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
+							'first_name' => $change['email'],
+							'last_name' => '[last_name]',
+						), 'google');
 						/* process rule */
 						$apiResult = $this->rule($validToken['site_id'], $actionName, $url, $player);
 						array_push($apiResults, $apiResult);
@@ -546,6 +494,28 @@ class Notification extends Engine
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
 		}
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
+	}
+
+	private function getPlayerFromService($validToken, $player, $service) {
+		$s_player_id = $player['player_id'];
+		$record = $this->player_model->findPlayerFromService($validToken, $s_player_id, $service);
+		if (!$record) {
+			$player['player_id'] = $this->mapPlayer($player['player_id'], $service);
+			$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, $player));
+			$this->player_model->insertPlayerService($validToken, $pb_player_id, $s_player_id, $service);
+		} else {
+			$pb_player_id = $record['pb_player_id'];
+		}
+		$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+			'cl_player_id',
+			'username',
+			'first_name',
+			'last_name',
+			'email',
+			'image'
+		));
+		$player['pb_player_id'] = $pb_player_id;
+		return $player;
 	}
 
 	private function extractEvents($events) {
@@ -590,14 +560,14 @@ class Notification extends Engine
 		if (!$oldEvent) { // calendar:create
 			array_push($results, array(
 				'email' => $newEvent['creator'],
-				'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+				'player_id' => $newEvent['creator'],
 				'action' => 'calendar:create',
 				'url' => $newEvent['summary'],
 			));
 		} else if ($newEvent['status'] == EVENT_CANCELLED) { // calendar:delete
 			array_push($results, array(
 				'email' => $oldEvent['creator'],
-				'player_id' => $this->mapPlayer($oldEvent['creator'], 'google'),
+				'player_id' => $oldEvent['creator'],
 				'action' => 'calendar:delete',
 				'url' => $oldEvent['summary'],
 			));
@@ -605,21 +575,21 @@ class Notification extends Engine
 			if ($oldCount < $newCount) { // calendar:invite
 				array_push($results, array(
 					'email' => $newEvent['creator'],
-					'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+					'player_id' => $newEvent['creator'],
 					'action' => 'calendar:invite',
 					'url' => null,
 				));
 				$attendee = $this->findDistinctAttendee($newEvent['creator'], $newEvent['attendees'], $oldEvent['attendees']);
 				array_push($results, array(
 					'email' => $attendee['email'],
-					'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+					'player_id' => $attendee['email'],
 					'action' => 'calendar:invited',
 					'url' => null,
 				));
 			} else if ($oldCount > $newCount) { // calendar:uninvite
 				array_push($results, array(
 					'email' => $newEvent['creator'],
-					'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+					'player_id' => $newEvent['creator'],
 					'action' => 'calendar:disinvite',
 					'url' => null,
 				));
@@ -627,7 +597,7 @@ class Notification extends Engine
 				if ($attendee) {
 					array_push($results, array(
 						'email' => $attendee['email'],
-						'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+						'player_id' => $attendee['email'],
 						'action' => 'calendar:disinvited',
 						'url' => null,
 					));
@@ -645,13 +615,13 @@ class Notification extends Engine
 								case 'accepted':
 									array_push($results, array(
 										'email' => $attendee['email'],
-										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+										'player_id' => $attendee['email'],
 										'action' => 'calendar:accept',
 										'url' => null,
 									));
 									array_push($results, array(
 										'email' => $newEvent['creator'],
-										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+										'player_id' => $newEvent['creator'],
 										'action' => 'calendar:accepted',
 										'url' => null,
 									));
@@ -660,13 +630,13 @@ class Notification extends Engine
 								case 'tentative':
 									array_push($results, array(
 										'email' => $attendee['email'],
-										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+										'player_id' => $attendee['email'],
 										'action' => 'calendar:mayaccept',
 										'url' => null,
 									));
 									array_push($results, array(
 										'email' => $newEvent['creator'],
-										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+										'player_id' => $newEvent['creator'],
 										'action' => 'calendar:mayaccepted',
 										'url' => null,
 									));
@@ -675,13 +645,13 @@ class Notification extends Engine
 								case 'declined':
 									array_push($results, array(
 										'email' => $attendee['email'],
-										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+										'player_id' => $attendee['email'],
 										'action' => 'calendar:decline',
 										'url' => null,
 									));
 									array_push($results, array(
 										'email' => $newEvent['creator'],
-										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+										'player_id' => $newEvent['creator'],
 										'action' => 'calendar:declined',
 										'url' => null,
 									));
@@ -696,7 +666,7 @@ class Notification extends Engine
 				if ($total > 0 && $accepted == $total) {
 					array_push($results, array(
 						'email' => $newEvent['creator'],
-						'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+						'player_id' => $newEvent['creator'],
 						'action' => 'calendar:100accepted',
 						'url' => null,
 					));
@@ -704,7 +674,7 @@ class Notification extends Engine
 				if (!$success) { // it is an updated calendar without any change in a list of attendees
 					array_push($results, array(
 						'email' => $newEvent['creator'],
-						'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+						'player_id' => $newEvent['creator'],
 						'action' => 'calendar:update',
 						'url' => $newEvent['summary'],
 					));
@@ -713,7 +683,7 @@ class Notification extends Engine
 		} else {
 			array_push($results, array(
 				'email' => $newEvent['creator'],
-				'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
+				'player_id' => $newEvent['creator'],
 				'action' => 'calendar:update',
 				'url' => $newEvent['summary'],
 			));
@@ -868,18 +838,6 @@ class Notification extends Engine
 	protected function rule($site_id, $actionName, $url, $player) {
 		$site = $this->client_model->findBySiteId($site_id);
 		$validToken = array('client_id' => $site['client_id'], 'site_id' => $site_id, 'domain_name' => $site['domain_name']);
-		$cl_player_id = $player['cl_player_id'];
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $cl_player_id)));
-		if (!$pb_player_id) {
-			$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-				'player_id' => $cl_player_id,
-				'image' => isset($player['image']) ? $player['image'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
-				'email' => isset($player['email']) ? $player['email'] : 'no-reply@playbasis.com',
-				'username' => isset($player['username']) ? $player['username'] : $cl_player_id,
-				'first_name' => isset($player['first_name']) ? $player['first_name'] : null,
-				'last_name' => isset($player['last_name']) ? $player['last_name'] : null,
-			)));
-		}
 		$action = $this->client_model->getAction(array(
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id'],
@@ -891,8 +849,8 @@ class Notification extends Engine
 		$actionId = $action['action_id'];
 		$actionIcon = $action['icon'];
 		$input = array_merge($validToken, array(
-			'player_id' => $cl_player_id,
-			'pb_player_id' => $pb_player_id,
+			'player_id' => $player['cl_player_id'],
+			'pb_player_id' => $player['pb_player_id'],
 			'action_id' => $actionId,
 			'action_name' => $actionName,
 			'action_icon' => $actionIcon,
@@ -900,7 +858,7 @@ class Notification extends Engine
 			'test' => false
 		));
 		$apiResult = $this->processRule($input, $validToken, null, null);
-		$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+		$apiQuestResult = $this->QuestProcess($player['pb_player_id'], $validToken);
 		return array_merge($apiResult, $apiQuestResult);
 	}
 }
