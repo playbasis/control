@@ -439,6 +439,8 @@ class Notification extends Engine
 			$site_id = new MongoId($_SERVER['HTTP_X_GOOG_CHANNEL_TOKEN']);
 			$subscription = $this->googles_model->getSubscription($site_id, $channel_id);
 			if (!$subscription) $this->response($this->error->setError('NOT_SETUP_GOOGLE'), 200);
+			$client_id = $subscription['client_id'];
+			$validToken = array('client_id' => $client_id, 'site_id' => $site_id);
 			$resource_id = $_SERVER['HTTP_X_GOOG_RESOURCE_ID'];
 			$resource_uri = $_SERVER['HTTP_X_GOOG_RESOURCE_URI'];
 			$date_expire = isset($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION']) ? new MongoDate(strtotime($_SERVER['HTTP_X_GOOG_CHANNEL_EXPIRATION'])) : null;
@@ -499,10 +501,37 @@ class Notification extends Engine
 						}
 					}
 					$this->googles_model->storeSyncToken($site_id, $calendar_id, $nextSyncToken);
+					/* processing the changes and submit actions to rule engine */
+					foreach ($changes as $change) {
+						$player_id = $change['player_id'];
+						$actionName = $change['action'];
+						$url = $change['url'];
+						$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $player_id)));
+						if (!$pb_player_id) {
+							$email = $change['email'];
+							$username = $change['email'];
+							$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+								'player_id' => $player_id,
+								'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
+								'email' => $email,
+								'username' => $username
+							)));
+						}
+						$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+							'cl_player_id',
+							'username',
+							'first_name',
+							'last_name',
+							'email',
+							'image'
+						));
+						/* process rule */
+						$apiResult = $this->rule($validToken['site_id'], $actionName, $url, $player);
+						$this->response($this->resp->setRespond($apiResult), 200);
+					}
 				} else {
 					$this->response($this->error->setError('NOT_SUPPORTED_GOOGLE_SERVICE'), 200);
 				}
-				/* TODO: processing the changes and submit actions to rule engine */
 				/* transaction ends */
 				break;
 			case 'not_exists':
@@ -558,12 +587,14 @@ class Notification extends Engine
 		$newCount = isset($newEvent['attendees']) ? count($newEvent['attendees']) : 0;
 		if (!$oldEvent) { // calendar:create
 			array_push($results, array(
+				'email' => $newEvent['creator'],
 				'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 				'action' => 'calendar:create',
 				'url' => $newEvent['summary'],
 			));
 		} else if ($newEvent['status'] == EVENT_CANCELLED) { // calendar:delete
 			array_push($results, array(
+				'email' => $oldEvent['creator'],
 				'player_id' => $this->mapPlayer($oldEvent['creator'], 'google'),
 				'action' => 'calendar:delete',
 				'url' => $oldEvent['summary'],
@@ -571,24 +602,28 @@ class Notification extends Engine
 		} else if ($oldCount > 0 || $newCount > 0) {
 			if ($oldCount < $newCount) { // calendar:invite
 				array_push($results, array(
+					'email' => $newEvent['creator'],
 					'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 					'action' => 'calendar:invite',
 					'url' => null,
 				));
 				$attendee = $this->findDistinctAttendee($newEvent['attendees'], $oldEvent['attendees']);
 				array_push($results, array(
+					'email' => $attendee['email'],
 					'player_id' => $this->mapPlayer($attendee['email'], 'google'),
 					'action' => 'calendar:invited',
 					'url' => null,
 				));
 			} else if ($oldCount > $newCount) { // calendar:uninvite
 				array_push($results, array(
+					'email' => $newEvent['creator'],
 					'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 					'action' => 'calendar:disinvite',
 					'url' => null,
 				));
 				$attendee = $this->findDistinctAttendee($oldEvent['attendees'], $newEvent['attendees']);
 				array_push($results, array(
+					'email' => $attendee['email'],
 					'player_id' => $this->mapPlayer($attendee['email'], 'google'),
 					'action' => 'calendar:disinvited',
 					'url' => null,
@@ -605,11 +640,13 @@ class Notification extends Engine
 								switch ($attendee['responseStatus']) { // needsAction, accepted, tentative, declined
 								case 'accepted':
 									array_push($results, array(
+										'email' => $attendee['email'],
 										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
 										'action' => 'calendar:accept',
 										'url' => null,
 									));
 									array_push($results, array(
+										'email' => $newEvent['creator'],
 										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 										'action' => 'calendar:accepted',
 										'url' => null,
@@ -618,11 +655,13 @@ class Notification extends Engine
 									break;
 								case 'tentative':
 									array_push($results, array(
+										'email' => $attendee['email'],
 										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
 										'action' => 'calendar:mayaccept',
 										'url' => null,
 									));
 									array_push($results, array(
+										'email' => $newEvent['creator'],
 										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 										'action' => 'calendar:mayaccepted',
 										'url' => null,
@@ -631,11 +670,13 @@ class Notification extends Engine
 									break;
 								case 'declined':
 									array_push($results, array(
+										'email' => $attendee['email'],
 										'player_id' => $this->mapPlayer($attendee['email'], 'google'),
 										'action' => 'calendar:decline',
 										'url' => null,
 									));
 									array_push($results, array(
+										'email' => $newEvent['creator'],
 										'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 										'action' => 'calendar:declined',
 										'url' => null,
@@ -650,6 +691,7 @@ class Notification extends Engine
 				}
 				if ($total > 0 && $accepted == $total) {
 					array_push($results, array(
+						'email' => $newEvent['creator'],
 						'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 						'action' => 'calendar:100accepted',
 						'url' => null,
@@ -657,6 +699,7 @@ class Notification extends Engine
 				}
 				if (!$success) { // it is an updated calendar without any change in a list of attendees
 					array_push($results, array(
+						'email' => $newEvent['creator'],
 						'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 						'action' => 'calendar:update',
 						'url' => $newEvent['summary'],
@@ -665,6 +708,7 @@ class Notification extends Engine
 			}
 		} else {
 			array_push($results, array(
+				'email' => $newEvent['creator'],
 				'player_id' => $this->mapPlayer($newEvent['creator'], 'google'),
 				'action' => 'calendar:update',
 				'url' => $newEvent['summary'],
