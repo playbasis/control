@@ -609,7 +609,7 @@ class Notification extends Engine
 					'action' => 'calendar:invite',
 					'url' => null,
 				));
-				$attendee = $this->findDistinctAttendee($newEvent['attendees'], $oldEvent['attendees']);
+				$attendee = $this->findDistinctAttendee($newEvent['creator'], $newEvent['attendees'], $oldEvent['attendees']);
 				array_push($results, array(
 					'email' => $attendee['email'],
 					'player_id' => $this->mapPlayer($attendee['email'], 'google'),
@@ -623,13 +623,15 @@ class Notification extends Engine
 					'action' => 'calendar:disinvite',
 					'url' => null,
 				));
-				$attendee = $this->findDistinctAttendee($oldEvent['attendees'], $newEvent['attendees']);
-				array_push($results, array(
-					'email' => $attendee['email'],
-					'player_id' => $this->mapPlayer($attendee['email'], 'google'),
-					'action' => 'calendar:disinvited',
-					'url' => null,
-				));
+				$attendee = $this->findDistinctAttendee($newEvent['creator'], $oldEvent['attendees'], $newEvent['attendees']);
+				if ($attendee) {
+					array_push($results, array(
+						'email' => $attendee['email'],
+						'player_id' => $this->mapPlayer($attendee['email'], 'google'),
+						'action' => 'calendar:disinvited',
+						'url' => null,
+					));
+				}
 			} else { // if #attendees are equal, we simply assume they are the same set of attendees
 				$success = false;
 				$total = 0;
@@ -719,8 +721,8 @@ class Notification extends Engine
 		return $results;
 	}
 
-	private function findDistinctAttendee($largers, $smallers) {
-		$emails = array();
+	private function findDistinctAttendee($creator, $largers, $smallers) {
+		$emails = array($creator);
 		foreach ($smallers as $attendee) {
 			array_push($emails, $attendee['email']);
 		}
