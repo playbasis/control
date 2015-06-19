@@ -19,7 +19,22 @@ class Jive extends MY_Controller
         $this->lang->load("jive", $lang['folder']);
         $this->lang->load("form_validation", $lang['folder']);
 
-        $this->_api = $this->jiveapi;
+        $this->_api = null;
+        $this->jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
+        if ($this->jive && isset($this->jive['token'])) {
+            $this->_api = $this->jiveapi;
+            try {
+                $this->_api->initialize($this->jive['jive_url'], $this->jive['token']['access_token']);
+            } catch (Exception $e) {
+                if ($e->getMessage() == 'TOKEN_EXPIRED') {
+                    $token = $this->_api->refreshToken($this->jive['jive_client_id'], $this->jive['jive_client_secret'], $this->jive['token']['refresh_token']);
+                    if ($token) {
+                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
+                        $this->_api->initialize($this->jive['jive_url'], $token->access_token); // re-initialize with new token
+                    }
+                }
+            }
+        }
     }
 
     public function index() {
@@ -83,9 +98,9 @@ class Jive extends MY_Controller
     public function authorize() {
         $code = $this->input->get('code');
         if (!empty($code)) {
-            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-            $this->_api->initialize($jive['jive_url']);
-            $token = $this->_api->newToken($jive['jive_client_id'], $jive['jive_client_secret'], $code);
+            $this->_api = $this->jiveapi;
+            $this->_api->initialize($this->jive['jive_url']);
+            $token = $this->_api->newToken($this->jive['jive_client_id'], $this->jive['jive_client_secret'], $code);
             if ($token) $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
         }
         redirect('/jive', 'refresh');
@@ -109,20 +124,7 @@ class Jive extends MY_Controller
             }
         }
 
-        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
-                    if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_api) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
@@ -141,7 +143,7 @@ class Jive extends MY_Controller
                 redirect('/jive/places'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['jive'] = $jive;
+            $this->data['jive'] = $this->jive;
             $this->session->set_userdata('total_places', $this->_api->totalPlaces());
             $this->getListPlaces($offset);
         } else {
@@ -169,20 +171,7 @@ class Jive extends MY_Controller
             }
         }
 
-        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
-                    if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_api) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
@@ -201,7 +190,7 @@ class Jive extends MY_Controller
                 redirect('/jive/events'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['jive'] = $jive;
+            $this->data['jive'] = $this->jive;
             $this->session->set_userdata('total_events', $this->Jive_model->totalEvents($this->User_model->getSiteId()));
             $this->getListEvents($offset);
         } else {
@@ -229,20 +218,7 @@ class Jive extends MY_Controller
             }
         }
 
-        if ($this->Jive_model->hasToken($this->User_model->getSiteId())) {
-            $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-            try {
-                $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
-            } catch (Exception $e) {
-                if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                    $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
-                    if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
-                        $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
-                    }
-                }
-            }
-
+        if ($this->_api) {
             /* POST */
             if ($this->input->post('selected')) {
                 $success = false;
@@ -261,7 +237,7 @@ class Jive extends MY_Controller
                 redirect('/jive/webhooks'.($offset ? '/'.$offset : ''), 'refresh');
             }
 
-            $this->data['jive'] = $jive;
+            $this->data['jive'] = $this->jive;
             $this->session->set_userdata('total_webhooks', $this->_api->totalWebhooks());
             $this->getListWebhooks($offset);
         } else {
@@ -281,19 +257,7 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
-                if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['jive'] = $jive;
+        $this->data['jive'] = $this->jive;
         $this->getListPlaces($offset);
     }
 
@@ -380,19 +344,7 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
-                if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['jive'] = $jive;
+        $this->data['jive'] = $this->jive;
         $this->getListEvents($offset);
     }
 
@@ -469,19 +421,7 @@ class Jive extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
-        try {
-            $this->_api->initialize($jive['jive_url'], $jive['token']['access_token']);
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'TOKEN_EXPIRED') {
-                $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
-                if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
-                    $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
-                }
-            }
-        }
-        $this->data['jive'] = $jive;
+        $this->data['jive'] = $this->jive;
         $this->getListWebhooks($offset);
     }
 
