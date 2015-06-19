@@ -24,7 +24,7 @@ class Calendar extends MY_Controller
         $this->_client = null;
         $this->_gcal = null;
         if ($this->record) {
-            $this->_client = $this->googleapi->initialize($this->record['google_client_id'], $this->record['google_client_secret'], base_url().'/calendar/authorize');
+            $this->_client = $this->googleapi->initialize($this->record['google_client_id'], $this->record['google_client_secret'], base_url().'calendar/authorize');
             if (isset($this->record['token'])) {
                 $this->_gcal = $this->_client->setAccessToken($this->record['token'])->calendar();
             }
@@ -80,12 +80,12 @@ class Calendar extends MY_Controller
                     $this->data['message'] = $this->lang->line('error_upload');
                 }
                 $data = json_decode($json);
-                if (!$data || !isset($data->installed) || !isset($data->installed->auth_uri) || !isset($data->installed->client_id) || !isset($data->installed->client_secret)) {
+                if (!$data || !isset($data->web) || !isset($data->web->auth_uri) || !isset($data->web->client_id) || !isset($data->web->client_secret)) {
                     $this->data['message'] = $this->lang->line('error_json');
                 }
 
                 if(/*$this->form_validation->run() &&*/ $this->data['message'] == null){
-                    $this->Googles_model->insertRegistration($data->installed->auth_uri, $data->installed->client_id, $data->installed->client_secret);
+                    $this->Googles_model->insertRegistration($data->web->auth_uri, $data->web->client_id, $data->web->client_secret);
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
                     redirect('/calendar', 'refresh');
                 }
