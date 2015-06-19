@@ -309,6 +309,7 @@ class Engine extends Quest
 	}
 	protected function processRule($input, $validToken, $fbData, $twData)
 	{
+
 		if(!isset($input['player_id']) || !$input['player_id']) {
 			if (!$input["test"])
 				$input['player_id'] = $this->player_model->getClientPlayerId(
@@ -325,6 +326,12 @@ class Engine extends Quest
 		$client_id = $validToken['client_id'];
 		$site_id = $validToken['site_id'];
 		$domain_name = $validToken['domain_name'];
+
+        $player = array(
+            'pb_player_id' =>$input['pb_player_id'],
+            'client_id' => $client_id ,
+            'site_id' => $site_id
+        );
 
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
@@ -454,6 +461,14 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+                                //publish to push notification
+                                $this->sendNotification(array(
+                                    'title' => $eventMessage,
+                                    'badge' => $jigsawConfig['reward_id'],
+                                    'type' => $jigsawConfig['reward_name'],
+                                    'value' => $jigsawConfig['quantity'],
+                                    'text' => $eventMessage
+                                ),$player,$eventMessage);
 
                                 if($lv > 0) {
                                     $eventMessage = $this->levelup($lv, $apiResult, $input);
@@ -470,6 +485,14 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+                                    //publish to push notification
+                                    $this->sendNotification(array(
+                                        'title' => $eventMessage,
+                                        'badge' => 'level',
+                                        'type' => 'level',
+                                        'value' => $lv,
+                                        'text' => $eventMessage
+                                    ),$player,$eventMessage);
                                 }
                             }  // close if (!$input["test"])
                         } else if(is_null($jigsawConfig['item_id']) || $jigsawConfig['item_id'] == '') {
@@ -499,6 +522,14 @@ class Engine extends Quest
                                                 $fbData['facebook_id'],
                                                 $eventMessage,
                                                 '');
+                                        //publish to push notification
+                                        $this->sendNotification(array(
+                                            'title' => $eventMessage,
+                                            'badge' => 'level',
+                                            'type' => 'level',
+                                            'value' => $lv,
+                                            'text' => $eventMessage
+                                        ),$player,$eventMessage);
                                     }
                                 }  // close if (!$input["test"])
                             } else {
@@ -546,6 +577,14 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+                                //publish to push notification
+                                $this->sendNotification(array(
+                                    'title' => $eventMessage,
+                                    'badge' => $jigsawConfig['reward_id'],
+                                    'type' => $jigsawConfig['reward_name'],
+                                    'value' => $jigsawConfig['quantity'],
+                                    'text' => $eventMessage
+                                ),$player,$eventMessage);
                             }  // close if (!$input["test"])
                         } else {
                             switch($jigsawConfig['reward_name']) {
@@ -597,6 +636,14 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+                                    //publish to push notification
+                                    $this->sendNotification(array(
+                                        'title' => $eventMessage,
+                                        'badge' => $jigsawConfig['reward_id'],
+                                        'type' => $jigsawConfig['reward_name'],
+                                        'value' => $jigsawConfig['quantity'],
+                                        'text' => $eventMessage
+                                    ),$player,$eventMessage);
                                     break;
                                 }  // close if (!$input["test"])
                                 break;
@@ -604,18 +651,6 @@ class Engine extends Quest
                                 log_message('error', 'Unknown reward: '.$jigsawConfig['reward_name']);
                                 break;
                             }  // close switch($jigsawConfig['reward_name'])
-
-                            /////////// push notification to mobile device /////////////////////
-                            // Rob mobile_token : 5d47ecfeb1978bf6a80e00de39d7ae629c948bdc695db44f14cbec6186576db2
-                            $notificationInfo = array(
-                                'device_token' => '6ee6e48f947fbd2f43321d803448e64230c6f5b76ee44416672737d8ed342efa',
-                                'messages' => $eventMessage,//$this->input->post('msg'),
-                                'data' => '',// $data,//$this->input->post('data'),
-                                'badge_number' => 1
-                            );
-                            $this->push_model->initail($notificationInfo);
-
-                            //////////  end of push notification to mobile device  /////////////////////
 
                         }  // close if(isset($exInfo['dynamic']))
                     } elseif($jigsaw['category'] == 'FEEDBACK') {
@@ -710,6 +745,34 @@ class Engine extends Quest
 	private function is_reward($category) {
 		return in_array($category, array('REWARD', 'FEEDBACK'));
 	}
+    public function sendNotification($data,$player,$msg)
+    {
+        $this->mongo_db->select('device_token');
+        $this->mongo_db->where(array(
+            'pb_player_id' => $player['player_id'],
+            'site_id' => $player['site_id'],
+            'client_id' => $player['client_id']
+        ));
+        $results = $this->mongo_db->get('playbasis_player_device');
+        /*$data = array(
+            'title' => $data['title'],
+            'badge' => $data['badge'],
+            'type' => $data['type'],
+            'value' => $data['value'],
+            'text' => $data['text']
+        );*/
+        foreach($results as $device_token)
+        {
+            $notificationInfo = array(
+                'device_token' => $device_token,
+                'messages' => $msg,
+                'data' => $data,
+                'badge_number' => 1
+            );
+            $this->push_model->initail($notificationInfo);
+        }
+
+    }
 	public function test_get()
 	{
 		echo '<pre>';
