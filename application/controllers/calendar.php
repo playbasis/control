@@ -24,7 +24,7 @@ class Calendar extends MY_Controller
         $this->_client = null;
         $this->_gcal = null;
         if ($this->record) {
-            $this->_client = $this->googleapi->initialize($this->record['google_client_id'], $this->record['google_client_secret'], base_url().'/calendar/authorize');
+            $this->_client = $this->googleapi->initialize($this->record['google_client_id'], $this->record['google_client_secret'], base_url().'calendar/authorize');
             if (isset($this->record['token'])) {
                 $this->_gcal = $this->_client->setAccessToken($this->record['token'])->calendar();
             }
