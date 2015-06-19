@@ -32,7 +32,6 @@ class Global_Player_Model extends MY_Model
             $this->mongo_db->limit(1);
             $id = $this->mongo_db->get('global_player');
             return $id;
-            //if(!$id) return $id;
         }
         else
         {
@@ -66,8 +65,6 @@ class Global_Player_Model extends MY_Model
     public function createGlobalPlayer($data,$social_data)
     {
         $mongoDate = new MongoDate(time());
-        $social = array();
-
 
         $salt = get_random_password(10,10);
 
@@ -76,22 +73,31 @@ class Global_Player_Model extends MY_Model
         $password = dohash($insert_password, $salt);
 
         if(!$social_data) {
+            $social = array(
+                'provider' => $social_data['provider'],
+                'id' => $social_data['id'],
+                'username' => $social_data['username'],
+                'access_token' => $social_data['access_token'],
+                'token_expire' => $social_data['token_expire'],
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate
+            );
 
             return $this->mongo_db->insert('global_player', array(
 
                 'username' => $data['username'],
                 'password' => $password,
                 'salt' => $salt,
-                //'first_name' => (isset($data['first_name'])) ? $data['first_name'] : $data['username'],
-                //'last_name' => (isset($data['last_name'])) ? $data['last_name'] : null,
-                //'nickname' => (isset($data['nickname'])) ? $data['nickname'] : null,
-                //'gender' => (isset($data['gender'])) ? intval($data['gender']) : 0,
-                //'birth_date' => (isset($data['birth_date'])) ? new MongoDate(strtotime($data['birth_date'])) : null,
-                //'image' => $data['image'],
+                'first_name' => (isset($data['first_name'])) ? $data['first_name'] : $data['username'],
+                'last_name' => (isset($data['last_name'])) ? $data['last_name'] : null,
+                'nickname' => (isset($data['nickname'])) ? $data['nickname'] : null,
+                'gender' => (isset($data['gender'])) ? intval($data['gender']) : 0,
+                'birth_date' => (isset($data['birth_date'])) ? new MongoDate(strtotime($data['birth_date'])) : null,
+                'image' => $data['image'],
                 'email' => $data['email'],
                 'status' => true,
-                //'social' => $social,
-                //'phone_number' => (isset($data['phone_number'])) ? $data['phone_number'] : null,
+                'social' => $social,
+                'phone_number' => (isset($data['phone_number'])) ? $data['phone_number'] : null,
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate,
 
@@ -118,7 +124,7 @@ class Global_Player_Model extends MY_Model
             ));
         }
     }
-    public function updateGlobalPlayer($id, $fieldData)
+    public function updateGlobalPlayer($id, $fieldData )
     {
         if(!$id)
             return false;
@@ -149,7 +155,6 @@ class Global_Player_Model extends MY_Model
         $result = $result[0];
         if(isset($result['date_added']))
         {
-            // $result['registered'] = date('Y-m-d H:i:s', $result['date_added']->sec);
             $result['registered'] = datetimeMongotoReadable($result['date_added']);
             unset($result['date_added']);
         }
@@ -269,7 +274,8 @@ class Global_Player_Model extends MY_Model
                 'site_id' => new MongoId($data['site_id']),
                 'device_token' => $data['device_token'],
                 'device_description' => $data['device_description'],
-                'status' => true,//$data['status'],
+                'device_name' => $data['device_name'],
+                'status' => true,
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate,
 

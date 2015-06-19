@@ -6,7 +6,6 @@ class Push_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
-        //$this->load->library('ApnsPHP/Autoload');
     }
     public function initail($data)
     {
@@ -22,22 +21,17 @@ class Push_model extends MY_Model
         $push = new ApnsPHP_Push(
             ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
             APPPATH.'libraries/ApnsPHP/Certificates/push_development.pem',
-            ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION,
-            APPPATH.'libraries/ApnsPHP/Certificates/push_push_production.pem'
         );*/
         $push = new ApnsPHP_Push(
             ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION,
             APPPATH.'libraries/ApnsPHP/Certificates/push_production.pem'
         );
         // Set the Provider Certificate passphrase
-        // $push->setProviderCertificatePassphrase('test');
-            $push->setProviderCertificatePassphrase('playbasis');
+                $push->setProviderCertificatePassphrase('playbasis');
         // Set the Root Certificate Autority to verify the Apple remote peer
-                //$push->setRootCertificationAuthority(APPPATH.'libraries/ApnsPHP/Certificates/entrust_2048_ca.cer');
-        $push->setRootCertificationAuthority(APPPATH.'libraries/ApnsPHP/Certificates/Entrust_Root_Certification_Authority.pem');
+                $push->setRootCertificationAuthority(APPPATH.'libraries/ApnsPHP/Certificates/Entrust_Root_Certification_Authority.pem');
         // Connect to the Apple Push Notification Service
                 $push->connect();
-
         // Instantiate a new Message with a single recipient
                 $message = new ApnsPHP_Message($data['device_token']);
 
@@ -59,7 +53,7 @@ class Push_model extends MY_Model
                 $message->setCustomProperty('DataInfo', $data['data']);
 
         // Set another custom property
-                $message->setCustomProperty('acme3', array('bing', 'bong'));
+                //$message->setCustomProperty('acme3', array('bing', 'bong'));
 
         // Set the expiry value to 30 seconds
                 $message->setExpiry(30);
