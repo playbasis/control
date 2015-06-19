@@ -23,7 +23,7 @@ class Lithium extends MY_Controller
         if ($this->Lithium_model->hasValidRegistration($this->User_model->getSiteId())) {
             $this->_api = $this->lithiumapi;
             $lithium = $this->Lithium_model->getRegistration($this->User_model->getSiteId());
-            if (isset($lithium['token']['access_token'])) { // $this->Lithium_model->hasToken($this->User_model->getSiteId())
+            if (isset($lithium['token'])) {
                 try {
                     $this->_api->initialize($lithium['lithium_url'], $lithium['token']['access_token']);
                 } catch (Exception $e) {
