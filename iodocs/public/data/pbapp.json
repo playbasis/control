@@ -235,11 +235,18 @@
                 "Default": "",
                 "Type": "string",
                 "Description": "Device model description"
+              },
+              {
+                "Name": "device_name",
+                "Required": "Y",
+                "Default": "",
+                "Type": "string",
+                "Description": "Device model name"
               }
 
             ]
-          },
-          {
+          }
+          /*{
             "MethodName": "Direct Msg to Device",
             "Synopsis": "Direct message to mobile device",
             "HTTPMethod": "POST",
@@ -286,7 +293,7 @@
               }
 
             ]
-          }
+          }*/
 
 
         ]
