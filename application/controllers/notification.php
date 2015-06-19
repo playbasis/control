@@ -503,8 +503,10 @@ class Notification extends Engine
 			$player['player_id'] = $this->mapPlayer($player['player_id'], $service);
 			$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, $player));
 			$this->player_model->insertPlayerService($validToken, $pb_player_id, $s_player_id, $service);
+		} else {
+			$pb_player_id = $record['pb_player_id'];
 		}
-		return $this->player_model->readPlayer($record['pb_player_id'], $validToken['site_id'], array(
+		return $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
 			'cl_player_id',
 			'username',
 			'first_name',
