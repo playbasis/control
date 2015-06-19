@@ -86,7 +86,7 @@ class Jive extends MY_Controller
             $jive = $this->Jive_model->getRegistration($this->User_model->getSiteId());
             $this->_api->initialize($jive['jive_url']);
             $token = $this->_api->newToken($jive['jive_client_id'], $jive['jive_client_secret'], $code);
-            if ($token) $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+            if ($token) $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
         }
         redirect('/jive', 'refresh');
     }
@@ -117,7 +117,7 @@ class Jive extends MY_Controller
                 if ($e->getMessage() == 'TOKEN_EXPIRED') {
                     $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
                     if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
                         $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
                     }
                 }
@@ -177,7 +177,7 @@ class Jive extends MY_Controller
                 if ($e->getMessage() == 'TOKEN_EXPIRED') {
                     $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
                     if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
                         $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
                     }
                 }
@@ -237,7 +237,7 @@ class Jive extends MY_Controller
                 if ($e->getMessage() == 'TOKEN_EXPIRED') {
                     $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
                     if ($token) {
-                        $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                        $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
                         $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
                     }
                 }
@@ -288,7 +288,7 @@ class Jive extends MY_Controller
             if ($e->getMessage() == 'TOKEN_EXPIRED') {
                 $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
                 if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
                     $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
                 }
             }
@@ -387,7 +387,7 @@ class Jive extends MY_Controller
             if ($e->getMessage() == 'TOKEN_EXPIRED') {
                 $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
                 if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
                     $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
                 }
             }
@@ -476,7 +476,7 @@ class Jive extends MY_Controller
             if ($e->getMessage() == 'TOKEN_EXPIRED') {
                 $token = $this->_api->refreshToken($jive['jive_client_id'], $jive['jive_client_secret'], $jive['token']['refresh_token']);
                 if ($token) {
-                    $this->Jive_model->updateToken($this->User_model->getSiteId(), (array)$token);
+                    $this->Jive_model->updateToken($this->User_model->getClientId(), $this->User_model->getSiteId(), (array)$token);
                     $this->_api->initialize($jive['jive_url'], $token->access_token); // re-initialize with new token
                 }
             }

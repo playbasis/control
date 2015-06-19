@@ -47,13 +47,14 @@ class Jive_model extends MY_Model {
         return $results ? $results[0] : null;
     }
 
-    public function updateToken($site_id, $token) {
+    public function updateToken($client_id, $site_id, $token) {
         $this->set_site_mongodb($site_id);
         $d = new MongoDate(time());
         $token['date_start'] = $d;
         $token['date_expire'] = new MongoDate($d->sec + $token['expires_in']);
         $this->mongo_db->where('site_id', new MongoID($site_id));
         $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->set('client_id', $client_id); // update missing client_id as well
         $this->mongo_db->set('token', $token);
         $this->mongo_db->set('date_modified', $d);
         $this->mongo_db->update("playbasis_jive_to_client");
