@@ -506,7 +506,7 @@ class Notification extends Engine
 		} else {
 			$pb_player_id = $record['pb_player_id'];
 		}
-		return $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+		$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
 			'cl_player_id',
 			'username',
 			'first_name',
@@ -514,6 +514,8 @@ class Notification extends Engine
 			'email',
 			'image'
 		));
+		$player['pb_player_id'] = $pb_player_id;
+		return $player;
 	}
 
 	private function extractEvents($events) {
@@ -836,18 +838,6 @@ class Notification extends Engine
 	protected function rule($site_id, $actionName, $url, $player) {
 		$site = $this->client_model->findBySiteId($site_id);
 		$validToken = array('client_id' => $site['client_id'], 'site_id' => $site_id, 'domain_name' => $site['domain_name']);
-		$cl_player_id = $player['cl_player_id'];
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $cl_player_id)));
-		if (!$pb_player_id) {
-			$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-				'player_id' => $cl_player_id,
-				'image' => isset($player['image']) ? $player['image'] : $this->config->item('DEFAULT_PROFILE_IMAGE'),
-				'email' => isset($player['email']) ? $player['email'] : 'no-reply@playbasis.com',
-				'username' => isset($player['username']) ? $player['username'] : $cl_player_id,
-				'first_name' => isset($player['first_name']) ? $player['first_name'] : null,
-				'last_name' => isset($player['last_name']) ? $player['last_name'] : null,
-			)));
-		}
 		$action = $this->client_model->getAction(array(
 			'client_id' => $validToken['client_id'],
 			'site_id' => $validToken['site_id'],
@@ -859,8 +849,8 @@ class Notification extends Engine
 		$actionId = $action['action_id'];
 		$actionIcon = $action['icon'];
 		$input = array_merge($validToken, array(
-			'player_id' => $cl_player_id,
-			'pb_player_id' => $pb_player_id,
+			'player_id' => $player['cl_player_id'],
+			'pb_player_id' => $player['pb_player_id'],
 			'action_id' => $actionId,
 			'action_name' => $actionName,
 			'action_icon' => $actionIcon,
@@ -868,7 +858,7 @@ class Notification extends Engine
 			'test' => false
 		));
 		$apiResult = $this->processRule($input, $validToken, null, null);
-		$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+		$apiQuestResult = $this->QuestProcess($player['pb_player_id'], $validToken);
 		return array_merge($apiResult, $apiQuestResult);
 	}
 }
