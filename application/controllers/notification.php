@@ -498,13 +498,13 @@ class Notification extends Engine
 
 	private function getPlayerFromService($validToken, $player, $service) {
 		$s_player_id = $player['player_id'];
-		$pb_player_id = $this->player_model->findPlayerFromService($validToken, $s_player_id, $service);
-		if (!$pb_player_id) {
+		$record = $this->player_model->findPlayerFromService($validToken, $s_player_id, $service);
+		if (!$record) {
 			$player['player_id'] = $this->mapPlayer($player['player_id'], $service);
 			$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, $player));
 			$this->player_model->insertPlayerService($validToken, $pb_player_id, $s_player_id, $service);
 		}
-		return $this->player_model->readPlayer($pb_player_id, $validToken['site_id'], array(
+		return $this->player_model->readPlayer($record['pb_player_id'], $validToken['site_id'], array(
 			'cl_player_id',
 			'username',
 			'first_name',
