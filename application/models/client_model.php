@@ -923,6 +923,17 @@ class Client_model extends MY_Model
         return $this->mongo_db->get('playbasis_client_site');
     }
 
+    public function findActiveSites($client_id) {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where(array('status' => true, 'deleted' => false));
+        return $this->mongo_db->get('playbasis_client_site');
+    }
+
+    public function countActionLog($site_id) {
+        $this->mongo_db->where('site_id', $site_id);
+        return $this->mongo_db->count('playbasis_action_log');
+    }
+
     public function getPlanById($plan_id) {
         return $this->getById($plan_id, 'playbasis_plan');
     }
