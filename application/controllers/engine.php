@@ -794,7 +794,7 @@ class Engine extends Quest
     {
         $this->mongo_db->select('device_token');
         $this->mongo_db->where(array(
-            'pb_player_id' => $player['player_id'],
+            'pb_player_id' => $player['pb_player_id'],
             'site_id' => $player['site_id'],
             'client_id' => $player['client_id']
         ));
