@@ -2296,8 +2296,8 @@ class Player_model extends MY_Model
 
         $this->mongo_db->select(null);
         $this->mongo_db->where(array(
-            'pb_player_id' => new MongoId($data['player_id']),
-            'site_id' => new MongoId($data['site_id']),
+            'pb_player_id' =>$data['player_id'],
+            'site_id' => $data['site_id'],
             'client_id' => $data['client_id'],
             'udid' => $data['udid'],
             'device_token' => $data['device_token']
@@ -2308,9 +2308,9 @@ class Player_model extends MY_Model
         {
             $this->mongo_db->insert('playbasis_player_device', array(
 
-                'pb_player_id' => new MongoId($data['player_id']),
-                'site_id' => new MongoId($data['site_id']),
-                'client_id' => new MongoId($data['site_id']),
+                'pb_player_id' => $data['player_id'],
+                'site_id' => $data['site_id'],
+                'client_id' => $data['client_id'],
                 'udid' => $data['udid'],
                 'device_token' => $data['device_token'],
                 'device_description' => $data['device_description'],
