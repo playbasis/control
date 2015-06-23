@@ -68,7 +68,7 @@
                 </table>
                 <?php if (!isset($calendar['token'])) { ?>
                 Please click the button below to authorize Playbasis <br>
-                <a href="<?php echo $calendar['google_url'].'?client_id='.$calendar['google_client_id'].'&response_type=code&scope=https://www.googleapis.com/auth/calendar&redirect_uri='.base_url().'calendar/authorize'; ?>" class="btn btn-success btn-mini">Authorize</a>
+                <a href="<?php echo $calendar['google_url'].'?client_id='.$calendar['google_client_id'].'&response_type=code&scope=https://www.googleapis.com/auth/calendar&redirect_uri='.base_url().'calendar/authorize&access_type=offline'; ?>" class="btn btn-success btn-mini">Authorize</a>
                 <?php } ?>
             <?php } else { ?>
                 Please upload your "client_secret.json" using the form below.
