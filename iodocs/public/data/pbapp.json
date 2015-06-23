@@ -246,56 +246,6 @@
 
             ]
           }
-          /*{
-            "MethodName": "Direct Msg to Device",
-            "Synopsis": "Direct message to mobile device",
-            "HTTPMethod": "POST",
-            "URI": "/Universe/directMsg",
-            "RequiresOAuth": "N",
-            "parameters": [
-              {
-                "Name": "token",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "access token returned from Auth"
-              },
-              {
-                "Name": "msg",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "message for notification"
-              },
-              {
-                "Name": "device_token",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "device_token"
-              }
-
-            ]
-          },
-          {
-            "MethodName": "My Test",
-            "Synopsis": "test",
-            "HTTPMethod": "GET",
-            "URI": "/Universe/mytest",
-            "RequiresOAuth": "N",
-            "parameters": [
-              {
-                "Name": "api_key",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "access token returned from Auth"
-              }
-
-            ]
-          }*/
-
-
         ]
       },
       {
