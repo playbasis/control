@@ -2296,7 +2296,7 @@ class Player_model extends MY_Model
 
         $this->mongo_db->select(null);
         $this->mongo_db->where(array(
-            'pb_player_id' =>$data['player_id'],
+            'pb_player_id' =>$data['pb_player_id'],
             'site_id' => $data['site_id'],
             'client_id' => $data['client_id'],
             'udid' => $data['udid'],
@@ -2308,7 +2308,7 @@ class Player_model extends MY_Model
         {
             $this->mongo_db->insert('playbasis_player_device', array(
 
-                'pb_player_id' => $data['player_id'],
+                'pb_player_id' => $data['pb_player_id'],
                 'site_id' => $data['site_id'],
                 'client_id' => $data['client_id'],
                 'udid' => $data['udid'],
