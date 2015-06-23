@@ -514,7 +514,7 @@ class Player extends REST2_Controller
             'pb_player_id' => $pb_player_id,
             'site_id' => $this->validToken['site_id'],
             'client_id' => $this->validToken['client_id'],
-            'udid' => $this->validToken['udid'],
+            'uuid' => $this->validToken['uuid'],
             'device_token' => $this->validToken['device_token'],
             'device_description' => $this->validToken['device_description'],
             'device_name' => $this->validToken['device_name']

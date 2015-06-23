@@ -2299,7 +2299,7 @@ class Player_model extends MY_Model
             'pb_player_id' =>$data['pb_player_id'],
             'site_id' => $data['site_id'],
             'client_id' => $data['client_id'],
-            'udid' => $data['udid'],
+            'uuid' => $data['uuid'],
             'device_token' => $data['device_token']
         ));
         $this->mongo_db->limit(1);
@@ -2311,7 +2311,7 @@ class Player_model extends MY_Model
                 'pb_player_id' => $data['pb_player_id'],
                 'site_id' => $data['site_id'],
                 'client_id' => $data['client_id'],
-                'udid' => $data['udid'],
+                'uuid' => $data['uuid'],
                 'device_token' => $data['device_token'],
                 'device_description' => $data['device_description'],
                 'device_name' => $data['device_name'],
