@@ -814,7 +814,7 @@ class Engine extends Quest
                 'data' => $data,
                 'badge_number' => 1
             );
-            $this->push_model->initail($notificationInfo);
+            $this->push_model->initial($notificationInfo);
         }
 
     }
