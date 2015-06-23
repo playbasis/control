@@ -7,6 +7,7 @@ $lang['text_success']           			= 'You have successfully uploaded file!';
 $lang['text_success_watch_place']           			= 'You have successfully created a new webhook for the selected place(s)!';
 $lang['text_success_delete']           			= 'You have successfully deleted webhook(s)!';
 $lang['text_fail_authorized_code']           			= 'There is a problem with an authorized code';
+$lang['text_fail_initialize_access_token']           			= 'There is a problem in initializing with given access token';
 $lang['text_default']           		= 'Default';
 $lang['text_image_manager']     		= 'Image Manager';
 $lang['text_browse']            		= 'Browse Files';
