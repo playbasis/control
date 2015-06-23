@@ -510,6 +510,16 @@ class Player extends REST2_Controller
 			$this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id, $session_expires_in);
 		}
 
+        $this->player_model->registerDevice(array(
+            'pb_player_id' => $pb_player_id,
+            'site_id' => $this->validToken['site_id'],
+            'client_id' => $this->validToken['client_id'],
+            'udid' => $this->validToken['udid'],
+            'device_token' => $this->validToken['device_token'],
+            'device_description' => $this->validToken['device_description'],
+            'device_name' => $this->validToken['device_name']
+        ),$this->validToken['site_id']);
+
 		$this->response($this->resp->setRespond(), 200);
 	}
 	public function logout_post($player_id = '')

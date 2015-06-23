@@ -2289,6 +2289,56 @@ class Player_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_player_session');
         return $results ? $results[0] : null;
     }
+
+    public function registerDevice($data,$site_id)
+    {
+        $mongoDate = new MongoDate(time());
+
+        $this->mongo_db->select(null);
+        $this->mongo_db->where(array(
+            'pb_player_id' => new MongoId($data['player_id']),
+            'site_id' => new MongoId($data['site_id']),
+            'client_id' => $data['client_id'],
+            'udid' => $data['udid'],
+            'device_token' => $data['device_token']
+        ));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_player_device');
+        if(!$results)
+        {
+            $this->mongo_db->insert('playbasis_player_device', array(
+
+                'pb_player_id' => new MongoId($data['player_id']),
+                'site_id' => new MongoId($data['site_id']),
+                'client_id' => new MongoId($data['site_id']),
+                'udid' => $data['udid'],
+                'device_token' => $data['device_token'],
+                'device_description' => $data['device_description'],
+                'device_name' => $data['device_name'],
+                'status' => true,
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate,
+
+            ));
+        }
+        else{
+
+            $this->set_site_mongodb($site_id);
+            $this->mongo_db->where(array(
+                'pb_player_id' => new MongoId($data['player_id']),
+                'site_id' => new MongoId($data['site_id']),
+                'client_id' => $data['client_id'],
+                'udid' => $data['udid']
+            ));
+            $this->mongo_db->set('device_token',$data['device_token']);
+            $this->mongo_db->set('device_description',$data['device_description']);
+            $this->mongo_db->set('date_modified',$mongoDate);
+            $this->mongo_db->update('playbasis_player_device');
+
+
+        }
+
+    }
 }
 
 function index_id($obj) {
