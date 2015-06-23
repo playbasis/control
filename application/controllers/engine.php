@@ -658,7 +658,7 @@ class Engine extends Quest
                                 'data' => '',// $data,//$this->input->post('data'),
                                 'badge_number' => 1
                             );
-                            $this->push_model->initail($notificationInfo);
+                            $this->push_model->initial($notificationInfo);
 
                             //////////  end of push notification to mobile device  /////////////////////
 

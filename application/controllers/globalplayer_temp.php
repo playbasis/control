@@ -135,7 +135,7 @@ class GlobalPlayer extends REST2_Controller
         );
         print_r($notificationInfo);
         //print_r($temp);
-        $this->push_model->initail($notificationInfo);
+        $this->push_model->initial($notificationInfo);
         //$this->push_model->server($notificationInfo);
         echo('Send Notification Success');
 

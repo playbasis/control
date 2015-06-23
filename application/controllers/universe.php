@@ -157,7 +157,7 @@ class Universe extends REST2_Controller
             'data' => $data,
             'badge_number' => 1
         );
-        $this->push_model->initail($notificationInfo);
+        $this->push_model->initial($notificationInfo);
         $this->response($this->resp->setRespond(''), 200);
 
     }

@@ -7,7 +7,7 @@ class Push_model extends MY_Model
     {
         parent::__construct();
     }
-    public function initail($data)
+    public function initial($data)
     {
 
 
