@@ -588,7 +588,7 @@ class Notification extends Engine
 						'url' => null,
 					));
 				}
-			} else if ($oldCount > $newCount) { // calendar:uninvite
+			} else if ($oldCount > $newCount) { // calendar:disinvite
 				array_push($results, array(
 					'email' => $newEvent['creator'],
 					'player_id' => $newEvent['creator'],
@@ -673,7 +673,7 @@ class Notification extends Engine
 						'url' => null,
 					));
 				}
-				if (!$success) { // it is an updated calendar without any change in a list of attendees
+				if (!$success) { // calendar:update, it is an update without any change in a list of attendees
 					array_push($results, array(
 						'email' => $newEvent['creator'],
 						'player_id' => $newEvent['creator'],
@@ -682,7 +682,7 @@ class Notification extends Engine
 					));
 				}
 			}
-		} else {
+		} else { // calendar:update
 			array_push($results, array(
 				'email' => $newEvent['creator'],
 				'player_id' => $newEvent['creator'],
