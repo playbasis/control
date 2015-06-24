@@ -215,7 +215,8 @@ class Player_model extends MY_Model
 		$this->mongo_db->where('player_id', $player_id);
 		$this->mongo_db->where('service', $service);
 		$this->mongo_db->limit(1);
-		return $this->mongo_db->get('playbasis_player_service');
+		$results = $this->mongo_db->get('playbasis_player_service');
+		return $results ? $results[0] : null;
 	}
 	public function insertPlayerService($validToken, $pb_player_id, $player_id, $service) {
 		$this->set_site_mongodb($validToken['site_id']);

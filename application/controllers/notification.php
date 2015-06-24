@@ -579,22 +579,24 @@ class Notification extends Engine
 					'action' => 'calendar:invite',
 					'url' => null,
 				));
-				$attendee = $this->findDistinctAttendee($newEvent['creator'], $newEvent['attendees'], $oldEvent['attendees']);
-				array_push($results, array(
-					'email' => $attendee['email'],
-					'player_id' => $attendee['email'],
-					'action' => 'calendar:invited',
-					'url' => null,
-				));
-			} else if ($oldCount > $newCount) { // calendar:uninvite
+				$attendees = $this->findDistinctAttendees($newEvent['creator'], $newEvent['attendees'], $oldEvent['attendees']);
+				foreach ($attendees as $attendee) {
+					array_push($results, array(
+						'email' => $attendee['email'],
+						'player_id' => $attendee['email'],
+						'action' => 'calendar:invited',
+						'url' => null,
+					));
+				}
+			} else if ($oldCount > $newCount) { // calendar:disinvite
 				array_push($results, array(
 					'email' => $newEvent['creator'],
 					'player_id' => $newEvent['creator'],
 					'action' => 'calendar:disinvite',
 					'url' => null,
 				));
-				$attendee = $this->findDistinctAttendee($newEvent['creator'], $oldEvent['attendees'], $newEvent['attendees']);
-				if ($attendee) {
+				$attendees = $this->findDistinctAttendees($newEvent['creator'], $oldEvent['attendees'], $newEvent['attendees']);
+				foreach ($attendees as $attendee) {
 					array_push($results, array(
 						'email' => $attendee['email'],
 						'player_id' => $attendee['email'],
@@ -671,7 +673,7 @@ class Notification extends Engine
 						'url' => null,
 					));
 				}
-				if (!$success) { // it is an updated calendar without any change in a list of attendees
+				if (!$success) { // calendar:update, it is an update without any change in a list of attendees
 					array_push($results, array(
 						'email' => $newEvent['creator'],
 						'player_id' => $newEvent['creator'],
@@ -680,7 +682,7 @@ class Notification extends Engine
 					));
 				}
 			}
-		} else {
+		} else { // calendar:update
 			array_push($results, array(
 				'email' => $newEvent['creator'],
 				'player_id' => $newEvent['creator'],
@@ -691,17 +693,18 @@ class Notification extends Engine
 		return $results;
 	}
 
-	private function findDistinctAttendee($creator, $largers, $smallers) {
+	private function findDistinctAttendees($creator, $largers, $smallers) {
+		$distinctAttendees = array();
 		$emails = array($creator);
 		foreach ($smallers as $attendee) {
 			array_push($emails, $attendee['email']);
 		}
 		foreach ($largers as $attendee) {
 			if (!in_array($attendee['email'], $emails)) {
-				return $attendee;
+				array_push($distinctAttendees, $attendee);
 			}
 		}
-		return null;
+		return $distinctAttendees;
 	}
 
 	private function mapPlayer($id, $service) {
