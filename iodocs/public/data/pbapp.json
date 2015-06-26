@@ -193,58 +193,6 @@
                 "Description": "access token returned from Auth"
               }
             ]
-          },
-          {
-            "MethodName": "Device Registration",
-            "Synopsis": "Register for your device ",
-            "HTTPMethod": "POST",
-            "URI": "/Universe/deviceRegistration",
-            "RequiresOAuth": "N",
-            "parameters": [
-              {
-                "Name": "player_id",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "player id"
-              },
-              {
-                "Name": "site_id",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "site_id"
-              },
-              {
-                "Name": "token",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "access token returned from Auth"
-              },
-              {
-                "Name": "device_token",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "access token returned from Device"
-              },
-              {
-                "Name": "device_description",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "Device model description"
-              },
-              {
-                "Name": "device_name",
-                "Required": "Y",
-                "Default": "",
-                "Type": "string",
-                "Description": "Device model name"
-              }
-
-            ]
           }
         ]
       },
