@@ -73,6 +73,17 @@ class Client_model extends MY_Model
         $id = $this->mongo_db->get('playbasis_action_to_client');
         return ($id && $id[0]) ? $id[0]['name'] : '';
     }
+    public function getRuleDetail($clientData, $rule_id) {
+        $this->set_site_mongodb($clientData['site_id']);
+        $this->mongo_db->select(array('name', 'description', 'action_id', 'jigsaw_set', 'active_status', 'tags'));
+        $this->mongo_db->where(array(
+            'client_id' => $clientData['client_id'],
+            'site_id' => $clientData['site_id'],
+            '_id' => new MongoId($rule_id)
+        ));
+        $id = $this->mongo_db->get('playbasis_rule');
+        return $id ? $id[0] : '';
+    }
     /*
      * get RuleSet by _id from plybasis_rule
      * @param string | MongoId $id
@@ -501,7 +512,7 @@ class Client_model extends MY_Model
 		$badge['image'] = $this->config->item('IMG_PATH') . $badge['image'];
 		return $badge;
 	}
-    public function updateplayerGoods($goodsId, $quantity, $pbPlayerId, $clPlayerId, $client_id, $site_id)
+    public function updateplayerGoods($goodsId, $quantity, $pbPlayerId, $clPlayerId, $client_id, $site_id, $is_sponsor=false)
     {
         assert(isset($goodsId));
         assert(isset($quantity));
@@ -512,8 +523,8 @@ class Client_model extends MY_Model
             'quantity'
         ));
         $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
+            'client_id' => $is_sponsor ? null : $client_id,
+            'site_id' => $is_sponsor ? null : $site_id,
             'goods_id' => $goodsId,
             'deleted' => false
         ));
@@ -548,8 +559,8 @@ class Client_model extends MY_Model
         // END NEW -->
         $this->mongo_db->set('quantity', $remainingQuantity);
         $this->mongo_db->set('date_modified', $mongoDate);
-        $this->mongo_db->where('client_id', $client_id);
-        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('client_id', $is_sponsor ? null : $client_id);
+        $this->mongo_db->where('site_id', $is_sponsor ? null : $site_id);
         $this->mongo_db->where('goods_id', $goodsId);
         $this->mongo_db->update('playbasis_goods_to_client');
 
@@ -577,6 +588,7 @@ class Client_model extends MY_Model
                 'client_id' => $client_id,
                 'site_id' => $site_id,
                 'goods_id' => $goodsId,
+                'is_sponsor' => $is_sponsor,
                 'value' => intval($quantity),
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate
@@ -909,6 +921,17 @@ class Client_model extends MY_Model
         $this->mongo_db->select(array('client_id', '_id'));
         $this->mongo_db->where(array('status' => true, 'deleted' => false));
         return $this->mongo_db->get('playbasis_client_site');
+    }
+
+    public function findActiveSites($client_id) {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where(array('status' => true, 'deleted' => false));
+        return $this->mongo_db->get('playbasis_client_site');
+    }
+
+    public function countActionLog($site_id) {
+        $this->mongo_db->where('site_id', $site_id);
+        return $this->mongo_db->count('playbasis_action_log');
     }
 
     public function getPlanById($plan_id) {

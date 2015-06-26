@@ -67,7 +67,7 @@ class Goods_model extends MY_Model
         }
         return $goods;
     }
-    public function getGoods($data)
+    public function getGoods($data, $is_sponsor=false)
     {
         //get goods id
         $this->set_site_mongodb($data['site_id']);
@@ -77,16 +77,16 @@ class Goods_model extends MY_Model
         ));
         $this->mongo_db->select(array(),array('_id'));
         $this->mongo_db->where(array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
+            'client_id' => $is_sponsor ? null : $data['client_id'],
+            'site_id' => $is_sponsor ? null : $data['site_id'],
             'goods_id' => $data['goods_id'],
             'deleted' => false
         ));
+        $this->mongo_db->limit(1);
         $result = $this->mongo_db->get('playbasis_goods_to_client');
 
         if(isset($result[0]['redeem']))
         {
-
             if(isset($result[0]['redeem']['badge'])){
                 $redeem = array();
                 foreach($result[0]['redeem']['badge'] as $k => $v){
@@ -107,6 +107,7 @@ class Goods_model extends MY_Model
                         'site_id' => $data['site_id'],
                         'reward_id' => new MongoId($k),
                     ));
+                    $this->mongo_db->limit(1);
                     $custom = $this->mongo_db->get('playbasis_reward_to_client');
                     if(isset($custom[0]['name'])){
                         $redeem_inside = array();
@@ -160,17 +161,6 @@ class Goods_model extends MY_Model
 		));
 		$this->mongo_db->where_in('_id', $data['in']);
 		return $this->mongo_db->get('playbasis_goods_to_client');
-	}
-	public function totalRedemption($data, $goods_id)
-	{
-		$this->set_site_mongodb($data['site_id']);
-		$this->mongo_db->select(array('pb_player_id','value'));
-		$this->mongo_db->where(array(
-			'client_id' => $data['client_id'],
-			'site_id' => $data['site_id'],
-		));
-		$this->mongo_db->where_in('goods_id', is_array($goods_id) ? $goods_id : array($goods_id));
-		return $this->mongo_db->get('playbasis_goods_to_player');
 	}
 	public function redeemLogDistinctPlayer($data, $goods_id, $from=null, $to=null)
 	{
@@ -245,23 +235,23 @@ class Goods_model extends MY_Model
 		if ($limit !== null) $this->mongo_db->limit($limit);
 		return $this->mongo_db->get('playbasis_goods_to_client');
 	}
-	public function getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount) {
-		$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, 0, 1);
+	public function getGoodsByGroupAndPlayerId($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
+		$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, 0, 1);
 		if ($goodsList) {
 			if ($this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount)) {
-				$total = $this->getTotalGoodsByGroup($client_id, $site_id, $group);
+				$total = $this->getTotalGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group);
 				$offset = rand(0, $total-1); // randomly pick one
-				$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, $offset, 1);
+				$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, $offset, 1);
 				return $goodsList ? $goodsList[0] : null;
 			}
 		}
 		return null;
 	}
-	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount) {
-		$goodsList = $this->getGoodsByGroup($client_id, $site_id, $group, 0, 1);
+	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
+		$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, 0, 1);
 		if ($goodsList) {
 			if ($this->checkGoods($client_id, $site_id, $goodsList[0], $pb_player_id, $amount)) {
-				return $this->getTotalGoodsByGroup($client_id, $site_id, $group);
+				return $this->getTotalGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group);
 			}
 		}
 		return 0; // unavailable
@@ -416,6 +406,7 @@ class Goods_model extends MY_Model
 			'site_id' => $site_id,
 			'name' => strtolower($name)
 		));
+		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
 		return $result ? $result[0]['reward_id'] : array();
 	}
@@ -424,6 +415,7 @@ class Goods_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'goods_id' => $goods_id,
 		));
+		$this->mongo_db->limit(1);
 		$playerRecord = $this->mongo_db->get('playbasis_goods_to_player');
 		return $playerRecord ? $playerRecord[0] : null;
 	}
@@ -432,6 +424,7 @@ class Goods_model extends MY_Model
 			'pb_player_id' => $pb_player_id,
 			'reward_id' => $reward_id
 		));
+		$this->mongo_db->limit(1);
 		$playerRecord = $this->mongo_db->get('playbasis_reward_to_player');
 		return $playerRecord ? $playerRecord[0] : null;
 	}

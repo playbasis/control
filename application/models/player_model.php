@@ -208,6 +208,29 @@ class Player_model extends MY_Model
 		$this->mongo_db->limit($limit);
 		return $this->mongo_db->get('playbasis_player');
 	}
+	public function findPlayerFromService($validToken, $player_id, $service) {
+		$this->set_site_mongodb($validToken['site_id']);
+		$this->mongo_db->where('client_id', $validToken['client_id']);
+		$this->mongo_db->where('site_id', $validToken['site_id']);
+		$this->mongo_db->where('player_id', $player_id);
+		$this->mongo_db->where('service', $service);
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_player_service');
+		return $results ? $results[0] : null;
+	}
+	public function insertPlayerService($validToken, $pb_player_id, $player_id, $service) {
+		$this->set_site_mongodb($validToken['site_id']);
+		$mongoDate = new MongoDate(time());
+		return $this->mongo_db->insert('playbasis_player_service', array(
+			'client_id' => $validToken['client_id'],
+			'site_id' => $validToken['site_id'],
+			'pb_player_id' => $pb_player_id,
+			'player_id' => $player_id,
+			'service' => $service,
+			'date_added' => $mongoDate,
+			'date_modified' => $mongoDate,
+		));
+	}
 	public function getPlayerPoints($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);
@@ -2266,6 +2289,56 @@ class Player_model extends MY_Model
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_player_session');
         return $results ? $results[0] : null;
+    }
+
+    public function registerDevice($data,$site_id)
+    {
+        $mongoDate = new MongoDate(time());
+
+        $this->mongo_db->select(null);
+        $this->mongo_db->where(array(
+            'pb_player_id' =>$data['pb_player_id'],
+            'site_id' => $data['site_id'],
+            'client_id' => $data['client_id'],
+            'uuid' => $data['uuid'],
+            'device_token' => $data['device_token']
+        ));
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_player_device');
+        if(!$results)
+        {
+            $this->mongo_db->insert('playbasis_player_device', array(
+
+                'pb_player_id' => $data['pb_player_id'],
+                'site_id' => $data['site_id'],
+                'client_id' => $data['client_id'],
+                'uuid' => $data['uuid'],
+                'device_token' => $data['device_token'],
+                'device_description' => $data['device_description'],
+                'device_name' => $data['device_name'],
+                'status' => true,
+                'date_added' => $mongoDate,
+                'date_modified' => $mongoDate,
+
+            ));
+        }
+        else{
+
+            $this->set_site_mongodb($site_id);
+            $this->mongo_db->where(array(
+                'pb_player_id' => new MongoId($data['player_id']),
+                'site_id' => new MongoId($data['site_id']),
+                'client_id' => $data['client_id'],
+                'udid' => $data['udid']
+            ));
+            $this->mongo_db->set('device_token',$data['device_token']);
+            $this->mongo_db->set('device_description',$data['device_description']);
+            $this->mongo_db->set('date_modified',$mongoDate);
+            $this->mongo_db->update('playbasis_player_device');
+
+
+        }
+
     }
 }
 

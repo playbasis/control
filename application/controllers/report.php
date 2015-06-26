@@ -58,7 +58,6 @@ class Report extends CI_Controller
 	    /* init */
 	    $allowed_site_ids = array( // true = send email, false = will not send
 		    SITE_ID_DEMO => true,
-		    SITE_ID_MTD => true,
 		    SITE_ID_TRUE_MONEY => true,
 		    SITE_ID_COMPARE_AND_SHARE => true,
 	    );

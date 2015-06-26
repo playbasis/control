@@ -1,6 +1,6 @@
 {
 	"endpoints": [
-		{
+      {
 			"name": "Auth API",
 			"methods": [
 				{
@@ -1102,6 +1102,76 @@
                             "Description": "amount of the goods to redeem"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Sponsored Goods List Info",
+                    "Synopsis": "Returns information about all available sponsored goods.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Goods/sponsor",
+                    "RequiresOAuth": "N",
+                    "parameters": []
+                },
+                {
+                    "MethodName": "Sponsored Goods Info",
+                    "Synopsis": "Returns information about the sponsored goods with the specified id.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Goods/sponsor/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods id to query"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Sponsored Goods Group Available",
+                    "Synopsis": "Find number of available sponsored Goods given group.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Redeem/sponsorGroup",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "group",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods group"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to redeem"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Personalized Sponsored Goods Info",
+                    "Synopsis": "Returns specific sponsored goods for a given player.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Goods/ad",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 }
             ]
         },
@@ -1115,6 +1185,29 @@
                     "URI": "/Engine/actionConfig",
                     "RequiresOAuth": "N",
                     "parameters": []
+                },
+                {
+                    "MethodName": "Rule Detail",
+                    "Synopsis": "Get the detail of the rule.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Engine/rule/:id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "rule id"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 },
                 {
                     "MethodName": "Rule",
@@ -1164,6 +1257,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "amount of the point-based reward to give to player, if the action trigger custom-point reward that doesn't specify reward quantity"
+                        },
+                        {
+                            "Name": "rule_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "if needed, you can also specify a rule id so that rule engine will only process against that rule"
                         }
                     ]
                 }
@@ -1644,6 +1744,80 @@
                     "Synopsis": "Redeem Goods given group.",
                     "HTTPMethod": "POST",
                     "URI": "/Redeem/goodsGroup",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "group",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods group"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to redeem"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Redeem Sponsor",
+                    "Synopsis": "Redeem Sponsor Goods for a client’s website.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/sponsor",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "goods_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods id of goods store"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "amount",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "integer",
+                            "Description": "amount of the goods to give to player"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Redeem Sponsored Goods Group",
+                    "Synopsis": "Redeem Sponsored Goods given group.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/sponsorGroup",
                     "RequiresOAuth": "N",
                     "parameters": [
                         {

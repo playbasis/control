@@ -206,8 +206,12 @@ class Curl {
 
     public function http_login($username = '', $password = '', $type = 'any')
     {
-        $this->option(CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($type)));
-        $this->option(CURLOPT_USERPWD, $username . ':' . $password);
+        if ($type == 'bearer') {
+            $this->http_header('Authorization', 'Bearer '.$username);
+        } else {
+            $this->option(CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($type)));
+            $this->option(CURLOPT_USERPWD, $username . ':' . $password);
+        }
         return $this;
     }
 
@@ -290,7 +294,11 @@ class Curl {
 // Set two default options, and merge any extra ones in
         if ( ! isset($this->options[CURLOPT_TIMEOUT]))
         {
-            $this->options[CURLOPT_TIMEOUT] = 30;
+            $this->options[CURLOPT_TIMEOUT] = 5*60;
+        }
+        if ( ! isset($this->options[CURLOPT_CONNECTTIMEOUT]))
+        {
+            $this->options[CURLOPT_CONNECTTIMEOUT] = 30;
         }
         if ( ! isset($this->options[CURLOPT_RETURNTRANSFER]))
         {

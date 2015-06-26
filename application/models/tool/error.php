@@ -87,6 +87,14 @@ class Error extends CI_Model
             $errorData['message'] = "Invalid Jive message";
             $errorData['error_code'] = '0811';
             break;
+        case 'LITHIUM_RECORD_NOT_FOUND':
+            $errorData['message'] = "Lithium record is not found";
+            $errorData['error_code'] = '0812';
+            break;
+        case 'LITHIUM_SUBSCRIPTION_RECORD_NOT_FOUND':
+            $errorData['message'] = "Lithium subscription record is not found";
+            $errorData['error_code'] = '0813';
+            break;
         case 'INVALID_API_KEY_OR_SECRET':
             $errorData['message'] = "Invalid API-KEY OR API-SECRET";
             $errorData['error_code'] = '0001';
@@ -102,6 +110,26 @@ class Error extends CI_Model
         case 'SETUP_MOBILE':
             $errorData['message'] = "Please set up mobile phone on dashboard";
             $errorData['error_code'] = '0004';
+            break;
+        case 'NOT_IMPLEMENTED':
+            $errorData['message'] = "There is no implementation for the requested service";
+            $errorData['error_code'] = '0005';
+            break;
+        case 'UNSUPPORTED_RESOURCE_STATE':
+            $errorData['message'] = "Unsupported resource state";
+            $errorData['error_code'] = '0006';
+            break;
+        case 'NOT_SETUP_GOOGLE':
+            $errorData['message'] = "Google API setup cannot be found";
+            $errorData['error_code'] = '0007';
+            break;
+        case 'NOT_TOKEN_GOOGLE':
+            $errorData['message'] = "Google API access token cannot be found";
+            $errorData['error_code'] = '0008';
+            break;
+        case 'NOT_SUPPORTED_GOOGLE_SERVICE':
+            $errorData['message'] = "This Google API is not supported";
+            $errorData['error_code'] = '0009';
             break;
         case 'USER_NOT_EXIST':
             $errorData['message'] = "User doesn't exist";
@@ -194,6 +222,10 @@ class Error extends CI_Model
         case 'QUIZ_QUESTION_ALREADY_COMPLETED':
             $errorData['message'] = "Question has already been completed by the player";
             $errorData['error_code'] = '1004';
+            break;
+        case 'RULE_NOT_FOUND':
+            $errorData['message'] = "Rule not available";
+            $errorData['error_code'] = '1101';
             break;
         default:
             $errorData['message'] = "Unknown";

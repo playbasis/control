@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once(APPPATH.'controllers/quest.php');
-
+require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
 //class Engine extends REST2_Controller
 class Engine extends Quest
 {
@@ -10,6 +10,7 @@ class Engine extends Quest
 	{
 		parent::__construct();
 		$this->load->model('auth_model');
+        $this->load->model('push_model');
 		$this->load->model('player_model');
 		$this->load->model('action_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
@@ -83,14 +84,59 @@ class Engine extends Quest
 		}
 		$this->response($this->resp->setRespond($actionConfig), 200);
 	}
-	public function rule_get($option = 0)
+	public function rule_get($rule_id=0)
 	{
-		if($option != 'facebook')
-		{
-			$this->response($this->error->setError('ACCESS_DENIED'), 200);
+		/* check parameters */
+		if(!$rule_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array('rule_id')), 200);
+		$pb_player_id = null;
+		$player_id = $this->input->get('player_id');
+		if ($player_id !== false) {
+			$pb_player_id = $this->player_model->getPlaybasisId(array(
+				'client_id' => $this->client_id,
+				'site_id' => $this->site_id,
+				'cl_player_id' => $player_id,
+			));
+			if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		}
-		$challenge = $this->input->get('hub_challenge');
-		echo $challenge;
+
+		/* get rule detail */
+		$rule = $this->client_model->getRuleDetail($this->validToken, $rule_id);
+		if(!$rule)
+			$this->response($this->error->setError('RULE_NOT_FOUND'), 200);
+
+		/* format output */
+		$rule['id'] = $rule['_id'].'';
+		unset($rule['_id']);
+		$rule['action'] = $this->action_model->findActionName($this->site_id, $rule['action_id']);
+		unset($rule['action_id']);
+
+		/* find current state of rule execution of the player */
+		if ($pb_player_id && isset($rule['jigsaw_set'])) {
+			$input = array(
+				'site_id' => $this->site_id,
+				'pb_player_id' => $pb_player_id,
+				'rule_id' => new MongoId($rule['id']),
+			);
+			foreach ($rule['jigsaw_set'] as &$jigsaw) {
+				try {
+					$jigsaw_id = new MongoId($jigsaw['id']);
+				} catch (MongoException $ex) {
+					$jigsaw_id = "";
+				}
+				$input['jigsaw_id'] = $jigsaw_id;
+				$input['jigsaw_name'] = $jigsaw['name'];
+				$input['jigsaw_category'] = $jigsaw['category'];
+				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
+				$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
+					'input',
+					'date_added'
+				));
+				array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
+			}
+		}
+
+		$this->response($this->resp->setRespond($rule), 200);
 	}
 
     /*
@@ -308,6 +354,7 @@ class Engine extends Quest
 	}
 	protected function processRule($input, $validToken, $fbData, $twData)
 	{
+
 		if(!isset($input['player_id']) || !$input['player_id']) {
 			if (!$input["test"])
 				$input['player_id'] = $this->player_model->getClientPlayerId(
@@ -325,10 +372,16 @@ class Engine extends Quest
 		$site_id = $validToken['site_id'];
 		$domain_name = $validToken['domain_name'];
 
+        $player = array(
+            'pb_player_id' =>$input['pb_player_id'],
+            'client_id' => $client_id ,
+            'site_id' => $site_id
+        );
+
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
 
-		if ($input["test"])
+		if (isset($input["rule_id"]))
 			$ruleSet = $this->client_model->getRuleSetById($input["rule_id"]);
 		else
 			$ruleSet = $this->client_model->getRuleSetByActionId(array(
@@ -453,6 +506,14 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+                                //publish to push notification
+                                $this->sendNotification(array(
+                                    'title' => $eventMessage,
+                                    'badge' => $jigsawConfig['reward_id'],
+                                    'type' => $jigsawConfig['reward_name'],
+                                    'value' => $jigsawConfig['quantity'],
+                                    'text' => $eventMessage
+                                ),$player,$eventMessage);
 
                                 if($lv > 0) {
                                     $eventMessage = $this->levelup($lv, $apiResult, $input);
@@ -469,6 +530,14 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+                                    //publish to push notification
+                                    $this->sendNotification(array(
+                                        'title' => $eventMessage,
+                                        'badge' => 'level',
+                                        'type' => 'level',
+                                        'value' => $lv,
+                                        'text' => $eventMessage
+                                    ),$player,$eventMessage);
                                 }
                             }  // close if (!$input["test"])
                         } else if(is_null($jigsawConfig['item_id']) || $jigsawConfig['item_id'] == '') {
@@ -498,6 +567,14 @@ class Engine extends Quest
                                                 $fbData['facebook_id'],
                                                 $eventMessage,
                                                 '');
+                                        //publish to push notification
+                                        $this->sendNotification(array(
+                                            'title' => $eventMessage,
+                                            'badge' => 'level',
+                                            'type' => 'level',
+                                            'value' => $lv,
+                                            'text' => $eventMessage
+                                        ),$player,$eventMessage);
                                     }
                                 }  // close if (!$input["test"])
                             } else {
@@ -545,6 +622,14 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+                                //publish to push notification
+                                $this->sendNotification(array(
+                                    'title' => $eventMessage,
+                                    'badge' => $jigsawConfig['reward_id'],
+                                    'type' => $jigsawConfig['reward_name'],
+                                    'value' => $jigsawConfig['quantity'],
+                                    'text' => $eventMessage
+                                ),$player,$eventMessage);
                             }  // close if (!$input["test"])
                         } else {
                             switch($jigsawConfig['reward_name']) {
@@ -596,6 +681,14 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+                                    //publish to push notification
+                                    $this->sendNotification(array(
+                                        'title' => $eventMessage,
+                                        'badge' => $jigsawConfig['reward_id'],
+                                        'type' => $jigsawConfig['reward_name'],
+                                        'value' => $jigsawConfig['quantity'],
+                                        'text' => $eventMessage
+                                    ),$player,$eventMessage);
                                     break;
                                 }  // close if (!$input["test"])
                                 break;
@@ -603,6 +696,7 @@ class Engine extends Quest
                                 log_message('error', 'Unknown reward: '.$jigsawConfig['reward_name']);
                                 break;
                             }  // close switch($jigsawConfig['reward_name'])
+
                         }  // close if(isset($exInfo['dynamic']))
                     } elseif($jigsaw['category'] == 'FEEDBACK') {
                         if (!$input["test"])
@@ -696,6 +790,34 @@ class Engine extends Quest
 	private function is_reward($category) {
 		return in_array($category, array('REWARD', 'FEEDBACK'));
 	}
+    public function sendNotification($data,$player,$msg)
+    {
+        $this->mongo_db->select('device_token');
+        $this->mongo_db->where(array(
+            'pb_player_id' => $player['pb_player_id'],
+            'site_id' => $player['site_id'],
+            'client_id' => $player['client_id']
+        ));
+        $results = $this->mongo_db->get('playbasis_player_device');
+        /*$data = array(
+            'title' => $data['title'],
+            'badge' => $data['badge'],
+            'type' => $data['type'],
+            'value' => $data['value'],
+            'text' => $data['text']
+        );*/
+        foreach($results as $device_token)
+        {
+            $notificationInfo = array(
+                'device_token' => $device_token['device_token'],
+                'messages' => $msg,
+                'data' => $data,
+                'badge_number' => 1
+            );
+            $this->push_model->initial($notificationInfo);
+        }
+
+    }
 	public function test_get()
 	{
 		echo '<pre>';
@@ -734,6 +856,23 @@ class Engine extends Quest
 		//$result = $this->jigsaw_model->checkReward($reward_id, $token['site_id']);
 		//var_dump($result);
 		echo '</pre>';
+	}
+
+	/**
+	 * Use with array_walk and array_walk_recursive.
+	 * Recursive iterable items to modify array's value
+	 * from MongoId to string and MongoDate to readable date
+	 * @param mixed $item this is reference
+	 * @param string $key
+	 */
+	private function convert_mongo_object(&$item, $key) {
+		if (is_object($item)) {
+			if (get_class($item) === 'MongoId') {
+				$item = $item->{'$id'};
+			} else if (get_class($item) === 'MongoDate') {
+				$item =  datetimeMongotoReadable($item);
+			}
+		}
 	}
 }
 ?>

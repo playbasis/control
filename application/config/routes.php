@@ -43,6 +43,40 @@ define('ANY_NUMBER','([0-9]+)');
 
 $route['default_controller'] = "welcome/playbasis";
 
+//global player API
+
+//$route['Universe/'.ANY_STRING.'/test'] = 'universe/test/$1';
+$route['Universe/test'] = 'universe/test';
+$route['Universe/mau'] = 'universe/mau';
+$route['Universe/mau_per_day'] = 'universe/mauDay';
+$route['Universe/mytest'] = 'universe/mytest';
+
+$route['Universe/'.ANY_STRING.'/register'] = 'universe/register/$1';
+$route['Universe/register'] = 'universe/register';
+
+$route['Universe/'.ANY_STRING.'/login'] = 'universe/login/$1';
+$route['Universe/login'] = 'universe/login';
+
+$route['Universe/'.ANY_STRING.'/join'] = 'universe/join/$1';
+$route['Universe/join'] = 'universe/join';
+
+$route['Universe/'.ANY_STRING.'/searchClientSite'] = 'universe/searchClientSite/$1';
+$route['Universe/searchClientSite'] = 'universe/searchClientSite';
+
+$route['Universe/'.ANY_STRING.'/feature'] = 'universe/feature/$1';
+$route['Universe/feature'] = 'universe/feature';
+
+$route['Universe/'.ANY_STRING.'/feature'] = 'universe/service/$1';
+$route['Universe/service'] = 'universe/service';
+
+$route['Universe/'.ANY_STRING.'/deviceRegistration'] = 'universe/deviceRegistration/$1';
+$route['Universe/deviceRegistration'] = 'universe/deviceRegistration';
+
+$route['Universe/'.ANY_STRING.'/directMsg'] = 'universe/directMsg/$1';
+$route['Universe/directMsg'] = 'universe/directMsg';
+
+
+
 //auth API
 $route['Auth'] = 'auth';
 $route['Auth/renew'] = 'auth/renew';
@@ -116,6 +150,11 @@ $route['Player/'.ANY_STRING.'/deduct'] = 'player/deduct_reward/$1';
 
 $route['Player/rankuser/'.ANY_STRING.'/'.ANY_STRING] = 'player/rankuser/$1/$2';
 
+$route['Player/'.ANY_STRING.'/contact'] = 'player/contact/$1/10';
+$route['Player/'.ANY_STRING.'/contact/'.ANY_NUMBER] = 'player/contact/$1/$2';
+$route['Player/contact'] = 'player/contact/0/10';
+$route['Player/contact/'.ANY_NUMBER] = 'player/contact/0/$1';
+
 //badge API
 $route['Badge/'.ANY_STRING] = 'badge/index/$1';
 $route['Badge']  = 'badge/index';
@@ -124,6 +163,9 @@ $route['Badges'] = 'badge/index';
 //Goods API
 $route['Goods/'.ANY_STRING] = 'goods/index/$1';
 $route['Goods'] = 'goods/index';
+$route['Goods/sponsor/'.ANY_STRING] = 'goods/sponsor/$1';
+$route['Goods/sponsor'] = 'goods/sponsor';
+$route['Goods/ad'] = 'goods/personalizedSponsor';
 
 //engine API
 $route['Engine/actionConfig']	= 'engine/getActionConfig';
@@ -136,6 +178,9 @@ $route['Engine/quest']	= 'engine/quest';
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
 $route['Redeem/goodsGroup'] = 'redeem/goodsGroup';
+$route['Redeem/sponsor/'.ANY_STRING] = 'redeem/sponsor/$1';
+$route['Redeem/sponsor'] = 'redeem/sponsor/0';
+$route['Redeem/sponsorGroup'] = 'redeem/sponsorGroup';
 
 // api-carlos
 $route['Action'] = 'action/index';
