@@ -809,7 +809,7 @@ class Engine extends Quest
         foreach($results as $device_token)
         {
             $notificationInfo = array(
-                'device_token' => $device_token,
+                'device_token' => $device_token['device_token'],
                 'messages' => $msg,
                 'data' => $data,
                 'badge_number' => 1
