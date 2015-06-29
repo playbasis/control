@@ -354,7 +354,6 @@ $email = 'pechpras@playbasis.com';
 		if ($clients) foreach ($clients as $client) {
 			$client_id = $client['_id'];
 			$email = $client['email'];
-$email = 'pechpras@playbasis.com';
 
 			$myplan_id = $this->client_model->getPlanIdByClientId($client_id);
 			if ($myplan_id != FREE_PLAN) continue;
