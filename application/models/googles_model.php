@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+define('EXPIRED_WITHIN_SEC', 2*24*60*60);
+
 class Googles_model extends MY_Model {
 
     public function __construct()
@@ -166,7 +168,7 @@ class Googles_model extends MY_Model {
         $t = time();
         $_ret = array();
         foreach ($ret as $key => $each) {
-            if ($each['date_expire'] && $each['date_expire']->sec < $t) { // check if even the latest one is expired
+            if ($each['date_expire'] && $each['date_expire']->sec < $t + EXPIRED_WITHIN_SEC) { // check if even the latest one is expired
                 array_push($_ret, $each);
             }
         }

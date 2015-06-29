@@ -328,13 +328,13 @@ $email = 'pechpras@playbasis.com';
 		$fp = fopen($tmpfname, 'w');
 		$clients = $this->client_model->listAllActiveClients();
 		if ($clients) foreach ($clients as $client) {
-			$max = 0;
+			$sum = 0;
 			$sites = $this->client_model->findActiveSites($client['_id']);
 			foreach ($sites as $site) {
 				$n = $this->client_model->countActionLog($site['_id']);
-				if ($n > $max) $max = $n;
+				$sum += $n;
 			}
-			fputcsv($fp, array($client['_id']."", $client['first_name'], $client['last_name'], $client['company'], $client['email'], $client['mobile'], datetimeMongotoReadable($client['date_added']), $max));
+			fputcsv($fp, array($client['_id']."", $client['first_name'], $client['last_name'], $client['company'], $client['email'], $client['mobile'], datetimeMongotoReadable($client['date_added']), $sum));
 		}
 		fclose($fp);
 
