@@ -77,7 +77,7 @@ class Googles_model extends MY_Model {
         $this->mongo_db->where('site_id', $this->session->userdata('site_id'));
         $this->mongo_db->where('channel_id', $channel_id);
         $this->mongo_db->where('resource_id', $resource_id);
-        $this->mongo_db->delete('playbasis_google_subscription');
+        $this->mongo_db->delete_all('playbasis_google_subscription');
     }
 }
 ?>
