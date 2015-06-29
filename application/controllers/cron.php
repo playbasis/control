@@ -24,6 +24,7 @@ class Cron extends CI_Controller
 		$this->load->model('email_model');
 		$this->load->model('plan_model');
 		$this->load->model('service_model');
+		$this->load->model('googles_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
 		$this->load->model('tool/utility', 'utility');
 		$this->load->library('parser');
@@ -366,6 +367,29 @@ $email = 'pechpras@playbasis.com';
 				$html = $this->parser->parse('message_verify_mobile.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'date' => date('M d, Y', strtotime(DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE))), true);
 				$response = $this->utility->email_bcc($from, array($to, EMAIL_BCC_PLAYBASIS_EMAIL), $subject, $html);
 				$this->email_model->log(EMAIL_TYPE_CLIENT_REGISTRATION, $client_id, null, $response, $from, $to, $subject, $html);
+			}
+		}
+	}
+
+	public function renewCalendarWebhooks() {
+		$this->load->library('GoogleApi');
+		$webhooks = $this->googles_model->listAlmostExpiredCalendarChannels();
+		if ($webhooks) foreach ($webhooks as $webhook) {
+			$record = $this->googles_model->getRegistration($webhook['site_id']);
+			if ($record) {
+				$client = $this->googleapi->initialize($record['google_client_id'], $record['google_client_secret']);
+				if (isset($record['token'])) {
+					if (isset($webhook['calendar_id'])) {
+						$service = $client->setAccessToken($record['token'])->calendar();
+						$channel_id = $webhook['channel_id'];
+						$new_channel_id = get_random_code(12,true,true,true);
+						/* there has to be some overlapping for the same resource_id */
+						$client->watchCalendar($service, $webhook['calendar_id'], $new_channel_id, array('site_id' => $webhook['site_id'].'', 'callback_url' => $webhook['callback_url']));
+						$this->googles_model->insertWebhook($webhook['client_id'], $webhook['site_id'], $webhook['calendar_id'], $new_channel_id, $webhook['callback_url']);
+						$client->unwatchCalendar($service, $channel_id, $webhook['resource_id']);
+						$this->googles_model->removeWebhook($webhook['client_id'], $webhook['site_id'], $channel_id, $webhook['resource_id']);
+					}
+				}
 			}
 		}
 	}
