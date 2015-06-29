@@ -4,7 +4,7 @@ require_once ("Google/autoload.php");
 
 define('APPLICATION_NAME', 'Playbasis Dashboard');
 define('SCOPES', implode(' ', array(
-    Google_Service_Calendar::CALENDAR)
+    Google_Service_Calendar::CALENDAR_READONLY)
 ));
 
 class GoogleApi
