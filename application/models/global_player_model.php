@@ -278,6 +278,7 @@ class Global_Player_Model extends MY_Model
                 'status' => true,
                 'date_added' => $mongoDate,
                 'date_modified' => $mongoDate,
+                'type' => $data['type']
 
             ));
         }
