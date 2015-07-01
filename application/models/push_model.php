@@ -1,11 +1,12 @@
 <?php
-
+defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set('Asia/Bangkok');
 class Push_model extends MY_Model
 {
     public function __construct()
     {
         parent::__construct();
+        $this->load->library('mongo_db');
     }
 
     public function initial($data,$type=null)
