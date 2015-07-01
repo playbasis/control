@@ -6,6 +6,7 @@ class Push_model extends MY_Model
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('tool/utility', 'utility');
         $this->load->library('mongo_db');
     }
 
@@ -13,6 +14,16 @@ class Push_model extends MY_Model
     {
         switch ($type) {
             case "ios":
+                $setup = $this->getIosSetup($data['client_id'], $data['site_id']);
+                if (!$setup) break; // suppress the error for now
+
+                $environment = $setup['env'] == 'prod' ? ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION : ApnsPHP_Abstract::ENVIRONMENT_SANDBOX;
+                $certificate = $this->utility->var2file($setup['certificate']);
+                $password = $setup['password'];
+                $ca = $this->utility->var2file($setup['ca']);
+
+                $push = new ApnsPHP_Push($environment, $certificate);
+
                 // Instantiate a new ApnsPHP_Push object
                 /*$push = new ApnsPHP_Push(
                     ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
@@ -25,15 +36,17 @@ class Push_model extends MY_Model
                     APPPATH.'libraries/ApnsPHP/Certificates/push_development.pem'
                 );
         /*      */
-                $push = new ApnsPHP_Push(
+                /*$push = new ApnsPHP_Push(
                     ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION,
                     APPPATH.'libraries/ApnsPHP/Certificates/push_production.pem'
-                );
+                );*/
 
                 // Set the Provider Certificate passphrase
-                $push->setProviderCertificatePassphrase('playbasis');
+                //$push->setProviderCertificatePassphrase('playbasis');
+                $push->setProviderCertificatePassphrase($password);
                 // Set the Root Certificate Autority to verify the Apple remote peer
-                $push->setRootCertificationAuthority(APPPATH.'libraries/ApnsPHP/Certificates/Entrust_Root_Certification_Authority.pem');
+                //$push->setRootCertificationAuthority(APPPATH.'libraries/ApnsPHP/Certificates/Entrust_Root_Certification_Authority.pem');
+                $push->setRootCertificationAuthority($ca);
                 // Connect to the Apple Push Notification Service
                 $push->connect();
                 // Instantiate a new Message with a single recipient
@@ -174,5 +187,12 @@ class Push_model extends MY_Model
             // Sleep a little...
             usleep(200000);
         }
+    }
+
+    public function getIosSetup($client_id, $site_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('client_id', $client_id);
+        $results = $this->mongo_db->get("playbasis_push_ios");
+        return $results ? $results[0] : null;
     }
 }

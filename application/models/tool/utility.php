@@ -162,5 +162,14 @@ class Utility extends CI_Model
 		}
 		return $template;
 	}
+
+	public function var2file($var) {
+		$f = tmpfile();
+		$meta = stream_get_meta_data($f);
+		$uri = $meta['uri'];
+		fwrite($f, $var);
+		fclose($f);
+		return $uri;
+	}
 }
 ?>
