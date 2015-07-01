@@ -7,14 +7,11 @@ class Push_model extends MY_Model
     {
         parent::__construct();
     }
+
     public function initial($data,$type=null)
     {
-
-        if(!$type)
-        {
-
-            if($type == "ios")
-            {
+        switch ($type) {
+            case "ios":
                 // Instantiate a new ApnsPHP_Push object
                 /*$push = new ApnsPHP_Push(
                     ApnsPHP_Abstract::ENVIRONMENT_SANDBOX,
@@ -79,9 +76,9 @@ class Push_model extends MY_Model
                     var_dump($aErrorQueue);
 
                 }
-            }
-            if($type == "android")
-            {
+                break;
+
+            case "android":
                 define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
                 $registrationIds = $data['device_token'];
                 $msg = array
@@ -118,9 +115,12 @@ class Push_model extends MY_Model
                 $result = curl_exec($ch );
                 curl_close( $ch );
                 echo $result;
-            }
-        }
+                break;
 
+            default:
+                throw new Exception("Unsupported device type: ".$type);
+                break;
+        }
     }
 
     public function server($data)
