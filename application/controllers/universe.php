@@ -127,7 +127,8 @@ class Universe extends REST2_Controller
             'site_id' => $this->input->post('site_id'),
             'device_token' => $this->input->post('device_token') ,
             'device_description' => $this->input->post('device_description'),
-            'device_name' => $this->input->post('device_name')
+            'device_name' => $this->input->post('device_name'),
+            'type' => $this->input->post('type')
         );
         $this->global_player_model->storeDeviceToken($deviceInfo);
         $this->response($this->resp->setRespond(''), 200);
