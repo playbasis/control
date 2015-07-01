@@ -68,7 +68,7 @@
                                 <?php } ?>
                             <?php } else { ?>
                         <tr>
-                            <td class="center" colspan="8"><?php echo $this->lang->line('text_no_results'); ?></td>
+                            <td class="center" colspan="6"><?php echo $this->lang->line('text_no_results'); ?></td>
                         </tr>
                             <?php } ?>
                         </tbody>
