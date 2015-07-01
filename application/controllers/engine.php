@@ -792,31 +792,24 @@ class Engine extends Quest
 	}
     public function sendNotification($data,$player,$msg)
     {
-        $this->mongo_db->select('device_token');
-        $this->mongo_db->where(array(
-            'pb_player_id' => $player['pb_player_id'],
+        $where = array(
+            'client_id' => $player['client_id'],
             'site_id' => $player['site_id'],
-            'client_id' => $player['client_id']
-        ));
+            'pb_player_id' => $player['pb_player_id'],
+        );
+        $this->mongo_db->select('device_token');
+        $this->mongo_db->where($where);
         $results = $this->mongo_db->get('playbasis_player_device');
-        /*$data = array(
-            'title' => $data['title'],
-            'badge' => $data['badge'],
-            'type' => $data['type'],
-            'value' => $data['value'],
-            'text' => $data['text']
-        );*/
-        foreach($results as $device_token)
+        $notificationInfo = array_merge($where, array(
+            'messages' => $msg,
+            'data' => $data,
+            'badge_number' => 1
+        ));
+        foreach($results as $device)
         {
-            $notificationInfo = array(
-                'device_token' => $device_token['device_token'],
-                'messages' => $msg,
-                'data' => $data,
-                'badge_number' => 1
-            );
-            $this->push_model->initial($notificationInfo);
+            $notificationInfo['device_token'] = $device['device_token'];
+            $this->push_model->initial($notificationInfo, $device['type']);
         }
-
     }
 	public function test_get()
 	{
