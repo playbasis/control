@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 require_once APPPATH . '/libraries/ApnsPHP/Autoload.php';
+//require_once APPPATH . '/libraries/GCM/loader.php';
 class Universe extends REST2_Controller
 {
     public function __construct()
@@ -142,22 +143,24 @@ class Universe extends REST2_Controller
             'text' => '100',
             'status' => 'confirm'
         );*/
+        $type = $this->input->post('type');
         $data = array(
             'title' => $data['title'],
             'reward' => $data['badge'],
-            'type' => $data['type'],
+            'type' => 'exp',//$data['type'],
             'value' => $data['value'],
-            'text' => $data['text'],
+            'text' => 'description test',//$data['text'],
             'status' => $data['status']
         );
 
         $notificationInfo = array(
             'device_token' => $this->input->post('device_token'),
-            'messages' => $this->input->post('msg'),
+            //'messages' => $this->input->post('msg'),
+            'messages' => 'Congratulations',
             'data' => $data,
             'badge_number' => 1
         );
-        $this->push_model->initial($notificationInfo);
+        $this->push_model->initial($notificationInfo,$type);
         $this->response($this->resp->setRespond(''), 200);
 
     }
