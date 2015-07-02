@@ -440,6 +440,44 @@
     var jsonString_Condition = <?php echo json_encode($conditionList); ?>;
     var jsonString_Reward    = <?php echo json_encode($rewardList); ?>;
     var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
+    var jsonString_Group = [{
+    "_id":{"$id":"00000000000000000"},
+    "name":"random",
+    "description":"",
+    "sort_order":1,
+    "status":true,
+    "specific_id":"00000000000000000",
+    "dataSet":[{
+        "param_name":"group_container",
+        "label":"Group",
+        "placeholder":"",
+        "sortOrder":"0",
+        "field_type":"group_container"
+    }],
+    "itemList":[],
+    "id":"00000000000000000",
+    "category":"GROUP"
+},
+{
+    "_id":{"$id":"00000000000000000"},
+    "name":"sequence",
+    "description":"",
+    "sort_order":2,
+    "status":true,
+    "specific_id":"00000000000000000",
+    "dataSet":[{
+        "param_name":"group_container",
+        "label":"Group",
+        "placeholder":"",
+        "sortOrder":"0",
+        "field_type":"group_container"
+    }],
+    "itemList":[],
+    "id":"00000000000000000",
+    "category":"GROUP"
+}];
+
+
     var jsonString_Email     = <?php echo json_encode($emailList); ?>;
     var jsonString_Sms       = <?php echo json_encode($smsList); ?>;
 
@@ -455,6 +493,7 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_editor_onerule.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_editor_table.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_dataset.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_dataset_group.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_node.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/scripts.js"></script>
 
@@ -569,6 +608,24 @@
     </div>
 </div>
 <!-- end : choose reward modal -->
+
+<!-- start : choose reward group modal -->
+<div class="modal hide fade rule_modal_condition pbd_rule_editor_modal" id="newrule_group_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3 rel="popover" data-trigger="hover"data-placement="bottom" data-content="Select an reward group type" data-original-title="Reward" >Choose Reward Group Type</h3>
+    </div>
+
+    <div class="modal-body ">
+        <div class="selection_wrapper" style="margin-left:4px">
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <a href="javaScript:void()" class="btn btn-primary pbd_modal_confirm_btn">OK</a>
+    </div>
+</div>
+<!-- end : choose reward group modal -->
 
 
 <!-- Error Modal -->

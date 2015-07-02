@@ -38,6 +38,7 @@ oneRuleMan = {
 
     //About node create dialog
     openNodeSelectionDialogType:undefined,
+    openNodeSelectionDialogTargetObj:undefined,
     modalOptionSelectedItem:undefined,
     nodeInsertAfterPosition:undefined,
 
@@ -755,6 +756,18 @@ $('#new_reward_btn').live('click',function(event){
     oneRuleMan.openNodeSelectionDialogType = 'FEEDBACK';
 })
 
+//Event : Insert new Group
+$('#new_group_btn').live('click',function(event){
+    event.preventDefault();
+    var theModal = $('#newrule_group_modal');
+
+    //oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Reward,'reward');
+    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Group,'group');
+    theModal.modal('show');
+    //oneRuleMan.openNodeSelectionDialogType = 'REWARD';
+    oneRuleMan.openNodeSelectionDialogType = 'GROUP';
+})
+
 //Event : Select option between 'Create Condition Node' and 'Create Reward Node'
 $('.dropdown-toggle').live('click',function(){
     oneRuleMan.nodeInsertAfterPosition = $(this).attr('id');
@@ -776,6 +789,7 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
     event.preventDefault();
     var id = oneRuleMan.modalOptionSelectedItem;
     var type = oneRuleMan.openNodeSelectionDialogType;
+    var targetObj = oneRuleMan.openNodeSelectionDialogTargetObj;
 
     if(id!=undefined &&  id!='' && id!=' '){
 
@@ -789,6 +803,10 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             jsonItemSet = jsonString_Reward;
         else if(type === 'FEEDBACK')
             jsonItemSet = jsonString_Feedback;
+        else if(type === 'GROUP')
+            jsonItemSet = jsonString_Group;
+        else if(type === 'GROUP_ITEM')
+            jsonItemSet = jsonString_Feedback;
 
         for(var index in jsonItemSet){
             var item = jsonItemSet[index];
@@ -797,18 +815,29 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             }
         }
 
+
         /* Append new node  */
-        if(selected_jsonstring!='' && type!='ACTION'){
-            // pbnode.appendNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition);
-            chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
-            oneRuleMan.nodeInsertAfterPosition = undefined;
-        }else if(type=='ACTION'){
+        if(type=='ACTION'){
             // Force add item to sort_index 0
             chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
             oneRuleMan.nodeInsertAfterPosition = undefined;
 
             chainMan.hideAddActionButton()
+        }else if(type=='GROUP_ITEM'){
+
+            groupMan.addItem(selected_jsonstring, targetObj)
+            oneRuleMan.nodeInsertAfterPosition = undefined;
+            oneRuleMan.openNodeSelectionDialogType = undefined;
+            oneRuleMan.openNodeSelectionDialogTargetObj = undefined;
+
+        }else if( selected_jsonstring!='' ){
+              // pbnode.appendNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition);
+            chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
+            oneRuleMan.nodeInsertAfterPosition = undefined;
         }
+
+
+
 
         $('.close').trigger('click');
         //clear current selected options in modal dialog

@@ -18,6 +18,10 @@ Node = function(json){
     this.jigsawDescription = json.description;
     this.category = json.category;
     this.sortOrder = json.sort_order;
+    if(json.group_obj){
+        this.group_obj = json.group_obj;
+    }
+    
     // this.currentJSON = json;
 
 
@@ -41,7 +45,14 @@ Node = function(json){
 
 
 
-    this.currentDataSet = new DataSet(json.dataSet,this.uid);
+    
+    if( this.category.toLowerCase() == "group" ){
+        json.group_id = this.uid;
+        this.currentDataSet = new DataSetGroup(json.dataSet,this.uid, json);
+    }else{
+        this.currentDataSet = new DataSet(json.dataSet,this.uid);
+    }
+
     this.mRuleHTML = undefined;
     //Start : Init statement
     //TODO : Implement object initialzed stuff
@@ -63,6 +74,7 @@ Node.prototype.getHTML = function(){
         case 'CONDITION':boxStyle = 'pbd_boxstyle_condition';boxIcon= 'fa-icon-time';break;
         case 'REWARD':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
         case 'FEEDBACK':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
+        case 'GROUP':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
     }
 
     var htmlElement = '';
@@ -113,8 +125,12 @@ Node.prototype.getHTML = function(){
         '<span class="pbd_boxcontent_action">';
     //add dataset Table
     this.mRuleHTML += htmlElement+'</span></div>';
-    //Add connection link
-    this.mRuleHTML += '<div class="row connection"><div class="line_connect line_top offset6"></div><div class="offset6 new_node_connect"><div class="new_node_connect_btn circle" style="margin-top: -20px;"><div class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="1"><i class="icon-plus icon-white"></i> Add : condition & reward</a><ul class="dropdown-menu pbd_dropdown-menu" role="menu" aria-labelledby="dLabel"><li><a tabindex="-1" id="new_condition_btn" href="#"><i class="fa-icon-cogs"></i> Condition</a></li><li><a tabindex="-1" id="new_reward_btn" href="#"><i class="fa-icon-trophy"></i> Reward</a></li></ul></div></div></div></div></div>';
+
+    if( !this.group_obj ){
+        //Add connection link
+        this.mRuleHTML += '<div class="row connection"><div class="line_connect line_top offset6"></div><div class="offset6 new_node_connect"><div class="new_node_connect_btn circle" style="margin-top: -20px;"><div class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="1"><i class="icon-plus icon-white"></i> Add : condition & reward</a><ul class="dropdown-menu pbd_dropdown-menu" role="menu" aria-labelledby="dLabel"><li><a tabindex="-1" id="new_condition_btn" href="#"><i class="fa-icon-cogs"></i> Condition</a></li><li><a tabindex="-1" id="new_reward_btn" href="#"><i class="fa-icon-trophy"></i> Reward</a></li><li><a tabindex="-1" id="new_group_btn" href="#"><i class="fa-icon-trophy"></i> Reward Group</a></li></ul></div></div></div></div></div>';
+    }
+
     //End node enclosure
     this.mRuleHTML += '</li>';
 
@@ -216,6 +232,10 @@ Node.prototype.getJSON = function() {
 
             case "REWARD" :
                 output.reward_id = escape(parentContext.specificId);
+                break;
+
+            case "GROUP" :
+                output.group_id = escape(parentContext.specificId);
                 break;
 
         }//-->

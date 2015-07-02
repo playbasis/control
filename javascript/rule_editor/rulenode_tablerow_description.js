@@ -301,5 +301,36 @@ toolstip = {
 				template_id: 'template id'
 			}
 		}
+	},
+
+	feedback: {
+		email: {
+			description: 'Email',
+			field_desc: {
+				template_id: 'template id',
+				subject: 'email subject'
+			}
+		},
+		sms: {
+			description: 'SMS',
+			field_desc: {
+				template_id: 'template id'
+			}
+		}
+	},
+
+	group: {
+		random: {
+			description: 'Random',
+			field_desc: {
+				
+			}
+		},
+		sequence: {
+			description: 'Sequence',
+			field_desc: {
+				
+			}
+		}
 	}
 }
