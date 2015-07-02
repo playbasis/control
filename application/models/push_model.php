@@ -17,10 +17,13 @@ class Push_model extends MY_Model
                 $setup = $this->getIosSetup($data['client_id'], $data['site_id']);
                 if (!$setup) break; // suppress the error for now
 
+                $f_cert = tmpfile();
+                $f_ca = tmpfile();
+
                 $environment = $setup['env'] == 'prod' ? ApnsPHP_Abstract::ENVIRONMENT_PRODUCTION : ApnsPHP_Abstract::ENVIRONMENT_SANDBOX;
-                $certificate = $this->utility->var2file($setup['certificate']);
+                $certificate = $this->utility->var2file($f_cert, $setup['certificate']);
                 $password = $setup['password'];
-                $ca = $this->utility->var2file($setup['ca']);
+                $ca = $this->utility->var2file($f_ca, $setup['ca']);
 
                 $push = new ApnsPHP_Push($environment, $certificate);
 
@@ -90,6 +93,10 @@ class Push_model extends MY_Model
                     var_dump($aErrorQueue);
 
                 }
+
+                fclose($f_cert);
+                fclose($f_ca);
+
                 break;
 
             case "android":
