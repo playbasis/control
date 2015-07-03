@@ -361,7 +361,31 @@ class Account extends MY_Controller
 		);
 
 		$this->data['heading_title'] = $this->lang->line('order_title');
-		$this->data['main'] = 'account_purchase_paypal';
+		$plan_id = $this->data['params']['plan_id'].'';
+		switch (PAYMENT_CHANNEL_DEFAULT) {
+		case PAYMENT_CHANNEL_PAYPAL:
+			$this->data['main'] = 'account_purchase_paypal';
+			break;
+		case PAYMENT_CHANNEL_STRIPE:
+			require_once(APPPATH.'/libraries/stripe/init.php');
+			\Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+			try {
+				$plan = \Stripe\Plan::retrieve($plan_id);
+			} catch (Exception $e) {
+				\Stripe\Plan::create(array(
+					'amount' => $this->data['params']['price']*100,
+					'interval' => 'month',
+					'name' => $this->data['params']['plan_name'],
+					'currency' => 'usd',
+					'id' => $plan_id,
+					'trial_period_days' => $this->data['params']['trial_days'],
+				));
+			}
+			$this->data['params']['publishable_key'] = STRIPE_PUBLISHABLE_KEY;
+			$this->data['main'] = 'account_purchase_stripe';
+			$this->data['form'] = 'account/stripe';
+			break;
+		}
 
 		$this->load->vars($this->data);
 		$this->render_page('template');
