@@ -318,12 +318,26 @@ class Account extends MY_Controller
 			$plan_id = $this->input->post('plan_id');
 			$client_id = $this->User_model->getClientId();
 			$client = $this->Client_model->getClient($client_id);
-			$customer = \Stripe\Customer::create(array(
-				'source' => $token,
-				'plan' => $plan_id,
-				'email' => $client['email'],
-			));
-			$this->Client_model->insertOrUpdatePayment($client_id, $customer->id, 'stripe');
+			$stripe = $this->Client_model->getStripe($client_id);
+			$customer = null;
+			if (!$stripe) { // new customer, assuming subscribe
+				try {
+					$customer = \Stripe\Customer::create(array(
+						'source' => $token,
+						'plan' => $plan_id,
+						'email' => $client['email'],
+					));
+					$this->Client_model->insertOrUpdateStrip($client_id, $customer->id, $customer->subscriptions->data[0]->id);
+				} catch (Exception $e) {
+					$this->session->set_flashdata("fail", $this->lang->line("error_payment_declined"));
+					redirect('/account', 'refresh');
+				}
+			} else { // existing customer, assuming upgrade/downgrade
+				$customer = \Stripe\Customer::retrieve($stripe['stripe_id']);
+				$subscription = $customer->subscriptions->retrieve($stripe['subscription_id']);
+				$subscription->plan = $plan_id;
+				$subscription->save();
+			}
 			redirect('/account/stripe_completed', 'refresh');
 		}
 		redirect('/account', 'refresh');
