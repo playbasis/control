@@ -533,5 +533,29 @@ class Client_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_permission');
         return $results ? $results[0] : null;
     }
+
+    public function insertOrUpdatePayment($client_id, $id, $type) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $d = new MongoDate(time());
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('type', $type);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_payment');
+        if (!$results) {
+            $this->mongo_db->insert('playbasis_payment', array(
+                'client_id' => $client_id,
+                'type' => $type,
+                'id' => $id,
+                'date_added' => $d,
+                'date_modified' => $d,
+            ));
+        } else {
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('type', $type);
+            $this->mongo_db->set('id', $id);
+            $this->mongo_db->set('date_modified', $d);
+            $this->mongo_db->update('playbasis_payment');
+        }
+    }
 }
 ?>

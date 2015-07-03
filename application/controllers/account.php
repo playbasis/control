@@ -224,8 +224,14 @@ class Account extends MY_Controller
 			$this->form_validation->set_rules('channel', $this->lang->line('form_channel'), 'trim|required');
 			$channel = $this->input->post('channel');
 			if (!$this->check_valid_payment_channel($channel)) $this->data['message'] = 'Invalid payment channel';
+			if ($mode != PURCHASE_SUBSCRIBE && $mode != PURCHASE_UPGRADE && $mode != PURCHASE_DOWNGRADE) {
+				$this->data['message'] = 'Invalid payment mode';
+				$mode = PURCHASE_SUBSCRIBE; // set mode to be default "subscribe"
+			}
 
 			if($this->form_validation->run() && $this->data['message'] == null){
+				$success = true;
+
 				$selected_plan = $this->Plan_model->getPlanById(new MongoId($this->input->post('plan')));
 				if (!array_key_exists('price', $selected_plan)) {
 					$selected_plan['price'] = DEFAULT_PLAN_PRICE;
@@ -253,7 +259,8 @@ class Account extends MY_Controller
 					break;
 				}
 
-				/* set the parameters for PayPal */
+				/* set the parameters for payment */
+				$this->data['heading_title'] = $this->lang->line('order_title');
 				$this->data['params'] = array(
 					'plan_id' => $selected_plan['_id'],
 					'plan_name' => $selected_plan['name'],
@@ -263,11 +270,32 @@ class Account extends MY_Controller
 					'modify' => $modify,
 				);
 
-				$success = true;
+				$plan_id = $this->data['params']['plan_id'].'';
+				switch ($channel) {
+				case PAYMENT_CHANNEL_PAYPAL:
+					$this->data['main'] = 'account_purchase_paypal';
+					break;
+				case PAYMENT_CHANNEL_STRIPE:
+					require_once(APPPATH.'/libraries/stripe/init.php');
+					\Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+					try {
+						$plan = \Stripe\Plan::retrieve($plan_id);
+					} catch (Exception $e) {
+						\Stripe\Plan::create(array(
+							'amount' => $this->data['params']['price']*100,
+							'interval' => 'month',
+							'name' => $this->data['params']['plan_name'],
+							'currency' => 'usd',
+							'id' => $plan_id,
+							'trial_period_days' => $this->data['params']['trial_days'],
+						));
+					}
+					$this->data['params']['publishable_key'] = STRIPE_PUBLISHABLE_KEY;
+					$this->data['main'] = 'account_purchase_stripe';
+					$this->data['form'] = 'account/stripe';
+					break;
+				}
 			}
-
-			$this->data['heading_title'] = $this->lang->line('order_title');
-			$this->data['main'] = 'account_purchase_paypal';
 		}
 		if (!$success) {
 			$this->data['mode'] = $mode;
@@ -280,6 +308,25 @@ class Account extends MY_Controller
 
 		$this->load->vars($this->data);
 		$this->render_page('template');
+	}
+
+	public function stripe() {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			require_once(APPPATH.'/libraries/stripe/init.php');
+			\Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+			$token = $this->input->post('stripeToken');
+			$plan_id = $this->input->post('plan_id');
+			$client_id = $this->User_model->getClientId();
+			$client = $this->Client_model->getClient($client_id);
+			$customer = \Stripe\Customer::create(array(
+				'source' => $token,
+				'plan' => $plan_id,
+				'email' => $client['email'],
+			));
+			$this->Client_model->insertOrUpdatePayment($client_id, $customer->id, 'stripe');
+			redirect('/account/stripe_completed', 'refresh');
+		}
+		redirect('/account', 'refresh');
 	}
 
 	public function pay() {
@@ -355,12 +402,25 @@ class Account extends MY_Controller
 	}
 
 	public function paypal_completed() {
-
 		$this->data['meta_description'] = $this->lang->line('meta_description');
 		$this->data['title'] = $this->lang->line('title');
 		$this->data['heading_title'] = $this->lang->line('congrat_title');
 		$this->data['text_no_results'] = $this->lang->line('text_no_results');
 		$this->data['main'] = 'account_purchase_paypal_done';
+
+		/* clear basket in the session */
+		$this->session->unset_userdata('plan');
+
+		$this->load->vars($this->data);
+		$this->render_page('template');
+	}
+
+	public function stripe_completed() {
+		$this->data['meta_description'] = $this->lang->line('meta_description');
+		$this->data['title'] = $this->lang->line('title');
+		$this->data['heading_title'] = $this->lang->line('congrat_title');
+		$this->data['text_no_results'] = $this->lang->line('text_no_results');
+		$this->data['main'] = 'account_purchase_stripe_done';
 
 		/* clear basket in the session */
 		$this->session->unset_userdata('plan');
@@ -735,7 +795,7 @@ class Account extends MY_Controller
 	}
 
 	private function check_valid_payment_channel($channel) {
-		return in_array($channel, array(PAYMENT_CHANNEL_PAYPAL));
+		return in_array($channel, array(PAYMENT_CHANNEL_PAYPAL, PAYMENT_CHANNEL_STRIPE));
 	}
 
 	private function validateAccess(){
