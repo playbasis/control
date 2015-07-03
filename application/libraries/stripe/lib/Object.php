@@ -92,8 +92,6 @@ class Object implements ArrayAccess
     }
     public function &__get($k)
     {
-log_message('error', '__get, k = '.$k);
-log_message('error', '__get, ->_values = '.print_r($this->_values,true));
         if (array_key_exists($k, $this->_values)) {
             return $this->_values[$k];
         } else if ($this->_transientValues->includes($k)) {
