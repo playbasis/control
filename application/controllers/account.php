@@ -426,8 +426,24 @@ class Account extends MY_Controller
 			if (!$this->check_valid_payment_channel($channel)) $this->data['message'] = 'Invalid payment channel';
 
 			if($this->form_validation->run() && $this->data['message'] == null){
-				$this->data['main'] = 'account_cancel_subscription_paypal';
 				$success = true;
+
+				switch ($channel) {
+				case PAYMENT_CHANNEL_PAYPAL:
+					$this->data['main'] = 'account_cancel_subscription_paypal';
+					break;
+				case PAYMENT_CHANNEL_STRIPE:
+					require_once(APPPATH.'/libraries/stripe/init.php');
+					\Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+					$client_id = $this->User_model->getClientId();
+					$stripe = $this->Client_model->getStripe($client_id);
+					$customer = \Stripe\Customer::retrieve($stripe['stripe_id']);
+					$subscription = $customer->subscriptions->retrieve($stripe['subscription_id']);
+					$subscription->cancel();
+					$this->Client_model->removeStrip($client_id);
+					$this->data['main'] = 'account_cancel_subscription_stripe';
+					break;
+				}
 			}
 		}
 		if (!$success) {

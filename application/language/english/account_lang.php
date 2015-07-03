@@ -29,6 +29,7 @@ $lang['text_trial_not_begin']						= 'Not Begin';
 $lang['text_trial_total_days']						= 'Total Allowed Trial Days';
 $lang['text_trial_remaining_days']						= 'Remaining Days In Trial Period';
 $lang['text_paypal']						= 'PayPal';
+$lang['text_stripe']						= 'Stripe';
 $lang['text_yes']						= 'Yes';
 $lang['text_no']						= 'No';
 $lang['text_not_available']						= 'N/A';
