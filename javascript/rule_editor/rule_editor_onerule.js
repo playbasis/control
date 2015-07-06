@@ -38,7 +38,8 @@ oneRuleMan = {
 
     //About node create dialog
     openNodeSelectionDialogType:undefined,
-    openNodeSelectionDialogTargetObj:undefined,
+    openNodeSelectionDialogTargetId:undefined,
+    openNodeSelectionDialogTargetType: undefined,// random | sequence | badge
     modalOptionSelectedItem:undefined,
     nodeInsertAfterPosition:undefined,
 
@@ -374,7 +375,9 @@ oneRuleMan = {
                     chainMan.chain.prepend(oneRuleMan.nodeList[nodePosition].getHTML());
                 }else{
                     //Append other type of node
-                    var target = chainMan.chain.find('li.pbd_ul_child:nth-child('+nodePosition+')')
+                    // var target = chainMan.chain.find('li.pbd_ul_child:nth-child('+nodePosition+')')
+                    var preNodePosition = nodePosition-1;
+                    var target = chainMan.chain.find('li.pbd_ul_child[id='+oneRuleMan.nodeList[preNodePosition].uid+']');
                     $(target).after(oneRuleMan.nodeList[nodePosition].getHTML());
                 }
             }else{ //If start with blank node List
@@ -389,6 +392,7 @@ oneRuleMan = {
              console.log(oneRuleMan.nodeList)
              console.log('===============================\n')
              }*/
+             console.log(oneRuleMan.nodeList);
 
             //Clean node connection
             chainMan.cleanNode();
@@ -560,7 +564,14 @@ perventDialogMan = {
                 forceAllowAddNewAction = ('ACTION' == dataMan.getClassAttrAfterPrefix('cate_',dataMan.objClassInspect(entireNode)))
 
                 //Delete Data sturct
-                chainMan.deleteNode(entireNode.attr('id'))
+                //Check if group
+                if(entireNode.parent().hasClass('pbd_ul_group')){
+                    var group_id = entireNode.parent().parent().attr('id');
+                    groupMan.deleteNode(entireNode.attr('id'), group_id);
+                }else{
+                    chainMan.deleteNode(entireNode.attr('id'))
+                }
+
                 //Delete UI
                 entireNode.remove();
 
@@ -789,7 +800,8 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
     event.preventDefault();
     var id = oneRuleMan.modalOptionSelectedItem;
     var type = oneRuleMan.openNodeSelectionDialogType;
-    var targetObj = oneRuleMan.openNodeSelectionDialogTargetObj;
+    var targetId = oneRuleMan.openNodeSelectionDialogTargetId;
+    var targetType = oneRuleMan.openNodeSelectionDialogTargetType;
 
     if(id!=undefined &&  id!='' && id!=' '){
 
@@ -815,7 +827,6 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             }
         }
 
-
         /* Append new node  */
         if(type=='ACTION'){
             // Force add item to sort_index 0
@@ -825,18 +836,17 @@ $('.pbd_rule_editor_modal .pbd_modal_confirm_btn').live('click',function(event){
             chainMan.hideAddActionButton()
         }else if(type=='GROUP_ITEM'){
 
-            groupMan.addItem(selected_jsonstring, targetObj)
+            groupMan.addItem(selected_jsonstring, targetId, targetType)
             oneRuleMan.nodeInsertAfterPosition = undefined;
             oneRuleMan.openNodeSelectionDialogType = undefined;
-            oneRuleMan.openNodeSelectionDialogTargetObj = undefined;
+            oneRuleMan.openNodeSelectionDialogTargetId = undefined;
+            oneRuleMan.openNodeSelectionDialogTargetType = undefined;
 
         }else if( selected_jsonstring!='' ){
               // pbnode.appendNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition);
             chainMan.addNode(selected_jsonstring,oneRuleMan.nodeInsertAfterPosition)
             oneRuleMan.nodeInsertAfterPosition = undefined;
         }
-
-
 
 
         $('.close').trigger('click');

@@ -16,7 +16,7 @@ var get_selected_option_text = function(arr, val) {
 }
 
 //rule_dataset.js
-DataSet = function(jsonArray, parent_id) {
+DataSet = function(jsonArray, parent_id, json_jigsaw) {
     if(!jsonArray || !$.isArray(jsonArray)) {
         try {
             $.parseJSON(jsonArray);
@@ -115,11 +115,18 @@ DataSet = function(jsonArray, parent_id) {
 
             var jigsaw = $('<table class="table table-bordered">');
 
-            // looping world
-            $.each(jsonArray, function(k, v) {
+            if( jsonArray.isGroupItem ){
+                jigsaw.addClass('table-group');
+            }
+
+            _pushDatasetRowToJigsaw = function(k,v){
                 var row = $('<tr>').addClass('pbd_rule_param state_text parent_id_'+parent_id),
                     labelColumn = $('<td>').addClass('pbd_rule_label'),
                     dataColumn = $('<td>').addClass('pbd_rule_data');
+
+                if( jsonArray.isGroupItem ){
+                    jigsaw.addClass('group-item');
+                }
 
                 if(v.field_type === 'hidden') {
                     row.addClass('hide');
@@ -182,6 +189,49 @@ DataSet = function(jsonArray, parent_id) {
                 // end data properties
 
                 jigsaw.append(row);
+            }
+
+            _pushGroupContainerRowToJigsaw = function(k, v, group_id){
+                
+                var $row = $('<tr class="pbd_rule_group_container state_text parent_id_'+group_id+'" id="'+group_id+'"><td colspan="2"><div class="pbd_group_container" id="'+group_id+'"><ul class="pbd_ul_group"></ul><div style="clear:both"><a herf="#" class="new_group_item_btn"><i class="icon-plus icon-white"></i> Add Reward</a></div></div></td></tr>');
+                
+
+                var tempItemGroup = [];
+                if( v.value.length > 0 ){
+                    $.each(v.value, function(keyGroupItem, groupItemJson) {
+                        var nodeGroupItem = new Node( groupItemJson );
+                        tempItemGroup.push( nodeGroupItem );
+                        $row.find( '.pbd_ul_group' ).append( nodeGroupItem.getHTML() );
+                    });
+
+                    v.value = tempItemGroup;
+                }
+
+                jigsaw.append($row);
+
+                 //Event : Insert new Reward
+                $('.pbd_group_container[id='+group_id+'] .new_group_item_btn').live('click',function(event){
+                    event.preventDefault();
+                    var theModal = $('#newrule_reward_modal');
+
+                    oneRuleMan.openNodeSelectionDialog(theModal.find('.modal-body .selection_wrapper'),jsonString_Feedback,'feedback');
+                    theModal.modal('show');
+                    oneRuleMan.openNodeSelectionDialogType = 'GROUP_ITEM';
+                    oneRuleMan.openNodeSelectionDialogTargetId = group_id;
+                    oneRuleMan.openNodeSelectionDialogTargetType = json_jigsaw.name;
+
+                })
+
+            }
+
+             // looping world
+            $.each(jsonArray, function(k, v) {
+                if(v.field_type == 'group_container'){
+                    _pushGroupContainerRowToJigsaw(k, v, parent_id);
+                }else{
+                    _pushDatasetRowToJigsaw(k, v);
+                }
+                
             });
 
             _validateByType = {
@@ -655,77 +705,109 @@ DataSet = function(jsonArray, parent_id) {
 //            console.log('getJson : ' + this.parent_id);
             var result = [];
 
-            $('#'+this.parent_id+' tbody tr').each(function() {
-                var obj = {},
-                    $this = $(this),
-                    class_data = $($(this).find('td')[0]).attr('class');
+            var _getParamFromUI = function($this){
+                    var obj = {},
+                        // $this = $(this),
+                        class_data = $($this.find('td')[0]).attr('class');
 
-                data = class_data.split(' ');
-                $.each(data, function(k, v){
-                    if(v.match('name_')) {
-                        obj.param_name = v.split('name_')[1];
-                    }
-                    if(v.match('field_type_')) {
-                        obj.field_type = v.split('field_type_')[1];
-                    }
-                    if(v.match('sort_')) {
-                        obj.sortOrder = v.split('sort_')[1];
-                    }
-                });
-
-                obj.label = $this.find('td')[0].innerHTML;
-                var elm = $this.find('input'); // try to find "input" first
-                if (elm.length <= 0) elm = $this.find('select'); // if not found, then try to find "select"
-                obj.placeholder = elm.attr('placeholder');
-                if (elm.attr('datatype')) obj.type = elm.attr('datatype');
-
-                /*
-                 * track to grand parent node to get node header
-                 * for formatting result to correct format for backend
-                 */
-                var value = elm.val(),
-                    $parent = $this.parent().parent().parent().parent().parent().parent(),
-                    anotherType = $parent.find('.name_only').html();
-
-                switch(anotherType) {
-                    case 'BEFORE_DATE':
-                    // Before: date time in unix timestamp
-                    case 'AFTER_DATE':
-                        // After: date time in unix timestamp
-                        try {
-                            value = Date.parse(value).getTime()/1000;
+                    data = class_data.split(' ');
+                    $.each(data, function(k, v){
+                        if(v.match('name_')) {
+                            obj.param_name = v.split('name_')[1];
                         }
-                        catch(e) {
-                            // value is unix time format so correct
-                            // skip the error
+                        if(v.match('field_type_')) {
+                            obj.field_type = v.split('field_type_')[1];
                         }
-                        break;
+                        if(v.match('sort_')) {
+                            obj.sortOrder = v.split('sort_')[1];
+                        }
+                    });
 
-                    case 'BETWEEN':
-                    // Between :time in 24hr format {00:00 - 23:59}
-                    // do nothing
-                    case 'COOLDOWN':
-                    // Cooldown :cooldown time in second
-                    // do nothing
-                    case 'DAILY':
-                    // Daily->time_of_day : time in 24hr format {00:00 - 23:59}
-                    // donothing
-                    case 'WEEKLY':
-                    // Weekly->time_of_day : time in 24hr format {00:00 - 23:59}
-                    // Weekly->date_of_month{1-7}
-                    case 'MONTHLY':
-                    // Monthly->time_of_day : time in 24hr format {00:00 - 23:59}
-                    // Monthly->date_of_month{1-31}
-                    case 'EVERY_N_DAY':
-                        // EveryDay->time_of_day : time in 24hr format {00:00 - 23:59}
-                        // EveryDay->num_of_day : num
-                        break;
+                    obj.label = $this.find('td')[0].innerHTML;
+                    var elm = $this.find('input'); // try to find "input" first
+                    if (elm.length <= 0) elm = $this.find('select'); // if not found, then try to find "select"
+                    obj.placeholder = elm.attr('placeholder');
+                    if (elm.attr('datatype')) obj.type = elm.attr('datatype');
+
+                    /*
+                     * track to grand parent node to get node header
+                     * for formatting result to correct format for backend
+                     */
+                    var value = elm.val(),
+                        $parent = $this.parent().parent().parent().parent().parent().parent(),
+                        anotherType = $parent.find('.name_only').html();
+
+                    switch(anotherType) {
+                        case 'BEFORE_DATE':
+                        // Before: date time in unix timestamp
+                        case 'AFTER_DATE':
+                            // After: date time in unix timestamp
+                            try {
+                                value = Date.parse(value).getTime()/1000;
+                            }
+                            catch(e) {
+                                // value is unix time format so correct
+                                // skip the error
+                            }
+                            break;
+
+                        case 'BETWEEN':
+                        // Between :time in 24hr format {00:00 - 23:59}
+                        // do nothing
+                        case 'COOLDOWN':
+                        // Cooldown :cooldown time in second
+                        // do nothing
+                        case 'DAILY':
+                        // Daily->time_of_day : time in 24hr format {00:00 - 23:59}
+                        // donothing
+                        case 'WEEKLY':
+                        // Weekly->time_of_day : time in 24hr format {00:00 - 23:59}
+                        // Weekly->date_of_month{1-7}
+                        case 'MONTHLY':
+                        // Monthly->time_of_day : time in 24hr format {00:00 - 23:59}
+                        // Monthly->date_of_month{1-31}
+                        case 'EVERY_N_DAY':
+                            // EveryDay->time_of_day : time in 24hr format {00:00 - 23:59}
+                            // EveryDay->num_of_day : num
+                            break;
+                    }
+
+                    obj.value = value;
+
+                    return obj;
+            }
+
+            var _this = this;
+            var _getParamFromGroupContainer = function( ){
+                    var group_container = {
+                        "param_name": "group_container",
+                        "label": "group",
+                        "placeholder": "",
+                        "sortOrder": "0",
+                        "field_type": "group_container",
+                        "value": []
+                    };
+
+                    var groupContainer = groupMan.findGroupContainerInNodeList(_this.parent_id);
+
+                    for(var key in groupContainer.value){
+                        var json = groupContainer.value[key].getJSON();
+                        group_container.value.push(json);
+                    }
+
+                    return group_container;
+            }
+
+            $('#'+this.parent_id+' table:first').find('>tbody>tr').each(function() {
+                if( $(this).hasClass('pbd_rule_group_container') ){
+                    var obj =  _getParamFromGroupContainer();
+                    result.push(obj);
+                }else{
+                    var obj =  _getParamFromUI( $(this) );
+                    result.push(obj);
                 }
-
-                obj.value = value;
-                result.push(obj);
             });
-//            console.log(result);
+
             return result;
         }
     }

@@ -18,8 +18,9 @@ Node = function(json){
     this.jigsawDescription = json.description;
     this.category = json.category;
     this.sortOrder = json.sort_order;
-    if(json.group_obj){
-        this.group_obj = json.group_obj;
+
+    if(json.is_group_item){
+        this.isGroupItem = json.is_group_item;
     }
     
     // this.currentJSON = json;
@@ -46,12 +47,16 @@ Node = function(json){
 
 
     
-    if( this.category.toLowerCase() == "group" ){
-        json.group_id = this.uid;
-        this.currentDataSet = new DataSetGroup(json.dataSet,this.uid, json);
-    }else{
-        this.currentDataSet = new DataSet(json.dataSet,this.uid);
-    }
+    // if( this.category.toLowerCase() == "group" ){
+    //     json.group_id = this.uid;
+    //     this.currentDataSet = new DataSet(json.dataSet,this.uid);
+    //     // this.currentDataSet = new DataSetGroup(json.dataSet,this.uid, json);
+    // }else{
+    //     this.currentDataSet = new DataSet(json.dataSet,this.uid);
+    // }
+
+    this.currentDataSet = new DataSet(json.dataSet,this.uid, json);
+
 
     this.mRuleHTML = undefined;
     //Start : Init statement
@@ -126,7 +131,7 @@ Node.prototype.getHTML = function(){
     //add dataset Table
     this.mRuleHTML += htmlElement+'</span></div>';
 
-    if( !this.group_obj ){
+    if( !this.isGroupItem ){
         //Add connection link
         this.mRuleHTML += '<div class="row connection"><div class="line_connect line_top offset6"></div><div class="offset6 new_node_connect"><div class="new_node_connect_btn circle" style="margin-top: -20px;"><div class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="1"><i class="icon-plus icon-white"></i> Add : condition & reward</a><ul class="dropdown-menu pbd_dropdown-menu" role="menu" aria-labelledby="dLabel"><li><a tabindex="-1" id="new_condition_btn" href="#"><i class="fa-icon-cogs"></i> Condition</a></li><li><a tabindex="-1" id="new_reward_btn" href="#"><i class="fa-icon-trophy"></i> Reward</a></li><li><a tabindex="-1" id="new_group_btn" href="#"><i class="fa-icon-trophy"></i> Reward Group</a></li></ul></div></div></div></div></div>';
     }
@@ -218,7 +223,7 @@ Node.prototype.getJSON = function() {
     function extract_configFromJSON(dataSet,parentContext){
 
         //Custom parameter for different type of node
-        var output = transformDataSetToConfig(dataSet);
+        var output = transformDataSetToConfig(dataSet, parentContext);
 
         switch(parentContext.category){
             case "ACTION" :
@@ -240,7 +245,8 @@ Node.prototype.getJSON = function() {
 
         }//-->
 
-        function transformDataSetToConfig(dataSet){
+
+        function transformDataSetToConfig(dataSet, parentContext){
             /*
              Building this
              "config": {
@@ -251,12 +257,14 @@ Node.prototype.getJSON = function() {
              }
 
              */
+            
             var stringOutput = '{'; //start : collecting value into string
             var len = dataSet.length;
 
             for(var i=0;i<len;i++){
                 if(i > 0 && i < len)stringOutput += ',';
                 var item = dataSet[i];
+
                 if(item.value == undefined || item.value == 'undefined')
                     item.value = "";
 
@@ -273,6 +281,13 @@ Node.prototype.getJSON = function() {
                     else item.value = false;
                     stringOutput+= '"'+item.param_name+'":'+item.value;
 
+                }else if( item.field_type == "group_container" ){
+                    var group_item = [];
+                    for( var key in item.value ){
+                        var nodeGroupContainer =  groupMan.findNodeGroupItemInNodeList(item.value[key].jigsaw_index, parentContext.uid );
+                        group_item.push( extract_configFromJSON(item.value[key].dataSet, nodeGroupContainer ) );
+                    }
+                    stringOutput+= '"'+item.param_name+'": '+ JSON.stringify(group_item);
                 }else{
                     stringOutput+= '"'+item.param_name+'":"'+item.value+'"';
                 }

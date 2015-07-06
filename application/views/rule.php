@@ -446,15 +446,15 @@
     "description":"",
     "sort_order":1,
     "status":true,
-    "specific_id":"00000000000000000",
+    "specific_id":"random_id!!!",
     "dataSet":[{
         "param_name":"group_container",
         "label":"Group",
         "placeholder":"",
         "sortOrder":"0",
-        "field_type":"group_container"
+        "field_type":"group_container",
+         "value": []
     }],
-    "itemList":[],
     "id":"00000000000000000",
     "category":"GROUP"
 },
@@ -464,15 +464,23 @@
     "description":"",
     "sort_order":2,
     "status":true,
-    "specific_id":"00000000000000000",
+    "specific_id":"sequence_id!!!",
     "dataSet":[{
+            "param_name": "loop",
+            "label": "Loop",
+            "placeholder": "",
+            "sortOrder": "0",
+            "field_type": "boolean",
+            "value": "true"
+    },
+    {
         "param_name":"group_container",
         "label":"Group",
         "placeholder":"",
-        "sortOrder":"0",
-        "field_type":"group_container"
+        "sortOrder":"1",
+        "field_type":"group_container",
+        "value": []
     }],
-    "itemList":[],
     "id":"00000000000000000",
     "category":"GROUP"
 }];
@@ -493,7 +501,7 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_editor_onerule.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_editor_table.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_dataset.js"></script>
-<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_dataset_group.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_group.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rule_node.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/scripts.js"></script>
 
