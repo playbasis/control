@@ -19,6 +19,16 @@ ul.pbd_ul_group.ui-sortable li.ui-state-highlight{
   margin: 0 10px;
 }
 
+.new_group_item_btn{
+  padding: 5px 10px;
+  background: #999;
+  color: #fff;
+  display: inline-block;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
 
 .line_connect{width:15px;/*background: green; */background: #333;height: 30px;}
 .connection{margin:0px 0px -18px 0px;}

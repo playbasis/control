@@ -400,7 +400,6 @@ oneRuleMan = {
              console.log(oneRuleMan.nodeList)
              console.log('===============================\n')
              }*/
-             console.log(oneRuleMan.nodeList);
 
             //Clean node connection
             chainMan.cleanNode();
