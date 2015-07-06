@@ -19,14 +19,21 @@ ul.pbd_ul_group.ui-sortable li.ui-state-highlight{
   margin: 0 10px;
 }
 
+.pbd_group_action{
+  text-align: center;
+}
 .new_group_item_btn{
   padding: 5px 10px;
-  background: #999;
-  color: #fff;
+  color: #666;
   display: inline-block;
   font-weight: bold;
   cursor: pointer;
   border-radius: 15px;
+}
+.new_group_item_btn:hover{
+  color: #333;
+  background: #ddd;
+  text-decoration: none;
 }
 
 

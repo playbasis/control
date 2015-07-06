@@ -193,7 +193,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
             _pushGroupContainerRowToJigsaw = function(k, v, group_id){
                 
-                var $row = $('<tr class="pbd_rule_group_container state_text parent_id_'+group_id+'" id="'+group_id+'"><td colspan="2"><div class="pbd_group_container" id="'+group_id+'"><ul class="pbd_ul_group pbd_group_'+json_jigsaw.name+' "></ul><div style="clear:both"><a herf="#" class="new_group_item_btn"><i class="icon-plus icon-white"></i> Add Reward</a></div></div></td></tr>');
+                var $row = $('<tr class="pbd_rule_group_container state_text parent_id_'+group_id+'" id="'+group_id+'"><td colspan="2"><div class="pbd_group_container" id="'+group_id+'"><ul class="pbd_ul_group pbd_group_'+json_jigsaw.name+' "></ul><div style="clear:both" class="pbd_group_action"><a herf="#" class="new_group_item_btn"><i class="icon-plus icon-white"></i> Add Reward</a></div></div></td></tr>');
                 
 
                 var tempItemGroup = [];
@@ -226,7 +226,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
                 })
 
-                
+
 
 
 
