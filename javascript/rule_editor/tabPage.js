@@ -92,16 +92,29 @@
             $(this).addClass('tab-item-hightlight');
         });
 
-        $("#badge_selection_btn").live('click', function(){
+        $("#badge_selection_btn").unbind('click').on('click', function(){
             var send_data = $('.tab-item-hightlight').attr('id');
             var img = $('.tab-item-hightlight').find('img').attr('src')
-            $(opts.output_data).val(send_data);
 
-            //Append Badges Images here
+            if( typeof opts.targetId != 'undefined' ){
+                $targetObj = $('#'+opts.targetId).find(opts.output_data+':first');
+                $targetObj.val(send_data);
+
+                var tableRow = $targetObj.parent().parent();
+                tableRow.find('img').remove();
+                tableRow.prepend( BadgeSet.getBadgeImage(send_data));
+
+            }else{
+                $(opts.output_data).val(send_data);
+                //Append Badges Images here
                 var tableRow = $(opts.output_data).parent().parent();
                 tableRow.find('img').remove();
                 // tableRow.find('input').hide();
                 tableRow.prepend( BadgeSet.getBadgeImage(send_data));
+            }
+            
+
+            
 
         });
 
@@ -112,7 +125,10 @@
 $(document).ready(function() {
     $('.edit_reward_type').live('click',function(){
         if($.isFunction($.fn.tabPage)){
-            $().tabPage({url :urlConfig.URL_getBadges()});
+            $().tabPage({
+                url :urlConfig.URL_getBadges(),
+                targetId: $(this).closest('.pbd_ul_child').attr('id')
+            });
         }
         $('#reward_collection').modal('show');
     })
