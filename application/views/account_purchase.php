@@ -19,7 +19,7 @@
                 <?php echo form_open($form ,$attributes); ?>
 
                                     <input type="hidden" name="plan" >
-                                    <input type="hidden" name="channel" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>">
+                                    <input type="hidden" name="channel" value="<?php echo PAYMENT_CHANNEL_DEFAULT; ?>">
                                 
                 <?php echo form_close(); ?>
             

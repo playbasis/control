@@ -533,5 +533,45 @@ class Client_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_permission');
         return $results ? $results[0] : null;
     }
+
+    public function getStripe($client_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_stripe');
+        return $results ? $results[0] : null;
+    }
+
+    public function insertOrUpdateStrip($client_id, $stripe_id, $subscription_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $d = new MongoDate(time());
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where_ne('deleted', true);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_stripe');
+        if (!$results) {
+            $this->mongo_db->insert('playbasis_stripe', array(
+                'client_id' => $client_id,
+                'stripe_id' => $stripe_id,
+                'subscription_id' => $subscription_id,
+                'date_added' => $d,
+                'date_modified' => $d,
+            ));
+        } else {
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->set('stripe_id', $stripe_id);
+            $this->mongo_db->set('subscription_id', $subscription_id);
+            $this->mongo_db->set('date_modified', $d);
+            $this->mongo_db->update('playbasis_stripe');
+        }
+    }
+
+    public function removeStrip($client_id) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->update('playbasis_stripe');
+    }
 }
 ?>
