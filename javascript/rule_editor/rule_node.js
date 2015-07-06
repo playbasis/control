@@ -79,7 +79,7 @@ Node.prototype.getHTML = function(){
         case 'CONDITION':boxStyle = 'pbd_boxstyle_condition';boxIcon= 'fa-icon-time';break;
         case 'REWARD':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
         case 'FEEDBACK':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
-        case 'GROUP':boxStyle = 'pbd_boxstyle_reward';boxIcon= 'fa-icon-trophy';break;
+        case 'GROUP':boxStyle = 'pbd_boxstyle_group';boxIcon= 'fa-icon-tasks';break;
     }
 
     var htmlElement = '';

@@ -429,6 +429,7 @@
 <script type="text/javascript" src="<?php echo base_url();?>javascript/rule_editor/rulenode_tablerow_description.js"></script>
 <!-- TRY ADD CHZN PLUGIN - BUT NOT WORK  -->
 
+
 <!-- Start : Rule Editor -->
 <script type="text/javascript">
     //########### Start : Global variable for rule_e.js ##################/

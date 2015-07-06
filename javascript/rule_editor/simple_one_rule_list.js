@@ -799,7 +799,7 @@
                             "category": "REWARD",
                             "specific_id": "00000000",
                             "sort_order": 1,
-                            "is_group_item": true,
+                            "is_group_item": "00000000", //Group Id
                             "dataSet": [
                                 {
                                     "param_name": "reward_name",

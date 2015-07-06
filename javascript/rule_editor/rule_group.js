@@ -8,9 +8,6 @@ groupMan = {
             this.group.empty();
         },
 
-        getLen:function(){
-            return this.group.children().length;
-        },
         findGroupContainerInNodeList: function( group_id ){
 
             var groupContainer;
@@ -85,12 +82,45 @@ groupMan = {
             
             $('.pbd_group_container[id='+group_id+'] .pbd_ul_group').append( groupItem.getHTML() );
 
+            groupMan.initEvent();
+
             pb_sweapNodeDataRow();
 
-            console.log( oneRuleMan.nodeList );
-            console.log( $.parseJSON(oneRuleMan.saveRule()) );
+            // console.log( oneRuleMan.nodeList );
+            // console.log( $.parseJSON(oneRuleMan.saveRule()) );
 
             // groupMan.cleanNode();
+        },
+        initEvent: function(){
+
+             $('.pbd_group_container').each(function(){
+                
+                var group_id = $(this).attr('id');
+
+                // *****************************//
+                // binding event for SEQUENCE Group      //
+                // *****************************//
+                $('.pbd_group_container[id='+group_id+'] .pbd_group_sequence').sortable({
+                    placeholder: "ui-state-highlight",
+                    deactivate: function( event, ui ) {
+                        var groupContainer = groupMan.findGroupContainerInNodeList( group_id );
+                        var temp = [];
+                        $ulGroup = ui.item.parent();
+                        $ulGroup.find('>li').each(function(){
+                            var itemId = $(this).attr('id');
+                            for(var key in groupContainer.value){
+                                if(groupContainer.value[key].uid == itemId){
+                                    temp.push(groupContainer.value[key]);
+                                }
+                            }
+                        });
+                        groupContainer.value = temp;
+                    }
+                });
+
+             });
+            
+
         },
         deleteNode:function(uid, group_id){
 

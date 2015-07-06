@@ -193,18 +193,22 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
             _pushGroupContainerRowToJigsaw = function(k, v, group_id){
                 
-                var $row = $('<tr class="pbd_rule_group_container state_text parent_id_'+group_id+'" id="'+group_id+'"><td colspan="2"><div class="pbd_group_container" id="'+group_id+'"><ul class="pbd_ul_group"></ul><div style="clear:both"><a herf="#" class="new_group_item_btn"><i class="icon-plus icon-white"></i> Add Reward</a></div></div></td></tr>');
+                var $row = $('<tr class="pbd_rule_group_container state_text parent_id_'+group_id+'" id="'+group_id+'"><td colspan="2"><div class="pbd_group_container" id="'+group_id+'"><ul class="pbd_ul_group pbd_group_'+json_jigsaw.name+' "></ul><div style="clear:both"><a herf="#" class="new_group_item_btn"><i class="icon-plus icon-white"></i> Add Reward</a></div></div></td></tr>');
                 
 
                 var tempItemGroup = [];
                 if( v.value.length > 0 ){
                     $.each(v.value, function(keyGroupItem, groupItemJson) {
+                        console.log(groupItemJson);
                         var nodeGroupItem = new Node( groupItemJson );
                         tempItemGroup.push( nodeGroupItem );
                         $row.find( '.pbd_ul_group' ).append( nodeGroupItem.getHTML() );
                     });
 
                     v.value = tempItemGroup;
+
+                   
+
                 }
 
                 jigsaw.append($row);
@@ -222,8 +226,11 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
                 })
 
-            }
+                
 
+
+
+            }
              // looping world
             $.each(jsonArray, function(k, v) {
                 if(v.field_type == 'group_container'){
@@ -231,8 +238,9 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 }else{
                     _pushDatasetRowToJigsaw(k, v);
                 }
-                
             });
+
+            
 
             _validateByType = {
                 'number': function(value) {
@@ -257,6 +265,9 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                     return value.search(/['"]/g) < 0;
                 }
             };
+
+
+            
 
             // *****************************//
             // binding event for input      //
@@ -696,7 +707,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 }
                 // console.log(this.id);
             });
-
+        
             // console.log(jigsaw[0].outerHTML);
             return jigsaw[0].outerHTML;
         },
@@ -792,6 +803,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
                     for(var key in groupContainer.value){
                         var json = groupContainer.value[key].getJSON();
+                        json.is_group_item = _this.parent_id;
                         group_container.value.push(json);
                     }
 

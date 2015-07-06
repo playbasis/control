@@ -126,6 +126,8 @@ oneRuleMan = {
             //And remove add Rule Btn if There is action-node already ->
             chainMan.hideAddActionButton();
         }
+        
+        groupMan.initEvent();
 
         chainMan.cleanNode()
     },
@@ -198,6 +200,12 @@ oneRuleMan = {
     validateAtLeastOneReward:function() {
         for(var index in oneRuleMan.nodeList){
             if (['REWARD', 'FEEDBACK'].indexOf(oneRuleMan.nodeList[index].category) > -1) return true;
+            if( oneRuleMan.nodeList[index].category == 'GROUP'){
+                var groupContainer = groupMan.findGroupContainerInNodeList(oneRuleMan.nodeList[index].uid);
+                if( typeof groupContainer.value != 'undefined' && groupContainer.value.length > 0){
+                    return true;
+                }
+            }
         }
         return false;
     },
