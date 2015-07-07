@@ -116,6 +116,7 @@ class Dashboard extends MY_Controller
         if ($this->User_model->getUserGroupId() != $this->User_model->getAdminGroupID()) {
             $this->load->model('Feature_model');
             $user_plan = $this->User_model->getPlan();
+            if (!$user_plan) redirect('/logout', 'refresh');
             if ($user_plan['_id'] != FREE_PLAN || $this->User_model->getMobile()) {
                 if ($this->User_model->getSiteId()) {
                     $features = $this->Feature_model->getFeatureBySiteId($this->User_model->getClientId(), $this->User_model->getSiteId());
