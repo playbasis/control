@@ -576,7 +576,7 @@ class Rule_model extends MY_Model
                     $value['action_id'] = strval($value["action_id"]);
                     $value['action_name'] = array_key_exists(strval($value["action_id"]), $params['actionNameDict']) ? $params['actionNameDict'][strval($value["action_id"])] : $this->getActionName($value['jigsaw_set']).'<span style="color: red">*</span>';
                     $value['usage'] = array_key_exists($value['rule_id'], $rules) ? $rules[$value['rule_id']] : 0;
-                    $value['error'] = $this->checkRuleError($value['jigsaw_set'], $params);
+                    $value['error'] = implode(', ', $this->checkRuleError($value['jigsaw_set'], $params));
                     unset($value['jigsaw_set']);
                     foreach ($value as $k2 => &$v2) {
                         if($k2 == "date_added"){
@@ -745,7 +745,7 @@ class Rule_model extends MY_Model
         }
         if ($is_condition) $error[] = 'because one condition has been set at the end of rule, this condition will be ineffective';
         if (!$check_reward) $error[] = 'there is no any reward configured in the rule';
-        return implode(', ', $error);
+        return $error;
     }
 
     private function vsort(&$array, $key) {
