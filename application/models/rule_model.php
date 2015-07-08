@@ -282,6 +282,15 @@ class Rule_model extends MY_Model
                 'specific_id' => $type,
                 'dataSet' => array(
                     array(
+                        'field_type' => 'hidden',
+                        'label' => 'feedback_name',
+                        'param_name' => 'feedback_name',
+                        'placeholder' => 'feedback_name',
+                        'sortOrder' => 0,
+                        'tooltips' => 'feedback_name',
+                        'value' => 'email',
+                    ),
+                    array(
                         'field_type' => 'select',
                         'label' => 'Template id',
                         'param_name' => 'template_id',
@@ -315,6 +324,15 @@ class Rule_model extends MY_Model
                 'status' => 1,
                 'specific_id' => $type,
                 'dataSet' => array(
+                    array(
+                        'field_type' => 'hidden',
+                        'label' => 'feedback_name',
+                        'param_name' => 'feedback_name',
+                        'placeholder' => 'feedback_name',
+                        'sortOrder' => 0,
+                        'tooltips' => 'feedback_name',
+                        'value' => 'sms',
+                    ),
                     array(
                         'field_type' => 'select',
                         'label' => 'Template id',
