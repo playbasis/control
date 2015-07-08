@@ -75,11 +75,13 @@ class Rule extends MY_Controller
             $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
             $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
             $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList);
+            $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
 
             $this->data['actionList'] = $actionList;
             $this->data['conditionList'] = $conditionList;
             $this->data['rewardList'] = $rewardList;
             $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
+            $this->data['groupList'] = $groupList;
             $this->data['emailList'] = $emailList;
             $this->data['smsList'] = $smsList;
         }

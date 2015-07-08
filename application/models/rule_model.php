@@ -214,6 +214,60 @@ class Rule_model extends MY_Model
         return $output;
     }
 
+    public function getGroupJigsawList($siteId,$clientId){
+        if (filter_var($clientId, FILTER_VALIDATE_BOOLEAN) !=
+            filter_var($siteId, FILTER_VALIDATE_BOOLEAN))
+            throw new Exception("error_xor_client_site");
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array(
+            'jigsaw_id',
+            'name',
+            'description',
+            'sort_order',
+            'icon',
+            'status',
+            'init_dataset'
+        ));
+        $this->mongo_db->where('category', 'GROUP');
+        if ($clientId) {
+            $this->mongo_db->where('site_id', new MongoID($siteId));
+            $this->mongo_db->where('client_id', new MongoID($clientId));
+            $results = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
+        } else {
+            $results = $this->mongo_db->get("playbasis_jigsaw");
+        }
+
+        $output = array(
+            'error'=>1,
+            'success'=>false,
+            'msg'=>'Error , invalid request format or missing parameter'
+        );
+
+        try{
+            if(count($results)>0){
+                foreach ($results as &$rowx) {
+                    $jigsaw_id = strval($rowx['jigsaw_id']);
+                    $rowx['id'] = $jigsaw_id;
+                    $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
+                    $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
+                    $rowx['dataSet'] = $rowx['init_dataset'];
+                    $rowx['specific_id'] = $jigsaw_id; // no specific id for condition so using the same id with jigsaw id.
+                    $rowx['category']='GROUP';
+                    unset($rowx['jigsaw_id']);
+                    unset($rowx['init_dataset']);
+                    unset($rowx['_id']);
+                }
+                $output = $results;
+            }
+
+        }catch(Exception $e){
+            //Exception stuff
+        }
+
+        return $output;
+    }
+
     public function getFeedbackJigsawList($siteId, $clientId, $emailList, $smsList) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $output = array();

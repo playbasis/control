@@ -441,52 +441,7 @@
     var jsonString_Condition = <?php echo json_encode($conditionList); ?>;
     var jsonString_Reward    = <?php echo json_encode($rewardList); ?>;
     var jsonString_Feedback  = <?php echo json_encode($feedbackList); ?>;
-    var jsonString_Group = [{
-    "_id":{"$id":"00000000000000000"},
-    "name":"random",
-    "description":"",
-    "sort_order":1,
-    "status":true,
-    "specific_id":"random_id!!!",
-    "dataSet":[{
-        "param_name":"group_container",
-        "label":"Group",
-        "placeholder":"",
-        "sortOrder":"0",
-        "field_type":"group_container",
-         "value": []
-    }],
-    "id":"00000000000000000",
-    "category":"GROUP"
-},
-{
-    "_id":{"$id":"00000000000000000"},
-    "name":"sequence",
-    "description":"",
-    "sort_order":2,
-    "status":true,
-    "specific_id":"sequence_id!!!",
-    "dataSet":[{
-            "param_name": "loop",
-            "label": "Loop",
-            "placeholder": "",
-            "sortOrder": "0",
-            "field_type": "boolean",
-            "value": "true"
-    },
-    {
-        "param_name":"group_container",
-        "label":"Group",
-        "placeholder":"",
-        "sortOrder":"1",
-        "field_type":"group_container",
-        "value": []
-    }],
-    "id":"00000000000000000",
-    "category":"GROUP"
-}];
-
-
+    var jsonString_Group = <?php echo json_encode($groupList); ?>;
     var jsonString_Email     = <?php echo json_encode($emailList); ?>;
     var jsonString_Sms       = <?php echo json_encode($smsList); ?>;
 
