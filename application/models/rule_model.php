@@ -735,6 +735,10 @@ class Rule_model extends MY_Model
                 $is_condition = false;
                 $check_reward = true;
                 break;
+            case 'GROUP':
+                $is_condition = false;
+                $check_reward = true;
+                break;
             default:
                 break;
             }
