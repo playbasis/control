@@ -307,14 +307,14 @@ class Rule extends MY_Controller
             return ;
         }
 
-        $json = $this->Rule_model->getRuleById(
+        $rule = $this->Rule_model->getRuleById(
             $s_siteId,
             $s_clientId,
             $this->input->get('ruleId'));
 
-        if($json){
+        if($rule){
             $this->output->set_output(
-                $this->input->get('callback')."(".json_encode($json[0]).")");
+                $this->input->get('callback')."(".json_encode($rule).")");
         }else{
             $this->jsonErrorResponse();
         }

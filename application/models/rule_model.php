@@ -431,10 +431,7 @@ class Rule_model extends MY_Model
     public function getRuleById($siteId,$clientId,$ruleId){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $output = array( 'error'=>1 ,'success'=>false ,'msg'=>'Error , invalid request format or missing parameter');
-
         try{
-
             $this->mongo_db->where('site_id', new MongoID($siteId));
             $this->mongo_db->where('client_id', new MongoID($clientId));
             $this->mongo_db->where('_id', new MongoID($ruleId));
@@ -447,13 +444,13 @@ class Rule_model extends MY_Model
                 $ds[0]['client_id'] = $ds[0]['client_id']."";
                 $ds[0]['action_id'] = $ds[0]['action_id']."";
                 $ds[0]['_id'] = $ds[0]['_id']."";
-                $output = $ds;
+                return $ds[0];
             }
         }catch(Exception $e){
             //Exception stuff
         }
 
-        return $output;
+        return false;
     }
 
     public function getRulesByCombinationId($siteId, $clientId, $params=array('actionList' => null, 'actionNameDict' => null, 'conditionList' => null, 'rewardList' => null)) {
