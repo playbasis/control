@@ -738,6 +738,13 @@ class Rule_model extends MY_Model
             case 'GROUP':
                 $is_condition = false;
                 $check_reward = true;
+                // check each entry in "GROUP"
+                foreach ($each['dataSet'] as $data) {
+                    if ($data['field_type'] == 'group_container') {
+                        // recursive call
+                        $error = array_merge($error, $this->checkRuleError($data['value'], $params));
+                    }
+                }
                 break;
             default:
                 break;
