@@ -974,6 +974,16 @@ table {
   font-size: 12px;
 }
 
+#pb-registration .modal-card-content small {
+  text-shadow: none;
+  font-size: 12px;
+  text-transform: inherit;
+  line-height: 1.4;
+  color: #999;
+  letter-spacing: inherit;
+  padding: 10px 20px 0;
+}
+
 /* ==========================================================================
    Modal Card
 /* ========================================================================== */

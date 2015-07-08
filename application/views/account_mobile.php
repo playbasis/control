@@ -31,6 +31,7 @@
 			<hr>
 			<p>
 				No SMS received? Please contact <a href="mailto:support@playbasis.com">support@playbasis.com</a>
+				<small>The validation code will expire after 30 minutes. <br>Please request a new one if needed.</small>
 			</p>
 		</div>
 	</div>
