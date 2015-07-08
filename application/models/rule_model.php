@@ -33,9 +33,11 @@ class Rule_model extends MY_Model
         );
 
         $this->mongo_db->select(array('_id'));
-        $this->mongo_db->where('name',  'action');
-        $this->mongo_db->where('category',  'ACTION');
+        $this->mongo_db->where('name', 'action');
+        $this->mongo_db->where('category', 'ACTION');
+        $this->mongo_db->limit(1);
         $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
+        $jigsaw_id = strval($jigsaw[0]['_id']);
 
         try{
             if(count($results)>0){
@@ -46,10 +48,11 @@ class Rule_model extends MY_Model
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
                     $rowx['dataSet'] = $rowx['init_dataset'];
-                    $rowx['id']=$jigsaw[0]['_id']."";
+                    $rowx['id'] = $jigsaw_id;
                     $rowx['category']='ACTION';
                     unset($rowx['action_id']);
                     unset($rowx['init_dataset']);
+                    unset($rowx['_id']);
                 }
                 $output = $results;
             }
@@ -94,14 +97,16 @@ class Rule_model extends MY_Model
         try{
             if(count($results)>0){
                 foreach ($results as &$rowx) {
-                    $rowx['id']=$rowx['jigsaw_id']."";
+                    $jigsaw_id = strval($rowx['jigsaw_id']);
+                    $rowx['id'] = $jigsaw_id;
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
                     $rowx['dataSet'] = $rowx['init_dataset'];
-                    $rowx['specific_id']= $rowx['jigsaw_id']."";//'';//no specific id for contion so using the same id with jigsaw id.
+                    $rowx['specific_id'] = $jigsaw_id; // no specific id for condition so using the same id with jigsaw id.
                     $rowx['category']='CONDITION';
                     unset($rowx['jigsaw_id']);
                     unset($rowx['init_dataset']);
+                    unset($rowx['_id']);
                 }
                 $output = $results;
             }
@@ -144,10 +149,12 @@ class Rule_model extends MY_Model
         );
 
         $this->mongo_db->select(array('_id'));
-        $this->mongo_db->where('name',  'reward');
-        $this->mongo_db->where('category',  'REWARD');
+        $this->mongo_db->where('name', 'reward');
+        $this->mongo_db->where('category', 'REWARD');
         $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
         $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
+        $jigsaw_id = strval($jigsaw[0]['_id']);
 
         try{
             if(count($ds)>0){
@@ -156,10 +163,11 @@ class Rule_model extends MY_Model
                     $rowx['name'] = htmlspecialchars($rowx['name'], ENT_QUOTES);
                     $rowx['description'] = htmlspecialchars($rowx['description'], ENT_QUOTES);
                     $rowx['dataSet'] = isset($rowx['init_dataset'])?$rowx['init_dataset']:null;
-                    $rowx['id']=$jigsaw[0]['_id']."";
+                    $rowx['id'] = $jigsaw_id;
                     $rowx['category']='REWARD';
                     unset($rowx['reward_id']);
                     unset($rowx['init_dataset']);
+                    unset($rowx['_id']);
                 }
 
                 // append custom reward
@@ -179,6 +187,7 @@ class Rule_model extends MY_Model
                     $this->mongo_db->where('category', 'REWARD');
                     $this->mongo_db->where('status', true);
 //                    $this->mongo_db->where('name', array('$nin'=>array('reward', 'customPointReward')));
+                    $this->mongo_db->limit(1);
                     $ds2 = $this->mongo_db->get("playbasis_game_jigsaw_to_client");
 
                     if(count($ds2)>0){
@@ -190,6 +199,7 @@ class Rule_model extends MY_Model
 
                         unset($ds2[0]['jigsaw_id']);
                         unset($ds2[0]['init_dataset']);
+                        unset($ds2[0]['_id']);
                         array_push($ds, $ds2[0]);
                     }
                 }
