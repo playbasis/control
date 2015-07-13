@@ -518,6 +518,7 @@ class jigsaw extends MY_Model
 		));
 		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
+		if (!$result) return false;
 		$result = $result[0];
 		if(is_null($result['limit'])){
             return true;
