@@ -438,12 +438,12 @@ class Engine extends Quest
 				$jigsawCategory = $jigsaw['category'];
 
 				//get class path to precess jigsaw
-                $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
+				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
 
-                if (!$input["test"])
-                    $jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
-                else
-                    $jigsaw_model = true;
+				if (!$input["test"])
+					$jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
+				else
+					$jigsaw_model = true;
 
 				/* [rule usage] increase rule usage counter if a reward is given on chunk-based basis */
 				if ($this->is_reward($jigsaw['category']) && !$this->is_reward($last_jigsaw)) $count++;
