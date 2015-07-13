@@ -415,6 +415,34 @@ class jigsaw extends MY_Model
 		}
 		return false;
 	}
+	public function random($config, $input, &$exInfo = array())
+	{
+		$this->set_site_mongodb($input['site_id']);
+		$sum = 0;
+		$acc = array();
+		foreach ($config['group_container'] as $each) {
+			$sum += intval($each['weight']);
+			array_push($acc, $sum);
+		}
+		$max = $acc[count($acc)-1];
+		$ran = rand(0, $max-1);
+		foreach ($acc as $i => $value) {
+			if ($ran < $value) {
+				$exInfo['random'] = $i;
+				$conf = $config['group_container'][$i];
+				if (array_key_exists('reward_name', $conf)) {
+					foreach (array('item_id', 'reward_id') as $field) {
+						if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? new MongoId($conf[$field]) : null;
+					}
+					return $this->reward($conf, $input, $exInfo);
+				} else if (array_key_exists('feedback_name', $conf)) {
+					return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+				}
+				return false;
+			}
+		}
+		return false;
+	}
 	public function getMostRecentJigsaw($input, $fields)
 	{
 		assert(isset($input['site_id']));

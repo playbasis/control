@@ -431,17 +431,11 @@ class Engine extends Quest
 				$input['jigsaw_name'] = $jigsaw['name'];
 				$input['jigsaw_category'] = $jigsaw['category'];
 				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
-
-				if(isset($jigsaw['config']['action_id']) && !empty($jigsaw['config']['action_id']))
-					$jigsaw['config']['action_id'] = new MongoId($jigsaw['config']['action_id']);
-				if(isset($jigsaw['config']['reward_id']) && !empty($jigsaw['config']['reward_id']))
-					$jigsaw['config']['reward_id'] = new MongoId($jigsaw['config']['reward_id']);
-				if(isset($jigsaw['config']['item_id']) && !empty($jigsaw['config']['item_id']))
-					$jigsaw['config']['item_id'] = new MongoId($jigsaw['config']['item_id']);
-
+				$jigsaw['config'] = $this->normalize_jigsawConfig($jigsaw['config']);
 				$input['input'] = $jigsaw['config'];
 				$exInfo = array();
 				$jigsawConfig = $jigsaw['config'];
+				$jigsawCategory = $jigsaw['category'];
 
 				//get class path to precess jigsaw
                 $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
@@ -456,7 +450,24 @@ class Engine extends Quest
 
 				if($jigsaw_model) {
 
-					if($jigsaw['category'] == 'REWARD') {
+					/* pre-processing in case of 'GROUP' */
+					$jigsawName = $input['jigsaw_name'];
+					if($jigsawCategory == 'GROUP') {
+						$conf = $jigsawConfig['group_container'][$exInfo['random']];
+						$jigsawConfig = $this->normalize_jigsawConfig(array_merge($jigsawConfig, $conf));
+						if (array_key_exists('reward_name', $conf)) {
+							$jigsawCategory = 'REWARD';
+						} else if (array_key_exists('feedback_name', $conf)) {
+							$jigsawCategory = 'FEEDBACK';
+							foreach (array('feedback_name', 'template_id', 'subject') as $field) {
+								if (array_key_exists($field, $conf)) $input['input'][$field] = $conf[$field];
+							}
+							$jigsawName = $conf['feedback_name'];
+						}
+					}
+
+					/* process 'REWARD' or 'FEEDBACK' */
+					if($jigsawCategory == 'REWARD') {
 						if(isset($exInfo['dynamic'])) {
 							//reward is a custom point
 							assert('$exInfo["dynamic"]["reward_name"]');
@@ -698,9 +709,9 @@ class Engine extends Quest
                             }  // close switch($jigsawConfig['reward_name'])
 
                         }  // close if(isset($exInfo['dynamic']))
-                    } elseif($jigsaw['category'] == 'FEEDBACK') {
+                    } elseif($jigsawCategory == 'FEEDBACK') {
                         if (!$input["test"])
-                            $this->processFeedback($input['jigsaw_name'], $input);
+                            $this->processFeedback($jigsawName, $input);
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {
@@ -753,7 +764,7 @@ class Engine extends Quest
 					if (!$input["test"])
 						$this->client_model->log($input, $exInfo);
 				} else {  // jigsaw return false
-					if($this->is_reward($jigsaw['category'])) {
+					if($this->is_reward($jigsawCategory)) {
 						continue;
 					} else {
 						// fail, log jigsaw - ACTION or CONDITION
@@ -764,7 +775,7 @@ class Engine extends Quest
 				}  // close if($jigsaw_model)
 
 				/* [rule usage] set last_jigsaw */
-				$last_jigsaw = $jigsaw['category'];
+				$last_jigsaw = $jigsawCategory;
 			}  // close foreach($jigsawSet as $jigsaw)
 
 			/* [rule usage] increase usage value on client's account */
@@ -786,6 +797,15 @@ class Engine extends Quest
 			}
 		}  // close foreach($ruleSet as $rule)
 		return $apiResult;
+	}
+	private function normalize_jigsawConfig($jigsawConfig) {
+		if(isset($jigsawConfig['action_id']) && !empty($jigsawConfig['action_id']))
+			$jigsawConfig['action_id'] = new MongoId($jigsawConfig['action_id']);
+		if(isset($jigsawConfig['reward_id']) && !empty($jigsawConfig['reward_id']))
+			$jigsawConfig['reward_id'] = new MongoId($jigsawConfig['reward_id']);
+		if(isset($jigsawConfig['item_id']) && !empty($jigsawConfig['item_id']))
+			$jigsawConfig['item_id'] = new MongoId($jigsawConfig['item_id']);
+		return $jigsawConfig;
 	}
 	private function is_reward($category) {
 		return in_array($category, array('REWARD', 'FEEDBACK'));
