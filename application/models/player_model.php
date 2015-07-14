@@ -61,6 +61,7 @@ class Player_model extends MY_Model
 			'password'		=> (isset($data['password']))	 ? $data['password']	: null,
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))  ? new MongoDate(strtotime($data['birth_date'])) : null,
+			'anonymous_flag' => (isset($data['anonymous_flag'])) ? $data['anonymous_flag']  : false,
 			'date_added'	=> $mongoDate,
 			'date_modified' => $mongoDate
 		));
