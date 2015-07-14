@@ -443,6 +443,29 @@ class jigsaw extends MY_Model
 		}
 		return false;
 	}
+	public function sequence($config, $input, &$exInfo = array())
+	{
+		$this->set_site_mongodb($input['site_id']);
+		$result = $this->getMostRecentJigsaw($input, array(
+			'input'
+		));
+		$i = !$result || !isset($result['input']['index']) ? 0 : $result['input']['index']+1;
+		if ($i > count($config['group_container'])-1) {
+			if (!$config['loop']) return false;
+			$i = 0; // looping, reset to be starting at 0
+		}
+		$exInfo['random'] = $i;
+		$conf = $config['group_container'][$i];
+		if (array_key_exists('reward_name', $conf)) {
+			foreach (array('item_id', 'reward_id') as $field) {
+				if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? new MongoId($conf[$field]) : null;
+			}
+			return $this->reward($conf, $input, $exInfo);
+		} else if (array_key_exists('feedback_name', $conf)) {
+			return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+		}
+		return false;
+	}
 	public function getMostRecentJigsaw($input, $fields)
 	{
 		assert(isset($input['site_id']));
