@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
+require_once(APPPATH.'controllers/engine.php');
 class Player extends REST2_Controller
 {
 	public function __construct()
@@ -43,7 +44,8 @@ class Player extends REST2_Controller
 			'exp',
 			'level',
 			'date_added',
-			'birth_date'
+			'birth_date',
+			'anonymous_flag'
 		));
 
 		//get last login/logout
@@ -76,7 +78,8 @@ class Player extends REST2_Controller
 			'exp',
 			'level',
 			'date_added',
-			'birth_date'
+			'birth_date',
+			'anonymous_flag'
 		));
 
 		//get last login/logout
@@ -132,7 +135,8 @@ class Player extends REST2_Controller
 			'exp',
 			'level',
 			'date_added',
-			'birth_date'));
+			'birth_date',
+			'anonymous_flag'));
 			
 			$player['player'][$i]['last_login']= $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGIN');
 			$player['player'][$i]['last_logout']= $this->player_model->getLastEventTime($pb_player_id, $this->site_id, 'LOGOUT');
@@ -164,7 +168,8 @@ class Player extends REST2_Controller
 			'exp',
 			'level',
 			'date_added',
-			'birth_date'
+			'birth_date',
+			'anonymous_flag'
 		));
         //percent exp of level
 //        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
@@ -228,7 +233,8 @@ class Player extends REST2_Controller
 			'exp',
 			'level',
 			'date_added',
-			'birth_date'
+			'birth_date',
+			'anonymous_flag'
 		));
 
         //percent exp of level
@@ -296,6 +302,11 @@ class Player extends REST2_Controller
 		if($required)
 			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
+                $ID_Arr = explode("-",$player_id);
+                $arrCount = count($ID_Arr);
+                if ($arrCount==2) { $anoy_id = $ID_Arr['1']; } else $anoy_id = '';
+                if ($arrCount==2) $player_id = $ID_Arr['0'];
+                
         if(!$this->validClPlayerId($player_id)){
             $this->response($this->error->setError('USER_ID_INVALID'), 200);
         }
