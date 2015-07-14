@@ -428,7 +428,7 @@ class jigsaw extends MY_Model
 		$ran = rand(0, $max-1);
 		foreach ($acc as $i => $value) {
 			if ($ran < $value) {
-				$exInfo['random'] = $i;
+				$exInfo['index'] = $i;
 				$conf = $config['group_container'][$i];
 				if (array_key_exists('reward_name', $conf)) {
 					foreach (array('item_id', 'reward_id') as $field) {
@@ -454,7 +454,7 @@ class jigsaw extends MY_Model
 			if (!$config['loop']) return false;
 			$i = 0; // looping, reset to be starting at 0
 		}
-		$exInfo['random'] = $i;
+		$exInfo['index'] = $i;
 		$conf = $config['group_container'][$i];
 		if (array_key_exists('reward_name', $conf)) {
 			foreach (array('item_id', 'reward_id') as $field) {

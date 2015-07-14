@@ -453,7 +453,7 @@ class Engine extends Quest
 					/* pre-processing in case of 'GROUP' */
 					$jigsawName = $input['jigsaw_name'];
 					if($jigsawCategory == 'GROUP') {
-						$conf = $jigsawConfig['group_container'][$exInfo['random']];
+						$conf = $jigsawConfig['group_container'][$exInfo['index']];
 						$jigsawConfig = $this->normalize_jigsawConfig(array_merge($jigsawConfig, $conf));
 						if (array_key_exists('reward_name', $conf)) {
 							$jigsawCategory = 'REWARD';
