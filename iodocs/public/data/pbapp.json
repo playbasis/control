@@ -256,7 +256,18 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
-						}
+						},
+                                                {
+                                                        "Name": "anonymous_flag",
+                                                        "Required": "N",
+                                                        "Default": false,
+                                                        "Type": "enumerated",
+                                                        "Description": "true=Anonymous User, false=Real User",
+                                                        "EnumeratedList": [
+                                                                true,
+                                                                false
+                                                        ]
+                                                }
 					]
 				},
 				{
