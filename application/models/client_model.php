@@ -352,7 +352,7 @@ class Client_model extends MY_Model
             $this->mongo_db->where('client_id', $client_id);
             $this->mongo_db->where('site_id', $site_id);
 			$this->mongo_db->where('badge_id', $badgeId);
-			$this->mongo_db->update('playbasis_badge_to_client');
+			if ($anoy_flag==false) $this->mongo_db->update('playbasis_badge_to_client');
 		}
 		//update player badge table
 		$this->mongo_db->where(array(
