@@ -451,8 +451,10 @@ class Engine extends Quest
 				if($jigsaw_model) {
 
 					/* pre-processing in case of 'GROUP' */
+					$break = false;
 					$jigsawName = $input['jigsaw_name'];
 					if($jigsawCategory == 'GROUP') {
+						$break = $exInfo['break'];
 						$conf = $jigsawConfig['group_container'][$exInfo['index']];
 						$jigsawConfig = $this->normalize_jigsawConfig(array_merge($jigsawConfig, $conf));
 						if (array_key_exists('reward_name', $conf)) {
@@ -763,9 +765,11 @@ class Engine extends Quest
 					// success, log jigsaw - ACTION, CONDITION, REWARD, or FEEDBACK
 					if (!$input["test"])
 						$this->client_model->log($input, $exInfo);
+
+					if ($break) break; // break early, do not process next jigsaw
 				} else {  // jigsaw return false
-					if($this->is_reward($jigsawCategory)) {
-						continue;
+					if($this->is_reward($jigsawCategory)) { // REWARD, GROUP
+						if(isset($exInfo['break']) && $exInfo['break']) break;
 					} else {
 						// fail, log jigsaw - ACTION or CONDITION
                         if (!$input["test"])

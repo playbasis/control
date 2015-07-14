@@ -429,6 +429,7 @@ class jigsaw extends MY_Model
 		foreach ($acc as $i => $value) {
 			if ($ran < $value) {
 				$exInfo['index'] = $i;
+				$exInfo['break'] = false;
 				$conf = $config['group_container'][$i];
 				if (array_key_exists('reward_name', $conf)) {
 					foreach (array('item_id', 'reward_id') as $field) {
@@ -438,10 +439,10 @@ class jigsaw extends MY_Model
 				} else if (array_key_exists('feedback_name', $conf)) {
 					return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
 				}
-				return false;
+				return false; // should not reach this line
 			}
 		}
-		return false;
+		return false; // should not reach this line
 	}
 	public function sequence($config, $input, &$exInfo = array())
 	{
@@ -450,11 +451,14 @@ class jigsaw extends MY_Model
 			'input'
 		));
 		$i = !$result || !isset($result['input']['index']) ? 0 : $result['input']['index']+1;
+		$exInfo['index'] = $i;
+		$exInfo['break'] = true; // generally, "sequence" will block
 		if ($i > count($config['group_container'])-1) {
-			if (!$config['loop']) return false;
+			$exInfo['index'] = $result['input']['index']; // ensure that "index" has not been changed
+			if ($config['loop'] === 'false' || !$config['loop']) return false;
 			$i = 0; // looping, reset to be starting at 0
 		}
-		$exInfo['index'] = $i;
+		if ($i == count($config['group_container'])-1) $exInfo['break'] = false; // if this is last item in the sequence jigsaw, we allow the rule to process next jigsaw
 		$conf = $config['group_container'][$i];
 		if (array_key_exists('reward_name', $conf)) {
 			foreach (array('item_id', 'reward_id') as $field) {
@@ -464,7 +468,7 @@ class jigsaw extends MY_Model
 		} else if (array_key_exists('feedback_name', $conf)) {
 			return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
 		}
-		return false;
+		return false; // should not reach this line
 	}
 	public function getMostRecentJigsaw($input, $fields)
 	{
