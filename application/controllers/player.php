@@ -405,7 +405,7 @@ class Player extends REST2_Controller
 				'url'          => null,
 			));
 		}
-        if ($pb_player_id)
+        if ($pb_player_id) {
         	if ($anoy_id) {
                 $pb_anoy_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
                         'cl_player_id' => $anoy_id
