@@ -364,6 +364,15 @@ class Player extends REST2_Controller
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
 
+		$anonymous_flag = $this->input->post('anonymous_flag');
+                if($anonymous_flag) {
+                   if($anonymous_flag == 'false' or $anonymous_flag == "" or $anonymous_flag == "0" or $anonymous_flag == false) {
+                        $playerInfo['anonymous_flag'] = false;
+                   } elseif($anonymous_flag == 'true' or $anonymous_flag == "1" or $anonymous_flag == true) {
+                        $playerInfo['anonymous_flag'] = true;
+                   }
+                }
+                
         // get plan_id
         $plan_id = $this->client_model->getPlanIdByClientId($this->validToken["client_id"]);
         try {
@@ -397,9 +406,57 @@ class Player extends REST2_Controller
 			));
 		}
         if ($pb_player_id)
-            $this->response($this->resp->setRespond(), 200);
+        	if ($anoy_id) {
+                $pb_anoy_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+                        'cl_player_id' => $anoy_id
+                )));
+                $this->mongo_db->where('_id', $pb_anoy_id);
+                $anoy_result = $this->mongo_db->get('playbasis_player');
+                $anoy_flag = $anoy_result[0]['anonymous_flag'];
+                //$this->response($anoy_flag,200);
+                if ($pb_anoy_id && $anoy_flag==true) {
+                        $engine = new Engine;
+                        $where = array(
+                                'client_id' => $this->client_id,
+                                'site_id' => $this->site_id,
+                                'pb_player_id' => $pb_anoy_id,
+                        );
+                        $this->mongo_db->where($where);
+                        $anoy_results = $this->mongo_db->get('playbasis_action_log');
+                        foreach ($anoy_results as $anoy_result) {
+                                $input = array_merge($this->validToken, array(
+                                        'player_id' => $player_id,
+                                        'pb_player_id' => $pb_player_id,
+                                        'action_id' => $anoy_result['action_id'],
+                                        'action_name' => $anoy_result['action_name'],
+                                        'url' => $anoy_result['url'],
+                                        'date_added' => $anoy_result['date_added'],
+                                        'test' => false
+                                ));
+                                $engine->processRule($input, $this->validToken, null, null);
+                        }
+
+                        $this->player_model->deletePlayer($pb_anoy_id, $this->validToken['site_id']);
+                        $AnoyInfo = array(
+                                'email' => 'pbapp_auto_user@playbasis.com',
+                                'image' => "https://www.pbapp.net/images/default_profile.jpg",
+                                'username' => "autouser${anoy_id}",
+                                'player_id' => $anoy_id,
+                                'gender' => 1,
+                                'anonymous_flag' => true
+                        );
+                        $pb_anoy_id = $this->player_model->createPlayer(
+                        array_merge($this->validToken, $AnoyInfo));
+
+                } else {
+                                // do nothing
+                                //$this->response("No user $anoy_id",200);
+                        }
+
+               }
+            	$this->response($this->resp->setRespond(), 200);
         else
-			$this->response($this->error->setError('LIMIT_EXCEED'), 200);
+		$this->response($this->error->setError('LIMIT_EXCEED'), 200);
 	}
 	public function update_post($player_id = '')
 	{
@@ -492,6 +549,12 @@ class Player extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
+			
+		$ID_Arr = explode("-",$player_id);
+                $arrCount = count($ID_Arr);
+                if ($arrCount==2) { $anoy_id = $ID_Arr['1']; } else $anoy_id = '';
+                if ($arrCount==2) $player_id = $ID_Arr['0'];
+                
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
@@ -530,6 +593,55 @@ class Player extends REST2_Controller
             'device_description' => $this->validToken['device_description'],
             'device_name' => $this->validToken['device_name']
         ),$this->validToken['site_id']);*/
+        
+                if ($anoy_id) {
+                        $pb_anoy_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+                                'cl_player_id' => $anoy_id
+                        )));
+                        $this->mongo_db->where('_id', $pb_anoy_id);
+                        $anoy_result = $this->mongo_db->get('playbasis_player');
+                        $anoy_flag = $anoy_result[0]['anonymous_flag'];
+                        //$this->response($anoy_flag,200);
+                        if ($pb_anoy_id && $anoy_flag==true) {
+                                $engine = new Engine;
+                                $where = array(
+                                        'client_id' => $this->client_id,
+                                        'site_id' => $this->site_id,
+                                        'pb_player_id' => $pb_anoy_id,
+                                );
+                                $this->mongo_db->where($where);
+                                $anoy_results = $this->mongo_db->get('playbasis_action_log');
+                                //$this->response($anoy_results,200);
+                                foreach ($anoy_results as $anoy_result) {
+                                        $input = array_merge($this->validToken, array(
+                                                'player_id' => $player_id,
+                                                'pb_player_id' => $pb_player_id,
+                                                'action_id' => $anoy_result['action_id'],
+                                                'action_name' => $anoy_result['action_name'],
+                                                'url' => $anoy_result['url'],
+                                                'date_added' => $anoy_result['date_added'],
+                                                'test' => false
+                                        ));
+                                $engine->processRule($input, $this->validToken, null, null);
+                                }
+
+                                $this->player_model->deletePlayer($pb_anoy_id, $this->validToken['site_id']);
+                                $AnoyInfo = array(
+                                        'email' => 'pbapp_auto_user@playbasis.com',
+                                        'image' => "https://www.pbapp.net/images/default_profile.jpg",
+                                        'username' => "autouser${anoy_id}",
+                                        'player_id' => $anoy_id,
+                                        'gender' => 1,
+                                        'anonymous_flag' => true
+                                );
+                                $pb_anoy_id = $this->player_model->createPlayer(
+                                array_merge($this->validToken, $AnoyInfo));
+
+                        } else {
+                                // do nothing
+                                //$this->response("No user $anoy_id",200);
+                        }
+                }
 
 		$this->response($this->resp->setRespond(), 200);
 	}
