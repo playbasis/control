@@ -61,6 +61,9 @@ class Redeem extends REST2_Controller
                 case 'OVER_LIMIT_REDEEM':
                     $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
                     break;
+                case 'ANONYMOUS_CANNOT_REDEEM':
+                    $this->response($this->error->setError('ANONYMOUS_CANNOT_REDEEM'),200);
+                    break;
             }
         }
 
@@ -106,6 +109,9 @@ class Redeem extends REST2_Controller
                     break;
                 case 'OVER_LIMIT_REDEEM':
                     $this->response($this->error->setError('OVER_LIMIT_REDEEM'), 200);
+                    break;
+                case 'ANONYMOUS_CANNOT_REDEEM':
+                    $this->response($this->error->setError('ANONYMOUS_CANNOT_REDEEM'),200);
                     break;
             }
         }
@@ -200,6 +206,7 @@ class Redeem extends REST2_Controller
                     if ($e->getMessage() == 'OVER_LIMIT_REDEEM') continue; // this goods_id has been assigned to this player too often!, try next one
                     else if ($e->getMessage() == 'GOODS_NOT_ENOUGH') continue; // there may be a collision, try next one
                     else if ($e->getMessage() == 'GOODS_NOT_FOUND') continue; // this should not happen, but if this is the case, then try next one
+                    else if ($e->getMessage() == 'ANONYMOUS_CANNOT_REDEEM') continue;
                     else
                         $this->response($this->error->setError(
                             "INTERNAL_ERROR", array()), 200);
@@ -243,6 +250,7 @@ class Redeem extends REST2_Controller
                     if ($e->getMessage() == 'OVER_LIMIT_REDEEM') continue; // this goods_id has been assigned to this player too often!, try next one
                     else if ($e->getMessage() == 'GOODS_NOT_ENOUGH') continue; // there may be a collision, try next one
                     else if ($e->getMessage() == 'GOODS_NOT_FOUND') continue; // this should not happen, but if this is the case, then try next one
+                    else if ($e->getMessage() == 'ANONYMOUS_CANNOT_REDEEM') continue;
                     else
                         $this->response($this->error->setError(
                             "INTERNAL_ERROR", array()), 200);
@@ -254,6 +262,12 @@ class Redeem extends REST2_Controller
     }
 
     private function redeem($site_id, $pb_player_id, $goods, $amount, $validToken, $validate=true, $is_sponsor=false) {
+        
+        $this->mongo_db->where('_id', $pb_player_id);
+        $anoy_result = $this->mongo_db->get('playbasis_player');
+        $anoy_flag = $anoy_result[0]['anonymous_flag'];
+        if ($anoy_flag == true) throw new Exception('ANONYMOUS_CANNOT_REDEEM');
+        
         if (!$goods) throw new Exception('GOODS_NOT_FOUND');
 
         if ($goods['per_user'] !== null) {
