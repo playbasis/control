@@ -455,7 +455,7 @@ class Player extends REST2_Controller
 
                }
             	$this->response($this->resp->setRespond(), 200);
-        else
+        } else
 		$this->response($this->error->setError('LIMIT_EXCEED'), 200);
 	}
 	public function update_post($player_id = '')
