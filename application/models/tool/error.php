@@ -227,6 +227,10 @@ class Error extends CI_Model
             $errorData['message'] = "Rule not available";
             $errorData['error_code'] = '1101';
             break;
+        case 'ANONYMOUS_CANNOT_REDEEM':
+           $errorData['message'] = "Redeem only avaliable for Login User";
+           $errorData['error_code'] = '1102';
+           break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';
