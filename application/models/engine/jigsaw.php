@@ -289,7 +289,7 @@ class jigsaw extends MY_Model
 		assert($input != false);
 		assert(is_array($input));
 		assert(isset($config['time_of_day']));
-		assert(isset($config['date_of_month']));
+		assert(isset($config['day_of_month']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
 		));
@@ -457,6 +457,7 @@ class jigsaw extends MY_Model
 			$exInfo['index'] = $result['input']['index']; // ensure that "index" has not been changed
 			if ($config['loop'] === 'false' || !$config['loop']) return false;
 			$i = 0; // looping, reset to be starting at 0
+			$exInfo['index'] = 0;
 		}
 		if ($i == count($config['group_container'])-1) $exInfo['break'] = false; // if this is last item in the sequence jigsaw, we allow the rule to process next jigsaw
 		$conf = $config['group_container'][$i];
