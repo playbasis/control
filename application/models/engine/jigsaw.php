@@ -457,6 +457,7 @@ class jigsaw extends MY_Model
 			$exInfo['index'] = $result['input']['index']; // ensure that "index" has not been changed
 			if ($config['loop'] === 'false' || !$config['loop']) return false;
 			$i = 0; // looping, reset to be starting at 0
+			$exInfo['index'] = 0;
 		}
 		if ($i == count($config['group_container'])-1) $exInfo['break'] = false; // if this is last item in the sequence jigsaw, we allow the rule to process next jigsaw
 		$conf = $config['group_container'][$i];
