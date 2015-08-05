@@ -1,13 +1,3 @@
-<?php 
-/* HARD CODE FOR TEST WIDGET */
-$plan_widget['quest'] = true;
-$plan_widget['feed'] = true;
-$plan_widget['rewardstore'] = true;
-$plan_widget['treasure'] = true;
-$plan_widget['trackevent'] = true;
-/* HARD CODE FOR TEST WIDGET */
-?>
-
 <link rel="stylesheet" href="<?php echo base_url();?>stylesheet/widget/style.css">
 
 <div id="content" class="span10 widget-page">
@@ -44,19 +34,6 @@ $plan_widget['trackevent'] = true;
         <?php
         }
         ?>
-
-        <?php
-        if(isset($plan_widget['profile']) && $plan_widget['profile']){
-        ?>
-        <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_profile'); ?></a></li>
-        <?php
-        }
-        ?>
-
         <?php
         if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
         ?>
@@ -68,7 +45,39 @@ $plan_widget['trackevent'] = true;
         <?php
         }
         ?>
-
+        <?php
+        if(isset($plan_widget['livefeed']) && $plan_widget['livefeed']){
+        ?>
+        <li> <?php echo anchor('widget#widget-livefeed', $this->lang->line('column_livefeed'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_livefeed'); ?></a></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['profile']) && $plan_widget['profile']){
+        ?>
+        <li> <?php echo anchor('widget#widget-profile', $this->lang->line('column_profile'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_profile'); ?></a></li>
+        <?php
+        }
+        ?>
+        <?php
+        if(isset($plan_widget['userbar']) && $plan_widget['userbar']){
+        ?>
+        <li> <?php echo anchor('widget#widget-userbar', $this->lang->line('column_userbar'));?></li>
+        <?php
+        }else{
+        ?>
+        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_userbar'); ?></a></li>
+        <?php
+        }
+        ?>
         <?php
         if(isset($plan_widget['achievement']) && $plan_widget['achievement']){
         ?>
@@ -80,7 +89,6 @@ $plan_widget['trackevent'] = true;
         <?php
         }
         ?>
-
         <?php
         if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
         ?>
@@ -89,66 +97,6 @@ $plan_widget['trackevent'] = true;
         }else{
         ?>
         <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_quiz'); ?></a></li>
-        <?php
-        }
-        ?>
-
-        <?php
-        if(isset($plan_widget['quest']) && $plan_widget['quest']){
-        ?>
-        <li> <?php echo anchor('widget#widget-quest', $this->lang->line('column_quest'));?></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_quest'); ?></a></li>
-        <?php
-        }
-        ?>
-
-        <?php
-        if(isset($plan_widget['feed']) && $plan_widget['feed']){
-        ?>
-        <li> <?php echo anchor('widget#widget-feed', $this->lang->line('column_feed'));?></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_feed'); ?></a></li>
-        <?php
-        }
-        ?>
-
-        <?php
-        if(isset($plan_widget['rewardstore']) && $plan_widget['rewardstore']){
-        ?>
-        <li> <?php echo anchor('widget#widget-rewardstore', $this->lang->line('column_rewardstore'));?></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_rewardstore'); ?></a></li>
-        <?php
-        }
-        ?>
-
-        <?php
-        if(isset($plan_widget['treasure']) && $plan_widget['treasure']){
-        ?>
-        <li> <?php echo anchor('widget#widget-treasure', $this->lang->line('column_treasure'));?></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_treasure'); ?></a></li>
-        <?php
-        }
-        ?>
-
-        <?php
-        if(isset($plan_widget['trackevent']) && $plan_widget['trackevent']){
-        ?>
-        <li> <?php echo anchor('widget#widget-trackevent', $this->lang->line('column_trackevent'));?></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_trackevent'); ?></a></li>
         <?php
         }
         ?>

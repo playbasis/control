@@ -1,3 +1,13 @@
+<?php 
+/* HARD CODE FOR TEST WIDGET */
+$plan_widget['quest'] = true;
+$plan_widget['feed'] = true;
+$plan_widget['rewardstore'] = true;
+$plan_widget['treasure'] = true;
+$plan_widget['trackevent'] = true;
+/* HARD CODE FOR TEST WIDGET */
+?>
+
 <div id="content" class="span10 widget-page">
     <div class="box">
         <div class="heading">
@@ -5,113 +15,169 @@
         </div><!-- .heading -->
 
         <div class="content">
-        <h1 class="hide"><?php echo $this->lang->line('text_choose_key'); ?></h1>
-
-        <select class="wg-apikey hide" >
-            <?php
-            foreach($platform_data as $pfd){
-                ?>
-                <option  value="<?php echo $pfd["api_key"]; ?>"><?php echo $pfd["api_key"]; ?></option>
-            <?php
-            }
-            ?>
-        </select>
-
+        
         <h1><?php echo $this->lang->line('text_choose_type'); ?></h1>
+        <form class="form-horizontal well" id="widget-globel">
+
+            <div class="control-group hide">
+            <label class="control-label" ><?php echo $this->lang->line('text_choose_key'); ?></label>
+                <div class="controls">
+                    <select class="wg-apikey" >
+                        <?php
+                        foreach($platform_data as $pfd){
+                            ?>
+                            <option  value="<?php echo $pfd["api_key"]; ?>"><?php echo $pfd["api_key"]; ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
+                <div class="controls">
+                    <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
+                <div class="controls">
+                    <div class="input-prepend">
+                      <span class="colorSelectorHolder add-on"></span>
+                      <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                    <label class="control-label" ><?php echo $this->lang->line('form_cssfile'); ?></label>
+                    <div class="controls">
+                        <input type="text" width="50%" class="wg-globel-cssfile" placeholder="<?php echo $this->lang->line('text_cssfile'); ?>">
+                    </div>
+            </div>
+        </form>
 
     <ul class="nav nav-tabs">
-        <?php
-        if(isset($plan_widget['social']) && $plan_widget['social']){
-        ?>
-        <li> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login'));?></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_social_login'); ?></a></li>
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
-        ?>
-        <li><a href="#widget-leaderboard"  data-toggle="tab"><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['livefeed']) && $plan_widget['livefeed']){
-        ?>
-        <li><a href="#widget-livefeed" data-toggle="tab"><?php echo $this->lang->line('column_livefeed'); ?></a></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_livefeed'); ?></a></li>
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['profile']) && $plan_widget['profile']){
-        ?>
-        <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_profile'); ?></a></li>
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['userbar']) && $plan_widget['userbar']){
-        ?>
-        <li><a href="#widget-userbar" data-toggle="tab"><?php echo $this->lang->line('column_userbar'); ?></a></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_userbar'); ?></a></li>
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['achievement']) && $plan_widget['achievement']){
-        ?>
-        <li><a href="#widget-achievement" data-toggle="tab"><?php echo $this->lang->line('column_achievement'); ?></a></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_achievement'); ?></a></li>
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
-        ?>
-        <li><a href="#widget-quiz" data-toggle="tab"><?php echo $this->lang->line('column_quiz'); ?></a></li>
-        <?php
-        }else{
-        ?>
-        <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_quiz'); ?></a></li>
-        <?php
-        }
-        ?>
-	</ul>
+        <?php if(isset($plan_widget['social']) && $plan_widget['social']){ ?>
+            <li> <?php echo anchor('widget/social_login', $this->lang->line('column_social_login'));?></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_social_login'); ?></a></li>
+        <?php } ?>
+        
+        <?php if(isset($plan_widget['profile']) && $plan_widget['profile']){ ?>
+            <li><a href="#widget-profile" data-toggle="tab"><?php echo $this->lang->line('column_profile'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_profile'); ?></a></li>
+        <?php } ?>
 
-	<div class="tab-content">
-        <?php
-        if(isset($plan_widget['social']) && $plan_widget['social']){
-        ?>
+        <?php if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){ ?>
+            <li><a href="#widget-leaderboard"  data-toggle="tab"><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_leaderboard'); ?></a></li>
+        <?php } ?>
+
+        
+
+        <?php if(isset($plan_widget['achievement']) && $plan_widget['achievement']){ ?>
+            <li><a href="#widget-achievement" data-toggle="tab"><?php echo $this->lang->line('column_achievement'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_achievement'); ?></a></li>
+        <?php } ?>
+
+        <?php if(isset($plan_widget['quiz']) && $plan_widget['quiz']){ ?>
+            <li><a href="#widget-quiz" data-toggle="tab"><?php echo $this->lang->line('column_quiz'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_quiz'); ?></a></li>
+        <?php } ?>
+
+        <?php if(isset($plan_widget['quest']) && $plan_widget['quest']){ ?>
+            <li><a href="#widget-quest" data-toggle="tab"><?php echo $this->lang->line('column_quest'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_quest'); ?></a></li>
+        <?php } ?>
+
+        <?php if(isset($plan_widget['feed']) && $plan_widget['feed']){ ?>
+            <li><a href="#widget-feed" data-toggle="tab"><?php echo $this->lang->line('column_feed'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_feed'); ?></a></li>
+        <?php } ?>
+
+        <?php if(isset($plan_widget['rewardstore']) && $plan_widget['rewardstore']){ ?>
+            <li><a href="#widget-rewardstore" data-toggle="tab"><?php echo $this->lang->line('column_rewardstore'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_rewardstore'); ?></a></li>
+        <?php } ?>
+
+        <?php if(isset($plan_widget['treasure']) && $plan_widget['treasure']){ ?>
+            <li><a href="#widget-treasure" data-toggle="tab"><?php echo $this->lang->line('column_treasure'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_treasure'); ?></a></li>
+        <?php } ?>
+
+        <?php if(isset($plan_widget['trackevent']) && $plan_widget['trackevent']){ ?>
+            <li><a href="#widget-trackevent" data-toggle="tab"><?php echo $this->lang->line('column_trackevent'); ?></a></li>
+        <?php }else{ ?>
+            <li> <a href="javascript:void(0)" class="disabled" disabled style="color:#646464;cursor: default;" ><?php echo $this->lang->line('column_trackevent'); ?></a></li>
+        <?php } ?>
+
+    </ul>
+
+        <div class="tab-content">
+        <?php if(isset($plan_widget['social']) && $plan_widget['social']){ ?>
         <div class="tab-pane" id="widget-social-login">
 
         </div><!-- .tab-pane -->
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){
-        ?>
+        <?php } ?>
+    
+                <?php if(isset($plan_widget['profile']) && $plan_widget['profile']){ ?>
+                <div class="tab-pane" id="widget-profile">
+
+                    <h3><?php echo $this->lang->line('text_profile_widget'); ?></h3>
+                    
+                    <div class="row">
+                        <div class="span6 offset3">
+                            <form class="form-horizontal">
+                                <div class="control-group">
+                                    <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                                    <div class="controls">
+                                        <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
+                                    <div class="controls">
+                                        <select class="wg-displaypoint" >
+                                          <option value="point">Point</option>
+                                          <option value="exp">EXP</option>
+                                            <?php foreach($points_data as $p){ ?>
+                                                <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label" ></label>
+                                    <div class="controls">
+                                        <a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                        <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-profile" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+                        <div class="span11">
+                            <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=profile" width="100%" height="280" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div><!-- .tab-pane -->
+                <?php } ?>
+
+        <?php if(isset($plan_widget['leaderboard']) && $plan_widget['leaderboard']){ ?>
 		<div class="tab-pane" id="widget-leaderboard">
 			
 			<h3><?php echo $this->lang->line('text_leaderboard_widget'); ?></h3>
@@ -126,28 +192,16 @@
 						</div>
 					</div>
 
-					<div class="control-group">
-						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-						<div class="controls">
-							<div class="input-prepend">
-							  <span class="colorSelectorHolder add-on"></span>
-							  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-							</div>
-						</div>
-					</div>
+					
 					<div class="control-group">
 						<label class="control-label" for="wg-rank"><?php echo $this->lang->line('form_rankby'); ?></label>
 						<div class="controls">
 							<select class="wg-rankby" >
 							  <option value="point">Point</option>
 							  <option value="exp">Exp</option>
-                                <?php
-                                foreach($points_data as $p){
-                                ?>
+                                <?php foreach($points_data as $p){ ?>
                                     <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
-                                <?php
-                                }
-                                ?>
+                                <?php } ?>
 							</select>
 						</div>
 					</div>
@@ -168,193 +222,10 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['livefeed']) && $plan_widget['livefeed']){
-        ?>
-        <div class="tab-pane" id="widget-livefeed">
-			
-			<h3><?php echo $this->lang->line('text_livefeed_widget'); ?></h3>
-			
-			<div class="row">
-		        	<div class="span5">
-				<form class="form-horizontal">
-					<div class="control-group">
-						<label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
-						<div class="controls">
-							<input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
-						<div class="controls">
-							<input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-						<div class="controls">
-							<div class="input-prepend">
-							  <span class="colorSelectorHolder add-on"></span>
-							  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-							</div>
-						</div>
-					</div>
-					
-					<div class="control-group">
-						<label class="control-label" ></label>
-						<div class="controls">
-							<a href="javascript:void(0);" onclick="reloadLivefeed()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-							<a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-livefeed" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
-						</div>
-					</div>
-					
-				</form>
-
-                </div>
-                <div class="span7">
-                    <iframe id="iframe-livefeed" src="<?php echo base_url();?>index.php/widget/preview?type=livefeed" width="100%" height="500" frameborder="0"></iframe>
-                </div>
-            </div>
-        </div><!-- .tab-pane -->
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['profile']) && $plan_widget['profile']){
-        ?>
-        <div class="tab-pane" id="widget-profile">
-
-            <h3><?php echo $this->lang->line('text_profile_widget'); ?></h3>
-			
-			<div class="row">
-                <div class="span6 offset3">
-                    <form class="form-horizontal">
-                        <div class="control-group">
-                            <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
-                            <div class="controls">
-                                <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-                            <div class="controls">
-                                <div class="input-prepend">
-                                  <span class="colorSelectorHolder add-on"></span>
-                                  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
-                            <div class="controls">
-                                <select class="wg-displaypoint" >
-                                  <option value="point">Point</option>
-                                  <option value="exp">EXP</option>
-                                    <?php
-                                    foreach($points_data as $p){
-                                    ?>
-                                        <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
-                                    <?php
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
-                            <div class="controls">
-                                <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" ></label>
-                            <div class="controls">
-                                <a href="javascript:void(0);" onclick="reloadProfile()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-                                <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-profile" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
-                            </div>
-                        </div>
-
-                    </form>
-
-                </div>
-                <div class="span11">
-                    <iframe id="iframe-profile" src="<?php echo base_url();?>index.php/widget/preview?type=profile" width="100%" height="280" frameborder="0"></iframe>
-                </div>
-            </div>
-        </div><!-- .tab-pane -->
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['userbar']) && $plan_widget['userbar']){
-        ?>
-        <div class="tab-pane" id="widget-userbar">
-
-            <h3><?php echo $this->lang->line('text_userbar_widget'); ?></h3>
-			
-			<div class="row">
-                <div class="span6 offset3">
-                    <form class="form-horizontal">
-
-                        <div class="control-group">
-                            <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-                            <div class="controls">
-                                <div class="input-prepend">
-                                  <span class="colorSelectorHolder add-on"></span>
-                                  <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="wg-displaypoint"><?php echo $this->lang->line('form_type_display'); ?></label>
-                            <div class="controls">
-                                <select class="wg-displaypoint" >
-                                  <option value="point">Point</option>
-                                  <option value="exp">EXP</option>
-                                    <?php
-                                    foreach($points_data as $p){
-                                    ?>
-                                        <option  value="<?php echo $p["name"]; ?>"><?php echo ucfirst($p["name"]); ?></option>
-                                    <?php
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
-                            <div class="controls">
-                                <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" ></label>
-                            <div class="controls">
-                                <a href="javascript:void(0);" onclick="reloadUserbar()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
-                                <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-userbar" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
-                            </div>
-                        </div>
-
-                    </form>
-
-                </div>
-                <div class="span11">
-                    <iframe id="iframe-userbar" src="<?php echo base_url();?>index.php/widget/preview?type=userbar" width="100%" height="280" frameborder="0"></iframe>
-                </div>
-            </div>
-        </div><!-- .tab-pane -->
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['achievement']) && $plan_widget['achievement']){
-        ?>
+        <?php } ?>
+     
+       
+        <?php if(isset($plan_widget['achievement']) && $plan_widget['achievement']){ ?>
         <div class="tab-pane" id="widget-achievement">
 
             <h3><?php echo $this->lang->line('text_achievement_widget'); ?></h3>
@@ -374,21 +245,6 @@
                                 <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
                             </div>
                         </div>
-                        <div class="control-group">
-                            <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-                            <div class="controls">
-                                <div class="input-prepend">
-                                    <span class="colorSelectorHolder add-on"></span>
-                                    <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
-                            <div class="controls">
-                                <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
-                            </div>
-                        </div>
 
                         <div class="control-group">
                             <label class="control-label" ></label>
@@ -406,12 +262,9 @@
                 </div>
             </div>
         </div><!-- .tab-pane -->
-        <?php
-        }
-        ?>
-        <?php
-        if(isset($plan_widget['quiz']) && $plan_widget['quiz']){
-            ?>
+        <?php } ?>
+
+        <?php if(isset($plan_widget['quiz']) && $plan_widget['quiz']){ ?>
             <div class="tab-pane" id="widget-quiz">
 
                 <h3><?php echo $this->lang->line('text_quiz_widget'); ?></h3>
@@ -431,21 +284,6 @@
                                     <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label" ><?php echo $this->lang->line('form_color'); ?></label>
-                                <div class="controls">
-                                    <div class="input-prepend">
-                                        <span class="colorSelectorHolder add-on"></span>
-                                        <input class="span6 colorSelector wg-color"  type="text" placeholder="#ffaa00">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" ><?php echo $this->lang->line('form_player_id'); ?></label>
-                                <div class="controls">
-                                    <input type="text" class="wg-player-id" placeholder="<?php echo $this->lang->line('text_require'); ?>"/>
-                                </div>
-                            </div>
 
                             <div class="control-group">
                                 <label class="control-label" ></label>
@@ -463,11 +301,202 @@
                     </div>
                 </div>
             </div><!-- .tab-pane -->
-        <?php
-        }
-        ?>
+            <?php } ?>
 
-	        </div>
+
+
+            <?php if(isset($plan_widget['quest']) && $plan_widget['quest']){ ?>
+                <div class="tab-pane" id="widget-quest">
+
+                    <h3><?php echo $this->lang->line('text_quest_widget'); ?></h3>
+
+                    <div class="row">
+                        <div class="span5">
+                            <form class="form-horizontal">
+                                <div class="control-group">
+                                    <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                                    <div class="controls">
+                                        <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
+                                    <div class="controls">
+                                        <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label" ></label>
+                                    <div class="controls">
+                                        <a href="javascript:void(0);" onclick="reloadQuest()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                        <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-quest" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+                        <div class="span7">
+                            <iframe id="iframe-quest" src="<?php echo base_url();?>index.php/widget/preview?type=quest" width="100%" height="400" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div><!-- .tab-pane -->
+                <?php } ?>
+
+                
+                <?php if(isset($plan_widget['feed']) && $plan_widget['feed']){ ?>
+                    <div class="tab-pane" id="widget-feed">
+
+                        <h3><?php echo $this->lang->line('text_feed_widget'); ?></h3>
+
+                        <div class="row">
+                            <div class="span6 offset3">
+                                <form class="form-horizontal">
+                                    <div class="control-group">
+                                        <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                                        <div class="controls">
+                                            <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
+                                        <div class="controls">
+                                            <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <label class="control-label" ></label>
+                                        <div class="controls">
+                                            <a href="javascript:void(0);" onclick="reloadFeed()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                            <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-feed" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                        </div>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                            <div class="span11">
+                                <iframe id="iframe-feed" src="<?php echo base_url();?>index.php/widget/preview?type=feed" width="100%" height="400" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                    </div><!-- .tab-pane -->
+                    <?php } ?>
+
+                    <?php if(isset($plan_widget['rewardstore']) && $plan_widget['rewardstore']){ ?>
+                        <div class="tab-pane" id="widget-rewardstore">
+
+                            <h3><?php echo $this->lang->line('text_rewardstore_widget'); ?></h3>
+
+                            <div class="row">
+                                <div class="span6 offset3">
+                                    <form class="form-horizontal">
+                                        <div class="control-group">
+                                            <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                                            <div class="controls">
+                                                <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                                            </div>
+                                        </div>
+                                        <div class="control-group">
+                                            <label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
+                                            <div class="controls">
+                                                <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
+                                            </div>
+                                        </div>
+
+                                        <div class="control-group">
+                                            <label class="control-label" ></label>
+                                            <div class="controls">
+                                                <a href="javascript:void(0);" onclick="reloadRewardstore()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                                <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-rewardstore" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                            </div>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+                                <div class="span11">
+                                    <iframe id="iframe-rewardstore" src="<?php echo base_url();?>index.php/widget/preview?type=rewardstore" width="100%" height="400" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div><!-- .tab-pane -->
+                        <?php } ?>
+
+                        
+                        <?php if(isset($plan_widget['treasure']) && $plan_widget['treasure']){ ?>
+                            <div class="tab-pane" id="widget-treasure">
+
+                                <h3><?php echo $this->lang->line('text_treasure_widget'); ?></h3>
+
+                                <div class="row">
+                                    <div class="span5">
+                                        <form class="form-horizontal">
+                                            <div class="control-group">
+                                                <label class="control-label" ><?php echo $this->lang->line('form_width'); ?></label>
+                                                <div class="controls">
+                                                    <input type="text" class="wg-width" placeholder="<?php echo $this->lang->line('text_pixel_width'); ?>">
+                                                </div>
+                                            </div>
+                                            <div class="control-group">
+                                                <label class="control-label" ><?php echo $this->lang->line('form_height'); ?></label>
+                                                <div class="controls">
+                                                    <input type="text" class="wg-height" placeholder="<?php echo $this->lang->line('text_pixel_height'); ?>">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="control-group">
+                                                <label class="control-label" ><?php echo $this->lang->line('form_rule_id'); ?></label>
+                                                <div class="controls">
+                                                    <input type="text" class="wg-rule-id" placeholder="<?php echo $this->lang->line('text_rule_id'); ?>">
+                                                </div>
+                                            </div>
+
+                                            <div class="control-group">
+                                                <label class="control-label" ></label>
+                                                <div class="controls">
+                                                    <a href="javascript:void(0);" onclick="reloadTreasure()" class="btn"><?php echo $this->lang->line('text_preview'); ?></a>
+                                                    <a href="#getcode-modal" role="button" data-toggle="modal" data-href="#widget-treasure" class="btn btn-primary" class="getcode-btn"><?php echo $this->lang->line('text_get_code'); ?></a>
+                                                </div>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                    <div class="span7">
+                                        <iframe id="iframe-treasure" src="<?php echo base_url();?>index.php/widget/preview?type=treasure" width="100%" height="400" frameborder="0"></iframe>
+                                    </div>
+                                </div>
+                            </div><!-- .tab-pane -->
+                            <?php } ?>
+
+
+                        
+
+                        <?php if(isset($plan_widget['trackevent']) && $plan_widget['trackevent']){ ?>
+                            <div class="tab-pane" id="widget-trackevent">
+
+                                <h3><?php echo $this->lang->line('text_trackevent_widget'); ?></h3>
+
+                                <div class="row">
+                                    <div class="span6 offset3">
+
+                                        For "Visit" Customs page name Event, put attribute "data-pb-page" in &#x3C;body&#x3E tag<br><br>
+                                        <pre class="prettyprint">
+&#x3C;body data-pb-page=&#x22;### PAGE NAME ###&#x22;&#x3E;
+                                        </pre>
+                                        
+                                        For Customs Event when "Click", put attribute "data-pb-action" and "data-pb-url" in &#x3C;a&#x3E; or &#x3C;button&#x3E; tag for example<br><br>
+                                        <pre class="prettyprint">
+&#x3C;a href=&#x22;http://www.exemple.com&#x22; data-pb-action=&#x22;view&#x22; data-pb-url=&#x22;exemple&#x22; &#x3E;exemple.com&#x3C;/a&#x3E;
+                                        </pre>
+
+                                    </div>
+                                </div>
+                            </div><!-- .tab-pane -->
+                            <?php } ?>
+
+	</div>
         </div><!-- .content -->
     </div><!-- .box -->
 </div><!-- #content .span10 -->
@@ -475,184 +504,164 @@
 
 
 <script>
+$(document).ready(function(){
+            $(".wg-apikey option:first").attr('selected','selected');
 
-	$(document).ready(function(){
-        $(".wg-apikey option:first").attr('selected','selected');
+            if(location.hash){
+                var tabclick = location.hash;
+                $('.nav-tabs a[href='+tabclick+']').tab('show') ;
+                
+                if( typeof reloadFunc[tabActive] != 'undefined' ){
+                    reloadFunc[tabActive]();
+                 };
 
-        if(location.hash){
-            var tabclick = location.hash;
-            $('.nav-tabs a[href='+tabclick+']').tab('show') ;
-            switch(tabclick){
-                case "#widget-leaderboard":
-                    reloadLeaderboard();
-                    break;
-                case "#widget-livefeed":
-                    reloadLivefeed();
-                    break;
-                case "#widget-profile":
-                    reloadProfile();
-                    break;
-                case "#widget-userbar":
-                    reloadUserbar();
-                    break;
-                case "#widget-achievement":
-                    reloadAchievement();
-                    break;
-                case "#widget-quiz":
-                    reloadQuiz();
-                    break;
+            }else{
+                $('a[data-toggle="tab"]:first').tab('show');
             }
-        }else{
-            $('a[data-toggle="tab"]:first').tab('show');
-        }
 
-		$('.colorSelector').ColorPicker({
-			onBeforeShow: function () {
-				$(this).ColorPickerSetColor(this.value);
-			},
-			onShow: function (colpkr) {
-				$(colpkr).fadeIn(200);
-				return false;
-			},
-			onHide: function (colpkr) {
-				$(colpkr).fadeOut(200);
-				return false;
-			},
-			onChange: function (hsb, hex, rgb) {
-				$('.colorSelectorHolder').css('backgroundColor', '#' + hex);
-				$('.colorSelector').val('#' +hex);
-			},
-            onSubmit: function(hsb, hex, rgb, el) {
-                $('.colorSelectorHolder').css('backgroundColor', '#' + hex);
-                $('.colorSelectorHolder').val('#' +hex);
-                $(el).ColorPickerHide();
+            $('.colorSelector').ColorPicker({
+                 onBeforeShow: function () {
+                    $(this).ColorPickerSetColor(this.value);
+                },
+                onShow: function (colpkr) {
+                    $(colpkr).fadeIn(200);
+                    return false;
+                },
+                onHide: function (colpkr) {
+                    $(colpkr).fadeOut(200);
+                    return false;
+                },
+                onChange: function (hsb, hex, rgb) {
+                    $('.colorSelectorHolder').css('backgroundColor', '#' + hex);
+                    $('.colorSelector').val('#' +hex);
+                },
+                onSubmit: function(hsb, hex, rgb, el) {
+                    $('.colorSelectorHolder').css('backgroundColor', '#' + hex);
+                    $('.colorSelectorHolder').val('#' +hex);
+                    $(el).ColorPickerHide();
+                }
+            }).bind('keyup', function(){
+             $(this).ColorPickerSetColor(this.value);
+             $('.colorSelectorHolder').css('backgroundColor', this.value);
+             if(event.keyCode == 13){
+                $(this).ColorPickerHide();
             }
-		}).bind('keyup', function(){
-			$(this).ColorPickerSetColor(this.value);
-			$('.colorSelectorHolder').css('backgroundColor', this.value);
-			if(event.keyCode == 13){
-				$(this).ColorPickerHide();
-			}
-		});
-		$('.colorSelectorHolder').click(function(){
-			$('.colorSelector').focus();
-		});
-
-		$('form').submit(function(e){
-			e.preventDefault();
-		});
-
-		$('#widget-leaderboard input, #widget-leaderboard select').bind("change paste blur", function() {
-			clearTimeout(timeout);
-			timeout = setTimeout(reloadLeaderboard,timeBuffer);
-		});
-		$('#widget-livefeed input, #widget-livefeed select').bind("change paste blur", function() {
-			clearTimeout(timeout);
-			timeout = setTimeout(reloadLivefeed,timeBuffer);
-		});
-		$('#widget-profile input, #widget-profile select').bind("change paste blur", function() {
-			clearTimeout(timeout);
-			timeout = setTimeout(reloadProfile,timeBuffer);
-		});
-		$('#widget-userbar input, #widget-userbar select').bind("change paste blur", function() {
-			clearTimeout(timeout);
-			timeout = setTimeout(reloadUserbar,timeBuffer);
-		});
-        $('#widget-achievement input, #widget-achievement select').bind("change paste blur", function() {
-            clearTimeout(timeout);
-            timeout = setTimeout(reloadAchievement,timeBuffer);
         });
-        $('#widget-quiz input, #widget-quiz select').bind("change paste blur", function() {
-            clearTimeout(timeout);
-            timeout = setTimeout(reloadQuiz,timeBuffer);
-        });
+        $('.colorSelectorHolder').click(function(){
+         $('.colorSelector').focus();
+     });
+
+        $('form').submit(function(e){
+         e.preventDefault();
+     });
 
         $('.controls .btn-primary').click(function(){
             tabActive = $(this).attr('data-href');
-            switch(tabActive){
-                case "#widget-leaderboard":
-                    reloadLeaderboard();
-                    break;
-                case "#widget-livefeed":
-                    reloadLivefeed();
-                    break;
-                case "#widget-profile":
-                    reloadProfile();
-                    break;
-                case "#widget-userbar":
-                    reloadUserbar();
-                    break;
-                case "#widget-achievement":
-                    reloadAchievement();
-                    break;
-                case "#widget-quiz":
-                    reloadQuiz();
-                    break;
-            }
+
+            if( typeof reloadFunc[tabActive] != 'undefined' ){
+                reloadFunc[tabActive]();
+             };
+
         });
 
-		$('#getcode-modal').on('show', function () {
+        $('#getcode-modal').on('show', function () {
 
-		})
-		
-		$('a[data-toggle="tab"]').on('shown', function (e) {
-			tabActive = $(this).attr('href');
-			switch(tabActive){
-				case "#widget-leaderboard":
-					reloadLeaderboard();
-				break;
-				case "#widget-livefeed":
-					reloadLivefeed();
-				break;
-				case "#widget-profile":
-					reloadProfile();
-				break;
-				case "#widget-userbar":
-					reloadUserbar();
-				break;
-                case "#widget-achievement":
-                    reloadAchievement();
-                break;
-                case "#widget-quiz":
-                    reloadQuiz();
-                    break;
-			}
-		})
+        })
 
-	});
-	var tabActive = '#widget-leaderboard';
-	var timeBuffer = 500;
-	var isReload = false;
-	var timeout = setTimeout(void(0),0);
-    var codeHeaderTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
+        $('a[data-toggle="tab"]').on('shown', function (e) {
+         tabActive = $(this).attr('href');
+
+         if( typeof reloadFunc[tabActive] != 'undefined' ){
+            reloadFunc[tabActive]();
+         };
+
+    })
+
+    });
+    var tabActive = '#widget-profile';
+    var urlPreview = '<?php echo base_url();?>index.php/widget/preview';
+    var timeBuffer = 500;
+    var isReload = false;
+    var timeout = setTimeout(void(0),0);
+    var codeHeaderTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc'{{theme_color}}{{player_id}}{{cssfile}}\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/sdk.js?version=v1';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
     var codeHeaderPlayerTestTemplate= "&lt;script&gt;\nwindow.PBAsyncInit = function(){\n\tPB.init({\n\t\tapi_key:'abc',\n\t\ttheme_color :'#0e9ce4',\n\t\tplayerId :'playertest'\n\t});\n};(!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://widget.pbapp.net/playbasis/en/all.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','playbasis-js'));&lt;/script&gt;";
 
-    function updateWidget(type){
-		clearTimeout(timeout);
-		timeout = setTimeout(reloadLeaderboard,timeBuffer);
-	}
-	function reloadLeaderboard(){
-		var width = getVal($('#widget-leaderboard .wg-width').val());
-		var color =getColor($('#widget-leaderboard .wg-color').val());
-		var rankby =$('#widget-leaderboard .wg-rankby').val();
-		var url = '<?php echo base_url();?>index.php/widget/preview?type=leaderboard';
-		var codeElement = '&lt;div class="pb-leaderboard" ';
-		var codeHeader = codeHeaderTemplate;
-        var apikey = $('.wg-apikey').val();
+    var reloadFunc =[];
+    reloadFunc['#widget-profile'] = function(){ reloadProfile(); };
+    reloadFunc['#widget-leaderboard'] = function(){ reloadLeaderboard(); };
+    reloadFunc['#widget-achievement'] = function(){ reloadAchievement(); };
+    reloadFunc['#widget-quiz'] = function(){ reloadQuiz(); };
+    reloadFunc['#widget-quest'] = function(){ reloadQuest(); };
+    reloadFunc['#widget-feed'] = function(){ reloadFeed(); };
+    reloadFunc['#widget-rewardstore'] = function(){ reloadRewardstore(); };
+    reloadFunc['#widget-treasure'] = function(){ reloadTreasure(); };
+    reloadFunc['#widget-trackevent'] = function(){ reloadTrackevent(); };
 
-        if(apikey){
-            url+='&apikey='+apikey;
-            codeHeader = codeHeader.replace('abc', apikey);
+    reloadFunc['#widget-profile']();
+
+    for( var widget_id in reloadFunc){
+        $(widget_id+' input, '+widget_id+' select').bind("change paste blur", function() {
+            var $tab = $(this).closest('.tab-pane');
+            var _widget_id = $tab.attr('id');
+            clearTimeout(timeout);
+            timeout = setTimeout( reloadFunc['#'+_widget_id] ,timeBuffer);
+        });
+    }
+    
+    function updateParamForGlobal(url, codeHeader){
+        var apikey = $('.wg-apikey').val();
+        var player_id = $('.wg-player-id').val();
+        var cssfile = $('.wg-cssfile').val();
+        var color =getColor($('#widget-globel .wg-color').val());
+
+        url+='&apikey='+apikey;
+        codeHeader = codeHeader.replace('abc', apikey);
+
+        if(typeof color != 'undefined' && color != ""){
+            url+='&color='+color;
+            var jsonColor = ',\n\t\ttheme_color : "#'+color+'"';
+            codeHeader = codeHeader.replace("{{theme_color}}", jsonColor);
+        }else{
+            codeHeader = codeHeader.replace("{{theme_color}}", '');
+        }
+
+        if(typeof player_id != 'undefined' && player_id != ""){
+            url+='&player_id='+player_id;
+            var jsonPlayerId = ',\n\t\tplayer_id : "'+player_id+'"';
+            codeHeader = codeHeader.replace("{{player_id}}", jsonPlayerId);
+        }else{
+            codeHeader = codeHeader.replace("{{player_id}}", '');
+        }
+
+        if(typeof cssfile != 'undefined' && cssfile != ""){
+            url+='&cssfile='+cssfile;
+            var jsonColor = ',\n\t\cssfile : "'+cssfile+'"';
+            codeHeader = codeHeader.replace("{{cssfile}}", cssfile);
+        }else{
+            codeHeader = codeHeader.replace("{{cssfile}}", '');
+        }
+
+        return {url, codeHeader};
+    }
+
+
+    function reloadLeaderboard(){
+      var width = getVal($('#widget-leaderboard .wg-width').val());
+      var rankby =$('#widget-leaderboard .wg-rankby').val();
+      var url = urlPreview+'?type=leaderboard';
+      var codeElement = '&lt;div class="pb-leaderboard" ';
+      var codeHeader = codeHeaderTemplate;
+
+      var apikey = $('.wg-apikey').val();
+      if(apikey){
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
 
             if(typeof width != 'undefined' && width != ""){
                 url+='&width='+width;
                 codeElement += 'data-pb-width="'+width+'" ';
             }
-
-            if(typeof color != 'undefined' && color != ""){
-                url+='&color='+color;
-                codeHeader = codeHeader.replace("#0e9ce4", color);
-            }
+            
             if(typeof rankby != 'undefined'  && rankby != ""){
                 url+='&rankby='+rankby;
                 codeElement += 'data-pb-rankBy="'+rankby+'" ';
@@ -664,123 +673,52 @@
             $('#getcode-modal .code-element').html(codeElement);
             $('#getcode-modal .code-header').html(codeHeader);
         }
-	}
-	function reloadLivefeed(){
-		var width = getVal($('#widget-livefeed .wg-width').val());
-		var height = getVal($('#widget-livefeed .wg-height').val());
-		var color =getColor($('#widget-livefeed .wg-color').val());
-		var url = baseUrlPath+'widget/preview?type=livefeed';
-		var codeElement = '&lt;div class="pb-livefeed" ';
-		var codeHeader = codeHeaderTemplate;
+    }
+
+    function reloadProfile(){
+        var width = getVal($('#widget-profile .wg-width').val());
+        var displaypoint =getColor($('#widget-profile .wg-displaypoint').val());
+        var url = urlPreview+'?type=profile';
+        var codeElement = '&lt;div class="pb-profile" ';
+        var codeHeader = codeHeaderTemplate;
+        
         var apikey = $('.wg-apikey').val();
 
         if(apikey){
 
-            url+='&apikey='+apikey;
-            codeHeader = codeHeader.replace('abc', apikey);
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
 
             if(typeof width != 'undefined' && width != ""){
                 url+='&width='+width;
                 codeElement += 'data-pb-width="'+width+'" ';
             }
-            if(typeof height != 'undefined' && height != ""){
-                url+='&height='+height;
-                codeElement += 'data-pb-height="'+height+'" ';
-            }
-            if(typeof color != 'undefined' && color != ""){
-                url+='&color='+color;
-                codeHeader = codeHeader.replace("#0e9ce4", color);
-            }
-            codeElement += '&gt;&lt;/div&gt;';
-            $('#iframe-livefeed').attr('src',url);
-
-            $('#getcode-modal .code-element').html(codeElement);
-            $('#getcode-modal .code-header').html(codeHeader);
-        }
-	}
-	function reloadProfile(){
-		var width = getVal($('#widget-profile .wg-width').val());
-		var color =getColor($('#widget-profile .wg-color').val());
-		var displaypoint =getColor($('#widget-profile .wg-displaypoint').val());
-		var playerIdTest =$('#widget-profile .wg-player-id').val();
-		var url = baseUrlPath+'widget/preview?type=profile';
-		var codeElement = '&lt;div class="pb-profile" ';
-		var codeHeader = codeHeaderPlayerTestTemplate;
-        var apikey = $('.wg-apikey').val();
-
-        if(apikey){
-
-            url+='&apikey='+apikey;
-            codeHeader = codeHeader.replace('abc', apikey);
-
-            if(typeof width != 'undefined' && width != ""){
-                url+='&width='+width;
-                codeElement += 'data-pb-width="'+width+'" ';
-            }
-            if(typeof color != 'undefined' && color != ""){
-                url+='&color='+color;
-                codeHeader = codeHeader.replace("#0e9ce4", color);
-            }
+            
             if(typeof displaypoint != 'undefined'  && displaypoint != ""){
                 url+='&displaypoint='+displaypoint;
                 codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
             }
-            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
-                url+='&playerId='+playerIdTest;
-                codeHeader = codeHeader.replace("playertest", playerIdTest);
-            }
+            
             codeElement += '&gt;&lt;/div&gt;';
             $('#iframe-profile').attr('src',url);
             $('#getcode-modal .code-element').html(codeElement);
             $('#getcode-modal .code-header').html(codeHeader);
         }
-	}
-	function reloadUserbar(){
-		var color =getColor($('#widget-userbar .wg-color').val());
-		var displaypoint =getColor($('#widget-userbar .wg-displaypoint').val());
-        var playerIdTest =$('#widget-userbar .wg-player-id').val();
-		var url = baseUrlPath+'widget/preview?type=userbar';
-		var codeElement = '&lt;div class="pb-userbar" ';
-		var codeHeader = codeHeaderPlayerTestTemplate;
-        var apikey = $('.wg-apikey').val();
+    }
 
-        if(apikey){
-
-            url+='&apikey='+apikey;
-            codeHeader = codeHeader.replace('abc', apikey);
-
-            if(typeof color != 'undefined' && color != ""){
-                url+='&color='+color;
-                codeHeader = codeHeader.replace("#0e9ce4", color);
-            }
-            if(typeof displaypoint != 'undefined'  && displaypoint != ""){
-                url+='&displaypoint='+displaypoint;
-                codeElement += 'data-pb-displayPoint="'+displaypoint+'" ';
-            }
-            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
-                url+='&playerId='+playerIdTest;
-                codeHeader = codeHeader.replace("playertest", playerIdTest);
-            }
-            codeElement += '&gt;&lt;/div&gt;';
-            $('#iframe-userbar').attr('src',url);
-            $('#getcode-modal .code-element').html(codeElement);
-            $('#getcode-modal .code-header').html(codeHeader);
-        }
-	}
     function reloadAchievement(){
         var width = getVal($('#widget-achievement .wg-width').val());
         var height = getVal($('#widget-achievement .wg-height').val());
-        var color =getColor($('#widget-achievement .wg-color').val());
-        var playerIdTest =$('#widget-achievement .wg-player-id').val();
-        var url = baseUrlPath+'widget/preview?type=achievement';
+        var url = urlPreview+'?type=achievement';
         var codeElement = '&lt;div class="pb-achievement" ';
-        var codeHeader = codeHeaderPlayerTestTemplate;
+        var codeHeader = codeHeaderTemplate;
+
         var apikey = $('.wg-apikey').val();
 
         if(apikey){
 
-            url+='&apikey='+apikey;
-            codeHeader = codeHeader.replace('abc', apikey);
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
 
             if(typeof width != 'undefined' && width != ""){
                 url+='&width='+width;
@@ -790,14 +728,7 @@
                 url+='&height='+height;
                 codeElement += 'data-pb-height="'+height+'" ';
             }
-            if(typeof color != 'undefined' && color != ""){
-                url+='&color='+color;
-                codeHeader = codeHeader.replace("#0e9ce4", color);
-            }
-            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
-                url+='&playerId='+playerIdTest;
-                codeHeader = codeHeader.replace("playertest", playerIdTest);
-            }
+
             codeElement += '&gt;&lt;/div&gt;';
             $('#iframe-achievement').attr('src',url);
 
@@ -808,17 +739,15 @@
     function reloadQuiz(){
         var width = getVal($('#widget-quiz .wg-width').val());
         var height = getVal($('#widget-quiz .wg-height').val());
-        var color =getColor($('#widget-quiz .wg-color').val());
-        var playerIdTest =$('#widget-quiz .wg-player-id').val();
-        var url = baseUrlPath+'widget/preview?type=quiz';
+        var url = urlPreview+'?type=quiz';
         var codeElement = '&lt;div class="pb-quiz" ';
-        var codeHeader = codeHeaderPlayerTestTemplate;
+        var codeHeader = codeHeaderTemplate;
         var apikey = $('.wg-apikey').val();
 
         if(apikey){
 
-            url+='&apikey='+apikey;
-            codeHeader = codeHeader.replace('abc', apikey);
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
 
             if(typeof width != 'undefined' && width != ""){
                 url+='&width='+width;
@@ -828,14 +757,6 @@
                 url+='&height='+height;
                 codeElement += 'data-pb-height="'+height+'" ';
             }
-            if(typeof color != 'undefined' && color != ""){
-                url+='&color='+color;
-                codeHeader = codeHeader.replace("#0e9ce4", color);
-            }
-            if(typeof playerIdTest != 'undefined'  && playerIdTest != ""){
-                url+='&playerId='+playerIdTest;
-                codeHeader = codeHeader.replace("playertest", playerIdTest);
-            }
             codeElement += '&gt;&lt;/div&gt;';
             $('#iframe-quiz').attr('src',url);
 
@@ -843,21 +764,168 @@
             $('#getcode-modal .code-header').html(codeHeader);
         }
     }
-	function getVal(val){
-		if(typeof val == 'undefined' ){
-			return '';
-		}
-		var lastStr = val.slice(-1);
-		if(lastStr == '%'){
-			return val;
-		}else{
-			return val.replace(/[^0-9%]/g,'');
-		}
-	}
-	function getColor(val){
-		var color = val.replace(/#/g, '');
-		return color;
-	}
+
+
+    function reloadQuest(){
+        var width = getVal($('#widget-quest .wg-width').val());
+        var height = getVal($('#widget-quest .wg-height').val());
+        var url = urlPreview+'?type=quest';
+        var codeElement = '&lt;div class="pb-quest" ';
+        var codeHeader = codeHeaderTemplate;
+        var apikey = $('.wg-apikey').val();
+
+        if(apikey){
+
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof height != 'undefined' && height != ""){
+                url+='&height='+height;
+                codeElement += 'data-pb-height="'+height+'" ';
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-quest').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
+    }
+
+    function reloadFeed(){
+        var width = getVal($('#widget-feed .wg-width').val());
+        var height = getVal($('#widget-feed .wg-height').val());
+        var url = urlPreview+'?type=feed';
+        var codeElement = '&lt;div class="pb-feed" ';
+        var codeHeader = codeHeaderTemplate;
+        var apikey = $('.wg-apikey').val();
+
+        if(apikey){
+
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof height != 'undefined' && height != ""){
+                url+='&height='+height;
+                codeElement += 'data-pb-height="'+height+'" ';
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-feed').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
+    }
+
+    function reloadRewardstore(){
+        var width = getVal($('#widget-rewardstore .wg-width').val());
+        var height = getVal($('#widget-rewardstore .wg-height').val());
+        var url = urlPreview+'?type=rewardstore';
+        var codeElement = '&lt;div class="pb-rewardstore" ';
+        var codeHeader = codeHeaderTemplate;
+        var apikey = $('.wg-apikey').val();
+
+        if(apikey){
+
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof height != 'undefined' && height != ""){
+                url+='&height='+height;
+                codeElement += 'data-pb-height="'+height+'" ';
+            }
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-rewardstore').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
+    }
+
+    function reloadTreasure(){
+        var width = getVal($('#widget-treasure .wg-width').val());
+        var height = getVal($('#widget-treasure .wg-height').val());
+        var url = urlPreview+'?type=treasure';
+        var codeElement = '&lt;div class="pb-treasure" ';
+        var codeHeader = codeHeaderTemplate;
+        var apikey = $('.wg-apikey').val();
+
+        var rule_id = getVal($('#widget-treasure .wg-rule-id').val());
+
+        if(apikey){
+
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
+
+            if(typeof width != 'undefined' && width != ""){
+                url+='&width='+width;
+                codeElement += 'data-pb-width="'+width+'" ';
+            }
+            if(typeof height != 'undefined' && height != ""){
+                url+='&height='+height;
+                codeElement += 'data-pb-height="'+height+'" ';
+            }
+            if(typeof rule_id != 'undefined' && rule_id != ""){
+                url+='&rule_id='+rule_id;
+                codeElement += 'data-pb-rule-id="'+rule_id+'" ';
+            }
+
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-treasure').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
+    }
+
+    function reloadTrackevent(){
+        
+        var url = urlPreview+'?type=trackevent';
+        var codeElement = '&lt;div class="pb-trackevent" ';
+        var codeHeader = codeHeaderTemplate;
+        var apikey = $('.wg-apikey').val();
+
+        if(apikey){
+
+            url = updateParamForGlobal(url, codeHeader).url;
+            codeHeader = updateParamForGlobal(url, codeHeader).codeHeader;
+
+            codeElement += '&gt;&lt;/div&gt;';
+            $('#iframe-trackevent').attr('src',url);
+
+            $('#getcode-modal .code-element').html(codeElement);
+            $('#getcode-modal .code-header').html(codeHeader);
+        }
+    }
+
+
+    function getVal(val){
+      if(typeof val == 'undefined' ){
+         return '';
+     }
+     var lastStr = val.slice(-1);
+     if(lastStr == '%'){
+         return val;
+     }else{
+         return val.replace(/[^0-9%]/g,'');
+     }
+    }
+    function getColor(val){
+      var color = val.replace(/#/g, '');
+      return color;
+    }
+
 
 </script>
 
