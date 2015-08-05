@@ -58,17 +58,18 @@
                 <?php if( !empty($cssfile) ){ ?>
                 cssfile : '<?php echo $cssfile; ?>',//optional
                 <?php } ?>
-                pb_host: '//localhost/widget',
-                api_node: '//qav2node.pbapp.net',
-                api_url: '//qav2api.pbapp.net'
+                // pb_host: '//localhost/widget',
+                // pb_host: '//widget.pbapp.net/v1',
+                // api_node: '//qav2node.pbapp.net',
+                // api_url: '//qav2api.pbapp.net'
             });
         };
         (!function(d,s,id){
             var js,fjs=d.getElementsByTagName(s)[0],
                     p=/^http:/.test(d.location)?'http':'https';
             if(!d.getElementById(id)){js=d.createElement(s);js.id=id;
-                // js.src=p+"://widget.pbapp.net/sdk.js?version=v1";
-                js.src=p+"://localhost/widget/playbasis/en/all.js";
+                js.src=p+"://widget.pbapp.net/sdk.js?version=v1";
+                // js.src=p+"://localhost/widget/playbasis/en/all.js";
                 fjs.parentNode.insertBefore(js,fjs);}
         }(document,"script","playbasis-js"));
     </script>
