@@ -79,7 +79,8 @@ class Quiz extends REST2_Controller
             $nin = array_map('index_quiz_id', $arr);
         }
 
-        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
+        $type = $this->input->get('type');
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin, $type);
         $results = array_map('convert_MongoId_id', $results);
         array_walk_recursive($results, array($this, "convert_mongo_object_and_image_path"));
 
@@ -146,15 +147,16 @@ class Quiz extends REST2_Controller
         $nin = null;
         if ($player_id === false) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         $pb_player_id = $this->player_model->getPlaybasisId(array(
-                'client_id' => $this->client_id,
-                'site_id' => $this->site_id,
-                'cl_player_id' => $player_id,
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
         ));
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         $arr = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id);
         $nin = array_map('index_quiz_id', $arr);
-        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
+        $type = $this->input->get('type');
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin, $type);
         $results = array_map('convert_MongoId_id', $results);
 
         $result = null;
@@ -168,7 +170,6 @@ class Quiz extends REST2_Controller
 
             array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
         }
-
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
