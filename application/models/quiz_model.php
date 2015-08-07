@@ -8,7 +8,7 @@ class Quiz_model extends MY_Model
         $this->config->load('playbasis');
     }
 
-    public function find($client_id, $site_id, $nin=null) {
+    public function find($client_id, $site_id, $nin=null, $type=null) {
         $d = new MongoDate(time());
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('name','image','description','description_image','weight'));
@@ -20,6 +20,7 @@ class Quiz_model extends MY_Model
             array('$or' => array(array('date_expire' => array('$gt' => $d)), array('date_expire' => null)))
         )));
         if ($nin !== null) $this->mongo_db->where_not_in('_id', $nin);
+        if ($type) $this->mongo_db->where('type', $type);
         $result = $this->mongo_db->get('playbasis_quiz_to_client');
 
         return $result;
