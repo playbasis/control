@@ -458,6 +458,47 @@ class Quiz extends REST2_Controller
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
     }
 
+    public function stat_get($quiz_id = '')
+    {
+        $this->benchmark->mark('start');
+
+        /* param "quiz_id" */
+        if (empty($quiz_id)) $this->response($this->error->setError('PARAMETER_MISSING', array('quiz_id')), 200);
+        $quiz_id = new MongoId($quiz_id);
+        $quiz = $this->quiz_model->find_by_id($this->client_id, $this->site_id, $quiz_id);
+        if ($quiz === null) $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
+
+        $result = array();
+        $stat = $this->quiz_model->calculate_frequency($this->client_id, $this->site_id, $quiz_id);
+        $n = count($quiz['questions']);
+        foreach ($quiz['questions'] as $i => $q) {
+            $question_id = strval($q['question_id']);
+            $options = $q['options'];
+            $options = array();
+            if ($q['options']) foreach ($q['options'] as $o) {
+                $option_id = strval($o['option_id']);
+                array_push($options, array(
+                    'option' => $o['option'],
+                    'option_image' => $o['option_image'],
+                    'option_id' => $option_id,
+                    'count' => isset($stat[$question_id][$option_id]) ? $stat[$question_id][$option_id] : 0,
+                ));
+            }
+            array_push($result, array(
+                'question' => $q['question'],
+                'question_image' => $q['question_image'],
+                'question_id' => strval($q['question_id']),
+                'options' => $options,
+                'index' => $i+1,
+                'total' => $n,
+            ));
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
+    }
+
     /*
      * reset quiz
      *
