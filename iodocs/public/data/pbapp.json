@@ -1500,6 +1500,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "type",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz, poll"
                         }
                     ]
                 },
@@ -1539,6 +1546,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "type",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz, poll"
                         }
                     ]
                 },
