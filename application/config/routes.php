@@ -236,7 +236,7 @@ $route['Quiz/'.ANY_STRING.'/question'] = 'quiz/question/$1'; // ANY_STRING = qui
 $route['Quiz/'.ANY_STRING.'/answer'] = 'quiz/answer/$1'; // ANY_STRING = quiz_id
 $route['Quiz/'.ANY_STRING.'/rank/'.ANY_NUMBER] = 'quiz/rank/$1/$2'; // ANY_STRING = quiz_id
 $route['Quiz/'.ANY_STRING.'/rank'] = 'quiz/rank/$1/5'; // ANY_STRING = quiz_id
-$route['Quiz/'.ANY_STRING.'/stat/'] = 'quiz/stat/$1'; // ANY_STRING = quiz_id
+$route['Quiz/'.ANY_STRING.'/stat'] = 'quiz/stat/$1'; // ANY_STRING = quiz_id
 $route['Quiz/reset'] = 'quiz/reset';
 
 //email API
