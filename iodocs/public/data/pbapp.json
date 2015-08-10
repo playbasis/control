@@ -1693,6 +1693,22 @@
                     ]
                 },
                 {
+                    "MethodName": "Query for Quiz's Statistics",
+                    "Synopsis": "Query a statistics of a quiz done by all players.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Quiz/:id/stat",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "quiz id"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Reset a Player's Quiz",
                     "Synopsis": "Reset a quiz done by a player.",
                     "HTTPMethod": "POST",
