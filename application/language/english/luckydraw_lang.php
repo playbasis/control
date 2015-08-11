@@ -17,6 +17,10 @@ $lang['entry_date_modified']                    = 'Date Modified';
 $lang['entry_part_method']                      = 'Participation method';
 $lang['entry_part_method_active']               = 'Select only active users';
 $lang['entry_part_method_ask']                  = 'Ask player to join';
+$lang['entry_banner_upload']                    = 'Banner upload';
+$lang['entry_banner_upload_button']             = 'Upload';
+$lang['entry_banner_advertise']                 = 'Advertise';
+$lang['entry_banner_winner']                    = 'Winner';
 
 $lang['column_name']                            = 'Lucky Draw Name';
 $lang['column_date_start']                      = 'Date Start';

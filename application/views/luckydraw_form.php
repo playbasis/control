@@ -133,16 +133,25 @@ function find_template($data, $type, $template_id)
                                 <span class="required">* </span><?php echo $this->lang->line('entry_part_method'); ?> :
                             </td>
                             <td>
-                                <ul style="list-style-type: none">
-                                    <li>
-                                        <input type="radio" name="participate_method" value="ask_to_join"
-                                               id="part_method_ask" <?php echo isset($luckydraw) && isset($luckydraw['participate_method']) && $luckydraw['participate_method'] ? 'checked' : ''; ?>> <?php echo $this->lang->line('entry_part_method_ask'); ?>
-                                    </li>
-                                    <li>
-                                        <input type="radio" name="participate_method" value="active_users_only"
-                                               id="part_method_active" <?php echo isset($luckydraw) && isset($luckydraw['participate_method']) && $luckydraw['participate_method'] == false ? 'checked' : ''; ?>> <?php echo $this->lang->line('entry_part_method_active'); ?>
-                                    </li>
-                                </ul>
+                                <label class="radio" style="display: block;">
+                                    <input type="radio" name="participate_method" id="part_method_ask"
+                                           value="ask_to_join" <?php echo isset($luckydraw) && isset($luckydraw['participate_method']) && $luckydraw['participate_method'] ? 'checked' : ''; ?>>
+                                    <?php echo $this->lang->line('entry_part_method_ask'); ?>
+                                </label>
+                                <label class="radio" style="display: block;">
+                                    <input type="radio" name="participate_method" id="part_method_active"
+                                           value="active_users_only" <?php echo isset($luckydraw) && isset($luckydraw['participate_method']) && $luckydraw['participate_method'] == false ? 'checked' : ''; ?>>
+                                    <?php echo $this->lang->line('entry_part_method_active'); ?>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <?php echo $this->lang->line('entry_banner_upload'); ?> :
+                            </td>
+                            <td>
+                                <?php echo $this->lang->line('entry_banner_advertise'); ?><button class="btn btn-small" type="button"><?php echo $this->lang->line('entry_banner_upload_button'); ?></button>
+                                <?php echo $this->lang->line('entry_banner_winner'); ?><button class="btn btn-small" type="button"><?php echo $this->lang->line('entry_banner_upload_button'); ?></button>
                             </td>
                         </tr>
                         </tbody>
