@@ -83,7 +83,7 @@ function find_template($data, $type, $template_id)
                         <tr>
                             <td>
                                 <span
-                                    class="required">* </span><?php echo $this->lang->line('entry_name'); // TODO(Rook): change to label ?>
+                                    class="required">* </span><?php echo $this->lang->line('entry_name'); ?>
                                 :
                             </td>
                             <td>
@@ -94,7 +94,7 @@ function find_template($data, $type, $template_id)
                         </tr>
                         <tr>
                             <td>
-                                <?php echo $this->lang->line('entry_desc'); // TODO(Rook): change to label ?> :
+                                <?php echo $this->lang->line('entry_desc'); ?> :
                             </td>
                             <td>
                                 <?php
@@ -105,7 +105,7 @@ function find_template($data, $type, $template_id)
                         <tr>
                             <td>
                                 <span
-                                    class="required">* </span><?php echo $this->lang->line('entry_date_start'); // TODO(Rook): change to label ?>
+                                    class="required">* </span><?php echo $this->lang->line('entry_date_start'); ?>
                                 :
                             </td>
                             <td>
@@ -118,7 +118,7 @@ function find_template($data, $type, $template_id)
                         <tr>
                             <td>
                                 <span
-                                    class="required">* </span><?php echo $this->lang->line('entry_date_end'); // TODO(Rook): change to label ?>
+                                    class="required">* </span><?php echo $this->lang->line('entry_date_end'); ?>
                                 :
                             </td>
                             <td>

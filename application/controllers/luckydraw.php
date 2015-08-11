@@ -174,9 +174,10 @@ class LuckyDraw extends MY_Controller
             $luckydraw = $data;
 
             $this->form_validation->set_rules('name', 'lang:entry_name', 'trim|required|xss_clean');
-            $this->form_validation->set_rules('date_start', 'lang:entry_date_start','trim|required|xss_clean');
-            $this->form_validation->set_rules('date_end', 'lang:entry_date_end','trim|required|xss_clean');
-            $this->form_validation->set_rules('participate_method', 'lang:entry_part_method','trim|required|xss_clean');
+            $this->form_validation->set_rules('date_start', 'lang:entry_date_start', 'trim|required|xss_clean');
+            $this->form_validation->set_rules('date_end', 'lang:entry_date_end', 'trim|required|xss_clean');
+            $this->form_validation->set_rules('participate_method', 'lang:entry_part_method',
+                'trim|required|xss_clean');
 
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $luckydraw['client_id'] = $this->User_model->getClientId();
