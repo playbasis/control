@@ -21,8 +21,6 @@
                     <tr>
                         <td width="1" style="text-align: center;"><input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" /></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
-<!--                        <td class="right" style="width:100px;">--><?php //echo $this->lang->line('column_date_start'); ?><!--</td>-->
-<!--                        <td class="right" style="width:100px;">--><?php //echo $this->lang->line('column_date_end'); ?><!--</td>-->
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
@@ -34,7 +32,6 @@
                         <td><input type="text" name="filter_name" value="" style="width:50%;" /></td>
                         <td></td>
                         <td></td>
-<!--                        <td></td>-->
                         <td class="right">
                             <a onclick="clear_filter();" class="button" id="clear_filter"><?php echo $this->lang->line('button_clear_filter'); ?></a>
                             <a onclick="filter();" class="button"><?php echo $this->lang->line('button_filter'); ?></a>
@@ -51,7 +48,15 @@
                                     <?php } ?></td>
                                 <td class="right"><?php echo $luckydraw['name']; ?> <?php if (!empty($luckydraw['error'])) { ?><span class="red"><a herf="javascript:void(0)" class="error-icon" title="<?php echo $luckydraw['error']; ?>" data-toggle="tooltip"><i class="icon-warning-sign" ></i></a></span><?php } ?></td>
                                 <td class="right"><?php echo datetimeMongotoReadable($luckydraw['date_added']); ?></td>
-                                <td class="right"><?php echo $luckydraw['status']; ?></td>
+                                <td class="right">
+                                    <?php if ($luckydraw['status'] == "Done") { ?>
+                                        <span class="label"><?php echo $this->lang->line("entry_done"); ?></span>
+                                    <?php } elseif ($luckydraw['status'] == "Ongoing") { ?>
+                                        <span class="label label-success"><?php echo $this->lang->line("entry_ongoing"); ?></span>
+                                    <?php } elseif ($luckydraw['status'] == "Planned") { ?>
+                                        <span class="label label-info"><?php echo $this->lang->line("entry_planned"); ?></span>
+                                    <?php } ?>
+                                </td>
                                 <td class="right">
                                     [ <?php if($client_id){
                                         echo anchor('luckydraw/edit/'.$luckydraw['_id'], 'Edit');
