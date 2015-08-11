@@ -1,24 +1,28 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class LuckyDraw_model extends MY_Model{
 
-    public function getLuckyDraw($luckydraw_id){
+class LuckyDraw_model extends MY_Model
+{
+
+    public function getLuckyDraw($luckydraw_id)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('_id',  new MongoID($luckydraw_id));
+        $this->mongo_db->where('_id', new MongoID($luckydraw_id));
 
         $results = $this->mongo_db->get("playbasis_luckydraw_to_client");
 
         return $results ? $results[0] : null;
     }
 
-    public function getLuckyDraws($data){
+    public function getLuckyDraws($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('site_id', $data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -59,13 +63,14 @@ class LuckyDraw_model extends MY_Model{
         return $results;
     }
 
-    public function getTotalLuckyDraws($data){
+    public function getTotalLuckyDraws($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('site_id', $data['site_id']);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
-            $regex = new MongoRegex("/".preg_quote(utf8_strtolower($data['filter_name']))."/i");
+            $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
             $this->mongo_db->where('name', $regex);
         }
 
@@ -93,41 +98,42 @@ class LuckyDraw_model extends MY_Model{
         return $db_results;
     }
 
-    public function editLuckyDrawToClient($luckydraw_id, $data){
+    public function editLuckyDrawToClient($luckydraw_id, $data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($luckydraw_id));
         $this->mongo_db->where('client_id', new MongoID($data['client_id']));
         $this->mongo_db->where('site_id', new MongoID($data['site_id']));
 
-        if(isset($data['name']) && !is_null($data['name'])){
+        if (isset($data['name']) && !is_null($data['name'])) {
             $this->mongo_db->set('name', $data['name']);
         }
 
-        if(isset($data['description']) && !is_null($data['description'])){
+        if (isset($data['description']) && !is_null($data['description'])) {
             $this->mongo_db->set('description', $data['description']);
         }
 
-        if(isset($data['date_start'])){
-            if($data['date_start'] != ''){
+        if (isset($data['date_start'])) {
+            if ($data['date_start'] != '') {
                 $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
-            }else{
+            } else {
                 $this->mongo_db->set('date_start', null);
             }
         }
 
-        if(isset($data['date_end'])){
-            if($data['date_end'] != ''){
+        if (isset($data['date_end'])) {
+            if ($data['date_end'] != '') {
                 $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));
-            }else{
+            } else {
                 $this->mongo_db->set('date_end', null);
             }
         }
 
-        if(isset($data['part_method']) && !is_null($data['part_method'])){
-            if($data['part_method']=="ask_to_join"){
+        if (isset($data['participate_method']) && !is_null($data['participate_method'])) {
+            if ($data['participate_method'] == "ask_to_join") {
                 $this->mongo_db->set('participate_method', true);
-            }elseif($data['part_method']=="active_users_only"){
+            } elseif ($data['participate_method'] == "active_users_only") {
                 $this->mongo_db->set('participate_method', false);
             }
         }
@@ -143,20 +149,28 @@ class LuckyDraw_model extends MY_Model{
         return true;
     }
 
-    public function addLuckyDrawToClient($data){
+    public function addLuckyDrawToClient($data)
+    {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        if(isset($data['date_start'])) {
+        if (isset($data['date_start'])) {
             $data['date_start'] = $data['date_start'] ? new MongoDate(strtotime($data['date_start'])) : null;
         }
-        if(isset($data['date_expire'])) {
-            $data['date_expire'] = $data['date_expire'] ? new MongoDate(strtotime($data['date_expire'])) : null;
+        if (isset($data['date_end'])) {
+            $data['date_end'] = $data['date_end'] ? new MongoDate(strtotime($data['date_end'])) : null;
+        }
+
+        if (isset($data['participate_method']) && !is_null($data['participate_method'])) {
+            if ($data['participate_method'] == "ask_to_join") {
+                $data['participate_method'] = true;
+            } elseif ($data['participate_method'] == "active_users_only") {
+                $data['participate_method'] = false;
+            }
         }
 
         $data = array_merge($data, array(
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-                'deleted' => false
             )
         );
 

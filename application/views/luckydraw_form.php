@@ -135,11 +135,11 @@ function find_template($data, $type, $template_id)
                             <td>
                                 <ul style="list-style-type: none">
                                     <li>
-                                        <input type="radio" name="part_method" value="ask_to_join"
+                                        <input type="radio" name="participate_method" value="ask_to_join"
                                                id="part_method_ask" <?php echo isset($luckydraw) && isset($luckydraw['participate_method']) && $luckydraw['participate_method'] ? 'checked' : ''; ?>> <?php echo $this->lang->line('entry_part_method_ask'); ?>
                                     </li>
                                     <li>
-                                        <input type="radio" name="part_method" value="active_users_only"
+                                        <input type="radio" name="participate_method" value="active_users_only"
                                                id="part_method_active" <?php echo isset($luckydraw) && isset($luckydraw['participate_method']) && $luckydraw['participate_method'] == false ? 'checked' : ''; ?>> <?php echo $this->lang->line('entry_part_method_active'); ?>
                                     </li>
                                 </ul>
