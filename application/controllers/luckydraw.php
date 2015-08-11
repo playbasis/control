@@ -137,14 +137,12 @@ class LuckyDraw extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Reward_model');
 
-        $this->
-
         $luckydraw_info = array();
 
         if (isset($luckydraw_id) && ($luckydraw_id != 0)) {
-            if($this->User_model->getClientId()){ // isAdmin?
+            if ($this->User_model->getClientId()) { // isAdmin?
                 $luckydraw_info = $this->LuckyDraw_model->getLuckyDraw($luckydraw_id);
-            }else{
+            } else {
                 $luckydraw_info = $this->LuckyDraw_model->getLuckyDraw($luckydraw_id);
             }
         }
@@ -166,27 +164,26 @@ class LuckyDraw extends MY_Controller
             $this->data['message'] = $this->lang->line('error_luckydraw_limit');
         }
 
-        if($this->input->post()){
+        if ($this->input->post()) {
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
             $data = $this->input->post();
 
-            $luckydraw = array();
-
-            // TODO(Rook): display query here
+            $luckydraw = $data;
 
             $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
-            $this->form_validation->set_rules('description', $this->lang->line('description'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('description', $this->lang->line('description'),
+                'trim|required|xss_clean');
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $luckydraw['client_id'] = $this->User_model->getClientId();
                 $luckydraw['site_id'] = $this->User_model->getSiteId();
 
-                if($luckydraw_info){
+                if ($luckydraw_info) {
                     $this->LuckyDraw_model->editLuckyDrawToClient($luckydraw_id, $luckydraw);
-                }else{
+                } else {
                     $this->LuckyDraw_model->addLuckyDrawToClient($luckydraw);
                 }
                 redirect('/luckydraw', 'refresh');
@@ -201,16 +198,12 @@ class LuckyDraw extends MY_Controller
         $data['site_id'] = $this->User_model->getSiteId();
 
         $this->data['badge_list'] = array();
-        $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $data['site_id'] ));
+        $this->data['badge_list'] = $this->Badge_model->getBadgeBySiteId(array("site_id" => $data['site_id']));
 
         $this->data['point_list'] = array();
         $this->data['point_list'] = $this->Reward_model->getAnotherRewardBySiteId($data['site_id']);
 
         $this->load->model('Feature_model');
-        $this->load->model('Email_model');
-        $this->load->model('Sms_model');
-        $this->data['emails'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'email') ? $this->Email_model->listTemplatesBySiteId($data['site_id']) : null;
-        $this->data['smses'] = $this->Feature_model->getFeatureExistByClientId($data['client_id'], 'sms') ? $this->Sms_model->listTemplatesBySiteId($data['site_id']) : null;
 
         $this->data['client_id'] = $data['client_id'];
         $this->data['site_id'] = $data['site_id'];
