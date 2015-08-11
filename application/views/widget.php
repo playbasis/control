@@ -1,13 +1,3 @@
-<?php 
-/* HARD CODE FOR TEST WIDGET */
-$plan_widget['quest'] = true;
-$plan_widget['feed'] = true;
-$plan_widget['rewardstore'] = true;
-$plan_widget['treasure'] = true;
-$plan_widget['trackevent'] = true;
-/* HARD CODE FOR TEST WIDGET */
-?>
-
 <div id="content" class="span10 widget-page">
     <div class="box">
         <div class="heading">
