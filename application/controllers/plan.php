@@ -480,10 +480,16 @@ class Plan extends MY_Controller
             "social" => null,
             "leaderboard" => null,
             "livefeed" => null,
+            "feed" => null,
             "profile" => null,
             "userbar" => null,
             "achievement" => null,
-            "quiz" => null);
+            "quest" => null,
+            "quiz" => null,
+            "rewardstore" => null,
+            "treasure" => null,
+            "trackevent" => null,
+        );
         if ($this->input->post('limit_widget')) {
             $this->data['limit_widget'] = $this->input->post('limit_widget');
         } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])){
