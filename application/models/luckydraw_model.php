@@ -9,6 +9,7 @@ class LuckyDraw_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($luckydraw_id));
+        $this->mongo_db->where('deleted', false);
 
         $results = $this->mongo_db->get("playbasis_luckydraw_to_client");
 
@@ -20,6 +21,7 @@ class LuckyDraw_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('deleted', false);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
@@ -68,6 +70,7 @@ class LuckyDraw_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('site_id', $data['site_id']);
+        $this->mongo_db->where('deleted', false);
 
         if (isset($data['filter_name']) && !is_null($data['filter_name'])) {
             $regex = new MongoRegex("/" . preg_quote(utf8_strtolower($data['filter_name'])) . "/i");
@@ -171,9 +174,24 @@ class LuckyDraw_model extends MY_Model
         $data = array_merge($data, array(
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                'deleted' => false
             )
         );
 
         return $this->mongo_db->insert('playbasis_luckydraw_to_client', $data);
+    }
+
+    public function delete($luckydraw_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($luckydraw_id));
+
+        $this->mongo_db->set('deleted', true);
+        $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+
+        $this->mongo_db->update('playbasis_luckydraw_to_client');
+
+        return true;
     }
 }
