@@ -171,7 +171,106 @@ class LuckyDraw extends MY_Controller
 
             $data = $this->input->post();
 
-            $luckydraw = $data;
+            $luckydraw = array();
+
+//            todo(Rook): need to revise this array translation
+//            foreach($data as $key => $value){
+//                if($key == "quiz"){
+//                    foreach($value as $qkey => $qvalue){
+//                        if($qkey == "grades"){
+//                            foreach($qvalue as $ggkey => $ggvalue){
+//                                $grades = array();
+//                                $grades['grade_id'] = new MongoId($ggkey);
+//                                foreach($ggvalue as $gggkey => $gggvalue){
+//
+//                                    if($gggkey == "rewards"){
+//
+//                                        foreach($gggvalue as $rkey => $rvalue){
+//                                            if($rkey == "badge"){
+//
+//                                                $badge = array();
+//
+//                                                foreach($rvalue as $bkey => $bvalue){
+//                                                    if(!empty($bvalue)){
+//                                                        $b["badge_id"] = new MongoId($bkey);
+//                                                        $b["badge_value"] = $bvalue;
+//
+//                                                        $badge[] = $b;
+//                                                    }
+//                                                }
+//                                                if($badge){
+//                                                    $grades[$gggkey]["badge"] = $badge;
+//                                                }
+//
+//                                            }
+//                                            if($rkey == "exp" && !empty($rvalue)){
+//                                                $grades[$gggkey]["exp"] = $rvalue;
+//                                            }
+//                                            if($rkey == "point" && !empty($rvalue)){
+//                                                $grades[$gggkey]["point"] = $rvalue;
+//                                            }
+//                                            if($rkey == "custom"){
+//                                                $custom = array();
+//
+//                                                foreach($rvalue as $ckey => $cvalue){
+//                                                    if(!empty($cvalue)){
+//                                                        $c["custom_id"] = new MongoId($ckey);
+//                                                        $c["custom_value"] = $cvalue;
+//
+//                                                        $custom[] = $c;
+//                                                    }
+//                                                }
+//                                                if($custom){
+//                                                    $grades[$gggkey]["custom"] = $custom;
+//                                                }
+//
+//                                            }
+//                                        }
+//
+//                                    }else{
+//                                        $grades[$gggkey] = $gggvalue;
+//                                    }
+//
+//                                }
+//                                $quiz["grades"][] = $grades;
+//                            }
+//
+//                        }else if($qkey == "questions"){
+//                            foreach($qvalue as $qqkey => $qqvalue){
+//                                $questions = array();
+//                                $questions['question_id'] = new MongoId($qqkey);
+//
+//                                foreach($qqvalue as $qqqkey => $qqqvalue){
+//
+//                                    if($qqqkey == "options"){
+//
+//                                        $options = array();
+//
+//                                        foreach($qqqvalue as $okey => $ovalue){
+//                                            $option = $ovalue;
+//                                            $option['option_id'] = new MongoId($okey);
+//
+//                                            $options[] = $option;
+//                                        }
+//                                        if($options){
+//                                            $questions["options"] = $options;
+//                                        }
+//                                    }else{
+//                                        $questions[$qqqkey] = $qqqvalue;
+//                                    }
+//                                }
+//                                $quiz["questions"][] = $questions;
+//                            }
+//                        }
+//                    }
+//                }else{
+//                    if($key == "status"){
+//                        $quiz[$key] = ('true' === $value);
+//                    }else{
+//                        $quiz[$key] = $value;
+//                    }
+//                }
+//            }
 
             $this->form_validation->set_rules('name', 'lang:entry_name', 'trim|required|xss_clean');
             $this->form_validation->set_rules('date_start', 'lang:entry_date_start', 'trim|required|xss_clean');

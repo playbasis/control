@@ -172,10 +172,32 @@ function find_template($data, $type, $template_id)
                         foreach ($luckydraw['rewards'] as $reward) {
 
                             // convert from mongoid obj to just id
-                            // $reward['id'] = $reward['id'] . "";
+                            $reward['ld_reward_id'] = $reward['ld_reward_id'] . "";
+
+                            $custom_user_set = array();
+                            $badge_user_set = array();
+                            $point_user_set = array();
+                            $exp_user_set = array();
+
+                            if(isset($reward["details"])){
+                                foreach($reward["details"] as $reward_key => $reward_value){
+                                    if($reward_key == "custom"){
+                                        $custom_user_set = $reward_value;
+                                    }
+                                    if($reward_key == "badge"){
+                                        $badge_user_set = $reward_value;
+                                    }
+                                    if($reward_key == "exp"){
+                                        $exp_user_set = $reward_value;
+                                    }
+                                    if($reward_key == "point"){
+                                        $point_user_set = $reward_value;
+                                    }
+                                }
+                            }
 
                             $reward_ranking_data = array(
-                                "name" => "rewards[ranking]",
+                                "name" => "luckydraw[rewards][" . $reward['ld_reward_id'] . "][ranking]",
                                 "id" => 'luckydraw_reward_ranking',
                                 "value" => isset($reward["ranking"]) ? $reward["ranking"] : '',
                                 "placeholder" => $this->lang->line('entry_reward_ranking'),
@@ -183,7 +205,7 @@ function find_template($data, $type, $template_id)
                             );
 
                             $reward_quantity_data = array(
-                                "name" => "rewards[qty]",
+                                "name" => "luckydraw[rewards][" . $reward['ld_reward_id'] . "][qty]",
                                 "id" => 'luckydraw_reward_quantity',
                                 "value" => isset($reward["qty"]) ? $reward["qty"] : '',
                                 "placeholder" => $this->lang->line('entry_reward_quantity'),
@@ -256,17 +278,13 @@ function find_template($data, $type, $template_id)
                                                                 </div>
                                                                 <div class="span6">
                                                                     <input type="text"
-                                                                           name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][exp]"
+                                                                           name="luckydraw[rewards][<?php echo $reward['ld_reward_id']; ?>][details][exp][value]"
                                                                            class="orange tooltips"
-                                                                        <?php
-                                                                        foreach ($reward['details'] as $reward_detail) {
-                                                                            if ($reward_detail['type'] == "exp" && !empty($reward_detail['value'])) {
-                                                                                echo "value=\"" . $reward_detail['value'] . "\"";
-                                                                            }
-                                                                        } ?> />
+                                                                           value="<?php echo $exp_user_set? $exp_user_set["value"] : ''; ?>" />
                                                                 </div>
                                                             </div>
                                                         </div>
+
                                                         <div class="point" id="point">
                                                             <div class="row-fluid"
                                                                  style="padding-top: 10px; padding-bottom: 10px">
@@ -276,17 +294,13 @@ function find_template($data, $type, $template_id)
                                                                 </div>
                                                                 <div class="span6">
                                                                     <input type="text"
-                                                                           name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][point]"
+                                                                           name="luckydraw[rewards][<?php echo $reward['ld_reward_id']; ?>][details][point][value]"
                                                                            class="orange tooltips"
-                                                                        <?php
-                                                                        foreach ($reward['details'] as $reward_detail) {
-                                                                            if ($reward_detail['type'] == "point" && !empty($reward_detail['value'])) {
-                                                                                echo "value=\"" . $reward_detail['value'] . "\"";
-                                                                            }
-                                                                        } ?> />
+                                                                           value="<?php echo $point_user_set ? $point_user_set["value"] : ''; ?>" />
                                                                 </div>
                                                             </div>
                                                         </div>
+
                                                         <div class="badges" id="badges">
                                                             <?php
                                                             if ($badge_list) {
@@ -301,16 +315,16 @@ function find_template($data, $type, $template_id)
                                                                         </div>
                                                                         <?php
                                                                         $user_b = "";
-                                                                        foreach ($reward['details'] as $reward_detail) {
-                                                                            if ($reward_detail['type'] == "badge" && !empty($reward_detail['badge_id']) && $reward_detail["badge_id"] == $badge['badge_id']) {
-                                                                                $user_b = $reward_detail["badge_value"];
+                                                                        foreach($badge_user_set as $b){
+                                                                            if($b["badge_id"] == $badge['badge_id']){
+                                                                                $user_b = $b["badge_value"];
                                                                                 break;
                                                                             }
                                                                         }
                                                                         ?>
                                                                         <div class="span6">
                                                                             <input type="text"
-                                                                                   name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][badge][<?php echo $badge['badge_id']; ?>]"
+                                                                                   name="luckydraw[rewards][<?php echo $reward['ld_reward_id']; ?>][details][badge][<?php echo $badge['badge_id']; ?>]"
                                                                                    class="<?php echo alternator('green',
                                                                                        'yellow',
                                                                                        'blue'); ?> tooltips"
@@ -335,9 +349,9 @@ function find_template($data, $type, $template_id)
                                                                             class="label label-primary"><?php echo $point['name']; ?></span>
                                                                         <?php
                                                                         $user_c = "";
-                                                                        foreach ($reward['details'] as $reward_detail) {
-                                                                            if ($reward_detail['type'] == "custom" && !empty($reward_detail['custom_id']) && $reward_detail["custom_id"] == $point['_id']) {
-                                                                                $user_c = $reward_detail["custom_value"];
+                                                                        foreach($custom_user_set as $c){
+                                                                            if($c["custom_id"] == $point['reward_id']){
+                                                                                $user_c = $c["custom_value"];
                                                                                 break;
                                                                             }
                                                                         }
@@ -345,7 +359,7 @@ function find_template($data, $type, $template_id)
                                                                     </div>
                                                                     <div class="span6">
                                                                         <input type="text"
-                                                                               name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][custom][<?php echo $point['_id']; ?>] ?>]"
+                                                                               name="luckydraw[rewards][<?php echo $reward['ld_reward_id']; ?>][details][custom][<?php echo $point['_id']; ?>] ?>]"
                                                                                class="<?php echo alternator('green',
                                                                                    'yellow', 'blue'); ?>" size="100"
                                                                                value="<?php echo $user_c; ?>"/>
