@@ -163,8 +163,7 @@ function find_template($data, $type, $template_id)
                 <div class="reward-head-wrapper">
                     <a href="javascript:void(0)" class="btn open-reward-btn btn-lg">Open All</a>
                     <a href="javascript:void(0)" class="btn close-reward-btn btn-lg">Close All</a>
-                    <a href="javascript:void(0)" class="btn btn-primary add-reward-btn btn-lg disabled">Add Reward</a>
-                    <!--                todo(Rook): Add is disable for now.    -->
+                    <a href="javascript:void(0)" class="btn btn-primary add-reward-btn btn-lg">Add Reward</a>
                 </div>
 
                 <div class="rewards-wrapper">
@@ -172,13 +171,29 @@ function find_template($data, $type, $template_id)
                     if (isset($luckydraw['rewards']) && $luckydraw['rewards']) {
                         foreach ($luckydraw['rewards'] as $reward) {
 
-                            $reward['id'] = $reward['id'] . "";
+                            // convert from mongoid obj to just id
+                            // $reward['id'] = $reward['id'] . "";
+
+                            $reward_ranking_data = array(
+                                "name" => "rewards[ranking]",
+                                "id" => 'luckydraw_reward_ranking',
+                                "value" => isset($reward["ranking"]) ? $reward["ranking"] : '',
+                                "placeholder" => $this->lang->line('entry_reward_ranking'),
+                                "class" => "form-control"
+                            );
+
+                            $reward_quantity_data = array(
+                                "name" => "rewards[qty]",
+                                "id" => 'luckydraw_reward_quantity',
+                                "value" => isset($reward["qty"]) ? $reward["qty"] : '',
+                                "placeholder" => $this->lang->line('entry_reward_quantity'),
+                                "class" => "form-control"
+                            );
                             ?>
-                            <div class="reward-item-wrapper" data-reward-id="<?php echo $reward['id']; ?>">
+                            <div class="reward-item-wrapper" data-ld-reward-id="<?php echo $reward['ld_reward_id']; ?>">
                                 <div class="box-header box-reward-header overflow-visible">
-                                    <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50"> Reward
-                                        priority#<?php echo $reward['priority']; ?> -
-                                        value <?php echo $reward['value']; ?> - quantity <?php echo $reward['qty']; ?>
+                                    <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">Reward
+                                        for ranking# <?php echo $reward['ranking']; ?>
                                     </h2>
 
                                     <div class="box-icon">
@@ -193,37 +208,161 @@ function find_template($data, $type, $template_id)
                                             <tbody>
                                             <tr>
                                                 <td>
-                                                    asd
+                                                    <?php echo $this->lang->line("entry_reward_ranking") ?> :
                                                 </td>
                                                 <td>
-                                                    asdasd
+                                                    <?php echo form_input($reward_ranking_data); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    aasdasd
-                                                </td>
-                                                <td>aasdasd
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    Rank title :
+                                                    <?php echo $this->lang->line("entry_reward_quantity") ?> :
                                                 </td>
                                                 <td>
-                                                    asdasd
+                                                    <?php echo form_input($reward_quantity_data); ?>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                     <div class="span6">
-                                        <span>sadfasdfasdfasdf
-                                        asdfasdfasdfasdfasdf
-                                        asdfasdfasdfasdf</span>
-                                        <span>sadfasdfasdfasdf
-                                        asdfasdfasdfasdfasdf
-                                        asdfasdfasdfasdf</span>
+                                        <table class="form">
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <p class="text-center">
+                                                        <?php echo $this->lang->line('entry_rewards'); ?>
+                                                    </p>
+
+                                                    <div class="reward">
+                                                        <div class="btn-group-wrap" style="text-align: center;">
+                                                            <div class="btn-group center">
+                                                                <button id="exp-entry"
+                                                                        class="btn btn-info btn-large"><?php echo $this->lang->line('entry_exp'); ?></button>
+                                                                <button id="point-entry"
+                                                                        class="btn btn-info btn-large"><?php echo $this->lang->line('entry_point'); ?></button>
+                                                                <button id="badge-entry"
+                                                                        class="btn btn-info btn-large"><?php echo $this->lang->line('entry_badge'); ?></button>
+                                                                <button id="reward-entry"
+                                                                        class="btn btn-info btn-large"><?php echo $this->lang->line('entry_custom_point'); ?></button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="exp" id="exp">
+                                                            <div class="row-fluid"
+                                                                 style="padding-top: 10px; padding-bottom: 10px;">
+                                                                <div class="span2 offset1">
+                                                                        <span
+                                                                            class="label label-primary"><?php echo $this->lang->line('entry_exp'); ?></span>
+                                                                </div>
+                                                                <div class="span6">
+                                                                    <input type="text"
+                                                                           name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][exp]"
+                                                                           class="orange tooltips"
+                                                                        <?php
+                                                                        foreach ($reward['details'] as $reward_detail) {
+                                                                            if ($reward_detail['type'] == "exp" && !empty($reward_detail['value'])) {
+                                                                                echo "value=\"" . $reward_detail['value'] . "\"";
+                                                                            }
+                                                                        } ?> />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="point" id="point">
+                                                            <div class="row-fluid"
+                                                                 style="padding-top: 10px; padding-bottom: 10px">
+                                                                <div class="span2 offset1">
+                                                                    <span
+                                                                        class="label label-primary"><?php echo $this->lang->line('entry_point'); ?></span>
+                                                                </div>
+                                                                <div class="span6">
+                                                                    <input type="text"
+                                                                           name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][point]"
+                                                                           class="orange tooltips"
+                                                                        <?php
+                                                                        foreach ($reward['details'] as $reward_detail) {
+                                                                            if ($reward_detail['type'] == "point" && !empty($reward_detail['value'])) {
+                                                                                echo "value=\"" . $reward_detail['value'] . "\"";
+                                                                            }
+                                                                        } ?> />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="badges" id="badges">
+                                                            <?php
+                                                            if ($badge_list) {
+                                                                foreach ($badge_list as $badge) {
+                                                                    ?>
+                                                                    <div class="row-fluid"
+                                                                         style="padding-top: 10px; padding-bottom: 10px;">
+                                                                        <div class="span2 offset1">
+                                                                            <img height="50" width="50"
+                                                                                 src="<?php echo S3_IMAGE . $badge['image']; ?>"
+                                                                                 onerror="$(this).attr('src','<?php echo base_url(); ?>image/default-image.png');"/>
+                                                                        </div>
+                                                                        <?php
+                                                                        $user_b = "";
+                                                                        foreach ($reward['details'] as $reward_detail) {
+                                                                            if ($reward_detail['type'] == "badge" && !empty($reward_detail['badge_id']) && $reward_detail["badge_id"] == $badge['badge_id']) {
+                                                                                $user_b = $reward_detail["badge_value"];
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        ?>
+                                                                        <div class="span6">
+                                                                            <input type="text"
+                                                                                   name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][badge][<?php echo $badge['badge_id']; ?>]"
+                                                                                   class="<?php echo alternator('green',
+                                                                                       'yellow',
+                                                                                       'blue'); ?> tooltips"
+                                                                                   size="100"
+                                                                                   value="<?php echo $user_b; ?>"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <?php
+                                                                }
+                                                            }
+                                                            ?>
+                                                        </div>
+                                                        <div id="rewards" class="rewards">
+                                                            <?php if ($point_list) { ?>
+                                                                <div class="row-fluid"
+                                                                     style="padding-top: 10px; padding-bottom: 10px">
+                                                                    <div class="span2 offset1">
+                                                                        <?php
+                                                                        foreach ($point_list as $point) {
+                                                                        ?>
+                                                                        <span
+                                                                            class="label label-primary"><?php echo $point['name']; ?></span>
+                                                                        <?php
+                                                                        $user_c = "";
+                                                                        foreach ($reward['details'] as $reward_detail) {
+                                                                            if ($reward_detail['type'] == "custom" && !empty($reward_detail['custom_id']) && $reward_detail["custom_id"] == $point['_id']) {
+                                                                                $user_c = $reward_detail["custom_value"];
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        ?>
+                                                                    </div>
+                                                                    <div class="span6">
+                                                                        <input type="text"
+                                                                               name="rewards[<?php echo $reward['ld_reward_id']; ?>][details][custom][<?php echo $point['_id']; ?>] ?>]"
+                                                                               class="<?php echo alternator('green',
+                                                                                   'yellow', 'blue'); ?>" size="100"
+                                                                               value="<?php echo $user_c; ?>"/>
+                                                                        <?php
+                                                                        }
+                                                                        ?>
+                                                                    </div>
+                                                                </div>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -246,29 +385,69 @@ function find_template($data, $type, $template_id)
 <script type="text/javascript">
 
     $(document).ready(function () {
+        var startDateTextBox = $('#date_start');
+        var endDateTextBox = $('#date_end');
+
+        startDateTextBox.datetimepicker({
+            dateFormat: "yy-mm-dd",
+            timeFormat: 'HH:mm',
+            addSliderAccess: true,
+            sliderAccessArgs: {touchonly: false},
+            onClose: function (dateText, inst) {
+                if (endDateTextBox.val() != '') {
+                    var testStartDate = startDateTextBox.datetimepicker('getDate');
+                    var testEndDate = endDateTextBox.datetimepicker('getDate');
+                    if (testStartDate > testEndDate)
+                        endDateTextBox.datetimepicker('setDate', testStartDate);
+                }
+                else {
+                    endDateTextBox.val(dateText);
+                }
+            },
+            onSelect: function (selectedDateTime) {
+                endDateTextBox.datetimepicker('option', 'minDate', startDateTextBox.datetimepicker('getDate'));
+            }
+        });
+        endDateTextBox.datetimepicker({
+            dateFormat: "yy-mm-dd",
+            timeFormat: 'HH:mm',
+            addSliderAccess: true,
+            sliderAccessArgs: {touchonly: false},
+            onClose: function (dateText, inst) {
+                if (startDateTextBox.val() != '') {
+                    var testStartDate = startDateTextBox.datetimepicker('getDate');
+                    var testEndDate = endDateTextBox.datetimepicker('getDate');
+                    if (testStartDate > testEndDate)
+                        startDateTextBox.datetimepicker('setDate', testEndDate);
+                }
+                else {
+                    startDateTextBox.val(dateText);
+                }
+            },
+            onSelect: function (selectedDateTime) {
+                startDateTextBox.datetimepicker('option', 'maxDate', endDateTextBox.datetimepicker('getDate'));
+            }
+        });
+
         $(".exp").hide();
         $(".point").hide();
         $(".badges").hide();
         $(".rewards").hide();
-        $(".emails").hide();
-        $(".smses").hide();
-        $("#exp-entry").live('click', function () {
-            $(this).parent().find(".exp").toggle()
+        $("#exp-entry").live('click', function (e) {
+            e.preventDefault();
+            $(this).closest(".reward").find(".exp").toggle();
         });
-        $("#point-entry").live('click', function () {
-            $(this).parent().find(".point").toggle()
+        $("#point-entry").live('click', function (e) {
+            e.preventDefault();
+            $(this).closest(".reward").find(".point").toggle();
         });
-        $("#badge-entry").live('click', function () {
-            $(this).parent().find(".badges").toggle()
+        $("#badge-entry").live('click', function (e) {
+            e.preventDefault();
+            $(this).closest(".reward").find(".badges").toggle();
         });
-        $("#reward-entry").live('click', function () {
-            $(this).parent().find(".rewards").toggle()
-        });
-        $("#email-entry").live('click', function () {
-            $(this).parent().find(".emails").toggle()
-        });
-        $("#sms-entry").live('click', function () {
-            $(this).parent().find(".smses").toggle()
+        $("#reward-entry").live('click', function (e) {
+            e.preventDefault();
+            $(this).closest(".reward").find(".rewards").toggle();
         });
 
         $('#tabs a').tabs();
@@ -326,48 +505,6 @@ function find_template($data, $type, $template_id)
 </script>
 <script type="text/javascript">
     $(function () {
-        var startDateTextBox = $('#date_start');
-        var endDateTextBox = $('#date_end');
 
-        startDateTextBox.datetimepicker({
-            dateFormat: "yy-mm-dd",
-            timeFormat: 'HH:mm',
-            addSliderAccess: true,
-            sliderAccessArgs: {touchonly: false},
-            onClose: function (dateText, inst) {
-                if (endDateTextBox.val() != '') {
-                    var testStartDate = startDateTextBox.datetimepicker('getDate');
-                    var testEndDate = endDateTextBox.datetimepicker('getDate');
-                    if (testStartDate > testEndDate)
-                        endDateTextBox.datetimepicker('setDate', testStartDate);
-                }
-                else {
-                    endDateTextBox.val(dateText);
-                }
-            },
-            onSelect: function (selectedDateTime) {
-                endDateTextBox.datetimepicker('option', 'minDate', startDateTextBox.datetimepicker('getDate'));
-            }
-        });
-        endDateTextBox.datetimepicker({
-            dateFormat: "yy-mm-dd",
-            timeFormat: 'HH:mm',
-            addSliderAccess: true,
-            sliderAccessArgs: {touchonly: false},
-            onClose: function (dateText, inst) {
-                if (startDateTextBox.val() != '') {
-                    var testStartDate = startDateTextBox.datetimepicker('getDate');
-                    var testEndDate = endDateTextBox.datetimepicker('getDate');
-                    if (testStartDate > testEndDate)
-                        startDateTextBox.datetimepicker('setDate', testEndDate);
-                }
-                else {
-                    startDateTextBox.val(dateText);
-                }
-            },
-            onSelect: function (selectedDateTime) {
-                startDateTextBox.datetimepicker('option', 'maxDate', endDateTextBox.datetimepicker('getDate'));
-            }
-        });
     })
 </script>

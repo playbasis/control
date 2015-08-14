@@ -21,6 +21,14 @@ $lang['entry_banner_upload']                    = 'Banner upload';
 $lang['entry_banner_upload_button']             = 'Upload';
 $lang['entry_banner_advertise']                 = 'Advertise';
 $lang['entry_banner_winner']                    = 'Winner';
+$lang['entry_exp']                              = 'Exp';
+$lang['entry_point']                            = 'Point';
+$lang['entry_badge']                            = 'Badge';
+$lang['entry_rewards']                          = 'Rewards';
+$lang['entry_custom_point']                     = 'Custom Point';
+$lang['entry_reward_ranking']                   = 'Ranking';
+$lang['entry_reward_quantity']                  = 'Quantity';
+$lang['entry_reward_value']                     = 'Value';
 
 $lang['column_name']                            = 'Lucky Draw Name';
 $lang['column_date_start']                      = 'Date Start';

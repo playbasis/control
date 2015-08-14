@@ -141,6 +141,7 @@ class LuckyDraw_model extends MY_Model
             }
         }
 
+//        todo(Rook): Need to edit rewards save process
 //        if(isset($data['rewards']) && !is_null($data['rewards'])){
 //            $this->mongo_db->set('rewards', $data['rewards']);
 //        }
