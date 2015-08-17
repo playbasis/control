@@ -12,7 +12,7 @@ class LuckyDraw extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
-        if(!$this->User_model->isLogged()){
+        if (!$this->User_model->isLogged()) {
             redirect('/login', 'refresh');
         }
 
@@ -25,10 +25,11 @@ class LuckyDraw extends MY_Controller
         $this->lang->load("luckydraw", $lang['folder']);
     }
 
-    public function index(){
+    public function index()
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -39,10 +40,11 @@ class LuckyDraw extends MY_Controller
         $this->getList(0);
     }
 
-    public function page($offset=0) {
+    public function page($offset = 0)
+    {
 
-        if(!$this->validateAccess()){
-            echo "<script>alert('".$this->lang->line('error_access')."'); history.go(-1);</script>";
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
             die();
         }
 
@@ -53,7 +55,8 @@ class LuckyDraw extends MY_Controller
         $this->getList($offset);
     }
 
-    public function getList($offset){
+    public function getList($offset)
+    {
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
 
@@ -64,12 +67,12 @@ class LuckyDraw extends MY_Controller
         $filter = array(
             'limit' => $config['per_page'],
             'start' => $offset,
-            'client_id'=>$client_id,
-            'site_id'=>$site_id,
-            'sort'=>'sort_order'
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'sort' => 'sort_order'
         );
 
-        if(isset($_GET['filter_name'])){
+        if (isset($_GET['filter_name'])) {
             $filter['filter_name'] = $_GET['filter_name'];
         }
 
@@ -115,7 +118,8 @@ class LuckyDraw extends MY_Controller
         $this->render_page('template');
     }
 
-    public function insert(){
+    public function insert()
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -123,7 +127,8 @@ class LuckyDraw extends MY_Controller
         $this->getForm(0);
     }
 
-    public function edit($luckydraw_id){
+    public function edit($luckydraw_id)
+    {
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
@@ -131,7 +136,8 @@ class LuckyDraw extends MY_Controller
         $this->getForm($luckydraw_id);
     }
 
-    private function getForm($luckydraw_id=null) {
+    private function getForm($luckydraw_id = null)
+    {
 
         $this->load->model('Image_model');
         $this->load->model('Badge_model');
@@ -248,6 +254,8 @@ class LuckyDraw extends MY_Controller
             $this->form_validation->set_rules('participate_method', 'lang:entry_part_method',
                 'trim|required|xss_clean');
 
+            // todo(Rook): need validation ranking duplication
+
             if ($this->form_validation->run() && $this->data['message'] == null) {
                 $luckydraw['client_id'] = $this->User_model->getClientId();
                 $luckydraw['site_id'] = $this->User_model->getSiteId();
@@ -285,7 +293,8 @@ class LuckyDraw extends MY_Controller
         $this->render_page('template');
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $this->data['meta_description'] = $this->lang->line('meta_description');
         $this->data['title'] = $this->lang->line('title');
@@ -293,7 +302,7 @@ class LuckyDraw extends MY_Controller
 
         $this->error['warning'] = null;
 
-        if(!$this->validateModify()){
+        if (!$this->validateModify()) {
             $this->error['warning'] = $this->lang->line('error_permission');
         }
 
@@ -311,7 +320,8 @@ class LuckyDraw extends MY_Controller
         $this->getList(0);
     }
 
-    private function validateModify() {
+    private function validateModify()
+    {
         if ($this->User_model->hasPermission('modify', 'luckydraw')) {
             return true;
         } else {
@@ -319,14 +329,17 @@ class LuckyDraw extends MY_Controller
         }
     }
 
-    private function validateAccess(){
-        if($this->User_model->isAdmin()){
+    private function validateAccess()
+    {
+        if ($this->User_model->isAdmin()) {
             return true;
         }
         $this->load->model('Feature_model');
         $client_id = $this->User_model->getClientId();
 
-        if ($this->User_model->hasPermission('access', 'luckydraw') &&  $this->Feature_model->getFeatureExistByClientId($client_id, 'luckydraw')) {
+        if ($this->User_model->hasPermission('access',
+                'luckydraw') && $this->Feature_model->getFeatureExistByClientId($client_id, 'luckydraw')
+        ) {
             return true;
         } else {
             return false;
@@ -335,11 +348,14 @@ class LuckyDraw extends MY_Controller
 
 }
 
-function index_badge_id($obj) {
+function index_badge_id($obj)
+{
     return $obj['badge_id'];
 }
 
-function index_reward_id($obj) {
+function index_reward_id($obj)
+{
     return $obj['reward_id'];
 }
+
 ?>
