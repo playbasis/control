@@ -359,7 +359,7 @@ function find_template($data, $type, $template_id)
                                                                     </div>
                                                                     <div class="span6">
                                                                         <input type="text"
-                                                                               name="luckydraw[rewards][<?php echo $reward['ld_reward_id']; ?>][details][custom][<?php echo $point['_id']; ?>] ?>]"
+                                                                               name="luckydraw[rewards][<?php echo $reward['ld_reward_id']; ?>][details][custom][<?php echo $point['reward_id']; ?>] ?>]"
                                                                                class="<?php echo alternator('green',
                                                                                    'yellow', 'blue'); ?>" size="100"
                                                                                value="<?php echo $user_c; ?>"/>
