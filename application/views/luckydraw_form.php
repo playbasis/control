@@ -588,7 +588,6 @@ function find_template($data, $type, $template_id)
         src="<?php echo S3_IMAGE . $badge['image']; ?>"\
         onerror="$(this).attr(\'src\',\'<?php echo base_url(); ?>image/default-image.png\');"/>\
             </div>\
-            <?php $user_b = ""; foreach($badge_user_set as $b){ if($b["badge_id"] == $badge['badge_id']){ $user_b = $b["badge_value"]; break; } } ?>\
             <div class="span6">\
             <input type="text"\
         name="luckydraw[rewards][' + countRewards + '][details][badge][<?php echo $badge['badge_id']; ?>]"\
@@ -608,15 +607,6 @@ function find_template($data, $type, $template_id)
             ?>\
             <span\
         class="label label-primary"><?php echo $point['name']; ?></span>\
-            <?php
-            $user_c = "";
-            foreach($custom_user_set as $c){
-                if($c["custom_id"] == $point['reward_id']){
-                    $user_c = $c["custom_value"];
-                    break;
-                }
-            }
-            ?>\
             </div>\
             <div class="span6">\
             <input type="text"\
