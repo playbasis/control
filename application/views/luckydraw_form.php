@@ -405,6 +405,8 @@ function find_template($data, $type, $template_id)
         startDateTextBox.datetimepicker({
             dateFormat: "yy-mm-dd",
             timeFormat: 'HH:mm',
+            showMinute: false,
+            minuteMax: 0,
             addSliderAccess: true,
             sliderAccessArgs: {touchonly: false},
             onClose: function (dateText, inst) {
@@ -425,6 +427,8 @@ function find_template($data, $type, $template_id)
         endDateTextBox.datetimepicker({
             dateFormat: "yy-mm-dd",
             timeFormat: 'HH:mm',
+            showMinute: false,
+            minuteMax: 0,
             addSliderAccess: true,
             sliderAccessArgs: {touchonly: false},
             onClose: function (dateText, inst) {
