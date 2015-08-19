@@ -330,7 +330,7 @@ class Quiz extends REST2_Controller
         /* if this is the last question, then grade the player's score */
         $grade = array();
         if (count($completed_questions) + 1 >= count($quiz['questions'])) {
-            $percent = ($total_score*1.0)/$total_max_score*100;
+            $percent = $total_max_score ? ($total_score*1.0)/$total_max_score*100 : 100;
             if (isset($quiz['grades'])) foreach ($quiz['grades'] as $g) {
                 if ($g['start'] <= $percent && ($g['end'] < 100 ? $percent < $g['end'] : $percent <= $g['end'])) {
                     $grade = $g;
