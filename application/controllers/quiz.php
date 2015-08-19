@@ -331,7 +331,7 @@ class Quiz extends REST2_Controller
         $grade = array();
         if (count($completed_questions) + 1 >= count($quiz['questions'])) {
             $percent = ($total_score*1.0)/$total_max_score*100;
-            foreach ($quiz['grades'] as $g) {
+            if (isset($quiz['grades'])) foreach ($quiz['grades'] as $g) {
                 if ($g['start'] <= $percent && ($g['end'] < 100 ? $percent < $g['end'] : $percent <= $g['end'])) {
                     $grade = $g;
                     break;
