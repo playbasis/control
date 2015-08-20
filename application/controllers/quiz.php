@@ -273,6 +273,9 @@ class Quiz extends MY_Controller
                     if($key == "status"){
                         $quiz[$key] = ('true' === $value);
                     }else{
+                        if ($key == 'weight') {
+                            $value = $value ? intval($value) : 1;
+                        }
                         $quiz[$key] = $value;
                     }
                 }
