@@ -170,6 +170,8 @@ class LuckyDraw extends MY_Controller
             $this->data['message'] = $this->lang->line('error_luckydraw_limit');
         }
 
+        // todo(Rook): need to add support for banner upload
+
         if ($this->input->post()) {
             if (!$this->validateModify()) {
                 $this->data['message'] = $this->lang->line('error_permission');
@@ -345,7 +347,6 @@ class LuckyDraw extends MY_Controller
             return false;
         }
     }
-
 }
 
 function index_badge_id($obj)
@@ -357,5 +358,3 @@ function index_reward_id($obj)
 {
     return $obj['reward_id'];
 }
-
-?>

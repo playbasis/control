@@ -147,7 +147,10 @@ function find_template($data, $type, $template_id)
                         </tr>
                         <tr>
                             <td>
-                                <?php echo $this->lang->line('entry_banner_upload'); ?> :
+                                <?php
+                                // todo(Rook): need to add support for banner upload
+                                echo $this->lang->line('entry_banner_upload');
+                                ?> :
                             </td>
                             <td>
                                 <?php echo $this->lang->line('entry_banner_advertise'); ?><button class="btn btn-small" type="button"><?php echo $this->lang->line('entry_banner_upload_button'); ?></button>
