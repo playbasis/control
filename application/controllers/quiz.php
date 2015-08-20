@@ -277,6 +277,9 @@ class Quiz extends MY_Controller
                     case 'weight':
                         $value = $value ? intval($value) : 1;
                         break;
+                    case 'type':
+                        if (!$value) $value = 'quiz';
+                        break;
                     default:
                         break;
                     }
