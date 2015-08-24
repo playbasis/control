@@ -157,6 +157,13 @@ class Client_model extends MY_Model
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
 		$this->set_site_mongodb($siteId);
+
+		//check Anonymous flag
+		$this->mongo_db->where('_id', $pbPlayerId);
+		$anon_result = $this->mongo_db->get('playbasis_player');
+		$anon_flag = isset($anon_result[0]['anonymous_flag']) ? $anon_result[0]['anonymous_flag'] : false;
+
+		//update player reward table
 		$this->mongo_db->where(array(
 			'pb_player_id' => $pbPlayerId,
 			'reward_id' => $rewardId
@@ -189,7 +196,9 @@ class Client_model extends MY_Model
 				'date_modified' => $mongoDate
 			));
 		}
-		//upadte client reward limit
+
+		//update client reward limit
+		if ($anon_flag) return;
 		$this->mongo_db->select(array('limit'));
 		$this->mongo_db->where(array(
 			'reward_id' => $rewardId,
@@ -339,7 +348,7 @@ class Client_model extends MY_Model
 			return;
 		$badgeInfo = $result[0];
 		$mongoDate = new MongoDate(time());
-		if(isset($badgeInfo['substract']) && $badgeInfo['substract'])
+		if(!$anon_flag && isset($badgeInfo['substract']) && $badgeInfo['substract'])
 		{
 			$remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
 			if($remainingQuantity < 0)
@@ -352,8 +361,9 @@ class Client_model extends MY_Model
 			$this->mongo_db->where('client_id', $client_id);
 			$this->mongo_db->where('site_id', $site_id);
 			$this->mongo_db->where('badge_id', $badgeId);
-			if ($anon_flag==false) $this->mongo_db->update('playbasis_badge_to_client');
+			$this->mongo_db->update('playbasis_badge_to_client');
 		}
+
 		//update player badge table
 		$this->mongo_db->where(array(
 			'pb_player_id' => $pbPlayerId,
