@@ -41,6 +41,6 @@ $lang['column_order']                           = 'Order';
 $lang['button_filter']                          = 'Filter';
 $lang['button_clear_filter']                    = 'Clear filter';
 
-$lang['error_permission']                       = 'Warning: You do not have permission to modify quiz!';
+$lang['error_permission']                       = 'Warning: You do not have permission to modify lucky draw!';
 $lang['error_access']                           = 'Warning: You do not have permission to access this page!';
-$lang['error_luckydraw_limit']                  = 'You have reached Lucky Draw limit.';
+$lang['error_luckydraw_limit']                  = 'You have reached lucky draw limit.';
