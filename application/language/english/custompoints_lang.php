@@ -15,6 +15,12 @@ $lang = array(
 	'text_image_manager'     			=> 'Image Manager',
 	'entry_name'						=> 'Custom Point Name',
 	'entry_status'						=> 'Status',
+    'entry_type'                        => 'Type',
+    'entry_energy_per_user'             => 'Per user',
+    'entry_energy_regen_time'           => 'Regeneration time',
+    'entry_energy_decay_per_period'     => 'Energy Decay per period',
+    'entry_energy_regen_per_period'     => 'Energy Regenerate per period',
+
 
 );
 
