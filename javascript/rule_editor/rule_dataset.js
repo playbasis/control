@@ -98,6 +98,10 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                             BadgeSet.getBadgeImage(v.value)+'<input type="text" class="collection reward_type hide" placeholder="'+v.placeholder+'" value="'+v.value+'" />&nbsp;' +
                                 '<span class="edit_reward_type btn btn-info btn-mini"><i class="icon-gift icon-white"></i></span>&nbsp;',
 
+                        'collection-goods':
+                            GoodsSet.getGoodsImage(v.value)+'<input type="text" class="collection_goods goods_type hide" placeholder="'+v.placeholder+'" value="'+v.value+'" />&nbsp;' +
+                                '<span class="edit_goods_type btn btn-info btn-mini"><i class="icon-gift icon-white"></i></span>&nbsp;',
+
                         'select':
                             '<select name="' + v.param_name + '" placeholder="' + v.placeholder + '" datatype="' + v.type + '">' + generate_select_options(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</select>',
 
@@ -171,6 +175,8 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
 
                 if(v.field_type == "collection"){
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+BadgeSet.getBadgeImage(v.value)+'</span>');
+                }else if(v.field_type == "collection-goods"){
+                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+GoodsSet.getGoodsImage(v.value)+'</span>');
                 }else if(v.field_type == "select"){
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</span>');
                 }
@@ -356,7 +362,7 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                     $thisrow.find('.pbd_rule_data .pbd_rule_text').hide();
                     $thisrow.find('.pbd_rule_data .pbd_rule_field').show();
 
-                    if($thisrow.find('.collection').length > 0) {
+                    if($thisrow.find('.collection').length > 0 || $thisrow.find('.collection_goods').length > 0) {
                         // do nothing
                         if(DEBUG)console.log('edit > collection');
                         //Hide Text Field
@@ -488,6 +494,20 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         rowText.hide();
                         rowText.parent().find('img').remove();
                         rowText.parent().prepend(BadgeSet.getBadgeImage(key))
+                    }
+
+                    else if($thisrow.find('.collection_goods').length > 0) {
+                        if(DEBUG)console.log('save > collection');
+
+                        //Set value from edit text to nornal text
+                        var key = rowField.find('input').val();
+                        rowText.html(key);
+
+                        //Append Goods Images here
+                        //Hide Text View
+                        rowText.hide();
+                        rowText.parent().find('img').remove();
+                        rowText.parent().prepend(GoodsSet.getGoodsImage(key))
                     }
 
                     else if($thisrow.find('.timeout').length > 0) {
@@ -632,6 +652,20 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                         rowText.hide();
                         rowText.parent().find('img').remove();
                         rowText.parent().prepend(BadgeSet.getBadgeImage(key))
+                    }
+
+                    else if($thisrow.find('.collection_goods').length > 0) {
+                        if(DEBUG)console.log('cancel > collection');
+
+                        //Set value from edit text to nornal text
+                        var key = rowText.html();
+                        rowField.find('input').val(key);
+
+                        //Append Badges Images here
+                        //Hide Text View
+                        rowText.hide();
+                        rowText.parent().find('img').remove();
+                        rowText.parent().prepend(GoodsSet.getGoodsImage(key))
                     }
 
                     else if($thisrow.find('.timeout').length > 0) {

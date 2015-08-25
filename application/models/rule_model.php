@@ -31,13 +31,7 @@ class Rule_model extends MY_Model
             'success'=>false,
             'msg'=>'Error , invalid request format or missing parameter'
         );
-
-        $this->mongo_db->select(array('_id'));
-        $this->mongo_db->where('name', 'action');
-        $this->mongo_db->where('category', 'ACTION');
-        $this->mongo_db->limit(1);
-        $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
-        $jigsaw_id = strval($jigsaw[0]['_id']);
+        $jigsaw_id = $this->findJigsawId('action', 'ACTION');
 
         try{
             if(count($results)>0){
@@ -147,14 +141,7 @@ class Rule_model extends MY_Model
             'success'=>false,
             'msg'=>'Error , invalid request format or missing parameter'
         );
-
-        $this->mongo_db->select(array('_id'));
-        $this->mongo_db->where('name', 'reward');
-        $this->mongo_db->where('category', 'REWARD');
-        $this->mongo_db->where('status', true);
-        $this->mongo_db->limit(1);
-        $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
-        $jigsaw_id = strval($jigsaw[0]['_id']);
+        $jigsaw_id = $this->findJigsawId('reward', 'REWARD');
 
         try{
             if(count($ds)>0){
@@ -211,7 +198,7 @@ class Rule_model extends MY_Model
             //Exception stuff
         }
 
-        return $output;
+        return array_merge($output, $this->getGoodsJigsawList($siteId, $clientId));
     }
 
     public function getGroupJigsawList($siteId,$clientId){
@@ -349,6 +336,71 @@ class Rule_model extends MY_Model
             );
         }
         return $output;
+    }
+
+    public function getGoodsJigsawList($siteId, $clientId) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $output = array();
+        if ($this->getFeatureExistByClientId($clientId, 'goods')) {
+            $type = 'goods';
+            $output[] = array(
+                '_id' => $type,
+                'name' => $type,
+                'description' => 'Reward '.$type,
+                'sort_order' => 10,
+                'status' => 1,
+                'specific_id' => $type,
+                'dataSet' => array(
+                    array(
+                        'param_name' => 'reward_name',
+                        'label' => 'Name',
+                        'placeholder' => null,
+                        'sortOrder' => 0,
+                        'field_type' => 'read_only',
+                        'value' => 'goods',
+                    ),
+                    array(
+                        'param_name' => 'item_id',
+                        'label' => 'Item id',
+                        'placeholder' => 'Item id',
+                        'sortOrder' => 0,
+                        'field_type' => 'collection-goods',
+                        'value' => 0,
+                    ),
+                    array(
+                        'param_name' => 'quantity',
+                        'label' => 'Quantity',
+                        'placeholder' => 'How many ...',
+                        'sortOrder' => 0,
+                        'field_type' => 'number',
+                        'value' => 1,
+                    ),
+                ),
+                'id' => $type,
+                'category' => 'REWARD',
+            );
+        }
+        return $output;
+    }
+
+    public function findJigsawId($name, $category) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where('name', $name);
+        $this->mongo_db->where('category', $category);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->limit(1);
+        $jigsaw = $this->mongo_db->get("playbasis_jigsaw");
+        return strval($jigsaw[0]['_id']);
+    }
+
+    /* copy over from "feature_model" */
+    public function getFeatureExistByClientId($client_id, $link) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('client_id', new MongoID($client_id));
+        $this->mongo_db->where('link', $link);
+        return $this->mongo_db->count("playbasis_feature_to_client") > 0;
     }
 
     function saveRule($input){

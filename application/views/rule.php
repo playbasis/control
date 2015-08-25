@@ -508,6 +508,21 @@
     </div>
 </div>
 
+<div class="modal hide fade pbd_rule_goods_collection_modal" id='goods_collection'>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Goods Collection modal</h3>
+    </div>
+    <div class="modal-body " style='padding:0px'>
+        <div class="row" style="margin-left:0px" id="rule-goods-modal">
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <span href="" class="btn" data-dismiss="modal">Cancel</span>
+        <span href="" class="btn btn-primary" id='goods_selection_btn' data-dismiss="modal">Select</span>
+    </div>
+</div>
 
 <div class="modal hide fade simple_rule_interface">
     <div class="modal-header">

@@ -294,6 +294,34 @@ class Rule extends MY_Controller
         }
     }
 
+    public function loadGoods() {
+        $this->load->model('Badge_model');
+        $this->load->model('Goods_model');
+
+        $results = $this->Goods_model->getGroupsAggregate($this->session->userdata('site_id'));
+        $ids = array();
+        $group_name = array();
+        foreach ($results as $i => $result) {
+            $group = $result['_id']['group'];
+            $quantity = $result['quantity'];
+            $list = $result['list'];
+            $first = array_shift($list); // skip first one
+            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+            $ids = array_merge($ids, $list);
+        }
+
+        $goods_list = $this->Goods_model->getGoodsBySiteId(array('site_id' => $this->session->userdata('site_id'), 'sort' => 'sort_order', '$nin' => $ids));
+        foreach($goods_list as &$g){
+            $g['_id'] = $g['_id']."";
+            $g['goods_id'] = $g['goods_id']."";
+            $g['client_id'] = $g['client_id']."";
+            $g['site_id'] = $g['site_id']."";
+        }
+        $json['goods'] = $goods_list;
+
+        $this->output->set_output(json_encode($json));
+    }
+
     public function jsonGetRuleById(){
         $adminGroup = $this->User_model->getAdminGroupID();
         if ($this->User_model->isAdmin()) {
