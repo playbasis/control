@@ -15,6 +15,14 @@ $lang = array(
 	'text_image_manager'     			=> 'Image Manager',
 	'entry_name'						=> 'Custom Point Name',
 	'entry_status'						=> 'Status',
+    'entry_type'                        => 'Type',
+    'entry_energy_per_user'             => 'Per user',
+    'entry_energy_normal_based'         => 'Normal point based',
+    'entry_energy_gain_based'           => 'Gain based',
+    'entry_energy_loss_based'           => 'Loss based',
+    'entry_energy_changing_period'      => 'Changing period',
+    'entry_energy_changing_per_period'  => 'Energy changing per period',
+
 
 );
 
