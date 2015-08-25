@@ -73,27 +73,49 @@ class Custompoints extends MY_Controller
             $this->data['message'] = $this->lang->line('error_custompoint_limit');
         }
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('type_custompoint', $this->lang->line('entry_type'), 'required');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-           if(!$this->validateModify()){
+            if (!$this->validateModify()) {
                 $this->error['message'] = $this->lang->line('error_permission');
-           }
+            }
 
-           if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->input->post('type_custompoint') == "energy") {
+                $this->form_validation->set_rules('energy_per_user', $this->lang->line('entry_energy_per_user'),
+                    'required|numeric|is_natural_no_zero|xss_clean');
+                $this->form_validation->set_rules('energy_regen_time', $this->lang->line('entry_energy_regen_time'),
+                    'required|xss_clean');
+                $this->form_validation->set_rules('energy_decay_per_period',
+                    $this->lang->line('entry_energy_decay_per_period|xss_clean'),
+                    'required|numeric|is_natural_no_zero|xss_clean');
+                $this->form_validation->set_rules('energy_regen_per_period',
+                    $this->lang->line('entry_energy_regen_per_period'),
+                    'required|numeric|is_natural_no_zero|xss_clean');
+            }
+
+            if ($this->form_validation->run() && $this->data['message'] == null) {
                 $custompoints_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $custompoints_data['name'];
+                $data['type'] = $custompoints_data['type_custompoint'];
                 $data['status'] = true;
+                if ($custompoints_data['type_custompoint'] == "energy"){
+                    $data['per_user'] = $custompoints_data['energy_per_user'];
+                    $data['regen_time'] = $custompoints_data['energy_regen_time'];
+                    $data['decay_per_period'] = $custompoints_data['energy_decay_per_period'];
+                    $data['regen_per_period'] = $custompoints_data['regen_per_period'];
+                }
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
-                if($insert){
+                if ($insert) {
                     redirect('/custompoints', 'refresh');
                 }
-            }      
+            }
         }
         $this->getForm();
     }
@@ -231,7 +253,7 @@ class Custompoints extends MY_Controller
             $this->data['name'] = $custompoints_info['name'];
         } else {
             $this->data['name'] = '';
-        }   
+        }
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');

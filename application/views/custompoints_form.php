@@ -53,14 +53,15 @@
                             <div class="control-group">
                                 <div class="controls">
                                     <label class="control-label">
-                                        <input type="radio" name="type_radios" id="radio_normal" value="normal"
-                                               checked>
+                                        <input type="radio" name="type_custompoint" id="radio_normal" value="normal"
+                                            <?php echo set_radio('type_custompoint', 'normal', true); ?>>
                                         Normal based
                                     </label>
                                 </div>
                                 <div class="controls">
                                     <label class="control-label">
-                                        <input type="radio" name="type_radios" id="radio_energy" value="energy">
+                                        <input type="radio" name="type_custompoint" id="radio_energy" value="energy"
+                                            <?php echo set_radio('type_custompoint', 'energy'); ?>>
                                         Energy based
                                     </label>
                                 </div>
@@ -74,39 +75,47 @@
                         <td>
                             <input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_energy_per_user'); ?>"
-                                   name="energy_per_user" id="input_energy_per_user" disabled="disabled">
+                                   name="energy_per_user" id="input_energy_per_user"
+                                   value="<?php echo isset($per_user) ? $per_user : set_value('energy_per_user'); ?>">
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <span class="required hide" id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_regen_time'); ?>:
+                            <span class="required hide"
+                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_regen_time'); ?>
+                            :
                         </td>
                         <td>
                             <input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_energy_regen_time'); ?>"
-                                   name="energy_regen_time" id="input_energy_regen_time" disabled="disabled">
+                                   name="energy_regen_time" id="input_energy_regen_time"
+                                   value="<?php echo set_value('energy_regen_time'); ?>">
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <span class="required hide" id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_decay_per_period'); ?>:
+                            <span class="required hide"
+                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_decay_per_period'); ?>
+                            :
                         </td>
                         <td>
                             <input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_energy_decay_per_period'); ?>"
                                    name="energy_decay_per_period" id="input_energy_decay_per_period"
-                                   disabled="disabled">
+                                   value="<?php echo set_value('energy_decay_per_period'); ?>">
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <span class="required hide" id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_regen_per_period'); ?>:
+                            <span class="required hide"
+                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_regen_per_period'); ?>
+                            :
                         </td>
                         <td>
                             <input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_energy_regen_per_period'); ?>"
                                    name="energy_regen_per_period" id="input_energy_regen_per_period"
-                                   disabled="disabled">
+                                   value="<?php echo set_value('energy_regen_per_period'); ?>">
                         </td>
                     </tr>
                 </table>
@@ -128,19 +137,27 @@
             stepHour: 1,
             stepMinute: 10
         });
-        
-        var energy_inputs = $('[id^=input_energy_]'),
-            energy_required = $('[id=energy_required]'),
-            group = $('input[type=radio][name=type_radios]');
 
-        group.change(function() {
-            console.log("Val: ",$(this).val());
+        var energy_inputs = $('[id^=input_energy_]'),
+            energy_required_span = $('[id=energy_required]'),
+            custompoint_type_radio = $('input[type=radio][name=type_custompoint]'),
+            custompoint_type_radio_value = $('input[type=radio][name=type_custompoint]:checked').val();
+
+        if(custompoint_type_radio_value == 'energy'){
+            energy_inputs.attr('disabled',false);
+            energy_required_span.show();
+        } else {
+            energy_inputs.attr('disabled',true);
+            energy_required_span.hide();
+        }
+
+        $( custompoint_type_radio ).on( "change", function() {
             if ($(this).val() == 'energy') {
                 energy_inputs.attr('disabled',false);
-                energy_required.show();
+                energy_required_span.show();
             } else {
                 energy_inputs.attr('disabled',true);
-                energy_required.hide();
+                energy_required_span.hide();
             }
         });
     });
