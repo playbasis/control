@@ -370,7 +370,11 @@ $(document).ready(function(){
                 $(".content").prepend('<div class="content messages half-width"><div class="warning"><?php echo $this->lang->line('error_file_too_large'); ?></div> </div>');
             }
         }else{
+            <?php if ($is_import) { ?>
             $(".content").prepend('<div class="content messages half-width"><div class="warning"><?php echo $this->lang->line('error_file'); ?></div> </div>');
+            <?php } else { ?>
+            $('#form').submit();
+            <?php } ?>
         }
     }
 
