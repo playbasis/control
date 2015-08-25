@@ -54,15 +54,25 @@
                                 <div class="controls">
                                     <label class="control-label">
                                         <input type="radio" name="type_custompoint" id="radio_normal" value="normal"
-                                            <?php echo $type == "normal" ? "checked=\"checked\"" : set_radio('type_custompoint', 'normal', true); ?>>
-                                        Normal based
+                                            <?php echo $type == "normal" ? "checked=\"checked\"" : set_radio('type_custompoint',
+                                                'normal', true); ?>>
+                                        <?php echo $this->lang->line('entry_energy_normal_based'); ?>
                                     </label>
                                 </div>
                                 <div class="controls">
                                     <label class="control-label">
-                                        <input type="radio" name="type_custompoint" id="radio_energy" value="energy"
-                                            <?php echo $type == "energy" ? "checked=\"checked\"" : set_radio('type_custompoint', 'energy'); ?>>
-                                        Energy based
+                                        <input type="radio" name="type_custompoint" id="radio_gain" value="gain"
+                                            <?php echo $type == "gain" ? "checked=\"checked\"" : set_radio('type_custompoint',
+                                                'gain'); ?>>
+                                        <?php echo $this->lang->line('entry_energy_gain_based'); ?>
+                                    </label>
+                                </div>
+                                <div class="controls">
+                                    <label class="control-label">
+                                        <input type="radio" name="type_custompoint" id="radio_loss" value="loss"
+                                            <?php echo $type == "loss" ? "checked=\"checked\"" : set_radio('type_custompoint',
+                                                'loss'); ?>>
+                                        <?php echo $this->lang->line('entry_energy_loss_based'); ?>
                                     </label>
                                 </div>
                             </div>
@@ -82,40 +92,27 @@
                     <tr>
                         <td>
                             <span class="required hide"
-                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_regen_time'); ?>
+                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_changing_period'); ?>
                             :
                         </td>
                         <td>
                             <input type="text"
-                                   placeholder="<?php echo $this->lang->line('entry_energy_regen_time'); ?>"
-                                   name="energy_regen_time" id="input_energy_regen_time"
-                                   value="<?php echo isset($regen_time) ? $regen_time : set_value('energy_regen_time'); ?>">
+                                   placeholder="<?php echo $this->lang->line('entry_energy_changing_period'); ?>"
+                                   name="energy_changing_period" id="input_energy_changing_period"
+                                   value="<?php echo isset($changing_period) ? $changing_period : set_value('energy_changing_period'); ?>">
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <span class="required hide"
-                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_decay_per_period'); ?>
+                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_changing_per_period'); ?>
                             :
                         </td>
                         <td>
                             <input type="text"
-                                   placeholder="<?php echo $this->lang->line('entry_energy_decay_per_period'); ?>"
-                                   name="energy_decay_per_period" id="input_energy_decay_per_period"
-                                   value="<?php echo isset($decay_per_period) ? $decay_per_period : set_value('energy_decay_per_period'); ?>">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="required hide"
-                                  id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_regen_per_period'); ?>
-                            :
-                        </td>
-                        <td>
-                            <input type="text"
-                                   placeholder="<?php echo $this->lang->line('entry_energy_regen_per_period'); ?>"
-                                   name="energy_regen_per_period" id="input_energy_regen_per_period"
-                                   value="<?php echo isset($regen_per_period) ? $regen_per_period : set_value('energy_regen_per_period'); ?>">
+                                   placeholder="<?php echo $this->lang->line('entry_energy_changing_per_period'); ?>"
+                                   name="energy_changing_per_period" id="input_energy_changing_per_period"
+                                   value="<?php echo isset($changing_per_period) ? $changing_per_period : set_value('energy_changing_per_period'); ?>">
                         </td>
                     </tr>
                 </table>
@@ -133,7 +130,7 @@
     $(function(){
         $('#tabs a').tabs();
 
-        $('#input_energy_regen_time').timepicker({
+        $('#input_energy_changing_period').timepicker({
             stepHour: 1,
             stepMinute: 10
         });
@@ -143,7 +140,7 @@
             custompoint_type_radio = $('input[type=radio][name=type_custompoint]'),
             custompoint_type_radio_value = $('input[type=radio][name=type_custompoint]:checked').val();
 
-        if(custompoint_type_radio_value == 'energy'){
+        if(custompoint_type_radio_value != "normal"){
             energy_inputs.attr('disabled',false);
             energy_required_span.show();
         } else {
@@ -152,7 +149,7 @@
         }
 
         $( custompoint_type_radio ).on( "change", function() {
-            if ($(this).val() == 'energy') {
+            if ($(this).val() != 'normal') {
                 energy_inputs.attr('disabled',false);
                 energy_required_span.show();
             } else {

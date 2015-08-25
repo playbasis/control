@@ -49,12 +49,11 @@ class Custompoints_model extends MY_Model
             'date_modified' => new MongoDate(now())
         );
 
-        if ($data['type'] == 'energy') {
+        if ($data['type'] != 'normal') {
             $energy_props_arr = array(
                 "per_user" => $data['per_user'],
-                "regen_time" => $data['regen_time'],
-                "decay_per_period" => $data['decay_per_period'],
-                "regen_per_period" => $data['regen_per_period']
+                "changing_period" => $data['changing_period'],
+                "changing_per_period" => $data['changing_per_period']
             );
             $insert_data['energy_props'] = $energy_props_arr;
         }
@@ -142,11 +141,10 @@ class Custompoints_model extends MY_Model
 		$this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('type', $data['type']);
 
-        if ($data['type'] == 'energy') {
+        if ($data['type'] != 'normal') {
             $this->mongo_db->set('energy_props.per_user', $data['per_user']);
-            $this->mongo_db->set('energy_props.regen_time', $data['regen_time']);
-            $this->mongo_db->set('energy_props.decay_per_period', $data['decay_per_period']);
-            $this->mongo_db->set('energy_props.regen_per_period', $data['regen_per_period']);
+            $this->mongo_db->set('energy_props.changing_period', $data['changing_period']);
+            $this->mongo_db->set('energy_props.changing_per_period', $data['changing_per_period']);
         } else {
             $this->mongo_db->unset_field('energy_props');
         }
