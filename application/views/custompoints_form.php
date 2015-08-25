@@ -54,14 +54,14 @@
                                 <div class="controls">
                                     <label class="control-label">
                                         <input type="radio" name="type_custompoint" id="radio_normal" value="normal"
-                                            <?php echo set_radio('type_custompoint', 'normal', true); ?>>
+                                            <?php echo $type == "normal" ? "checked=\"checked\"" : set_radio('type_custompoint', 'normal', true); ?>>
                                         Normal based
                                     </label>
                                 </div>
                                 <div class="controls">
                                     <label class="control-label">
                                         <input type="radio" name="type_custompoint" id="radio_energy" value="energy"
-                                            <?php echo set_radio('type_custompoint', 'energy'); ?>>
+                                            <?php echo $type == "energy" ? "checked=\"checked\"" : set_radio('type_custompoint', 'energy'); ?>>
                                         Energy based
                                     </label>
                                 </div>
@@ -89,7 +89,7 @@
                             <input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_energy_regen_time'); ?>"
                                    name="energy_regen_time" id="input_energy_regen_time"
-                                   value="<?php echo set_value('energy_regen_time'); ?>">
+                                   value="<?php echo isset($regen_time) ? $regen_time : set_value('energy_regen_time'); ?>">
                         </td>
                     </tr>
                     <tr>
@@ -102,7 +102,7 @@
                             <input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_energy_decay_per_period'); ?>"
                                    name="energy_decay_per_period" id="input_energy_decay_per_period"
-                                   value="<?php echo set_value('energy_decay_per_period'); ?>">
+                                   value="<?php echo isset($decay_per_period) ? $decay_per_period : set_value('energy_decay_per_period'); ?>">
                         </td>
                     </tr>
                     <tr>
@@ -115,7 +115,7 @@
                             <input type="text"
                                    placeholder="<?php echo $this->lang->line('entry_energy_regen_per_period'); ?>"
                                    name="energy_regen_per_period" id="input_energy_regen_per_period"
-                                   value="<?php echo set_value('energy_regen_per_period'); ?>">
+                                   value="<?php echo isset($regen_per_period) ? $regen_per_period : set_value('energy_regen_per_period'); ?>">
                         </td>
                     </tr>
                 </table>
