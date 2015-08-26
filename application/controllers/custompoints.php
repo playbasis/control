@@ -261,6 +261,8 @@ class Custompoints extends MY_Controller
 
         if (isset($custompoints_info['type'])) {
             $this->data['type'] = $custompoints_info['type'];
+        } else {
+            $this->data['type'] = "normal";
         }
 
         if (isset($custompoints_info['energy_props'])) {
