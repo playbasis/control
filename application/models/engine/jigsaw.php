@@ -37,14 +37,16 @@ class jigsaw extends MY_Model
 		assert($input['pb_player_id']);
 		//always true if reward type is point
 		if(is_null($config['item_id']) || $config['item_id'] == ''){
-            return $this->checkReward($config['reward_id'], $input['site_id']);
+            return $this->checkReward($config['reward_id'], $input['site_id'], $config['quantity']);
         }
 
 		//if reward type is badge
 		switch($config['reward_name'])
 		{
 			case 'badge':
-				return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id']);
+				return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
+            case 'goods':
+                return $this->checkGoods($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
 			default:
 				return false;
 		}
@@ -433,7 +435,7 @@ class jigsaw extends MY_Model
 				$conf = $config['group_container'][$i];
 				if (array_key_exists('reward_name', $conf)) {
 					foreach (array('item_id', 'reward_id') as $field) {
-						if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? new MongoId($conf[$field]) : null;
+                        if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? ($conf[$field] != 'goods' ? new MongoId($conf[$field]) : $conf[$field]) : null;
 					}
 					return $this->reward($conf, $input, $exInfo);
 				} else if (array_key_exists('feedback_name', $conf)) {
@@ -504,7 +506,7 @@ class jigsaw extends MY_Model
 		}
 		return ($result) ? $result[0] : $result;
 	}
-	private function checkBadge($badgeId, $pb_player_id, $site_id)
+	private function checkBadge($badgeId, $pb_player_id, $site_id, $quantity=0)
 	{
 		//get badge properties
 		$this->set_site_mongodb($site_id);
@@ -536,7 +538,20 @@ class jigsaw extends MY_Model
 			return false;
 		return true;
 	}
-	private function checkReward($rewardId, $siteId)
+    private function checkGoods($goodsId, $pb_player_id, $site_id, $quantity=0)
+    {
+        if (!$quantity) return true;
+        $goods = $this->getGoods($site_id, $goodsId); // next, try to get from normal goods
+        if (!$goods || !isset($goods[0])) return false;
+        $goods = $goods[0];
+        $total = isset($goods['group']) ? $this->getGroupQuantity($site_id, $goods['group']) : $goods['quantity'];
+        if ($quantity > $total) return false;
+        if (!$goods['per_user']) return true; // per_user is not set
+        $max = $goods['per_user'];
+        $used = $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
+        return $used+$quantity <= $max;
+    }
+	private function checkReward($rewardId, $siteId, $quantity=0)
 	{
 		$this->set_site_mongodb($siteId);
 		$this->mongo_db->select(array('limit'));
@@ -554,6 +569,52 @@ class jigsaw extends MY_Model
 
 		return $result['limit'] > 0;
 	}
+    private function getGroupQuantity($site_id, $group) {
+        $results = $this->mongo_db->aggregate('playbasis_goods_to_client', array(
+            array(
+                '$match' => array(
+                    'deleted' => false,
+                    'site_id' => $site_id,
+                    'group' => $group
+                ),
+            ),
+            array(
+                '$project' => array('group' => 1, 'quantity' => 1)
+            ),
+            array(
+                '$group' => array('_id' => array('group' => '$group'), 'quantity' => array('$sum' => '$quantity'))
+            ),
+        ));
+        $res = $results ? $results['result'] : array();
+        return $res ? $res[0]['quantity'] : $res;
+    }
+    private function getGoods($site_id, $goodsId) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('per_user', 'quantity', 'group'));
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'goods_id' => $goodsId,
+            '$and' => array(
+                array('$or' => array(array('date_start' => array('$lte' => $this->new_mongo_date(date('Y-m-d')))), array('date_start' => null))),
+                array('$or' => array(array('date_expire' => array('$gte' => $this->new_mongo_date(date('Y-m-d'), '23:59:59'))), array('date_expire' => null)))
+            ),
+            'status' => true,
+            'deleted' => false
+        ));
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->get("playbasis_goods_to_client");
+    }
+    private function getPlayerGoods($site_id, $goodsId, $pb_player_id) {
+        $this->mongo_db->select(array('value'));
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'goods_id' => $goodsId,
+            'pb_player_id' => $pb_player_id
+        ));
+        $this->mongo_db->limit(1);
+        $goods = $this->mongo_db->get('playbasis_goods_to_player');
+        return isset($goods[0]) ? $goods[0]['value'] : null;
+    }
 //	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
     private function matchUrl($inputUrl, $compareUrl)
 	{
