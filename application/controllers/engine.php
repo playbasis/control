@@ -768,7 +768,7 @@ class Engine extends Quest
 
 					if ($break) break; // break early, do not process next jigsaw
 				} else {  // jigsaw return false
-					if($this->is_reward($jigsawCategory)) { // REWARD, GROUP
+					if($this->is_reward($jigsawCategory)) { // REWARD, FEEDBACK
 						if(isset($exInfo['break']) && $exInfo['break']) break;
 					} else {
 						// fail, log jigsaw - ACTION or CONDITION
@@ -806,7 +806,7 @@ class Engine extends Quest
 		if(isset($jigsawConfig['action_id']) && !empty($jigsawConfig['action_id']))
 			$jigsawConfig['action_id'] = new MongoId($jigsawConfig['action_id']);
 		if(isset($jigsawConfig['reward_id']) && !empty($jigsawConfig['reward_id']))
-			$jigsawConfig['reward_id'] = new MongoId($jigsawConfig['reward_id']);
+			$jigsawConfig['reward_id'] = $jigsawConfig['reward_id'] != 'goods' ? new MongoId($jigsawConfig['reward_id']) : $jigsawConfig['reward_id'];
 		if(isset($jigsawConfig['item_id']) && !empty($jigsawConfig['item_id']))
 			$jigsawConfig['item_id'] = new MongoId($jigsawConfig['item_id']);
 		return $jigsawConfig;
