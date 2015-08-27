@@ -80,13 +80,13 @@
                     </tr>
                     <tr>
                         <td>
-                            <span class="required hide" id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_per_user'); ?>:
+                            <span class="required hide" id="energy_required">*</span> <?php echo $this->lang->line('entry_energy_maximum'); ?>:
                         </td>
                         <td>
                             <input type="text"
-                                   placeholder="<?php echo $this->lang->line('entry_energy_per_user'); ?>"
-                                   name="energy_per_user" id="input_energy_per_user"
-                                   value="<?php echo isset($per_user) ? $per_user : set_value('energy_per_user'); ?>">
+                                   placeholder="<?php echo $this->lang->line('entry_energy_maximum'); ?>"
+                                   name="energy_maximum" id="input_energy_maximum"
+                                   value="<?php echo isset($maximum) ? $maximum : set_value('energy_maximum'); ?>">
                         </td>
                     </tr>
                     <tr>

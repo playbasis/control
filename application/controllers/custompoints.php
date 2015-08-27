@@ -84,7 +84,7 @@ class Custompoints extends MY_Controller
             }
 
             if ($this->input->post('type_custompoint') != "normal") {
-                $this->form_validation->set_rules('energy_per_user', $this->lang->line('entry_energy_per_user'),
+                $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
                     'required|numeric|is_natural_no_zero|xss_clean');
                 $this->form_validation->set_rules('energy_changing_period', $this->lang->line('entry_energy_changing_period'),
                     'required|xss_clean');
@@ -102,7 +102,7 @@ class Custompoints extends MY_Controller
                 $data['status'] = true;
                 $data['type'] = $custompoints_data['type_custompoint'];
                 if ($custompoints_data['type_custompoint'] != "normal") {
-                    $data['per_user'] = $custompoints_data['energy_per_user'];
+                    $data['maximum'] = $custompoints_data['energy_maximum'];
                     $data['changing_period'] = $custompoints_data['energy_changing_period'];
                     $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
                 }
@@ -266,7 +266,7 @@ class Custompoints extends MY_Controller
         }
 
         if (isset($custompoints_info['energy_props'])) {
-            $this->data['per_user'] = $custompoints_info['energy_props']['per_user'];
+            $this->data['maximum'] = $custompoints_info['energy_props']['maximum'];
         }
 
         if (isset($custompoints_info['energy_props'])) {
@@ -299,7 +299,7 @@ class Custompoints extends MY_Controller
             }
 
             if ($this->input->post('type_custompoint') != "normal") {
-                $this->form_validation->set_rules('energy_per_user', $this->lang->line('entry_energy_per_user'),
+                $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
                     'required|numeric|is_natural_no_zero|xss_clean');
                 $this->form_validation->set_rules('energy_changing_period', $this->lang->line('entry_energy_changing_period'),
                     'required|xss_clean');
@@ -317,7 +317,7 @@ class Custompoints extends MY_Controller
                 $data['name'] = $custompoints_data['name'];
                 $data['type'] = $custompoints_data['type_custompoint'];
                 if ($custompoints_data['type_custompoint'] != "normal"){
-                    $data['per_user'] = $custompoints_data['energy_per_user'];
+                    $data['maximum'] = $custompoints_data['energy_maximum'];
                     $data['changing_period'] = $custompoints_data['energy_changing_period'];
                     $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
                 }

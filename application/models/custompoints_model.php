@@ -51,7 +51,7 @@ class Custompoints_model extends MY_Model
 
         if ($data['type'] != 'normal') {
             $energy_props_arr = array(
-                "per_user" => $data['per_user'],
+                "maximum" => $data['maximum'],
                 "changing_period" => $data['changing_period'],
                 "changing_per_period" => $data['changing_per_period']
             );
@@ -142,7 +142,7 @@ class Custompoints_model extends MY_Model
         $this->mongo_db->set('type', $data['type']);
 
         if ($data['type'] != 'normal') {
-            $this->mongo_db->set('energy_props.per_user', $data['per_user']);
+            $this->mongo_db->set('energy_props.maximum', $data['maximum']);
             $this->mongo_db->set('energy_props.changing_period', $data['changing_period']);
             $this->mongo_db->set('energy_props.changing_per_period', $data['changing_per_period']);
         } else {
