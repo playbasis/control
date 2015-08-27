@@ -393,6 +393,50 @@ $email = 'pechpras@playbasis.com';
 			}
 		}
 	}
+
+    public function energyUpdater(){
+        $this->load->model('energy_model');
+        $this->load->model('player_model');
+
+        $now = now();
+
+        //todo (rook): uncommented cli check before production
+//        if ($this->input->is_cli_request()) {
+            echo "> Running Energy Updater CLI!" . PHP_EOL . PHP_EOL;
+
+        foreach ($this->energy_model->findActiveEnergyTypeRewards() as $energy) {
+            echo ">>> Energy name: " . $energy['name'] . PHP_EOL;
+            $client_id = $energy['client_id'];
+            $site_id = $energy['site_id'];
+            $energy_reward_id = $energy['reward_id'];
+
+            //todo (rook): to check if client and site is still active, if not just break this loop
+
+            $players_with_energy = $this->energy_model->findPlayersByEnergy($client_id, $site_id, $energy_reward_id);
+
+            echo ">>> Entering loop to update energy" . PHP_EOL;
+            $players_with_energy_pb_player_id = array();
+            foreach ($players_with_energy as $player) {
+                array_push($players_with_energy_pb_player_id, $player['pb_player_id']);
+
+                //filter out if energy is full
+                // or last consume is not with in this minutes
+
+                // perform energy update
+
+                echo ">>>>>>> Update energy to player" . PHP_EOL;
+            }
+
+            $players_without_energy = $this->energy_model->findPlayersWithExclusions($client_id, $site_id,
+                $players_with_energy_pb_player_id);
+
+            echo ">>> Entering loop to update energy" . PHP_EOL;
+            foreach ($players_without_energy as $player){
+                echo ">>>>>>> Distribute initial energy to player" . PHP_EOL;
+            }
+        }
+
+    }
 }
 
 function urlsafe_b64encode($string) {
