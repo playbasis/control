@@ -446,16 +446,13 @@ $email = 'pechpras@playbasis.com';
 
                     // perform energy update
                     if ($energy['type'] == 'gain') {
-                        // fixme (Rook): Need to add method to increase energy instead of change
                         $this->client_model->updatePlayerPointReward($energy_reward_id, $energy_change_per_period,
                             $player_with_energy_details['pb_player_id'], $player_with_energy_details['cl_player_id'],
-                            $client_id, $site_id);
+                            $client_id, $site_id, true);
                     } elseif ($energy['type'] == 'loss') {
-                        // fixme (Rook): Need to add method to decrease energy instead of change
-                        $this->client_model->updatePlayerPointReward($energy_reward_id, 0,
+                        $this->client_model->updatePlayerPointReward($energy_reward_id, (int)-($energy_change_per_period),
                             $player_with_energy_details['pb_player_id'], $player_with_energy_details['cl_player_id'],
-                            $client_id,
-                            $site_id);
+                            $client_id, $site_id, true);
                     }
                 }
 
