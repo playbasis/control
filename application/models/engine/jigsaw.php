@@ -430,7 +430,8 @@ class jigsaw extends MY_Model
                 $acc[$i] = $sum;
             }
 		}
-		$max = $acc[count($acc)-1];
+        if (!$acc) return false; // there is no valid entry
+        $max = $sum;
 		$ran = rand(0, $max-1);
 		foreach ($acc as $i => $value) {
 			if ($ran < $value) {
@@ -546,14 +547,25 @@ class jigsaw extends MY_Model
     {
         if (!$quantity) return true;
         $goods = $this->getGoods($site_id, $goodsId); // next, try to get from normal goods
-        if (!$goods || !isset($goods[0])) return false;
-        $goods = $goods[0];
+        if (!$goods) return false;
         $total = isset($goods['group']) ? $this->getGroupQuantity($site_id, $goods['group']) : $goods['quantity'];
-        if ($quantity > $total) return false;
-        if (!$goods['per_user']) return true; // per_user is not set
         $max = $goods['per_user'];
         $used = $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
-        return $used+$quantity <= $max;
+        if ($total === 0 || $max === 0) return false;
+        if ($total) {
+            if ($quantity > $total) return false;
+            if ($max) {
+                return $used+$quantity <= $max;
+            } else {
+                return true;
+            }
+        } else { // unlimited amount
+            if ($max) {
+                return $used+$quantity <= $max;
+            } else {
+                return true;
+            }
+        }
     }
 	private function checkReward($rewardId, $siteId, $quantity=0)
 	{
@@ -606,7 +618,8 @@ class jigsaw extends MY_Model
             'deleted' => false
         ));
         $this->mongo_db->limit(1);
-        return $this->mongo_db->get("playbasis_goods_to_client");
+        $ret = $this->mongo_db->get("playbasis_goods_to_client");
+        return $ret && isset($ret[0]) ? $ret[0] : array();
     }
     private function getPlayerGoods($site_id, $goodsId, $pb_player_id) {
         $this->mongo_db->select(array('value'));
