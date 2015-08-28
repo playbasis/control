@@ -17,6 +17,7 @@ class Engine extends Quest
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
+        $this->load->model('goods_model');
 		$this->load->model('social_model');
 		$this->load->model('email_model');
 		$this->load->model('sms_model');
@@ -705,6 +706,30 @@ class Engine extends Quest
                                     break;
                                 }  // close if (!$input["test"])
                                 break;
+                            case 'goods':
+                                $goodsData = $this->jigsaw_model->getGoods($site_id, $jigsawConfig['item_id']);
+                                if (!$goodsData) break;
+
+                                if (isset($goodsData['group'])) {
+                                    $goodsData = $this->goods_model->getGoodsFromGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'], $input['pb_player_id'], $jigsawConfig['quantity']);
+                                    if (!$goodsData) break;
+                                    $jigsawConfig['item_id'] = $goodsData['goods_id'];
+                                }
+
+                                unset($goodsData['_id']);
+                                unset($goodsData['redeem']);
+                                $goodsData['goods_id'] = $goodsData['goods_id'].'';
+                                $event = array(
+                                    'event_type' => 'REWARD_RECEIVED',
+                                    'reward_type' => $jigsawConfig['reward_name'],
+                                    'reward_data' => $goodsData,
+                                    'value' => $jigsawConfig['quantity']
+                                );
+                                array_push($apiResult['events'], $event);
+
+                                if (!$input["test"]) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
+
+                                break;
                             default:
                                 log_message('error', 'Unknown reward: '.$jigsawConfig['reward_name']);
                                 break;
@@ -835,6 +860,47 @@ class Engine extends Quest
             $this->push_model->initial($notificationInfo, $device['type']);
         }
     }
+
+    private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData) {
+        $domain_name = $validToken['domain_name'];
+
+        $player = array(
+            'pb_player_id' => $input['pb_player_id'],
+            'client_id' => $validToken['client_id'] ,
+            'site_id' => $validToken['site_id']
+        );
+
+        $this->client_model->updateplayerGoods($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+
+        $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '', $event['reward_data']['name']);
+
+        // log event - reward, goods
+        $this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
+            'reward_id' => $jigsawConfig['reward_id'],
+            'reward_name' => $jigsawConfig['reward_name'],
+            'item_id' => $jigsawConfig['item_id'],
+            'amount' => $jigsawConfig['quantity'])));
+
+        // publish - node stream
+        $this->node->publish(array_merge($input, array(
+            'message' => $eventMessage,
+            'goods' => $event['reward_data']
+        )), $domain_name, $validToken['site_id']);
+
+        // publish - facebook notification
+        if ($fbData)
+            $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
+
+        // publish - push notification
+        $this->sendNotification(array(
+            'title' => $eventMessage,
+            'goods' => $jigsawConfig['item_id'],
+            'type' => $jigsawConfig['reward_name'],
+            'value' => $jigsawConfig['quantity'],
+            'text' => $eventMessage
+        ), $player, $eventMessage);
+    }
+
 	public function test_get()
 	{
 		echo '<pre>';

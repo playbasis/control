@@ -222,7 +222,7 @@ class Goods_model extends MY_Model
 	}
 	public function getGoodsByGroup($client_id, $site_id, $group, $offset=null, $limit=null) {
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('goods_id','date_start','date_expire','quantity','per_user','redeem'));
+		$this->mongo_db->select(array('goods_id','name','description','image','date_start','date_expire','quantity','per_user','redeem'));
 		$this->mongo_db->where(array(
 			'client_id' => $client_id,
 			'site_id' => $site_id,
@@ -247,6 +247,12 @@ class Goods_model extends MY_Model
 		}
 		return null;
 	}
+    public function getGoodsFromGroup($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
+        $total = $this->getTotalGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group);
+        $offset = rand(0, $total-1); // randomly pick one
+        $goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, $offset, 1);
+        return $goodsList ? $goodsList[0] : null;
+    }
 	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
 		$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, 0, 1);
 		if ($goodsList) {
