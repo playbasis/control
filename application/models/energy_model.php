@@ -13,7 +13,7 @@ class Energy_model extends MY_Model
      * @param int $mongo_site_id DEPRECATED used to switch between db.
      * @return array result of active energies, empty array if none found.
      */
-    public function findActiveEnergyTypeRewards($mongo_site_id = 0)
+    public function findActiveEnergyRewards($mongo_site_id = 0)
     {
         $this->set_site_mongodb($mongo_site_id);
 
@@ -32,12 +32,9 @@ class Energy_model extends MY_Model
      * @param int $mongo_site_id DEPRECATED used to switch between db.
      * @return array
      */
-    public function findPlayersByEnergy($client_id, $site_id, $energy_id, $mongo_site_id = 0)
+    public function findAllPlayersRewardDetailsFromEnergyId($client_id, $site_id, $energy_id, $mongo_site_id = 0)
     {
         $this->set_site_mongodb($mongo_site_id);
-
-        $this->mongo_db->select(array('pb_player_id', 'cl_player_id'));
-
         $this->mongo_db->where(array(
             'client_id' => $client_id,
             'site_id' => $site_id,
