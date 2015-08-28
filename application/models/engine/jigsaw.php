@@ -552,20 +552,9 @@ class jigsaw extends MY_Model
         $max = $goods['per_user'];
         $used = $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
         if ($total === 0 || $max === 0) return false;
-        if ($total) {
-            if ($quantity > $total) return false;
-            if ($max) {
-                return $used+$quantity <= $max;
-            } else {
-                return true;
-            }
-        } else { // unlimited amount
-            if ($max) {
-                return $used+$quantity <= $max;
-            } else {
-                return true;
-            }
-        }
+        if ($total && $quantity > $total) return false;
+        if (!$max) return true;
+        return $used+$quantity <= $max;
     }
 	private function checkReward($rewardId, $siteId, $quantity=0)
 	{
