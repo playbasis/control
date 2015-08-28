@@ -469,7 +469,7 @@ class jigsaw extends MY_Model
 		$conf = $config['group_container'][$i];
 		if (array_key_exists('reward_name', $conf)) {
 			foreach (array('item_id', 'reward_id') as $field) {
-				if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? new MongoId($conf[$field]) : null;
+				if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? ($conf[$field] != 'goods' ? new MongoId($conf[$field]) : $conf[$field]) : null;
 			}
 			return $this->reward($conf, $input, $exInfo);
 		} else if (array_key_exists('feedback_name', $conf)) {
