@@ -425,7 +425,7 @@ class jigsaw extends MY_Model
 		foreach ($config['group_container'] as $i => $conf) {
             // invalid goods will be excluded from randomness
             if (!(array_key_exists('reward_name', $conf) && $conf['reward_name'] == 'goods')
-                    || $this->checkGoods($conf['item_id'], $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
+                    || $this->checkGoods(new MongoId($conf['item_id']), $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
                 $sum += intval($conf['weight']);
                 $acc[$i] = $sum;
             }
