@@ -475,7 +475,7 @@ class jigsaw extends MY_Model
 		} else if (array_key_exists('feedback_name', $conf)) {
 			return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
 		}
-		return false; // should not reach this line
+		return false; // can reach this line if (1) there is no entry (2) all entries are invalid
 	}
 	public function getMostRecentJigsaw($input, $fields)
 	{
