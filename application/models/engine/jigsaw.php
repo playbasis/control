@@ -422,9 +422,13 @@ class jigsaw extends MY_Model
 		$this->set_site_mongodb($input['site_id']);
 		$sum = 0;
 		$acc = array();
-		foreach ($config['group_container'] as $each) {
-			$sum += intval($each['weight']);
-			array_push($acc, $sum);
+		foreach ($config['group_container'] as $i => $conf) {
+            // invalid goods will be excluded from randomness
+            if (!(array_key_exists('reward_name', $conf) && $conf['reward_name'] == 'goods')
+                    || $this->checkGoods($conf['item_id'], $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
+                $sum += intval($conf['weight']);
+                $acc[$i] = $sum;
+            }
 		}
 		$max = $acc[count($acc)-1];
 		$ran = rand(0, $max-1);
@@ -444,7 +448,7 @@ class jigsaw extends MY_Model
 				return false; // should not reach this line
 			}
 		}
-		return false; // should not reach this line
+		return false; // can reach this line if (1) there is no entry (2) all entries are invalid
 	}
 	public function sequence($config, $input, &$exInfo = array())
 	{
