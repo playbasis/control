@@ -396,92 +396,84 @@ $email = 'pechpras@playbasis.com';
 
     public function energyUpdater()
     {
-        //while(1){
         $this->load->model('energy_model');
         $this->load->model('player_model');
 
         $now = now();
 
         //todo (rook): uncommented cli check before production
-//        if ($this->input->is_cli_request()) {
-//        echo "> Running Energy Updater CLI!" . PHP_EOL . PHP_EOL;
+        if ($this->input->is_cli_request()) {
+            foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
+                $client_id = $energy['client_id'];
+                $site_id = $energy['site_id'];
+                $energy_reward_id = $energy['reward_id'];
+                $energy_max = (int)$energy['energy_props']['maximum'];
+                $energy_change_per_period = (int)$energy['energy_props']['changing_per_period'];
 
-        foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
-            //echo ">>> Energy name: " . $energy['name'] . PHP_EOL;
-            $client_id = $energy['client_id'];
-            $site_id = $energy['site_id'];
-            $energy_reward_id = $energy['reward_id'];
-            $energy_max = (int)$energy['energy_props']['maximum'];
-            $energy_change_per_period = (int)$energy['energy_props']['changing_per_period'];
+                //fixme (rook): to check if client and site is still active, if not just break this loop
 
-            //todo (rook): to check if client and site is still active, if not just break this loop
+                $all_players_with_energy_details = $this->energy_model->findAllPlayersRewardDetailsFromEnergyId($client_id,
+                    $site_id, $energy_reward_id);
 
-            $all_players_with_energy_details = $this->energy_model->findAllPlayersRewardDetailsFromEnergyId($client_id, $site_id, $energy_reward_id);
+                $players_with_energy_pb_player_id = array();
+                foreach ($all_players_with_energy_details as $player_with_energy_details) {
+                    array_push($players_with_energy_pb_player_id, $player_with_energy_details['pb_player_id']);
 
-            //echo ">>> Entering loop to update energy" . PHP_EOL;
-            $players_with_energy_pb_player_id = array();
-            foreach ($all_players_with_energy_details as $player_with_energy_details) {
-                array_push($players_with_energy_pb_player_id, $player_with_energy_details['pb_player_id']);
+                    $date_modified = $player_with_energy_details['date_modified']->sec;
 
-                $date_modified = $player_with_energy_details['date_modified']->sec;
+                    $temp_arr = explode(':', $energy['energy_props']['changing_period']);
+                    $change_period['hours'] = (int)$temp_arr[0];
+                    $change_period['minutes'] = (int)$temp_arr[1];
+                    $change_period['ts'] = (int)(($change_period['minutes'] * 60) + ($change_period['hours'] * 60 * 60));
 
-                $temp_arr = explode(':', $energy['energy_props']['changing_period']);
-                $change_period['hours'] = (int)$temp_arr[0];
-                $change_period['minutes'] = (int)$temp_arr[1];
-                $change_period['ts'] = (int)(($change_period['minutes'] * 60) + ($change_period['hours'] * 60 * 60));
+                    $date_range_min_criteria = $now - $change_period['ts'] - 60; // 60 second ago
+                    $date_range_max_criteria = $now - $change_period['ts'] + 60; // 60 second ahead
 
-                $date_range_min_criteria = $now - $change_period['ts'] - 60; // 60 second ago
-                $date_range_max_criteria = $now - $change_period['ts']  + 60; // 60 second ahead
+                    $result_date_criteria = ($date_modified >= $date_range_min_criteria && $date_modified <= $date_range_max_criteria);
 
-                $result_date_criteria = ($date_modified >= $date_range_min_criteria && $date_modified <= $date_range_max_criteria);
+                    //echo "Mod-Max: " . ($date_modified - $date_range_max_criteria) . PHP_EOL;
 
-                //filter out if energy is full
-                // or last consume is not with in this minutes
-                if ($energy['type'] == 'gain') {
-                    if ((int)$player_with_energy_details['value'] >= $energy_max || $result_date_criteria) {
-                        continue;
+                    //filter out if energy is full or last consume is not with in this minutes
+                    if ($energy['type'] == 'gain') {
+                        if ((int)$player_with_energy_details['value'] >= $energy_max || !$result_date_criteria) {
+                            continue;
+                        }
+                    } elseif ($energy['type'] == 'loss') {
+                        if ((int)$player_with_energy_details['value'] <= 0 || !$result_date_criteria) {
+                            continue;
+                        }
                     }
-                } elseif ($energy['type'] == 'loss') {
-                    if ((int)$player_with_energy_details['value'] <= 0 || $result_date_criteria) {
-                        continue;
-                    }
-                } else {
+
                     // perform energy update
                     if ($energy['type'] == 'gain') {
-                        // todo (Rook): Need to add method to increase energy instead of change
+                        // fixme (Rook): Need to add method to increase energy instead of change
                         $this->client_model->updatePlayerPointReward($energy_reward_id, $energy_change_per_period,
-                            $player_with_energy_details['_id'], $player_with_energy_details['cl_player_id'], $client_id,
-                            $site_id);
+                            $player_with_energy_details['pb_player_id'], $player_with_energy_details['cl_player_id'],
+                            $client_id, $site_id);
                     } elseif ($energy['type'] == 'loss') {
-                        // todo (Rook): Need to add method to decrease energy instead of change
+                        // fixme (Rook): Need to add method to decrease energy instead of change
                         $this->client_model->updatePlayerPointReward($energy_reward_id, 0,
-                            $player_with_energy_details['_id'],
-                            $player_with_energy_details['cl_player_id'], $client_id, $site_id);
+                            $player_with_energy_details['pb_player_id'], $player_with_energy_details['cl_player_id'],
+                            $client_id,
+                            $site_id);
                     }
-                    echo ">>>>>>> Update energy to player" . PHP_EOL;
                 }
-            }
 
-            $players_without_energy = $this->energy_model->findPlayersWithExclusions($client_id, $site_id,
-                $players_with_energy_pb_player_id);
-
-            //echo ">>> Entering loop to update energy" . PHP_EOL;
-            foreach ($players_without_energy as $player) {
-                //echo ">>>>>>> Distribute initial energy to player" . PHP_EOL;
-                // Note: $player here is from player table
-                if ($energy['type'] == 'gain') {
-                    $this->client_model->updatePlayerPointReward($energy_reward_id, $energy_max, $player['_id'],
-                        $player['cl_player_id'], $client_id, $site_id);
-                } elseif ($energy['type'] == 'loss') {
-                    $this->client_model->updatePlayerPointReward($energy_reward_id, 0, $player['_id'],
-                        $player['cl_player_id'], $client_id, $site_id);
+                $players_without_energy = $this->energy_model->findPlayersWithExclusions($client_id, $site_id,
+                    $players_with_energy_pb_player_id);
+                foreach ($players_without_energy as $player) {
+                    // Note: $player here is from player table
+                    if ($energy['type'] == 'gain') {
+                        $this->client_model->updatePlayerPointReward($energy_reward_id, $energy_max, $player['_id'],
+                            $player['cl_player_id'], $client_id, $site_id);
+                    } elseif ($energy['type'] == 'loss') {
+                        $this->client_model->updatePlayerPointReward($energy_reward_id, 0, $player['_id'],
+                            $player['cl_player_id'], $client_id, $site_id);
+                    }
                 }
-                //echo ">>>>>>>>> Updated to db" . PHP_EOL;
             }
         }
-//    }  //end cli request checking
     }
-    //}
 }
 
 function urlsafe_b64encode($string) {
