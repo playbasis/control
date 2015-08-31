@@ -14,6 +14,8 @@ define('S3_BUCKET', 'elasticbeanstalk-ap-southeast-1-007834438823');
 define('S3_FOLDER', 'log/playbasis_web_service_log');
 define('DAYS_TO_BECOME_ACTIVE', 3);
 
+define('ENERGY_UPDATER_THRESHOLD', 5);
+
 class Cron extends CI_Controller
 {
 	public function __construct()
@@ -426,8 +428,8 @@ $email = 'pechpras@playbasis.com';
                     $change_period['minutes'] = (int)$temp_arr[1];
                     $change_period['ts'] = (int)(($change_period['minutes'] * 60) + ($change_period['hours'] * 60 * 60));
 
-                    $date_range_min_criteria = $now - $change_period['ts'] - 60; // 60 second ago
-                    $date_range_max_criteria = $now - $change_period['ts'] + 60; // 60 second ahead
+                    $date_range_min_criteria = $now - $change_period['ts'] - (int)ENERGY_UPDATER_THRESHOLD;
+                    $date_range_max_criteria = $now - $change_period['ts'] + (int)ENERGY_UPDATER_THRESHOLD;
 
                     $result_date_criteria = ($date_modified >= $date_range_min_criteria && $date_modified <= $date_range_max_criteria);
 
