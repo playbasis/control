@@ -155,6 +155,59 @@
 						}
 					]
 				},
+                {
+                    "MethodName": "List Custom Fields of Player",
+                    "Synopsis": "Get custom fields information about a player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/custom",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "Set Custom Field of Player",
+                    "Synopsis": "Set custom field of a player",
+                    "HTTPMethod": "POST",
+                    "URI": "/Player/:id/custom",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "key",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "custom field keys separated by comma"
+                        },
+                        {
+                            "Name": "value",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "custom field values separated by comma"
+                        }
+                    ]
+                },
 				{
 					"MethodName": "Register",
 					"Synopsis": "Register a user from client's website as a Playbasis player.",
