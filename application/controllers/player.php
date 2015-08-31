@@ -460,51 +460,51 @@ class Player extends REST2_Controller
 		$this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
 		$this->response($this->resp->setRespond(), 200);
 	}
-    public function custom_get($player_id = '')
-    {
-        if(!$player_id)
-            $this->response($this->error->setError('PARAMETER_MISSING', array(
-                'player_id'
-            )), 200);
-        //get playbasis player id
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-            'cl_player_id' => $player_id
-        )));
-        if(!$pb_player_id)
-            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-        //read player information
-        $player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array(
-            'custom',
-        ));
-        $this->response($this->resp->setRespond($player), 200);
-    }
-    public function custom_post($player_id = '')
-    {
-        if(!$player_id)
-            $this->response($this->error->setError('PARAMETER_MISSING', array(
-                'player_id'
-            )), 200);
+	public function custom_get($player_id = '')
+	{
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'player_id'
+			)), 200);
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+			'cl_player_id' => $player_id
+		)));
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		//read player information
+		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array(
+			'custom',
+		));
+		$this->response($this->resp->setRespond($player), 200);
+	}
+	public function custom_post($player_id = '')
+	{
+		if(!$player_id)
+			$this->response($this->error->setError('PARAMETER_MISSING', array(
+				'player_id'
+			)), 200);
 
-        //get playbasis player id
-        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+		//get playbasis player id
+		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
-        )));
-        if(!$pb_player_id)
-            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
-        $playerInfo = array();
-        $key = $this->input->post('key');
-        if ($key) {
-            $playerInfo['custom'] = array();
-            $keys = explode(',', $key);
-            $value = $this->input->post('value');
-            $values = explode(',', $value);
-            foreach ($keys as $i => $key) {
-                $playerInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
-            }
-        }
-        $this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
-        $this->response($this->resp->setRespond(), 200);
-    }
+		)));
+		if(!$pb_player_id)
+			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		$playerInfo = array();
+		$key = $this->input->post('key');
+		if ($key) {
+			$playerInfo['custom'] = array();
+			$keys = explode(',', $key);
+			$value = $this->input->post('value');
+			$values = explode(',', $value);
+			foreach ($keys as $i => $key) {
+				$playerInfo['custom'][$key] = isset($values[$i]) ? $values[$i] : null;
+			}
+		}
+		$this->player_model->updatePlayer($pb_player_id, $this->validToken['site_id'], $playerInfo);
+		$this->response($this->resp->setRespond(), 200);
+	}
 	public function delete_post($player_id = '')
 	{
 		if(!$player_id)
