@@ -15,7 +15,7 @@ define('S3_FOLDER', 'log/playbasis_web_service_log');
 define('DAYS_TO_BECOME_ACTIVE', 3);
 
 define('ENERGY_UPDATER_THRESHOLD', 5);
-define('LIMIT_PLAYERS_QUERY', 30000);
+define('LIMIT_PLAYERS_QUERY', 20000);
 
 class Cron extends CI_Controller
 {
