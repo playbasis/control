@@ -500,6 +500,7 @@ class jigsaw extends MY_Model
             /* TODO: permissionProcess "redeem" */
             foreach ($config['group_container'] as $conf) {
                 if(is_null($conf['item_id']) || $conf['item_id'] == ''){
+                    if ($conf['reward_name'] == 'exp') continue; // "exp" should not be decreasing
                     $this->updatePlayerPointReward($input['client_id'], $input['site_id'], $conf['reward_id'], $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
                 } else {
                     switch ($conf['reward_name']) {
