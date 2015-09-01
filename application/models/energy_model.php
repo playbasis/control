@@ -61,7 +61,7 @@ class Energy_model extends MY_Model
      * @param $site_id
      * @param $energy_id
      * @param int $mongo_site_id DEPRECATED used to switch between db.
-     * @return array
+     * @return int
      */
     public function countAllPlayersRewardDetailsFromEnergyId($client_id, $site_id, $energy_id, $mongo_site_id = 0)
     {
