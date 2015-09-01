@@ -497,13 +497,14 @@ class jigsaw extends MY_Model
             }
         }
         if ($ok) {
+            /* TODO: permissionProcess "redeem" */
             foreach ($config['group_container'] as $conf) {
                 if(is_null($conf['item_id']) || $conf['item_id'] == ''){
-                    $this->redeemPoint($input['client_id'], $input['site_id'], $conf['reward_id'], $input['pb_player_id'], $input['player_id'], $conf['quantity']);
+                    $this->updatePlayerPointReward($input['client_id'], $input['site_id'], $conf['reward_id'], $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
                 } else {
                     switch ($conf['reward_name']) {
                     case 'badge':
-                        $this->redeemBadge($input['client_id'], $input['site_id'], $conf['item_id'], $input['pb_player_id'], $input['player_id'], $conf['quantity']);
+                        $this->updateplayerBadge($input['client_id'], $input['site_id'], $conf['item_id'], $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
                         break;
                     case 'goods':
                         /* TODO: support goods */
@@ -619,7 +620,8 @@ class jigsaw extends MY_Model
         if ($quantity) $this->mongo_db->where_gte('value', intval($quantity));
         return $this->mongo_db->count('playbasis_reward_to_player');
     }
-    private function redeemPoint($client_id, $site_id, $rewardId, $pb_player_id, $cl_player_id, $quantity=0)
+    /* copied over from client_model */
+    private function updatePlayerPointReward($client_id, $site_id, $rewardId, $pb_player_id, $cl_player_id, $quantity=0)
     {
         $this->set_site_mongodb($site_id);
 
@@ -676,7 +678,8 @@ class jigsaw extends MY_Model
         $this->mongo_db->dec('limit', intval($quantity));
         $this->mongo_db->update('playbasis_reward_to_client');
     }
-    private function redeemBadge($client_id, $site_id, $badgeId, $pb_player_id, $cl_player_id, $quantity=0)
+    /* copied over from client_model */
+    private function updateplayerBadge($client_id, $site_id, $badgeId, $pb_player_id, $cl_player_id, $quantity=0)
     {
         $this->set_site_mongodb($site_id);
 
