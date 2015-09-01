@@ -478,11 +478,11 @@ class jigsaw extends MY_Model
         foreach ($config['group_container'] as $conf) {
             $avail = false;
             if(is_null($conf['item_id']) || $conf['item_id'] == ''){
-                $avail = $this->checkRedeemPoint($input['site_id'], $conf['reward_id'], $input['pb_player_id'], $conf['quantity']);
+                $avail = $this->checkRedeemPoint($input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], intval($conf['quantity']));
             } else {
                 switch ($conf['reward_name']) {
                 case 'badge':
-                    $avail = $this->checkRedeemBadge($input['site_id'], $conf['item_id'], $input['pb_player_id'], $conf['quantity']);
+                    $avail = $this->checkRedeemBadge($input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], intval($conf['quantity']));
                     break;
                 case 'goods':
                     /* TODO: support goods */
@@ -501,11 +501,11 @@ class jigsaw extends MY_Model
             foreach ($config['group_container'] as $conf) {
                 if(is_null($conf['item_id']) || $conf['item_id'] == ''){
                     if ($conf['reward_name'] == 'exp') continue; // "exp" should not be decreasing
-                    $this->updatePlayerPointReward($input['client_id'], $input['site_id'], $conf['reward_id'], $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
+                    $this->updatePlayerPointReward($input['client_id'], $input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
                 } else {
                     switch ($conf['reward_name']) {
                     case 'badge':
-                        $this->updateplayerBadge($input['client_id'], $input['site_id'], $conf['item_id'], $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
+                        $this->updateplayerBadge($input['client_id'], $input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
                         break;
                     case 'goods':
                         /* TODO: support goods */
@@ -608,7 +608,7 @@ class jigsaw extends MY_Model
             'reward_id' => new MongoId($rewardId),
             'pb_player_id' => $pb_player_id,
         ));
-        if ($quantity) $this->mongo_db->where_gte('value', intval($quantity));
+        if ($quantity) $this->mongo_db->where_gte('value', $quantity);
         return $this->mongo_db->count('playbasis_reward_to_player');
     }
     private function checkRedeemBadge($site_id, $badgeId, $pb_player_id, $quantity=0)
@@ -618,7 +618,7 @@ class jigsaw extends MY_Model
             'badge_id' => new MongoId($badgeId),
             'pb_player_id' => $pb_player_id,
         ));
-        if ($quantity) $this->mongo_db->where_gte('value', intval($quantity));
+        if ($quantity) $this->mongo_db->where_gte('value', $quantity);
         return $this->mongo_db->count('playbasis_reward_to_player');
     }
     /* copied over from client_model */
