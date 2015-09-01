@@ -476,7 +476,20 @@ class jigsaw extends MY_Model
         $this->set_site_mongodb($input['site_id']);
         $ok = true;
         foreach ($config['group_container'] as $conf) {
-            $avail = !empty($conf['item_id']) ? $this->checkRedeemBadge($input['site_id'], $conf['item_id'], $input['pb_player_id'], $conf['quantity']) : $this->checkRedeemPoint($input['site_id'], $conf['reward_id'], $input['pb_player_id'], $conf['quantity']);
+            $avail = false;
+            if(is_null($conf['item_id']) || $conf['item_id'] == ''){
+                $avail = $this->checkRedeemPoint($input['site_id'], $conf['reward_id'], $input['pb_player_id'], $conf['quantity']);
+            } else {
+                switch ($conf['reward_name']) {
+                case 'badge':
+                    $avail = $this->checkRedeemBadge($input['site_id'], $conf['item_id'], $input['pb_player_id'], $conf['quantity']);
+                    break;
+                case 'goods':
+                    break;
+                default:
+                    break;
+                }
+            }
             if (!$avail) {
                 $ok = false;
                 break;
