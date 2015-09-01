@@ -474,7 +474,7 @@ class jigsaw extends MY_Model
     public function redeem($config, $input, &$exInfo = array())
     {
         $this->set_site_mongodb($input['site_id']);
-        $ok = true;
+        $ok = true; // default is true
         foreach ($config['group_container'] as $conf) {
             $avail = false;
             if(is_null($conf['item_id']) || $conf['item_id'] == ''){
@@ -485,6 +485,7 @@ class jigsaw extends MY_Model
                     $avail = $this->checkRedeemBadge($input['site_id'], $conf['item_id'], $input['pb_player_id'], $conf['quantity']);
                     break;
                 case 'goods':
+                    /* TODO: support goods */
                     break;
                 default:
                     break;
@@ -497,10 +498,19 @@ class jigsaw extends MY_Model
         }
         if ($ok) {
             foreach ($config['group_container'] as $conf) {
-                if (isset($conf['item_id'])) {
-                    $this->redeemBadge($input['client_id'], $input['site_id'], $conf['badge_id'], $input['pb_player_id'], $input['player_id'], $conf['value']);
+                if(is_null($conf['item_id']) || $conf['item_id'] == ''){
+                    $this->redeemPoint($input['client_id'], $input['site_id'], $conf['reward_id'], $input['pb_player_id'], $input['player_id'], $conf['quantity']);
                 } else {
-                    $this->redeemPoint($input['client_id'], $input['site_id'], $conf['reward_id'], $input['pb_player_id'], $input['player_id'], $conf['value']);
+                    switch ($conf['reward_name']) {
+                    case 'badge':
+                        $this->redeemBadge($input['client_id'], $input['site_id'], $conf['item_id'], $input['pb_player_id'], $input['player_id'], $conf['quantity']);
+                        break;
+                    case 'goods':
+                        /* TODO: support goods */
+                        break;
+                    default:
+                        break;
+                    }
                 }
             }
         }
