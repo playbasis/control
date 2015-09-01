@@ -471,53 +471,53 @@ class jigsaw extends MY_Model
 		}
 		return false; // should not reach this line
 	}
-    public function redeem($config, $input, &$exInfo = array())
-    {
-        $this->set_site_mongodb($input['site_id']);
-        $ok = true; // default is true
-        foreach ($config['group_container'] as $conf) {
-            $avail = false;
-            if(is_null($conf['item_id']) || $conf['item_id'] == ''){
-                $avail = $this->checkRedeemPoint($input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], intval($conf['quantity']));
-            } else {
-                switch ($conf['reward_name']) {
-                case 'badge':
-                    $avail = $this->checkRedeemBadge($input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], intval($conf['quantity']));
-                    break;
-                case 'goods':
-                    /* TODO: support goods */
-                    break;
-                default:
-                    break;
-                }
-            }
-            if (!$avail) {
-                $ok = false;
-                break;
-            }
-        }
-        if ($ok) {
-            /* TODO: permissionProcess "redeem" */
-            foreach ($config['group_container'] as $conf) {
-                if(is_null($conf['item_id']) || $conf['item_id'] == ''){
-                    if ($conf['reward_name'] == 'exp') continue; // "exp" should not be decreasing
-                    $this->updatePlayerPointReward($input['client_id'], $input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
-                } else {
-                    switch ($conf['reward_name']) {
-                    case 'badge':
-                        $this->updateplayerBadge($input['client_id'], $input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
-                        break;
-                    case 'goods':
-                        /* TODO: support goods */
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
-        return $ok;
-    }
+	public function redeem($config, $input, &$exInfo = array())
+	{
+		$this->set_site_mongodb($input['site_id']);
+		$ok = true; // default is true
+		foreach ($config['group_container'] as $conf) {
+			$avail = false;
+			if(is_null($conf['item_id']) || $conf['item_id'] == ''){
+				$avail = $this->checkRedeemPoint($input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], intval($conf['quantity']));
+			} else {
+				switch ($conf['reward_name']) {
+				case 'badge':
+					$avail = $this->checkRedeemBadge($input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], intval($conf['quantity']));
+					break;
+				case 'goods':
+					/* TODO: support goods */
+					break;
+				default:
+					break;
+				}
+			}
+			if (!$avail) {
+				$ok = false;
+				break;
+			}
+		}
+		if ($ok) {
+			/* TODO: permissionProcess "redeem" */
+			foreach ($config['group_container'] as $conf) {
+				if(is_null($conf['item_id']) || $conf['item_id'] == ''){
+					if ($conf['reward_name'] == 'exp') continue; // "exp" should not be decreasing
+					$this->updatePlayerPointReward($input['client_id'], $input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
+				} else {
+					switch ($conf['reward_name']) {
+					case 'badge':
+						$this->updateplayerBadge($input['client_id'], $input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
+						break;
+					case 'goods':
+						/* TODO: support goods */
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		return $ok;
+	}
 	public function getMostRecentJigsaw($input, $fields)
 	{
 		assert(isset($input['site_id']));
@@ -601,172 +601,172 @@ class jigsaw extends MY_Model
 
 		return $result['limit'] > 0;
 	}
-    private function checkRedeemPoint($site_id, $rewardId, $pb_player_id, $quantity=0)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->where(array(
-            'reward_id' => new MongoId($rewardId),
-            'pb_player_id' => $pb_player_id,
-        ));
-        if ($quantity) $this->mongo_db->where_gte('value', $quantity);
-        return $this->mongo_db->count('playbasis_reward_to_player');
-    }
-    private function checkRedeemBadge($site_id, $badgeId, $pb_player_id, $quantity=0)
-    {
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->where(array(
-            'badge_id' => new MongoId($badgeId),
-            'pb_player_id' => $pb_player_id,
-        ));
-        if ($quantity) $this->mongo_db->where_gte('value', $quantity);
-        return $this->mongo_db->count('playbasis_reward_to_player');
-    }
-    /* copied over from client_model */
-    private function updatePlayerPointReward($client_id, $site_id, $rewardId, $pb_player_id, $cl_player_id, $quantity=0)
-    {
-        $this->set_site_mongodb($site_id);
+	private function checkRedeemPoint($site_id, $rewardId, $pb_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'reward_id' => new MongoId($rewardId),
+			'pb_player_id' => $pb_player_id,
+		));
+		if ($quantity) $this->mongo_db->where_gte('value', $quantity);
+		return $this->mongo_db->count('playbasis_reward_to_player');
+	}
+	private function checkRedeemBadge($site_id, $badgeId, $pb_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'badge_id' => new MongoId($badgeId),
+			'pb_player_id' => $pb_player_id,
+		));
+		if ($quantity) $this->mongo_db->where_gte('value', $quantity);
+		return $this->mongo_db->count('playbasis_reward_to_player');
+	}
+	/* copied over from client_model */
+	private function updatePlayerPointReward($client_id, $site_id, $rewardId, $pb_player_id, $cl_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
 
-        // check anonymous player
-        $this->mongo_db->where('_id', $pb_player_id);
-        $anon_result = $this->mongo_db->get('playbasis_player');
-        $anon_flag = isset($anon_result[0]['anonymous_flag']) ? $anon_result[0]['anonymous_flag'] : false;
+		// check anonymous player
+		$this->mongo_db->where('_id', $pb_player_id);
+		$anon_result = $this->mongo_db->get('playbasis_player');
+		$anon_flag = isset($anon_result[0]['anonymous_flag']) ? $anon_result[0]['anonymous_flag'] : false;
 
-        // update player reward table
-        $this->mongo_db->where(array(
-            'pb_player_id' => $pb_player_id,
-            'reward_id' => $rewardId
-        ));
-        $hasReward = $this->mongo_db->count('playbasis_reward_to_player');
-        if ($hasReward) {
-            $this->mongo_db->where(array(
-                'pb_player_id' => $pb_player_id,
-                'reward_id' => $rewardId
-            ));
-            $this->mongo_db->set('date_modified', new MongoDate(time()));
-            $this->mongo_db->inc('value', intval($quantity));
-            $this->mongo_db->update('playbasis_reward_to_player');
-        } else {
-            $mongoDate = new MongoDate(time());
-            $this->mongo_db->insert('playbasis_reward_to_player', array(
-                'pb_player_id' => $pb_player_id,
-                'cl_player_id' => $cl_player_id,
-                'client_id' => $client_id,
-                'site_id' => $site_id,
-                'reward_id' => $rewardId,
-                'value' => intval($quantity),
-                'date_added' => $mongoDate,
-                'date_modified' => $mongoDate
-            ));
-        }
+		// update player reward table
+		$this->mongo_db->where(array(
+			'pb_player_id' => $pb_player_id,
+			'reward_id' => $rewardId
+		));
+		$hasReward = $this->mongo_db->count('playbasis_reward_to_player');
+		if ($hasReward) {
+			$this->mongo_db->where(array(
+				'pb_player_id' => $pb_player_id,
+				'reward_id' => $rewardId
+			));
+			$this->mongo_db->set('date_modified', new MongoDate(time()));
+			$this->mongo_db->inc('value', intval($quantity));
+			$this->mongo_db->update('playbasis_reward_to_player');
+		} else {
+			$mongoDate = new MongoDate(time());
+			$this->mongo_db->insert('playbasis_reward_to_player', array(
+				'pb_player_id' => $pb_player_id,
+				'cl_player_id' => $cl_player_id,
+				'client_id' => $client_id,
+				'site_id' => $site_id,
+				'reward_id' => $rewardId,
+				'value' => intval($quantity),
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate
+			));
+		}
 
-        // update client reward limit
-        if ($anon_flag) return;
-        $this->mongo_db->select(array('limit'));
-        $this->mongo_db->where(array(
-            'reward_id' => $rewardId,
-            'site_id' => $site_id
-        ));
-        $this->mongo_db->limit(1);
-        $result = $this->mongo_db->get('playbasis_reward_to_client');
-        assert($result);
-        $result = $result[0];
-        if(is_null($result['limit']))
-            return;
-        $this->mongo_db->where(array(
-            'reward_id' => $rewardId,
-            'site_id' => $site_id
-        ));
-        $this->mongo_db->dec('limit', intval($quantity));
-        $this->mongo_db->update('playbasis_reward_to_client');
-    }
-    /* copied over from client_model */
-    private function updateplayerBadge($client_id, $site_id, $badgeId, $pb_player_id, $cl_player_id, $quantity=0)
-    {
-        $this->set_site_mongodb($site_id);
+		// update client reward limit
+		if ($anon_flag) return;
+		$this->mongo_db->select(array('limit'));
+		$this->mongo_db->where(array(
+			'reward_id' => $rewardId,
+			'site_id' => $site_id
+		));
+		$this->mongo_db->limit(1);
+		$result = $this->mongo_db->get('playbasis_reward_to_client');
+		assert($result);
+		$result = $result[0];
+		if(is_null($result['limit']))
+			return;
+		$this->mongo_db->where(array(
+			'reward_id' => $rewardId,
+			'site_id' => $site_id
+		));
+		$this->mongo_db->dec('limit', intval($quantity));
+		$this->mongo_db->update('playbasis_reward_to_client');
+	}
+	/* copied over from client_model */
+	private function updateplayerBadge($client_id, $site_id, $badgeId, $pb_player_id, $cl_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
 
-        // check anonymous player
-        $this->mongo_db->where('_id', $pb_player_id);
-        $anon_result = $this->mongo_db->get('playbasis_player');
-        $anon_flag = isset($anon_result[0]['anonymous_flag']) ? $anon_result[0]['anonymous_flag'] : false;
+		// check anonymous player
+		$this->mongo_db->where('_id', $pb_player_id);
+		$anon_result = $this->mongo_db->get('playbasis_player');
+		$anon_flag = isset($anon_result[0]['anonymous_flag']) ? $anon_result[0]['anonymous_flag'] : false;
 
-        // update badge master table
-        $this->set_site_mongodb($site_id);
-        $this->mongo_db->select(array(
-            'substract',
-            'quantity',
-            'claim',
-            'redeem'
-        ));
-        $this->mongo_db->where(array(
-            'client_id' => $client_id,
-            'site_id' => $site_id,
-            'badge_id' => $badgeId,
-            'deleted' => false
-        ));
-        $this->mongo_db->limit(1);
-        $result = $this->mongo_db->get('playbasis_badge_to_client');
-        if (!$result)
-            return;
-        $badgeInfo = $result[0];
-        $mongoDate = new MongoDate(time());
-        if (!$anon_flag && isset($badgeInfo['substract']) && $badgeInfo['substract']) {
-            $remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
-            if($remainingQuantity < 0)
-            {
-                $remainingQuantity = 0;
-                $quantity = $badgeInfo['quantity'];
-            }
-            $this->mongo_db->set('quantity', $remainingQuantity);
-            $this->mongo_db->set('date_modified', $mongoDate);
-            $this->mongo_db->where('client_id', $client_id);
-            $this->mongo_db->where('site_id', $site_id);
-            $this->mongo_db->where('badge_id', $badgeId);
-            $this->mongo_db->update('playbasis_badge_to_client');
-        }
+		// update badge master table
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'substract',
+			'quantity',
+			'claim',
+			'redeem'
+		));
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'badge_id' => $badgeId,
+			'deleted' => false
+		));
+		$this->mongo_db->limit(1);
+		$result = $this->mongo_db->get('playbasis_badge_to_client');
+		if (!$result)
+			return;
+		$badgeInfo = $result[0];
+		$mongoDate = new MongoDate(time());
+		if (!$anon_flag && isset($badgeInfo['substract']) && $badgeInfo['substract']) {
+			$remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
+			if($remainingQuantity < 0)
+			{
+				$remainingQuantity = 0;
+				$quantity = $badgeInfo['quantity'];
+			}
+			$this->mongo_db->set('quantity', $remainingQuantity);
+			$this->mongo_db->set('date_modified', $mongoDate);
+			$this->mongo_db->where('client_id', $client_id);
+			$this->mongo_db->where('site_id', $site_id);
+			$this->mongo_db->where('badge_id', $badgeId);
+			$this->mongo_db->update('playbasis_badge_to_client');
+		}
 
-        // update player badge table
-        $this->mongo_db->where(array(
-            'pb_player_id' => $pb_player_id,
-            'badge_id' => $badgeId
-        ));
-        $hasBadge = $this->mongo_db->count('playbasis_reward_to_player');
-        if ($hasBadge) {
-            $this->mongo_db->where(array(
-                'pb_player_id' => $pb_player_id,
-                'badge_id' => $badgeId
-            ));
-            $this->mongo_db->set('date_modified', $mongoDate);
-            if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
-            {
-                $this->mongo_db->inc('claimed', intval($quantity));
-            }else{
-                $this->mongo_db->inc('value', intval($quantity));
-            }
-            $this->mongo_db->update('playbasis_reward_to_player');
-        } else {
-            $data = array(
-                'pb_player_id' => $pb_player_id,
-                'cl_player_id' => $cl_player_id,
-                'client_id' => $client_id,
-                'site_id' => $site_id,
-                'badge_id' => $badgeId,
-                'redeemed' => 0,
-                'date_added' => $mongoDate,
-                'date_modified' => $mongoDate
-            );
-            if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
-            {
-                $data['value'] = 0;
-                $data['claimed'] = intval($quantity);
-            }else{
-                $data['value'] = intval($quantity);
-                $data['claimed'] = 0;
-            }
-            $this->mongo_db->insert('playbasis_reward_to_player', $data);
-        }
-    }
+		// update player badge table
+		$this->mongo_db->where(array(
+			'pb_player_id' => $pb_player_id,
+			'badge_id' => $badgeId
+		));
+		$hasBadge = $this->mongo_db->count('playbasis_reward_to_player');
+		if ($hasBadge) {
+			$this->mongo_db->where(array(
+				'pb_player_id' => $pb_player_id,
+				'badge_id' => $badgeId
+			));
+			$this->mongo_db->set('date_modified', $mongoDate);
+			if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
+			{
+				$this->mongo_db->inc('claimed', intval($quantity));
+			}else{
+				$this->mongo_db->inc('value', intval($quantity));
+			}
+			$this->mongo_db->update('playbasis_reward_to_player');
+		} else {
+			$data = array(
+				'pb_player_id' => $pb_player_id,
+				'cl_player_id' => $cl_player_id,
+				'client_id' => $client_id,
+				'site_id' => $site_id,
+				'badge_id' => $badgeId,
+				'redeemed' => 0,
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate
+			);
+			if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
+			{
+				$data['value'] = 0;
+				$data['claimed'] = intval($quantity);
+			}else{
+				$data['value'] = intval($quantity);
+				$data['claimed'] = 0;
+			}
+			$this->mongo_db->insert('playbasis_reward_to_player', $data);
+		}
+	}
 //	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
-    private function matchUrl($inputUrl, $compareUrl)
+	private function matchUrl($inputUrl, $compareUrl)
 	{
 		// return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
 
