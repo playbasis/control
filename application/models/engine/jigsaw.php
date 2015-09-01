@@ -593,7 +593,7 @@ class jigsaw extends MY_Model
 	private function checkGoods($goodsId, $pb_player_id, $site_id, $quantity=0)
 	{
 		if (!$quantity) return true;
-		$goods = $this->getGoods($site_id, $goodsId); // next, try to get from normal goods
+		$goods = $this->getGoods($site_id, $goodsId);
 		if (!$goods) return false;
 		$total = isset($goods['group']) ? $this->getGroupQuantity($site_id, $goods['group']) : $goods['quantity'];
 		$max = $goods['per_user'];
