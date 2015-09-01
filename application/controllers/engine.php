@@ -10,14 +10,14 @@ class Engine extends Quest
 	{
 		parent::__construct();
 		$this->load->model('auth_model');
-        $this->load->model('push_model');
+		$this->load->model('push_model');
 		$this->load->model('player_model');
 		$this->load->model('action_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
-        $this->load->model('goods_model');
+		$this->load->model('goods_model');
 		$this->load->model('social_model');
 		$this->load->model('email_model');
 		$this->load->model('sms_model');
@@ -67,11 +67,11 @@ class Engine extends Quest
 			}
 			else
 			{
-                $actionName = $this->client_model->getActionName(array(
-                    'client_id' => $validToken['client_id'],
-                    'site_id' => $validToken['site_id'],
-                    'action_id' => new MongoId($jigsawSet[0]['config']['action_id'])
-                ));
+				$actionName = $this->client_model->getActionName(array(
+					'client_id' => $validToken['client_id'],
+					'site_id' => $validToken['site_id'],
+					'action_id' => new MongoId($jigsawSet[0]['config']['action_id'])
+				));
 				$actionConfig[$actionId] = array(
 					'name' => $actionName,
 					'config' => array(
@@ -184,22 +184,15 @@ class Engine extends Quest
 			if($pb_player_id < 0)
 				$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 			$actionName = $fbData['action'];
-//			$actionId = $this->client_model->getActionId(array(
-//				'client_id' => $validToken['client_id'],
-//				'site_id' => $validToken['site_id'],
-//				'action_name' => $actionName
-//			));
-//            if(!$actionId)
-//                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-            $action = $this->client_model->getAction(array(
-                'client_id' => $validToken['client_id'],
-                'site_id' => $validToken['site_id'],
-                'action_name' => $actionName
-            ));
+			$action = $this->client_model->getAction(array(
+				'client_id' => $validToken['client_id'],
+				'site_id' => $validToken['site_id'],
+				'action_name' => $actionName
+			));
 			if(!$action)
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-            $actionId = $action['action_id'];
-            $actionIcon = $action['icon'];
+			$actionId = $action['action_id'];
+			$actionIcon = $action['icon'];
 			$input = array_merge($validToken, array(
 				'pb_player_id' => $pb_player_id,
 				'action_id' => $actionId,
@@ -221,119 +214,103 @@ class Engine extends Quest
 				if($pb_player_id < 0)
 					continue;
 				$actionName = $twData['action'];
-//				$actionId = $this->client_model->getActionId(array(
-//					'client_id' => $validToken['client_id'],
-//					'site_id' => $validToken['site_id'],
-//					'action_name' => $actionName
-//				));
-//				if(!$actionId)
-//					continue;
-                $action = $this->client_model->getAction(array(
-                    'client_id' => $validToken['client_id'],
-                    'site_id' => $validToken['site_id'],
-                    'action_name' => $actionName
-                ));
-                if(!$action)
-                    continue;
-                $actionId = $action['action_id'];
-                $actionIcon = $action['icon'];
-                $input = array_merge($validToken, array(
-                    'pb_player_id' => $pb_player_id,
-                    'action_id' => $actionId,
-                    'action_name' => $actionName,
-                    'action_icon' => $actionIcon
-                ));
+				$action = $this->client_model->getAction(array(
+					'client_id' => $validToken['client_id'],
+					'site_id' => $validToken['site_id'],
+					'action_name' => $actionName
+				));
+				if(!$action)
+					continue;
+				$actionId = $action['action_id'];
+				$actionIcon = $action['icon'];
+				$input = array_merge($validToken, array(
+					'pb_player_id' => $pb_player_id,
+					'action_id' => $actionId,
+					'action_name' => $actionName,
+					'action_icon' => $actionIcon
+				));
 				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 			}
 		}
 		else
 		{
-            $test = $this->input->post("test");
+			$test = $this->input->post("test");
+			$required = NULL;
 
-            $required = NULL;
 			//process regular data
-            if (!$test)
-                $required = $this->input->checkParam(array('token'));
-
+			if (!$test)
+				$required = $this->input->checkParam(array('token'));
 			if($required)
 				$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 
-            if (!$test)
-                $required = $this->input->checkParam(array('action', 'player_id'));
-
+			if (!$test)
+				$required = $this->input->checkParam(array('action', 'player_id'));
 			if($required)
 				$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
-            if (!$test)
-                $validToken = $this->auth_model->findToken($this->input->post('token'));
-            else
-                $validToken = array("client_id" => new MongoId($this->input->post("client_id")),
-                                    "site_id" => new MongoId($this->input->post("site_id")),
-                                    "domain_name" => NULL);
-
+			if (!$test)
+				$validToken = $this->auth_model->findToken($this->input->post('token'));
+			else
+				$validToken = array(
+					"client_id" => new MongoId($this->input->post("client_id")),
+					"site_id" => new MongoId($this->input->post("site_id")),
+					"domain_name" => NULL
+				);
 			if(!$validToken)
 				$this->response($this->error->setError('INVALID_TOKEN'), 200);
 
 			//get playbasis player id from client player id
-            $pb_player_id = array();
-            if (!$test) {
-                $cl_player_id = $this->input->post('player_id');
-                $pb_player_id = $this->player_model->getPlaybasisId(
-                    array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
-            }
+			$pb_player_id = array();
+			if (!$test) {
+				$cl_player_id = $this->input->post('player_id');
+				$pb_player_id = $this->player_model->getPlaybasisId(
+					array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
+			}
 
-            if(!$pb_player_id && !$test)
-            {
-                log_message('error', '[debug-case-pbapp_auto_user] player_id = '.$this->input->post('player_id').', action = '.$this->input->post('action'));
-                //$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-                //create user with tmp data for this id
-                $pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-                    'player_id' => $cl_player_id,
-                    'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
-                    'email' => 'pbapp_auto_user@playbasis.com',
-                    'username' => $cl_player_id,
-                    'first_name' => $cl_player_id,
-                    'nickname' => $cl_player_id,
-                )));
-            }
+			if(!$pb_player_id && !$test)
+			{
+				log_message('error', '[debug-case-pbapp_auto_user] player_id = '.$this->input->post('player_id').', action = '.$this->input->post('action'));
+				//$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+				//create user with tmp data for this id
+				$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+					'player_id' => $cl_player_id,
+					'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
+					'email' => 'pbapp_auto_user@playbasis.com',
+					'username' => $cl_player_id,
+					'first_name' => $cl_player_id,
+					'nickname' => $cl_player_id,
+				)));
+			}
 
-            //get action id by action name
-            $actionName = $this->input->post('action');
-//            $actionId = $this->client_model->getActionId(array(
-//                'client_id' => $validToken['client_id'],
-//                'site_id' => $validToken['site_id'],
-//                'action_name' => $actionName
-//            ));
-//            if(!$actionId)
-//                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+			//get action id by action name
+			$actionName = $this->input->post('action');
+			$action = $this->client_model->getAction(array(
+				'client_id' => $validToken['client_id'],
+				'site_id' => $validToken['site_id'],
+				'action_name' => $actionName
+			));
+			if(!$action)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+			$actionId = $action['action_id'];
+			$actionIcon = $action['icon'];
 
-            $action = $this->client_model->getAction(array(
-                'client_id' => $validToken['client_id'],
-                'site_id' => $validToken['site_id'],
-                'action_name' => $actionName
-            ));
-            if(!$action)
-                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-            $actionId = $action['action_id'];
-            $actionIcon = $action['icon'];
+			$postData = $this->input->post();
+			$input = array_merge($postData, $validToken, array(
+				'pb_player_id' => $pb_player_id,
+				'action_id' => $actionId,
+				'action_name' => $actionName,
+				'action_icon' => $actionIcon
+			));
+			if (!$test)
+				$input["test"] = false;
 
-            $postData = $this->input->post();
-            $input = array_merge($postData, $validToken, array(
-                'pb_player_id' => $pb_player_id,
-                'action_id' => $actionId,
-                'action_name' => $actionName,
-                'action_icon' => $actionIcon
-            ));
-            if (!$test)
-                $input["test"] = false;
-
-            $apiResult = $this->processRule($input, $validToken, $fbData, $twData);
-        }
-        //Quest Process
-        if (!$test){
-            $apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
-            $apiResult = array_merge($apiResult, $apiQuestResult);
-        }
+			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+		}
+		//Quest Process
+		if (!$test){
+			$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+			$apiResult = array_merge($apiResult, $apiQuestResult);
+		}
 
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
@@ -373,11 +350,11 @@ class Engine extends Quest
 		$site_id = $validToken['site_id'];
 		$domain_name = $validToken['domain_name'];
 
-        $player = array(
-            'pb_player_id' =>$input['pb_player_id'],
-            'client_id' => $client_id ,
-            'site_id' => $site_id
-        );
+		$player = array(
+			'pb_player_id' =>$input['pb_player_id'],
+			'client_id' => $client_id ,
+			'site_id' => $site_id
+		);
 
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
@@ -422,11 +399,11 @@ class Engine extends Quest
 			$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set']: array();
 
 			foreach($jigsawSet as $jigsaw) {
-                try {
-                    $jigsaw_id = new MongoId($jigsaw['id']);
-                } catch (MongoException $ex) {
-                    $jigsaw_id = "";
-                }
+				try {
+					$jigsaw_id = new MongoId($jigsaw['id']);
+				} catch (MongoException $ex) {
+					$jigsaw_id = "";
+				}
 
 				$input['jigsaw_id'] = $jigsaw_id;
 				$input['jigsaw_name'] = $jigsaw['name'];
@@ -476,12 +453,12 @@ class Engine extends Quest
 							assert('$exInfo["dynamic"]["reward_name"]');
 							assert('$exInfo["dynamic"]["quantity"]');
 
-                            if (!$input["test"])
-                                $lv = $this->client_model->updateCustomReward(
-                                    $exInfo['dynamic']['reward_name'],
-                                    $exInfo['dynamic']['quantity'],
-                                    $input,
-                                    $jigsawConfig);
+							if (!$input["test"])
+								$lv = $this->client_model->updateCustomReward(
+									$exInfo['dynamic']['reward_name'],
+									$exInfo['dynamic']['quantity'],
+									$input,
+									$jigsawConfig);
 
 							$event = array(
 								'event_type' => 'REWARD_RECEIVED',
