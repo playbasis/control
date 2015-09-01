@@ -476,7 +476,7 @@ class jigsaw extends MY_Model
         $this->set_site_mongodb($input['site_id']);
         $ok = true;
         foreach ($config['group_container'] as $conf) {
-            $avail = isset($conf['item_id']) ? $this->checkRedeemBadge($input['site_id'], $conf['badge_id'], $input['pb_player_id'], $conf['value']) : $this->checkRedeemPoint($input['site_id'], $conf['reward_id'], $input['pb_player_id'], $conf['value']);
+            $avail = !empty($conf['item_id']) ? $this->checkRedeemBadge($input['site_id'], $conf['item_id'], $input['pb_player_id'], $conf['quantity']) : $this->checkRedeemPoint($input['site_id'], $conf['reward_id'], $input['pb_player_id'], $conf['quantity']);
             if (!$avail) {
                 $ok = false;
                 break;
@@ -576,24 +576,24 @@ class jigsaw extends MY_Model
 
 		return $result['limit'] > 0;
 	}
-    private function checkRedeemPoint($site_id, $rewardId, $pb_player_id, $value=0)
+    private function checkRedeemPoint($site_id, $rewardId, $pb_player_id, $quantity=0)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
-            'reward_id' => $rewardId,
+            'reward_id' => new MongoId($rewardId),
             'pb_player_id' => $pb_player_id,
         ));
-        if ($value) $this->mongo_db->where_gte('value', $value);
+        if ($quantity) $this->mongo_db->where_gte('value', intval($quantity));
         return $this->mongo_db->count('playbasis_reward_to_player');
     }
-    private function checkRedeemBadge($site_id, $badgeId, $pb_player_id, $value=0)
+    private function checkRedeemBadge($site_id, $badgeId, $pb_player_id, $quantity=0)
     {
         $this->set_site_mongodb($site_id);
         $this->mongo_db->where(array(
-            'badge_id' => $badgeId,
+            'badge_id' => new MongoId($badgeId),
             'pb_player_id' => $pb_player_id,
         ));
-        if ($value) $this->mongo_db->where_gte('value', $value);
+        if ($quantity) $this->mongo_db->where_gte('value', intval($quantity));
         return $this->mongo_db->count('playbasis_reward_to_player');
     }
     private function redeemPoint($client_id, $site_id, $rewardId, $pb_player_id, $cl_player_id, $quantity=0)
