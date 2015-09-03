@@ -12,8 +12,6 @@ class Payment_model extends MY_Model
 	}
 
 	public function processVerifiedIPN($client_id, $plan_id, $POST, $log_id) {
-	    $this->set_site_mongodb($this->session->userdata('site_id'));
-
 		/* find details of the client */
 		$client = $this->getClientById($client_id);
 
@@ -123,20 +121,13 @@ class Payment_model extends MY_Model
 	}
 
 	public function processVerifiedStripe($client_id, $plan_id, $POST, $log_id) {
-
-		$this->set_site_mongodb($this->session->userdata('site_id'));
-
-		if (!isset($event['id'])) return false;
-		$event_id = $event['id'];
+		if (!isset($POST['id'])) return false;
+		$event_id = $POST['id'];
 
 		/* Guard against duplicated events */
-		if ($this->existStripeEvent($event_id)) {
-			log_message('error', 'Duplicated Stripe events: '.$event_id);
-			$this->response($this->error->setError('DUPLICATED_STRIPE_EVENTS'), 400);
-		}
-		$this->insertStripeEvent($event_id, $event);
+		if ($this->existStripeEvent($event_id)) return false;
+		$this->insertStripeEvent($event_id, $POST);
 
-return false;
 		/* find details of the client */
 		$client = $this->getClientById($client_id);
 
@@ -259,11 +250,11 @@ return false;
     }
 
     public function insertStripeEvent($event_id, $event) {
-        $this->mongo_db->insert('playbasis_stripe_log', array_merge($event, array(
+        $this->mongo_db->insert('playbasis_stripe_log', array(
             '_id' => $event_id,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate(),
-        )));
+        ));
     }
 
 	public function getPlanIdByClientId($client_id) {
