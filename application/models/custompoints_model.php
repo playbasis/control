@@ -45,8 +45,8 @@ class Custompoints_model extends MY_Model
             'is_custom' => true,
             'init_dataset' => array($field1, $field2, $field3),
             'type' => $data['type'],
-            'date_added' => new MongoDate(now()),
-            'date_modified' => new MongoDate(now())
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
         );
 
         if ($data['type'] != 'normal') {
@@ -149,7 +149,7 @@ class Custompoints_model extends MY_Model
             $this->mongo_db->unset_field('energy_props');
         }
 
-        $this->mongo_db->set('date_modified', new MongoDate(now()));
+        $this->mongo_db->set('date_modified', new MongoDate());
 
         $update = $this->mongo_db->update('playbasis_reward_to_client');
 
