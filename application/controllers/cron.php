@@ -15,7 +15,7 @@ define('S3_FOLDER', 'log/playbasis_web_service_log');
 define('DAYS_TO_BECOME_ACTIVE', 3);
 
 define('ENERGY_UPDATER_THRESHOLD', 5);
-define('LIMIT_PLAYERS_QUERY', 20000);
+define('LIMIT_PLAYERS_QUERY', 10000);
 
 class Cron extends CI_Controller
 {
@@ -404,86 +404,79 @@ $email = 'pechpras@playbasis.com';
 
         $now = now();
 
-        //todo (rook): uncommented cli check before production
+        if ($this->input->is_cli_request()) {
+            foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
+                $client_id = $energy['client_id'];
+                $site_id = $energy['site_id'];
+                $energy_reward_id = $energy['reward_id'];
+                $energy_change_period = $energy['energy_props']['changing_period'];
+                $energy_change_per_period = (int)$energy['energy_props']['changing_per_period'];
+
+                //FIXME(Rook): to check if client and site is still active, if not just break this loop
+
+                $completed_flag = $this->energy_model->updatePlayersEnergyValueWithConditions($client_id,
+                    $site_id, $energy_reward_id, $now, $energy_change_period, $energy_change_per_period);
+                if ($completed_flag) {
+                    echo "Updated value success!" . PHP_EOL;
+                } else {
+                    echo "Skip update" . PHP_EOL;
+                }
+            }
+        }
+    }
+
+    public function energyInitialInsertion()
+    {
+        $this->load->model('energy_model');
+        $this->load->model('player_model');
+
         if ($this->input->is_cli_request()) {
             foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
                 $client_id = $energy['client_id'];
                 $site_id = $energy['site_id'];
                 $energy_reward_id = $energy['reward_id'];
                 $energy_max = (int)$energy['energy_props']['maximum'];
-                $energy_change_per_period = (int)$energy['energy_props']['changing_per_period'];
 
-                //fixme (rook): to check if client and site is still active, if not just break this loop
+                //FIXME(Rook): to check if client and site is still active, if not just break this loop
 
-                $total = $this->energy_model->countAllPlayersRewardDetailsFromEnergyId($client_id, $site_id,
-                    $energy_reward_id);
-                echo "Total Player with reward = $total" . PHP_EOL;
-                $players_with_energy_pb_player_id = array();
-
+                $total = $this->energy_model->findPlayersToInsert($client_id, $site_id, true);
+                echo "Total Player to insert = $total" . PHP_EOL;
                 for ($i = 0; $i <= round($total / LIMIT_PLAYERS_QUERY); $i++) {
                     $offset = LIMIT_PLAYERS_QUERY * $i;
-                    $all_players_with_energy_details = $this->energy_model->findAllPlayersRewardDetailsFromEnergyId($client_id,
-                        $site_id, $energy_reward_id, $offset, LIMIT_PLAYERS_QUERY);
+                    $players_without_energy = $this->energy_model->findPlayersToInsert($client_id, $site_id, false,
+                        $offset, LIMIT_PLAYERS_QUERY);
 
-                    foreach ($all_players_with_energy_details as $player_with_energy_details) {
-                        array_push($players_with_energy_pb_player_id, $player_with_energy_details['pb_player_id']);
-
-                        $date_modified = $player_with_energy_details['date_modified']->sec;
-
-                        $temp_arr = explode(':', $energy['energy_props']['changing_period']);
-                        $change_period['hours'] = (int)$temp_arr[0];
-                        $change_period['minutes'] = (int)$temp_arr[1];
-                        $change_period['ts'] = (int)(($change_period['minutes'] * 60) + ($change_period['hours'] * 60 * 60));
-
-                        $date_range_min_criteria = $now - $change_period['ts'] - (int)ENERGY_UPDATER_THRESHOLD;
-                        $date_range_max_criteria = $now - $change_period['ts'] + (int)ENERGY_UPDATER_THRESHOLD;
-
-                        $result_date_criteria = ($date_modified >= $date_range_min_criteria && $date_modified <= $date_range_max_criteria);
-
-                        //echo "Mod-Max: " . ($date_modified - $date_range_max_criteria) . PHP_EOL;
-
-                        //filter out if energy is full or last consume is not with in this minutes
-                        if ($energy['type'] == 'gain') {
-                            if ((int)$player_with_energy_details['value'] >= $energy_max || !$result_date_criteria) {
-                                continue;
-                            }
-                        } elseif ($energy['type'] == 'loss') {
-                            if ((int)$player_with_energy_details['value'] <= 0 || !$result_date_criteria) {
-                                continue;
-                            }
-                        }
-
-                        // perform energy update
-                        if ($energy['type'] == 'gain') {
-                            $this->client_model->updatePlayerPointReward($energy_reward_id, $energy_change_per_period,
-                                $player_with_energy_details['pb_player_id'],
-                                $player_with_energy_details['cl_player_id'],
-                                $client_id, $site_id, true);
-                        } elseif ($energy['type'] == 'loss') {
-                            $this->client_model->updatePlayerPointReward($energy_reward_id,
-                                (int)-($energy_change_per_period),
-                                $player_with_energy_details['pb_player_id'],
-                                $player_with_energy_details['cl_player_id'],
-                                $client_id, $site_id, true);
-                        }
-                    }
-                }
-
-                $total = $this->energy_model->countPlayersWithExclusions($client_id, $site_id,
-                    $players_with_energy_pb_player_id);
-                echo "Total Player with exclusions = $total" . PHP_EOL;
-                for ($i = 0; $i <= round($total / LIMIT_PLAYERS_QUERY); $i++) {
-                    $offset = LIMIT_PLAYERS_QUERY * $i;
-                    $players_without_energy = $this->energy_model->findPlayersWithExclusions($client_id, $site_id,
-                        $offset, LIMIT_PLAYERS_QUERY, $players_with_energy_pb_player_id);
+                    $batch_data = array();
                     foreach ($players_without_energy as $player) {
                         // Note: $player here is from player table
                         if ($energy['type'] == 'gain') {
-                            $this->client_model->updatePlayerPointReward($energy_reward_id, $energy_max, $player['_id'],
-                                $player['cl_player_id'], $client_id, $site_id);
+                            array_push($batch_data, array(
+                                'pb_player_id' => $player['_id'],
+                                'cl_player_id' => $player['cl_player_id'],
+                                'client_id' => $client_id,
+                                'site_id' => $site_id,
+                                'reward_id' => $energy_reward_id,
+                                'value' => $energy_max,
+                                'date_added' => new MongoDate(),
+                                'date_modified' => new MongoDate()
+                            ));
                         } elseif ($energy['type'] == 'loss') {
-                            $this->client_model->updatePlayerPointReward($energy_reward_id, 0, $player['_id'],
-                                $player['cl_player_id'], $client_id, $site_id);
+                            array_push($batch_data, array(
+                                'pb_player_id' => $player['_id'],
+                                'cl_player_id' => $player['cl_player_id'],
+                                'client_id' => $client_id,
+                                'site_id' => $site_id,
+                                'reward_id' => $energy_reward_id,
+                                'value' => 0,
+                                'date_added' => new MongoDate(),
+                                'date_modified' => new MongoDate()
+                            ));
+                        }
+                    }
+                    if (!empty($batch_data)) {
+                        $completed_flag = $this->energy_model->bulkInsertInitialValue($batch_data);
+                        if ($completed_flag) {
+                            echo "Bulk Insert Initial value success! at offset#$offset" . PHP_EOL;
                         }
                     }
                 }
