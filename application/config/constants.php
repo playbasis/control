@@ -42,6 +42,10 @@ define('FREE_PLAN', '5428f2df998040b0458b45f2'); // free plan
 define('DEFAULT_PLAN_PRICE', 0); // default is free package
 define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
+define('PAYMENT_CHANNEL_STRIPE', 'Stripe');
+define('PAYMENT_CHANNEL_DEFAULT', PAYMENT_CHANNEL_STRIPE);
+define('STRIPE_API_KEY', 'sk_test_8ChxEiUQyzeiN7OgnnFDBBYG');
+define('STRIPE_PUBLISHABLE_KEY', 'pk_test_1dekH9esZmjybutm3r76RIhG');
 define('PAYPAL_ENV', '');
 define('PAYPAL_IPN_VERIFIED', 'VERIFIED');
 define('PAYPAL_IPN_INVALID', 'INVALID');
@@ -52,6 +56,19 @@ define('PAYPAL_TXN_TYPE_SUBSCR_MODIFY', 'subscr_modify');
 define('PAYPAL_TXN_TYPE_SUBSCR_FAILED', 'subscr_failed');
 define('PAYPAL_TXN_TYPE_SUBSCR_PAYMNT', 'subscr_payment');
 define('PAYPAL_TXN_TYPE_SUBSCR_EOT', 'subscr_eot');
+/* https://stripe.com/docs/api#event_types */
+define('STRIPE_EVT_TYPE_SUBSCR_CREATED', 'customer.subscription.created');
+define('STRIPE_EVT_TYPE_SUBSCR_UPDATED', 'customer.subscription.updated');
+define('STRIPE_EVT_TYPE_SUBSCR_DELETED', 'customer.subscription.deleted');
+define('STRIPE_EVT_TYPE_SUBSCR_TRIAL_WILL_END', 'customer.subscription.trial_will_end');
+define('STRIPE_EVT_TYPE_INVOICE_CREATED', 'invoice.created');
+define('STRIPE_EVT_TYPE_INVOICE_FAILED', 'invoice.payment_failed');
+define('STRIPE_EVT_TYPE_INVOICE_SUCCEEDED', 'invoice.payment_succeeded');
+define('STRIPE_EVT_TYPE_CHARGE_CAPTURED', 'charge.captured');
+define('STRIPE_EVT_TYPE_CHARGE_FAILED', 'charge.failed');
+define('STRIPE_EVT_TYPE_CHARGE_REFUNDED', 'charge.refunded');
+define('STRIPE_EVT_TYPE_CHARGE_SUCCEEDED', 'charge.succeeded');
+define('STRIPE_EVT_TYPE_CHARGE_UPDATED', 'charge.updated');
 /* https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=xpt/Help/popup/StatusTypes */
 define('PAYPAL_PAYMENT_STATUS_COMPLETED', 'Completed'); // Money has been successfully sent to the recipient
 define('PAYPAL_PAYMENT_STATUS_CANCELED', 'Canceled'); // The sender canceled this payment
@@ -99,6 +116,7 @@ define('COMPLETE_QUEST_ACTION', 'complete-quest');
 define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
 
 define('GOOGLE_USER_AGENT', 'APIs-Google');
+define('STRIPE_USER_AGENT', 'Stripe');
 
 define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
 

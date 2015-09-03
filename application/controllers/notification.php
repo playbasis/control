@@ -492,7 +492,66 @@ class Notification extends Engine
 				break;
 			}
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
-		}
+		} else if (strpos($_SERVER['HTTP_USER_AGENT'], STRIPE_USER_AGENT) === false ? false : true) {
+			require_once(APPPATH.'/libraries/stripe/init.php');
+			\Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+			/* Verify that the request is authentic */
+			$event_id = isset($message['id']) ? $message['id'] : null;
+			if (!$event_id) {
+				log_message('error', 'Missing Stripe event id');
+				$this->response($this->error->setError('MISSING_STRIPE_EVENT_ID'), 400);
+			}
+			$event = null;
+			try {
+				$event = \Stripe\Event::retrieve($event_id);
+			} catch (Exception $e) {
+				log_message('error', 'Unknown Stripe event: '.$event_id);
+				$this->response($this->error->setError('INVALID_STRIPE_EVENT'), 404);
+			}
+			/* Extract info */
+			$stripe_id = null;
+			$subscription_id = null;
+			switch ($event['data']['object']['object']) {
+			case 'card': // type: customer.source.created
+				$card_id = $event['data']['object']['id'];
+				$stripe_id = $event['data']['object']['customer'];
+				break;
+			case 'customer': // type: customer.created
+				$stripe_id = $event['data']['object']['id'];
+				break;
+			case 'invoice': // type: invoice.payment_succeeded
+				$invoice_id = $event['data']['object']['id'];
+				$stripe_id = $event['data']['object']['customer'];
+				$subscription_id = $event['data']['object']['subscription'];
+				break;
+			case 'subscription': // type: customer.subscription.created
+				$subscription_id = $event['data']['object']['id'];
+				$stripe_id = $event['data']['object']['customer'];
+				break;
+			default:
+				break;
+			}
+			if (!$stripe_id) {
+				log_message('error', 'Cannot find customer stripe_id for Stripe event: '.$event_id);
+				$this->response($this->error->setError('CANNOT_FIND_STRIPE_ID'), 404);
+			}
+			$client_id = $this->payment_model->getClientIdByStripeId($stripe_id);
+			if (!$client_id) {
+				log_message('error', 'Cannot find customer client_id for stripe_id: '.$stripe_id);
+				$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
+			}
+			$plan_id = null;
+			if ($subscription_id) {
+				$customer = \Stripe\Customer::retrieve($stripe_id);
+				$subscription = $customer->subscriptions->retrieve($subscription_id);
+				$plan = $subscription->plan;
+				$plan_id = new MongoId($plan->id);
+			}
+			/* Process Stripe event */
+			$result = $this->payment_model->processVerifiedStripe($client_id, $plan_id, $event, $log_id);
+			log_message('debug', 'process: result = '.$result);
+			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
+        }
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
 	}
 

@@ -131,6 +131,22 @@ class Error extends CI_Model
             $errorData['message'] = "This Google API is not supported";
             $errorData['error_code'] = '0009';
             break;
+        case 'MISSING_STRIPE_EVENT_ID':
+            $errorData['message'] = "Missing required Stripe event Id";
+            $errorData['error_code'] = '0010';
+            break;
+        case 'INVALID_STRIPE_EVENT':
+            $errorData['message'] = "Invalid Stripe event";
+            $errorData['error_code'] = '0011';
+            break;
+        case 'CANNOT_FIND_STRIPE_ID':
+            $errorData['message'] = "Cannot find Stripe customer ID";
+            $errorData['error_code'] = '0012';
+            break;
+        case 'CANNOT_FIND_CLIENT_ID':
+            $errorData['message'] = "Cannot find client ID";
+            $errorData['error_code'] = '0013';
+            break;
         case 'USER_NOT_EXIST':
             $errorData['message'] = "User doesn't exist";
             $errorData['error_code'] = '0200';
