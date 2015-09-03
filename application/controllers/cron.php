@@ -402,7 +402,7 @@ $email = 'pechpras@playbasis.com';
         $this->load->model('energy_model');
         $this->load->model('player_model');
 
-        $now = now();
+        $now = time();
 
         if ($this->input->is_cli_request()) {
             foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
