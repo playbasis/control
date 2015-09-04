@@ -125,44 +125,47 @@ class Payment_model extends MY_Model
 		$event_id = $POST['id'];
 
 		/* Guard against duplicated events */
-		if ($this->existStripeEvent($event_id)) return false;
-		$this->insertStripeEvent($event_id, $POST);
+		//if ($this->existStripeEvent($event_id)) return false;
+		//$this->insertStripeEvent($event_id, $POST);
 
 		/* find details of the client */
 		$client = $this->getClientById($client_id);
+		if (!$client) return false;
 
 		/* find details of the current plan of the client */
 		$myplan_id = $this->getPlanIdByClientId($client_id);
 		$myplan = $myplan_id ? $this->getPlanById($myplan_id) : null;
+		if (!$myplan) return false;
 		if (!array_key_exists('price', $myplan)) {
-            $myplan['price'] = DEFAULT_PLAN_PRICE;
+			$myplan['price'] = DEFAULT_PLAN_PRICE;
 		}
 
 		/* find details of the subscribed plan of the client */
 		$plan = $this->getPlanById($plan_id);
+		if (!$plan) return false;
 		if (!array_key_exists('price', $plan)) {
-            $plan['price'] = DEFAULT_PLAN_PRICE;
+			$plan['price'] = DEFAULT_PLAN_PRICE;
 		}
 
 		/* process Stripe message differently according to event 'type' */
 		log_message('info', 'Stripe event type: '.$POST['type']);
 		switch ($POST['type']) {
-            case PAYPAL_TXN_TYPE_SUBSCR_SIGNUP:
-                $this->setDateBilling($client_id, $plan, $POST['subscr_id']);
-                $this->setDateStartAndDateExpire($client_id); // we have to put this because if the chosen plan has trial period, then we will not receive IPN payment
-                if ($myplan['price'] <= 0) { // change the plan if current plan is free
+		case STRIPE_EVT_TYPE_SUBSCR_CREATED:
+			$this->setDateBilling($client_id, $plan, $POST['subscr_id']);
+			$this->setDateStartAndDateExpire($client_id); // we have to put this because if the chosen plan has trial period, then we will not receive IPN payment
+			if ($myplan['price'] <= 0) { // change the plan if current plan is free
                     $this->changePlan($client, $myplan_id, $plan_id);
-                }
-                $html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $log_id->{'$id'}, 'date' => date('l, F d, Y', time())), true);
-                $this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Registration Confirmation', $html);
-                break;
-            case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
-                $html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'At your request, we will change your Playbasis subscription plan to '.$plan['name'].'.<br>The billing for your new subscription will take effect on '.$POST['subscr_effective'].'.<br>Below are the details of the order you have placed with us:<br><table><tr><td>&nbsp;</td><td>Old Plan</td><td>New Plan</td></tr> <tr><td>Client ID</td><td>'.$client_id.'</td><td>'.$client_id.'</td></tr> <tr><td>Subscription plan</td><td>'.$myplan['name'].'</td><td>'.$plan['name'].'</td></tr> <tr><td>Monthly price</td><td>'.$myplan['price'].'</td><td>'.$plan['price'].'</td></tr> </table><br>We are looking forward to hearing from you soon.'), true);
-                $this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Request to Change Your Subscription Plan', $html);
-                break;
-            case PAYPAL_TXN_TYPE_SUBSCR_PAYMNT:
-                /* check if we already process this 'txn_id' */
-                if (!$this->hasAlreadyProcessed($POST['txn_id'])) { // skip possible duplicate IPN messages
+			}
+			$html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $log_id->{'$id'}, 'date' => date('l, F d, Y', time())), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Registration Confirmation', $html);
+			break;
+		case STRIPE_EVT_TYPE_SUBSCR_UPDATED:
+			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'At your request, we will change your Playbasis subscription plan to '.$plan['name'].'.<br>The billing for your new subscription will take effect on '.$POST['subscr_effective'].'.<br>Below are the details of the order you have placed with us:<br><table><tr><td>&nbsp;</td><td>Old Plan</td><td>New Plan</td></tr> <tr><td>Client ID</td><td>'.$client_id.'</td><td>'.$client_id.'</td></tr> <tr><td>Subscription plan</td><td>'.$myplan['name'].'</td><td>'.$plan['name'].'</td></tr> <tr><td>Monthly price</td><td>'.$myplan['price'].'</td><td>'.$plan['price'].'</td></tr> </table><br>We are looking forward to hearing from you soon.'), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Request to Change Your Subscription Plan', $html);
+			break;
+		case STRIPE_EVT_TYPE_INVOICE_SUCCEEDED:
+			/* check if we already process this 'txn_id' */
+			if (!$this->hasAlreadyProcessed($POST['txn_id'])) { // skip possible duplicate IPN messages
                     $amount = intval($POST['mc_gross']);
 
                     /* insert into payment log */
@@ -205,33 +208,39 @@ class Payment_model extends MY_Model
                             break;
                     }
                 }
-                break;
-            case PAYPAL_TXN_TYPE_SUBSCR_FAILED:
-                /* As we rely on PayPal to do reattempt for us if the payment has failed.
-                Eventually, PayPal will send 'subscr_cancel' after few reattempts within 3 days.
-                So we will not block the usage when we receive 'subscr_failed'.
+			break;
+		case STRIPE_EVT_TYPE_INVOICE_FAILED:
+			/* As we rely on PayPal to do reattempt for us if the payment has failed.
+			   Eventually, PayPal will send 'subscr_cancel' after few reattempts within 3 days.
+			   So we will not block the usage when we receive 'subscr_failed'.
 
-                /* send email to the user notifying the failure of payment with reason */
-                $html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We were unable to process the subscription plan payment '.$plan['name'].' of '.$plan['price'].' USD for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. PayPal informed us the payment has been declined '.$POST['retry_at'].' times without giving a specific reason.<br><br>What should you do now?<br>Please check the payment setting in your PayPal account and try to resolve the problem.<br><br>What about your account?<br>We\'ll keep your account active for now. However, five days after the initial payment failure we\'ll automatically downgrade your account to the Free plan. You\'ll be able to upgrade later with a valid payment without losing any of your settings.'), true);
-                $this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Unable to Process Your Playbasis Payment', $html);
-                break;
-            case PAYPAL_TXN_TYPE_SUBSCR_CANCEL:
-                /* remove "date_billing" */
-                $this->unsetDateBilling($client_id);
+			/* send email to the user notifying the failure of payment with reason */
+			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We were unable to process the subscription plan payment '.$plan['name'].' of '.$plan['price'].' USD for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. PayPal informed us the payment has been declined '.$POST['retry_at'].' times without giving a specific reason.<br><br>What should you do now?<br>Please check the payment setting in your PayPal account and try to resolve the problem.<br><br>What about your account?<br>We\'ll keep your account active for now. However, five days after the initial payment failure we\'ll automatically downgrade your account to the Free plan. You\'ll be able to upgrade later with a valid payment without losing any of your settings.'), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Unable to Process Your Playbasis Payment', $html);
+			break;
+		case STRIPE_EVT_TYPE_SUBSCR_DELETED:
+			/* remove "date_billing" */
+			$this->unsetDateBilling($client_id);
 
-                /* remove "date_start" and "date_expire" */
-                $this->unsetDateStartAndDateExpire($client_id);
+			/* remove "date_start" and "date_expire" */
+			$this->unsetDateStartAndDateExpire($client_id);
 
-                $html = $this->parser->parse('message_cancel_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'date' => date('l, F d, Y', time())), true);
-                $this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Plan Cancellation', $html);
+			$html = $this->parser->parse('message_cancel_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'date' => date('l, F d, Y', time())), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Plan Cancellation', $html);
 
-                /* change the client's plan to be a free plan */
-                $this->changePlan($client, $myplan_id, new MongoId(FREE_PLAN));
-                log_message('info', 'Client '.$client_id.' has canceled the subscription and has been changed to free plan');
-                break;
-            default:
-                log_message('error', 'Unsupported PayPal txn_type: '.$POST['txn_type']);
-                return false;
+			/* change the client's plan to be a free plan */
+			$this->changePlan($client, $myplan_id, new MongoId(FREE_PLAN));
+			log_message('info', 'Client '.$client_id.' has canceled the subscription and has been changed to free plan');
+			break;
+		case STRIPE_EVT_TYPE_SUBSCR_TRIAL_WILL_END:
+			/* TODO: to be implemented */
+			break;
+		case STRIPE_EVT_TYPE_INVOICE_CREATED:
+			/* TODO: to be implemented */
+			break;
+		default:
+			log_message('error', 'Unsupported Stripe event type: '.$POST['type']);
+			return false;
 		}
 		return true;
 	}
