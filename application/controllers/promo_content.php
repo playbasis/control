@@ -104,13 +104,59 @@ class Promo_content extends MY_Controller
                 $data['image'] = $promo_content_data['image'];
                 $data['status'] = true;
 
-                $insert = $this->Promo_content_model->insertPromoContent($data);
+                $insert = $this->Promo_content_model->createPromoContent($data);
                 if ($insert) {
+                    $this->session->set_flashdata('success', $this->lang->line('text_success'));
                     redirect('/promo_content', 'refresh');
                 }
             }
         }
         $this->getForm();
+    }
+
+    public function update($promo_content_id)
+    {
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+        $this->data['form'] = 'promo_content/update/' . $promo_content_id;
+
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('description', $this->lang->line('entry_description'),
+            'trim|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
+            'trim|required|xss_clean');
+        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($this->form_validation->run()) {
+                $promo_content_data = $this->input->post();
+
+                $data['_id'] = $promo_content_id;
+                $data['client_id'] = $this->User_model->getClientId();
+                $data['site_id'] = $this->User_model->getSiteId();
+                $data['name'] = $promo_content_data['name'];
+                $data['desc'] = $promo_content_data['description'];
+                $data['date_start'] = $promo_content_data['date_start'];
+                $data['date_end'] = $promo_content_data['date_end'];
+                $data['image'] = $promo_content_data['image'];
+
+                $update = $this->Promo_content_model->updatePromoContent($data);
+                if ($update) {
+                    $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+                    redirect('/promo_content', 'refresh');
+                }
+            }
+        }
+
+        $this->getForm($promo_content_id);
     }
 
     public function page($offset = 0)
@@ -154,7 +200,12 @@ class Promo_content extends MY_Controller
         $config['total_rows'] = 0;
 
         if ($client_id) {
-            // todo: insert data query here to show in dashboard list
+            $this->data['client_id'] = $client_id;
+
+            $promo_contents = $this->Promo_content_model->retrievePromoContents($filter);
+
+            $this->data['promo_contents'] = $promo_contents;
+            $config['total_rows'] = $this->Promo_content_model->countPromoContents($client_id, $site_id);
         }
 
         $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
@@ -195,30 +246,90 @@ class Promo_content extends MY_Controller
     {
         $this->data['main'] = 'promo_content_form';
 
-        $this->load->vars($this->data);
+        if (isset($promo_content_id) && ($promo_content_id != 0)) {
+            if ($this->User_model->getClientId()) {
+                $promo_content_info = $this->Promo_content_model->retrievePromoContent($promo_content_id);
+            }
+        }
+
+        if ($this->input->post('name')) {
+            $this->data['name'] = $this->input->post('name');
+        } elseif (isset($promo_content_info['name'])) {
+            $this->data['name'] = $promo_content_info['name'];
+        } else {
+            $this->data['name'] = '';
+        }
+
+        if ($this->input->post('description')) {
+            $this->data['description'] = $this->input->post('description');
+        } elseif (isset($promo_content_info['desc'])) {
+            $this->data['description'] = $promo_content_info['desc'];
+        } else {
+            $this->data['description'] = '';
+        }
 
         if ($this->input->post('image')) {
             $this->data['image'] = $this->input->post('image');
-//        } elseif (!empty($badge_info)) {
-//            $this->data['image'] = $badge_info['image'];
+        } elseif (isset($promo_content_info['image'])) {
+            $this->data['image'] = $promo_content_info['image'];
         } else {
             $this->data['image'] = 'no_image.jpg';
         }
 
-        if ($this->data['image']){
-            $info = pathinfo($this->data['image']);
-            if(isset($info['extension'])){
-                $extension = $info['extension'];
-                $new_image = 'cache/' . utf8_substr($this->data['image'], 0, utf8_strrpos($this->data['image'], '.')).'-100x100.'.$extension;
-                $this->data['thumb'] = S3_IMAGE.$new_image;
-            }else{
-                $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
-            }
-        }else{
-            $this->data['thumb'] = S3_IMAGE."cache/no_image-100x100.jpg";
+        if ($this->input->post('date_start')) {
+            $this->data['date_start'] = $this->input->post('date_start');
+        } elseif (isset($promo_content_info['date_start'])) {
+            $this->data['date_start'] = $promo_content_info['date_start'];
+        } else {
+            $this->data['date_start'] = '';
         }
 
+        if ($this->input->post('date_end')) {
+            $this->data['date_end'] = $this->input->post('date_end');
+        } elseif (isset($promo_content_info['date_end'])) {
+            $this->data['date_end'] = $promo_content_info['date_end'];
+        } else {
+            $this->data['date_end'] = '';
+        }
+
+        if ($this->data['image']) {
+            $info = pathinfo($this->data['image']);
+            if (isset($info['extension'])) {
+                $extension = $info['extension'];
+                $new_image = 'cache/' . utf8_substr($this->data['image'], 0,
+                        utf8_strrpos($this->data['image'], '.')) . '-100x100.' . $extension;
+                $this->data['thumb'] = S3_IMAGE . $new_image;
+            } else {
+                $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+            }
+        } else {
+            $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+        }
+
+        $this->load->vars($this->data);
         $this->render_page('template');
+    }
+
+    public function delete()
+    {
+
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+        $this->data['text_no_results'] = $this->lang->line('text_no_results');
+
+        $this->error['message'] = null;
+
+        if ($this->input->post('selected') && $this->error['message'] == null) {
+            foreach ($this->input->post('selected') as $promo_content_id) {
+                $this->Promo_content_model->deletePromoContent($promo_content_id);
+            }
+
+            $this->session->set_flashdata('success', $this->lang->line('text_success_delete'));
+            redirect('/promo_content', 'refresh');
+        }
+
+        $this->getList(0);
     }
 
     private function validateModify()
@@ -247,14 +358,4 @@ class Promo_content extends MY_Controller
         }
     }
 
-}
-
-function index_badge_id($obj)
-{
-    return $obj['badge_id'];
-}
-
-function index_reward_id($obj)
-{
-    return $obj['reward_id'];
 }

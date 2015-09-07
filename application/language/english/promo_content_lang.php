@@ -4,7 +4,7 @@ $lang['heading_title'] = 'Promotional Content';
 
 // Column
 $lang['column_name'] = "Name";
-$lang['column_date_range'] = "Date Range";
+$lang['column_date_added'] = "Date Added";
 $lang['column_status'] = "Status";
 $lang['column_action'] = "Action";
 

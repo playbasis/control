@@ -68,14 +68,14 @@
                             <span>
                                 <input type="text" class="date" name="date_start" id="date_start" size="50"
                                        placeholder="<?php echo $this->lang->line('entry_date_start'); ?>"
-                                       value="<?php echo isset($date_start) && $date_start ? date('Y-m-d H:i',
+                                       value="<?php echo isset($date_start) && $date_start ? date('Y-m-d',
                                            strtotime(datetimeMongotoReadable($date_start))) : ''; ?>"/>
                             </span>
                             <span>&nbsp;-&nbsp;</span>
                             <span>
                                 <input type="text" class="date" name="date_end" id="date_end" size="50"
                                        placeholder="<?php echo $this->lang->line('entry_date_end'); ?>"
-                                       value="<?php echo isset($date_end) && $date_end ? date('Y-m-d H:i',
+                                       value="<?php echo isset($date_end) && $date_end ? date('Y-m-d',
                                            strtotime(datetimeMongotoReadable($date_end))) : ''; ?>"/>
                             </span>
                         </td>

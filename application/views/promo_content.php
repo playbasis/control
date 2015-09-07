@@ -23,12 +23,12 @@
                 <table class="list">
                     <thead>
                     <tr>
-                        <td width="1" style="text-align: center;"><input type="checkbox"
-                                                                         onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
+                        <td width="1" style="text-align: center;">
+                            <input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                         </td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="right"
-                            style="width:100px;"><?php echo $this->lang->line('column_date_range'); ?></td>
+                            style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
@@ -65,9 +65,9 @@
                                 <td class="right"><?php echo ($promo_content['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">
                                     [ <?php if ($client_id) {
-                                        echo anchor('promo_content/edit/' . $promo_content['_id'], 'Edit');
+                                        echo anchor('promo_content/update/' . $promo_content['_id'], 'Edit');
                                     } else {
-                                        echo anchor('promo_content/edit/' . $promo_content['_id'], 'Edit');
+                                        echo anchor('promo_content/update/' . $promo_content['_id'], 'Edit');
                                     }
                                     ?> ]
                                 </td>
