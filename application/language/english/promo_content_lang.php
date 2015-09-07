@@ -19,6 +19,8 @@ $lang['tab_general'] = 'General';
 $lang['entry_name'] = 'Promotion name';
 $lang['entry_description'] = 'Description';
 $lang['entry_date_range'] = 'Date Range';
+$lang['entry_date_start'] = 'Date Start';
+$lang['entry_date_end'] = 'Date End';
 $lang['entry_image'] = 'Image';
 
 // Text

@@ -52,8 +52,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_description'); ?>&nbsp;:
+                        <td><?php echo $this->lang->line('entry_description'); ?>&nbsp;:
                         </td>
                         <td>
                             <textarea name="description" rows="4"
@@ -68,14 +67,14 @@
                         <td>
                             <span>
                                 <input type="text" class="date" name="date_start" id="date_start" size="50"
-                                       placeholder="Start"
+                                       placeholder="<?php echo $this->lang->line('entry_date_start'); ?>"
                                        value="<?php echo isset($date_start) && $date_start ? date('Y-m-d H:i',
                                            strtotime(datetimeMongotoReadable($date_start))) : ''; ?>"/>
                             </span>
                             <span>&nbsp;-&nbsp;</span>
                             <span>
                                 <input type="text" class="date" name="date_end" id="date_end" size="50"
-                                       placeholder="End"
+                                       placeholder="<?php echo $this->lang->line('entry_date_end'); ?>"
                                        value="<?php echo isset($date_end) && $date_end ? date('Y-m-d H:i',
                                            strtotime(datetimeMongotoReadable($date_end))) : ''; ?>"/>
                             </span>
@@ -133,12 +132,43 @@
         });
     }
 
+    var startDateTextBox = $('#date_start');
+    var endDateTextBox = $('#date_end');
+
     $(function () {
         $('#tabs a').tabs();
 
-        $('#input_energy_changing_period').timepicker({
-            stepHour: 1,
-            stepMinute: 10
+        startDateTextBox.datepicker({
+            onClose: function (dateText, inst) {
+                if (endDateTextBox.val() != '') {
+                    var testStartDate = startDateTextBox.datepicker('getDate');
+                    var testEndDate = endDateTextBox.datepicker('getDate');
+                    if (testStartDate > testEndDate)
+                        endDateTextBox.datepicker('setDate', testStartDate);
+                }
+                else {
+                    endDateTextBox.val(dateText);
+                }
+            },
+            onSelect: function (selectedDateTime) {
+                endDateTextBox.datepicker('option', 'minDate', startDateTextBox.datepicker('getDate'));
+            }
+        });
+        endDateTextBox.datepicker({
+            onClose: function (dateText, inst) {
+                if (startDateTextBox.val() != '') {
+                    var testStartDate = startDateTextBox.datepicker('getDate');
+                    var testEndDate = endDateTextBox.datepicker('getDate');
+                    if (testStartDate > testEndDate)
+                        startDateTextBox.datepicker('setDate', testEndDate);
+                }
+                else {
+                    startDateTextBox.val(dateText);
+                }
+            },
+            onSelect: function (selectedDateTime) {
+                startDateTextBox.datepicker('option', 'maxDate', endDateTextBox.datepicker('getDate'));
+            }
         });
 
     });

@@ -77,48 +77,39 @@ class Promo_content extends MY_Controller
 //        if ($limit_promo_content && $promo_contents >= $limit_promo_content) {
 //            $this->data['message'] = $this->lang->line('error_promo_contents_limit');
 //        }
-//
-//        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
-//            'trim|required|min_length[2]|max_length[255]|xss_clean');
-//        $this->form_validation->set_rules('type_custompoint', $this->lang->line('entry_type'), 'required');
-//
-//        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//
-//            if (!$this->validateModify()) {
-//                $this->error['message'] = $this->lang->line('error_permission');
-//            }
-//
-//            if ($this->input->post('type_custompoint') != "normal") {
-//                $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
-//                    'required|numeric|is_natural_no_zero|xss_clean');
-//                $this->form_validation->set_rules('energy_changing_period',
-//                    $this->lang->line('entry_energy_changing_period'),
-//                    'required|xss_clean');
-//                $this->form_validation->set_rules('energy_changing_per_period',
-//                    $this->lang->line('entry_energy_changing_per_period'),
-//                    'required|numeric|is_natural_no_zero|xss_clean');
-//            }
-//
-//            if ($this->form_validation->run()) {
-//                $custompoints_data = $this->input->post();
-//
-//                $data['client_id'] = $this->User_model->getClientId();
-//                $data['site_id'] = $this->User_model->getSiteId();
-//                $data['name'] = $custompoints_data['name'];
-//                $data['status'] = true;
-//                $data['type'] = $custompoints_data['type_custompoint'];
-//                if ($custompoints_data['type_custompoint'] != "normal") {
-//                    $data['maximum'] = $custompoints_data['energy_maximum'];
-//                    $data['changing_period'] = $custompoints_data['energy_changing_period'];
-//                    $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
-//                }
-//
-//                $insert = $this->Custompoints_model->insertCustompoints($data);
-//                if ($insert) {
-//                    redirect('/custompoints', 'refresh');
-//                }
-//            }
-//        }
+
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[3]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('description', $this->lang->line('entry_description'),
+            'trim|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
+            'trim|required|xss_clean');
+        $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (!$this->validateModify()) {
+                $this->error['message'] = $this->lang->line('error_permission');
+            }
+
+            if ($this->form_validation->run()) {
+                $promo_content_data = $this->input->post();
+
+                $data['client_id'] = $this->User_model->getClientId();
+                $data['site_id'] = $this->User_model->getSiteId();
+                $data['name'] = $promo_content_data['name'];
+                $data['desc'] = $promo_content_data['description'];
+                $data['date_start'] = $promo_content_data['date_start'];
+                $data['date_end'] = $promo_content_data['date_end'];
+                $data['image'] = $promo_content_data['image'];
+                $data['status'] = true;
+
+                $insert = $this->Promo_content_model->insertPromoContent($data);
+                if ($insert) {
+                    redirect('/promo_content', 'refresh');
+                }
+            }
+        }
         $this->getForm();
     }
 
