@@ -825,6 +825,41 @@ class Player extends REST2_Controller
 		$this->response($this->resp->setRespond($point), 200);
 	}
 
+    public function pointLastUsed_get($player_id = '', $reward = '')
+    {
+        $required = array();
+        if (!$player_id) {
+            array_push($required, 'player_id');
+        }
+        if (!$reward) {
+            array_push($required, 'reward');
+        }
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+        $input = array_merge($this->validToken, array(
+            'reward_name' => $reward
+        ));
+        $reward_id = $this->point_model->findPoint($input);
+        if (!$reward_id) {
+            $this->response($this->error->setError('REWARD_NOT_FOUND'), 200);
+        }
+        $point['point'] = $this->player_model->getLastUsedPoint($pb_player_id, $reward_id, $this->site_id);
+        $point['point'][0]['reward_id'] = $reward_id . "";
+        $point['point'][0]['reward_name'] = $reward;
+        $point['point'][0]['reward_last_used'] = datetimeMongotoReadable($point['point'][0]['date_modified']);
+        unset($point['point'][0]['date_modified']);
+        ksort($point);
+        $this->response($this->resp->setRespond($point), 200);
+    }
+
 	public function point_history_get($player_id =''){
 		$required = array();
 		if(!$player_id){
@@ -1397,6 +1432,24 @@ class Player extends REST2_Controller
 		$this->player_model->set_read_preference_primary();
 		$this->response($this->resp->setRespond($log), 200);
 	}
+
+    public function energy_get($player_id = '') {
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if(!$pb_player_id)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+
+        //read player information
+        $player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array('status'));
+        $this->response($this->resp->setRespond($player), 200);
+    }
+
 	public function test_get()
 	{
 		echo '<pre>';
