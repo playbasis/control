@@ -247,12 +247,12 @@ class Goods_model extends MY_Model
 		}
 		return null;
 	}
-    public function getGoodsFromGroup($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
-        $total = $this->getTotalGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group);
-        $offset = rand(0, $total-1); // randomly pick one
-        $goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, $offset, 1);
-        return $goodsList ? $goodsList[0] : null;
-    }
+	public function getGoodsFromGroup($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
+		$total = $this->getTotalGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group);
+		$offset = rand(0, $total-1); // randomly pick one
+		$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, $offset, 1);
+		return $goodsList ? $goodsList[0] : null;
+	}
 	public function countGoodsByGroup($client_id, $site_id, $group, $pb_player_id, $amount, $is_sponsor=false) {
 		$goodsList = $this->getGoodsByGroup($is_sponsor ? null : $client_id, $is_sponsor ? null : $site_id, $group, 0, 1);
 		if ($goodsList) {
