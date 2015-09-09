@@ -24,11 +24,12 @@
                     <thead>
                     <tr>
                         <td width="1" style="text-align: center;">
-                            <input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
+                            <input type="checkbox"
+                                   onclick="$('input[name*=\'selected\']').attr('checked', this.checked);"/>
                         </td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_name'); ?></td>
                         <td class="right"
-                            style="width:100px;"><?php echo $this->lang->line('column_date_added'); ?></td>
+                            style="width:100px;"><?php echo $this->lang->line('column_date_range'); ?></td>
                         <td class="right" style="width:100px;"><?php echo $this->lang->line('column_status'); ?></td>
                         <td class="right" style="width:140px;"><?php echo $this->lang->line('column_action'); ?></td>
                     </tr>
@@ -61,7 +62,8 @@
                                                              title="<?php echo $promo_content['error']; ?>"
                                                              data-toggle="tooltip"><i class="icon-warning-sign"></i></a>
                                         </span><?php } ?></td>
-                                <td class="right"><?php echo datetimeMongotoReadable($promo_content['date_added']); ?></td>
+                                <td class="right"><?php echo datetimeMongotoReadable($promo_content['date_start']); ?>
+                                    &nbsp;-&nbsp;<?php echo datetimeMongotoReadable($promo_content['date_end']); ?></td>
                                 <td class="right"><?php echo ($promo_content['status']) ? "Enabled" : "Disabled"; ?></td>
                                 <td class="right">
                                     [ <?php if ($client_id) {
@@ -71,7 +73,6 @@
                                     }
                                     ?> ]
                                 </td>
-
                             </tr>
                         <?php }
                     } else {
