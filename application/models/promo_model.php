@@ -18,7 +18,8 @@ class Promo_model extends MY_Model
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'status' => true
+            'status' => true,
+            'deleted' => false
         ));
 
         if ($query_date_check == true) {
@@ -40,7 +41,8 @@ class Promo_model extends MY_Model
         $this->mongo_db->where(array(
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
-            'status' => true
+            'status' => true,
+            'delete' => false
         ));
 
         if (isset($data['promo_id']) && !empty($data['promo_id'])) {
