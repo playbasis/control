@@ -558,7 +558,7 @@ class Notification extends Engine
 					$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
 				}
 				$client = $this->payment_model->getClientById($client_id);
-                $plan = $this->payment_model->getPlanById($plan_id);
+				$plan = $this->payment_model->getPlanById($plan_id);
 				switch ($event['type']) {
 				case INVOICE_CREATED:
 					$this->payment_model->invoiceCreated($client, $plan, $subscription_id);
@@ -596,13 +596,13 @@ class Notification extends Engine
 					log_message('error', 'Cannot find customer client_id for stripe_id: '.$stripe_id);
 					$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
 				}
-                $client = $this->payment_model->getClientById($client_id);
+				$client = $this->payment_model->getClientById($client_id);
 				$this->payment_model->log($client_id, PAYMENT_CHANNEL_STRIPE, $event_id, $txn_id, $amount, $currency, $status, $failure_code, $failure_message);
-                if ($event['type'] == CHARGE_SUCCEEDED) {
-                    $this->payment_model->chargeSucceeded($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date);
-                } else {
-                    $this->payment_model->chargeFailed($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date, $failure_code, $failure_message);
-                }
+				if ($event['type'] == CHARGE_SUCCEEDED) {
+					$this->payment_model->chargeSucceeded($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date);
+				} else {
+					$this->payment_model->chargeFailed($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date, $failure_code, $failure_message);
+				}
 				break;
 			// object = subscription
 			// customer
@@ -627,22 +627,22 @@ class Notification extends Engine
 					log_message('error', 'Cannot find customer client_id for stripe_id: '.$stripe_id);
 					$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
 				}
-                $client = $this->payment_model->getClientById($client_id);
-                $plan = $this->payment_model->getPlanById($plan_id);
-                $myplan_id = $this->payment_model->getPlanIdByClientId($client_id);
-                $myplan = $this->payment_model->getPlanById($myplan_id);
+				$client = $this->payment_model->getClientById($client_id);
+				$plan = $this->payment_model->getPlanById($plan_id);
+				$myplan_id = $this->payment_model->getPlanIdByClientId($client_id);
+				$myplan = $this->payment_model->getPlanById($myplan_id);
 				switch ($event['type']) {
 				case SUBSCRIPTION_CREATED:
-					$this->payment_model->subscriptionCreated($client, $plan, $myplan, $subscription_id);
+					$this->payment_model->subscriptionCreated($client, $plan, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end);
 					break;
 				case SUBSCRIPTION_UPDATED:
-					$this->payment_model->subscriptionUpdated($client, $plan, $myplan, $subscription_id);
+					$this->payment_model->subscriptionUpdated($client, $plan, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end);
 					break;
 				case SUBSCRIPTION_DELETED:
-					$this->payment_model->subscriptionDeleted($client, $plan, $myplan, $subscription_id);
+					$this->payment_model->subscriptionDeleted($client, $plan, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end);
 					break;
 				case SUBSCRIPTION_TRIAL_WILL_END:
-					$this->payment_model->trialPeriodWillEnd($client, $plan, $myplan, $subscription_id);
+					$this->payment_model->trialPeriodWillEnd($client, $plan, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end);
 					break;
 				}
 				break;
@@ -677,13 +677,13 @@ class Notification extends Engine
 		return $player;
 	}
 
-    private function extractEvents($events) {
-        $_events = array();
-        foreach ($events as $event) {
-            array_push($_events, $this->extractEvent($event));
-        }
-        return $_events;
-    }
+	private function extractEvents($events) {
+		$_events = array();
+		foreach ($events as $event) {
+			array_push($_events, $this->extractEvent($event));
+		}
+		return $_events;
+	}
 
 	private function extractEvent($event) {
 		$_creator = null;
