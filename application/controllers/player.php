@@ -165,8 +165,7 @@ class Player extends REST2_Controller
 			'exp',
 			'level',
 			'date_added',
-			'birth_date',
-			'anonymous_flag'
+			'birth_date'
 		));
         //percent exp of level
 //        $level = $this->level_model->getLevelDetail($player['player']['level'], $this->validToken['client_id'], $this->validToken['site_id']);
@@ -230,8 +229,7 @@ class Player extends REST2_Controller
 			'exp',
 			'level',
 			'date_added',
-			'birth_date',
-			'anonymous_flag'
+			'birth_date'
 		));
 
         //percent exp of level
