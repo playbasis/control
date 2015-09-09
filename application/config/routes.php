@@ -260,6 +260,11 @@ $route['Sms/recent'] = 'pb_sms/recent';
 $route['notification/'.ANY_STRING] = 'notification/index/$1';
 $route['notification'] = 'notification/index';
 
+//promo API
+$route['Promo'] = 'promo/list';
+$route['Promo/list'] = 'promo/list';
+$route['Promo/name/' . ANY_STRING] = 'promo/detailByName/$1';
+
 //misc
 //$route['test']	= 'playbasis/test';
 $route['test']	= 'notification/index';
