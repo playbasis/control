@@ -40,34 +40,25 @@
                                         
                                         <!-- {message} -->
 
-                                        <p>
-                                        Your registration with Playbasis is confirmed and complete.<br>
-                                        Thank you for subscribing the plan {plan_name}.<br>
-                                        We are looking forward to hearing from you soon.
-                                        </p>
-                                        <p style="text-align: center;">
-                                            <strong style="color:#333;">Payment Detail</strong>
+                                        <p>This is to confirm your successful payment to Playbasis.<br>
+                                            Here are the details of your transaction:
                                         </p>
                                         <table cellpadding="5" style="color:#333;">
                                             <tr>
-                                                <td style="font-weight: bold;text-align: right;">Your payment reference number:</td>
-                                                <td>{reference_number}</td>
+                                                <td style="font-weight: bold;text-align: right;">Merchant:</td>
+                                                <td>Playbasis</td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: bold;text-align: right;">Your payment has been set up on:</td>
+                                                <td style="font-weight: bold;text-align: right;">Transaction ID:</td>
+                                                <td>{transaction_id}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight: bold;text-align: right;">Transaction date and time:</td>
                                                 <td>{date}</td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: bold;text-align: right;">Payment channel:</td>
+                                                <td style="font-weight: bold;text-align: right;">Channel:</td>
                                                 <td>{channel}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight: bold;text-align: right;">Monthly payment price:</td>
-                                                <td>{plan_price} USD</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight: bold;text-align: right;">Payment status:</td>
-                                                <td>Confirmed</td>
                                             </tr>
                                         </table>
 

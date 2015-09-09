@@ -843,9 +843,6 @@ class Client_model extends MY_Model
         // get "date_start" && "date_expire" of client for permission processing
         $myplan_id = $this->getPlanIdByClientId($client_id);
         $myplan = $this->getPlanById($myplan_id);
-        if (!array_key_exists('price', $myplan)) {
-            $myplan['price'] = DEFAULT_PLAN_PRICE;
-        }
         $free_flag = $myplan['price'] <= 0;
         $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
 
@@ -875,9 +872,6 @@ class Client_model extends MY_Model
         // get "date_start" && "date_expire" of client for permission processing
         $myplan_id = $this->getPlanIdByClientId($client_id);
         $myplan = $this->getPlanById($myplan_id);
-        if (!array_key_exists('price', $myplan)) {
-            $myplan['price'] = DEFAULT_PLAN_PRICE;
-        }
         $free_flag = $myplan['price'] <= 0;
         $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
 
@@ -951,7 +945,11 @@ class Client_model extends MY_Model
     }
 
     public function getPlanById($plan_id) {
-        return $this->getById($plan_id, 'playbasis_plan');
+        $plan = $this->getById($plan_id, 'playbasis_plan');
+        if ($plan && !array_key_exists('price', $plan)) {
+            $plan['price'] = DEFAULT_PLAN_PRICE;
+        }
+        return $plan;
     }
 
     public function getPlanIdByClientId($client_id) {
