@@ -508,48 +508,147 @@ class Notification extends Engine
 				log_message('error', 'Unknown Stripe event: '.$event_id);
 				$this->response($this->error->setError('INVALID_STRIPE_EVENT'), 404);
 			}
-			/* Extract info */
-			$stripe_id = null;
-			$subscription_id = null;
-			switch ($event['data']['object']['object']) {
-			case 'card': // type: customer.source.created
-				$card_id = $event['data']['object']['id'];
-				$stripe_id = $event['data']['object']['customer'];
+			/* Guard against duplicated events */
+			if ($this->payment_model->existPaymentEvent($event_id)) {
+				log_message('error', 'Duplicated Stripe event: '.$event_id);
+			}
+			$this->payment_model->insertPaymentEvent($event_id, $event);
+			/* Process event */
+			switch ($event['type']) {
+			// object = plan
+			// id
+			case 'plan.created':
+			case 'plan.updated':
+			case 'plan.deleted':
+			// object = customer
+			// id
+			case 'customer.created':
+			case 'customer.updated':
+			case 'customer.deleted':
+			// object = card
+			// customer
+			case 'customer.source.created':
+			case 'customer.source.updated':
+			case 'customer.source.deleted':
+				$this->response($this->resp->setRespond('Handle Stripe message ('.$event['type'].') successfully'), 200);
 				break;
-			case 'customer': // type: customer.created
-				$stripe_id = $event['data']['object']['id'];
-				break;
-			case 'invoice': // type: invoice.payment_succeeded
-				$invoice_id = $event['data']['object']['id'];
+			// object = invoice
+			// total
+			// currency
+			// customer
+			case 'invoice.created': // email
+			case 'invoice.updated': // email
+			case 'invoice.payment_succeeded': // update client status, email
+			case 'invoice.payment_failed': // email
+				$amount = intval($event['data']['object']['total'])/100.0;
+				$currency = $event['data']['object']['currency'];
 				$stripe_id = $event['data']['object']['customer'];
 				$subscription_id = $event['data']['object']['subscription'];
+				$plan_id = null;
+				foreach ($event['data']['lines']['data'] as $line) {
+					if ($line['type'] == 'subscription') {
+						$plan_id = new MongoId($line['plan']['id']);
+						break;
+					}
+				}
+				$client_id = $this->payment_model->getClientIdByStripeId($stripe_id);
+				if (!$client_id) {
+					log_message('error', 'Cannot find customer client_id for stripe_id: '.$stripe_id);
+					$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
+				}
+				$client = $this->payment_model->getClientById($client_id);
+                $plan = $this->payment_model->getPlanById($plan_id);
+				switch ($event['type']) {
+				case 'invoice.created':
+					$this->payment_model->invoiceCreated($client, $plan, $subscription_id);
+					break;
+				case 'invoice.updated':
+					$this->payment_model->invoiceUpdated($client, $plan, $subscription_id);
+					break;
+				case 'invoice.payment_succeeded':
+					$this->payment_model->invoicePaymentSucceeded($client, $plan, $subscription_id);
+					break;
+				case 'invoice.payment_failed':
+					$this->payment_model->invoicePaymentFailed($client, $plan, $subscription_id);
+					break;
+				}
 				break;
-			case 'subscription': // type: customer.subscription.created
-				$subscription_id = $event['data']['object']['id'];
+			// object = charge
+			// amount
+			// currency
+			// customer
+			// balance_transaction
+			// failure_code
+			// failure_message
+			case 'charge.succeeded': // log
+			case 'charge.failed': // log
+				$status = $event['data']['object']['status'];
+				$amount = intval($event['data']['object']['amount'])/100.0;
+				$currency = $event['data']['object']['currency'];
 				$stripe_id = $event['data']['object']['customer'];
+				$txn_id = $event['data']['object']['balance_transaction'];
+				$txn_date = $event['data']['object']['created'];
+				$failure_code = $event['data']['object']['failure_code'];
+				$failure_message = $event['data']['object']['failure_message'];
+				$client_id = $this->payment_model->getClientIdByStripeId($stripe_id);
+				if (!$client_id) {
+					log_message('error', 'Cannot find customer client_id for stripe_id: '.$stripe_id);
+					$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
+				}
+                $client = $this->payment_model->getClientById($client_id);
+				$this->payment_model->log($client_id, PAYMENT_CHANNEL_STRIPE, $event_id, $txn_id, $amount, $currency, $status, $failure_code, $failure_message);
+                if ($event['type'] == 'charge.succeeded') {
+                    $this->payment_model->chargeSucceeded($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date);
+                } else {
+                    $this->payment_model->chargeFailed($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date, $failure_code, $failure_message);
+                }
+				break;
+			// object = subscription
+			// customer
+			// plan[id]
+			// current_period_start
+			// current_period_end
+			// trial_start
+			// trial_end
+			case 'customer.subscription.created': // from free to paid plan
+			case 'customer.subscription.updated': // from paid to paid, (1) move from a trial to active subscription (2) upgrade/downgrade
+			case 'customer.subscription.deleted': // from paid to free, (1) cancel (2) after 3 failed payments
+			case 'customer.subscription.trial_will_end': // email (3 days before the end of trial period)
+				$subscription_id = $event['data']['object']['id'];
+				$plan_id = new MongoId($event['data']['object']['plan']['id']);
+				$stripe_id = $event['data']['object']['customer'];
+				$period_start = $event['data']['object']['current_period_start'];
+				$period_end = $event['data']['object']['current_period_end'];
+				$trial_start = $event['data']['object']['trial_start'];
+				$trial_end = $event['data']['object']['trial_end'];
+				$client_id = $this->payment_model->getClientIdByStripeId($stripe_id);
+				if (!$client_id) {
+					log_message('error', 'Cannot find customer client_id for stripe_id: '.$stripe_id);
+					$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
+				}
+                $client = $this->payment_model->getClientById($client_id);
+                $plan = $this->payment_model->getPlanById($plan_id);
+                $myplan_id = $this->payment_model->getPlanIdByClientId($client_id);
+                $myplan = $this->payment_model->getPlanById($myplan_id);
+				switch ($event['type']) {
+				case 'customer.subscription.created':
+					$this->payment_model->subscriptionCreated($client, $plan, $myplan, $subscription_id);
+					break;
+				case 'customer.subscription.updated':
+					$this->payment_model->subscriptionUpdated($client, $plan, $myplan, $subscription_id);
+					break;
+				case 'customer.subscription.deleted':
+					$this->payment_model->subscriptionDeleted($client, $plan, $myplan, $subscription_id);
+					break;
+				case 'customer.subscription.trial_will_end':
+					$this->payment_model->trialPeriodWillEnd($client, $plan, $myplan, $subscription_id);
+					break;
+				}
 				break;
 			default:
+				$this->response($this->resp->setRespond('Unimplemented handler for Stripe message ('.$event['type'].')'), 200);
 				break;
 			}
-			if (!$stripe_id) {
-				log_message('error', 'Cannot find customer stripe_id for Stripe event: '.$event_id);
-				$this->response($this->error->setError('CANNOT_FIND_STRIPE_ID'), 404);
-			}
-			$client_id = $this->payment_model->getClientIdByStripeId($stripe_id);
-			if (!$client_id) {
-				log_message('error', 'Cannot find customer client_id for stripe_id: '.$stripe_id);
-				$this->response($this->error->setError('CANNOT_FIND_CLIENT_ID'), 404);
-			}
-			$plan_id = null;
-			if ($subscription_id) {
-				$customer = \Stripe\Customer::retrieve($stripe_id);
-				$subscription = $customer->subscriptions->retrieve($subscription_id);
-				$plan = $subscription->plan;
-				$plan_id = new MongoId($plan->id);
-			}
-			/* Process Stripe event */
-			$result = $this->payment_model->processVerifiedStripe($client_id, $plan_id, $event, $log_id);
-			log_message('debug', 'process: result = '.$result);
 			$this->response($this->resp->setRespond('Handle notification message successfully'), 200);
         }
 		$this->response($this->error->setError('UNKNOWN_NOTIFICATION_MESSAGE'), 200);
@@ -577,13 +676,13 @@ class Notification extends Engine
 		return $player;
 	}
 
-	private function extractEvents($events) {
-		$_events = array();
-		foreach ($events as $event) {
-			array_push($_events, $this->extractEvent($event));
-		}
-		return $_events;
-	}
+    private function extractEvents($events) {
+        $_events = array();
+        foreach ($events as $event) {
+            array_push($_events, $this->extractEvent($event));
+        }
+        return $_events;
+    }
 
 	private function extractEvent($event) {
 		$_creator = null;
