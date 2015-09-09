@@ -139,6 +139,10 @@ class Error extends CI_Model
             $errorData['message'] = "Invalid Stripe event";
             $errorData['error_code'] = '0011';
             break;
+        case 'DUPLICATED_STRIPE_EVENT':
+            $errorData['message'] = "Duplicated Stripe event";
+            $errorData['error_code'] = '0014';
+            break;
         case 'CANNOT_FIND_STRIPE_ID':
             $errorData['message'] = "Cannot find Stripe customer ID";
             $errorData['error_code'] = '0012';

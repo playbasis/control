@@ -511,6 +511,7 @@ class Notification extends Engine
 			/* Guard against duplicated events */
 			if ($this->payment_model->existPaymentEvent($event_id)) {
 				log_message('error', 'Duplicated Stripe event: '.$event_id);
+				$this->response($this->error->setError('DUPLICATED_STRIPE_EVENT'), 200);
 			}
 			$this->payment_model->insertPaymentEvent($event_id, $event);
 			/* Process event */
