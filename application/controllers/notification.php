@@ -517,29 +517,29 @@ class Notification extends Engine
 			switch ($event['type']) {
 			// object = plan
 			// id
-			case 'plan.created':
-			case 'plan.updated':
-			case 'plan.deleted':
+			case PLAN_CREATED:
+			case PLAN_UPDATED:
+			case PLAN_DELETED:
 			// object = customer
 			// id
-			case 'customer.created':
-			case 'customer.updated':
-			case 'customer.deleted':
+			case CUSTOMER_CREATED:
+			case CUSTOMER_UPDATED:
+			case CUSTOMER_DELETED:
 			// object = card
 			// customer
-			case 'customer.source.created':
-			case 'customer.source.updated':
-			case 'customer.source.deleted':
+			case SOURCE_CREATED:
+			case SOURCE_UPDATED:
+			case SOURCE_DELETED:
 				$this->response($this->resp->setRespond('Handle Stripe message ('.$event['type'].') successfully'), 200);
 				break;
 			// object = invoice
 			// total
 			// currency
 			// customer
-			case 'invoice.created': // email
-			case 'invoice.updated': // email
-			case 'invoice.payment_succeeded': // update client status, email
-			case 'invoice.payment_failed': // email
+			case INVOICE_CREATED: // email
+			case INVOICE_UPDATED: // email
+			case INVOICE_PAYMENT_SUCCEEDED: // update client status, email
+			case INVOICE_PAYMENT_FAILED: // email
 				$amount = intval($event['data']['object']['total'])/100.0;
 				$currency = $event['data']['object']['currency'];
 				$stripe_id = $event['data']['object']['customer'];
@@ -559,16 +559,16 @@ class Notification extends Engine
 				$client = $this->payment_model->getClientById($client_id);
                 $plan = $this->payment_model->getPlanById($plan_id);
 				switch ($event['type']) {
-				case 'invoice.created':
+				case INVOICE_CREATED:
 					$this->payment_model->invoiceCreated($client, $plan, $subscription_id);
 					break;
-				case 'invoice.updated':
+				case INVOICE_UPDATED:
 					$this->payment_model->invoiceUpdated($client, $plan, $subscription_id);
 					break;
-				case 'invoice.payment_succeeded':
+				case INVOICE_PAYMENT_SUCCEEDED:
 					$this->payment_model->invoicePaymentSucceeded($client, $plan, $subscription_id);
 					break;
-				case 'invoice.payment_failed':
+				case INVOICE_PAYMENT_FAILED:
 					$this->payment_model->invoicePaymentFailed($client, $plan, $subscription_id);
 					break;
 				}
@@ -580,8 +580,8 @@ class Notification extends Engine
 			// balance_transaction
 			// failure_code
 			// failure_message
-			case 'charge.succeeded': // log
-			case 'charge.failed': // log
+			case CHARGE_SUCCEEDED: // log
+			case CHARGE_FAILED: // log
 				$status = $event['data']['object']['status'];
 				$amount = intval($event['data']['object']['amount'])/100.0;
 				$currency = $event['data']['object']['currency'];
@@ -597,7 +597,7 @@ class Notification extends Engine
 				}
                 $client = $this->payment_model->getClientById($client_id);
 				$this->payment_model->log($client_id, PAYMENT_CHANNEL_STRIPE, $event_id, $txn_id, $amount, $currency, $status, $failure_code, $failure_message);
-                if ($event['type'] == 'charge.succeeded') {
+                if ($event['type'] == CHARGE_SUCCEEDED) {
                     $this->payment_model->chargeSucceeded($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date);
                 } else {
                     $this->payment_model->chargeFailed($client, PAYMENT_CHANNEL_STRIPE, $txn_id, $txn_date, $failure_code, $failure_message);
@@ -610,10 +610,10 @@ class Notification extends Engine
 			// current_period_end
 			// trial_start
 			// trial_end
-			case 'customer.subscription.created': // from free to paid plan
-			case 'customer.subscription.updated': // from paid to paid, (1) move from a trial to active subscription (2) upgrade/downgrade
-			case 'customer.subscription.deleted': // from paid to free, (1) cancel (2) after 3 failed payments
-			case 'customer.subscription.trial_will_end': // email (3 days before the end of trial period)
+			case SUBSCRIPTION_CREATED: // from free to paid plan
+			case SUBSCRIPTION_UPDATED: // from paid to paid, (1) move from a trial to active subscription (2) upgrade/downgrade
+			case SUBSCRIPTION_DELETED: // from paid to free, (1) cancel (2) after 3 failed payments
+			case SUBSCRIPTION_TRIAL_WILL_END: // email (3 days before the end of trial period)
 				$subscription_id = $event['data']['object']['id'];
 				$plan_id = new MongoId($event['data']['object']['plan']['id']);
 				$stripe_id = $event['data']['object']['customer'];
@@ -631,16 +631,16 @@ class Notification extends Engine
                 $myplan_id = $this->payment_model->getPlanIdByClientId($client_id);
                 $myplan = $this->payment_model->getPlanById($myplan_id);
 				switch ($event['type']) {
-				case 'customer.subscription.created':
+				case SUBSCRIPTION_CREATED:
 					$this->payment_model->subscriptionCreated($client, $plan, $myplan, $subscription_id);
 					break;
-				case 'customer.subscription.updated':
+				case SUBSCRIPTION_UPDATED:
 					$this->payment_model->subscriptionUpdated($client, $plan, $myplan, $subscription_id);
 					break;
-				case 'customer.subscription.deleted':
+				case SUBSCRIPTION_DELETED:
 					$this->payment_model->subscriptionDeleted($client, $plan, $myplan, $subscription_id);
 					break;
-				case 'customer.subscription.trial_will_end':
+				case SUBSCRIPTION_TRIAL_WILL_END:
 					$this->payment_model->trialPeriodWillEnd($client, $plan, $myplan, $subscription_id);
 					break;
 				}

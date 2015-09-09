@@ -57,18 +57,25 @@ define('PAYPAL_TXN_TYPE_SUBSCR_FAILED', 'subscr_failed');
 define('PAYPAL_TXN_TYPE_SUBSCR_PAYMNT', 'subscr_payment');
 define('PAYPAL_TXN_TYPE_SUBSCR_EOT', 'subscr_eot');
 /* https://stripe.com/docs/api#event_types */
-define('STRIPE_EVT_TYPE_SUBSCR_CREATED', 'customer.subscription.created');
-define('STRIPE_EVT_TYPE_SUBSCR_UPDATED', 'customer.subscription.updated');
-define('STRIPE_EVT_TYPE_SUBSCR_DELETED', 'customer.subscription.deleted');
-define('STRIPE_EVT_TYPE_SUBSCR_TRIAL_WILL_END', 'customer.subscription.trial_will_end');
-define('STRIPE_EVT_TYPE_INVOICE_CREATED', 'invoice.created');
-define('STRIPE_EVT_TYPE_INVOICE_FAILED', 'invoice.payment_failed');
-define('STRIPE_EVT_TYPE_INVOICE_SUCCEEDED', 'invoice.payment_succeeded');
-define('STRIPE_EVT_TYPE_CHARGE_CAPTURED', 'charge.captured');
-define('STRIPE_EVT_TYPE_CHARGE_FAILED', 'charge.failed');
-define('STRIPE_EVT_TYPE_CHARGE_REFUNDED', 'charge.refunded');
-define('STRIPE_EVT_TYPE_CHARGE_SUCCEEDED', 'charge.succeeded');
-define('STRIPE_EVT_TYPE_CHARGE_UPDATED', 'charge.updated');
+define('PLAN_CREATED', 'plan.created');
+define('PLAN_UPDATED', 'plan.updated');
+define('PLAN_DELETED', 'plan.deleted');
+define('CUSTOMER_CREATED', 'customer.created');
+define('CUSTOMER_UPDATED', 'customer.updated');
+define('CUSTOMER_DELETED', 'customer.deleted');
+define('SOURCE_CREATED', 'customer.source.created');
+define('SOURCE_UPDATED', 'customer.source.updated');
+define('SOURCE_DELETED', 'customer.source.deleted');
+define('INVOICE_CREATED', 'invoice.created');
+define('INVOICE_UPDATED', 'invoice.updated');
+define('INVOICE_PAYMENT_SUCCEEDED', 'invoice.payment_succeeded');
+define('INVOICE_PAYMENT_FAILED', 'invoice.payment_failed');
+define('CHARGE_SUCCEEDED', 'charge.succeeded');
+define('CHARGE_FAILED', 'charge.failed');
+define('SUBSCRIPTION_CREATED', 'customer.subscription.created');
+define('SUBSCRIPTION_UPDATED', 'customer.subscription.updated');
+define('SUBSCRIPTION_DELETED', 'customer.subscription.deleted');
+define('SUBSCRIPTION_TRIAL_WILL_END', 'customer.subscription.trial_will_end');
 /* https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=xpt/Help/popup/StatusTypes */
 define('PAYPAL_PAYMENT_STATUS_COMPLETED', 'Completed'); // Money has been successfully sent to the recipient
 define('PAYPAL_PAYMENT_STATUS_CANCELED', 'Canceled'); // The sender canceled this payment
