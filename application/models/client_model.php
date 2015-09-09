@@ -945,7 +945,9 @@ class Client_model extends MY_Model
     }
 
     public function getPlanById($plan_id) {
-        $plan = $this->getById($plan_id, 'playbasis_plan');
+        $this->mongo_db->where(array('_id' => $plan_id));
+        $ret = $this->mongo_db->get('playbasis_plan');
+        $plan = is_array($ret) && count($ret) == 1 ? $ret[0] : $ret;
         if ($plan && !array_key_exists('price', $plan)) {
             $plan['price'] = DEFAULT_PLAN_PRICE;
         }
