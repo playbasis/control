@@ -102,7 +102,7 @@ class Promo_content extends MY_Controller
                 $data['date_start'] = $promo_content_data['date_start'];
                 $data['date_end'] = $promo_content_data['date_end'];
                 $data['image'] = $promo_content_data['image'];
-                $data['status'] = true;
+                $data['status'] = $promo_content_data['status'] == 'enable' ? true : false;
 
                 $insert = $this->Promo_content_model->createPromoContent($data);
                 if ($insert) {
@@ -129,6 +129,7 @@ class Promo_content extends MY_Controller
         $this->form_validation->set_rules('date_start', $this->lang->line('entry_date_start'),
             'trim|required|xss_clean');
         $this->form_validation->set_rules('date_end', $this->lang->line('entry_date_end'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('status', $this->lang->line('entry_status'), 'trim|required|xss_clean');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -147,6 +148,7 @@ class Promo_content extends MY_Controller
                 $data['date_start'] = $promo_content_data['date_start'];
                 $data['date_end'] = $promo_content_data['date_end'];
                 $data['image'] = $promo_content_data['image'];
+                $data['status'] = $promo_content_data['status'] == 'enable' ? true : false;
 
                 $update = $this->Promo_content_model->updatePromoContent($data);
                 if ($update) {
@@ -304,6 +306,14 @@ class Promo_content extends MY_Controller
             }
         } else {
             $this->data['thumb'] = S3_IMAGE . "cache/no_image-100x100.jpg";
+        }
+
+        if ($this->input->post('status')) {
+            $this->data['status'] = $this->input->post('status');
+        } elseif (isset($promo_content_info['status'])) {
+            $this->data['status'] = $promo_content_info['status'];
+        } else {
+            $this->data['status'] = true;
         }
 
         $this->load->vars($this->data);

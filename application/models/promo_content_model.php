@@ -10,6 +10,7 @@ class Promo_content_model extends MY_Model
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
         $total = $this->mongo_db->count('playbasis_promo_content_to_client');
 
         return $total;
@@ -58,7 +59,7 @@ class Promo_content_model extends MY_Model
 
         $this->mongo_db->where('client_id', $data['client_id']);
         $this->mongo_db->where('site_id', $data['site_id']);
-        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
         return $this->mongo_db->get("playbasis_promo_content_to_client");
     }
 
@@ -88,7 +89,8 @@ class Promo_content_model extends MY_Model
             'date_start' => new MongoDate(strtotime($data['date_start'])),
             'date_end' => new MongoDate(strtotime($data['date_end'])),
             'image' => $data['image'],
-            'status' => true,
+            'status' => $data['status'],
+            'deleted' => false,
             'date_added' => new MongoDate(),
             'date_modified' => new MongoDate()
         );
@@ -109,6 +111,7 @@ class Promo_content_model extends MY_Model
         $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
         $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));
         $this->mongo_db->set('date_modified', new MongoDate());
+        $this->mongo_db->set('status', $data['status']);
 
         $update = $this->mongo_db->update('playbasis_promo_content_to_client');
 
@@ -120,7 +123,7 @@ class Promo_content_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($promo_content_id));
-        $this->mongo_db->set('status', false);
+        $this->mongo_db->set('deleted', true);
         return $this->mongo_db->update('playbasis_promo_content_to_client');
     }
 }

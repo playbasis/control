@@ -92,6 +92,31 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <span class="required">*&nbsp;</span><?php echo $this->lang->line('entry_status'); ?>&nbsp;:
+                        </td>
+                        <td>
+                            <div class="control-group">
+                                <div class="controls">
+                                    <label class="control-label">
+                                        <input type="radio" name="status" id="radio_status_enable" value="enable"
+                                            <?php echo $status == true ? "checked=\"checked\"" : set_radio('status',
+                                                'enable', true); ?>>
+                                        <?php echo $this->lang->line('entry_status_enable'); ?>
+                                    </label>
+                                </div>
+                                <div class="controls">
+                                    <label class="control-label">
+                                        <input type="radio" name="status" id="radio_status_disabled" value="disable"
+                                            <?php echo $status == false ? "checked=\"checked\"" : set_radio('status',
+                                                'disable'); ?>>
+                                        <?php echo $this->lang->line('entry_status_disable'); ?>
+                                    </label>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

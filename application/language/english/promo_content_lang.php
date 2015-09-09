@@ -4,7 +4,7 @@ $lang['heading_title'] = 'Promotional Content';
 
 // Column
 $lang['column_name'] = "Name";
-$lang['column_date_added'] = "Date Added";
+$lang['column_date_range'] = "Date Range";
 $lang['column_status'] = "Status";
 $lang['column_action'] = "Action";
 
@@ -22,6 +22,9 @@ $lang['entry_date_range'] = 'Date Range';
 $lang['entry_date_start'] = 'Date Start';
 $lang['entry_date_end'] = 'Date End';
 $lang['entry_image'] = 'Image';
+$lang['entry_status'] = 'Status';
+$lang['entry_status_enable'] = 'Enable';
+$lang['entry_status_disable'] = 'Disable';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';
