@@ -43,7 +43,6 @@ define('DEFAULT_PLAN_PRICE', 0); // default is free package
 define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
 define('PAYMENT_CHANNEL_STRIPE', 'Stripe');
-define('PAYMENT_CHANNEL_DEFAULT', PAYMENT_CHANNEL_STRIPE);
 define('STRIPE_API_KEY', 'sk_test_8ChxEiUQyzeiN7OgnnFDBBYG');
 define('STRIPE_PUBLISHABLE_KEY', 'pk_test_1dekH9esZmjybutm3r76RIhG');
 define('PAYPAL_ENV', '');
