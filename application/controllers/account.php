@@ -327,7 +327,7 @@ class Account extends MY_Controller
 						'plan' => $plan_id,
 						'email' => $client['email'],
 					));
-					$this->Client_model->insertOrUpdateStrip($client_id, $customer->id, $customer->subscriptions->data[0]->id);
+					$this->Client_model->insertOrUpdateStripe($client_id, $customer->id, $customer->subscriptions->data[0]->id);
 				} catch (Exception $e) {
 					$this->session->set_flashdata("fail", $this->lang->line("error_payment_declined"));
 					redirect('/account', 'refresh');
@@ -440,7 +440,7 @@ class Account extends MY_Controller
 					$customer = \Stripe\Customer::retrieve($stripe['stripe_id']);
 					$subscription = $customer->subscriptions->retrieve($stripe['subscription_id']);
 					$subscription->cancel();
-					$this->Client_model->removeStrip($client_id);
+					$this->Client_model->removeStripe($client_id);
 					$this->data['main'] = 'account_cancel_subscription_stripe';
 					break;
 				}
