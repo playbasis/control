@@ -7,6 +7,7 @@ $lang['text_success']           				= 'You have successfully created a plan!';
 $lang['text_success_update']           			= 'You have successfully updated a plan!';
 $lang['text_success_delete']           			= 'You have successfully deleted plan(s)!';
 $lang['text_fail']								= 'The plan(s) are in use by a client, it cannot be deleted.';
+$lang['text_fail_update']								= 'The plan(s) are in use by a client, it cannot be updated.';
 $lang['text_default']           				= 'Default';
 $lang['text_image_manager']     				= 'Image Manager';
 $lang['text_browse']            				= 'Browse Files';
