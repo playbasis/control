@@ -42,7 +42,7 @@ class Promo_model extends MY_Model
             'client_id' => $data['client_id'],
             'site_id' => $data['site_id'],
             'status' => true,
-            'delete' => false
+            'deleted' => false
         ));
 
         if (isset($data['promo_id']) && !empty($data['promo_id'])) {

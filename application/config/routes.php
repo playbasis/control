@@ -263,6 +263,7 @@ $route['notification'] = 'notification/index';
 //promo API
 $route['Promo'] = 'promo/list';
 $route['Promo/list'] = 'promo/list';
+$route['Promo/name'] = 'promo/detailByName';
 $route['Promo/name/' . ANY_STRING] = 'promo/detailByName/$1';
 
 //misc

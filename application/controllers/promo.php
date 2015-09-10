@@ -73,7 +73,7 @@ class Promo extends REST2_Controller
         $this->benchmark->mark('start');
 
         if (empty($name)) {
-            $this->response($this->error->setError('PARAMETER_MISSING', array('promo_id')), 200);
+            $this->response($this->error->setError('PARAMETER_MISSING', array('promo_name')), 200);
         }
 
         $promo_data['site_id'] = $this->site_id;
