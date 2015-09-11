@@ -37,14 +37,16 @@ class jigsaw extends MY_Model
 		assert($input['pb_player_id']);
 		//always true if reward type is point
 		if(is_null($config['item_id']) || $config['item_id'] == ''){
-            return $this->checkReward($config['reward_id'], $input['site_id']);
-        }
+			return $this->checkReward($config['reward_id'], $input['site_id'], $config['quantity']);
+		}
 
 		//if reward type is badge
 		switch($config['reward_name'])
 		{
 			case 'badge':
-				return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id']);
+				return $this->checkBadge($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
+			case 'goods':
+				return $this->checkGoods($config['item_id'], $input['pb_player_id'], $input['site_id'], $config['quantity']);
 			default:
 				return false;
 		}
@@ -67,24 +69,24 @@ class jigsaw extends MY_Model
 		$exInfo['dynamic']['quantity'] = $quan;
 		return $name && $quan;
 	}
-    public function specialReward($config, $input, &$exInfo = array())
-    {
-        assert($config != false);
-        assert(is_array($config));
-        $name = $config['reward_name'];
-        $quan = $config['quantity'];
-        if(!$name && isset($input['reward']) && $input['reward'])
-        {
-            $name = $input['reward'];
-        }
-        if(!$quan && isset($input['quantity']) && $input['quantity'])
-        {
-            $quan = $input['quantity'];
-        }
-        $exInfo['dynamic']['reward_name'] = $name;
-        $exInfo['dynamic']['quantity'] = $quan;
-        return $name && $quan;
-    }
+	public function specialReward($config, $input, &$exInfo = array())
+	{
+		assert($config != false);
+		assert(is_array($config));
+		$name = $config['reward_name'];
+		$quan = $config['quantity'];
+		if(!$name && isset($input['reward']) && $input['reward'])
+		{
+			$name = $input['reward'];
+		}
+		if(!$quan && isset($input['quantity']) && $input['quantity'])
+		{
+			$quan = $input['quantity'];
+		}
+		$exInfo['dynamic']['reward_name'] = $name;
+		$exInfo['dynamic']['quantity'] = $quan;
+		return $name && $quan;
+	}
 	public function counter($config, $input, &$exInfo = array())
 	{
 		assert($config != false);
@@ -289,7 +291,7 @@ class jigsaw extends MY_Model
 		assert($input != false);
 		assert(is_array($input));
 		assert(isset($config['time_of_day']));
-		assert(isset($config['date_of_month']));
+		assert(isset($config['day_of_month']));
 		$result = $this->getMostRecentJigsaw($input, array(
 			'input'
 		));
@@ -415,6 +417,114 @@ class jigsaw extends MY_Model
 		}
 		return false;
 	}
+	public function random($config, $input, &$exInfo = array())
+	{
+		$this->set_site_mongodb($input['site_id']);
+		$sum = 0;
+		$acc = array();
+		foreach ($config['group_container'] as $i => $conf) {
+			// invalid goods will be excluded from randomness
+			if (!(array_key_exists('reward_name', $conf) && $conf['reward_name'] == 'goods')
+					|| $this->checkGoods(new MongoId($conf['item_id']), $input['pb_player_id'], $input['site_id'], $conf['quantity'])) {
+				$sum += intval($conf['weight']);
+				$acc[$i] = $sum;
+			}
+		}
+		if (!$acc) return false; // there is no valid entry
+		$max = $sum;
+		$ran = rand(0, $max-1);
+		foreach ($acc as $i => $value) {
+			if ($ran < $value) {
+				$exInfo['index'] = $i;
+				$exInfo['break'] = false;
+				$conf = $config['group_container'][$i];
+				if (array_key_exists('reward_name', $conf)) {
+					foreach (array('item_id', 'reward_id') as $field) {
+						if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? ($conf[$field] != 'goods' ? new MongoId($conf[$field]) : $conf[$field]) : null;
+					}
+					return $this->reward($conf, $input, $exInfo);
+				} else if (array_key_exists('feedback_name', $conf)) {
+					return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+				}
+				return false; // should not reach this line
+			}
+		}
+		return false; // can reach this line if (1) there is no entry (2) all entries are invalid
+	}
+	public function sequence($config, $input, &$exInfo = array())
+	{
+		$this->set_site_mongodb($input['site_id']);
+		$result = $this->getMostRecentJigsaw($input, array(
+			'input'
+		));
+		$i = !$result || !isset($result['input']['index']) ? 0 : $result['input']['index']+1;
+		$exInfo['index'] = $i;
+		$exInfo['break'] = true; // generally, "sequence" will block
+		if ($i > count($config['group_container'])-1) {
+			$exInfo['index'] = $result['input']['index']; // ensure that "index" has not been changed
+			if ($config['loop'] === 'false' || !$config['loop']) return false;
+			$i = 0; // looping, reset to be starting at 0
+			$exInfo['index'] = 0;
+		}
+		if ($i == count($config['group_container'])-1) $exInfo['break'] = false; // if this is last item in the sequence jigsaw, we allow the rule to process next jigsaw
+		$conf = $config['group_container'][$i];
+		if (array_key_exists('reward_name', $conf)) {
+			foreach (array('item_id', 'reward_id') as $field) {
+				if (array_key_exists($field, $conf)) $conf[$field] = $conf[$field] ? ($conf[$field] != 'goods' ? new MongoId($conf[$field]) : $conf[$field]) : null;
+			}
+			return $this->reward($conf, $input, $exInfo);
+		} else if (array_key_exists('feedback_name', $conf)) {
+			return $this->feedback($conf['feedback_name'], $conf, $input, $exInfo);
+		}
+		return false; // can reach this line if (1) there is no entry (2) all entries are invalid
+	}
+	public function redeem($config, $input, &$exInfo = array())
+	{
+		$this->set_site_mongodb($input['site_id']);
+		$ok = true; // default is true
+		foreach ($config['group_container'] as $conf) {
+			$avail = false;
+			if(is_null($conf['item_id']) || $conf['item_id'] == ''){
+				$avail = $this->checkRedeemPoint($input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], intval($conf['quantity']));
+			} else {
+				switch ($conf['reward_name']) {
+				case 'badge':
+					$avail = $this->checkRedeemBadge($input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], intval($conf['quantity']));
+					break;
+				case 'goods':
+					/* TODO: support goods */
+					break;
+				default:
+					break;
+				}
+			}
+			if (!$avail) {
+				$ok = false;
+				break;
+			}
+		}
+		if ($ok) {
+			/* TODO: permissionProcess "redeem" */
+			foreach ($config['group_container'] as $conf) {
+				if(is_null($conf['item_id']) || $conf['item_id'] == ''){
+					if ($conf['reward_name'] == 'exp') continue; // "exp" should not be decreasing
+					$this->updatePlayerPointReward($input['client_id'], $input['site_id'], new MongoId($conf['reward_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
+				} else {
+					switch ($conf['reward_name']) {
+					case 'badge':
+						$this->updateplayerBadge($input['client_id'], $input['site_id'], new MongoId($conf['item_id']), $input['pb_player_id'], $input['player_id'], -1*(int)$conf['quantity']);
+						break;
+					case 'goods':
+						/* TODO: support goods */
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		}
+		return $ok;
+	}
 	public function getMostRecentJigsaw($input, $fields)
 	{
 		assert(isset($input['site_id']));
@@ -448,7 +558,7 @@ class jigsaw extends MY_Model
 		}
 		return ($result) ? $result[0] : $result;
 	}
-	private function checkBadge($badgeId, $pb_player_id, $site_id)
+	private function checkBadge($badgeId, $pb_player_id, $site_id, $quantity=0)
 	{
 		//get badge properties
 		$this->set_site_mongodb($site_id);
@@ -457,7 +567,7 @@ class jigsaw extends MY_Model
 			'substract',
 			'quantity'));
 		$this->mongo_db->where(array(
-            'site_id' => $site_id,
+			'site_id' => $site_id,
 			'badge_id' => $badgeId,
 			'deleted' => false
 		));
@@ -480,7 +590,20 @@ class jigsaw extends MY_Model
 			return false;
 		return true;
 	}
-	private function checkReward($rewardId, $siteId)
+	private function checkGoods($goodsId, $pb_player_id, $site_id, $quantity=0)
+	{
+		if (!$quantity) return true;
+		$goods = $this->getGoods($site_id, $goodsId);
+		if (!$goods) return false;
+		$total = isset($goods['group']) ? $this->getGroupQuantity($site_id, $goods['group']) : $goods['quantity'];
+		$max = $goods['per_user'];
+		$used = $this->getPlayerGoods($site_id, $goodsId, $pb_player_id);
+		if ($total === 0 || $max === 0) return false;
+		if ($total && $quantity > $total) return false;
+		if (!$max) return true;
+		return $used+$quantity <= $max;
+	}
+	private function checkReward($rewardId, $siteId, $quantity=0)
 	{
 		$this->set_site_mongodb($siteId);
 		$this->mongo_db->select(array('limit'));
@@ -490,15 +613,227 @@ class jigsaw extends MY_Model
 		));
 		$this->mongo_db->limit(1);
 		$result = $this->mongo_db->get('playbasis_reward_to_client');
+		if (!$result) return false;
 		$result = $result[0];
 		if(is_null($result['limit'])){
-            return true;
-        }
+			return true;
+		}
 
 		return $result['limit'] > 0;
 	}
+	private function getGroupQuantity($site_id, $group) {
+		$results = $this->mongo_db->aggregate('playbasis_goods_to_client', array(
+			array(
+				'$match' => array(
+					'deleted' => false,
+					'site_id' => $site_id,
+					'group' => $group
+				),
+			),
+			array(
+				'$project' => array('group' => 1, 'quantity' => 1)
+			),
+			array(
+				'$group' => array('_id' => array('group' => '$group'), 'quantity' => array('$sum' => '$quantity'))
+			),
+		));
+		$res = $results ? $results['result'] : array();
+		return $res ? $res[0]['quantity'] : $res;
+	}
+	public function getGoods($site_id, $goodsId) {
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array('goods_id', 'name', 'description', 'image', 'per_user', 'quantity', 'group'));
+		$this->mongo_db->where(array(
+			'site_id' => $site_id,
+			'goods_id' => $goodsId,
+			'$and' => array(
+				array('$or' => array(array('date_start' => array('$lte' => $this->new_mongo_date(date('Y-m-d')))), array('date_start' => null))),
+				array('$or' => array(array('date_expire' => array('$gte' => $this->new_mongo_date(date('Y-m-d'), '23:59:59'))), array('date_expire' => null)))
+			),
+			'status' => true,
+			'deleted' => false
+		));
+		$this->mongo_db->limit(1);
+		$ret = $this->mongo_db->get("playbasis_goods_to_client");
+		return $ret && isset($ret[0]) ? $ret[0] : array();
+	}
+	private function getPlayerGoods($site_id, $goodsId, $pb_player_id) {
+		$this->mongo_db->select(array('value'));
+		$this->mongo_db->where(array(
+			'site_id' => $site_id,
+			'goods_id' => $goodsId,
+			'pb_player_id' => $pb_player_id
+		));
+		$this->mongo_db->limit(1);
+		$goods = $this->mongo_db->get('playbasis_goods_to_player');
+		return isset($goods[0]) ? $goods[0]['value'] : null;
+	}
+	private function checkRedeemPoint($site_id, $rewardId, $pb_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'reward_id' => new MongoId($rewardId),
+			'pb_player_id' => $pb_player_id,
+		));
+		if ($quantity) $this->mongo_db->where_gte('value', $quantity);
+		return $this->mongo_db->count('playbasis_reward_to_player');
+	}
+	private function checkRedeemBadge($site_id, $badgeId, $pb_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->where(array(
+			'badge_id' => new MongoId($badgeId),
+			'pb_player_id' => $pb_player_id,
+		));
+		if ($quantity) $this->mongo_db->where_gte('value', $quantity);
+		return $this->mongo_db->count('playbasis_reward_to_player');
+	}
+	/* copied over from client_model */
+	private function updatePlayerPointReward($client_id, $site_id, $rewardId, $pb_player_id, $cl_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
+
+		// check anonymous player
+		$this->mongo_db->where('_id', $pb_player_id);
+		$anon_result = $this->mongo_db->get('playbasis_player');
+		$anon_flag = isset($anon_result[0]['anonymous_flag']) ? $anon_result[0]['anonymous_flag'] : false;
+
+		// update player reward table
+		$this->mongo_db->where(array(
+			'pb_player_id' => $pb_player_id,
+			'reward_id' => $rewardId
+		));
+		$hasReward = $this->mongo_db->count('playbasis_reward_to_player');
+		if ($hasReward) {
+			$this->mongo_db->where(array(
+				'pb_player_id' => $pb_player_id,
+				'reward_id' => $rewardId
+			));
+			$this->mongo_db->set('date_modified', new MongoDate(time()));
+			$this->mongo_db->inc('value', intval($quantity));
+			$this->mongo_db->update('playbasis_reward_to_player');
+		} else {
+			$mongoDate = new MongoDate(time());
+			$this->mongo_db->insert('playbasis_reward_to_player', array(
+				'pb_player_id' => $pb_player_id,
+				'cl_player_id' => $cl_player_id,
+				'client_id' => $client_id,
+				'site_id' => $site_id,
+				'reward_id' => $rewardId,
+				'value' => intval($quantity),
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate
+			));
+		}
+
+		// update client reward limit
+		if ($anon_flag) return;
+		$this->mongo_db->select(array('limit'));
+		$this->mongo_db->where(array(
+			'reward_id' => $rewardId,
+			'site_id' => $site_id
+		));
+		$this->mongo_db->limit(1);
+		$result = $this->mongo_db->get('playbasis_reward_to_client');
+		assert($result);
+		$result = $result[0];
+		if(is_null($result['limit']))
+			return;
+		$this->mongo_db->where(array(
+			'reward_id' => $rewardId,
+			'site_id' => $site_id
+		));
+		$this->mongo_db->dec('limit', intval($quantity));
+		$this->mongo_db->update('playbasis_reward_to_client');
+	}
+	/* copied over from client_model */
+	private function updateplayerBadge($client_id, $site_id, $badgeId, $pb_player_id, $cl_player_id, $quantity=0)
+	{
+		$this->set_site_mongodb($site_id);
+
+		// check anonymous player
+		$this->mongo_db->where('_id', $pb_player_id);
+		$anon_result = $this->mongo_db->get('playbasis_player');
+		$anon_flag = isset($anon_result[0]['anonymous_flag']) ? $anon_result[0]['anonymous_flag'] : false;
+
+		// update badge master table
+		$this->set_site_mongodb($site_id);
+		$this->mongo_db->select(array(
+			'substract',
+			'quantity',
+			'claim',
+			'redeem'
+		));
+		$this->mongo_db->where(array(
+			'client_id' => $client_id,
+			'site_id' => $site_id,
+			'badge_id' => $badgeId,
+			'deleted' => false
+		));
+		$this->mongo_db->limit(1);
+		$result = $this->mongo_db->get('playbasis_badge_to_client');
+		if (!$result)
+			return;
+		$badgeInfo = $result[0];
+		$mongoDate = new MongoDate(time());
+		if (!$anon_flag && isset($badgeInfo['substract']) && $badgeInfo['substract']) {
+			$remainingQuantity = (int)$badgeInfo['quantity'] - (int)$quantity;
+			if($remainingQuantity < 0)
+			{
+				$remainingQuantity = 0;
+				$quantity = $badgeInfo['quantity'];
+			}
+			$this->mongo_db->set('quantity', $remainingQuantity);
+			$this->mongo_db->set('date_modified', $mongoDate);
+			$this->mongo_db->where('client_id', $client_id);
+			$this->mongo_db->where('site_id', $site_id);
+			$this->mongo_db->where('badge_id', $badgeId);
+			$this->mongo_db->update('playbasis_badge_to_client');
+		}
+
+		// update player badge table
+		$this->mongo_db->where(array(
+			'pb_player_id' => $pb_player_id,
+			'badge_id' => $badgeId
+		));
+		$hasBadge = $this->mongo_db->count('playbasis_reward_to_player');
+		if ($hasBadge) {
+			$this->mongo_db->where(array(
+				'pb_player_id' => $pb_player_id,
+				'badge_id' => $badgeId
+			));
+			$this->mongo_db->set('date_modified', $mongoDate);
+			if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
+			{
+				$this->mongo_db->inc('claimed', intval($quantity));
+			}else{
+				$this->mongo_db->inc('value', intval($quantity));
+			}
+			$this->mongo_db->update('playbasis_reward_to_player');
+		} else {
+			$data = array(
+				'pb_player_id' => $pb_player_id,
+				'cl_player_id' => $cl_player_id,
+				'client_id' => $client_id,
+				'site_id' => $site_id,
+				'badge_id' => $badgeId,
+				'redeemed' => 0,
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate
+			);
+			if(isset($badgeInfo['claim']) && $badgeInfo['claim'])
+			{
+				$data['value'] = 0;
+				$data['claimed'] = intval($quantity);
+			}else{
+				$data['value'] = intval($quantity);
+				$data['claimed'] = 0;
+			}
+			$this->mongo_db->insert('playbasis_reward_to_player', $data);
+		}
+	}
 //	private function matchUrl($inputUrl, $compareUrl, $isRegEx)
-    private function matchUrl($inputUrl, $compareUrl)
+	private function matchUrl($inputUrl, $compareUrl)
 	{
 		// return (boolean) $this->matchUrl($input['url'], $config['url'], $config['regex']);
 
@@ -530,7 +865,7 @@ class jigsaw extends MY_Model
 //			$match = (string) $compareUrl === (string) $inputUrl;
 //		}
 
-        $match = (string) $compareUrl === (string) $inputUrl;
+		$match = (string) $compareUrl === (string) $inputUrl;
 
 		return $match;
 		//e.g.

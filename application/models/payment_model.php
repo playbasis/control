@@ -12,23 +12,15 @@ class Payment_model extends MY_Model
 	}
 
 	public function processVerifiedIPN($client_id, $plan_id, $POST, $log_id) {
-	    $this->set_site_mongodb($this->session->userdata('site_id'));
-
 		/* find details of the client */
 		$client = $this->getClientById($client_id);
 
 		/* find details of the current plan of the client */
 		$myplan_id = $this->getPlanIdByClientId($client_id);
 		$myplan = $myplan_id ? $this->getPlanById($myplan_id) : null;
-		if (!array_key_exists('price', $myplan)) {
-			$myplan['price'] = DEFAULT_PLAN_PRICE;
-		}
 
 		/* find details of the subscribed plan of the client */
 		$plan = $this->getPlanById($plan_id);
-		if (!array_key_exists('price', $plan)) {
-			$plan['price'] = DEFAULT_PLAN_PRICE;
-		}
 
 		/* process PayPal IPN message differently according to 'txn_type' */
 		log_message('info', 'IPN PayPal txn_type: '.$POST['txn_type']);
@@ -39,7 +31,7 @@ class Payment_model extends MY_Model
 			if ($myplan['price'] <= 0) { // change the plan if current plan is free
 				$this->changePlan($client, $myplan_id, $plan_id);
 			}
-			$html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $log_id->{'$id'}, 'date' => date('l, F d, Y', time())), true);
+			$html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'channel' => PAYMENT_CHANNEL_PAYPAL, 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $log_id->{'$id'}, 'date' => date('l, F d, Y', time())), true);
 			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Registration Confirmation', $html);
 			break;
 		case PAYPAL_TXN_TYPE_SUBSCR_MODIFY:
@@ -122,6 +114,104 @@ class Payment_model extends MY_Model
 		return true;
 	}
 
+	public function invoiceCreated($client, $plan, $subscription_id) {
+	}
+
+	public function invoiceUpdated($client, $plan, $subscription_id) {
+	}
+
+	public function invoicePaymentSucceeded($client, $plan, $subscription_id) {
+		/* adjust billing period, 'date_start' and 'date_expire', allowing client to use our API */
+		log_message('info', 'Client '.$client['_id'].' has been set billing period ("date_start" and "date_expire")');
+		$this->setDateStartAndDateExpire($client['_id']);
+	}
+
+	public function invoicePaymentFailed($client, $plan, $subscription_id, $retry_at) {
+		/* after several attempts, send email to the user notifying the failure of payment */
+		$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We were unable to process the subscription plan payment '.$plan['name'].' of '.$plan['price'].' USD for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. The payment has been declined '.$retry_at.' times.<br><br>What about your account?<br>We\'ll keep your account active for now. However, five days after the initial payment failure we\'ll automatically downgrade your account to the Free plan. You\'ll be able to upgrade later with a valid payment without losing any of your settings.'), true);
+		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Your Playbasis Payment has Failed', $html);
+	}
+
+	public function chargeSucceeded($client, $channel, $txn_id, $txn_date) {
+		$html = $this->parser->parse('message_confirm_payment.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'transaction_id' => $txn_id, 'date' => date('l, F d, Y', $txn_date), 'channel' => $channel), true);
+		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Receipt for Your Payment to Playbasis', $html);
+	}
+
+	public function chargeFailed($client, $channel, $txn_id, $txn_date, $failure_code, $failure_message) {
+		/* send email to the user notifying the failure of payment with reason */
+		$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'We were unable to process the subscription plan payment for Playbasis account, '.$client['first_name'].' '.$client['last_name'].', on '.date('l, F d, Y', time()).'. '.$channel.' informed us the payment has been declined with a following reason: '.$failure_message.' ('.$failure_code.').<br><br>What should you do now?<br>Please check the payment setting in your '.$channel.' account and try to resolve the problem.'), true);
+		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Unable to Process Your Playbasis Payment', $html);
+	}
+
+	public function log($client_id, $channel, $event_id, $txn_id, $amount, $currency, $status, $failure_code, $failure_message) {
+		$d = new MongoDate(strtotime(date("Y-m-d H:i:s")));
+		$this->mongo_db->insert('playbasis_payment_log', array(
+			'channel' => $channel,
+			'client_id' => $client_id,
+			'status' => $status,
+			'amount' => $amount,
+			'currency' => $currency,
+			'txn_id' => $txn_id,
+			'event_id' => $event_id,
+			'failure_code' => $failure_code,
+			'failure_message' => $failure_message,
+			'date_added' => $d,
+			'date_modified' => $d,
+		));
+	}
+
+	public function subscriptionCreated($client, $plan, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end) {
+		$this->setDateBilling($client['_id'], $plan, $subscription_id);
+		$this->setDateStartAndDateExpire($client['_id']);
+		$this->changePlan($client, $myplan['_id'], $plan['_id']);
+		$html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'channel' => PAYMENT_CHANNEL_PAYPAL, 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $subscription_id, 'date' => date('l, F d, Y', time())), true);
+		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Registration Confirmation', $html);
+	}
+
+	public function subscriptionUpdated($client, $plan, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end) {
+		if ($myplan['_id'] != $plan['_id']) { /* detecting plan has been changed */
+			log_message('info', 'Client '.$client['_id'].' has changed the plan from '.$myplan['_id'].' to '.$plan['_id']);
+			$this->changePlan($client, $myplan['_id'], $plan['_id']);
+			$html = $this->parser->parse('message.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'message' => 'At your request, we have changed your Playbasis subscription plan to '.$plan['name'].'.<br>The next billing for your subscription will be on the same date, but the amount will be different as we will prorate the cost.<br>Below are the details of the order you have placed with us:<br><table><tr><td>&nbsp;</td><td>Old Plan</td><td>New Plan</td></tr> <tr><td>Client ID</td><td>'.$client['_id'].'</td><td>'.$client['_id'].'</td></tr> <tr><td>Subscription plan</td><td>'.$myplan['name'].'</td><td>'.$plan['name'].'</td></tr> <tr><td>Monthly price</td><td>'.$myplan['price'].'</td><td>'.$plan['price'].'</td></tr> </table><br>We are looking forward to hearing from you soon.'), true);
+			$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Request to Change Your Subscription Plan', $html);
+		} else { /* end of trial period */
+
+		}
+	}
+
+	public function subscriptionDeleted($client, $plan, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end) {
+		$this->unsetDateBilling($client['_id']);
+		$this->unsetDateStartAndDateExpire($client['_id']);
+		$this->changePlan($client, $myplan['_id'], new MongoId(FREE_PLAN));
+		log_message('info', 'Client '.$client['_id'].' has canceled the subscription and has been changed to free plan');
+		$html = $this->parser->parse('message_cancel_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'date' => date('l, F d, Y', time())), true);
+		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Subscription Plan Cancellation', $html);
+	}
+
+	public function trialPeriodWillEnd($client_id, $plan_id, $myplan, $subscription_id, $period_start, $period_end, $trial_start, $trial_end) {
+	}
+
+	public function getClientIdByStripeId($stripe_id) {
+		$this->mongo_db->select(array('client_id'));
+		$this->mongo_db->where('stripe_id', $stripe_id);
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_stripe');
+		return $results ? $results[0]['client_id'] : null;
+	}
+
+	public function existPaymentEvent($event_id) {
+		$this->mongo_db->where('_id', $event_id);
+		return $this->mongo_db->count('playbasis_payment_event');
+	}
+
+	public function insertPaymentEvent($event_id, $event) {
+		$this->mongo_db->insert('playbasis_payment_event', array(
+			'_id' => $event_id,
+			'date_added' => new MongoDate(),
+			'date_modified' => new MongoDate(),
+		));
+	}
+
 	public function getPlanIdByClientId($client_id) {
 		$permission = $this->getLatestPermissionByClientId($client_id);
 		return $permission ? $permission['plan_id'] : null;
@@ -146,7 +236,11 @@ class Payment_model extends MY_Model
 	}
 
 	public function getPlanById($plan_id) {
-		return $this->getById($plan_id, 'playbasis_plan');
+		$plan = $this->getById($plan_id, 'playbasis_plan');
+		if ($plan && !array_key_exists('price', $plan)) {
+			$plan['price'] = DEFAULT_PLAN_PRICE;
+		}
+		return $plan;
 	}
 
 	public function getSytemRewardById($reward_id) {

@@ -14,6 +14,9 @@ define('S3_BUCKET', 'elasticbeanstalk-ap-southeast-1-007834438823');
 define('S3_FOLDER', 'log/playbasis_web_service_log');
 define('DAYS_TO_BECOME_ACTIVE', 3);
 
+define('ENERGY_UPDATER_THRESHOLD', 5);
+define('LIMIT_PLAYERS_QUERY', 10000);
+
 class Cron extends CI_Controller
 {
 	public function __construct()
@@ -393,6 +396,93 @@ $email = 'pechpras@playbasis.com';
 			}
 		}
 	}
+
+    public function energyUpdater()
+    {
+        $this->load->model('energy_model');
+        $this->load->model('player_model');
+
+        $now = time();
+
+        if ($this->input->is_cli_request()) {
+            foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
+                $client_id = $energy['client_id'];
+                $site_id = $energy['site_id'];
+                $energy_reward_id = $energy['reward_id'];
+                $energy_change_period = $energy['energy_props']['changing_period'];
+                $energy_change_per_period = (int)$energy['energy_props']['changing_per_period'];
+
+                //FIXME(Rook): to check if client and site is still active, if not just break this loop
+
+                $completed_flag = $this->energy_model->updatePlayersEnergyValueWithConditions($client_id,
+                    $site_id, $energy_reward_id, $now, $energy_change_period, $energy_change_per_period);
+                if ($completed_flag) {
+                    echo "Updated value success!" . PHP_EOL;
+                } else {
+                    echo "Skip update" . PHP_EOL;
+                }
+            }
+        }
+    }
+
+    public function energyInitialInsertion()
+    {
+        $this->load->model('energy_model');
+        $this->load->model('player_model');
+
+        if ($this->input->is_cli_request()) {
+            foreach ($this->energy_model->findActiveEnergyRewards() as $energy) {
+                $client_id = $energy['client_id'];
+                $site_id = $energy['site_id'];
+                $energy_reward_id = $energy['reward_id'];
+                $energy_max = (int)$energy['energy_props']['maximum'];
+
+                //FIXME(Rook): to check if client and site is still active, if not just break this loop
+
+                $total = $this->energy_model->findPlayersToInsert($client_id, $site_id, true);
+                echo "Total Player to insert = $total" . PHP_EOL;
+                for ($i = 0; $i <= round($total / LIMIT_PLAYERS_QUERY); $i++) {
+                    $offset = LIMIT_PLAYERS_QUERY * $i;
+                    $players_without_energy = $this->energy_model->findPlayersToInsert($client_id, $site_id, false,
+                        $offset, LIMIT_PLAYERS_QUERY);
+
+                    $batch_data = array();
+                    foreach ($players_without_energy as $player) {
+                        // Note: $player here is from player table
+                        if ($energy['type'] == 'gain') {
+                            array_push($batch_data, array(
+                                'pb_player_id' => $player['_id'],
+                                'cl_player_id' => $player['cl_player_id'],
+                                'client_id' => $client_id,
+                                'site_id' => $site_id,
+                                'reward_id' => $energy_reward_id,
+                                'value' => $energy_max,
+                                'date_added' => new MongoDate(),
+                                'date_modified' => new MongoDate()
+                            ));
+                        } elseif ($energy['type'] == 'loss') {
+                            array_push($batch_data, array(
+                                'pb_player_id' => $player['_id'],
+                                'cl_player_id' => $player['cl_player_id'],
+                                'client_id' => $client_id,
+                                'site_id' => $site_id,
+                                'reward_id' => $energy_reward_id,
+                                'value' => 0,
+                                'date_added' => new MongoDate(),
+                                'date_modified' => new MongoDate()
+                            ));
+                        }
+                    }
+                    if (!empty($batch_data)) {
+                        $completed_flag = $this->energy_model->bulkInsertInitialValue($batch_data);
+                        if ($completed_flag) {
+                            echo "Bulk Insert Initial value success! at offset#$offset" . PHP_EOL;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 function urlsafe_b64encode($string) {

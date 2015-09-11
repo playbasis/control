@@ -121,6 +121,7 @@ $route['Player/levels'] = 'player/levels';
 $route['Player/'.ANY_STRING.'/points'] = 'player/points/$1';
 $route['Player/points'] = 'player/points';
 $route['Player/'.ANY_STRING.'/point/'.ANY_STRING] = 'player/point/$1/$2';
+$route['Player/'.ANY_STRING.'/point/'.ANY_STRING.'/lastUsed'] = 'player/pointLastUsed/$1/$2';
 $route['Player/point/'.ANY_STRING] = 'player/point/0/$1';
 $route['Player/'.ANY_STRING.'/point'] = 'player/points/$1';
 $route['Player/point'] = 'player/point/';
@@ -237,6 +238,7 @@ $route['Quiz/'.ANY_STRING.'/question'] = 'quiz/question/$1'; // ANY_STRING = qui
 $route['Quiz/'.ANY_STRING.'/answer'] = 'quiz/answer/$1'; // ANY_STRING = quiz_id
 $route['Quiz/'.ANY_STRING.'/rank/'.ANY_NUMBER] = 'quiz/rank/$1/$2'; // ANY_STRING = quiz_id
 $route['Quiz/'.ANY_STRING.'/rank'] = 'quiz/rank/$1/5'; // ANY_STRING = quiz_id
+$route['Quiz/'.ANY_STRING.'/stat'] = 'quiz/stat/$1'; // ANY_STRING = quiz_id
 $route['Quiz/reset'] = 'quiz/reset';
 
 //email API
@@ -257,6 +259,12 @@ $route['Sms/recent'] = 'pb_sms/recent';
 //notification API
 $route['notification/'.ANY_STRING] = 'notification/index/$1';
 $route['notification'] = 'notification/index';
+
+//promo API
+$route['Promo'] = 'promo/list';
+$route['Promo/list'] = 'promo/list';
+$route['Promo/name'] = 'promo/detailByName';
+$route['Promo/name/' . ANY_STRING] = 'promo/detailByName/$1';
 
 //misc
 //$route['test']	= 'playbasis/test';

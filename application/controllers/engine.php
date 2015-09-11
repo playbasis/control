@@ -10,13 +10,14 @@ class Engine extends Quest
 	{
 		parent::__construct();
 		$this->load->model('auth_model');
-        $this->load->model('push_model');
+		$this->load->model('push_model');
 		$this->load->model('player_model');
 		$this->load->model('action_model');
 		$this->load->model('engine/jigsaw', 'jigsaw_model');
 		$this->load->model('client_model');
 		$this->load->model('tracker_model');
 		$this->load->model('point_model');
+		$this->load->model('goods_model');
 		$this->load->model('social_model');
 		$this->load->model('email_model');
 		$this->load->model('sms_model');
@@ -66,11 +67,11 @@ class Engine extends Quest
 			}
 			else
 			{
-                $actionName = $this->client_model->getActionName(array(
-                    'client_id' => $validToken['client_id'],
-                    'site_id' => $validToken['site_id'],
-                    'action_id' => new MongoId($jigsawSet[0]['config']['action_id'])
-                ));
+				$actionName = $this->client_model->getActionName(array(
+					'client_id' => $validToken['client_id'],
+					'site_id' => $validToken['site_id'],
+					'action_id' => new MongoId($jigsawSet[0]['config']['action_id'])
+				));
 				$actionConfig[$actionId] = array(
 					'name' => $actionName,
 					'config' => array(
@@ -183,22 +184,15 @@ class Engine extends Quest
 			if($pb_player_id < 0)
 				$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 			$actionName = $fbData['action'];
-//			$actionId = $this->client_model->getActionId(array(
-//				'client_id' => $validToken['client_id'],
-//				'site_id' => $validToken['site_id'],
-//				'action_name' => $actionName
-//			));
-//            if(!$actionId)
-//                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-            $action = $this->client_model->getAction(array(
-                'client_id' => $validToken['client_id'],
-                'site_id' => $validToken['site_id'],
-                'action_name' => $actionName
-            ));
+			$action = $this->client_model->getAction(array(
+				'client_id' => $validToken['client_id'],
+				'site_id' => $validToken['site_id'],
+				'action_name' => $actionName
+			));
 			if(!$action)
 				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-            $actionId = $action['action_id'];
-            $actionIcon = $action['icon'];
+			$actionId = $action['action_id'];
+			$actionIcon = $action['icon'];
 			$input = array_merge($validToken, array(
 				'pb_player_id' => $pb_player_id,
 				'action_id' => $actionId,
@@ -220,119 +214,103 @@ class Engine extends Quest
 				if($pb_player_id < 0)
 					continue;
 				$actionName = $twData['action'];
-//				$actionId = $this->client_model->getActionId(array(
-//					'client_id' => $validToken['client_id'],
-//					'site_id' => $validToken['site_id'],
-//					'action_name' => $actionName
-//				));
-//				if(!$actionId)
-//					continue;
-                $action = $this->client_model->getAction(array(
-                    'client_id' => $validToken['client_id'],
-                    'site_id' => $validToken['site_id'],
-                    'action_name' => $actionName
-                ));
-                if(!$action)
-                    continue;
-                $actionId = $action['action_id'];
-                $actionIcon = $action['icon'];
-                $input = array_merge($validToken, array(
-                    'pb_player_id' => $pb_player_id,
-                    'action_id' => $actionId,
-                    'action_name' => $actionName,
-                    'action_icon' => $actionIcon
-                ));
+				$action = $this->client_model->getAction(array(
+					'client_id' => $validToken['client_id'],
+					'site_id' => $validToken['site_id'],
+					'action_name' => $actionName
+				));
+				if(!$action)
+					continue;
+				$actionId = $action['action_id'];
+				$actionIcon = $action['icon'];
+				$input = array_merge($validToken, array(
+					'pb_player_id' => $pb_player_id,
+					'action_id' => $actionId,
+					'action_name' => $actionName,
+					'action_icon' => $actionIcon
+				));
 				$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
 			}
 		}
 		else
 		{
-            $test = $this->input->post("test");
+			$test = $this->input->post("test");
+			$required = NULL;
 
-            $required = NULL;
 			//process regular data
-            if (!$test)
-                $required = $this->input->checkParam(array('token'));
-
+			if (!$test)
+				$required = $this->input->checkParam(array('token'));
 			if($required)
 				$this->response($this->error->setError('TOKEN_REQUIRED', $required), 200);
 
-            if (!$test)
-                $required = $this->input->checkParam(array('action', 'player_id'));
-
+			if (!$test)
+				$required = $this->input->checkParam(array('action', 'player_id'));
 			if($required)
 				$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
-            if (!$test)
-                $validToken = $this->auth_model->findToken($this->input->post('token'));
-            else
-                $validToken = array("client_id" => new MongoId($this->input->post("client_id")),
-                                    "site_id" => new MongoId($this->input->post("site_id")),
-                                    "domain_name" => NULL);
-
+			if (!$test)
+				$validToken = $this->auth_model->findToken($this->input->post('token'));
+			else
+				$validToken = array(
+					"client_id" => new MongoId($this->input->post("client_id")),
+					"site_id" => new MongoId($this->input->post("site_id")),
+					"domain_name" => NULL
+				);
 			if(!$validToken)
 				$this->response($this->error->setError('INVALID_TOKEN'), 200);
 
 			//get playbasis player id from client player id
-            $pb_player_id = array();
-            if (!$test) {
-                $cl_player_id = $this->input->post('player_id');
-                $pb_player_id = $this->player_model->getPlaybasisId(
-                    array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
-            }
+			$pb_player_id = array();
+			if (!$test) {
+				$cl_player_id = $this->input->post('player_id');
+				$pb_player_id = $this->player_model->getPlaybasisId(
+					array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
+			}
 
-            if(!$pb_player_id && !$test)
-            {
-                log_message('error', '[debug-case-pbapp_auto_user] player_id = '.$this->input->post('player_id').', action = '.$this->input->post('action'));
-                //$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-                //create user with tmp data for this id
-                $pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
-                    'player_id' => $cl_player_id,
-                    'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
-                    'email' => 'pbapp_auto_user@playbasis.com',
-                    'username' => $cl_player_id,
-                    'first_name' => $cl_player_id,
-                    'nickname' => $cl_player_id,
-                )));
-            }
+			if(!$pb_player_id && !$test)
+			{
+				log_message('error', '[debug-case-pbapp_auto_user] player_id = '.$this->input->post('player_id').', action = '.$this->input->post('action'));
+				//$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+				//create user with tmp data for this id
+				$pb_player_id = $this->player_model->createPlayer(array_merge($validToken, array(
+					'player_id' => $cl_player_id,
+					'image' => $this->config->item('DEFAULT_PROFILE_IMAGE'),
+					'email' => 'pbapp_auto_user@playbasis.com',
+					'username' => $cl_player_id,
+					'first_name' => $cl_player_id,
+					'nickname' => $cl_player_id,
+				)));
+			}
 
-            //get action id by action name
-            $actionName = $this->input->post('action');
-//            $actionId = $this->client_model->getActionId(array(
-//                'client_id' => $validToken['client_id'],
-//                'site_id' => $validToken['site_id'],
-//                'action_name' => $actionName
-//            ));
-//            if(!$actionId)
-//                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+			//get action id by action name
+			$actionName = $this->input->post('action');
+			$action = $this->client_model->getAction(array(
+				'client_id' => $validToken['client_id'],
+				'site_id' => $validToken['site_id'],
+				'action_name' => $actionName
+			));
+			if(!$action)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+			$actionId = $action['action_id'];
+			$actionIcon = $action['icon'];
 
-            $action = $this->client_model->getAction(array(
-                'client_id' => $validToken['client_id'],
-                'site_id' => $validToken['site_id'],
-                'action_name' => $actionName
-            ));
-            if(!$action)
-                $this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
-            $actionId = $action['action_id'];
-            $actionIcon = $action['icon'];
+			$postData = $this->input->post();
+			$input = array_merge($postData, $validToken, array(
+				'pb_player_id' => $pb_player_id,
+				'action_id' => $actionId,
+				'action_name' => $actionName,
+				'action_icon' => $actionIcon
+			));
+			if (!$test)
+				$input["test"] = false;
 
-            $postData = $this->input->post();
-            $input = array_merge($postData, $validToken, array(
-                'pb_player_id' => $pb_player_id,
-                'action_id' => $actionId,
-                'action_name' => $actionName,
-                'action_icon' => $actionIcon
-            ));
-            if (!$test)
-                $input["test"] = false;
-
-            $apiResult = $this->processRule($input, $validToken, $fbData, $twData);
-        }
-        //Quest Process
-        if (!$test){
-            $apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
-            $apiResult = array_merge($apiResult, $apiQuestResult);
-        }
+			$apiResult = $this->processRule($input, $validToken, $fbData, $twData);
+		}
+		//Quest Process
+		if (!$test){
+			$apiQuestResult = $this->QuestProcess($pb_player_id, $validToken);
+			$apiResult = array_merge($apiResult, $apiQuestResult);
+		}
 
 		$this->benchmark->mark('engine_rule_end');
 		$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
@@ -352,7 +330,7 @@ class Engine extends Quest
 		)));
 		return $eventMessage;
 	}
-	protected function processRule($input, $validToken, $fbData, $twData)
+	public function processRule($input, $validToken, $fbData, $twData)
 	{
 
 		if(!isset($input['player_id']) || !$input['player_id']) {
@@ -372,11 +350,11 @@ class Engine extends Quest
 		$site_id = $validToken['site_id'];
 		$domain_name = $validToken['domain_name'];
 
-        $player = array(
-            'pb_player_id' =>$input['pb_player_id'],
-            'client_id' => $client_id ,
-            'site_id' => $site_id
-        );
+		$player = array(
+			'pb_player_id' =>$input['pb_player_id'],
+			'client_id' => $client_id ,
+			'site_id' => $site_id
+		);
 
 		if(!isset($input['site_id']) || !$input['site_id'])
 			$input['site_id'] = $site_id;
@@ -421,53 +399,66 @@ class Engine extends Quest
 			$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set']: array();
 
 			foreach($jigsawSet as $jigsaw) {
-                try {
-                    $jigsaw_id = new MongoId($jigsaw['id']);
-                } catch (MongoException $ex) {
-                    $jigsaw_id = "";
-                }
+				try {
+					$jigsaw_id = new MongoId($jigsaw['id']);
+				} catch (MongoException $ex) {
+					$jigsaw_id = "";
+				}
 
 				$input['jigsaw_id'] = $jigsaw_id;
 				$input['jigsaw_name'] = $jigsaw['name'];
 				$input['jigsaw_category'] = $jigsaw['category'];
 				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
-
-				if(isset($jigsaw['config']['action_id']) && !empty($jigsaw['config']['action_id']))
-					$jigsaw['config']['action_id'] = new MongoId($jigsaw['config']['action_id']);
-				if(isset($jigsaw['config']['reward_id']) && !empty($jigsaw['config']['reward_id']))
-					$jigsaw['config']['reward_id'] = new MongoId($jigsaw['config']['reward_id']);
-				if(isset($jigsaw['config']['item_id']) && !empty($jigsaw['config']['item_id']))
-					$jigsaw['config']['item_id'] = new MongoId($jigsaw['config']['item_id']);
-
+				$jigsaw['config'] = $this->normalize_jigsawConfig($jigsaw['config']);
 				$input['input'] = $jigsaw['config'];
 				$exInfo = array();
 				$jigsawConfig = $jigsaw['config'];
+				$jigsawCategory = $jigsaw['category'];
 
 				//get class path to precess jigsaw
-                $processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
+				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
 
-                if (!$input["test"])
-                    $jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
-                else
-                    $jigsaw_model = true;
+				if (!$input["test"])
+					$jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
+				else
+					$jigsaw_model = true;
 
 				/* [rule usage] increase rule usage counter if a reward is given on chunk-based basis */
 				if ($this->is_reward($jigsaw['category']) && !$this->is_reward($last_jigsaw)) $count++;
 
 				if($jigsaw_model) {
 
-					if($jigsaw['category'] == 'REWARD') {
+					/* pre-processing in case of 'GROUP' */
+					$break = false;
+					$jigsawName = $input['jigsaw_name'];
+					if($jigsawCategory == 'GROUP') {
+						$break = $exInfo['break'];
+						$conf = $jigsawConfig['group_container'][$exInfo['index']];
+						$jigsawConfig = $this->normalize_jigsawConfig(array_merge($jigsawConfig, $conf));
+						if (array_key_exists('reward_name', $conf)) {
+							$jigsawCategory = 'REWARD';
+						} else if (array_key_exists('feedback_name', $conf)) {
+							$jigsawCategory = 'FEEDBACK';
+							foreach (array('feedback_name', 'template_id', 'subject') as $field) {
+								if (array_key_exists($field, $conf)) $input['input'][$field] = $conf[$field];
+							}
+							$jigsawName = $conf['feedback_name'];
+						}
+					}
+
+					/* process 'REWARD' or 'FEEDBACK' */
+					if($jigsawCategory == 'REWARD') {
 						if(isset($exInfo['dynamic'])) {
 							//reward is a custom point
 							assert('$exInfo["dynamic"]["reward_name"]');
 							assert('$exInfo["dynamic"]["quantity"]');
 
-                            if (!$input["test"])
-                                $lv = $this->client_model->updateCustomReward(
-                                    $exInfo['dynamic']['reward_name'],
-                                    $exInfo['dynamic']['quantity'],
-                                    $input,
-                                    $jigsawConfig);
+							if (!$input["test"])
+								$lv = $this->client_model->updateCustomReward(
+									$exInfo['dynamic']['reward_name'],
+									$exInfo['dynamic']['quantity'],
+									$input,
+									$jigsawConfig);
 
 							$event = array(
 								'event_type' => 'REWARD_RECEIVED',
@@ -692,15 +683,39 @@ class Engine extends Quest
                                     break;
                                 }  // close if (!$input["test"])
                                 break;
+                            case 'goods':
+                                $goodsData = $this->jigsaw_model->getGoods($site_id, $jigsawConfig['item_id']);
+                                if (!$goodsData) break;
+
+                                if (isset($goodsData['group'])) {
+                                    $goodsData = $this->goods_model->getGoodsFromGroup($validToken['client_id'], $validToken['site_id'], $goodsData['group'], $input['pb_player_id'], $jigsawConfig['quantity']);
+                                    if (!$goodsData) break;
+                                    $jigsawConfig['item_id'] = $goodsData['goods_id'];
+                                }
+
+                                unset($goodsData['_id']);
+                                unset($goodsData['redeem']);
+                                $goodsData['goods_id'] = $goodsData['goods_id'].'';
+                                $event = array(
+                                    'event_type' => 'REWARD_RECEIVED',
+                                    'reward_type' => $jigsawConfig['reward_name'],
+                                    'reward_data' => $goodsData,
+                                    'value' => $jigsawConfig['quantity']
+                                );
+                                array_push($apiResult['events'], $event);
+
+                                if (!$input["test"]) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
+
+                                break;
                             default:
                                 log_message('error', 'Unknown reward: '.$jigsawConfig['reward_name']);
                                 break;
                             }  // close switch($jigsawConfig['reward_name'])
 
                         }  // close if(isset($exInfo['dynamic']))
-                    } elseif($jigsaw['category'] == 'FEEDBACK') {
+                    } elseif($jigsawCategory == 'FEEDBACK') {
                         if (!$input["test"])
-                            $this->processFeedback($input['jigsaw_name'], $input);
+                            $this->processFeedback($jigsawName, $input);
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {
@@ -752,9 +767,11 @@ class Engine extends Quest
 					// success, log jigsaw - ACTION, CONDITION, REWARD, or FEEDBACK
 					if (!$input["test"])
 						$this->client_model->log($input, $exInfo);
+
+					if ($break) break; // break early, do not process next jigsaw
 				} else {  // jigsaw return false
-					if($this->is_reward($jigsaw['category'])) {
-						continue;
+					if($this->is_reward($jigsawCategory)) { // REWARD, FEEDBACK
+						if(isset($exInfo['break']) && $exInfo['break']) break;
 					} else {
 						// fail, log jigsaw - ACTION or CONDITION
                         if (!$input["test"])
@@ -764,7 +781,7 @@ class Engine extends Quest
 				}  // close if($jigsaw_model)
 
 				/* [rule usage] set last_jigsaw */
-				$last_jigsaw = $jigsaw['category'];
+				$last_jigsaw = $jigsawCategory;
 			}  // close foreach($jigsawSet as $jigsaw)
 
 			/* [rule usage] increase usage value on client's account */
@@ -787,37 +804,80 @@ class Engine extends Quest
 		}  // close foreach($ruleSet as $rule)
 		return $apiResult;
 	}
+	private function normalize_jigsawConfig($jigsawConfig) {
+		if(isset($jigsawConfig['action_id']) && !empty($jigsawConfig['action_id']))
+			$jigsawConfig['action_id'] = new MongoId($jigsawConfig['action_id']);
+		if(isset($jigsawConfig['reward_id']) && !empty($jigsawConfig['reward_id']))
+			$jigsawConfig['reward_id'] = $jigsawConfig['reward_id'] != 'goods' ? new MongoId($jigsawConfig['reward_id']) : $jigsawConfig['reward_id'];
+		if(isset($jigsawConfig['item_id']) && !empty($jigsawConfig['item_id']))
+			$jigsawConfig['item_id'] = new MongoId($jigsawConfig['item_id']);
+		return $jigsawConfig;
+	}
 	private function is_reward($category) {
 		return in_array($category, array('REWARD', 'FEEDBACK'));
 	}
     public function sendNotification($data,$player,$msg)
     {
-        $this->mongo_db->select('device_token');
-        $this->mongo_db->where(array(
-            'pb_player_id' => $player['pb_player_id'],
+        $where = array(
+            'client_id' => $player['client_id'],
             'site_id' => $player['site_id'],
-            'client_id' => $player['client_id']
-        ));
+            'pb_player_id' => $player['pb_player_id'],
+        );
+        $this->mongo_db->select('device_token');
+        $this->mongo_db->where($where);
         $results = $this->mongo_db->get('playbasis_player_device');
-        /*$data = array(
-            'title' => $data['title'],
-            'badge' => $data['badge'],
-            'type' => $data['type'],
-            'value' => $data['value'],
-            'text' => $data['text']
-        );*/
-        foreach($results as $device_token)
+        $notificationInfo = array_merge($where, array(
+            'messages' => $msg,
+            'data' => $data,
+            'badge_number' => 1
+        ));
+        foreach($results as $device)
         {
-            $notificationInfo = array(
-                'device_token' => $device_token['device_token'],
-                'messages' => $msg,
-                'data' => $data,
-                'badge_number' => 1
-            );
-            $this->push_model->initial($notificationInfo);
+            $notificationInfo['device_token'] = $device['device_token'];
+            $this->push_model->initial($notificationInfo, $device['type']);
         }
-
     }
+
+    private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData) {
+        $domain_name = $validToken['domain_name'];
+
+        $player = array(
+            'pb_player_id' => $input['pb_player_id'],
+            'client_id' => $validToken['client_id'] ,
+            'site_id' => $validToken['site_id']
+        );
+
+        $this->client_model->updateplayerGoods($jigsawConfig['item_id'], $jigsawConfig['quantity'], $input['pb_player_id'], $input['player_id'], $validToken['client_id'], $validToken['site_id'], false);
+
+        $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '', $event['reward_data']['name']);
+
+        // log event - reward, goods
+        $this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
+            'reward_id' => $jigsawConfig['reward_id'],
+            'reward_name' => $jigsawConfig['reward_name'],
+            'item_id' => $jigsawConfig['item_id'],
+            'amount' => $jigsawConfig['quantity'])));
+
+        // publish - node stream
+        $this->node->publish(array_merge($input, array(
+            'message' => $eventMessage,
+            'goods' => $event['reward_data']
+        )), $domain_name, $validToken['site_id']);
+
+        // publish - facebook notification
+        if ($fbData)
+            $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
+
+        // publish - push notification
+        $this->sendNotification(array(
+            'title' => $eventMessage,
+            'goods' => $jigsawConfig['item_id'],
+            'type' => $jigsawConfig['reward_name'],
+            'value' => $jigsawConfig['quantity'],
+            'text' => $eventMessage
+        ), $player, $eventMessage);
+    }
+
 	public function test_get()
 	{
 		echo '<pre>';

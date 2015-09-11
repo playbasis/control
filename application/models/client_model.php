@@ -157,6 +157,8 @@ class Client_model extends MY_Model
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
 		$this->set_site_mongodb($siteId);
+
+		//update player reward table
 		$this->mongo_db->where(array(
 			'pb_player_id' => $pbPlayerId,
 			'reward_id' => $rewardId
@@ -189,7 +191,8 @@ class Client_model extends MY_Model
 				'date_modified' => $mongoDate
 			));
 		}
-		//upadte client reward limit
+
+		//update client reward limit
 		$this->mongo_db->select(array('limit'));
 		$this->mongo_db->where(array(
 			'reward_id' => $rewardId,
@@ -313,6 +316,7 @@ class Client_model extends MY_Model
 		assert(isset($badgeId));
 		assert(isset($quantity));
 		assert(isset($pbPlayerId));
+
 		//update badge master table
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->select(array(
@@ -343,11 +347,12 @@ class Client_model extends MY_Model
 			}
 			$this->mongo_db->set('quantity', $remainingQuantity);
 			$this->mongo_db->set('date_modified', $mongoDate);
-            $this->mongo_db->where('client_id', $client_id);
-            $this->mongo_db->where('site_id', $site_id);
+			$this->mongo_db->where('client_id', $client_id);
+			$this->mongo_db->where('site_id', $site_id);
 			$this->mongo_db->where('badge_id', $badgeId);
 			$this->mongo_db->update('playbasis_badge_to_client');
 		}
+
 		//update player badge table
 		$this->mongo_db->where(array(
 			'pb_player_id' => $pbPlayerId,
@@ -827,9 +832,6 @@ class Client_model extends MY_Model
         // get "date_start" && "date_expire" of client for permission processing
         $myplan_id = $this->getPlanIdByClientId($client_id);
         $myplan = $this->getPlanById($myplan_id);
-        if (!array_key_exists('price', $myplan)) {
-            $myplan['price'] = DEFAULT_PLAN_PRICE;
-        }
         $free_flag = $myplan['price'] <= 0;
         $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
 
@@ -859,9 +861,6 @@ class Client_model extends MY_Model
         // get "date_start" && "date_expire" of client for permission processing
         $myplan_id = $this->getPlanIdByClientId($client_id);
         $myplan = $this->getPlanById($myplan_id);
-        if (!array_key_exists('price', $myplan)) {
-            $myplan['price'] = DEFAULT_PLAN_PRICE;
-        }
         $free_flag = $myplan['price'] <= 0;
         $clientDate = ($free_flag ? $this->getFreeClientStartEndDate($client_id) : $this->getClientStartEndDate($client_id));
 
@@ -935,7 +934,13 @@ class Client_model extends MY_Model
     }
 
     public function getPlanById($plan_id) {
-        return $this->getById($plan_id, 'playbasis_plan');
+        $this->mongo_db->where(array('_id' => $plan_id));
+        $ret = $this->mongo_db->get('playbasis_plan');
+        $plan = is_array($ret) && count($ret) == 1 ? $ret[0] : $ret;
+        if ($plan && !array_key_exists('price', $plan)) {
+            $plan['price'] = DEFAULT_PLAN_PRICE;
+        }
+        return $plan;
     }
 
     public function getPlanIdByClientId($client_id) {

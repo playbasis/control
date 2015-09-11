@@ -42,6 +42,9 @@ define('FREE_PLAN', '5428f2df998040b0458b45f2'); // free plan
 define('DEFAULT_PLAN_PRICE', 0); // default is free package
 define('DEFAULT_TRIAL_DAYS', 0); // default is having no trial period
 define('PAYMENT_CHANNEL_PAYPAL', 'PayPal');
+define('PAYMENT_CHANNEL_STRIPE', 'Stripe');
+define('STRIPE_API_KEY', 'sk_test_8ChxEiUQyzeiN7OgnnFDBBYG');
+define('STRIPE_PUBLISHABLE_KEY', 'pk_test_1dekH9esZmjybutm3r76RIhG');
 define('PAYPAL_ENV', '');
 define('PAYPAL_IPN_VERIFIED', 'VERIFIED');
 define('PAYPAL_IPN_INVALID', 'INVALID');
@@ -52,6 +55,26 @@ define('PAYPAL_TXN_TYPE_SUBSCR_MODIFY', 'subscr_modify');
 define('PAYPAL_TXN_TYPE_SUBSCR_FAILED', 'subscr_failed');
 define('PAYPAL_TXN_TYPE_SUBSCR_PAYMNT', 'subscr_payment');
 define('PAYPAL_TXN_TYPE_SUBSCR_EOT', 'subscr_eot');
+/* https://stripe.com/docs/api#event_types */
+define('PLAN_CREATED', 'plan.created');
+define('PLAN_UPDATED', 'plan.updated');
+define('PLAN_DELETED', 'plan.deleted');
+define('CUSTOMER_CREATED', 'customer.created');
+define('CUSTOMER_UPDATED', 'customer.updated');
+define('CUSTOMER_DELETED', 'customer.deleted');
+define('SOURCE_CREATED', 'customer.source.created');
+define('SOURCE_UPDATED', 'customer.source.updated');
+define('SOURCE_DELETED', 'customer.source.deleted');
+define('INVOICE_CREATED', 'invoice.created');
+define('INVOICE_UPDATED', 'invoice.updated');
+define('INVOICE_PAYMENT_SUCCEEDED', 'invoice.payment_succeeded');
+define('INVOICE_PAYMENT_FAILED', 'invoice.payment_failed');
+define('CHARGE_SUCCEEDED', 'charge.succeeded');
+define('CHARGE_FAILED', 'charge.failed');
+define('SUBSCRIPTION_CREATED', 'customer.subscription.created');
+define('SUBSCRIPTION_UPDATED', 'customer.subscription.updated');
+define('SUBSCRIPTION_DELETED', 'customer.subscription.deleted');
+define('SUBSCRIPTION_TRIAL_WILL_END', 'customer.subscription.trial_will_end');
 /* https://www.sandbox.paypal.com/us/cgi-bin/webscr?cmd=xpt/Help/popup/StatusTypes */
 define('PAYPAL_PAYMENT_STATUS_COMPLETED', 'Completed'); // Money has been successfully sent to the recipient
 define('PAYPAL_PAYMENT_STATUS_CANCELED', 'Canceled'); // The sender canceled this payment
@@ -99,6 +122,7 @@ define('COMPLETE_QUEST_ACTION', 'complete-quest');
 define('COMPLETE_QUIZ_ACTION', 'complete-quiz');
 
 define('GOOGLE_USER_AGENT', 'APIs-Google');
+define('STRIPE_USER_AGENT', 'Stripe');
 
 define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
 

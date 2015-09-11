@@ -79,7 +79,8 @@ class Quiz extends REST2_Controller
             $nin = array_map('index_quiz_id', $arr);
         }
 
-        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
+        $type = $this->input->get('type');
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin, $type);
         $results = array_map('convert_MongoId_id', $results);
         array_walk_recursive($results, array($this, "convert_mongo_object_and_image_path"));
 
@@ -146,15 +147,16 @@ class Quiz extends REST2_Controller
         $nin = null;
         if ($player_id === false) $this->response($this->error->setError('PARAMETER_MISSING', array('player_id')), 200);
         $pb_player_id = $this->player_model->getPlaybasisId(array(
-                'client_id' => $this->client_id,
-                'site_id' => $this->site_id,
-                'cl_player_id' => $player_id,
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'cl_player_id' => $player_id,
         ));
         if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
 
         $arr = $this->quiz_model->find_quiz_done_by_player($this->client_id, $this->site_id, $pb_player_id);
         $nin = array_map('index_quiz_id', $arr);
-        $results = $this->quiz_model->find($this->client_id, $this->site_id, $nin);
+        $type = $this->input->get('type');
+        $results = $this->quiz_model->find($this->client_id, $this->site_id, $type != 'poll' ? $nin : null, $type);
         $results = array_map('convert_MongoId_id', $results);
 
         $result = null;
@@ -168,7 +170,6 @@ class Quiz extends REST2_Controller
 
             array_walk_recursive($result, array($this, "convert_mongo_object_and_image_path"));
         }
-
 
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
@@ -329,8 +330,8 @@ class Quiz extends REST2_Controller
         /* if this is the last question, then grade the player's score */
         $grade = array();
         if (count($completed_questions) + 1 >= count($quiz['questions'])) {
-            $percent = ($total_score*1.0)/$total_max_score*100;
-            foreach ($quiz['grades'] as $g) {
+            $percent = $total_max_score ? ($total_score*1.0)/$total_max_score*100 : 100;
+            if (isset($quiz['grades'])) foreach ($quiz['grades'] as $g) {
                 if ($g['start'] <= $percent && ($g['end'] < 100 ? $percent < $g['end'] : $percent <= $g['end'])) {
                     $grade = $g;
                     break;
@@ -455,6 +456,47 @@ class Quiz extends REST2_Controller
         $this->benchmark->mark('end');
         $t = $this->benchmark->elapsed_time('start', 'end');
         $this->response($this->resp->setRespond(array('result' => $results, 'processing_time' => $t)), 200);
+    }
+
+    public function stat_get($quiz_id = '')
+    {
+        $this->benchmark->mark('start');
+
+        /* param "quiz_id" */
+        if (empty($quiz_id)) $this->response($this->error->setError('PARAMETER_MISSING', array('quiz_id')), 200);
+        $quiz_id = new MongoId($quiz_id);
+        $quiz = $this->quiz_model->find_by_id($this->client_id, $this->site_id, $quiz_id);
+        if ($quiz === null) $this->response($this->error->setError('QUIZ_NOT_FOUND'), 200);
+
+        $result = array();
+        $stat = $this->quiz_model->calculate_frequency($this->client_id, $this->site_id, $quiz_id);
+        $n = count($quiz['questions']);
+        foreach ($quiz['questions'] as $i => $q) {
+            $question_id = strval($q['question_id']);
+            $options = $q['options'];
+            $options = array();
+            if ($q['options']) foreach ($q['options'] as $o) {
+                $option_id = strval($o['option_id']);
+                array_push($options, array(
+                    'option' => $o['option'],
+                    'option_image' => $o['option_image'],
+                    'option_id' => $option_id,
+                    'count' => isset($stat[$question_id][$option_id]) ? $stat[$question_id][$option_id] : 0,
+                ));
+            }
+            array_push($result, array(
+                'question' => $q['question'],
+                'question_image' => $q['question_image'],
+                'question_id' => strval($q['question_id']),
+                'options' => $options,
+                'index' => $i+1,
+                'total' => $n,
+            ));
+        }
+
+        $this->benchmark->mark('end');
+        $t = $this->benchmark->elapsed_time('start', 'end');
+        $this->response($this->resp->setRespond(array('result' => $result, 'processing_time' => $t)), 200);
     }
 
     /*

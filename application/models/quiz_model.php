@@ -8,7 +8,7 @@ class Quiz_model extends MY_Model
         $this->config->load('playbasis');
     }
 
-    public function find($client_id, $site_id, $nin=null) {
+    public function find($client_id, $site_id, $nin=null, $type=null) {
         $d = new MongoDate(time());
         $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('name','image','description','description_image','weight'));
@@ -20,6 +20,7 @@ class Quiz_model extends MY_Model
             array('$or' => array(array('date_expire' => array('$gt' => $d)), array('date_expire' => null)))
         )));
         if ($nin !== null) $this->mongo_db->where_not_in('_id', $nin);
+        if ($type) $this->mongo_db->where('type', $type);
         $result = $this->mongo_db->get('playbasis_quiz_to_client');
 
         return $result;
@@ -132,6 +133,30 @@ class Quiz_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_quiz_to_player');
 
         return $result;
+    }
+
+    public function calculate_frequency($client_id, $site_id, $quiz_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('questions','answers'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('quiz_id', $quiz_id);
+        $result = $this->mongo_db->get('playbasis_quiz_to_player');
+        $stat = array();
+        if ($result) foreach ($result as $each) {
+            if (isset($each['answers'])) foreach ($each['answers'] as $i => $value) {
+                if (isset($each['questions'][$i])) {
+                    $question = strval($each['questions'][$i]);
+                    $answer = strval($value['option_id']);
+                    if (!isset($stat[$question])) $stat[$question] = array();
+                    if (!isset($stat[$question][$answer])) $stat[$question][$answer] = 0;
+                    $stat[$question][$answer]++;
+                }
+            }
+        }
+
+        return $stat;
     }
 
     /*
