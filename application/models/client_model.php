@@ -543,7 +543,7 @@ class Client_model extends MY_Model
         return $results ? $results[0] : null;
     }
 
-    public function insertOrUpdateStrip($client_id, $stripe_id, $subscription_id) {
+    public function insertOrUpdateStripe($client_id, $stripe_id, $subscription_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $d = new MongoDate(time());
         $this->mongo_db->where('client_id', $client_id);
@@ -567,7 +567,7 @@ class Client_model extends MY_Model
         }
     }
 
-    public function removeStrip($client_id) {
+    public function removeStripe($client_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('client_id', $client_id);
         $this->mongo_db->set('deleted', true);
