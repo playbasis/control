@@ -75,11 +75,13 @@ class Rule extends MY_Controller
             $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
             $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
             $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList);
+            $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
 
             $this->data['actionList'] = $actionList;
             $this->data['conditionList'] = $conditionList;
             $this->data['rewardList'] = $rewardList;
             $this->data['feedbackList'] = array_merge($rewardList, $feedbackList);
+            $this->data['groupList'] = $groupList;
             $this->data['emailList'] = $emailList;
             $this->data['smsList'] = $smsList;
         }
@@ -292,6 +294,34 @@ class Rule extends MY_Controller
         }
     }
 
+    public function loadGoods() {
+        $this->load->model('Badge_model');
+        $this->load->model('Goods_model');
+
+        $results = $this->Goods_model->getGroupsAggregate($this->session->userdata('site_id'));
+        $ids = array();
+        $group_name = array();
+        foreach ($results as $i => $result) {
+            $group = $result['_id']['group'];
+            $quantity = $result['quantity'];
+            $list = $result['list'];
+            $first = array_shift($list); // skip first one
+            $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
+            $ids = array_merge($ids, $list);
+        }
+
+        $goods_list = $this->Goods_model->getGoodsBySiteId(array('site_id' => $this->session->userdata('site_id'), 'sort' => 'sort_order', '$nin' => $ids));
+        foreach($goods_list as &$g){
+            $g['_id'] = $g['_id']."";
+            $g['goods_id'] = $g['goods_id']."";
+            $g['client_id'] = $g['client_id']."";
+            $g['site_id'] = $g['site_id']."";
+        }
+        $json['goods'] = $goods_list;
+
+        $this->output->set_output(json_encode($json));
+    }
+
     public function jsonGetRuleById(){
         $adminGroup = $this->User_model->getAdminGroupID();
         if ($this->User_model->isAdmin()) {
@@ -307,14 +337,14 @@ class Rule extends MY_Controller
             return ;
         }
 
-        $json = $this->Rule_model->getRuleById(
+        $rule = $this->Rule_model->getRuleById(
             $s_siteId,
             $s_clientId,
             $this->input->get('ruleId'));
 
-        if($json){
+        if($rule){
             $this->output->set_output(
-                $this->input->get('callback')."(".json_encode($json[0]).")");
+                $this->input->get('callback')."(".json_encode($rule).")");
         }else{
             $this->jsonErrorResponse();
         }

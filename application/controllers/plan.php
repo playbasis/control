@@ -122,6 +122,15 @@ class Plan extends MY_Controller
             }
 
             if($this->form_validation->run() && $this->data['message'] == null){
+                if (PAYMENT_CHANNEL_DEFAULT == PAYMENT_CHANNEL_STRIPE) {
+                    $limit_other = $this->input->post('limit_others');
+                    $trial_days = $limit_other['trial']['limit'];
+                    $valid = $this->updatePlanInStripe($plan_id, $this->input->post('name'), intval($this->input->post('price')), $trial_days);
+                    if (!$valid) {
+                        $this->session->set_flashdata('fail', $this->lang->line('text_fail_update'));
+                        redirect('/plan', 'refresh');
+                    }
+                }
                 $this->Plan_model->editPlan($plan_id, $this->input->post());
 
                 $this->session->data['success'] = $this->lang->line('text_success');
@@ -480,10 +489,16 @@ class Plan extends MY_Controller
             "social" => null,
             "leaderboard" => null,
             "livefeed" => null,
+            "feed" => null,
             "profile" => null,
             "userbar" => null,
             "achievement" => null,
-            "quiz" => null);
+            "quest" => null,
+            "quiz" => null,
+            "rewardstore" => null,
+            "treasure" => null,
+            "trackevent" => null,
+        );
         if ($this->input->post('limit_widget')) {
             $this->data['limit_widget'] = $this->input->post('limit_widget');
         } elseif (!empty($plan_info) && isset($plan_info['limit_widget'])){
@@ -630,6 +645,25 @@ class Plan extends MY_Controller
         }
         return $listOfClients;
         //return $allClientsInThisPlan;
+    }
+
+
+    private function updatePlanInStripe($plan_id, $name, $price, $trial_days) {
+        require_once(APPPATH.'/libraries/stripe/init.php');
+        \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+        try {
+            $plan = \Stripe\Plan::retrieve($plan_id);
+            if ($plan->name != $name) $plan->name = $name;
+            if ($plan->amount != $price*100) $plan->amount = $price*100;
+            if ($plan->trial_period_days != $trial_days) $plan->trial_period_days = $trial_days;
+            $plan->save();
+        } catch (Exception $e) {
+            /* from https://stripe.com/docs/api/php#update_plan */
+            /* it is about to update a plan which is being used */
+            /* however, by design, Stripe only allow "name" to be updated */
+            return false;
+        }
+        return true;
     }
 }
 ?>

@@ -23,7 +23,6 @@
             <?php }?>
             <?php $attributes = array('id' => 'form');?>
             <?php echo form_open($form, $attributes);?>
-            	<input type="hidden" name="channel" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>" />
             	<?php $plan = $this->session->userdata('plan'); ?>
             	<div id="tab-general">
             		<table class="form">
@@ -38,8 +37,9 @@
             			<tr>
             				<td><span class="required">*</span> <?php echo $this->lang->line('form_channel'); ?>:</td>
             				<td>
-					            <select disabled>
-						            <option selected="selected" value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>"><?php echo $this->lang->line('text_paypal'); ?></option>
+					            <select name="channel">
+						            <option value="<?php echo PAYMENT_CHANNEL_PAYPAL; ?>"><?php echo $this->lang->line('text_paypal'); ?></option>
+						            <option selected="selected" value="<?php echo PAYMENT_CHANNEL_STRIPE; ?>"><?php echo $this->lang->line('text_stripe'); ?></option>
 					            </select>
             				</td>
             			</tr>

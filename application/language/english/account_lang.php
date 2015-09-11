@@ -29,6 +29,7 @@ $lang['text_trial_not_begin']						= 'Not Begin';
 $lang['text_trial_total_days']						= 'Total Allowed Trial Days';
 $lang['text_trial_remaining_days']						= 'Remaining Days In Trial Period';
 $lang['text_paypal']						= 'PayPal';
+$lang['text_stripe']						= 'Stripe';
 $lang['text_yes']						= 'Yes';
 $lang['text_no']						= 'No';
 $lang['text_not_available']						= 'N/A';
@@ -62,10 +63,11 @@ $lang['entry_site']         = 'Site Name';
 $lang['entry_plan']         = 'Plan';
 
 // Error 
-$lang['error_warning']          				= 'Warning: Please check the form carefully for errors!';
-$lang['error_permission']       				= 'Warning: You do not have permission to modify plans!';
-$lang['error_access']       				= 'Warning: You do not have permission to access this page!';
-$lang['error_name']             				= 'Category Name must be between 2 and 32 characters!';
-$lang['error_required']						= 'Warning: Please check required field!!';
-$lang['error_user']							= 'Error: Username not availble!!!';
+$lang['error_warning']          				= 'Warning: Please check the form carefully for errors';
+$lang['error_permission']       				= 'Warning: You do not have permission to modify plans';
+$lang['error_access']       				= 'Warning: You do not have permission to access this page';
+$lang['error_name']             				= 'Category Name must be between 2 and 32 characters';
+$lang['error_required']						= 'Warning: Please check required field';
+$lang['error_user']							= 'Error: Username not available';
+$lang['error_payment_declined']							= 'There is an error in setting your subscription';
 ?>

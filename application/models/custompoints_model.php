@@ -32,21 +32,33 @@ class Custompoints_model extends MY_Model
 			"value" => "0",
 		);
 
-		$insert = $this->mongo_db->insert('playbasis_reward_to_client', array(
-		    'reward_id' => new MongoId(),
-		    'client_id' => $data['client_id'],
-		    'site_id' => $data['site_id'],
-		    'group' => 'POINT',
-		    'name' => strtolower($data['name']),
+        $insert_data = array(
+            'reward_id' => new MongoId(),
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'group' => 'POINT',
+            'name' => strtolower($data['name']),
             'limit' => null,
             'description' => null,
             'sort' => 1,
             'status' => true,
             'is_custom' => true,
-            'init_dataset'=>array($field1,$field2,$field3),
-            'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-            'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
-		));
+            'init_dataset' => array($field1, $field2, $field3),
+            'type' => $data['type'],
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+
+        if ($data['type'] != 'normal') {
+            $energy_props_arr = array(
+                "maximum" => $data['maximum'],
+                "changing_period" => $data['changing_period'],
+                "changing_per_period" => $data['changing_per_period']
+            );
+            $insert_data['energy_props'] = $energy_props_arr;
+        }
+
+		$insert = $this->mongo_db->insert('playbasis_reward_to_client', $insert_data);
 
 		return $insert;
 	}
@@ -127,8 +139,19 @@ class Custompoints_model extends MY_Model
 		$this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
 		$this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('type', $data['type']);
 
-		$update = $this->mongo_db->update('playbasis_reward_to_client');
+        if ($data['type'] != 'normal') {
+            $this->mongo_db->set('energy_props.maximum', $data['maximum']);
+            $this->mongo_db->set('energy_props.changing_period', $data['changing_period']);
+            $this->mongo_db->set('energy_props.changing_per_period', $data['changing_per_period']);
+        } else {
+            $this->mongo_db->unset_field('energy_props');
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_reward_to_client');
 
         // update rule engine //
         $this->mongo_db->where(array('jigsaw_set.specific_id' => $data['reward_id']));

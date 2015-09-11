@@ -270,11 +270,20 @@ class Quiz extends MY_Controller
                         }
                     }
                 }else{
-                    if($key == "status"){
-                        $quiz[$key] = ('true' === $value);
-                    }else{
-                        $quiz[$key] = $value;
+                    switch ($key) {
+                    case 'status':
+                        $value = ('true' === $value);
+                        break;
+                    case 'weight':
+                        $value = $value ? intval($value) : 1;
+                        break;
+                    case 'type':
+                        if (!$value) $value = 'quiz';
+                        break;
+                    default:
+                        break;
                     }
+                    $quiz[$key] = $value;
                 }
             }
 

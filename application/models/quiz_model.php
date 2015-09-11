@@ -150,6 +150,10 @@ class Quiz_model extends MY_Model{
             $this->mongo_db->set('questions', $data['questions']);
         }
 
+        if(isset($data['type']) && !is_null($data['type'])){
+            $this->mongo_db->set('type', $data['type']);
+        }
+
         $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
 
         $this->mongo_db->update('playbasis_quiz_to_client');

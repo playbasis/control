@@ -109,6 +109,13 @@ function find_template($data, $type, $template_id) {
                             </td>
                         </tr>
                         <tr>
+                            <td><?php echo $this->lang->line('entry_type'); ?>:</td>
+                            <td>
+                                <input type="radio" name="type" value="quiz" <?php echo isset($quiz['type']) && $quiz['type'] == 'quiz' ? 'checked' : ''; ?> /> Quiz
+                                <input type="radio" name="type" value="poll" <?php echo isset($quiz['type']) && $quiz['type'] == 'poll' ? 'checked' : ''; ?> /> Poll
+                            </td>
+                        </tr>
+                        <tr>
                             <td>
                                 <?php echo $this->lang->line('status'); ?> :
                             </td>

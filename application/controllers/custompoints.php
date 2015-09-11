@@ -73,27 +73,45 @@ class Custompoints extends MY_Controller
             $this->data['message'] = $this->lang->line('error_custompoint_limit');
         }
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('type_custompoint', $this->lang->line('entry_type'), 'required');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-           if(!$this->validateModify()){
+            if (!$this->validateModify()) {
                 $this->error['message'] = $this->lang->line('error_permission');
-           }
+            }
 
-           if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->input->post('type_custompoint') != "normal") {
+                $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
+                    'required|numeric|is_natural_no_zero|xss_clean');
+                $this->form_validation->set_rules('energy_changing_period', $this->lang->line('entry_energy_changing_period'),
+                    'required|xss_clean');
+                $this->form_validation->set_rules('energy_changing_per_period',
+                    $this->lang->line('entry_energy_changing_per_period'),
+                    'required|numeric|is_natural_no_zero|xss_clean');
+            }
+
+            if ($this->form_validation->run()) {
                 $custompoints_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $custompoints_data['name'];
                 $data['status'] = true;
+                $data['type'] = $custompoints_data['type_custompoint'];
+                if ($custompoints_data['type_custompoint'] != "normal") {
+                    $data['maximum'] = $custompoints_data['energy_maximum'];
+                    $data['changing_period'] = $custompoints_data['energy_changing_period'];
+                    $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
+                }
 
                 $insert = $this->Custompoints_model->insertCustompoints($data);
-                if($insert){
+                if ($insert) {
                     redirect('/custompoints', 'refresh');
                 }
-            }      
+            }
         }
         $this->getForm();
     }
@@ -231,7 +249,7 @@ class Custompoints extends MY_Controller
             $this->data['name'] = $custompoints_info['name'];
         } else {
             $this->data['name'] = '';
-        }   
+        }
 
         if ($this->input->post('status')) {
             $this->data['status'] = $this->input->post('status');
@@ -239,6 +257,24 @@ class Custompoints extends MY_Controller
             $this->data['status'] = $custompoints_info['status'];
         } else {
             $this->data['status'] = 1;
+        }
+
+        if (isset($custompoints_info['type'])) {
+            $this->data['type'] = $custompoints_info['type'];
+        } else {
+            $this->data['type'] = "normal";
+        }
+
+        if (isset($custompoints_info['energy_props'])) {
+            $this->data['maximum'] = $custompoints_info['energy_props']['maximum'];
+        }
+
+        if (isset($custompoints_info['energy_props'])) {
+            $this->data['changing_period'] = $custompoints_info['energy_props']['changing_period'];
+        }
+
+        if (isset($custompoints_info['energy_props'])) {
+            $this->data['changing_per_period'] = $custompoints_info['energy_props']['changing_per_period'];
         }
 
         $this->load->vars($this->data);
@@ -252,7 +288,9 @@ class Custompoints extends MY_Controller
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'custompoints/update/'.$custompoints_id;
 
-        $this->form_validation->set_rules('name', $this->lang->line('entry_name'), 'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('entry_name'),
+            'trim|required|min_length[2]|max_length[255]|xss_clean');
+        $this->form_validation->set_rules('type_custompoint', $this->lang->line('entry_type'), 'required');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -260,13 +298,29 @@ class Custompoints extends MY_Controller
                 $this->data['message'] = $this->lang->line('error_permission');
             }
 
-            if($this->form_validation->run() && $this->data['message'] == null){
+            if ($this->input->post('type_custompoint') != "normal") {
+                $this->form_validation->set_rules('energy_maximum', $this->lang->line('entry_energy_maximum'),
+                    'required|numeric|is_natural_no_zero|xss_clean');
+                $this->form_validation->set_rules('energy_changing_period', $this->lang->line('entry_energy_changing_period'),
+                    'required|xss_clean');
+                $this->form_validation->set_rules('energy_changing_per_period',
+                    $this->lang->line('entry_energy_changing_per_period'),
+                    'required|numeric|is_natural_no_zero|xss_clean');
+            }
+
+            if ($this->form_validation->run()) {
                 $custompoints_data = $this->input->post();
 
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['reward_id'] = $custompoints_id;
                 $data['name'] = $custompoints_data['name'];
+                $data['type'] = $custompoints_data['type_custompoint'];
+                if ($custompoints_data['type_custompoint'] != "normal"){
+                    $data['maximum'] = $custompoints_data['energy_maximum'];
+                    $data['changing_period'] = $custompoints_data['energy_changing_period'];
+                    $data['changing_per_period'] = $custompoints_data['energy_changing_per_period'];
+                }
 
                 $update = $this->Custompoints_model->updateCustompoints($data);
                 if($update){

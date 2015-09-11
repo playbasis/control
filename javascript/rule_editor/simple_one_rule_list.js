@@ -775,6 +775,87 @@
                 "item_id": "",
                 "quantity": "15"
             }
+        },
+        // Group
+        {
+            "id": 00000000,
+            "name": "sequence",
+            "description": "",
+            "specific_id": "sequence_id!!!",
+            "category": "GROUP",
+            "sort_order": 20,
+            "dataSet": [
+                {
+                    "param_name": "group_container",
+                    "label": "group",
+                    "placeholder": "",
+                    "sortOrder": "0",
+                    "field_type": "group_container",
+                    "value": [
+                        {
+                            "id": "00000000",
+                            "name": "point",
+                            "description": "User earn point",
+                            "category": "REWARD",
+                            "specific_id": "00000000",
+                            "sort_order": 1,
+                            "is_group_item": "00000000", //Group Id
+                            "dataSet": [
+                                {
+                                    "param_name": "reward_name",
+                                    "label": "Name",
+                                    "placeholder": "",
+                                    "sortOrder": "0",
+                                    "field_type": "read_only",
+                                    "value": "point"
+                                },
+                                {
+                                    "param_name": "item_id",
+                                    "label": "Item id",
+                                    "placeholder": "Item id",
+                                    "sortOrder": "0",
+                                    "field_type": "hidden",
+                                    "value": ""
+                                },
+                                {
+                                    "param_name": "quantity",
+                                    "label": "Quantity",
+                                    "placeholder": "How many ...",
+                                    "sortOrder": "0",
+                                    "field_type": "number",
+                                    "value": "3"
+                                },
+                                {
+                                    "field_type": "number",
+                                    "label": "Chance",
+                                    "param_name": "chance",
+                                    "placeholder": "Chance ...",
+                                    "sortOrder": "0",
+                                    "tooltips": "Chance",
+                                    "value": "50"
+                                }
+                            ],
+                            "config": {
+                                "reward_id": "661",
+                                "reward_name": "point",
+                                "item_id": "",
+                                "quantity": "3",
+                                "chance": "50"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "config": {
+                "group_container": [
+                    {
+                         "reward_id": "44",
+                        "reward_name": "Point",
+                        "item_id": "",
+                        "quantity": "15"
+                    }
+                ]
+            }
         }
     ]
 }

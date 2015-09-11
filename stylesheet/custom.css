@@ -594,6 +594,10 @@ input[type=radio]:checked + label {
 	font-weight: normal;
 }
 
+.widget-page  input.wg-globel-cssfile{
+	width: 50%;
+}
+
 /* ====== [ Color Picker ] ======= */
 .colorpicker{
 	z-index: 100;
