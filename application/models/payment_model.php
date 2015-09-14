@@ -164,7 +164,7 @@ class Payment_model extends MY_Model
 		$this->setDateBilling($client['_id'], $plan, $subscription_id);
 		$this->setDateStartAndDateExpire($client['_id']);
 		$this->changePlan($client, $myplan['_id'], $plan['_id']);
-		$html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'channel' => PAYMENT_CHANNEL_PAYPAL, 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $subscription_id, 'date' => date('l, F d, Y', time())), true);
+		$html = $this->parser->parse('message_signup_plan.html', array('firstname' => $client['first_name'], 'lastname' => $client['last_name'], 'channel' => PAYMENT_CHANNEL_STRIPE, 'plan_name' => $plan['name'], 'plan_price' => $plan['price'], 'reference_number' => $subscription_id, 'date' => date('l, F d, Y', time())), true);
 		$this->utility->email_bcc(EMAIL_FROM, array($client['email'], EMAIL_BCC_PLAYBASIS_EMAIL), '[Playbasis] Registration Confirmation', $html);
 	}
 
