@@ -355,8 +355,10 @@ class Player extends REST2_Controller
 		}
 
         $anonymous =$this->input->post('anonymous');
+
         if($anonymous)
         {
+           
             $clientData = array(
                 'client_id'    => $this->validToken['client_id'],
                 'site_id'      => $this->validToken['site_id']
@@ -625,6 +627,7 @@ class Player extends REST2_Controller
 	}
 	public function sessions_get($player_id = '')
 	{
+
 		if(!$player_id)
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'

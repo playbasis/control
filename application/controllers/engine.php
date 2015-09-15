@@ -265,7 +265,21 @@ class Engine extends Quest
 				$cl_player_id = $this->input->post('player_id');
 				$pb_player_id = $this->player_model->getPlaybasisId(
 					array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
+
+                $anonymous = $this->player_model->IsAnonymousUser($cl_player_id);
+                if($pb_player_id && $anonymous)
+                {
+                    /* List all active sessions of the anonymous player */
+
+                    $sessions = $this->player_model->listSessions($validToken['client_id'], $validToken["site_id"], $pb_player_id);
+                    if(count($sessions)==0)
+                    {
+                        $this->response($this->error->setError('ANONYMOUS_SESSION_NOT_VALID'), 200);
+                    }
+
+                }
 			}
+
 
 			if(!$pb_player_id && !$test)
 			{

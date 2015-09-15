@@ -255,6 +255,10 @@ class Error extends CI_Model
             $errorData['message'] = "Anonymous not available";
             $errorData['error_code'] = '1102';
             break;
+        case 'ANONYMOUS_SESSION_NOT_VALID':
+            $errorData['message'] = "Anonymous session not valid";
+            $errorData['error_code'] = '1103';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';

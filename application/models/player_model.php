@@ -62,7 +62,9 @@ class Player_model extends MY_Model
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))  ? new MongoDate(strtotime($data['birth_date'])) : null,
 			'date_added'	=> $mongoDate,
-			'date_modified' => $mongoDate
+			'date_modified' => $mongoDate,
+            'anonymous' => $data['anonymous']
+
 		));
 	}
 	public function readPlayer($id, $site_id, $fields=null)
@@ -2273,6 +2275,7 @@ class Player_model extends MY_Model
     }
 
     public function listSessions($client_id, $site_id, $pb_player_id) {
+
         $this->set_site_mongodb($site_id);
         $mongoDate = new MongoDate(time());
         $this->mongo_db->select(array('session_id','date_expire'));
@@ -2355,6 +2358,16 @@ class Player_model extends MY_Model
 
 
         }
+
+    }
+    public function IsAnonymousUser($_id)
+    {
+        $this->mongo_db->select(array('anonymous'));
+        $this->mongo_db->where('cl_player_id', $_id);
+        $results = $this->mongo_db->get('playbasis_player');
+        $result = $results[0];
+        $anonymous = $result['anonymous'];
+        return $anonymous ;
 
     }
 }
