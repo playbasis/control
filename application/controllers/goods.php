@@ -27,6 +27,18 @@ class Goods extends REST2_Controller
             $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
             $ids = array_merge($ids, $list);
         }
+        /* find my goods */
+        $player_id = $this->input->get('player_id');
+        if ($player_id !== false) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'cl_player_id' => $player_id,
+            ));
+            if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            $myGoods = $this->player_model->getGoods($pb_player_id, $this->site_id);
+            $m = $this->mapByGoodsId($myGoods);
+        }
         /* main */
         if($goodsId) // given specified goods_id
         {
@@ -42,6 +54,9 @@ class Goods extends REST2_Controller
                         break;
                     }
                 }
+                if ($player_id !== false) $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
+            } else {
+                if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
             }
             $this->response($this->resp->setRespond($goods), 200);
         }
@@ -55,6 +70,9 @@ class Goods extends REST2_Controller
                     $goods['is_group'] = true;
                     $goods['name'] = $group_name[$goods_id]['group'];
                     $goods['quantity'] = $group_name[$goods_id]['quantity'];
+                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
+                } else {
+                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
                 }
                 unset($goods['_id']);
                 $goods['code'] = null;
@@ -78,6 +96,18 @@ class Goods extends REST2_Controller
             $group_name[$first->{'$id'}] = array('group' => $group, 'quantity' => $quantity);
             $ids = array_merge($ids, $list);
         }
+        /* find my goods */
+        $player_id = $this->input->get('player_id');
+        if ($player_id !== false) {
+            $pb_player_id = $this->player_model->getPlaybasisId(array(
+                'client_id' => $this->client_id,
+                'site_id' => $this->site_id,
+                'cl_player_id' => $player_id,
+            ));
+            if (!$pb_player_id) $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+            $myGoods = $this->player_model->getGoods($pb_player_id, $this->site_id);
+            $m = $this->mapByGoodsId($myGoods);
+        }
         /* main */
         if($goodsId) // given specified goods_id
         {
@@ -93,6 +123,9 @@ class Goods extends REST2_Controller
                         break;
                     }
                 }
+                if ($player_id !== false) $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
+            } else {
+                if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
             }
             $this->response($this->resp->setRespond($goods), 200);
         }
@@ -106,6 +139,9 @@ class Goods extends REST2_Controller
                     $goods['is_group'] = true;
                     $goods['name'] = $group_name[$goods_id]['group'];
                     $goods['quantity'] = $group_name[$goods_id]['quantity'];
+                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['name']]) ? $m[$goods['name']]['amount'] : 0;
+                } else {
+                    if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
                 }
                 unset($goods['_id']);
                 $goods['code'] = null;
@@ -164,6 +200,16 @@ class Goods extends REST2_Controller
         return $this->goods_model->getGoods(array_merge(array('client_id' => null, 'site_id' => null), array(
             'goods_id' => new MongoId($goodsList[$idx]['goods_id'])
         )));
+    }
+
+    private function mapByGoodsId($goodsList) {
+        $ret = array();
+        foreach ($goodsList as $goods) {
+            $key = isset($goods['group']) ? $goods['group'] : $goods['goods_id'];
+            if (!isset($ret[$key])) $ret[$key] = $goods;
+            else $ret[$key]['amount'] += $goods['amount'];
+        }
+        return $ret;
     }
 }
 ?>
