@@ -1473,6 +1473,7 @@ class Player_model extends MY_Model
                     'image',
                     'name',
                     'description',
+                    'group',
                 ));
                 $this->mongo_db->select(array(),array('_id'));
                 $this->mongo_db->where(array(
@@ -1489,6 +1490,7 @@ class Player_model extends MY_Model
                 $goods['image'] = $this->config->item('IMG_PATH') . $result['image'];
                 $goods['name'] = $result['name'];
                 $goods['description'] = $result['description'];
+                if (isset($result['group'])) $goods['group'] = $result['group'];
                 $goods['amount'] = $goods['value'];
                 unset($goods['value']);
                 array_push($playerGoods, $goods);

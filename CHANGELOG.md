@@ -1,5 +1,21 @@
 # Change Log
 
+## [2.1.36-alpha.1](https://github.com/playbasis/api/tree/2.1.36-alpha.1) (2015-09-15)
+[Full Changelog](https://github.com/playbasis/api/compare/fix_typo_stripe_email...2.1.36-alpha.1)
+
+**Implemented enhancements:**
+
+- Feature/add goods list with player [\#27](https://github.com/playbasis/api/pull/27) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+## [fix_typo_stripe_email](https://github.com/playbasis/api/tree/fix_typo_stripe_email) (2015-09-14)
+[Full Changelog](https://github.com/playbasis/api/compare/enable-stripe...fix_typo_stripe_email)
+
+## [enable-stripe](https://github.com/playbasis/api/tree/enable-stripe) (2015-09-14)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.35...enable-stripe)
+
+## [2.1.35](https://github.com/playbasis/api/tree/2.1.35) (2015-09-11)
+[Full Changelog](https://github.com/playbasis/api/compare/2.1.35-alpha.13...2.1.35)
+
 ## [2.1.35-alpha.13](https://github.com/playbasis/api/tree/2.1.35-alpha.13) (2015-09-10)
 [Full Changelog](https://github.com/playbasis/api/compare/2.1.35-alpha.12...2.1.35-alpha.13)
 

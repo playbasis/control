@@ -1108,7 +1108,15 @@
                     "HTTPMethod": "GET",
                     "URI": "/Goods",
                     "RequiresOAuth": "N",
-                    "parameters": []
+                    "parameters": [
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 },
                 {
                     "MethodName": "Goods Info",
@@ -1123,6 +1131,13 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "goods id to query"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
                         }
                     ]
                 },
