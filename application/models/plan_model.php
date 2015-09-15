@@ -38,5 +38,6 @@ class Plan_model extends MY_Model
 		$results = $this->mongo_db->get('playbasis_permission');
 		return $results ? $results[0] : null;
 	}
+
 }
 ?>

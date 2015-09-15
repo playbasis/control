@@ -354,6 +354,25 @@ class Player extends REST2_Controller
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
 
+        $anonymous =$this->input->post('anonymous');
+        if($anonymous)
+        {
+            $clientData = array(
+                'client_id'    => $this->validToken['client_id'],
+                'site_id'      => $this->validToken['site_id']
+            );
+            $result = $this->client_model->checkFeatureByFeatureName($clientData,"Anonymous");
+            if($result)
+            {
+                $playerInfo['anonymous'] = $anonymous;
+            }
+            else
+            {
+                $this->response($this->error->setError('ANONYMOUS_NOT_FOUND'), 200);
+            }
+
+        }
+
         // get plan_id
         $plan_id = $this->client_model->getPlanIdByClientId($this->validToken["client_id"]);
         try {

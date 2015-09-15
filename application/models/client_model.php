@@ -983,5 +983,20 @@ class Client_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_client_site');
         return $result ? $result[0] : array();
     }
+    public function checkFeatureByFeatureName($clientData,$featureName)
+    {
+        $this->mongo_db->select(array('_id'));
+        $this->mongo_db->where(array(
+            'client_id' => $clientData['client_id'],
+            'site_id' => $clientData['site_id'],
+            'name' => $featureName
+        ));
+        $this->mongo_db->limit(1);
+        $id = $this->mongo_db->get('playbasis_feature_to_client');
+
+        if($id) return true;
+        else return false;
+
+    }
 }
 ?>
