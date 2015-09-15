@@ -695,7 +695,9 @@ class Engine extends Quest
 
                                 unset($goodsData['_id']);
                                 unset($goodsData['redeem']);
+                                unset($goodsData['quantity']);
                                 $goodsData['goods_id'] = $goodsData['goods_id'].'';
+                                $goodsData['image'] = $this->config->item('IMG_PATH') . $goodsData['image'];
                                 $event = array(
                                     'event_type' => 'REWARD_RECEIVED',
                                     'reward_type' => $jigsawConfig['reward_name'],
