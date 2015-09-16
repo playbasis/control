@@ -1,5 +1,4 @@
-<div id="content" class="span10">
-
+<div id="content" class="span10 merchant-page">
     <div class="box">
         <div class="heading">
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
@@ -21,7 +20,8 @@
                 <ul class="nav nav-tabs" id="merchantTab">
                     <li class="active"><a href="#merchant-general"
                                           data-toggle="tab"><?php echo $this->lang->line('tab_general'); ?></a></li>
-                    <li><a href="#merchant-branch" data-toggle="tab"><?php echo $this->lang->line('tab_branch'); ?></a>
+                    <li><a href="#merchant-branch"
+                           data-toggle="tab"><?php echo $this->lang->line('tab_branch'); ?></a>
                     </li>
                 </ul>
                 <?php
@@ -45,46 +45,72 @@
                 ?>
                 <div class="tab-content">
                     <div class="tab-pane active" id="merchant-general">
-                        <div class="row" style="padding-top: 10px">
-                            <div class="control-group">
-                                <label
-                                    class="control-label"><?php echo $this->lang->line('entry_merchant_name'); ?></label>
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <div class="control-group">
+                                    <label
+                                        class="control-label"><?php echo $this->lang->line('entry_merchant_name'); ?></label>
 
-                                <div class="controls">
-                                    <input type="text" name="merchant-name"
-                                           placeholder="<?php echo $this->lang->line('entry_merchant_name'); ?>">
+                                    <div class="controls">
+                                        <input type="text" name="merchant-name"
+                                               placeholder="<?php echo $this->lang->line('entry_merchant_name'); ?>">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="control-group">
-                                <label
-                                    class="control-label"><?php echo $this->lang->line('entry_description'); ?></label>
+                                <div class="control-group">
+                                    <label
+                                        class="control-label"><?php echo $this->lang->line('entry_description'); ?></label>
 
-                                <div class="controls">
+                                    <div class="controls">
                                     <textarea name="merchant-desc" rows="4"
                                               placeholder="<?php echo $this->lang->line('entry_description'); ?>"></textarea>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="control-group">
-                                <label
-                                    class="control-label"><?php echo $this->lang->line('entry_status'); ?></label>
+                                <div class="control-group">
+                                    <label
+                                        class="control-label"
+                                        for="status_switch"><?php echo $this->lang->line('entry_status'); ?></label>
 
-                                <div class="controls">
-                                    <input type="checkbox" name="merchant-status" data-handle-width="40" checked>
+                                    <div class="controls">
+                                        <input type="checkbox" name="merchant-status" id="status_switch"
+                                               data-handle-width="40" checked="checked">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- .tab-pane -->
                     <div class="tab-pane" id="merchant-branch">
-                        <div class="row well" style="padding-top: 10px">
-                            <div class="control-group">
-                                <label
-                                    class="control-label"><?php echo $this->lang->line('entry_branch_name'); ?></label>
-
-                                <div class="controls">
-                                    <input type="text"
-                                           placeholder="<?php echo $this->lang->line('entry_branch_name'); ?>">
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <div class="text-center form-inline">
+                                    <label for="merchant-branch-to-create"><?php echo $this->lang->line('entry_number_to_create'); ?></label>
+                                    <input type="text" class="input-small" id="merchant-branch-to-create">
+                                    <button type="submit" class="btn">Create</button>
                                 </div>
+                            </div>
+                            <div class="row-fluid">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Branch</th>
+                                        <th>PIN Code</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+<!--                                    <tr>-->
+<!--                                        <td>###</td>-->
+<!--                                        <td><input type="text" class="input-small" id="merchant-branch-name" name="merchant-branch-name[]"></td>-->
+<!--                                        <td>#code</td>-->
+<!--                                        <td><input type="checkbox" name="merchant-branch-status[]" id="branch_status_switch"-->
+<!--                                                   data-handle-width="40" checked="checked"></td>-->
+<!--                                    </tr>-->
+                                    <tr>
+                                        <td colspan="4" style="text-align: center">Create new branch?</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -97,8 +123,8 @@
         </div>
     </div>
 </div>
-<link href="<?php echo base_url();?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
-<script src="<?php echo base_url();?>javascript/custom/bootstrap-switch.min.js" type="text/javascript"></script>
+<link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
+<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function () {
         $('#merchantTab a').click(function (e) {
@@ -107,5 +133,6 @@
         });
 
         $("[name='merchant-status']").bootstrapSwitch();
+        $("#status_switch").bootstrapSwitch();
     });
 </script>

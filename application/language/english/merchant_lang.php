@@ -23,6 +23,7 @@ $lang['entry_status'] = 'Status';
 $lang['entry_status_enable'] = 'Enable';
 $lang['entry_status_disable'] = 'Disable';
 //  Tab Branch
+$lang['entry_number_to_create'] = 'Number of branches to create';
 $lang['entry_branch_name'] = 'Branch Name';
 $lang['entry_pin_code'] = 'PIN Code';
 $lang['entry_branch_status'] = 'Status';
