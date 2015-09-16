@@ -358,7 +358,7 @@ class Player extends REST2_Controller
 
         if($anonymous)
         {
-           
+
             $clientData = array(
                 'client_id'    => $this->validToken['client_id'],
                 'site_id'      => $this->validToken['site_id']
@@ -548,10 +548,36 @@ class Player extends REST2_Controller
 			$this->response($this->error->setError('PARAMETER_MISSING', array(
 				'player_id'
 			)), 200);
+
+
+
 		//get playbasis player id
 		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
 			'cl_player_id' => $player_id
 		)));
+		//check anonymous user
+		$clientData = array(
+			'client_id'    => $this->client_id,
+			'site_id'      => $this->site_idม,
+			'domain_name' => NULL
+		);
+
+		$anonymousFeature = $this->client_model->checkFeatureByFeatureName($clientData,"Anonymous");
+		if($anonymousFeature)
+		{
+			$sessions = $this->player_model->findBySessionId($this->client_id, $this->site_id, $this->input->post('session_id'),true);
+            if(count($sessions) >0)
+            {
+                $anonymousUser = $this->player_model->IsAnonymousUser(null,$sessions['pb_player_id']);
+                if($anonymousUser)
+                {
+                    $this->player_model->replayProcessWithAnonymous($sessions['pb_player_id'],$clientData);
+
+                }
+            }
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+		}
+
 		if(!$pb_player_id)
 			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
 		//trigger and log event
@@ -574,6 +600,7 @@ class Player extends REST2_Controller
 		$session_id = $this->input->post('session_id');
 		$session_expires_in = $this->input->post('session_expires_in');
 		if ($session_id) {
+
 			$this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id, $session_expires_in);
 		}
 

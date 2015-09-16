@@ -266,7 +266,7 @@ class Engine extends Quest
 				$pb_player_id = $this->player_model->getPlaybasisId(
 					array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
 
-                $anonymous = $this->player_model->IsAnonymousUser($cl_player_id);
+                $anonymous = $this->player_model->IsAnonymousUser($cl_player_id,null);
                 if($pb_player_id && $anonymous)
                 {
                     /* List all active sessions of the anonymous player */
@@ -352,7 +352,7 @@ class Engine extends Quest
 				$input['player_id'] = $this->player_model->getClientPlayerId(
 			$input['pb_player_id'], $validToken['site_id']);
 		}
-
+		$anonymousUser = $this->player_model->IsAnonymousUser(null,$input['pb_player_id']);
 		$headers = $this->input->request_headers();
 		$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
 		if (!$input["test"]) {

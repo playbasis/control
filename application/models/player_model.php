@@ -2360,16 +2360,40 @@ class Player_model extends MY_Model
         }
 
     }
-    public function IsAnonymousUser($_id)
+    public function IsAnonymousUser($cl_player_id = null,$pb_player_id = null)
     {
         $this->mongo_db->select(array('anonymous'));
-        $this->mongo_db->where('cl_player_id', $_id);
+		if($cl_player_id != null)
+		{
+			$this->mongo_db->where('cl_player_id', $cl_player_id);
+		}
+		if($pb_player_id != null)
+		{
+			$this->mongo_db->where('_id', $pb_player_id);
+		}
+
         $results = $this->mongo_db->get('playbasis_player');
         $result = $results[0];
         $anonymous = $result['anonymous'];
         return $anonymous ;
 
     }
+	public function replayProcessWithAnonymous($pb_player_id,$client_data)
+	{
+		$this->mongo_db->where('pb_player_id', $pb_player_id);
+		$action_logs = $this->mongo_db->get('playbasis_action_log');
+		foreach($action_logs as $action_log)
+		{
+			$this->benchmark->mark('engine_rule_start');
+			$input = array_merge($action_log,$client_data);
+			$apiResult = $this->processRule($input, $client_data, null, null);
+			$apiQuestResult = $this->QuestProcess($pb_player_id, $client_data);
+			$apiResult = array_merge($apiResult, $apiQuestResult);
+			$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
+			$this->response($this->resp->setRespond($apiResult), 200);
+		}
+
+	}
 }
 
 function index_id($obj) {
