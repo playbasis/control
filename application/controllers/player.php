@@ -355,7 +355,7 @@ class Player extends REST2_Controller
 		}
 
         $anonymous =$this->input->post('anonymous');
-
+		//check anonymous feature depend on plan
         if($anonymous)
         {
 
@@ -556,22 +556,36 @@ class Player extends REST2_Controller
 			'cl_player_id' => $player_id
 		)));
 		//check anonymous user
-		$clientData = array(
-			'client_id'    => $this->client_id,
-			'site_id'      => $this->site_idม,
-			'domain_name' => NULL
-		);
 
-		$anonymousFeature = $this->client_model->checkFeatureByFeatureName($clientData,"Anonymous");
+		$anonymousFeature = $this->client_model->checkFeatureByFeatureName($this->validToken,"Anonymous");
 		if($anonymousFeature)
 		{
 			$sessions = $this->player_model->findBySessionId($this->client_id, $this->site_id, $this->input->post('session_id'),true);
+
             if(count($sessions) >0)
             {
                 $anonymousUser = $this->player_model->IsAnonymousUser(null,$sessions['pb_player_id']);
                 if($anonymousUser)
                 {
-                    $this->player_model->replayProcessWithAnonymous($sessions['pb_player_id'],$clientData);
+					$this->mongo_db->where('pb_player_id', $sessions['pb_player_id']);
+					$action_logs = $this->mongo_db->get('playbasis_action_log');
+					foreach($action_logs as $action_log)
+					{
+						print_r($action_log);
+						$engine = new Engine();
+						$input = array_merge($this->validToken, array(
+							'pb_player_id' => $pb_player_id,
+							'action_id' => $action_log['action_id'],
+							'action_name' => $action_log['action_name'],
+							'url' => $action_log['url'],
+							'date_added' => $action_log['date_added'],
+							'test' => false
+
+						));
+						$engine->processRule($input, $this->validToken, null, null);
+						$this->player_model->deletePlayer($sessions['pb_player_id'],$this->validToken['site_id'],true);
+
+					}
 
                 }
             }

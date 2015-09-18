@@ -141,10 +141,22 @@ class Player_model extends MY_Model
 		$this->mongo_db->set('date_modified', $d);
 		print $this->mongo_db->update('playbasis_player');
 	}
-	public function deletePlayer($id, $site_id)
+	public function deletePlayer($id, $site_id,$anonymous=false)
 	{
 		if(!$id)
 			return false;
+		if($anonymous)
+		{
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete('playbasis_action_log');
+
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete('playbasis_event_log');
+
+
+		}
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
 		$this->mongo_db->delete('playbasis_player');
@@ -2378,22 +2390,7 @@ class Player_model extends MY_Model
         return $anonymous ;
 
     }
-	public function replayProcessWithAnonymous($pb_player_id,$client_data)
-	{
-		$this->mongo_db->where('pb_player_id', $pb_player_id);
-		$action_logs = $this->mongo_db->get('playbasis_action_log');
-		foreach($action_logs as $action_log)
-		{
-			$this->benchmark->mark('engine_rule_start');
-			$input = array_merge($action_log,$client_data);
-			$apiResult = $this->processRule($input, $client_data, null, null);
-			$apiQuestResult = $this->QuestProcess($pb_player_id, $client_data);
-			$apiResult = array_merge($apiResult, $apiQuestResult);
-			$apiResult['processing_time'] = $this->benchmark->elapsed_time('engine_rule_start', 'engine_rule_end');
-			$this->response($this->resp->setRespond($apiResult), 200);
-		}
 
-	}
 }
 
 function index_id($obj) {
