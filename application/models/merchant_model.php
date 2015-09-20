@@ -93,6 +93,8 @@ class Merchant_model extends MY_Model
         );
         $insert = $this->mongo_db->insert('playbasis_merchant_to_client', $insert_data);
 
+        // TODO: Create PIN for new branches
+
         return $insert;
     }
 //

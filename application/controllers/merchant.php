@@ -93,6 +93,14 @@ class Merchant extends MY_Controller
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
 
+                $postArr = array_map('array_filter', $merchant_data['branches']);
+                foreach ($postArr as $key => $branch) {
+                    if(!array_key_exists('branchName',$branch)){
+                        unset($postArr[$key]);
+                    }
+                }
+                $merchant_data['branches'] = array_values($postArr);
+
                 $data['client_id'] = $this->User_model->getClientId();
                 $data['site_id'] = $this->User_model->getSiteId();
                 $data['name'] = $merchant_data['merchant-name'];

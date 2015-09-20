@@ -84,11 +84,11 @@
                         <div class="container-fluid">
                             <div class="tabbable">
                                 <ul class="nav nav-tabs">
-                                    <li class="active"><a href="#branches-list">Branches list</a></li>
-                                    <li><a href="#branches-new">New Branches</a></li>
+                                    <li><a href="#branches-list">Branches list</a></li>
+                                    <li class="active"><a href="#branches-new">New Branches</a></li>
                                 </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane fade active in" id="branches-list">
+                                    <div class="tab-pane fade" id="branches-list">
                                         <div class="row-fluid">
                                             <table data-toggle="table" data-pagination="true">
                                                 <thead>
@@ -107,17 +107,16 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="branches-new">
+                                    <div class="tab-pane fade active in" id="branches-new">
                                         <div class="row-fluid">
                                             <div class="text-center form-inline">
                                                 <label
                                                     for="merchant-branch-to-create"><?php echo $this->lang->line('entry_number_to_create'); ?></label>
                                                 <input type="text" class="input-small" id="merchant-branch-to-create">
-                                                <button type="submit" class="btn">Create</button>
+                                                <button type="button" id="merchant-branch-to-create-btn" class="btn">Create</button>
                                             </div>
                                         </div>
                                         <div class="row-fluid">
-                                            <a id="add">+</a>
                                             <table class="table" id="new-branches-table">
                                                 <thead>
                                                 <tr>
@@ -135,6 +134,7 @@
                                                 </tr>
                                                 </tbody>
                                             </table>
+                                            <span class="pull-right"><a class="btn btn-primary" id="add"><i class="fa fa-plus"></i>&nbsp;Add</a></span>
                                         </div>
                                     </div>
                                 </div>
@@ -158,8 +158,9 @@
     var globalNewIndex = 0;
 
     $(function () {
-        $("#add").click(function () {
-            $("[name^='branches'][name$='[status]']").bootstrapSwitch("destroy");
+        $("#add").click(function (e) {
+            e.preventDefault();
+            $("input[name^='branches'][name$='[status]']:last").bootstrapSwitch("destroy");
             $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
 
             var newIndex = globalNewIndex + 1;
@@ -174,8 +175,36 @@
             $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex)+1);
 
             globalNewIndex++;
-            $("[name^='branches']").filter("[name$='[status]']").bootstrapSwitch();
-            return false;
+            $(":not(div .bootstrap-switch-container)>input[name^='branches'][name$='[status]']").bootstrapSwitch();
+            //return false;
+        });
+
+        $("#merchant-branch-to-create-btn").click(function(e){
+            e.preventDefault();
+
+            var noBranches = $('#merchant-branch-to-create').val();
+
+            if ($.isNumeric(noBranches) && noBranches>0){
+                for(i=0;i<noBranches;i++){
+                    $("input[name^='branches'][name$='[status]']:last").bootstrapSwitch("destroy");
+                    $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
+
+                    var newIndex = globalNewIndex + 1;
+                    var changeIds = function (i, val) {
+                        if(val)
+                            return val.replace(globalNewIndex, newIndex);
+                    };
+
+                    $('#new-branches-table tbody>tr:last input').attr('name', changeIds).attr('id', changeIds);
+
+                    var displayIndex = $('#new-branches-table tbody>tr:last #branch-index').text(); //display index start from 1
+                    $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex)+1);
+
+                    globalNewIndex++;
+                }
+                $(":not(div .bootstrap-switch-container)>input[name^='branches'][name$='[status]']").bootstrapSwitch();
+                //return false;
+            }
         });
 
         $("ul.nav-tabs a").click(function (e) {
@@ -184,6 +213,6 @@
         });
 
         $("[name='merchant-status']").bootstrapSwitch();
-        $("[name^='branches']").filter("[name$='[status]']").bootstrapSwitch();
+        $("[name^='branches'][name$='[status]']").bootstrapSwitch();
     });
 </script>
