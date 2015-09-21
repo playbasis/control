@@ -56,7 +56,7 @@ class Goods extends REST2_Controller
                 }
                 if ($player_id !== false) $goods['amount'] = isset($m[$group]) ? $m[$group]['amount'] : 0;
             } else {
-                if ($player_id !== false) $goods['amount'] = isset($m[$goods['goods_id']]) ? $m[$goods['goods_id']]['amount'] : 0;
+                if ($player_id !== false) $goods['amount'] = isset($m[$goodsId]) ? $m[$goodsId]['amount'] : 0;
             }
             $this->response($this->resp->setRespond($goods), 200);
         }
