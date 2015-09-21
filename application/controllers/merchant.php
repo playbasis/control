@@ -95,20 +95,46 @@ class Merchant extends MY_Controller
 
                 $postArr = array_map('array_filter', $merchant_data['branches']);
                 foreach ($postArr as $key => $branch) {
-                    if(!array_key_exists('branchName',$branch)){
+                    if (!array_key_exists('branchName', $branch)) {
                         unset($postArr[$key]);
                     }
                 }
                 $merchant_data['branches'] = array_values($postArr);
 
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
+                $batch_data = array();
+                foreach ($merchant_data['branches'] as $branch) {
+                    array_push($batch_data, array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'branch_name' => $branch['branchName'],
+                        'pin_code' => $this->Merchant_model->generatePINCode($client_id, $site_id),
+                        'status' => !empty($branch['status']) ? true : false,
+                        'deleted' => false,
+                        'date_added' => new MongoDate(),
+                        'date_modified' => new MongoDate()
+                    ));
+                }
+
+                $data['branches'] = array();
+
+                if (!empty($batch_data)) {
+                    $completed_flag = $this->Merchant_model->bulkInsertBranches($batch_data);
+
+                    if ($completed_flag) {
+                        foreach ($batch_data as $entry) {
+                            array_push($data['branches'], array($entry['_id'], $entry['branch_name']));
+                        }
+                    }
+                }
+
+                $data['client_id'] = $client_id;
+                $data['site_id'] = $site_id;
                 $data['name'] = $merchant_data['merchant-name'];
                 $data['desc'] = $merchant_data['merchant-desc'];
                 $data['status'] = !empty($merchant_data['merchant-status']) ? true : false;
 
-                $insert = $this->Merchant_model->createMerchant($data);
-                if ($insert) {
+                $createdMerchantId = $this->Merchant_model->createMerchant($data);
+                if ($createdMerchantId) {
                     $this->session->set_flashdata('success', $this->lang->line('text_success'));
                     redirect('/merchant', 'refresh');
                 }

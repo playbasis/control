@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+define('PIN_CODE_LENGTH', 6);
+
 class Merchant_model extends MY_Model
 {
     public function countMerchants($client_id, $site_id)
@@ -86,6 +88,7 @@ class Merchant_model extends MY_Model
             'site_id' => $data['site_id'],
             'name' => $data['name'],
             'desc' => $data['desc'],
+            'branches' => $data['branches'],
             'status' => $data['status'],
             'deleted' => false,
             'date_added' => new MongoDate(),
@@ -96,6 +99,49 @@ class Merchant_model extends MY_Model
         // TODO: Create PIN for new branches
 
         return $insert;
+    }
+
+    public function bulkInsertBranches($batch_data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        if (!empty($batch_data) && is_array($batch_data)) {
+            try {
+                return $this->mongo_db->batch_insert('playbasis_merchant_branch_to_client', $batch_data,
+                    array("w" => 0, "j" => false));
+            } catch (Exception $e) {
+                var_dump($e);
+            }
+        }
+        return false;
+    }
+
+    private function checkPINCodeExisted($client_id, $site_id, $pin_code)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('pin_code', $pin_code);
+        $this->mongo_db->where('deleted', false);
+        $total = $this->mongo_db->count('playbasis_merchant_branch_to_client');
+
+        return $total ? true : false;
+    }
+
+    public function generatePINCode($clientId, $siteId)
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+
+        do {
+            for ($i = 0; $i < PIN_CODE_LENGTH; $i++) {
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+            }
+        } while ($this->checkPINCodeExisted($clientId, $siteId, $randomString));
+
+        return $randomString;
     }
 //
 //    public function updateMerchant($data)
