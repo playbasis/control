@@ -420,8 +420,6 @@ class Quest extends MY_Controller
 
         $this->data['badges'] = $this->Quest_model->getBadgesByClientSiteId($data);
 
-        $this->data['quiz'] = $this->Quest_model->getQuizsByClientSiteId($data);
-
         $this->data['actions'] = $this->Quest_model->getActionsByClientSiteId($data);
 
         $this->data['exp_id'] = $this->Quest_model->getExpId($data);
@@ -448,7 +446,6 @@ class Quest extends MY_Controller
             $countQuest = 0;
             $countCustomPoints = 0;
             $countBadges = 0;
-            $countQuizs=0;
             if(isset($editQuest['condition'])){
                 foreach($editQuest['condition'] as $condition){
                     if($condition['condition_type'] == 'DATETIME_START'){
@@ -507,12 +504,6 @@ class Quest extends MY_Controller
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_type'] = $condition['condition_type'];
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
-                        $countCustomPoints++;
-                    }
-                    if($condition['condition_type'] == 'QUIZ'){
-                        $this->data['editQuizsCon'][$countQuizs]['condition_type'] = $condition['condition_type'];
-                        $this->data['editQuizsCon'][$countQuizs]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
-                        $this->data['editQuizsCon'][$countQuizs]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                         $countCustomPoints++;
                     }
                     if($condition['condition_type'] == 'BADGE'){
@@ -649,7 +640,6 @@ class Quest extends MY_Controller
                         $countActions = 0;
                         $countCustomPoints = 0;
                         $countBadge = 0;
-                        $countQuizs = 0;
                         foreach($mission['completion'] as $mm){
                             if($mm['completion_type'] == 'ACTION'){
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_type'] = $mm['completion_type'];
@@ -674,14 +664,6 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_value'] = $mm['completion_value'];
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_id'] = $mm['completion_id'];
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_title'] = $mm['completion_title'];
-                                $countCustomPoints++;
-                            }
-
-                            if($mm['completion_type'] == 'QUIZ'){
-                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_type'] = $mm['completion_type'];
-                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_value'] = $mm['completion_value'];
-                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_id'] = $mm['completion_id'];
-                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_title'] = $mm['completion_title'];
                                 $countCustomPoints++;
                             }
 
@@ -1257,7 +1239,6 @@ class Quest extends MY_Controller
 					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
 					else if (!$rewardList || !in_array($completion['completion_id']->{'$id'}, $rewardList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
 					break;
-                //case 'QUIZ':
 				case 'BADGE':
 					if (empty($completion['completion_id'])) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] [completion_id] for '.$completion['completion_data']['name'].' is missing';
 					else if (!$badgeList || !in_array($completion['completion_id']->{'$id'}, $badgeList)) $error[] = '[M'.strval($i).','.strval($j).':COMPLETION] '.$completion['completion_type'].' ['.$completion['completion_data']['name'].'] is invalid';
