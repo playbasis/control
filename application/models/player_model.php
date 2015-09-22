@@ -149,11 +149,11 @@ class Player_model extends MY_Model
 		{
 			$this->set_site_mongodb($site_id);
 			$this->mongo_db->where('pb_player_id', $id);
-			$this->mongo_db->delete('playbasis_action_log');
+			$this->mongo_db->delete_all('playbasis_action_log');
 
 			$this->set_site_mongodb($site_id);
 			$this->mongo_db->where('pb_player_id', $id);
-			$this->mongo_db->delete('playbasis_event_log');
+			$this->mongo_db->delete_all('playbasis_event_log');
 
 
 		}
@@ -2385,9 +2385,15 @@ class Player_model extends MY_Model
 		}
 
         $results = $this->mongo_db->get('playbasis_player');
-        $result = $results[0];
-        $anonymous = $result['anonymous'];
-        return $anonymous ;
+		if($results)
+		{
+			$result = $results[0];
+			$anonymous = $result['anonymous'];
+			return $anonymous ;
+		}else{
+			return false;
+		}
+
 
     }
 

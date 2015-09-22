@@ -467,7 +467,7 @@ class Engine extends Quest
 							assert('$exInfo["dynamic"]["reward_name"]');
 							assert('$exInfo["dynamic"]["quantity"]');
 
-							if (!$input["test"])
+							if (!$input["test"]&& !$anonymousUser)
 								$lv = $this->client_model->updateCustomReward(
 									$exInfo['dynamic']['reward_name'],
 									$exInfo['dynamic']['quantity'],
@@ -481,7 +481,7 @@ class Engine extends Quest
 							);
 							array_push($apiResult['events'], $event);
 
-                            if (!$input["test"]) {
+                            if (!$input["test"] && !$anonymousUser) {
                                 $eventMessage = $this->utility->getEventMessage(
                                     'point',
                                     $jigsawConfig['quantity'],
@@ -584,7 +584,7 @@ class Engine extends Quest
                                 }  // close if (!$input["test"])
                             } else {
                                 //update point-based reward
-                                if (!$input["test"])
+                                if (!$input["test"]&&!$anonymousUser)
                                     $this->client_model->updatePlayerPointReward(
                                         $jigsawConfig['reward_id'],
                                         $jigsawConfig['quantity'],
@@ -600,7 +600,7 @@ class Engine extends Quest
                                 'value' => $jigsawConfig['quantity']);
                             array_push($apiResult['events'], $event);
 
-                            if (!$input["test"]) {
+                            if (!$input["test"]&&!$anonymousUser) {
                                 $eventMessage = $this->utility->getEventMessage(
                                     'point',
                                     $jigsawConfig['quantity'],
@@ -639,7 +639,7 @@ class Engine extends Quest
                         } else {
                             switch($jigsawConfig['reward_name']) {
                             case 'badge':
-                                if (!$input["test"])
+                                if (!$input["test"]&&!$anonymousUser)
                                     $this->client_model->updateplayerBadge(
                                         $jigsawConfig['item_id'],
                                         $jigsawConfig['quantity'],
@@ -661,7 +661,7 @@ class Engine extends Quest
                                 );
                                 array_push($apiResult['events'], $event);
 
-                                if (!$input["test"]) {
+                                if (!$input["test"]&& !$anonymousUser) {
                                     $eventMessage = $this->utility->getEventMessage(
                                         $jigsawConfig['reward_name'],
                                         '',
@@ -718,7 +718,7 @@ class Engine extends Quest
                                 );
                                 array_push($apiResult['events'], $event);
 
-                                if (!$input["test"]) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
+                                if (!$input["test"]&&!$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
 
                                 break;
                             default:
