@@ -206,28 +206,6 @@
                                     </div>
                                 <?php } ?>
 
-                                <?php if(isset($editQuizCon)){ ?>
-                                    <div class="quizs-wrapper condition-type well">
-                                        <h3>Quizs  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
-                                        <div class="item-container">
-                                            <?php foreach($editQuizCon as $quiz){ ?>    
-                                                <div class="clearfix item-wrapper quizs-item-wrapper" data-id-quiz="<?php echo $quiz['condition_id'] ?>">                                    
-                                                <div class="span2 text-center">
-                                                    <img src="<?php echo $quiz['condition_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
-                                                </div>                                    
-                                                <div class="span7"><?php echo $quiz['condition_data']['name'];?></div>                                    
-                                                <div class="span1">                                    
-                                                    <small>value</small>                                    
-                                                    <input type="text" name="condition[<?php echo $quiz['condition_id'] ?>][condition_value]" placeholder="Value" value="<?php echo $quiz['condition_value'] ?>">                                    
-                                                    <input type="hidden" name="condition[<?php echo $quiz['condition_id'] ?>][condition_id]" value="<?php echo $quiz['condition_id'] ?>">                                    
-                                                    <input type="hidden" name="condition[<?php echo $quiz['condition_id'] ?>][condition_type]" value="QUIZ"></div>                                    
-                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    </div>
-                                <?php } ?>
-
                             </div>
                         </div>
                     </div>
@@ -312,6 +290,8 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+
+
                                 <?php if(isset($editEmailRew)){ ?>
                                     <div class="emails-wrapper rewards-type well">
                                         <h3>Emails  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-email-btn">+ Add Emails</a></h3>
@@ -433,7 +413,8 @@
                                                 <ul class="dropdown-menu add-completion-menu" role="menu" aria-labelledby="dropdownMenu">                                                
                                                     <li class="add-action"><a tabindex="-1" href="javascript:void(0)">ACTION</a></li>                                                
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                                
-                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>                                                
+                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                                    <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>                                                
                                                     <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>                                            
                                                 </ul>                                            
                                                 <span class="break"></span>                                            
@@ -535,6 +516,32 @@
                                                                     </div>                                    
                                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                                     <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_title]" placeholder="Title" value="<?php echo $eBadge['completion_title'] ?>"></div></div>
+                                                                </div>
+                                                            <?php } ?>
+
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editBadge isset -->
+
+                                                <?php if(isset($mission['editQuiz'])){ ?>
+                                                    <div class="quizs-wrapper completion-type well">
+                                                        <h3>Quizs  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
+                                                        <div class="item-container">
+
+                                                            <?php foreach($mission['editQuiz'] as $eQuiz){ ?>
+                                                                <div class="clearfix item-wrapper quizs-item-wrapper" data-id-quiz="<?php echo $eQuiz['completion_id'] ?>">                                    
+                                                                    <div class="span2 text-center">
+                                                                        <img src="<?php echo $eQuiz['completion_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
+                                                                    </div>                                    
+                                                                    <div class="span7"><?php foreach($quizs as $q){if($q['_id'] == $eQuiz['completion_id']){echo $q['name'];}} ?></div>                                    
+                                                                    <div class="span1">                                    
+                                                                        <small>value</small>                                    
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_value]" placeholder="Value" value="<?php echo $eQuiz['completion_value']; ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_id]" value="<?php echo $eQuiz['completion_id'] ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_type]" value="QUIZ">
+                                                                    </div>                                    
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                                    <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_title]" placeholder="Title" value="<?php echo $eQuiz['completion_title'] ?>"></div></div>
                                                                 </div>
                                                             <?php } ?>
 
