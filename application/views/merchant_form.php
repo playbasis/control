@@ -39,6 +39,9 @@
                     <li><a href="#merchant-branch"
                            data-toggle="tab"><?php echo $this->lang->line('tab_branch'); ?></a>
                     </li>
+                    <li><a href="#merchant-goods_group"
+                           data-toggle="tab"><?php echo $this->lang->line('tab_goods_group'); ?></a>
+                    </li>
                 </ul>
                 <?php
                 $attributes = array('id' => 'form', 'class' => 'form-horizontal');
@@ -154,6 +157,14 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- .tab-pane -->
+                    <div class="tab-pane fade" id="merchant-goods_group">
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <span>x</span>
                             </div>
                         </div>
                     </div>

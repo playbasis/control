@@ -17,6 +17,7 @@ class Merchant extends MY_Controller
         }
 
         $this->load->model('Merchant_model');
+        $this->load->model('Goods_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -333,6 +334,9 @@ class Merchant extends MY_Controller
 
         if (isset($merchant_id) && ($merchant_id != 0)) {
             if ($this->User_model->getClientId()) {
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
                 $merchant_info = $this->Merchant_model->retrieveMerchant($merchant_id);
 
                 if (!empty($merchant_info['branches'])) {
@@ -341,11 +345,10 @@ class Merchant extends MY_Controller
                         array_push($tmpArrBranchID, $branch['b_id']);
                     }
 
-                    $client_id = $this->User_model->getClientId();
-                    $site_id = $this->User_model->getSiteId();
-
                     $branches = $this->Merchant_model->retrieveBranches($client_id, $site_id, $tmpArrBranchID);
                 }
+
+                $goodsgroup = $this->Goods_model->getGroupsAggregate($site_id);
             }
         }
 

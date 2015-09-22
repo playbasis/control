@@ -14,6 +14,7 @@ $lang['button_clear_filter'] = 'Clear filter';
 // Tab
 $lang['tab_general'] = 'General';
 $lang['tab_branch'] = 'Branch';
+$lang['tab_goods_group'] = 'Goods Group';
 
 // Entry
 //  Tab General
@@ -29,6 +30,8 @@ $lang['entry_pin_code'] = 'PIN Code';
 $lang['entry_branch_status'] = 'Status';
 $lang['entry_branch_status_enable'] = 'Enable';
 $lang['entry_branch_status_disable'] = 'Disable';
+//  Tab Goods Group
+$lang['entry_goods_group'] = 'Goods group';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';
