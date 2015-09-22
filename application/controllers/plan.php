@@ -647,12 +647,17 @@ class Plan extends MY_Controller
         //return $allClientsInThisPlan;
     }
 
-
     private function updatePlanInStripe($plan_id, $name, $price, $trial_days) {
         require_once(APPPATH.'/libraries/stripe/init.php');
         \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+        $plan = null;
         try {
             $plan = \Stripe\Plan::retrieve($plan_id);
+        } catch (Exception $e) {
+            /* this plan is not being used, so it can be updated */
+            return true;
+        }
+        try {
             if ($plan->name != $name) $plan->name = $name;
             if ($plan->amount != $price*100) $plan->amount = $price*100;
             if ($plan->trial_period_days != $trial_days) $plan->trial_period_days = $trial_days;
