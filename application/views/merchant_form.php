@@ -74,7 +74,7 @@
 
                                     <div class="controls">
                                         <input type="checkbox" name="merchant-status" id="status_switch"
-                                               data-handle-width="40" <?php echo isset($merchant_status) && $merchant_status ? ($merchant_status? "checked='checked'" : '') : set_checkbox('merchant-status','true'); ?>>
+                                               data-handle-width="40" <?php echo isset($merchant_status) && $merchant_status ? ($merchant_status? "checked='checked'" : '') : set_checkbox('merchant-status','',true); ?>>
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +223,7 @@
             }
         });
 
-        $("ul.nav-tabs a").click(function (e) {
+        $(".merchant-page ul.nav-tabs a").click(function (e) {
             e.preventDefault();
             $(this).tab('show');
         });
