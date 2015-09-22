@@ -65,20 +65,20 @@ class Merchant_model extends MY_Model
         return $this->mongo_db->get("playbasis_merchant_to_client");
     }
 
-//    public function retrieveMerchant($promo_content_id)
-//    {
-//        $this->set_site_mongodb($this->session->userdata('site_id'));
-//
-//        $this->mongo_db->where('_id', new MongoId($promo_content_id));
-//        $c = $this->mongo_db->get('playbasis_promo_content_to_client');
-//
-//        if ($c) {
-//            return $c[0];
-//        } else {
-//            return null;
-//        }
-//    }
-//
+    public function retrieveMerchant($merchant_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoId($merchant_id));
+        $c = $this->mongo_db->get('playbasis_merchant_to_client');
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
+
     public function createMerchant($data)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -96,9 +96,35 @@ class Merchant_model extends MY_Model
         );
         $insert = $this->mongo_db->insert('playbasis_merchant_to_client', $insert_data);
 
-        // TODO: Create PIN for new branches
-
         return $insert;
+    }
+
+    public function updateMerchant($data)
+    {
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('_id', new MongoID($data['_id']));
+
+        $this->mongo_db->set('name', $data['name']);
+        $this->mongo_db->set('desc', $data['desc']);
+        $this->mongo_db->set('status', $data['status']);
+
+        //TODO: to add branches update
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_merchant_to_client');
+
+        return $update;
+    }
+
+    public function deleteMerchant($merchant_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($merchant_id));
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update('playbasis_merchant_to_client');
     }
 
     public function bulkInsertBranches($batch_data)
@@ -114,6 +140,21 @@ class Merchant_model extends MY_Model
             }
         }
         return false;
+    }
+
+    public function retrieveBranches($client_id, $site_id, $arrBranchID = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+
+        $this->mongo_db->where_in('_id', $arrBranchID);
+
+        $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
+
+        return $result;
     }
 
     private function checkPINCodeExisted($client_id, $site_id, $pin_code)
@@ -142,33 +183,5 @@ class Merchant_model extends MY_Model
         } while ($this->checkPINCodeExisted($clientId, $siteId, $randomString));
 
         return $randomString;
-    }
-//
-//    public function updateMerchant($data)
-//    {
-//        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
-//        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
-//        $this->mongo_db->where('_id', new MongoID($data['_id']));
-//
-//        $this->mongo_db->set('name', $data['name']);
-//        $this->mongo_db->set('desc', $data['desc']);
-//        $this->mongo_db->set('image', $data['image']);
-//        $this->mongo_db->set('date_start', new MongoDate(strtotime($data['date_start'])));
-//        $this->mongo_db->set('date_end', new MongoDate(strtotime($data['date_end'])));
-//        $this->mongo_db->set('date_modified', new MongoDate());
-//        $this->mongo_db->set('status', $data['status']);
-//
-//        $update = $this->mongo_db->update('playbasis_promo_content_to_client');
-//
-//        return $update;
-//    }
-//
-    public function deleteMerchant($merchant_id)
-    {
-        $this->set_site_mongodb($this->session->userdata('site_id'));
-
-        $this->mongo_db->where('_id', new MongoID($merchant_id));
-        $this->mongo_db->set('deleted', true);
-        return $this->mongo_db->update('playbasis_merchant_to_client');
     }
 }

@@ -54,7 +54,8 @@
 
                                     <div class="controls">
                                         <input type="text" name="merchant-name"
-                                               placeholder="<?php echo $this->lang->line('entry_merchant_name'); ?>">
+                                               placeholder="<?php echo $this->lang->line('entry_merchant_name'); ?>"
+                                               value="<?php echo isset($merchant_name) ? $merchant_name : set_value('merchant-name'); ?>">
                                     </div>
                                 </div>
                                 <div class="control-group">
@@ -63,7 +64,7 @@
 
                                     <div class="controls">
                                     <textarea name="merchant-desc" rows="4"
-                                              placeholder="<?php echo $this->lang->line('entry_description'); ?>"></textarea>
+                                              placeholder="<?php echo $this->lang->line('entry_description'); ?>"><?php echo isset($merchant_desc) ? $merchant_desc : set_value('merchant-desc'); ?></textarea>
                                     </div>
                                 </div>
                                 <div class="control-group">
@@ -73,7 +74,7 @@
 
                                     <div class="controls">
                                         <input type="checkbox" name="merchant-status" id="status_switch"
-                                               data-handle-width="40" checked="checked">
+                                               data-handle-width="40" <?php echo isset($merchant_status) && $merchant_status ? ($merchant_status? "checked='checked'" : '') : set_checkbox('merchant-status','true'); ?>>
                                     </div>
                                 </div>
                             </div>
@@ -100,9 +101,24 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr>
-                                                    <td colspan="4" style="text-align: center">No branch found. Create new?</td>
-                                                </tr>
+                                                <?php
+                                                if (!empty($branches_list)) {
+                                                    $index = 0;
+                                                    foreach ($branches_list as $branch) { ?>
+                                                        <tr>
+                                                            <td><?php echo ++$index; ?></td>
+                                                            <td><?php echo $branch['branch_name']; ?></td>
+                                                            <td><?php echo $branch['pin_code']; ?></td>
+                                                            <td><?php echo $branch['status'] ? 'Enabled' : 'Disabled'; ?></td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                <?php } else { ?>
+                                                    <tr>
+                                                        <td colspan="4" style="text-align: center">No branch found.
+                                                            Create new?
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -128,7 +144,7 @@
                                                 <tbody>
                                                 <tr>
                                                     <td id="branch-index">1</td>
-                                                    <td><input type="text" name="branches[0][branchName]"></td>
+                                                    <td><input type="text" name="branches[0][branchName]" value=""></td>
                                                     <td><input type="checkbox" name="branches[0][status]"
                                                                data-handle-width="40" checked="checked"></td>
                                                 </tr>
