@@ -741,17 +741,17 @@
     </div>
     <div class="modal-body">
         <div class="select-list">
-            <?php for($i=0 ; $i < count($badges) ; $i++){ ?>
+            <?php for($i=0 ; $i < count($quizs) ; $i++){ ?>
                 <label>
 
-                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-quiz="<?php echo $badges[$i]['badge_id'] ?>">
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-quiz="<?php echo $quizs[$i]['_id'] ?>">
                     <div class="span1 text-center">
-                        <input type="checkbox" name="selected[]" value="<?php $badges[$i]['_id']; ?>">
+                        <input type="checkbox" name="selected[]" value="<?php $quizs[$i]['_id']; ?>">
                     </div>
                     <div class="span2 image text-center">
-                        <img height="50" width="50" src="<?php echo S3_IMAGE.$badges[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                        <img height="50" width="50" src="<?php echo S3_IMAGE.$quizs[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
                     </div>
-                    <div class="span9 title"><?php echo $badges[$i]['name'];?></div>
+                    <div class="span9 title"><?php echo $quizs[$i]['name'];?></div>
                 </div>
                 </label>
             <?php } ?>

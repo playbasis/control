@@ -420,6 +420,8 @@ class Quest extends MY_Controller
 
         $this->data['badges'] = $this->Quest_model->getBadgesByClientSiteId($data);
 
+        $this->data['quizs'] = $this->Quest_model->getQuizsByClientSiteId($data);
+
         $this->data['actions'] = $this->Quest_model->getActionsByClientSiteId($data);
 
         $this->data['exp_id'] = $this->Quest_model->getExpId($data);
@@ -446,6 +448,8 @@ class Quest extends MY_Controller
             $countQuest = 0;
             $countCustomPoints = 0;
             $countBadges = 0;
+            $countQuizs=0;
+
             if(isset($editQuest['condition'])){
                 foreach($editQuest['condition'] as $condition){
                     if($condition['condition_type'] == 'DATETIME_START'){
@@ -506,6 +510,12 @@ class Quest extends MY_Controller
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                         $countCustomPoints++;
                     }
+                    if($condition['condition_type'] == 'QUIZ'){
+                        $this->data['editQuizsCon'][$countQuizs]['condition_type'] = $condition['condition_type'];
+                        $this->data['editQuizsCon'][$countQuizs]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editQuizsCon'][$countQuizs]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                        $countCustomPoints++;
+                    }
                     if($condition['condition_type'] == 'BADGE'){
                         $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type'];
                         $this->data['editBadgeCon'][$countBadges]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
@@ -538,6 +548,8 @@ class Quest extends MY_Controller
             if(isset($editQuest['rewards'])){
                 $countCustomPoints = 0;
                 $countBadges = 0;
+                $countQuizs = 0;
+
                 foreach($editQuest['rewards'] as $reward){
                     if($reward['reward_type'] == 'POINT'){
                         $this->data['editPointsRew']['reward_type'] = $reward['reward_type'];
@@ -666,7 +678,13 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_title'] = $mm['completion_title'];
                                 $countCustomPoints++;
                             }
-
+                            if($mm['completion_type'] == 'QUIZ'){
+                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_type'] = $mm['completion_type'];
+                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_value'] = $mm['completion_value'];
+                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_id'] = $mm['completion_id'];
+                                $this->data['editMission'][$missionCount]['editCustomPoint'][$countQuizs]['completion_title'] = $mm['completion_title'];
+                                $countCustomPoints++;
+                            }
                             if($mm['completion_type'] == 'BADGE'){
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_type'] = $mm['completion_type'];
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_value'] = $mm['completion_value'];
