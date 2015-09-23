@@ -300,8 +300,8 @@
                 }
             });
 
-//            $("[name^='mc_goodsGroup['][name$='][goodsGroup]']").select2();
-//            $("[name^='mc_goodsGroup['][name$='][allowBranches]']").select2();
+            $("[name^='mc_goodsGroup['][name$='][goodsGroup]']:not([name*='id'])").select2();
+            $("[name^='mc_goodsGroup['][name$='][allowBranches]']:not([name*='id'])").select2();
         }
 
         init_mc_goodgroups_event();
