@@ -94,16 +94,16 @@ class Merchant extends MY_Controller
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
 
-                $postArr = array_map('array_filter', $merchant_data['branches']);
+                $postArr = array_map('array_filter', $merchant_data['newBranches']);
                 foreach ($postArr as $key => $branch) {
                     if (!array_key_exists('branchName', $branch)) {
                         unset($postArr[$key]);
                     }
                 }
-                $merchant_data['branches'] = array_values($postArr);
+                $merchant_data['newBranches'] = array_values($postArr);
 
                 $batch_data = array();
-                foreach ($merchant_data['branches'] as $branch) {
+                foreach ($merchant_data['newBranches'] as $branch) {
                     array_push($batch_data, array(
                         'client_id' => $client_id,
                         'site_id' => $site_id,
@@ -133,6 +133,8 @@ class Merchant extends MY_Controller
                 $data['name'] = $merchant_data['merchant-name'];
                 $data['desc'] = $merchant_data['merchant-desc'];
                 $data['status'] = !empty($merchant_data['merchant-status']) ? true : false;
+
+                // TODO : Need to add goods group support for insert
 
                 $createdMerchantId = $this->Merchant_model->createMerchant($data);
                 if ($createdMerchantId) {
@@ -196,45 +198,47 @@ class Merchant extends MY_Controller
                 $data['client_id'] = $client_id;
                 $data['site_id'] = $site_id;
 
-                //TODO : Need to edit Update methods to save branches
+                $postArr = array_map('array_filter', $merchant_data['newBranches']);
+                foreach ($postArr as $key => $branch) {
+                    if (!array_key_exists('branchName', $branch)) {
+                        unset($postArr[$key]);
+                    }
+                }
+                $merchant_data['newBranches'] = array_values($postArr);
 
-//                $postArr = array_map('array_filter', $merchant_data['branches']);
-//                foreach ($postArr as $key => $branch) {
-//                    if (!array_key_exists('branchName', $branch)) {
-//                        unset($postArr[$key]);
-//                    }
-//                }
-//                $merchant_data['branches'] = array_values($postArr);
-//
-//                $batch_data = array();
-//                foreach ($merchant_data['branches'] as $branch) {
-//                    array_push($batch_data, array(
-//                        'client_id' => $client_id,
-//                        'site_id' => $site_id,
-//                        'branch_name' => $branch['branchName'],
-//                        'pin_code' => $this->Merchant_model->generatePINCode($client_id, $site_id),
-//                        'status' => !empty($branch['status']) ? true : false,
-//                        'deleted' => false,
-//                        'date_added' => new MongoDate(),
-//                        'date_modified' => new MongoDate()
-//                    ));
-//                }
-//
-//                $data['branches'] = array();
-//
-//                if (!empty($batch_data)) {
-//                    $completed_flag = $this->Merchant_model->bulkInsertBranches($batch_data);
-//
-//                    if ($completed_flag) {
-//                        foreach ($batch_data as $entry) {
-//                            array_push($data['branches'], array($entry['_id'], $entry['branch_name']));
-//                        }
-//                    }
-//                }
+                $batch_data = array();
+                foreach ($merchant_data['newBranches'] as $branch) {
+                    array_push($batch_data, array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'branch_name' => $branch['branchName'],
+                        'pin_code' => $this->Merchant_model->generatePINCode($client_id, $site_id),
+                        'status' => !empty($branch['status']) ? true : false,
+                        'deleted' => false,
+                        'date_added' => new MongoDate(),
+                        'date_modified' => new MongoDate()
+                    ));
+                }
+
+                $data['branches'] = array();
+
+                if (!empty($batch_data)) {
+                    $completed_flag = $this->Merchant_model->bulkInsertBranches($batch_data);
+
+                    if ($completed_flag) {
+                        foreach ($batch_data as $entry) {
+                            array_push($data['branches'], array('b_id' => $entry['_id'], 'b_name' => $entry['branch_name']));
+                        }
+                    }
+                }
 
                 $data['name'] = $merchant_data['merchant-name'];
                 $data['desc'] = $merchant_data['merchant-desc'];
                 $data['status'] = !empty($merchant_data['merchant-status']) ? true : false;
+
+                // TODO : Need to edit Update methods to save branches ($data['branches'])
+
+                // TODO : Need to add goods group support for update
 
                 $update = $this->Merchant_model->updateMerchant($data);
                 if ($update) {

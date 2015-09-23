@@ -147,8 +147,8 @@
                                                 <tbody>
                                                 <tr>
                                                     <td id="branch-index">1</td>
-                                                    <td><input type="text" name="branches[0][branchName]" value=""></td>
-                                                    <td><input type="checkbox" name="branches[0][status]"
+                                                    <td><input type="text" name="newBranches[0][branchName]" value=""></td>
+                                                    <td><input type="checkbox" name="newBranches[0][status]"
                                                                data-handle-width="40" checked="checked"></td>
                                                 </tr>
                                                 </tbody>
@@ -306,27 +306,6 @@
 
         init_mc_goodgroups_event();
 
-        $("#add").click(function (e) {
-            e.preventDefault();
-            $("input[name^='branches'][name$='[status]']:last").bootstrapSwitch("destroy");
-            $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
-
-            var newIndex = globalNewIndex + 1;
-            var changeIds = function (i, val) {
-                if(val)
-                    return val.replace(globalNewIndex, newIndex);
-            };
-
-            $('#new-branches-table tbody>tr:last input').attr('name', changeIds).attr('id', changeIds);
-
-            var displayIndex = $('#new-branches-table tbody>tr:last #branch-index').text(); //display index start from 1
-            $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex)+1);
-
-            globalNewIndex++;
-            $(":not(div .bootstrap-switch-container)>input[name^='branches'][name$='[status]']").bootstrapSwitch();
-            //return false;
-        });
-
         $('#add-mc-goodsgroup-btn').click(function(){
             console.log('#add-mc-goodsgroup-btn clicked!');
             var generatedId = mongoIDjs();
@@ -343,6 +322,27 @@
             init_mc_goodgroups_event();
         });
 
+        $("#add").click(function (e) {
+            e.preventDefault();
+            $("input[name^='newBranches'][name$='[status]']:last").bootstrapSwitch("destroy");
+            $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
+
+            var newIndex = globalNewIndex + 1;
+            var changeIds = function (i, val) {
+                if(val)
+                    return val.replace(globalNewIndex, newIndex);
+            };
+
+            $('#new-branches-table tbody>tr:last input').attr('name', changeIds).attr('id', changeIds);
+
+            var displayIndex = $('#new-branches-table tbody>tr:last #branch-index').text(); //display index start from 1
+            $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex)+1);
+
+            globalNewIndex++;
+            $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']").bootstrapSwitch();
+            //return false;
+        });
+
         $("#merchant-branch-to-create-btn").click(function(e){
             e.preventDefault();
 
@@ -350,7 +350,7 @@
 
             if ($.isNumeric(noBranches) && noBranches>0){
                 for(i=0;i<noBranches;i++){
-                    $("input[name^='branches'][name$='[status]']:last").bootstrapSwitch("destroy");
+                    $("input[name^='newBranches'][name$='[status]']:last").bootstrapSwitch("destroy");
                     $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
 
                     var newIndex = globalNewIndex + 1;
@@ -366,7 +366,7 @@
 
                     globalNewIndex++;
                 }
-                $(":not(div .bootstrap-switch-container)>input[name^='branches'][name$='[status]']").bootstrapSwitch();
+                $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']").bootstrapSwitch();
                 //return false;
             }
         });
@@ -377,7 +377,7 @@
         });
 
         $("[name='merchant-status']").bootstrapSwitch();
-        $("[name^='branches'][name$='[status]']").bootstrapSwitch();
+        $("[name^='newBranches'][name$='[status]']").bootstrapSwitch();
 
     });
 </script>
