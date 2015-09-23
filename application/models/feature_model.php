@@ -51,7 +51,6 @@ class Feature_model extends MY_Model
         $this->mongo_db->order_by(array('sort_order' => 1));
         $results = $this->mongo_db->get("playbasis_feature_to_client");
 
-              
         return $results;
     }
 
