@@ -219,16 +219,16 @@
                 </div>
             </div>
         </div>
-        <div class="box-content clearfix hide">
+        <div class="box-content clearfix">
             <div class="row-fluid" style="margin-top: 15px;">
                 <div class="span6">
                     <div class="control-group">
-                        <label class="control-label" for="goodsgroup-select">
+                        <label class="control-label">
                             <?php echo $this->lang->line('entry_goods_groups_select'); ?>
                         </label>
 
                         <div class="controls">
-                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][goodsGroup]">
+                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][goodsGroup][]">
                                 <?php foreach ($goodsgroups as $goodsgroup) { ?>
                                     <option
                                         value="<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
@@ -239,12 +239,12 @@
                 </div>
                 <div class="span6">
                     <div class="control-group">
-                        <label class="control-label" for="branches-select">
+                        <label class="control-label">
                             <?php echo $this->lang->line('entry_allow_branches_select'); ?>
                         </label>
 
                         <div class="controls">
-                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][allowBranches]">
+                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][allowBranches][]">
                                 <?php
                                 if (!empty($branches_list)) {
                                     //TODO: Need to check if branch status is disabled.
@@ -300,8 +300,8 @@
                 }
             });
 
-            $("[name^='mc_goodsGroup['][name$='][goodsGroup]']:not([name*='id'])").select2();
-            $("[name^='mc_goodsGroup['][name$='][allowBranches]']:not([name*='id'])").select2();
+            $("[name^='mc_goodsGroup['][name$='][goodsGroup][]']:not([name*='id'])").select2({closeOnSelect:false});
+            $("[name^='mc_goodsGroup['][name$='][allowBranches][]']:not([name*='id'])").select2({closeOnSelect:false});
         }
 
         init_mc_goodgroups_event();
@@ -329,15 +329,15 @@
 
         $('#add-mc-goodsgroup-btn').click(function(){
             console.log('#add-mc-goodsgroup-btn clicked!');
-            var countGoodsGroups = mongoIDjs();
+            var generatedId = mongoIDjs();
 
-            var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html().replace(new RegExp('{{id}}', 'g'),countGoodsGroups);
+            var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html().replace(new RegExp('{{id}}', 'g'),generatedId);
 
             var goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
 
             goodsGroupWrapper.append(goodsGroupsHtml);
 
-            var element_position = goodsGroupWrapper.find('[data-mc-goodsgroup-id="'+countGoodsGroups+'"]').offset();
+            var element_position = goodsGroupWrapper.find('[data-mc-goodsgroup-id="'+generatedId+'"]').offset();
             $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
 
             init_mc_goodgroups_event();

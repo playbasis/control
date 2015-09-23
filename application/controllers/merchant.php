@@ -193,8 +193,10 @@ class Merchant extends MY_Controller
                 $merchant_data = $this->input->post();
 
                 $data['_id'] = $merchant_id;
-                $data['client_id'] = $this->User_model->getClientId();
-                $data['site_id'] = $this->User_model->getSiteId();
+                $data['client_id'] = $client_id;
+                $data['site_id'] = $site_id;
+
+                //TODO : Need to edit Update methods to save branches
 
 //                $postArr = array_map('array_filter', $merchant_data['branches']);
 //                foreach ($postArr as $key => $branch) {
