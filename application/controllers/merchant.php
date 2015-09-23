@@ -333,9 +333,10 @@ class Merchant extends MY_Controller
         $this->data['main'] = 'merchant_form';
 
         if (isset($merchant_id) && ($merchant_id != 0)) {
+            $client_id = $this->User_model->getClientId();
+            $site_id = $this->User_model->getSiteId();
+
             if ($this->User_model->getClientId()) {
-                $client_id = $this->User_model->getClientId();
-                $site_id = $this->User_model->getSiteId();
 
                 $merchant_info = $this->Merchant_model->retrieveMerchant($merchant_id);
 
@@ -347,9 +348,9 @@ class Merchant extends MY_Controller
 
                     $branches = $this->Merchant_model->retrieveBranches($client_id, $site_id, $tmpArrBranchID);
                 }
-
-                $goodsgroup = $this->Goods_model->getGroupsAggregate($site_id);
             }
+
+            $this->data['goodsgroups'] = $this->Goods_model->getGroupsAggregate($site_id);
         }
 
         if ($this->input->post('merchant-name')) {

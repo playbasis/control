@@ -164,7 +164,35 @@
                     <div class="tab-pane fade" id="merchant-goods_group">
                         <div class="container-fluid">
                             <div class="row-fluid">
-                                <span>x</span>
+                                <div id="mc-goodsgroup-header" style="margin-bottom: 15px">
+                                    <div class="row-fluid">
+                                        <div class="offset3 span2">
+                                            <a id="open-mc-goodsgroup-btn" class="btn btn-block">
+                                                <?php echo $this->lang->line('entry_goods_group_header_open_all'); ?>
+                                            </a>
+                                        </div>
+                                        <div class="span2">
+                                            <a id="close-mc-goodsgroup-btn" class="btn btn-block">
+                                                <?php echo $this->lang->line('entry_goods_group_header_close_all'); ?>
+                                            </a>
+                                        </div>
+                                        <div class="span2">
+                                            <a id="add-mc-goodsgroup-btn" class="btn btn-primary btn-block">
+                                                <?php echo $this->lang->line('entry_goods_group_header_add_goodsgroup'); ?>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="row-fluid" style="margin-top: 15px;">
+                                    <div class="alert alert-info">
+                                        <button type="button" class="close" data-dismiss="alert"><i class="fa fa-close"></i></button>
+                                        <h4><?php echo $this->lang->line('text_goods_group_info_header'); ?></h4>
+                                        <?php echo $this->lang->line('text_goods_group_info_text'); ?>
+                                    </div>
+                                </div>
+                                <div id="mc-goodsgroup-wrapper"></div>
                             </div>
                         </div>
                     </div>
@@ -177,14 +205,107 @@
         </div>
     </div>
 </div>
+
+<div id="newGoodGroups_emptyElement" class="hide invisible">
+    <div class="mc-goodsgroup-item-wrapper" data-mc-goodsgroup-id="{{id}}">
+        <div class="box-header box-goodsgroup-header overflow-visible">
+            <div class="row-fluid">
+                <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">New good groups</h2>
+
+                <div class="box-icon">
+                    <a class="btn btn-danger right remove-goodsgroup-btn">Delete</a>
+                    <span class="break"></span>
+                    <a><i class="fa fa-chevron-up"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="box-content clearfix hide">
+            <div class="row-fluid" style="margin-top: 15px;">
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="goodsgroup-select">
+                            <?php echo $this->lang->line('entry_goods_groups_select'); ?>
+                        </label>
+
+                        <div class="controls">
+                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][goodsGroup]">
+                                <?php foreach ($goodsgroups as $goodsgroup) { ?>
+                                    <option
+                                        value="<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="branches-select">
+                            <?php echo $this->lang->line('entry_allow_branches_select'); ?>
+                        </label>
+
+                        <div class="controls">
+                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][allowBranches]">
+                                <?php
+                                if (!empty($branches_list)) {
+                                    //TODO: Need to check if branch status is disabled.
+                                    foreach ($branches_list as $branch) { ?>
+                                        <option
+                                            value="<?php echo $branch['_id'] ?>"><?php echo $branch['branch_name'] ?></option>
+                                    <?php }
+                                } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-table.min.css" rel="stylesheet" type="text/css">
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
+<link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/custom/bootstrap-table.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/md5.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/mongoid.js" type="text/javascript"></script>
 <script type="text/javascript">
     var globalNewIndex = 0;
 
     $(function () {
+        function init_mc_goodgroups_event(){
+
+            $('.mc-goodsgroup-item-wrapper .box-goodsgroup-header').unbind().bind('click', function (data) {
+                var $target = $(this).next('.box-content');
+
+                if ($target.is(':visible')) {
+                    $('i', $(this)).removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                } else {
+                    $('i', $(this)).removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                }
+
+                $target.slideToggle();
+            });
+
+            $('.remove-goodsgroup-btn').unbind().bind('click',function(data){
+                var $target = $(this).parent().parent().parent();
+                console.log($target);
+
+                var r = confirm("Are you sure to remove!");
+                if (r == true) {
+                    $target.remove();
+                    init_mc_goodgroups_event()
+                }
+            });
+
+//            $("[name^='mc_goodsGroup['][name$='][goodsGroup]']").select2();
+//            $("[name^='mc_goodsGroup['][name$='][allowBranches]']").select2();
+        }
+
+        init_mc_goodgroups_event();
+
         $("#add").click(function (e) {
             e.preventDefault();
             $("input[name^='branches'][name$='[status]']:last").bootstrapSwitch("destroy");
@@ -204,6 +325,22 @@
             globalNewIndex++;
             $(":not(div .bootstrap-switch-container)>input[name^='branches'][name$='[status]']").bootstrapSwitch();
             //return false;
+        });
+
+        $('#add-mc-goodsgroup-btn').click(function(){
+            console.log('#add-mc-goodsgroup-btn clicked!');
+            var countGoodsGroups = mongoIDjs();
+
+            var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html().replace(new RegExp('{{id}}', 'g'),countGoodsGroups);
+
+            var goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
+
+            goodsGroupWrapper.append(goodsGroupsHtml);
+
+            var element_position = goodsGroupWrapper.find('[data-mc-goodsgroup-id="'+countGoodsGroups+'"]').offset();
+            $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
+
+            init_mc_goodgroups_event();
         });
 
         $("#merchant-branch-to-create-btn").click(function(e){
@@ -241,5 +378,6 @@
 
         $("[name='merchant-status']").bootstrapSwitch();
         $("[name^='branches'][name$='[status]']").bootstrapSwitch();
+
     });
 </script>

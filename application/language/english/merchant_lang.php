@@ -31,12 +31,19 @@ $lang['entry_branch_status'] = 'Status';
 $lang['entry_branch_status_enable'] = 'Enable';
 $lang['entry_branch_status_disable'] = 'Disable';
 //  Tab Goods Group
-$lang['entry_goods_group'] = 'Goods group';
+$lang['entry_goods_group_header_open_all'] = 'Open All';
+$lang['entry_goods_group_header_close_all'] = 'Close All';
+$lang['entry_goods_group_header_add_goodsgroup'] = 'Add Goods Group';
+$lang['entry_goods_groups_select'] = 'Goods group';
+$lang['entry_allow_branches_select'] = 'Allow branches';
 
 // Text
 $lang['text_success'] = 'You have successfully created!';
 $lang['text_success_delete'] = 'You have successfully deleted!';
 $lang['text_success_update'] = 'You have successfully updated!';
+
+$lang['text_goods_group_info_header'] = 'Info!';
+$lang['text_goods_group_info_text'] = 'Please select goods group and select which branches that be able to redeem';
 
 // Error message
 $lang['error_permission'] = 'Warning: You do not have permission to modify Merchant!';
