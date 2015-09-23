@@ -141,8 +141,19 @@ class Client_model extends MY_Model
             'site_id' => null,
             'plan_id' => $data['plan_id']
         );
-
         $this->addPlanToPermission($data_filter);
+        $sites = $this->getSitesByClientId($client_id);
+        if ($sites) foreach ($sites as $site) {
+            $data_filter = array(
+                'client_id' => $client_id,
+                'site_id' => $site['_id'],
+                'plan_id' => $data['plan_id'],
+            );
+            $this->copyRewardToClient($data_filter);
+            $this->copyFeaturedToClient($data_filter);
+            $this->copyActionToClient($data_filter);
+            $this->copyJigsawToClient($data_filter);
+        }
 
         if (isset($data['domain_value'])) {
             foreach ($data['domain_value'] as $domain_value) {
@@ -166,7 +177,6 @@ class Client_model extends MY_Model
                 $this->copyFeaturedToClient($data_filter);
                 $this->copyActionToClient($data_filter);
                 $this->copyJigsawToClient($data_filter);
-
             }
         }
 
@@ -191,8 +201,6 @@ class Client_model extends MY_Model
             }
         }
     }
-
-
 
     public function deleteClient($client_id) {
         $this->set_site_mongodb($this->session->userdata('site_id'));
@@ -336,7 +344,6 @@ class Client_model extends MY_Model
         $this->mongo_db->delete_all("playbasis_feature_to_client");
 
         $plan_data = $this->getPlan($data_filter['plan_id']);
-
 
         if (isset($plan_data['feature_to_plan'])) {
             foreach ($plan_data['feature_to_plan'] as $feature_id) {
@@ -509,7 +516,6 @@ class Client_model extends MY_Model
         $this->mongo_db->where('deleted', false);
         $this->mongo_db->where('client_id', new MongoID($client_id));
         return $this->mongo_db->get('playbasis_client_site');
-
     }
 
     public function getAllSitesFromAllClients(){
