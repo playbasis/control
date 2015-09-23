@@ -78,6 +78,7 @@
                                     <li class="add-quest"><a tabindex="-1" href="javascript:void(0)" >QUEST</a></li>
                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
                                     <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                    <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>
                                     <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
                                 </ul>
                                 <span class="break"></span>
@@ -182,6 +183,27 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editQuizCon)){ ?>
+                                    <div class="quizs-wrapper condition-type well">
+                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
+                                        <div class="item-container">
+                                            <?php foreach($editQuizCon as $quiz){ ?>
+                                                <div class="clearfix item-wrapper quizs-item-wrapper" data-id-badge="<?php echo $quiz['condition_id'] ?>">
+                                                    <div class="span2 text-center">
+                                                        <img src="<?php echo $quiz['condition_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
+                                                    </div>
+                                                    <div class="span7"><?php echo $quiz['condition_data']['name'];?></div>
+                                                    <div class="span1">
+                                                        <small>value</small>
+                                                        <input type="text" name="condition[<?php echo $quiz['condition_id'] ?>][condition_value]" placeholder="Value" value="<?php echo $quiz['condition_value'] ?>">
+                                                        <input type="hidden" name="condition[<?php echo $quiz['condition_id'] ?>][condition_id]" value="<?php echo $quiz['condition_id'] ?>">
+                                                        <input type="hidden" name="condition[<?php echo $quiz['condition_id'] ?>][condition_type]" value="QUIZ"></div>
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
                                     </div>
                                 <?php } ?>
                                 <?php if(isset($editBadgeCon)){ ?>

@@ -515,6 +515,32 @@ class Quest extends MY_Controller
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                         $countCustomPoints++;
                     }
+                    if($condition['condition_type'] == 'QUIZ'){
+                        $this->data['editQuizCon'][$countQuizs]['condition_type'] = $condition['condition_type'];
+                        $this->data['editQuizCon'][$countQuizs]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editQuizCon'][$countQuizs]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                        $this->data['editQuizCon'][$countQuizs]['condition_data'] = isset($condition['condition_data'])?$condition['condition_data']:null;
+
+                        if (isset($condition['condition_data']['image'])){
+                            $info = pathinfo($condition['condition_data']['image']);
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($condition['condition_data']['image'], 0, utf8_strrpos($condition['condition_data']['image'], '.')).'-100x100.'.$extension;
+                                $this->data['editQuizCon'][$countQuizs]['condition_data']['image'] = S3_IMAGE.$new_image;
+                            }else{
+                                $this->data['editQuizCon'][$countQuizs]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                            }
+                        }else{
+                            $this->data['editQuizCon'][$countQuizs]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                        }
+                        /*if (!empty($condition['condition_data']['image']) && $condition['condition_data']['image'] && (S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = $this->Image_model->resize($condition['condition_data']['image'], 100, 100);
+                        } else {
+                            $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                        }*/
+
+                        $countQuizs++;
+                    }
                     if($condition['condition_type'] == 'BADGE'){
                         $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type'];
                         $this->data['editBadgeCon'][$countBadges]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
