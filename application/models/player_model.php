@@ -63,7 +63,7 @@ class Player_model extends MY_Model
 			'birth_date'	=> (isset($data['birth_date']))  ? new MongoDate(strtotime($data['birth_date'])) : null,
 			'date_added'	=> $mongoDate,
 			'date_modified' => $mongoDate,
-            'anonymous' => $data['anonymous']
+            'anonymous' => (isset($data['anonymous']))
 
 		));
 	}

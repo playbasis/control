@@ -150,7 +150,7 @@ class Client_model extends MY_Model
             return null;
         }
 	}
-	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clPlayerId, $clientId, $siteId, $overrideOldValue = FALSE)
+	public function updatePlayerPointReward($rewardId, $quantity, $pbPlayerId, $clPlayerId, $clientId, $siteId, $overrideOldValue = FALSE,$anonymous=false)
 	{
 		assert(isset($rewardId));
 		assert(isset($siteId));
@@ -192,26 +192,30 @@ class Client_model extends MY_Model
 			));
 		}
 
+
 		//update client reward limit
-		$this->mongo_db->select(array('limit'));
-		$this->mongo_db->where(array(
-			'reward_id' => $rewardId,
-			'site_id' => $siteId
-		));
-		$this->mongo_db->limit(1);
-		$result = $this->mongo_db->get('playbasis_reward_to_client');
-		assert($result);
-		$result = $result[0];
-		if(is_null($result['limit']))
-			return;
-		$this->mongo_db->where(array(
-			'reward_id' => $rewardId,
-			'site_id' => $siteId
-		));
-		$this->mongo_db->dec('limit', intval($quantity));
-		$this->mongo_db->update('playbasis_reward_to_client');
+		if(!$anonymous) {
+			$this->mongo_db->select(array('limit'));
+			$this->mongo_db->where(array(
+				'reward_id' => $rewardId,
+				'site_id' => $siteId
+			));
+			$this->mongo_db->limit(1);
+			$result = $this->mongo_db->get('playbasis_reward_to_client');
+			assert($result);
+			$result = $result[0];
+			if (is_null($result['limit'])) {
+				return;
+			}
+			$this->mongo_db->where(array(
+				'reward_id' => $rewardId,
+				'site_id' => $siteId
+			));
+			$this->mongo_db->dec('limit', intval($quantity));
+			$this->mongo_db->update('playbasis_reward_to_client');
+		}
 	}
-	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig)
+	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig,$anonymous = false)
 	{
 		//get reward id
 		$this->set_site_mongodb($input['site_id']);
@@ -304,7 +308,7 @@ class Client_model extends MY_Model
 		else
 		{
 			//update player reward
-			$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id']);
+			$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id'],$anonymous);
 		}
 		$jigsawConfig['reward_id'] = $customRewardId;
 		$jigsawConfig['reward_name'] = $rewardName;

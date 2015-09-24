@@ -583,7 +583,7 @@ class Player extends REST2_Controller
                             'test' => false
 
                         ));
-                        $engine->processRule($input, $this->validToken, null, null);
+                        $engine->processRule($input, $this->validToken, null, null,$action_log['date_added']);
                         $this->player_model->deletePlayer($sessions['pb_player_id'],$this->validToken['site_id']);
 
                     }
