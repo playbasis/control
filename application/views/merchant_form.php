@@ -213,7 +213,7 @@
                 <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">New good groups</h2>
 
                 <div class="box-icon">
-                    <input type="checkbox" name="mc_goodsGroup[{{id}}][status]" data-handle-width="40" data-size="normal">
+                    <input type="checkbox" name="mc_goodsGroup[{{id}}][status]" data-handle-width="40" data-size="normal" checked>
                     <a class="btn btn-danger right remove-goodsgroup-btn">Delete</a>
                     <span class="break"></span>
                     <a><i class="fa fa-chevron-up"></i></a>
@@ -313,31 +313,26 @@
 
         init_mc_goodgroups_event();
 
-        $('#add-mc-goodsgroup-btn').click(function(){
-            console.log('#add-mc-goodsgroup-btn clicked!');
+        $('#add-mc-goodsgroup-btn').click(function () {
             var generatedId = mongoIDjs();
 
-            var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html().replace(new RegExp('{{id}}', 'g'),generatedId);
+            var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html();
+            goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{id}}', 'g'), generatedId);
 
-            var goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
+            var $goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
 
-            var globalSelect2Array = $("[name^='mc_goodsGroup['][name$='][goodsGroup][]']:not([name*='id'])");
-
-            $.each(globalSelect2Array, function (index, value) {
-                //console.log(index +": "+ $(value).val());
+            var globalGoodsGroupSelectedArray = $("[name^='mc_goodsGroup['][name$='][goodsGroup][]']:not([name*='id'])");
+            $.each(globalGoodsGroupSelectedArray, function (index, value) {
                 var selectedArray = $(value).val().toString().split(",");
                 $.each(selectedArray, function (index, value) {
-//                    $(goodsGroupsHtml).find("option[value='"+value+"']").prop("disabled", true);
-                    goodsGroupsHtml.html().replace(new RegExp('option value="' + value + '"','g'),'option disabled value="' + value + '"');
+                    goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('option value="' + value + '"', 'g'), 'option disabled value="' + value + '"');
                 });
             });
 
-            //console.log('select2:' + globalSelect2Value);
+            $goodsGroupWrapper.append(goodsGroupsHtml);
 
-            goodsGroupWrapper.append(goodsGroupsHtml);
-
-            var element_position = goodsGroupWrapper.find('[data-mc-goodsgroup-id="'+generatedId+'"]').offset();
-            $("html, body").animate({scrollTop:(element_position.top-20)}, 600);
+            var element_position = $goodsGroupWrapper.find('[data-mc-goodsgroup-id="' + generatedId + '"]').offset();
+            $("html, body").animate({scrollTop: (element_position.top - 20)}, 600);
 
             init_mc_goodgroups_event();
         });
