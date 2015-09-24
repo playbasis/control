@@ -184,4 +184,23 @@ class Merchant_model extends MY_Model
 
         return $randomString;
     }
+
+    public function createMerchantGoodsGroup($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $insert_data = array(
+            'client_id' => $data['client_id'],
+            'site_id' => $data['site_id'],
+            'goods_group' => $data['goods_group'],
+            'branches_allow' => $data['branches_allow'],
+            'status' => $data['status'],
+            'deleted' => false,
+            'date_added' => new MongoDate(),
+            'date_modified' => new MongoDate()
+        );
+        $insert = $this->mongo_db->insert('playbasis_merchant_goodsgroup_to_client', $insert_data);
+
+        return $insert;
+    }
 }
