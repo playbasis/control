@@ -285,91 +285,98 @@ class Player extends REST2_Controller
 		$player['player'] = $this->player_model->readPlayer($pb_player_id, $this->site_id, array('status'));
 		$this->response($this->resp->setRespond($player), 200);
 	}
-	public function register_post($player_id = '')
-	{
-		$required = $this->input->checkParam(array(
-//			'image',
-			'email',
-			'username'
-		));
-		if(!$player_id)
-			array_push($required, 'player_id');
-		if($required)
-			$this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
 
-        if(!$this->validClPlayerId($player_id)){
+    public function register_post($player_id = '')
+    {
+        $required = $this->input->checkParam(array(
+//			'image',
+            'email',
+            'username'
+        ));
+        if (!$player_id) {
+            array_push($required, 'player_id');
+        }
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        if (!$this->validClPlayerId($player_id)) {
             $this->response($this->error->setError('USER_ID_INVALID'), 200);
         }
 
-		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-			'cl_player_id' => $player_id
-		)));
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
 
-		if($pb_player_id)
-			$this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
+        if ($pb_player_id) {
+            $this->response($this->error->setError('USER_ALREADY_EXIST'), 200);
+        }
 
-		$playerInfo = array(
-			'email' => $this->input->post('email'),
-			'image' => $this->input->post('image') ? $this->input->post('image') : "https://www.pbapp.net/images/default_profile.jpg",
-			'username' => $this->input->post('username'),
-			'player_id' => $player_id
-		);
-		$firstName = $this->input->post('first_name');
-		if($firstName)
-			$playerInfo['first_name'] = $firstName;
-		$lastName = $this->input->post('last_name');
-		if($lastName)
-			$playerInfo['last_name'] = $lastName;
-		$nickName = $this->input->post('nickname');
-		if($nickName)
-			$playerInfo['nickname'] = $nickName;
-		$phoneNumber = $this->input->post('phone_number');
-		if($phoneNumber){
-            if($this->validTelephonewithCountry($phoneNumber)){
+        $playerInfo = array(
+            'email' => $this->input->post('email'),
+            'image' => $this->input->post('image') ? $this->input->post('image') : "https://www.pbapp.net/images/default_profile.jpg",
+            'username' => $this->input->post('username'),
+            'player_id' => $player_id
+        );
+        $firstName = $this->input->post('first_name');
+        if ($firstName) {
+            $playerInfo['first_name'] = $firstName;
+        }
+        $lastName = $this->input->post('last_name');
+        if ($lastName) {
+            $playerInfo['last_name'] = $lastName;
+        }
+        $nickName = $this->input->post('nickname');
+        if ($nickName) {
+            $playerInfo['nickname'] = $nickName;
+        }
+        $phoneNumber = $this->input->post('phone_number');
+        if ($phoneNumber) {
+            if ($this->validTelephonewithCountry($phoneNumber)) {
                 $playerInfo['phone_number'] = $phoneNumber;
-            }else{
+            } else {
                 $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
             }
         }
-		$facebookId = $this->input->post('facebook_id');
-		if($facebookId)
-			$playerInfo['facebook_id'] = $facebookId;
-		$twitterId = $this->input->post('twitter_id');
-		if($twitterId)
-			$playerInfo['twitter_id'] = $twitterId;
-		$instagramId = $this->input->post('instagram_id');
-		if($instagramId)
-			$playerInfo['instagram_id'] = $instagramId;
-		$password = $this->input->post('password');
-		if($password)
-			$playerInfo['password'] = $password;
-		$gender = $this->input->post('gender');
-		if($gender)
-			$playerInfo['gender'] = $gender;
-		$birthdate = $this->input->post('birth_date');
-		if($birthdate)
-		{
-			$timestamp = strtotime($birthdate);
-			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
-		}
+        $facebookId = $this->input->post('facebook_id');
+        if ($facebookId) {
+            $playerInfo['facebook_id'] = $facebookId;
+        }
+        $twitterId = $this->input->post('twitter_id');
+        if ($twitterId) {
+            $playerInfo['twitter_id'] = $twitterId;
+        }
+        $instagramId = $this->input->post('instagram_id');
+        if ($instagramId) {
+            $playerInfo['instagram_id'] = $instagramId;
+        }
+        $password = $this->input->post('password');
+        if ($password) {
+            $playerInfo['password'] = $password;
+        }
+        $gender = $this->input->post('gender');
+        if ($gender) {
+            $playerInfo['gender'] = $gender;
+        }
+        $birthdate = $this->input->post('birth_date');
+        if ($birthdate) {
+            $timestamp = strtotime($birthdate);
+            $playerInfo['birth_date'] = date('Y-m-d', $timestamp);
+        }
 
-        $anonymous =$this->input->post('anonymous');
-		//check anonymous feature depend on plan
-        if($anonymous)
-        {
+        $anonymous = $this->input->post('anonymous');
+        //check anonymous feature depend on plan
+        if ($anonymous) {
 
             $clientData = array(
-                'client_id'    => $this->validToken['client_id'],
-                'site_id'      => $this->validToken['site_id']
+                'client_id' => $this->validToken['client_id'],
+                'site_id' => $this->validToken['site_id']
             );
-            $result = $this->client_model->checkFeatureByFeatureName($clientData,"Anonymous");
-            if($result)
-            {
+            $result = $this->client_model->checkFeatureByFeatureName($clientData, "Anonymous");
+            if ($result) {
                 $playerInfo['anonymous'] = $anonymous;
-            }
-            else
-            {
+            } else {
                 $this->response($this->error->setError('ANONYMOUS_NOT_FOUND'), 200);
             }
 
@@ -383,35 +390,36 @@ class Player extends REST2_Controller
                 $plan_id,
                 "others",
                 "player");
-        } catch(Exception $e) {
-			$this->response($this->error->setError('INTERNAL_ERROR'), 200);
+        } catch (Exception $e) {
+            $this->response($this->error->setError('INTERNAL_ERROR'), 200);
         }
 
-		$pb_player_id = $this->player_model->createPlayer(
+        $pb_player_id = $this->player_model->createPlayer(
             array_merge($this->validToken, $playerInfo), $player_limit);
 
-		/* track action=register automatically after creating a new player */
-		$action_name = 'register';
-		$action = $this->client_model->getAction(array(
-			'client_id'   => $this->validToken['client_id'],
-			'site_id'     => $this->validToken['site_id'],
-			'action_name' => $action_name
-		));
-		if ($action) {
-			$this->tracker_model->trackAction(array(
-				'pb_player_id' => $pb_player_id,
-				'client_id'    => $this->validToken['client_id'],
-				'site_id'      => $this->validToken['site_id'],
-				'action_id'    => $action['action_id'],
-				'action_name'  => $action_name,
-				'url'          => null,
-			));
-		}
-        if ($pb_player_id)
+        /* track action=register automatically after creating a new player */
+        $action_name = 'register';
+        $action = $this->client_model->getAction(array(
+            'client_id' => $this->validToken['client_id'],
+            'site_id' => $this->validToken['site_id'],
+            'action_name' => $action_name
+        ));
+        if ($action) {
+            $this->tracker_model->trackAction(array(
+                'pb_player_id' => $pb_player_id,
+                'client_id' => $this->validToken['client_id'],
+                'site_id' => $this->validToken['site_id'],
+                'action_id' => $action['action_id'],
+                'action_name' => $action_name,
+                'url' => null,
+            ));
+        }
+        if ($pb_player_id) {
             $this->response($this->resp->setRespond(), 200);
-        else
-			$this->response($this->error->setError('LIMIT_EXCEED'), 200);
-	}
+        } else {
+            $this->response($this->error->setError('LIMIT_EXCEED'), 200);
+        }
+    }
 	public function update_post($player_id = '')
 	{
 		if(!$player_id)
@@ -542,24 +550,26 @@ class Player extends REST2_Controller
 		$this->player_model->deletePlayer($pb_player_id, $this->validToken['site_id']);
 		$this->response($this->resp->setRespond(), 200);
 	}
-	public function login_post($player_id = '')
-	{
-		if(!$player_id)
-			$this->response($this->error->setError('PARAMETER_MISSING', array(
-				'player_id'
-			)), 200);
+
+    public function login_post($player_id = '')
+    {
+        if (!$player_id) {
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        }
 
 
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
 
-		//get playbasis player id
-		$pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
-			'cl_player_id' => $player_id
-		)));
-		if(!$pb_player_id)
-			$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-
-		//check anonymous user
-		$anonymousFeature = $this->client_model->checkFeatureByFeatureName($this->validToken,"Anonymous");
+        //check anonymous user
+        $anonymousFeature = $this->client_model->checkFeatureByFeatureName($this->validToken, "Anonymous");
         if ($anonymousFeature) {
             $sessions = $this->player_model->findBySessionId($this->client_id, $this->site_id,
                 $this->input->post('session_id'), true);
@@ -591,29 +601,30 @@ class Player extends REST2_Controller
         }
 
 
-		//trigger and log event
-		$eventMessage = $this->utility->getEventMessage('login');
-		$this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
-			'client_id' => $this->client_id,
-			'site_id' => $this->site_id,
-			'pb_player_id' => $pb_player_id,
-			'action_log_id' => null
-		));
-		//publish to node stream
-		$this->node->publish(array(
-			'pb_player_id' => $pb_player_id,
-			'action_name' => 'login',
-			'action_icon' => 'fa-sign-in',
-			'message' => $eventMessage
-		), $this->validToken['domain_name'], $this->validToken['site_id']);
+        //trigger and log event
+        $eventMessage = $this->utility->getEventMessage('login');
+        $this->tracker_model->trackEvent('LOGIN', $eventMessage, array(
+            'client_id' => $this->client_id,
+            'site_id' => $this->site_id,
+            'pb_player_id' => $pb_player_id,
+            'action_log_id' => null
+        ));
+        //publish to node stream
+        $this->node->publish(array(
+            'pb_player_id' => $pb_player_id,
+            'action_name' => 'login',
+            'action_icon' => 'fa-sign-in',
+            'message' => $eventMessage
+        ), $this->validToken['domain_name'], $this->validToken['site_id']);
 
-		/* Optionally, keep track of session */
-		$session_id = $this->input->post('session_id');
-		$session_expires_in = $this->input->post('session_expires_in');
-		if ($session_id) {
+        /* Optionally, keep track of session */
+        $session_id = $this->input->post('session_id');
+        $session_expires_in = $this->input->post('session_expires_in');
+        if ($session_id) {
 
-			$this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id, $session_expires_in);
-		}
+            $this->player_model->login($this->client_id, $this->site_id, $pb_player_id, $session_id,
+                $session_expires_in);
+        }
 
         /*$this->player_model->registerDevice(array(
             'pb_player_id' => $pb_player_id,
@@ -625,8 +636,8 @@ class Player extends REST2_Controller
             'device_name' => $this->validToken['device_name']
         ),$this->validToken['site_id']);*/
 
-		$this->response($this->resp->setRespond(), 200);
-	}
+        $this->response($this->resp->setRespond(), 200);
+    }
 	public function logout_post($player_id = '')
 	{
 		if(!$player_id)
