@@ -767,7 +767,7 @@ class Player extends REST2_Controller
         $point['point'] = $this->player_model->getLastCronModifiedPoint($pb_player_id, $reward_id, $this->site_id);
         $point['point'][0]['reward_id'] = $reward_id . "";
         $point['point'][0]['reward_name'] = $reward;
-        $point['point'][0]['reward_last_filled'] = datetimeMongotoReadable($point['point'][0]['date_cron_modified']);
+        $point['point'][0]['reward_last_filled'] = isset($point['point'][0]['date_cron_modified']) ? datetimeMongotoReadable($point['point'][0]['date_cron_modified']) : null;
         unset($point['point'][0]['date_cron_modified']);
         ksort($point);
         $this->response($this->resp->setRespond($point), 200);
