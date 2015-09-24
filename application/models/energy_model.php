@@ -77,6 +77,7 @@ class Energy_model extends MY_Model
             $this->mongo_db->inc('value', -(int)$energy_inc_value);
         }
         $this->mongo_db->set('date_modified', new MongoDate($timestamp_now));
+        $this->mongo_db->set('date_cron_modified', new MongoDate($timestamp_now));
         return $this->mongo_db->update_all('playbasis_reward_to_player');
     }
 

@@ -328,6 +328,23 @@ class Player_model extends MY_Model
         return $this->mongo_db->get('playbasis_reward_to_player');
     }
 
+    public function getLastCronModifiedPoint($pb_player_id, $reward_id, $site_id)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array(
+            'reward_id',
+            'date_cron_modified'
+        ));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where(array(
+            'pb_player_id' => $pb_player_id,
+            'reward_id' => $reward_id,
+            'site_id' => $site_id
+        ));
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->get('playbasis_reward_to_player');
+    }
+
 	public function getLastActionPerform($pb_player_id, $site_id)
 	{
 		$this->set_site_mongodb($site_id);

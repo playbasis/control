@@ -457,6 +457,7 @@ $email = 'pechpras@playbasis.com';
                                 'site_id' => $site_id,
                                 'reward_id' => $energy_reward_id,
                                 'value' => $energy_max,
+                                'date_cron_modified' => new MongoDate(),
                                 'date_added' => new MongoDate(),
                                 'date_modified' => new MongoDate()
                             ));
@@ -468,6 +469,7 @@ $email = 'pechpras@playbasis.com';
                                 'site_id' => $site_id,
                                 'reward_id' => $energy_reward_id,
                                 'value' => 0,
+                                'date_cron_modified' => new MongoDate(),
                                 'date_added' => new MongoDate(),
                                 'date_modified' => new MongoDate()
                             ));
