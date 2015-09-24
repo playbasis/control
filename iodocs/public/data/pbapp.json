@@ -438,18 +438,7 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
-						},
-                        {
-                          "Name": "anonymous",
-                          "Required": "N",
-                          "Default": "",
-                          "Type": "enumerated",
-                          "Description": "anonymous flag",
-                          "EnumeratedList": [
-                            "FALSE",
-                            "TRUE"
-                          ]
-                        }
+						}
 					]
 				},
 				{
