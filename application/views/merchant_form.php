@@ -296,7 +296,7 @@
             });
 
             $('.remove-goodsgroup-btn').unbind().bind('click',function(data){
-                var $target = $(this).parent().parent().parent();
+                var $target = $(this).parent().parent().parent().parent();
                 console.log($target);
 
                 var r = confirm("Are you sure to remove!");
@@ -320,6 +320,19 @@
             var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html().replace(new RegExp('{{id}}', 'g'),generatedId);
 
             var goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
+
+            var globalSelect2Array = $("[name^='mc_goodsGroup['][name$='][goodsGroup][]']:not([name*='id'])");
+
+            $.each(globalSelect2Array, function (index, value) {
+                //console.log(index +": "+ $(value).val());
+                var selectedArray = $(value).val().toString().split(",");
+                $.each(selectedArray, function (index, value) {
+//                    $(goodsGroupsHtml).find("option[value='"+value+"']").prop("disabled", true);
+                    goodsGroupsHtml.html().replace(new RegExp('option value="' + value + '"','g'),'option disabled value="' + value + '"');
+                });
+            });
+
+            //console.log('select2:' + globalSelect2Value);
 
             goodsGroupWrapper.append(goodsGroupsHtml);
 
