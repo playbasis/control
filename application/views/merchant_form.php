@@ -213,6 +213,7 @@
                 <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">New good groups</h2>
 
                 <div class="box-icon">
+                    <input type="checkbox" name="mc_goodsGroup[{{id}}][status]" data-handle-width="40" data-size="normal">
                     <a class="btn btn-danger right remove-goodsgroup-btn">Delete</a>
                     <span class="break"></span>
                     <a><i class="fa fa-chevron-up"></i></a>
@@ -222,38 +223,43 @@
         <div class="box-content clearfix">
             <div class="row-fluid" style="margin-top: 15px;">
                 <div class="span6">
-                    <div class="control-group">
-                        <label class="control-label">
-                            <?php echo $this->lang->line('entry_goods_groups_select'); ?>
-                        </label>
+                    <div class="row-fluid">
+                        <div class="control-group">
+                            <label class="control-label">
+                                <?php echo $this->lang->line('entry_goods_groups_select'); ?>
+                            </label>
 
-                        <div class="controls">
-                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][goodsGroup][]">
-                                <?php foreach ($goodsgroups as $goodsgroup) { ?>
-                                    <option
-                                        value="<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
-                                <?php } ?>
-                            </select>
+                            <div class="controls">
+                                <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][goodsGroup][]">
+                                    <?php foreach ($goodsgroups as $goodsgroup) { ?>
+                                        <option
+                                            value="<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="span6">
-                    <div class="control-group">
-                        <label class="control-label">
-                            <?php echo $this->lang->line('entry_allow_branches_select'); ?>
-                        </label>
+                    <div class="row-fluid">
+                        <div class="control-group">
+                            <label class="control-label">
+                                <?php echo $this->lang->line('entry_allow_branches_select'); ?>
+                            </label>
 
-                        <div class="controls">
-                            <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][allowBranches][]">
-                                <?php
-                                if (!empty($branches_list)) {
-                                    //TODO: Need to check if branch status is disabled.
-                                    foreach ($branches_list as $branch) { ?>
-                                        <option
-                                            value="<?php echo $branch['_id'] ?>"><?php echo $branch['branch_name'] ?></option>
-                                    <?php }
-                                } ?>
-                            </select>
+                            <div class="controls">
+                                <select multiple="multiple" style="width: 80%"
+                                        name="mc_goodsGroup[{{id}}][allowBranches][]">
+                                    <?php
+                                    if (!empty($branches_list)) {
+                                        //TODO: Need to check if branch status is disabled.
+                                        foreach ($branches_list as $branch) { ?>
+                                            <option
+                                                value="<?php echo $branch['_id'] ?>"><?php echo $branch['branch_name'] ?></option>
+                                        <?php }
+                                    } ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -302,6 +308,7 @@
 
             $("[name^='mc_goodsGroup['][name$='][goodsGroup][]']:not([name*='id'])").select2({closeOnSelect:false});
             $("[name^='mc_goodsGroup['][name$='][allowBranches][]']:not([name*='id'])").select2({closeOnSelect:false});
+            $(":not(div .bootstrap-switch-container)>input[name^='mc_goodsGroup['][name$='][status]']:not([name*='id'])").bootstrapSwitch();
         }
 
         init_mc_goodgroups_event();
