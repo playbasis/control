@@ -190,8 +190,9 @@ class Merchant_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $insert_data = array(
-            'client_id' => $data['client_id'],
-            'site_id' => $data['site_id'],
+            'client_id' => new MongoId($data['client_id']),
+            'site_id' => new MongoId($data['site_id']),
+            'merchant_id' => new MongoId($data['merchant_id']),
             'goods_group' => $data['goods_group'],
             'branches_allow' => $data['branches_allow'],
             'status' => $data['status'],
@@ -202,5 +203,19 @@ class Merchant_model extends MY_Model
         $insert = $this->mongo_db->insert('playbasis_merchant_goodsgroup_to_client', $insert_data);
 
         return $insert;
+    }
+
+    public function retrieveMerchantGoodsGroup($client_id, $site_id, $merchant_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('merchant_id', new MongoId($merchant_id));
+        $this->mongo_db->where('deleted', false);
+
+        $result = $this->mongo_db->get('playbasis_merchant_goodsgroup_to_client');
+
+        return $result;
     }
 }

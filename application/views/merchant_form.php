@@ -311,13 +311,11 @@
             $(":not(div .bootstrap-switch-container)>input[name^='mc_goodsGroups['][name$='][status]']:not([name*='id'])").bootstrapSwitch();
         }
 
-        init_mc_goodgroups_event();
-
-        $('#add-mc-goodsgroup-btn').click(function () {
-            var generatedId = mongoIDjs();
+        function createGoodsGroupItemBox(goodsGroupId){
+            goodsGroupId = typeof goodsGroupId !== 'undefined' ? goodsGroupId : mongoIDjs();
 
             var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html();
-            goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{id}}', 'g'), generatedId);
+            goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{id}}', 'g'), goodsGroupId);
 
             var $goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
 
@@ -331,8 +329,14 @@
 
             $goodsGroupWrapper.append(goodsGroupsHtml);
 
-            var element_position = $goodsGroupWrapper.find('[data-mc-goodsgroup-id="' + generatedId + '"]').offset();
+            var element_position = $goodsGroupWrapper.find('[data-mc-goodsgroup-id="' + goodsGroupId + '"]').offset();
             $("html, body").animate({scrollTop: (element_position.top - 20)}, 600);
+        }
+
+        init_mc_goodgroups_event();
+
+        $('#add-mc-goodsgroup-btn').click(function () {
+            createGoodsGroupItemBox();
 
             init_mc_goodgroups_event();
         });

@@ -241,6 +241,7 @@ class Merchant extends MY_Controller
                 foreach ($merchant_data['mc_goodsGroups'] as $ggkey => $ggvalue) {
                     $gg_data['client_id'] = $client_id;
                     $gg_data['site_id'] = $site_id;
+                    $gg_data['merchant_id'] = $merchant_id;
                     $gg_data['goods_group'] = $ggvalue['goodsGroup'];
 
                     foreach ($ggvalue['allowBranches'] as &$allowBranch) {
@@ -370,6 +371,9 @@ class Merchant extends MY_Controller
             }
 
             $this->data['goodsgroups'] = $this->Goods_model->getGroupsAggregate($site_id);
+
+            $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroup($client_id, $site_id, $merchant_id);
+            //TODO(Rook): Display $merchantGoodsGroups in to item-box
         }
 
         if ($this->input->post('merchant-name')) {
