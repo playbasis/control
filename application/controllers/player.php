@@ -560,19 +560,16 @@ class Player extends REST2_Controller
 
 		//check anonymous user
 		$anonymousFeature = $this->client_model->checkFeatureByFeatureName($this->validToken,"Anonymous");
-		if($anonymousFeature)
-		{
-			$sessions = $this->player_model->findBySessionId($this->client_id, $this->site_id, $this->input->post('session_id'),true);
+        if ($anonymousFeature) {
+            $sessions = $this->player_model->findBySessionId($this->client_id, $this->site_id,
+                $this->input->post('session_id'), true);
 
-            if(count($sessions) >0)
-            {
-                $anonymousUser = $this->player_model->IsAnonymousUser(null,$sessions['pb_player_id']);
-				if($anonymousUser)
-                {
+            if (count($sessions) > 0) {
+                $anonymousUser = $this->player_model->IsAnonymousUser(null, $sessions['pb_player_id']);
+                if ($anonymousUser) {
                     $this->mongo_db->where('pb_player_id', $sessions['pb_player_id']);
                     $action_logs = $this->mongo_db->get('playbasis_action_log');
-                    foreach($action_logs as $action_log)
-                    {
+                    foreach ($action_logs as $action_log) {
                         $engine = new Engine();
                         $input = array_merge($this->validToken, array(
                             'pb_player_id' => $pb_player_id,
@@ -583,15 +580,15 @@ class Player extends REST2_Controller
                             'test' => false
 
                         ));
-                        $engine->processRule($input, $this->validToken, null, null,$action_log['date_added']);
-                        $this->player_model->deletePlayer($sessions['pb_player_id'],$this->validToken['site_id']);
+                        $engine->processRule($input, $this->validToken, null, null, $action_log['date_added']);
+                        $this->player_model->deletePlayer($sessions['pb_player_id'], $this->validToken['site_id']);
 
                     }
 
                 }
             }
             //$this->response($this->error->setError('USER_NOT_EXIST'), 200);
-		}
+        }
 
 
 		//trigger and log event

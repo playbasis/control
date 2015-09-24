@@ -259,26 +259,25 @@ class Engine extends Quest
 			if(!$validToken)
 				$this->response($this->error->setError('INVALID_TOKEN'), 200);
 
-			//get playbasis player id from client player id
-			$pb_player_id = array();
-			if (!$test) {
-				$cl_player_id = $this->input->post('player_id');
-				$pb_player_id = $this->player_model->getPlaybasisId(
-					array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
+            //get playbasis player id from client player id
+            $pb_player_id = array();
+            if (!$test) {
+                $cl_player_id = $this->input->post('player_id');
+                $pb_player_id = $this->player_model->getPlaybasisId(
+                    array_merge($validToken, array('cl_player_id' => $cl_player_id)));
 
-                $anonymous = $this->player_model->IsAnonymousUser($cl_player_id,null);
-                if($pb_player_id && $anonymous)
-                {
+                $anonymous = $this->player_model->IsAnonymousUser($cl_player_id, null);
+                if ($pb_player_id && $anonymous) {
                     /* List all active sessions of the anonymous player */
 
-                    $sessions = $this->player_model->listSessions($validToken['client_id'], $validToken["site_id"], $pb_player_id);
-                    if(count($sessions)==0)
-                    {
+                    $sessions = $this->player_model->listSessions($validToken['client_id'], $validToken["site_id"],
+                        $pb_player_id);
+                    if (count($sessions) == 0) {
                         $this->response($this->error->setError('ANONYMOUS_SESSION_NOT_VALID'), 200);
                     }
 
                 }
-			}
+            }
 
 
 			if(!$pb_player_id && !$test)
@@ -414,7 +413,8 @@ class Engine extends Quest
 			$input['rule_time'] = new MongoDate(time());
 			$jigsawSet = (isset($rule['jigsaw_set']) && !empty($rule['jigsaw_set'])) ? $rule['jigsaw_set']: array();
 
-			foreach($jigsawSet as $jigsaw) {
+			foreach($jigsawSet as $jigsaw)
+			{
 				try {
 					$jigsaw_id = new MongoId($jigsaw['id']);
 				} catch (MongoException $ex) {
