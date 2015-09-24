@@ -122,6 +122,7 @@ $route['Player/'.ANY_STRING.'/points'] = 'player/points/$1';
 $route['Player/points'] = 'player/points';
 $route['Player/'.ANY_STRING.'/point/'.ANY_STRING] = 'player/point/$1/$2';
 $route['Player/'.ANY_STRING.'/point/'.ANY_STRING.'/lastUsed'] = 'player/pointLastUsed/$1/$2';
+$route['Player/'.ANY_STRING.'/point/'.ANY_STRING.'/lastFilled'] = 'player/pointLastCronModified/$1/$2';
 $route['Player/point/'.ANY_STRING] = 'player/point/0/$1';
 $route['Player/'.ANY_STRING.'/point'] = 'player/points/$1';
 $route['Player/point'] = 'player/point/';
