@@ -192,7 +192,6 @@ class Client_model extends MY_Model
 			));
 		}
 
-
 		//update client reward limit
 		if(!$anonymous) {
 			$this->mongo_db->select(array('limit'));
@@ -215,7 +214,7 @@ class Client_model extends MY_Model
 			$this->mongo_db->update('playbasis_reward_to_client');
 		}
 	}
-	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig,$anonymous = false)
+	public function updateCustomReward($rewardName, $quantity, $input, &$jigsawConfig, $anonymous = false)
 	{
 		//get reward id
 		$this->set_site_mongodb($input['site_id']);
@@ -308,7 +307,7 @@ class Client_model extends MY_Model
 		else
 		{
 			//update player reward
-			$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id'],$anonymous);
+			$this->updatePlayerPointReward($customRewardId, $quantity, $input['pb_player_id'], $input['player_id'], $input['client_id'], $input['site_id'], $anonymous);
 		}
 		$jigsawConfig['reward_id'] = $customRewardId;
 		$jigsawConfig['reward_name'] = $rewardName;
@@ -987,8 +986,8 @@ class Client_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_client_site');
         return $result ? $result[0] : array();
     }
-    public function checkFeatureByFeatureName($clientData,$featureName)
-    {
+
+    public function checkFeatureByFeatureName($clientData, $featureName) {
         $this->mongo_db->select(array('_id'));
         $this->mongo_db->where(array(
             'client_id' => $clientData['client_id'],
@@ -1000,7 +999,6 @@ class Client_model extends MY_Model
 
         if($id) return true;
         else return false;
-
     }
 }
 ?>
