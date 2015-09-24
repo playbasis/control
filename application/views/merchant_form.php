@@ -213,7 +213,7 @@
                 <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">New good groups</h2>
 
                 <div class="box-icon">
-                    <input type="checkbox" name="mc_goodsGroup[{{id}}][status]" data-handle-width="40" data-size="normal" checked>
+                    <input type="checkbox" name="mc_goodsGroups[{{id}}][status]" data-handle-width="40" data-size="normal" checked>
                     <a class="btn btn-danger right remove-goodsgroup-btn">Delete</a>
                     <span class="break"></span>
                     <a><i class="fa fa-chevron-up"></i></a>
@@ -230,7 +230,7 @@
                             </label>
 
                             <div class="controls">
-                                <select multiple="multiple" style="width: 80%" name="mc_goodsGroup[{{id}}][goodsGroup][]">
+                                <select style="width: 80%" name="mc_goodsGroups[{{id}}][goodsGroup]">
                                     <?php foreach ($goodsgroups as $goodsgroup) { ?>
                                         <option
                                             value="<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
@@ -249,7 +249,7 @@
 
                             <div class="controls">
                                 <select multiple="multiple" style="width: 80%"
-                                        name="mc_goodsGroup[{{id}}][allowBranches][]">
+                                        name="mc_goodsGroups[{{id}}][allowBranches][]">
                                     <?php
                                     if (!empty($branches_list)) {
                                         //TODO: Need to check if branch status is disabled.
@@ -306,9 +306,9 @@
                 }
             });
 
-            $("[name^='mc_goodsGroup['][name$='][goodsGroup][]']:not([name*='id'])").select2({closeOnSelect:false});
-            $("[name^='mc_goodsGroup['][name$='][allowBranches][]']:not([name*='id'])").select2({closeOnSelect:false});
-            $(":not(div .bootstrap-switch-container)>input[name^='mc_goodsGroup['][name$='][status]']:not([name*='id'])").bootstrapSwitch();
+            $("[name^='mc_goodsGroups['][name$='][goodsGroup]']:not([name*='id'])").select2();
+            $("[name^='mc_goodsGroups['][name$='][allowBranches][]']:not([name*='id'])").select2({closeOnSelect:false});
+            $(":not(div .bootstrap-switch-container)>input[name^='mc_goodsGroups['][name$='][status]']:not([name*='id'])").bootstrapSwitch();
         }
 
         init_mc_goodgroups_event();
@@ -321,7 +321,7 @@
 
             var $goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
 
-            var globalGoodsGroupSelectedArray = $("[name^='mc_goodsGroup['][name$='][goodsGroup][]']:not([name*='id'])");
+            var globalGoodsGroupSelectedArray = $("[name^='mc_goodsGroups['][name$='][goodsGroup]']:not([name*='id'])");
             $.each(globalGoodsGroupSelectedArray, function (index, value) {
                 var selectedArray = $(value).val().toString().split(",");
                 $.each(selectedArray, function (index, value) {

@@ -238,7 +238,20 @@ class Merchant extends MY_Controller
 
                 // TODO : Need to edit Update methods to save branches ($data['branches'])
 
-                // TODO : Need to add goods group support for update
+                foreach ($merchant_data['mc_goodsGroups'] as $ggkey => $ggvalue) {
+                    $gg_data['client_id'] = $client_id;
+                    $gg_data['site_id'] = $site_id;
+                    $gg_data['goods_group'] = $ggvalue['goodsGroup'];
+
+                    foreach ($ggvalue['allowBranches'] as &$allowBranch) {
+                        $allowBranch = new MongoId($allowBranch);
+                    }
+                    $gg_data['branches_allow'] = $ggvalue['allowBranches'];
+
+                    $gg_data['status'] = !empty($ggvalue['status']) ? true : false;
+
+                    $ggupdate = $this->Merchant_model->createMerchantGoodsGroup($gg_data);
+                }
 
                 $update = $this->Merchant_model->updateMerchant($data);
                 if ($update) {
