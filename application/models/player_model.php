@@ -141,11 +141,12 @@ class Player_model extends MY_Model
 		$this->mongo_db->set('date_modified', $d);
 		print $this->mongo_db->update('playbasis_player');
 	}
-	public function deletePlayer($id, $site_id,$anonymous=false)
+	public function deletePlayer($id, $site_id)
 	{
 		if(!$id)
 			return false;
-		if($anonymous)
+		$player = $this->readPlayer($id,$site_id,'anonymous');
+		if($player['anonymous'] != null && $player['anonymous'])
 		{
 			$this->set_site_mongodb($site_id);
 			$this->mongo_db->where('pb_player_id', $id);

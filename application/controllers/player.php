@@ -584,7 +584,7 @@ class Player extends REST2_Controller
 
                         ));
                         $engine->processRule($input, $this->validToken, null, null);
-                        $this->player_model->deletePlayer($sessions['pb_player_id'],$this->validToken['site_id'],true);
+                        $this->player_model->deletePlayer($sessions['pb_player_id'],$this->validToken['site_id']);
 
                     }
 
