@@ -260,17 +260,7 @@ class Quest extends REST2_Controller
                                             'url' => $m["mission_id"],
                                         ));
                                     }
-                                    /* fire complete-quiz action */
-                                    if ($completeQuizActionsId) {
-                                        $this->tracker_model->trackAction(array(
-                                            'client_id' => $client_id,
-                                            'site_id' => $site_id,
-                                            'pb_player_id' => $pb_player_id,
-                                            'action_id' => $completeQuizActionsId,
-                                            'action_name' => COMPLETE_QUIZ_ACTION,
-                                            'url' => $m["quiz_id"],
-                                        ));
-                                    }
+                                    
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
