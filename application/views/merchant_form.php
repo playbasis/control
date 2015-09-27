@@ -255,7 +255,7 @@
                                         //TODO: Need to check if branch status is disabled.
                                         foreach ($branches_list as $branch) { ?>
                                             <option
-                                                value="<?php echo $branch['_id'] ?>"><?php echo $branch['branch_name'] ?></option>
+                                                value="<?php echo $branch['_id'] . ':' . $branch['branch_name'] ?>"><?php echo $branch['branch_name'] ?></option>
                                         <?php }
                                     } ?>
                                 </select>

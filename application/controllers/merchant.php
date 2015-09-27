@@ -244,10 +244,16 @@ class Merchant extends MY_Controller
                     $gg_data['merchant_id'] = $merchant_id;
                     $gg_data['goods_group'] = $ggvalue['goodsGroup'];
 
+                    $gg_data['newAllowBranches'] = array();
                     foreach ($ggvalue['allowBranches'] as &$allowBranch) {
-                        $allowBranch = new MongoId($allowBranch);
+                        $tmp_array = explode(':', $allowBranch);
+                        $tmp_array['b_id'] = new MongoId($tmp_array[0]);
+                        $tmp_array['b_name'] = $tmp_array[1];
+                        unset($tmp_array[0]);
+                        unset($tmp_array[1]);
+                        array_push($gg_data['newAllowBranches'], $tmp_array);
                     }
-                    $gg_data['branches_allow'] = $ggvalue['allowBranches'];
+                    $gg_data['branches_allow'] = $gg_data['newAllowBranches'];
 
                     $gg_data['status'] = !empty($ggvalue['status']) ? true : false;
 
@@ -373,6 +379,7 @@ class Merchant extends MY_Controller
             $this->data['goodsgroups'] = $this->Goods_model->getGroupsAggregate($site_id);
 
             $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroup($client_id, $site_id, $merchant_id);
+            $merchantGoodsGroupsJSON = $this->Merchant_model->retrieveMerchantGoodsGroupJSON($client_id, $site_id, $merchant_id);
             //TODO(Rook): Display $merchantGoodsGroups in to item-box
         }
 

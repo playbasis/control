@@ -218,4 +218,18 @@ class Merchant_model extends MY_Model
 
         return $result;
     }
+
+    public function retrieveMerchantGoodsGroupJSON($client_id, $site_id, $merchant_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('merchant_id', new MongoId($merchant_id));
+        $this->mongo_db->where('deleted', false);
+
+        $result = $this->mongo_db->get('playbasis_merchant_goodsgroup_to_client');
+
+        return json_encode($result);
+    }
 }
