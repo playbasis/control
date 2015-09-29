@@ -223,6 +223,8 @@ class Merchant_model extends MY_Model
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
+        $this->mongo_db->select(array('_id','goods_group','branches_allow', 'status'),null);
+
         $this->mongo_db->where('client_id', new MongoId($client_id));
         $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('merchant_id', new MongoId($merchant_id));
