@@ -4,7 +4,7 @@
             <h1><img src="<?php echo base_url(); ?>image/category.png" alt=""/> <?php echo $heading_title; ?></h1>
 
             <div class="buttons">
-                <button class="btn btn-info" onclick="$('#form').submit();"
+                <button class="btn btn-info" id="form-submit-btn"
                         type="button"><?php echo $this->lang->line('button_save'); ?></button>
                 <button class="btn btn-info" onclick="location = baseUrlPath+'merchant'"
                         type="button"><?php echo $this->lang->line('button_cancel'); ?></button>
@@ -126,6 +126,7 @@
                                             </table>
                                         </div>
                                     </div>
+                                    <?php //TODO(Rook): Change this to hidden div then us js to populate ?>
                                     <div class="tab-pane fade active in" id="branches-new">
                                         <div class="row-fluid">
                                             <div class="text-center form-inline">
@@ -210,7 +211,7 @@
     <div class="mc-goodsgroup-item-wrapper" data-mc-goodsgroup-id="{{id}}">
         <div class="box-header box-goodsgroup-header overflow-visible">
             <div class="row-fluid">
-                <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">New good groups</h2>
+                <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">{{header}}</h2>
 
                 <div class="box-icon">
                     <input type="checkbox" name="mc_goodsGroups[{{id}}][status]" data-handle-width="40" data-size="normal" checked>
@@ -233,7 +234,7 @@
                                 <select style="width: 80%" name="mc_goodsGroups[{{id}}][goodsGroup]">
                                     <?php foreach ($goodsgroups as $goodsgroup) { ?>
                                         <option
-                                            value="<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
+                                            value="mc_gg_<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -267,6 +268,18 @@
         </div>
     </div>
 </div>
+<div class="modal hide fade" id="inputEmptyModal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Input is empty</h3>
+    </div>
+    <div class="modal-body">
+        <p>Please make sure all input is not empty.</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Close</a>
+    </div>
+</div>
 
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-table.min.css" rel="stylesheet" type="text/css">
@@ -280,9 +293,17 @@
 <script type="text/javascript">
     var globalNewIndex = 0;
 
-    $(function () {
-        function init_mc_goodgroups_event(){
+    var merchantGoodsGroupsJSON = <?php echo $merchantGoodsGroupsJSON; ?>;
+    console.log(merchantGoodsGroupsJSON);
 
+    $(function () {
+        function init_mc_goodgroups_item_box() {
+            $.each(merchantGoodsGroupsJSON, function (index, value) {
+                createGoodsGroupItemBox(value._id.$id,value);
+            });
+        }
+
+        function init_mc_goodgroups_event() {
             $('.mc-goodsgroup-item-wrapper .box-goodsgroup-header').unbind().bind('click', function (data) {
                 var $target = $(this).next('.box-content');
 
@@ -295,7 +316,7 @@
                 $target.slideToggle();
             });
 
-            $('.remove-goodsgroup-btn').unbind().bind('click',function(data){
+            $('.remove-goodsgroup-btn').unbind().bind('click', function (data) {
                 var $target = $(this).parent().parent().parent().parent();
                 console.log($target);
 
@@ -307,17 +328,29 @@
             });
 
             $("[name^='mc_goodsGroups['][name$='][goodsGroup]']:not([name*='id'])").select2();
-            $("[name^='mc_goodsGroups['][name$='][allowBranches][]']:not([name*='id'])").select2({closeOnSelect:false});
+            $("[name^='mc_goodsGroups['][name$='][allowBranches][]']:not([name*='id'])").select2({closeOnSelect: false});
             $(":not(div .bootstrap-switch-container)>input[name^='mc_goodsGroups['][name$='][status]']:not([name*='id'])").bootstrapSwitch();
         }
 
-        function createGoodsGroupItemBox(goodsGroupId){
-            goodsGroupId = typeof goodsGroupId !== 'undefined' ? goodsGroupId : mongoIDjs();
+        function createGoodsGroupItemBox(merchantGoodsGroupId, merchantGoodsGroupDataJSONObject) {
+            merchantGoodsGroupId = typeof merchantGoodsGroupId !== 'undefined' ? merchantGoodsGroupId : mongoIDjs();
+            merchantGoodsGroupDataJSONObject = typeof merchantGoodsGroupDataJSONObject !== 'undefined' ? merchantGoodsGroupDataJSONObject : null;
 
             var goodsGroupsHtml = $('#newGoodGroups_emptyElement').html();
-            goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{id}}', 'g'), goodsGroupId);
+            goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{id}}', 'g'), merchantGoodsGroupId);
 
-            var $goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
+            if (merchantGoodsGroupDataJSONObject != null) {
+                goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{header}}', 'g'), merchantGoodsGroupDataJSONObject.goods_group);
+                //replace merchant_goodsgroup select2
+                goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('option value="mc_gg_' + merchantGoodsGroupDataJSONObject.goods_group + '"', 'g'),
+                    'option value="mc_gg_' + merchantGoodsGroupDataJSONObject.goods_group + '" selected');
+                $.each(merchantGoodsGroupDataJSONObject.branches_allow, function (index, value) {
+                    goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('option value="' + value.b_id.$id + ':' + value.b_name + '"', 'g'),
+                        'option value="' + value.b_id.$id + ':' + value.b_name + '" selected');
+                });
+            } else {
+                goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{header}}', 'g'), 'New good groups');
+            }
 
             var globalGoodsGroupSelectedArray = $("[name^='mc_goodsGroups['][name$='][goodsGroup]']:not([name*='id'])");
             $.each(globalGoodsGroupSelectedArray, function (index, value) {
@@ -327,18 +360,36 @@
                 });
             });
 
+            var $goodsGroupWrapper = $('#mc-goodsgroup-wrapper');
             $goodsGroupWrapper.append(goodsGroupsHtml);
 
-            var element_position = $goodsGroupWrapper.find('[data-mc-goodsgroup-id="' + goodsGroupId + '"]').offset();
+            var element_position = $goodsGroupWrapper.find('[data-mc-goodsgroup-id="' + merchantGoodsGroupId + '"]').offset();
             $("html, body").animate({scrollTop: (element_position.top - 20)}, 600);
         }
 
-        init_mc_goodgroups_event();
+        function isAllGoodsGroupFilled() {
+            var isFilled = true;
+            $.each($("[name^='mc_goodsGroups['][name$='][allowBranches][]']:not([name*='id'])"), function (key, value) {
+                var select_val = $(value).find("option:selected").val();
+                console.log("select_val", select_val);
+                if (select_val == null){
+                    isFilled = false;
+                }
+            });
+            return isFilled;
+        }
 
         $('#add-mc-goodsgroup-btn').click(function () {
             createGoodsGroupItemBox();
 
             init_mc_goodgroups_event();
+        });
+
+        $('#open-mc-goodsgroup-btn').click(function () {
+            $('.mc-goodsgroup-item-wrapper>.box-content').show();
+        });
+        $('#close-mc-goodsgroup-btn').click(function () {
+            $('.mc-goodsgroup-item-wrapper>.box-content').hide();
         });
 
         $("#add").click(function (e) {
@@ -348,45 +399,55 @@
 
             var newIndex = globalNewIndex + 1;
             var changeIds = function (i, val) {
-                if(val)
+                if (val)
                     return val.replace(globalNewIndex, newIndex);
             };
 
             $('#new-branches-table tbody>tr:last input').attr('name', changeIds).attr('id', changeIds);
 
             var displayIndex = $('#new-branches-table tbody>tr:last #branch-index').text(); //display index start from 1
-            $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex)+1);
+            $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex) + 1);
 
             globalNewIndex++;
             $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']").bootstrapSwitch();
             //return false;
         });
 
-        $("#merchant-branch-to-create-btn").click(function(e){
+        $("#merchant-branch-to-create-btn").click(function (e) {
             e.preventDefault();
 
             var noBranches = $('#merchant-branch-to-create').val();
 
-            if ($.isNumeric(noBranches) && noBranches>0){
-                for(i=0;i<noBranches;i++){
+            if ($.isNumeric(noBranches) && noBranches > 0) {
+                for (i = 0; i < noBranches; i++) {
                     $("input[name^='newBranches'][name$='[status]']:last").bootstrapSwitch("destroy");
                     $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
 
                     var newIndex = globalNewIndex + 1;
                     var changeIds = function (i, val) {
-                        if(val)
+                        if (val)
                             return val.replace(globalNewIndex, newIndex);
                     };
 
                     $('#new-branches-table tbody>tr:last input').attr('name', changeIds).attr('id', changeIds);
 
                     var displayIndex = $('#new-branches-table tbody>tr:last #branch-index').text(); //display index start from 1
-                    $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex)+1);
+                    $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex) + 1);
 
                     globalNewIndex++;
                 }
                 $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']").bootstrapSwitch();
                 //return false;
+            }
+        });
+
+        $("#form-submit-btn").click(function (e) {
+            console.log("newGGfilled? :", isAllGoodsGroupFilled());
+            if (isAllGoodsGroupFilled()) {
+                $('#form').submit();
+            } else {
+                e.preventDefault();
+                $('#inputEmptyModal').modal('show')
             }
         });
 
@@ -398,5 +459,7 @@
         $("[name='merchant-status']").bootstrapSwitch();
         $("[name^='newBranches'][name$='[status]']").bootstrapSwitch();
 
+        init_mc_goodgroups_item_box();
+        init_mc_goodgroups_event();
     });
 </script>
