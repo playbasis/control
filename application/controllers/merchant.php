@@ -85,6 +85,16 @@ class Merchant extends MY_Controller
             'trim|max_length[255]|xss_clean');
         $this->form_validation->set_rules('merchant-status', $this->lang->line('entry_status'), 'trim|xss_clean');
 
+        $newBranches = $this->input->post('newBranches');
+
+        if ($newBranches != false && !empty($newBranches)) {
+            $i = 0;
+            foreach ($newBranches as $branch) {
+                $this->form_validation->set_rules('newBranches[' . $i++ . '][branchName]',
+                    $this->lang->line('entry_branch_name'), 'trim|xss_clean|min_length[3]|alpha_dash');
+            }
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!$this->validateModify()) {
@@ -123,7 +133,8 @@ class Merchant extends MY_Controller
 
                     if ($completed_flag) {
                         foreach ($batch_data as $entry) {
-                            array_push($data['branches'], array('b_id' => $entry['_id'], 'b_name' => $entry['branch_name']));
+                            array_push($data['branches'],
+                                array('b_id' => $entry['_id'], 'b_name' => $entry['branch_name']));
                         }
                     }
                 }
@@ -180,10 +191,34 @@ class Merchant extends MY_Controller
         $site_id = $this->User_model->getSiteId();
 
         $this->form_validation->set_rules('merchant-name', $this->lang->line('entry_name'),
-            'trim|required|min_length[3]|max_length[255]|xss_clean');
+            'trim|required|min_length[3]|max_length[255]|xss_clean|alpha_dash');
         $this->form_validation->set_rules('merchant-desc', $this->lang->line('entry_description'),
             'trim|max_length[255]|xss_clean');
         $this->form_validation->set_rules('merchant-status', $this->lang->line('entry_status'), 'trim|xss_clean');
+
+        // New Branch(es)
+        $newBranches = $this->input->post('newBranches');
+        if ($newBranches != false && !empty($newBranches)) {
+            $i = 0;
+            foreach ($newBranches as $branch) {
+                if(!empty($branch['branchName'])){
+                    $this->form_validation->set_rules('newBranches[' . $i++ . '][branchName]',
+                        $this->lang->line('entry_branch_name'), 'trim|xss_clean|alpha_dash');
+                }
+            }
+        }
+
+        // New Good Groups(es)
+        $newGoodsGroups = $this->input->post('mc_goodsGroups');
+//        if ($newGoodsGroups != false && !empty($newGoodsGroup)) {
+//            $i = 0;
+//            foreach ($newGoodsGroups as $goodsGroups) {
+//                if(!empty($branch['branchName'])){
+//                    $this->form_validation->set_rules('newBranches[' . $i++ . '][branchName]',
+//                        $this->lang->line('entry_branch_name'), 'trim|xss_clean|alpha_dash');
+//                }
+//            }
+//        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -227,7 +262,8 @@ class Merchant extends MY_Controller
 
                     if ($completed_flag) {
                         foreach ($batch_data as $entry) {
-                            array_push($data['branches'], array('b_id' => $entry['_id'], 'b_name' => $entry['branch_name']));
+                            array_push($data['branches'],
+                                array('b_id' => $entry['_id'], 'b_name' => $entry['branch_name']));
                         }
                     }
                 }
@@ -236,28 +272,29 @@ class Merchant extends MY_Controller
                 $data['desc'] = $merchant_data['merchant-desc'];
                 $data['status'] = !empty($merchant_data['merchant-status']) ? true : false;
 
-                // TODO : Need to edit Update methods to save branches ($data['branches'])
+                if (!empty($merchant_data['mc_goodsGroups'])) {
+                    foreach ($merchant_data['mc_goodsGroups'] as $ggkey => $ggvalue) {
+                        $gg_data['client_id'] = $client_id;
+                        $gg_data['site_id'] = $site_id;
+                        $gg_data['merchant_id'] = $merchant_id;
+                        $tmp_gg = preg_split("/(mc_gg_)/", $ggvalue['goodsGroup']);
+                        $gg_data['goods_group'] = $tmp_gg[1];
 
-                foreach ($merchant_data['mc_goodsGroups'] as $ggkey => $ggvalue) {
-                    $gg_data['client_id'] = $client_id;
-                    $gg_data['site_id'] = $site_id;
-                    $gg_data['merchant_id'] = $merchant_id;
-                    $gg_data['goods_group'] = $ggvalue['goodsGroup'];
+                        $gg_data['newAllowBranches'] = array();
+                        foreach ($ggvalue['allowBranches'] as &$allowBranch) {
+                            $tmp_array = explode(':', $allowBranch);
+                            $tmp_array['b_id'] = new MongoId($tmp_array[0]);
+                            $tmp_array['b_name'] = $tmp_array[1];
+                            unset($tmp_array[0]);
+                            unset($tmp_array[1]);
+                            array_push($gg_data['newAllowBranches'], $tmp_array);
+                        }
+                        $gg_data['branches_allow'] = $gg_data['newAllowBranches'];
 
-                    $gg_data['newAllowBranches'] = array();
-                    foreach ($ggvalue['allowBranches'] as &$allowBranch) {
-                        $tmp_array = explode(':', $allowBranch);
-                        $tmp_array['b_id'] = new MongoId($tmp_array[0]);
-                        $tmp_array['b_name'] = $tmp_array[1];
-                        unset($tmp_array[0]);
-                        unset($tmp_array[1]);
-                        array_push($gg_data['newAllowBranches'], $tmp_array);
+                        $gg_data['status'] = !empty($ggvalue['status']) ? true : false;
+
+                        $ggupdate = $this->Merchant_model->createMerchantGoodsGroup($gg_data);
                     }
-                    $gg_data['branches_allow'] = $gg_data['newAllowBranches'];
-
-                    $gg_data['status'] = !empty($ggvalue['status']) ? true : false;
-
-                    $ggupdate = $this->Merchant_model->createMerchantGoodsGroup($gg_data);
                 }
 
                 $update = $this->Merchant_model->updateMerchant($data);
@@ -378,8 +415,10 @@ class Merchant extends MY_Controller
 
             $this->data['goodsgroups'] = $this->Goods_model->getGroupsAggregate($site_id);
 
-            $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroup($client_id, $site_id, $merchant_id);
-            $merchantGoodsGroupsJSON = $this->Merchant_model->retrieveMerchantGoodsGroupJSON($client_id, $site_id, $merchant_id);
+            $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroup($client_id, $site_id,
+                $merchant_id);
+            $this->data['merchantGoodsGroupsJSON'] = $this->Merchant_model->retrieveMerchantGoodsGroupJSON($client_id, $site_id,
+                $merchant_id);
             //TODO(Rook): Display $merchantGoodsGroups in to item-box
         }
 
