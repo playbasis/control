@@ -62,7 +62,8 @@ class Player_model extends MY_Model
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))  ? new MongoDate(strtotime($data['birth_date'])) : null,
 			'date_added'	=> $mongoDate,
-			'date_modified' => $mongoDate
+			'date_modified' => $mongoDate,
+			'anonymous' => (isset($data['anonymous']) && $data['anonymous']),
 		));
 	}
 	public function readPlayer($id, $site_id, $fields=null)
@@ -143,6 +144,16 @@ class Player_model extends MY_Model
 	{
 		if(!$id)
 			return false;
+		$player = $this->readPlayer($id,$site_id,'anonymous');
+		if ($player['anonymous'] !== null && $player['anonymous']) {
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete_all('playbasis_action_log');
+
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete_all('playbasis_event_log');
+		}
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
 		$this->mongo_db->delete('playbasis_player');
@@ -2329,7 +2340,6 @@ class Player_model extends MY_Model
     public function registerDevice($data,$site_id)
     {
         $mongoDate = new MongoDate(time());
-
         $this->mongo_db->select(null);
         $this->mongo_db->where(array(
             'pb_player_id' =>$data['pb_player_id'],
@@ -2343,7 +2353,6 @@ class Player_model extends MY_Model
         if(!$results)
         {
             $this->mongo_db->insert('playbasis_player_device', array(
-
                 'pb_player_id' => $data['pb_player_id'],
                 'site_id' => $data['site_id'],
                 'client_id' => $data['client_id'],
@@ -2358,7 +2367,6 @@ class Player_model extends MY_Model
             ));
         }
         else{
-
             $this->set_site_mongodb($site_id);
             $this->mongo_db->where(array(
                 'pb_player_id' => new MongoId($data['player_id']),
@@ -2370,10 +2378,27 @@ class Player_model extends MY_Model
             $this->mongo_db->set('device_description',$data['device_description']);
             $this->mongo_db->set('date_modified',$mongoDate);
             $this->mongo_db->update('playbasis_player_device');
+        }
+    }
 
-
+    public function IsAnonymousUser($cl_player_id = null,$pb_player_id = null)
+    {
+        $this->mongo_db->select(array('anonymous'));
+        if ($cl_player_id != null) {
+            $this->mongo_db->where('cl_player_id', $cl_player_id);
+        }
+        if ($pb_player_id != null) {
+            $this->mongo_db->where('_id', $pb_player_id);
         }
 
+        $results = $this->mongo_db->get('playbasis_player');
+        if ($results) {
+            $result = $results[0];
+            $anonymous = $result['anonymous'];
+            return $anonymous;
+        } else {
+            return false;
+        }
     }
 }
 

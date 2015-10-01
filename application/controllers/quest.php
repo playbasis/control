@@ -617,6 +617,9 @@ class Quest extends REST2_Controller
             "mission_id" => $mission_id
         );
 
+        $player = $this->player_model->readPlayer($player_id,$validToken['site_id'], 'anonymous');
+        $anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
+
         $mission = $this->quest_model->getMission($data);
 
         $cl_player_id = $this->player_model->getClientPlayerId($player_id, $validToken['site_id']);
@@ -633,7 +636,7 @@ class Quest extends REST2_Controller
         );
 
         if(isset($mission["missions"][0]["rewards"])){
-            $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+            $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken, $anonymous);
         }
 
         array_push($questResult['events_missions'], $sub_events);
@@ -647,6 +650,9 @@ class Quest extends REST2_Controller
             "site_id" => $validToken['site_id'],
             "quest_id" => $quest_id
         );
+
+        $player = $this->player_model->readPlayer($player_id,$validToken['site_id'], 'anonymous');
+        $anonymous = $player['anonymous'] != null ? $player['anonymous']: false;
 
         $quest = $this->quest_model->getQuest($data);
 
@@ -662,7 +668,7 @@ class Quest extends REST2_Controller
         );
 
         if(isset($quest["rewards"])){
-            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken, $anonymous);
         }
 
         array_push($questResult['events_quests'], $sub_events);
@@ -678,6 +684,9 @@ class Quest extends REST2_Controller
             "pb_player_id" => $player_id,
             "player_id" => $cl_player_id
         );
+
+        $player = $this->player_model->readPlayer($player_id,$validToken['site_id'], 'anonymous');
+        $anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
 
         foreach($array_reward as $r){
 
@@ -745,7 +754,7 @@ class Quest extends REST2_Controller
                     $reward_name = $this->reward_model->getRewardName($reward_config, $r["reward_id"]);
 
                     $return_data = array();
-                    $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $update_config, $return_data);
+                    $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $update_config, $return_data, $anonymous);
 
                     $reward_type_message = 'point';
                     $reward_type_name = $return_data['reward_name'];
