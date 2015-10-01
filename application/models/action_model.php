@@ -133,7 +133,22 @@ class Action_model extends MY_Model
 		if ($to && (!isset($result[count($result)-1]['_id']) || $result[count($result)-1]['_id'] != $to)) array_push($result, array('_id' => $to, 'value' => 'SKIP'));
 		return $result;
 	}
+	public function actionLogByURL($data,$action_name,$url,$pb_player_id)
+	{
+		$this->set_site_mongodb($data['site_id']);
+		$this->mongo_db->where(array(
+			'pb_player_id' => $pb_player_id,
+			'client_id' => $data['client_id'],
+			'site_id' => $data['site_id'],
+			'action_name' => strtolower($action_name),
+			'url' => $url
 
+		));
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_action_log');
+		return $results ? $results[0] : null;
+
+	}
 	public function actionLogPerAction($data, $action_name, $from=null, $to=null)
 	{
 		$this->set_site_mongodb($data['site_id']);

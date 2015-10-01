@@ -15,6 +15,7 @@ class Quest extends REST2_Controller
         $this->load->model('point_model');
         $this->load->model('social_model');
         $this->load->model('quest_model');
+        $this->load->model('quiz_model');
         $this->load->model('reward_model');
         $this->load->model('email_model');
         $this->load->model('sms_model');
@@ -167,6 +168,7 @@ class Quest extends REST2_Controller
                                             'url' => $m["mission_id"],
                                         ));
                                     }
+
                                 }
 
                                 //for check total mission finish
@@ -242,6 +244,7 @@ class Quest extends REST2_Controller
                                             'url' => $m["mission_id"],
                                         ));
                                     }
+                                    
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -431,6 +434,18 @@ class Quest extends REST2_Controller
                         );
                         array_push($questEvent, $event);
                     }
+                }else if($c["condition_type"] == "QUIZ"){
+
+                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['condition_id'],$pb_player_id);
+                    if($complete_quiz == null)
+                    {
+                        $event = array(
+                            'event_type' => 'QUIZ_NOT_ENOUGH',
+                            'message' => 'user quiz not enough',
+                        );
+                        array_push($questEvent, $event);
+                    }
+
                 }else if($c["condition_type"] == "BADGE"){
                     if(isset($badge_player_check[$c["condition_id"].""])){
                         $badge = $badge_player_check[$c["condition_id"].""];
@@ -554,6 +569,18 @@ class Quest extends REST2_Controller
                             )
                         );
                         array_push($missionEvent, $event);
+                    }
+                }
+                if($c["completion_type"] == "QUIZ")
+                {
+                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['condition_id'],$pb_player_id);
+                    if($complete_quiz == null)
+                    {
+                        $event = array(
+                            'event_type' => 'QUIZ_NOT_ENOUGH',
+                            'message' => 'user quiz not enough',
+                        );
+                        array_push($questEvent, $event);
                     }
                 }
                 if($c["completion_type"] == "BADGE"){

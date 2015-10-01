@@ -2326,7 +2326,6 @@ class Player_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_player_session');
         return $results ? $results[0] : null;
     }
-
     public function registerDevice($data,$site_id)
     {
         $mongoDate = new MongoDate(time());
