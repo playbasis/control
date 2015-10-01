@@ -78,6 +78,7 @@
                                     <li class="add-quest"><a tabindex="-1" href="javascript:void(0)" >QUEST</a></li>
                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
                                     <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                    <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>
                                     <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
                                 </ul>
                                 <span class="break"></span>
@@ -184,6 +185,27 @@
                                         <?php } ?>
                                     </div>
                                 <?php } ?>
+                                <?php if(isset($editQuizCon)){ ?>
+                                    <div class="quizs-wrapper condition-type well">
+                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
+                                        <div class="item-container">
+                                            <?php foreach($editQuizCon as $quiz){ ?>
+                                                <div class="clearfix item-wrapper quizs-item-wrapper" data-id-badge="<?php echo $quiz['condition_id'] ?>">
+                                                    <div class="span2 text-center">
+                                                        <img src="<?php echo $quiz['condition_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
+                                                    </div>
+                                                    <div class="span7"><?php echo $quiz['condition_data']['name'];?></div>
+                                                    <div class="span1">
+                                                        <small>value</small>
+                                                        <input type="text" name="condition[<?php echo $quiz['condition_id'] ?>][condition_value]" placeholder="Value" value="<?php echo $quiz['condition_value'] ?>">
+                                                        <input type="hidden" name="condition[<?php echo $quiz['condition_id'] ?>][condition_id]" value="<?php echo $quiz['condition_id'] ?>">
+                                                        <input type="hidden" name="condition[<?php echo $quiz['condition_id'] ?>][condition_type]" value="QUIZ"></div>
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                                 <?php if(isset($editBadgeCon)){ ?>
                                     <div class="badges-wrapper condition-type well">
                                         <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-badge-btn">+ Add Badges</a></h3>
@@ -205,6 +227,7 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+
                             </div>
                         </div>
                     </div>
@@ -311,6 +334,8 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+
+
                                 <?php if(isset($editEmailRew)){ ?>
                                     <div class="emails-wrapper rewards-type well">
                                         <h3>Emails  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-email-btn">+ Add Emails</a></h3>
@@ -432,7 +457,8 @@
                                                 <ul class="dropdown-menu add-completion-menu" role="menu" aria-labelledby="dropdownMenu">                                                
                                                     <li class="add-action"><a tabindex="-1" href="javascript:void(0)">ACTION</a></li>                                                
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                                
-                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>                                                
+                                                    <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                                    <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>                                                
                                                     <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>                                            
                                                 </ul>                                            
                                                 <span class="break"></span>                                            
@@ -534,6 +560,32 @@
                                                                     </div>                                    
                                                                     <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
                                                                     <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eBadge['completion_id'] ?>][completion_title]" placeholder="Title" value="<?php echo $eBadge['completion_title'] ?>"></div></div>
+                                                                </div>
+                                                            <?php } ?>
+
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editBadge isset -->
+
+                                                <?php if(isset($mission['editQuiz'])){ ?>
+                                                    <div class="quizs-wrapper completion-type well">
+                                                        <h3>Quizs  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
+                                                        <div class="item-container">
+
+                                                            <?php foreach($mission['editQuiz'] as $eQuiz){ ?>
+                                                                <div class="clearfix item-wrapper quizs-item-wrapper" data-id-quiz="<?php echo $eQuiz['completion_id'] ?>">                                    
+                                                                    <div class="span2 text-center">
+                                                                        <img src="<?php echo $eQuiz['completion_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">                                    
+                                                                    </div>                                    
+                                                                    <div class="span7"><?php foreach($quizs as $q){if($q['_id'] == $eQuiz['completion_id']){echo $q['name'];}} ?></div>                                    
+                                                                    <div class="span1">                                    
+                                                                        <small>value</small>                                    
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_value]" placeholder="Value" value="<?php echo $eQuiz['completion_value']; ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_id]" value="<?php echo $eQuiz['completion_id'] ?>">                                    
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_type]" value="QUIZ">
+                                                                    </div>                                    
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                                    <div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name="missions[<?php echo $mission['mission_id'] ?>][completion][<?php echo $eQuiz['completion_id'] ?>][completion_title]" placeholder="Title" value="<?php echo $eQuiz['completion_title'] ?>"></div></div>
                                                                 </div>
                                                             <?php } ?>
 
@@ -785,6 +837,37 @@
         <button class="btn btn-primary select-goods-btn" data-dismiss="modal">Select</button>
     </div>
 </div>
+<!-- Modal Quiz -->
+<div id="modal-select-quiz" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select Quiz</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php for($i=0 ; $i < count($quizs) ; $i++){ ?>
+                <label>
+
+                <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-quiz="<?php echo $quizs[$i]['_id'] ?>">
+                    <div class="span1 text-center">
+                        <input type="checkbox" name="selected[]" value="<?php $quizs[$i]['_id']; ?>">
+                    </div>
+                    <div class="span2 image text-center">
+                        <img height="50" width="50" src="<?php echo S3_IMAGE.$quizs[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                    </div>
+                    <div class="span9 title"><?php echo $quizs[$i]['name'];?></div>
+                </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary select-quiz-btn" data-dismiss="modal">Select</button>
+    </div>
+</div>
+
 <!-- Modal Email -->
 <div id="modal-select-email" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
@@ -1017,6 +1100,7 @@
                                                 <li class="add-action"><a tabindex="-1" href="javascript:void(0)" >ACTION</a></li>\
                                                 <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>\
                                                 <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
+                                                <li class="add-quiz"><a tabindex="-1" href="javascript:void(0)">QUIZ</a></li>\
                                                 <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
                                             </ul>\
                                             <span class="break"></span>\
@@ -1129,6 +1213,7 @@
             addExpObj = menuObj.find('.add-exp'),
             addCustomPointObj = menuObj.find('.add-custompoint'),
             addBadgeObj = menuObj.find('.add-badge'),
+            addQuizObj = menuObj.find('.add-quiz'),
             addActionObj = menuObj.find('.add-action'),
             addEmailObj = menuObj.find('.add-email'),
             addSmsObj = menuObj.find('.add-sms')
@@ -1223,6 +1308,27 @@
             }
             $('.select-badge-btn').unbind().bind('click',function(data){
                 selectBadgesItem();
+            });
+
+            //Add Quiz
+
+            if(containerObj.has('.quizs-wrapper').length){
+                addQuizObj.removeClass('disabled');
+                addQuizObj.unbind().bind('click',function(data){
+                    setModalQuizItem(target);
+                });
+                containerObj.find('.quizs-wrapper .add-quiz-btn').bind('click',function(data){
+                    setModalQuizItem(target);
+                });
+            }else{
+                addQuizObj.removeClass('disabled');
+                addQuizObj.unbind().bind('click',function(data){
+                    addQuiz(target);
+                    setModalQuizItem(target);
+                });
+            }
+            $('.select-quiz-btn').unbind().bind('click',function(data){
+                selectQuizItem();
             });
 
             //Add Email
@@ -1546,6 +1652,19 @@ function addBadges(target){
     render(target);
 }
 
+function addQuiz(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+
+    var quizsHead = '<h3>Quizs  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>';
+    var quizsHtml = '<div class="quizs-wrapper '+type+'-type well">'+quizsHead+'<div class="item-container"></div></div>';
+
+    target.html = quizsHtml;
+
+    render(target);
+}
+
 function addEmails(target){
     var type = target.type;
     var id = target.id || null;
@@ -1681,6 +1800,92 @@ function selectBadgesItem(){
         }else{
             if(wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').length >= 1) {
                 wrapperObj.find('.badges-item-wrapper[data-id-badge='+$(this).data('id-badge')+']').remove();
+            }
+        }
+    })
+}
+// setModalQuizItem
+function setModalQuizItem(target){
+    setModalTarget($('#modal-select-quiz'),target);
+    var type = target.type;
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+
+    $('#modal-select-quiz input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.quizs-item-wrapper').each(function(){
+        var idQuizsSelect = $(this).data('id-quiz');
+        $('#modal-select-quiz .select-item[data-id-quiz='+idQuizsSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-quiz').modal('show');
+}
+
+function selectQuizItem(){
+    var modalObj = $('#modal-select-quiz');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
+    var type = target.type;
+    var taget_id = target.id || null;
+    var parent = target.parent || 'quest';
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+
+    $('#modal-select-quiz .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+
+            if(wrapperObj.find('.quizs-item-wrapper[data-id-quiz='+$(this).data('id-quiz')+']').length <= 0) {
+
+                var id = $(this).data('id-quiz');
+                var img = $(this).find('.image img').attr('src');
+                var title = $(this).find('.title').html();
+                var typeElement = checkTypeReward(type);
+
+                if(parent == 'missions'){
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                                <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_type]" value = "QUIZ"/>'
+                }else{
+                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                                <input type="hidden" name="'+type+'['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                                <input type="hidden" name="'+type+'['+id+']['+typeElement+'_type]" value = "QUIZ"/>'
+                }
+
+                var inputCompletionHtml = '';
+                if(type == 'completion'){
+                    inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_title]" placeholder="Title" value=""></div></div>';
+                }
+
+                var quizsItemHtml = '<div class="clearfix item-wrapper quizs-item-wrapper" data-id-quiz="'+id+'">\
+                                <div class="span2 text-center"><img src="'+img+'" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">\
+                                </div>\
+                                <div class="span7">'+title+'</div>\
+                                <div class="span1">\
+                                <small>value</small>\
+                                '+inputHtml+'</div>\
+                                <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
+                                </div>'+inputCompletionHtml+'</div>';
+
+
+                wrapperObj.find('.quizs-wrapper .item-container').append(quizsItemHtml);
+
+                init_additem_event(target);
+            }
+        }else{
+            if(wrapperObj.find('.quizs-item-wrapper[data-id-quiz='+$(this).data('id-quiz')+']').length >= 1) {
+                wrapperObj.find('.quizs-item-wrapper[data-id-quiz='+$(this).data('id-quiz')+']').remove();
             }
         }
     })

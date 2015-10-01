@@ -342,6 +342,11 @@ class Quest extends MY_Controller
             $badge_detail = $this->Quest_model->getBadge($query_data);
             $condition_data = $badge_detail;
             break;
+        case "QUIZ":
+            $query_data['_id'] = $object_data[$key_id];
+            $quiz_detail = $this->Quest_model->getQuiz($query_data);
+            $condition_data = $quiz_detail;
+            break;
         case "EXP":
             $condition_data = array("name" => 'exp');
             break;
@@ -428,6 +433,8 @@ class Quest extends MY_Controller
 
         $this->data['goods_items'] = $this->Goods_model->getGoodsBySiteId($data);
 
+        $this->data['quizs'] = $this->Quest_model->getQuizsByClientSiteId($data);
+
         $this->data['actions'] = $this->Quest_model->getActionsByClientSiteId($data);
 
         $this->data['exp_id'] = $this->Quest_model->getExpId($data);
@@ -454,6 +461,8 @@ class Quest extends MY_Controller
             $countQuest = 0;
             $countCustomPoints = 0;
             $countBadges = 0;
+            $countQuizs=0;
+
             if(isset($editQuest['condition'])){
                 foreach($editQuest['condition'] as $condition){
                     if($condition['condition_type'] == 'DATETIME_START'){
@@ -513,6 +522,32 @@ class Quest extends MY_Controller
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
                         $this->data['editCustomPointsCon'][$countCustomPoints]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
                         $countCustomPoints++;
+                    }
+                    if($condition['condition_type'] == 'QUIZ'){
+                        $this->data['editQuizCon'][$countQuizs]['condition_type'] = $condition['condition_type'];
+                        $this->data['editQuizCon'][$countQuizs]['condition_id'] = isset($condition['condition_id'])?$condition['condition_id']:null;
+                        $this->data['editQuizCon'][$countQuizs]['condition_value'] = isset($condition['condition_value'])?$condition['condition_value']:null;
+                        $this->data['editQuizCon'][$countQuizs]['condition_data'] = isset($condition['condition_data'])?$condition['condition_data']:null;
+
+                        if (isset($condition['condition_data']['image'])){
+                            $info = pathinfo($condition['condition_data']['image']);
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($condition['condition_data']['image'], 0, utf8_strrpos($condition['condition_data']['image'], '.')).'-100x100.'.$extension;
+                                $this->data['editQuizCon'][$countQuizs]['condition_data']['image'] = S3_IMAGE.$new_image;
+                            }else{
+                                $this->data['editQuizCon'][$countQuizs]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                            }
+                        }else{
+                            $this->data['editQuizCon'][$countQuizs]['condition_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                        }
+                        /*if (!empty($condition['condition_data']['image']) && $condition['condition_data']['image'] && (S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.1 404 Not Found' && S3_IMAGE . $condition['condition_data']['image'] != 'HTTP/1.0 403 Forbidden')) {
+                            $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = $this->Image_model->resize($condition['condition_data']['image'], 100, 100);
+                        } else {
+                            $this->data['editBadgeCon'][$countBadges]['condition_data']['image'] = $this->Image_model->resize('no_image.jpg', 100, 100);
+                        }*/
+
+                        $countQuizs++;
                     }
                     if($condition['condition_type'] == 'BADGE'){
                         $this->data['editBadgeCon'][$countBadges]['condition_type'] = $condition['condition_type'];
@@ -671,6 +706,7 @@ class Quest extends MY_Controller
                         $countActions = 0;
                         $countCustomPoints = 0;
                         $countBadge = 0;
+                        $countQuizs = 0;
                         foreach($mission['completion'] as $mm){
                             if($mm['completion_type'] == 'ACTION'){
                                 $this->data['editMission'][$missionCount]['editAction'][$countActions]['completion_type'] = $mm['completion_type'];
@@ -697,7 +733,27 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editCustomPoint'][$countCustomPoints]['completion_title'] = $mm['completion_title'];
                                 $countCustomPoints++;
                             }
+                            if($mm['completion_type'] == 'QUIZ'){
+                                $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_type'] = $mm['completion_type'];
+                                $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_value'] = $mm['completion_value'];
+                                $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_id'] = $mm['completion_id'];
+                                $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_title'] = $mm['completion_title'];
 
+                                 if (isset($mm['completion_data']['image'])){
+                                    $info = pathinfo($mm['completion_data']['image']);
+                                    if(isset($info['extension'])){
+                                        $extension = $info['extension'];
+                                        $new_image = 'cache/' . utf8_substr($mm['completion_data']['image'], 0, utf8_strrpos($mm['completion_data']['image'], '.')).'-100x100.'.$extension;
+                                        $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_data']['image'] = S3_IMAGE.$new_image;
+                                    }else{
+                                        $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                                    }
+                                }else{
+                                    $this->data['editMission'][$missionCount]['editQuiz'][$countQuizs]['completion_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                                }
+
+                                $countQuizs++;
+                            }
                             if($mm['completion_type'] == 'BADGE'){
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_type'] = $mm['completion_type'];
                                 $this->data['editMission'][$missionCount]['editBadge'][$countBadge]['completion_value'] = $mm['completion_value'];
