@@ -20,6 +20,7 @@ class Quest extends MY_Controller
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
         $this->load->model('Rule_model');
+        $this->load->model('Goods_model');
         $this->load->model('Permission_model');
 
         $lang = get_lang($this->session, $this->config);
@@ -331,6 +332,11 @@ class Quest extends MY_Controller
             $reward_detail = $this->Quest_model->getCustomPoint($query_data);
             $condition_data = array("name" => $reward_detail['name']);
             break;
+        case "GOODS":
+            $query_data['goods_id'] = $object_data[$key_id];
+            $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($query_data['goods_id']);
+            $condition_data = $goods_detail;
+            break;
         case "BADGE":
             $query_data['badge_id'] = $object_data[$key_id];
             $badge_detail = $this->Quest_model->getBadge($query_data);
@@ -419,6 +425,8 @@ class Quest extends MY_Controller
         $this->data['customPoints'] = $this->Quest_model->getCustomPoints($data);
 
         $this->data['badges'] = $this->Quest_model->getBadgesByClientSiteId($data);
+
+        $this->data['goods_items'] = $this->Goods_model->getGoodsBySiteId($data);
 
         $this->data['actions'] = $this->Quest_model->getActionsByClientSiteId($data);
 
@@ -538,6 +546,7 @@ class Quest extends MY_Controller
             if(isset($editQuest['rewards'])){
                 $countCustomPoints = 0;
                 $countBadges = 0;
+                $countGoods = 0;
                 foreach($editQuest['rewards'] as $reward){
                     if($reward['reward_type'] == 'POINT'){
                         $this->data['editPointsRew']['reward_type'] = $reward['reward_type'];
@@ -554,6 +563,28 @@ class Quest extends MY_Controller
                         $this->data['editCustomPointsRew'][$countCustomPoints]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
                         $this->data['editCustomPointsRew'][$countCustomPoints]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
                         $countCustomPoints++;
+                    }
+
+                    if($reward['reward_type'] == 'GOODS'){
+                        $this->data['editGoodsRew'][$countGoods]['reward_type'] = $reward['reward_type'];
+                        $this->data['editGoodsRew'][$countGoods]['reward_id'] = isset($reward['reward_id'])?$reward['reward_id']:null;
+                        $this->data['editGoodsRew'][$countGoods]['reward_value'] = isset($reward['reward_value'])?$reward['reward_value']:null;
+                        $this->data['editGoodsRew'][$countGoods]['reward_data'] = isset($reward['reward_data'])?$reward['reward_data']:null;
+
+                        if (isset($reward['reward_data']['image'])){
+                            $info = pathinfo($reward['reward_data']['image']);
+                            if(isset($info['extension'])){
+                                $extension = $info['extension'];
+                                $new_image = 'cache/' . utf8_substr($reward['reward_data']['image'], 0, utf8_strrpos($reward['reward_data']['image'], '.')).'-100x100.'.$extension;
+                                $this->data['editGoodsRew'][$countGoods]['reward_data']['image'] = S3_IMAGE.$new_image;
+                            }else{
+                                $this->data['editGoodsRew'][$countGoods]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                            }
+                        }else{
+                            $this->data['editGoodsRew'][$countGoods]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                        }
+
+                        $countGoods++;
                     }
                     if($reward['reward_type'] == 'BADGE'){
                         $this->data['editBadgeRew'][$countBadges]['reward_type'] = $reward['reward_type'];
@@ -698,6 +729,7 @@ class Quest extends MY_Controller
 
                     $countBadge = 0;
                     $countCustomPoints = 0;
+                    $countGoods = 0;
                     if(isset($mission['rewards'])){
                         foreach($mission['rewards'] as $rr){
                             if($rr['reward_type'] == 'POINT'){
@@ -717,6 +749,28 @@ class Quest extends MY_Controller
                                 $this->data['editMission'][$missionCount]['editCustomPointRew'][$countCustomPoints]['reward_value'] = $rr['reward_value'];
                                 $this->data['editMission'][$missionCount]['editCustomPointRew'][$countCustomPoints]['reward_id'] = $rr['reward_id'];
                                 $countCustomPoints++;
+                            }
+
+                            if($rr['reward_type'] == 'GOODS'){
+                                $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_type'] = $rr['reward_type'];
+                                $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_value'] = $rr['reward_value'];
+                                $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_id'] = $rr['reward_id'];
+                                $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_data'] = $rr['reward_data'];
+
+                                if (isset($rr['reward_data']['image'])){
+                                    $info = pathinfo($rr['reward_data']['image']);
+                                    if(isset($info['extension'])){
+                                        $extension = $info['extension'];
+                                        $new_image = 'cache/' . utf8_substr($rr['reward_data']['image'], 0, utf8_strrpos($rr['reward_data']['image'], '.')).'-100x100.'.$extension;
+                                        $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_data']['image'] = S3_IMAGE.$new_image;
+                                    }else{
+                                        $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                                    }
+                                }else{
+                                    $this->data['editMission'][$missionCount]['editGoodsRew'][$countGoods]['reward_data']['image'] = S3_IMAGE."cache/no_image-100x100.jpg";
+                                }
+
+                                $countGoods++;
                             }
 
                             if($rr['reward_type'] == 'BADGE'){

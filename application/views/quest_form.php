@@ -217,6 +217,7 @@
                                   <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>
                                   <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>
                                   <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                  <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>
                                   <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
                                 <?php if( $emails !== null ){ ?>
                                   <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
@@ -266,6 +267,27 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
+                                    </div>
+                                <?php } ?>
+                                <?php if(isset($editGoodsRew)){ ?>
+                                    <div class="goods-wrapper rewards-type well">
+                                        <h3>Goods  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-goods-btn">+ Add Goods</a></h3>
+                                        <div class="item-container">
+                                            <?php foreach($editGoodsRew as $item){ ?>
+                                                <div class="clearfix item-wrapper goods-item-wrapper" data-id-goods="<?php echo $item['reward_id'] ?>">
+                                                    <div class="span2 text-center">
+                                                        <img src="<?php echo $item['reward_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
+                                                    </div>
+                                                    <div class="span7"><?php echo $item['reward_data']['name'];?></div>
+                                                    <div class="span1">
+                                                        <small>value</small>
+                                                        <input type="text" name="rewards[<?php echo $item['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $item['reward_value'] ?>">
+                                                        <input type="hidden" name="rewards[<?php echo $item['reward_id'] ?>][reward_id]" value="<?php echo $item['reward_id'] ?>">
+                                                        <input type="hidden" name="rewards[<?php echo $item['reward_id'] ?>][reward_type]" value="GOODS"></div>
+                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a></div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
                                     </div>
                                 <?php } ?>
                                 <?php if(isset($editBadgeRew)){ ?>
@@ -532,6 +554,7 @@
                                                     <li class="add-point"><a tabindex="-1" href="javascript:void(0)">POINT</a></li>                                              
                                                     <li class="add-exp"><a tabindex="-1" href="javascript:void(0)">EXP</a></li>                                              
                                                     <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>
+                                                    <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>
                                                     <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>
                                                     <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>
                                                     <li class="add-sms"><a tabindex="-1" href="javascript:void(0)">SMS</a></li>
@@ -583,6 +606,28 @@
                                                         </div>
                                                     </div>
                                                 <?php } ?> <!-- end of editCustomPointRew isset -->
+
+                                                <?php if(isset($mission['editGoodsRew'])){ ?>
+                                                    <div class="goods-wrapper rewards-type well">
+                                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-goods-btn">+ Add Goods</a></h3>
+                                                        <div class="item-container">
+                                                            <?php foreach($mission['editGoodsRew'] as $eGoods){ ?>
+                                                                <div class="clearfix item-wrapper goods-item-wrapper" data-id-goods="<?php echo $eGoods['reward_id'] ?>">
+                                                                    <div class="span2 text-center"><img src="<?php echo $eGoods['reward_data']['image'] ?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
+                                                                    </div>
+                                                                    <div class="span7"><?php echo $eGoods['reward_data']['name'] ?></div>
+                                                                    <div class="span1">
+                                                                        <small>value</small>
+                                                                        <input type="text" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_value]" placeholder="Value" value="<?php echo $eGoods['reward_value'] ?>">
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_id]" value="<?php echo $eGoods['reward_id'] ?>">
+                                                                        <input type="hidden" name="missions[<?php echo $mission['mission_id'] ?>][rewards][<?php echo $eGoods['reward_id'] ?>][reward_type]" value="BADGE"></div>
+                                                                    <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?> <!-- end of editGoodsRew isset -->
 
                                                 <?php if(isset($mission['editBadgeRew'])){ ?>
                                                     <div class="badges-wrapper rewards-type well">
@@ -710,6 +755,36 @@
     </div>
 </div>
 
+<!-- Modal Goods -->
+<div id="modal-select-goods" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Select Goods</h3>
+    </div>
+    <div class="modal-body">
+        <div class="select-list">
+            <?php for($i=0 ; $i < count($goods_items) ; $i++){ ?>
+                <label>
+
+                    <div class="select-item clearfix" data-id="<?php echo $i; ?>" data-id-goods="<?php echo $goods_items[$i]['goods_id'] ?>">
+                        <div class="span1 text-center">
+                            <input type="checkbox" name="selected[]" value="<?php $goods_items[$i]['goods_id']; ?>">
+                        </div>
+                        <div class="span2 image text-center">
+                            <img height="50" width="50" src="<?php echo S3_IMAGE.$goods_items[$i]['image']; ?>" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');" />
+                        </div>
+                        <div class="span9 title"><?php echo $goods_items[$i]['name'];?></div>
+                    </div>
+                </label>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" onclick="$('.modal-select input[name*=\'selected\']').attr('checked', false);" >Clear Selection</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary select-goods-btn" data-dismiss="modal">Select</button>
+    </div>
+</div>
 <!-- Modal Email -->
 <div id="modal-select-email" class="modal hide fade modal-select" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
@@ -962,6 +1037,7 @@
                                               <li class="add-point"><a tabindex="-1" href="javascript:void(0)" >POINT</a></li>\
                                               <li class="add-exp"><a tabindex="-1" href="javascript:void(0)" >EXP</a></li>\
                                               <li class="add-custompoint"><a tabindex="-1" href="javascript:void(0)">CUSTOM POINT</a></li>\
+                                              <li class="add-goods"><a tabindex="-1" href="javascript:void(0)">GOODS</a></li>\
                                               <li class="add-badge"><a tabindex="-1" href="javascript:void(0)">BADGE</a></li>\
                                             <?php if( $emails !== null ){ ?>
                                                <li class="add-email"><a tabindex="-1" href="javascript:void(0)">EMAIL</a></li>\
@@ -1048,7 +1124,7 @@
             addDatetimeObj = menuObj.find('.add-datetime'),
             addLevelObj = menuObj.find('.add-level'),
             addQuestObj = menuObj.find('.add-quest'),
-
+            addGoodsObj = menuObj.find('.add-goods'),
             addPointObj = menuObj.find('.add-point'),
             addExpObj = menuObj.find('.add-exp'),
             addCustomPointObj = menuObj.find('.add-custompoint'),
@@ -1108,7 +1184,26 @@
                     addExp(target);
                 });
             }
+            //Add Goods
 
+            if(containerObj.has('.goods-wrapper').length){
+                addGoodsObj.removeClass('disabled');
+                addGoodsObj.unbind().bind('click',function(data){
+                    setModalGoodsItem(target);
+                });
+                containerObj.find('.goods-wrapper .add-goods-btn').bind('click',function(data){
+                    setModalGoodsItem(target);
+                });
+            }else{
+                addGoodsObj.removeClass('disabled');
+                addGoodsObj.unbind().bind('click',function(data){
+                    addGoods(target);
+                    setModalGoodsItem(target);
+                });
+            }
+            $('.select-goods-btn').unbind().bind('click',function(data){
+                selectGoodsItem();
+            });
             //Add Badges
 
             if(containerObj.has('.badges-wrapper').length){
@@ -1426,6 +1521,18 @@ function addCustompoints(target){
     render(target);
 }
 
+function addGoods(target){
+    var type = target.type;
+    var id = target.id || null;
+    var parent = target.parent || 'quest';
+
+    var goodsHead = '<h3>Goods  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-goods-btn">+ Add Goods</a></h3>';
+    var goodsHtml = '<div class="goods-wrapper '+type+'-type well">'+goodsHead+'<div class="item-container"></div></div>';
+
+    target.html = goodsHtml;
+
+    render(target);
+}
 function addBadges(target){
     var type = target.type;
     var id = target.id || null;
@@ -1579,6 +1686,93 @@ function selectBadgesItem(){
     })
 }
 
+// setModalGoodsItem
+function setModalGoodsItem(target){
+    setModalTarget($('#modal-select-goods'),target);
+    var type = target.type;
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+
+    $('#modal-select-goods input[type=checkbox]').prop('checked', false);
+    wrapperObj.find('.goods-item-wrapper').each(function(){
+        var idGoodsSelect = $(this).data('id-goods');
+        $('#modal-select-goods .select-item[data-id-goods='+idGoodsSelect+'] input[type=checkbox]').prop('checked', true);
+    })
+
+    $('#modal-select-goods').modal('show');
+}
+
+function selectGoodsItem(){
+    var modalObj = $('#modal-select-goods');
+    var target = {
+        "type":modalObj.attr('data-type'),
+        "id":modalObj.attr('data-mission-id'),
+        "parent":modalObj.attr('data-parent')
+    }
+
+    var type = target.type;
+    var taget_id = target.id || null;
+    var parent = target.parent || 'quest';
+    var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+
+    if(target.parent == 'missions'){
+        var wrapperObj = $('.mission-item-wrapper[data-mission-id='+target.id+'] .'+type+'-wrapper');
+    }else{
+        var wrapperObj = $('.data-quest-wrapper .'+type+'-wrapper');
+    }
+
+    $('#modal-select-goods .select-item').each(function(){
+        if($(this).find('input[type=checkbox]').is(':checked')){
+
+            if(wrapperObj.find('.goods-item-wrapper[data-id-goods='+$(this).data('id-goods')+']').length <= 0) {
+
+                var id = $(this).data('id-goods');
+                var img = $(this).find('.image img').attr('src');
+                var title = $(this).find('.title').html();
+                var typeElement = checkTypeReward(type);
+
+                if(parent == 'missions'){
+                    inputHtml = '<input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                            <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                            <input type="hidden" name="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_type]" value = "GOODS"/>'
+                }else{
+                    inputHtml = '<input type="text" name ="'+type+'['+id+']['+typeElement+'_value]" placeholder="Value" value="1"/>\
+                            <input type="hidden" name="'+type+'['+id+']['+typeElement+'_id]" value = "'+id+'"/>\
+                            <input type="hidden" name="'+type+'['+id+']['+typeElement+'_type]" value = "GOODS"/>'
+                }
+
+                var inputCompletionHtml = '';
+                if(type == 'completion'){
+                    inputCompletionHtml = '<div class="title-row"><div class="span2">Title : </div><div class="span10"><input type="text" name ="'+parent+'['+taget_id+']['+type+']['+id+']['+typeElement+'_title]" placeholder="Title" value=""></div></div>';
+                }
+
+                var goodsItemHtml = '<div class="clearfix item-wrapper goods-item-wrapper" data-id-goods="'+id+'">\
+                            <div class="span2 text-center"><img src="'+img+'" alt="" onerror="$(this).attr(\'src\',\'<?php echo base_url();?>image/default-image.png\');">\
+                            </div>\
+                            <div class="span7">'+title+'</div>\
+                            <div class="span1">\
+                            <small>value</small>\
+                            '+inputHtml+'</div>\
+                            <div class="span2 col-remove"><a class="item-remove"><i class="icon-remove-sign"></i></a>\
+                            </div>'+inputCompletionHtml+'</div>';
+
+
+                wrapperObj.find('.goods-wrapper .item-container').append(goodsItemHtml);
+
+
+                init_additem_event(target);
+            }
+        }else{
+            if(wrapperObj.find('.goods-item-wrapper[data-id-goods='+$(this).data('id-goods')+']').length >= 1) {
+                wrapperObj.find('.goods-item-wrapper[data-id-goods='+$(this).data('id-goods')+']').remove();
+            }
+        }
+    })
+}
 
 
 // setModalEmailsItem
