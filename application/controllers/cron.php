@@ -343,7 +343,7 @@ $email = 'pechpras@playbasis.com';
 
 		/* email */
 		$from = EMAIL_FROM;
-		$to = array('pechpras@playbasis.com', 'pascal@playbasis.com');
+		$to = array('pechpras@playbasis.com', 'pascal@playbasis.com', 'napada.w@playbasis.com');
 		$subject = '[Playbasis] Dashboard User Registration';
 		$message = 'The attachment is a CSV file for the data about current user registration (as of '.date('Y-m-d').').';
 		$html = $this->parser->parse('message.html', array('firstname' => 'Playbasis', 'lastname' => 'Team', 'message' => $message), true);
