@@ -2400,6 +2400,34 @@ class Player_model extends MY_Model
             return false;
         }
     }
+
+    public function getPlayerByPlayerId($site_id, $player_id, $fields=null) {
+        if($fields)
+            $this->mongo_db->select($fields);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('cl_player_id', $player_id);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function existsCode($code) {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->count('playbasis_player') > 0;
+    }
+
+    public function generateCode($pb_player_id) {
+        $code = null;
+        for ($i=0; $i < 2; $i++) {
+            $code = get_random_password(8,8,true,true);
+            if (!$this->existsCode($code)) break;
+        }
+        if (!$code) throw new Exception('Cannot generate unique player code');
+        $this->mongo_db->where('_id', $pb_player_id);
+        $this->mongo_db->set('code', $code);
+        $this->mongo_db->update('playbasis_player');
+        return $code;
+    }
 }
 
 function index_id($obj) {

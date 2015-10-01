@@ -1078,6 +1078,22 @@
                             "Description": "0 = not force if player has not enough reward to deduct, 1 = force to do the deduct (and player's reward becomes zero)"
                         }
                     ]
+                },
+                {
+                    "MethodName": "Player Unique Code",
+                    "Synopsis": "Returns generated unique code of player",
+                    "HTTPMethod": "GET",
+                    "URI": "/Player/:id/code",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
                 }
 			]
 		},

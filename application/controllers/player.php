@@ -1139,6 +1139,20 @@ class Player extends REST2_Controller
         $goodsList['goods'] = $this->player_model->getGoods($pb_player_id, $this->site_id);
         $this->response($this->resp->setRespond($goodsList), 200);
     }
+    public function code_get($player_id='')
+    {
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        $player = $this->player_model->getPlayerByPlayerId($this->site_id, $player_id, array('code'));
+        if(!$player)
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        if (!isset($player['code'])) {
+            $player['code'] = $this->player_model->generateCode($player['_id']);
+        }
+        $this->response($this->resp->setRespond(array('code' => $player['code'])), 200);
+    }
     public function contact_get($player_id=0, $N=10) {
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
