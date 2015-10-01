@@ -985,9 +985,11 @@ class User extends MY_Controller
             }
         }
 
-        $app = $this->App_model->getApp($player['site_id']);
-        $this->data['app_name'] = $app['site_name'];
-        $this->data['referral_code'] = $code;
+        if ($player) {
+            $app = $this->App_model->getApp($player['site_id']);
+            $this->data['app_name'] = $app['site_name'];
+            $this->data['referral_code'] = $code;
+        }
         $this->data['main'] = 'partial/referral_partial';
         $this->load->vars($this->data);
         $this->render_page('template_beforelogin');
