@@ -205,7 +205,49 @@ class Merchant_model extends MY_Model
         return $insert;
     }
 
-    public function retrieveMerchantGoodsGroup($client_id, $site_id, $merchant_id)
+    public function retrieveMerchantGoodsGroup($id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoId($id));
+
+        $c = $this->mongo_db->get('playbasis_merchant_goodsgroup_to_client');
+
+        if ($c) {
+            return $c[0];
+        } else {
+            return null;
+        }
+    }
+
+    public function updateMerchantGoodsGroup($data)
+    {
+        $this->mongo_db->where('_id', new MongoID($data['_id']));
+        $this->mongo_db->where('client_id', new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id', new MongoID($data['site_id']));
+        $this->mongo_db->where('merchant_id', new MongoId($data['merchant_id']));
+
+        $this->mongo_db->set('goods_group', $data['goods_group']);
+        $this->mongo_db->set('branches_allow', $data['branches_allow']);
+        $this->mongo_db->set('status', $data['status']);
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_merchant_goodsgroup_to_client');
+
+        return $update;
+    }
+
+    public function deleteMerchantGoodsGroup($merchantGoodsGroup_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('_id', new MongoID($merchantGoodsGroup_id));
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update('playbasis_merchant_goodsgroup_to_client');
+    }
+
+    public function retrieveMerchantGoodsGroups($client_id, $site_id, $merchant_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -219,7 +261,7 @@ class Merchant_model extends MY_Model
         return $result;
     }
 
-    public function retrieveMerchantGoodsGroupJSON($client_id, $site_id, $merchant_id)
+    public function retrieveMerchantGoodsGroupsJSON($client_id, $site_id, $merchant_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
