@@ -954,7 +954,8 @@ class User extends MY_Controller
             $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
             $this->load->vars($this->data);
-            $this->render_page('template');
+            $this->render_page('template_beforelogin');
+            return;
         }
         $this->data['by'] = $player;
 
