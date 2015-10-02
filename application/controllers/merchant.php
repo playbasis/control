@@ -201,7 +201,7 @@ class Merchant extends MY_Controller
         if ($newBranches != false && !empty($newBranches)) {
             $i = 0;
             foreach ($newBranches as $branch) {
-                if(!empty($branch['branchName'])){
+                if (!empty($branch['branchName'])) {
                     $this->form_validation->set_rules('newBranches[' . $i++ . '][branchName]',
                         $this->lang->line('entry_branch_name'), 'trim|xss_clean|alpha_dash');
                 }
@@ -229,7 +229,8 @@ class Merchant extends MY_Controller
             if ($this->form_validation->run()) {
                 $merchant_data = $this->input->post();
 
-                $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroups($client_id, $site_id, $merchant_id);
+                $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroups($client_id, $site_id,
+                    $merchant_id);
 
                 $data['_id'] = $merchant_id;
                 $data['client_id'] = $client_id;
@@ -275,6 +276,7 @@ class Merchant extends MY_Controller
                 $data['status'] = !empty($merchant_data['merchant-status']) ? true : false;
 
                 if (!empty($merchant_data['mc_goodsGroups'])) {
+                    $merchantGoodsGroupsId_processed = array();
                     foreach ($merchant_data['mc_goodsGroups'] as $ggkey => $ggvalue) {
                         $gg_data['client_id'] = $client_id;
                         $gg_data['site_id'] = $site_id;
@@ -302,24 +304,27 @@ class Merchant extends MY_Controller
                                 $gg_data['_id'] = $ggkey;
                                 $ggupdate = $this->Merchant_model->updateMerchantGoodsGroup($gg_data);
                                 $isUpdated = true;
+                                array_push($merchantGoodsGroupsId_processed, $ggkey . "");
                             }
                         }
                         // create if not existed
-                        if (!$isUpdated)
+                        if (!$isUpdated) {
                             $ggcreate = $this->Merchant_model->createMerchantGoodsGroup($gg_data);
+                            array_push($merchantGoodsGroupsId_processed, $ggcreate . "");
+                        }
                     }
 
-                    $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroups($client_id, $site_id, $merchant_id);
+                    $merchantGoodsGroups = $this->Merchant_model->retrieveMerchantGoodsGroups($client_id, $site_id,
+                        $merchant_id);
 
                     // check if there is any goodsgroupId get deleting
-                    $merchantGoodsGroupsId_submitted = array_keys($merchant_data['mc_goodsGroups']);
 
                     $merchantGoodsGroupsId = array();
                     foreach ($merchantGoodsGroups as $merchantGoodsGroup) {
                         array_push($merchantGoodsGroupsId, $merchantGoodsGroup['_id'] . "");
                     }
 
-                    $deletedMerchantGoodsGroups = array_diff($merchantGoodsGroupsId, $merchantGoodsGroupsId_submitted);
+                    $deletedMerchantGoodsGroups = array_diff($merchantGoodsGroupsId, $merchantGoodsGroupsId_processed);
                     if (!empty($deletedMerchantGoodsGroups)) {
                         foreach ($deletedMerchantGoodsGroups as $deletedMerchantGoodsGroup) {
                             $ggdelete = $this->Merchant_model->deleteMerchantGoodsGroup($deletedMerchantGoodsGroup);
@@ -445,7 +450,8 @@ class Merchant extends MY_Controller
 
             $this->data['goodsgroups'] = $this->Goods_model->getGroupsAggregate($site_id);
 
-            $this->data['merchantGoodsGroupsJSON'] = $this->Merchant_model->retrieveMerchantGoodsGroupsJSON($client_id, $site_id,
+            $this->data['merchantGoodsGroupsJSON'] = $this->Merchant_model->retrieveMerchantGoodsGroupsJSON($client_id,
+                $site_id,
                 $merchant_id);
         }
 
