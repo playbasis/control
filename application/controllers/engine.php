@@ -264,7 +264,7 @@ class Engine extends Quest
 			if (!$test) {
 				$cl_player_id = $this->input->post('player_id');
 				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $cl_player_id)));
-				$anonymous = $this->player_model->IsAnonymousUser($cl_player_id, null);
+				$anonymous = $this->player_model->isAnonymous($validToken['client_id'], $validToken["site_id"], $cl_player_id);
 				if ($pb_player_id && $anonymous) {
 					/* List all active sessions of the anonymous player */
 					$sessions = $this->player_model->listSessions($validToken['client_id'], $validToken["site_id"], $pb_player_id);
@@ -339,13 +339,12 @@ class Engine extends Quest
 	}
 	public function processRule($input, $validToken, $fbData, $twData, $time = null)
 	{
-
 		if(!isset($input['player_id']) || !$input['player_id']) {
 			if (!$input["test"])
 				$input['player_id'] = $this->player_model->getClientPlayerId(
 			$input['pb_player_id'], $validToken['site_id']);
 		}
-		$anonymousUser = $this->player_model->IsAnonymousUser(null,$input['pb_player_id']);
+		$anonymousUser = $this->player_model->isAnonymous($validToken['client_id'], $validToken['site_id'], null, $input['pb_player_id']);
 		$headers = $this->input->request_headers();
 
 		$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;

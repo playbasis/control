@@ -571,7 +571,7 @@ class Player extends REST2_Controller
 		if ($anonymousFeature) {
 			$sessions = $this->player_model->findBySessionId($this->client_id, $this->site_id, $this->input->post('session_id'), true);
 			if (count($sessions) > 0) {
-				$anonymousUser = $this->player_model->IsAnonymousUser(null, $sessions['pb_player_id']);
+				$anonymousUser = $this->player_model->isAnonymous($this->client_id, $this->site_id, null, $sessions['pb_player_id']);
 				if ($anonymousUser) {
 					$this->mongo_db->where('pb_player_id', $sessions['pb_player_id']);
 					$action_logs = $this->mongo_db->get('playbasis_action_log');

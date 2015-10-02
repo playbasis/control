@@ -2118,14 +2118,31 @@ class Player_model extends MY_Model
 		return $result['n'];
 	}
 
+    public function getActiveQuests($site_id, $fields)
+    {
+        $this->set_site_mongodb($site_id);
+        if ($fields)
+            $this->mongo_db->select($fields);
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'status' => true,
+        ));
+        $this->mongo_db->where_ne('deleted', true);
+        return $this->mongo_db->get('playbasis_quest_to_client');
+    }
+
     public function getAllQuests($pb_player_id, $site_id, $status="")
     {
         $this->set_site_mongodb($site_id);
+
+        $quests = $this->getActiveQuests($site_id, array('_id'));
+        $in = array_map('index_id', $quests);
 
         $this->mongo_db->where(array(
             'pb_player_id' => $pb_player_id,
             'site_id' => $site_id,
         ));
+        $this->mongo_db->where_in('quest_id', $in);
         $this->mongo_db->where_ne('deleted', true);
         $c_status = array("join", "unjoin", "finish");
         if($status != '' && in_array($status, $c_status) ){
@@ -2381,16 +2398,19 @@ class Player_model extends MY_Model
         }
     }
 
-    public function IsAnonymousUser($cl_player_id = null,$pb_player_id = null)
+    public function isAnonymous($client_id, $site_id, $cl_player_id=null, $pb_player_id=null)
     {
+        $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('anonymous'));
         if ($cl_player_id != null) {
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('cl_player_id', $cl_player_id);
         }
         if ($pb_player_id != null) {
             $this->mongo_db->where('_id', $pb_player_id);
         }
-
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_player');
         if ($results) {
             $result = $results[0];
