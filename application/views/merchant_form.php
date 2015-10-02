@@ -37,7 +37,7 @@
                     <li class="active"><a href="#merchant-general"
                                           data-toggle="tab"><?php echo $this->lang->line('tab_general'); ?></a></li>
                     <li><a href="#merchant-branch"
-                           data-toggle="tab"><?php echo $this->lang->line('tab_branch'); ?></a>
+                           data-toggle="tab"><?php echo $this->lang->line('tab_branch'); ?>&nbsp;<span class="badge"><?php echo !empty($branches_list) ? count($branches_list) : '0';?></span></a>
                     </li>
                     <li><a href="#merchant-goods_group"
                            data-toggle="tab"><?php echo $this->lang->line('tab_goods_group'); ?></a>
@@ -88,7 +88,7 @@
                         <div class="container-fluid">
                             <div class="tabbable">
                                 <ul class="nav nav-tabs">
-                                    <li><a href="#branches-list">Branches list</a></li>
+                                    <li><a href="#branches-list">Branches list&nbsp;<span class="badge"><?php echo !empty($branches_list) ? count($branches_list) : '0';?></span></a></li>
                                     <li class="active"><a href="#branches-new">New Branches</a></li>
                                 </ul>
                                 <div class="tab-content">
