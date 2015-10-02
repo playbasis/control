@@ -232,10 +232,14 @@
 
                             <div class="controls">
                                 <select style="width: 80%" name="mc_goodsGroups[{{id}}][goodsGroup]">
-                                    <?php foreach ($goodsgroups as $goodsgroup) { ?>
-                                        <option
-                                            value="mc_gg_<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
-                                    <?php } ?>
+                                    <?php
+                                    if (isset($goodsgroups)) {
+                                        foreach ($goodsgroups as $goodsgroup) { ?>
+                                            <option
+                                                value="mc_gg_<?php echo $goodsgroup['_id']['group'] ?>"><?php echo $goodsgroup['_id']['group'] ?></option>
+                                        <?php }
+                                    }
+                                    ?>
                                 </select>
                             </div>
                         </div>
@@ -293,7 +297,7 @@
 <script type="text/javascript">
     var globalNewIndex = 0;
 
-    var merchantGoodsGroupsJSON = <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : ""; ?>;
+    var merchantGoodsGroupsJSON = <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : "null"; ?>;
 
     $(function () {
         function init_mc_goodgroups_item_box() {
