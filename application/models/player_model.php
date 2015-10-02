@@ -2394,7 +2394,7 @@ class Player_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_player');
         if ($results) {
             $result = $results[0];
-            $anonymous = $result['anonymous'];
+            $anonymous = isset($result['anonymous']) ? $result['anonymous'] : false;
             return $anonymous;
         } else {
             return false;
