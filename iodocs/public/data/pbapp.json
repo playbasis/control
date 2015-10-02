@@ -317,8 +317,8 @@
 						  "Type": "enumerated",
 						  "Description": "anonymous flag",
 						  "EnumeratedList": [
-							"FALSE",
-							"TRUE"
+							"0",
+							"1"
 						  ]
 						}
 					]

@@ -366,6 +366,7 @@ class Player extends REST2_Controller
 		}
 
 		$anonymous = $this->input->post('anonymous');
+
 		//check anonymous feature depend on plan
 		if ($anonymous) {
 			$clientData = array(
