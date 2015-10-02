@@ -2381,16 +2381,19 @@ class Player_model extends MY_Model
         }
     }
 
-    public function IsAnonymousUser($cl_player_id = null,$pb_player_id = null)
+    public function isAnonymous($client_id, $site_id, $cl_player_id=null, $pb_player_id=null)
     {
+        $this->set_site_mongodb($site_id);
         $this->mongo_db->select(array('anonymous'));
         if ($cl_player_id != null) {
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
             $this->mongo_db->where('cl_player_id', $cl_player_id);
         }
         if ($pb_player_id != null) {
             $this->mongo_db->where('_id', $pb_player_id);
         }
-
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_player');
         if ($results) {
             $result = $results[0];
