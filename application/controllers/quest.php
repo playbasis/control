@@ -720,7 +720,7 @@ class Quest extends REST2_Controller
                     'action_name' => isset($sub_events["mission_id"])?'mission_reward':'quest_reward',
                     'action_icon' => 'fa-trophy',
                     'message' => $eventMessage,
-                    'badge' => $event['reward_data'],
+                    'goods' => $event['reward_data'],
                     'mission' => isset($sub_events["mission_id"])?$sub_events:null,
                     'quest' => (!isset($sub_events["mission_id"]))?$sub_events:null
                 )), $validToken['domain_name'], $validToken['site_id']);
