@@ -251,6 +251,10 @@ class Error extends CI_Model
             $errorData['message'] = "Promotional Content not found";
             $errorData['error_code'] = '2001';
             break;
+        case 'GOODS_GROUP_NOT_EXIST_IN_VERIFY_SETUP':
+            $errorData['message'] = "Goods group is not exist in verify setup";
+            $errorData['error_code'] = '2101';
+            break;
         case 'ANONYMOUS_NOT_FOUND':
             $errorData['message'] = "Anonymous not available";
             $errorData['error_code'] = '1102';

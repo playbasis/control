@@ -1902,6 +1902,43 @@
                     ]
                 },
                 {
+                    "MethodName": "Redeem Goods Group With Verification PINCode",
+                    "Synopsis": "Redeem Goods given group by also input Verification PIN Code.",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/goodsGroup/verify",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "group",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods group"
+                        },
+                        {
+                            "Name": "pincode",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "Merchant PIN Code generated from Admin dashboard"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Redeem Sponsor",
                     "Synopsis": "Redeem Sponsor Goods for a client’s website.",
                     "HTTPMethod": "POST",

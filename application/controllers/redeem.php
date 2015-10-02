@@ -14,6 +14,7 @@ class Redeem extends REST2_Controller
         $this->load->model('player_model');
         $this->load->model('redeem_model');
         $this->load->model('sms_model');
+        $this->load->model('merchant_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -207,6 +208,73 @@ class Redeem extends REST2_Controller
                 $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'], $this->validToken['site_id'], $group, $pb_player_id, $amount);
             }
         }
+        $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+    }
+
+    public function merchantGoodsGroup_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'group',
+            'pincode'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+        //get playbasis player id from client player id
+        $cl_player_id = $this->input->post('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $group = $this->input->post('group');
+        // to check if this goodsgroups is already in merchant verification setup
+
+        $merchantGoodsGroup = $this->merchant_model->getMerchantGoodsGroup($this->validToken['client_id'],
+            $this->validToken['site_id'], $group);
+        if (empty($merchantGoodsGroup)) {
+            $this->response($this->error->setError('GOODS_GROUP_NOT_EXIST_IN_VERIFY_SETUP'), 200);
+        }
+
+        $amount = 1;
+
+//        $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'],
+//            $this->validToken['site_id'], $group, $pb_player_id, $amount);
+//        if ($goods) {
+//            for ($i = 0; $i < MAX_REDEEM_TRIES; $i++) { // try to redeem for a few times before giving up
+//                log_message('debug', 'random = ' . $goods['goods_id']);
+//                /* actual redemption */
+//                try {
+//                    $redeemResult = $this->redeem($validToken['site_id'], $pb_player_id, $goods, $amount, $validToken,
+//                        false);
+//                    $this->response($this->resp->setRespond($redeemResult), 200);
+//                } catch (Exception $e) {
+//                    if ($e->getMessage() == 'OVER_LIMIT_REDEEM') {
+//                        continue;
+//                    } // this goods_id has been assigned to this player too often!, try next one
+//                    else {
+//                        if ($e->getMessage() == 'GOODS_NOT_ENOUGH') {
+//                            continue;
+//                        } // there may be a collision, try next one
+//                        else {
+//                            if ($e->getMessage() == 'GOODS_NOT_FOUND') {
+//                                continue;
+//                            } // this should not happen, but if this is the case, then try next one
+//                            else {
+//                                $this->response($this->error->setError(
+//                                    "INTERNAL_ERROR", array()), 200);
+//                            }
+//                        }
+//                    }
+//                }
+//                $goods = $this->goods_model->getGoodsByGroupAndPlayerId($this->validToken['client_id'],
+//                    $this->validToken['site_id'], $group, $pb_player_id, $amount);
+//            }
+//        }
         $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
     }
 

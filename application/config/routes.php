@@ -184,6 +184,7 @@ $route['Engine/quest']	= 'engine/quest';
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
 $route['Redeem/goodsGroup'] = 'redeem/goodsGroup';
+$route['Redeem/goodsGroup/verify'] = 'redeem/merchantGoodsGroup';
 $route['Redeem/sponsor/'.ANY_STRING] = 'redeem/sponsor/$1';
 $route['Redeem/sponsor'] = 'redeem/sponsor/0';
 $route['Redeem/sponsorGroup'] = 'redeem/sponsorGroup';
