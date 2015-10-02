@@ -335,6 +335,7 @@ class Quest extends MY_Controller
         case "GOODS":
             $query_data['goods_id'] = $object_data[$key_id];
             $goods_detail = $this->Goods_model->getGoodsOfClientPrivate($query_data['goods_id']);
+            unset($goods_detail['redeem']);
             $condition_data = $goods_detail;
             break;
         case "BADGE":
