@@ -190,7 +190,7 @@
                                         <h3>Quizzes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
                                         <div class="item-container">
                                             <?php foreach($editQuizCon as $quiz){ ?>
-                                                <div class="clearfix item-wrapper quizs-item-wrapper" data-id-badge="<?php echo $quiz['condition_id'] ?>">
+                                                <div class="clearfix item-wrapper quizs-item-wrapper" data-id-quiz="<?php echo $quiz['condition_id'] ?>">
                                                     <div class="span2 text-center">
                                                         <img src="<?php echo $quiz['condition_data']['image'];?>" alt="" onerror="$(this).attr('src','<?php echo base_url();?>image/default-image.png');">
                                                     </div>
