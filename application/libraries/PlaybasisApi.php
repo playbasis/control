@@ -9,8 +9,8 @@ class PlaybasisApi{
 
     private $_restClient;
     private $_cacheClient;
-	private $api_key;
-	private $api_secret;
+    private $api_key;
+    private $api_secret;
     private $token;
 
     public function __construct(){
@@ -23,13 +23,13 @@ class PlaybasisApi{
         //set_error_handler('handleError');
     }
 
-	public function set_api_key($api_key) {
-		$this->api_key = $api_key;
-	}
+    public function set_api_key($api_key) {
+        $this->api_key = $api_key;
+    }
 
-	public function set_api_secret($api_secret) {
-		$this->api_secret = $api_secret;
-	}
+    public function set_api_secret($api_secret) {
+        $this->api_secret = $api_secret;
+    }
 
     public function auth(){
         $result = $this->_post('Auth', array(
@@ -41,7 +41,7 @@ class PlaybasisApi{
     }
 
     public function register($player_id, $username, $email, $optionalParams=array()){
-        $result = $this->_post('Player/register/'.$player_id, array_merge(array(
+        $result = $this->_post('Player/'.$player_id.'/register/', array_merge(array(
             'username' => $username,
             'email' => $email,
         ), $optionalParams));
