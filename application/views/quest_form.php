@@ -187,7 +187,7 @@
                                 <?php } ?>
                                 <?php if(isset($editQuizCon)){ ?>
                                     <div class="quizs-wrapper condition-type well">
-                                        <h3>Badges  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
+                                        <h3>Quizzes  <a class="remove"><i class="icon-remove-sign"></i></a> <a class="btn add-quiz-btn">+ Add Quizs</a></h3>
                                         <div class="item-container">
                                             <?php foreach($editQuizCon as $quiz){ ?>
                                                 <div class="clearfix item-wrapper quizs-item-wrapper" data-id-badge="<?php echo $quiz['condition_id'] ?>">
