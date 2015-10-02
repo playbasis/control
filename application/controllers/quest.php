@@ -1363,12 +1363,12 @@ class Quest extends MY_Controller
 				case 'EXP':
 				case 'POINT':
 				case 'CUSTOM_POINT':
-					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
-					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
+					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.(isset($reward['reward_data']['name']) ? $reward['reward_data']['name'] : '#no-name').' is missing';
+					else if (!$rewardList || !in_array($reward['reward_id']->{'$id'}, $rewardList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.(isset($reward['reward_data']['name']) ? $reward['reward_data']['name'] : '#no-name').'] is invalid';
 					break;
 				case 'BADGE':
-					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.$reward['reward_data']['name'].' is missing';
-					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.$reward['reward_data']['name'].'] is invalid';
+					if (empty($reward['reward_id'])) $error[] = '[M'.strval($i).','.strval($j).':REWARD] [reward_id] for '.(isset($reward['reward_data']['name']) ? $reward['reward_data']['name'] : '#no-name').' is missing';
+					else if (!$badgeList || !in_array($reward['reward_id']->{'$id'}, $badgeList)) $error[] = '[M'.strval($i).','.strval($j).':REWARD] '.$reward['reward_type'].' ['.(isset($reward['reward_data']['name']) ? $reward['reward_data']['name'] : '#no-name').'] is invalid';
 					break;
 				default:
 					break;
