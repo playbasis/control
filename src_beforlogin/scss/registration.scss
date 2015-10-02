@@ -208,7 +208,20 @@
     font-size: 0.8em;
     color: lighten(desaturate($brand-primary, 50%), 20%);
   }
-
+  
+  .somethingwrong-benefits{
+    .benefits-block{
+      h4{
+        color: #fff;
+        font-size: 1.8em;
+      }
+      p{
+        color: #fff;
+        font-size: 0.8em;
+      }
+      
+    }
+  }
 
   // Footer
   // --------------------------------------------------
