@@ -293,8 +293,7 @@
 <script type="text/javascript">
     var globalNewIndex = 0;
 
-    var merchantGoodsGroupsJSON = <?php echo $merchantGoodsGroupsJSON; ?>;
-    console.log(merchantGoodsGroupsJSON);
+    var merchantGoodsGroupsJSON = <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : ""; ?>;
 
     $(function () {
         function init_mc_goodgroups_item_box() {
