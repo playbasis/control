@@ -252,8 +252,12 @@ class Error extends CI_Model
             $errorData['error_code'] = '2001';
             break;
         case 'GOODS_GROUP_NOT_EXIST_IN_VERIFY_SETUP':
-            $errorData['message'] = "Goods group is not exist in verify setup";
+            $errorData['message'] = "Goods group has not been setup to use with verification process";
             $errorData['error_code'] = '2101';
+            break;
+        case 'PIN_CODE_IS_NOT_FOUND_OR_INVALID':
+            $errorData['message'] = "PIN Code not found or invalid";
+            $errorData['error_code'] = '2102';
             break;
         case 'ANONYMOUS_NOT_FOUND':
             $errorData['message'] = "Anonymous not available";
