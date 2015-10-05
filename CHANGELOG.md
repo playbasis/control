@@ -1,8 +1,44 @@
 # Change Log
 
-## [2.2.23](https://github.com/playbasis/control/tree/HEAD)
+## [2.2.24](https://github.com/playbasis/control/tree/v2.2.24)
 
-[Full Changelog](https://github.com/playbasis/control/compare/add_icon_up...HEAD)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_bug_login_user_didnt_see_menu_of_assigned_plan...v2.2.24)
+
+**Implemented enhancements:**
+
+- Support new feature Merchant PINcode verification [\#20](https://github.com/playbasis/control/pull/20) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Fixed bugs:**
+
+- JS Error when no goods group in merchant database [\#21](https://github.com/playbasis/control/issues/21)
+- When assigning a demo plan to a newly created client, when the client logs in, the menu is not of demo plan [\#15](https://github.com/playbasis/control/issues/15)
+- Check if goodsgroup is existed before create select list [\#23](https://github.com/playbasis/control/pull/23) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Fix \#21 by make sure variable is being set [\#22](https://github.com/playbasis/control/pull/22) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Merged pull requests:**
+
+- Fix style error page in login page [\#19](https://github.com/playbasis/control/pull/19) ([notjiam](https://github.com/notjiam))
+- Feature/goods to quest [\#18](https://github.com/playbasis/control/pull/18) ([patsita-playbasis](https://github.com/patsita-playbasis))
+
+## [fix_bug_login_user_didnt_see_menu_of_assigned_plan](https://github.com/playbasis/control/tree/fix_bug_login_user_didnt_see_menu_of_assigned_plan) (2015-09-23)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_bug_cannot_update_free_plan...fix_bug_login_user_didnt_see_menu_of_assigned_plan)
+
+**Fixed bugs:**
+
+- Cannot update free plan in "Plan Setting" of admin account [\#14](https://github.com/playbasis/control/issues/14)
+
+**Merged pull requests:**
+
+- Feature/mission quiz [\#17](https://github.com/playbasis/control/pull/17) ([patsita-playbasis](https://github.com/patsita-playbasis))
+
+## [fix_bug_cannot_update_free_plan](https://github.com/playbasis/control/tree/fix_bug_cannot_update_free_plan) (2015-09-22)
+[Full Changelog](https://github.com/playbasis/control/compare/fix_bug_account_pay...fix_bug_cannot_update_free_plan)
+
+## [fix_bug_account_pay](https://github.com/playbasis/control/tree/fix_bug_account_pay) (2015-09-14)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.2.23...fix_bug_account_pay)
+
+## [v2.2.23](https://github.com/playbasis/control/tree/v2.2.23) (2015-09-11)
+[Full Changelog](https://github.com/playbasis/control/compare/add_icon_up...v2.2.23)
 
 **Implemented enhancements:**
 
