@@ -238,13 +238,25 @@ class Merchant_model extends MY_Model
         return $update;
     }
 
-    public function deleteMerchantGoodsGroup($merchantGoodsGroup_id)
+    public function deleteMerchantGoodsGroupById($merchantGoodsGroup_id)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $this->mongo_db->where('_id', new MongoID($merchantGoodsGroup_id));
         $this->mongo_db->set('deleted', true);
         return $this->mongo_db->update('playbasis_merchant_goodsgroup_to_client');
+    }
+
+    public function deleteMerchantGoodsGroupByMerchantId($client_id, $site_id, $merchant_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('merchant_id', new MongoId($merchant_id));
+
+        $this->mongo_db->set('deleted', true);
+        return $this->mongo_db->update_all('playbasis_merchant_goodsgroup_to_client');
     }
 
     public function retrieveMerchantGoodsGroups($client_id, $site_id, $merchant_id)

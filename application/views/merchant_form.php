@@ -214,7 +214,7 @@
                 <h2><img src="<?php echo base_url(); ?>image/default-image.png" width="50">{{header}}</h2>
 
                 <div class="box-icon">
-                    <input type="checkbox" name="mc_goodsGroups[{{id}}][status]" data-handle-width="40" data-size="normal" checked>
+                    <input type="checkbox" name="mc_goodsGroups[{{id}}][status]" data-handle-width="40" data-size="normal" {{status}}>
                     <a class="btn btn-danger right remove-goodsgroup-btn">Delete</a>
                     <span class="break"></span>
                     <a><i class="fa fa-chevron-up"></i></a>
@@ -344,6 +344,7 @@
 
             if (merchantGoodsGroupDataJSONObject != null) {
                 goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{header}}', 'g'), merchantGoodsGroupDataJSONObject.goods_group);
+                goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{status}}', 'g'), merchantGoodsGroupDataJSONObject.status ? 'checked="checked"' : null);
                 //replace merchant_goodsgroup select2
                 goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('option value="mc_gg_' + merchantGoodsGroupDataJSONObject.goods_group + '"', 'g'),
                     'option value="mc_gg_' + merchantGoodsGroupDataJSONObject.goods_group + '" selected');
@@ -353,6 +354,7 @@
                 });
             } else {
                 goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{header}}', 'g'), 'New good groups');
+                goodsGroupsHtml = goodsGroupsHtml.replace(new RegExp('{{status}}', 'g'), 'checked="checked"');
             }
 
             var globalGoodsGroupSelectedArray = $("[name^='mc_goodsGroups['][name$='][goodsGroup]']:not([name*='id'])");

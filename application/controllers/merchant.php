@@ -327,9 +327,11 @@ class Merchant extends MY_Controller
                     $deletedMerchantGoodsGroups = array_diff($merchantGoodsGroupsId, $merchantGoodsGroupsId_processed);
                     if (!empty($deletedMerchantGoodsGroups)) {
                         foreach ($deletedMerchantGoodsGroups as $deletedMerchantGoodsGroup) {
-                            $ggdelete = $this->Merchant_model->deleteMerchantGoodsGroup($deletedMerchantGoodsGroup);
+                            $ggdelete = $this->Merchant_model->deleteMerchantGoodsGroupById($deletedMerchantGoodsGroup);
                         }
                     }
+                } else {
+                    $ggdelete = $this->Merchant_model->deleteMerchantGoodsGroupByMerchantId($client_id, $site_id, $merchant_id);
                 }
 
                 $update = $this->Merchant_model->updateMerchant($data);
