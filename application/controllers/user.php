@@ -12,7 +12,9 @@ class User extends MY_Controller
         $this->lang->load("form_validation", $lang['folder']);
 
         $this->load->model('User_model');
+        $this->load->model('Player_model');
         $this->load->model('Client_model');
+        $this->load->model('App_model');
         $this->load->model('Plan_model');
 //        $this->load->model('Domain_model');
         $this->load->model('App_model');
@@ -21,7 +23,6 @@ class User extends MY_Controller
         $this->lang->load($lang['name'], $lang['folder']);
         $this->lang->load("user", $lang['folder']);
         $this->lang->load("login", $lang['folder']);
-
     }
 
     public function index(){
@@ -935,6 +936,64 @@ class User extends MY_Controller
             $this->data['main'] = 'partial/something_wrong';
             $this->render_page('template_beforelogin');
         }
+    }
+
+    public function referral($code='') {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['form'] = 'referral/'.$code;
+        $this->data['title'] = $this->lang->line('title');
+
+        if (!$code) {
+            redirect('/login', 'refresh');
+        }
+
+        $player = $this->Player_model->getPlayerByCode($code);
+        if (!$player) {
+            $this->data['topic_message'] = 'Your referral code is invalid,';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+        $this->data['by'] = $player;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $this->input->post();
+            $this->_api = $this->playbasisapi;
+            $platforms = $this->App_model->getPlatFormByAppId(array(
+                'site_id' => $player['site_id'],
+            ));
+            if ($platforms) $platforms = $platforms[0];
+            $this->_api->set_api_key($platforms['api_key']);
+            $this->_api->set_api_secret($platforms['api_secret']);
+            $this->_api->auth();
+            $status = $this->_api->register($data['username'], $data['username'], $data['email'], array(
+                'first_name' => $data['firstname'],
+                'last_name' => $data['lastname'],
+            ));
+            $error = null;
+            if ($status->success) { // register player B successfully
+                $this->_api->engine($data['username'], 'refer'); // send action player B refer
+                $this->_api->engine($player['cl_player_id'], 'referred'); // send action player A was referred
+            } else {
+                $error = $status->message;
+            }
+            if ($this->input->post('format') == 'json') {
+                echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'Your registration has been saved!' : $error));
+                exit();
+            }
+        }
+
+        if ($player) {
+            $app = $this->App_model->getApp($player['site_id']);
+            $this->data['app_name'] = $app['site_name'];
+            $this->data['referral_code'] = $code;
+        }
+        $this->data['main'] = 'partial/referral_partial';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
     }
 
     private function email($to, $subject, $message) {

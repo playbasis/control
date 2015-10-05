@@ -9,8 +9,9 @@ class PlaybasisApi{
 
     private $_restClient;
     private $_cacheClient;
-	private $api_key;
-	private $api_secret;
+    private $api_key;
+    private $api_secret;
+    private $token;
 
     public function __construct(){
 
@@ -22,13 +23,38 @@ class PlaybasisApi{
         //set_error_handler('handleError');
     }
 
-	public function set_api_key($api_key) {
-		$this->api_key = $api_key;
-	}
+    public function set_api_key($api_key) {
+        $this->api_key = $api_key;
+    }
 
-	public function set_api_secret($api_secret) {
-		$this->api_secret = $api_secret;
-	}
+    public function set_api_secret($api_secret) {
+        $this->api_secret = $api_secret;
+    }
+
+    public function auth(){
+        $result = $this->_post('Auth', array(
+            'api_key' => $this->api_key,
+            'api_secret' => $this->api_secret,
+        ));
+        if (isset($result->response->token)) $this->token = $result->response->token;
+        return $result;
+    }
+
+    public function register($player_id, $username, $email, $optionalParams=array()){
+        $result = $this->_post('Player/'.$player_id.'/register/', array_merge(array(
+            'username' => $username,
+            'email' => $email,
+        ), $optionalParams));
+        return $result;
+    }
+
+    public function engine($player_id, $action, $optionalParams=array()){
+        $result = $this->_post('Engine/rule', array_merge(array(
+            'player_id' => $player_id,
+            'action' => $action,
+        ), $optionalParams));
+        return $result;
+    }
 
     public function getAction(){
         $result = $this->_get('Action');
@@ -137,6 +163,13 @@ class PlaybasisApi{
         $defaultParam = array('api_key' => $this->api_key);
         $sendParam = array_merge($defaultParam, $params);
         $result = $this->_restClient->get($uri, $sendParam);
+        return $result;
+    }
+
+    private function _post($uri,$params = array()){
+        $defaultParam = array('token' => $this->token);
+        $sendParam = array_merge($defaultParam, $params);
+        $result = $this->_restClient->post($uri, $sendParam);
         return $result;
     }
 }

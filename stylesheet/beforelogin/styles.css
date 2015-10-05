@@ -892,6 +892,14 @@ table {
   font-size: 0.8em;
   color: #b5b9bd;
 }
+#pb-registration .somethingwrong-benefits .benefits-block h4 {
+  color: #fff;
+  font-size: 1.8em;
+}
+#pb-registration .somethingwrong-benefits .benefits-block p {
+  color: #fff;
+  font-size: 0.8em;
+}
 #pb-registration .pbr-footer {
   font-size: 0.8em;
   line-height: 42px;

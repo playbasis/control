@@ -38,6 +38,9 @@
 |
 */
 
+define('ANY_STRING','([a-zA-Z0-9-%_:\.]+)');
+define('ANY_NUMBER','([0-9]+)');
+
 $route['default_controller'] = "dashboard/home";
 $route['404_override'] = '';
 
@@ -53,6 +56,8 @@ $route['report/goods'] = 'report_goods';
 $route['report/registration'] = 'report_registration';
 $route['first_app'] = 'account/first_app';
 $route['domain'] = 'app';
+$route['referral/'.ANY_STRING] = 'user/referral/$1';
+$route['referral'] = 'user/referral';
 
 $route['404_override'] = 'error/error_404';
 

@@ -157,6 +157,18 @@ class Quest_model extends MY_Model{
         return $result?$result[0]:array();
     }
 
+    public function getQuiz($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('_id','image','name','description'));
+        $this->mongo_db->select(array(),array('_id'));
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+        $this->mongo_db->where('_id',  new MongoID($data['_id']));
+        $result = $this->mongo_db->get('playbasis_quiz_to_client');
+        return $result?$result[0]:array();
+    }
+
     public function getBadgesByClientSiteId($data){
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
@@ -165,6 +177,15 @@ class Quest_model extends MY_Model{
         $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
 
         return $this->mongo_db->get('playbasis_badge_to_client');
+    }
+    public function getQuizsByClientSiteId($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where_ne('deleted',  true);
+        $this->mongo_db->where('client_id',  new MongoID($data['client_id']));
+        $this->mongo_db->where('site_id',  new MongoID($data['site_id']));
+
+        return $this->mongo_db->get('playbasis_quiz_to_client');
     }
 
     /*
