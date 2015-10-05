@@ -62,7 +62,8 @@ class Player_model extends MY_Model
 			'gender'		=> (isset($data['gender']))		 ? intval($data['gender']) : 0,
 			'birth_date'	=> (isset($data['birth_date']))  ? new MongoDate(strtotime($data['birth_date'])) : null,
 			'date_added'	=> $mongoDate,
-			'date_modified' => $mongoDate
+			'date_modified' => $mongoDate,
+			'anonymous' => (isset($data['anonymous']) && $data['anonymous']),
 		));
 	}
 	public function readPlayer($id, $site_id, $fields=null)
@@ -143,6 +144,16 @@ class Player_model extends MY_Model
 	{
 		if(!$id)
 			return false;
+		$player = $this->readPlayer($id,$site_id,'anonymous');
+		if ($player['anonymous'] !== null && $player['anonymous']) {
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete_all('playbasis_action_log');
+
+			$this->set_site_mongodb($site_id);
+			$this->mongo_db->where('pb_player_id', $id);
+			$this->mongo_db->delete_all('playbasis_event_log');
+		}
 		$this->set_site_mongodb($site_id);
 		$this->mongo_db->where('_id', $id);
 		$this->mongo_db->delete('playbasis_player');
@@ -2107,14 +2118,31 @@ class Player_model extends MY_Model
 		return $result['n'];
 	}
 
+    public function getActiveQuests($site_id, $fields)
+    {
+        $this->set_site_mongodb($site_id);
+        if ($fields)
+            $this->mongo_db->select($fields);
+        $this->mongo_db->where(array(
+            'site_id' => $site_id,
+            'status' => true,
+        ));
+        $this->mongo_db->where_ne('deleted', true);
+        return $this->mongo_db->get('playbasis_quest_to_client');
+    }
+
     public function getAllQuests($pb_player_id, $site_id, $status="")
     {
         $this->set_site_mongodb($site_id);
+
+        $quests = $this->getActiveQuests($site_id, array('_id'));
+        $in = array_map('index_id', $quests);
 
         $this->mongo_db->where(array(
             'pb_player_id' => $pb_player_id,
             'site_id' => $site_id,
         ));
+        $this->mongo_db->where_in('quest_id', $in);
         $this->mongo_db->where_ne('deleted', true);
         $c_status = array("join", "unjoin", "finish");
         if($status != '' && in_array($status, $c_status) ){
@@ -2326,11 +2354,9 @@ class Player_model extends MY_Model
         $results = $this->mongo_db->get('playbasis_player_session');
         return $results ? $results[0] : null;
     }
-
     public function registerDevice($data,$site_id)
     {
         $mongoDate = new MongoDate(time());
-
         $this->mongo_db->select(null);
         $this->mongo_db->where(array(
             'pb_player_id' =>$data['pb_player_id'],
@@ -2344,7 +2370,6 @@ class Player_model extends MY_Model
         if(!$results)
         {
             $this->mongo_db->insert('playbasis_player_device', array(
-
                 'pb_player_id' => $data['pb_player_id'],
                 'site_id' => $data['site_id'],
                 'client_id' => $data['client_id'],
@@ -2359,7 +2384,6 @@ class Player_model extends MY_Model
             ));
         }
         else{
-
             $this->set_site_mongodb($site_id);
             $this->mongo_db->where(array(
                 'pb_player_id' => new MongoId($data['player_id']),
@@ -2371,10 +2395,58 @@ class Player_model extends MY_Model
             $this->mongo_db->set('device_description',$data['device_description']);
             $this->mongo_db->set('date_modified',$mongoDate);
             $this->mongo_db->update('playbasis_player_device');
-
-
         }
+    }
 
+    public function isAnonymous($client_id, $site_id, $cl_player_id=null, $pb_player_id=null)
+    {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->select(array('anonymous'));
+        if ($cl_player_id != null) {
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->where('site_id', $site_id);
+            $this->mongo_db->where('cl_player_id', $cl_player_id);
+        }
+        if ($pb_player_id != null) {
+            $this->mongo_db->where('_id', $pb_player_id);
+        }
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_player');
+        if ($results) {
+            $result = $results[0];
+            $anonymous = isset($result['anonymous']) ? $result['anonymous'] : false;
+            return $anonymous;
+        } else {
+            return false;
+        }
+    }
+
+    public function getPlayerByPlayerId($site_id, $player_id, $fields=null) {
+        if($fields)
+            $this->mongo_db->select($fields);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('cl_player_id', $player_id);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
+    public function existsCode($code) {
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        return $this->mongo_db->count('playbasis_player') > 0;
+    }
+
+    public function generateCode($pb_player_id) {
+        $code = null;
+        for ($i=0; $i < 2; $i++) {
+            $code = get_random_password(8,8,true,true);
+            if (!$this->existsCode($code)) break;
+        }
+        if (!$code) throw new Exception('Cannot generate unique player code');
+        $this->mongo_db->where('_id', $pb_player_id);
+        $this->mongo_db->set('code', $code);
+        $this->mongo_db->update('playbasis_player');
+        return $code;
     }
 }
 

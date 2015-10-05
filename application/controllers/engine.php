@@ -263,8 +263,15 @@ class Engine extends Quest
 			$pb_player_id = array();
 			if (!$test) {
 				$cl_player_id = $this->input->post('player_id');
-				$pb_player_id = $this->player_model->getPlaybasisId(
-					array_merge($validToken, array( 'cl_player_id' => $cl_player_id)));
+				$pb_player_id = $this->player_model->getPlaybasisId(array_merge($validToken, array('cl_player_id' => $cl_player_id)));
+				$anonymous = $this->player_model->isAnonymous($validToken['client_id'], $validToken["site_id"], $cl_player_id);
+				if ($pb_player_id && $anonymous) {
+					/* List all active sessions of the anonymous player */
+					$sessions = $this->player_model->listSessions($validToken['client_id'], $validToken["site_id"], $pb_player_id);
+					if (count($sessions) == 0) {
+						$this->response($this->error->setError('ANONYMOUS_SESSION_NOT_VALID'), 200);
+					}
+				}
 			}
 
 			if(!$pb_player_id && !$test)
@@ -330,19 +337,20 @@ class Engine extends Quest
 		)));
 		return $eventMessage;
 	}
-	public function processRule($input, $validToken, $fbData, $twData)
+	public function processRule($input, $validToken, $fbData, $twData, $time = null)
 	{
-
 		if(!isset($input['player_id']) || !$input['player_id']) {
 			if (!$input["test"])
 				$input['player_id'] = $this->player_model->getClientPlayerId(
 			$input['pb_player_id'], $validToken['site_id']);
 		}
-
+		$anonymousUser = $this->player_model->isAnonymous($validToken['client_id'], $validToken['site_id'], null, $input['pb_player_id']);
 		$headers = $this->input->request_headers();
+
 		$action_time = array_key_exists('Date', $headers) ? strtotime($headers['Date']) : null;
+		if($time == null) $time = $action_time;
 		if (!$input["test"]) {
-			$input['action_log_id'] = $this->tracker_model->trackAction($input, $action_time); //track action
+			$input['action_log_id'] = $this->tracker_model->trackAction($input, $time); //track action
 			$input['action_log_time'] = $this->action_model->findActionLogTime($validToken['site_id'], $input['action_log_id']);
 		}
 
@@ -453,12 +461,13 @@ class Engine extends Quest
 							assert('$exInfo["dynamic"]["reward_name"]');
 							assert('$exInfo["dynamic"]["quantity"]');
 
-							if (!$input["test"])
+							if (!$input["test"] && !$anonymousUser)
 								$lv = $this->client_model->updateCustomReward(
 									$exInfo['dynamic']['reward_name'],
 									$exInfo['dynamic']['quantity'],
 									$input,
-									$jigsawConfig);
+									$jigsawConfig,
+									$anonymousUser);
 
 							$event = array(
 								'event_type' => 'REWARD_RECEIVED',
@@ -467,7 +476,7 @@ class Engine extends Quest
 							);
 							array_push($apiResult['events'], $event);
 
-                            if (!$input["test"]) {
+                            if (!$input["test"] && !$anonymousUser) {
                                 $eventMessage = $this->utility->getEventMessage(
                                     'point',
                                     $jigsawConfig['quantity'],
@@ -577,7 +586,8 @@ class Engine extends Quest
                                         $input['pb_player_id'],
                                         $input['player_id'],
                                         $input['client_id'],
-                                        $input['site_id']);
+                                        $input['site_id'],
+                                        $anonymousUser);
                             }  // close if ($jigsawConfig["reward_name"] == 'exp')
 
                             $event = array(
@@ -706,7 +716,7 @@ class Engine extends Quest
                                 );
                                 array_push($apiResult['events'], $event);
 
-                                if (!$input["test"]) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
+                                if (!$input["test"] && !$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
 
                                 break;
                             default:

@@ -15,6 +15,7 @@ class Quest extends REST2_Controller
         $this->load->model('point_model');
         $this->load->model('social_model');
         $this->load->model('quest_model');
+        $this->load->model('quiz_model');
         $this->load->model('reward_model');
         $this->load->model('email_model');
         $this->load->model('sms_model');
@@ -167,6 +168,7 @@ class Quest extends REST2_Controller
                                             'url' => $m["mission_id"],
                                         ));
                                     }
+
                                 }
 
                                 //for check total mission finish
@@ -242,6 +244,7 @@ class Quest extends REST2_Controller
                                             'url' => $m["mission_id"],
                                         ));
                                     }
+                                    
                                 }
                                 //for check total mission finish
                                 $player_finish_count++;
@@ -431,6 +434,18 @@ class Quest extends REST2_Controller
                         );
                         array_push($questEvent, $event);
                     }
+                }else if($c["condition_type"] == "QUIZ"){
+
+                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['condition_id'],$pb_player_id);
+                    if($complete_quiz == null)
+                    {
+                        $event = array(
+                            'event_type' => 'QUIZ_NOT_ENOUGH',
+                            'message' => 'user quiz not enough',
+                        );
+                        array_push($questEvent, $event);
+                    }
+
                 }else if($c["condition_type"] == "BADGE"){
                     if(isset($badge_player_check[$c["condition_id"].""])){
                         $badge = $badge_player_check[$c["condition_id"].""];
@@ -556,6 +571,18 @@ class Quest extends REST2_Controller
                         array_push($missionEvent, $event);
                     }
                 }
+                if($c["completion_type"] == "QUIZ")
+                {
+                    $complete_quiz = $this->action_model->actionLogByURL($validToken,COMPLETE_QUIZ_ACTION,$c['condition_id'],$pb_player_id);
+                    if($complete_quiz == null)
+                    {
+                        $event = array(
+                            'event_type' => 'QUIZ_NOT_ENOUGH',
+                            'message' => 'user quiz not enough',
+                        );
+                        array_push($questEvent, $event);
+                    }
+                }
                 if($c["completion_type"] == "BADGE"){
                     if(isset($badge_player_check[$c["completion_id"].""])){
                         $badge = $badge_player_check[$c["completion_id"].""];
@@ -590,6 +617,9 @@ class Quest extends REST2_Controller
             "mission_id" => $mission_id
         );
 
+        $player = $this->player_model->readPlayer($player_id,$validToken['site_id'], 'anonymous');
+        $anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
+
         $mission = $this->quest_model->getMission($data);
 
         $cl_player_id = $this->player_model->getClientPlayerId($player_id, $validToken['site_id']);
@@ -606,7 +636,7 @@ class Quest extends REST2_Controller
         );
 
         if(isset($mission["missions"][0]["rewards"])){
-            $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+            $sub_events = $this->updateReward($mission["missions"][0]["rewards"], $sub_events, $player_id, $cl_player_id, $validToken, $anonymous);
         }
 
         array_push($questResult['events_missions'], $sub_events);
@@ -620,6 +650,9 @@ class Quest extends REST2_Controller
             "site_id" => $validToken['site_id'],
             "quest_id" => $quest_id
         );
+
+        $player = $this->player_model->readPlayer($player_id,$validToken['site_id'], 'anonymous');
+        $anonymous = $player['anonymous'] != null ? $player['anonymous']: false;
 
         $quest = $this->quest_model->getQuest($data);
 
@@ -635,7 +668,7 @@ class Quest extends REST2_Controller
         );
 
         if(isset($quest["rewards"])){
-            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken);
+            $sub_events = $this->updateReward($quest["rewards"], $sub_events, $player_id, $cl_player_id, $validToken, $anonymous);
         }
 
         array_push($questResult['events_quests'], $sub_events);
@@ -651,6 +684,9 @@ class Quest extends REST2_Controller
             "pb_player_id" => $player_id,
             "player_id" => $cl_player_id
         );
+
+        $player = $this->player_model->readPlayer($player_id,$validToken['site_id'], 'anonymous');
+        $anonymous = $player['anonymous'] != null ? $player['anonymous'] : false;
 
         foreach($array_reward as $r){
 
@@ -687,7 +723,45 @@ class Quest extends REST2_Controller
                     'mission' => isset($sub_events["mission_id"])?$sub_events:null,
                     'quest' => (!isset($sub_events["mission_id"]))?$sub_events:null
                 )), $validToken['domain_name'], $validToken['site_id']);
-            }else{
+            }
+            elseif($r["reward_type"] == "GOODS")
+            {
+                $this->client_model->updateplayerGoods($r["reward_id"], $r["reward_value"], $player_id, $cl_player_id, $validToken['client_id'], $validToken['site_id']);
+                $goods = $this->goods_model->getGoods(array_merge($validToken, array(
+                    'goods_id' => new MongoId($r["reward_id"])
+                )));
+
+
+                if(!$goods)
+                    break;
+                $event = array(
+                    'event_type' => 'REWARD_RECEIVED',
+                    'reward_type' => 'goods',
+                    'reward_data' => $goods,
+                    'value' => $r["reward_value"]
+                );
+                array_push($sub_events['events'], $event);
+                $eventMessage = $this->utility->getEventMessage('goods', '', '', $event['reward_data']['name']);
+                //log event - reward, badge
+                $data_reward = array(
+                    'reward_type'	=> $r["reward_type"],
+                    'reward_id'	    => $r["reward_id"],
+                    'reward_name'	=> $event['reward_data']['name'],
+                    'reward_value'	=> $r["reward_value"],
+                );
+                $this->trackQuest($player_id, $validToken, $data_reward, $sub_events["quest_id"], isset($sub_events["mission_id"])?$sub_events["mission_id"]:null);
+
+                //publish to node stream
+                $this->node->publish(array_merge($update_config, array(
+                    'action_name' => isset($sub_events["mission_id"])?'mission_reward':'quest_reward',
+                    'action_icon' => 'fa-trophy',
+                    'message' => $eventMessage,
+                    'goods' => $event['reward_data'],
+                    'mission' => isset($sub_events["mission_id"])?$sub_events:null,
+                    'quest' => (!isset($sub_events["mission_id"]))?$sub_events:null
+                )), $validToken['domain_name'], $validToken['site_id']);
+            }
+            else{
                 // for POINT ,CUSTOM_POINT and EXP
 
                 if($r["reward_type"] == "EXP"){
@@ -718,7 +792,7 @@ class Quest extends REST2_Controller
                     $reward_name = $this->reward_model->getRewardName($reward_config, $r["reward_id"]);
 
                     $return_data = array();
-                    $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $update_config, $return_data);
+                    $reward_update = $this->client_model->updateCustomReward($reward_name, $r["reward_value"], $update_config, $return_data, $anonymous);
 
                     $reward_type_message = 'point';
                     $reward_type_name = $return_data['reward_name'];
