@@ -2468,6 +2468,7 @@ class Player_model extends MY_Model
 				'device_token' => $data['device_token'],
 				'device_description' => $data['device_description'],
 				'device_name' => $data['device_name'],
+				'os_type' => $data['os_type'],
 				'status' => true,
 				'date_added' => $mongoDate,
 				'date_modified' => $mongoDate,

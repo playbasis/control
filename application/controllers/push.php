@@ -134,11 +134,34 @@ class Push extends REST2_Controller
             'pb_player_id' => $pb_player_id ,
             'device_token' => $this->input->post('device_token') ,
             'device_description' => $this->input->post('device_description'),
-            'device_name' => $this->input->post('device_name')
+            'device_name' => $this->input->post('device_name'),
+            'os_type' => $this->input->post('os_type')
         );
         $this->player_model->storeDeviceToken($deviceInfo);
         $this->response($this->resp->setRespond(''), 200);
     }
+    public function adhocSend_post($data)
+    {
+        $type = $this->input->post('type');
+        $data = array(
+            'title' => $data['title'],
+            'reward' => $data['badge'],
+            'type' => 'exp',//$data['type'],
+            'value' => $data['value'],
+            'text' => 'description test',//$data['text'],
+            'status' => $data['status']
+        );
 
+        $notificationInfo = array(
+            'device_token' => $this->input->post('device_token'),
+            //'messages' => $this->input->post('msg'),
+            'messages' => 'Congratulations',
+            'data' => $data,
+            'badge_number' => 1
+        );
+        $this->push_model->initial($notificationInfo,$type);
+        $this->response($this->resp->setRespond(''), 200);
+
+    }
 }
 ?>
