@@ -1902,8 +1902,8 @@
                     ]
                 },
                 {
-                    "MethodName": "Redeem Goods Group With Verification PINCode",
-                    "Synopsis": "Redeem Goods given group by also input Verification PIN Code.",
+                    "MethodName": "Redeem Verification",
+                    "Synopsis": "Redeem verification for merchant using PIN code",
                     "HTTPMethod": "POST",
                     "URI": "/Redeem/goodsGroup/verify",
                     "RequiresOAuth": "N",
@@ -1923,18 +1923,18 @@
                             "Description": "player id as used in client's website"
                         },
                         {
-                            "Name": "group",
+                            "Name": "goods_id",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
-                            "Description": "goods group"
+                            "Description": "goods id to verify"
                         },
                         {
                             "Name": "pincode",
                             "Required": "Y",
                             "Default": "",
                             "Type": "string",
-                            "Description": "Merchant PIN Code generated from Admin dashboard"
+                            "Description": "merchant PIN Code generated from admin dashboard"
                         }
                     ]
                 },
