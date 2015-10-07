@@ -945,12 +945,17 @@ class User extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
 
         if (!$code) {
-            redirect('/login', 'refresh');
+            $this->data['topic_message'] = 'Referral code is required to access this page';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
         }
 
         $player = $this->Player_model->getPlayerByCode($code);
         if (!$player) {
-            $this->data['topic_message'] = 'Your referral code is invalid,';
+            $this->data['topic_message'] = 'Your referral code is invalid.';
             $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
             $this->load->vars($this->data);
