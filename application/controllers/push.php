@@ -9,6 +9,7 @@ class Push extends REST2_Controller
         $this->load->model('auth_model');
         $this->load->model('goods_model');
         $this->load->model('player_model');
+        $this->load->model('push_model');
         $this->load->model('sms_model');
         $this->load->model('redeem_model');
         $this->load->model('tool/error', 'error');
@@ -142,24 +143,38 @@ class Push extends REST2_Controller
     }
     public function adhocSend_post($data)
     {
-        $type = $this->input->post('type');
-        $data = array(
+        $player_id =$this->input->post('player_id');
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        $list_device = $this->push_model->listDevice($pb_player_id);
+        /*$data = array(
             'title' => $data['title'],
             'reward' => $data['badge'],
             'type' => 'exp',//$data['type'],
             'value' => $data['value'],
             'text' => 'description test',//$data['text'],
             'status' => $data['status']
-        );
+        );*/
+        foreach($list_device as $device)
+        {
+            $notificationInfo = array(
+                'device_token' => $device['device_token'],
+                //'messages' => $this->input->post('msg'),
+                'messages' => 'Congratulations',
+                'data' => $data,
+                'badge_number' => 1
+            );
+            $this->push_model->initial($notificationInfo,$device['os_type']);
+        }
 
-        $notificationInfo = array(
-            'device_token' => $this->input->post('device_token'),
-            //'messages' => $this->input->post('msg'),
-            'messages' => 'Congratulations',
-            'data' => $data,
-            'badge_number' => 1
-        );
-        $this->push_model->initial($notificationInfo,$type);
+
+
         $this->response($this->resp->setRespond(''), 200);
 
     }

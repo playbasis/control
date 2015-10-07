@@ -12,6 +12,7 @@ class Push_model extends MY_Model
 
     public function initial($data,$type=null)
     {
+        $type = strtolower($type);
         switch ($type) {
             case "ios":
                 $setup = $this->getIosSetup($data['client_id'], $data['site_id']);
@@ -135,7 +136,7 @@ class Push_model extends MY_Model
                 curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
                 $result = curl_exec($ch );
                 curl_close( $ch );
-                echo $result;
+                //echo $result;
                 break;
 
             default:
@@ -201,5 +202,15 @@ class Push_model extends MY_Model
         $this->mongo_db->where('client_id', $client_id);
         $results = $this->mongo_db->get("playbasis_push_ios");
         return $results ? $results[0] : null;
+    }
+
+    public function listDevice($pb_player_id)
+    {
+        $this->mongo_db->select(null);
+        $this->mongo_db->where(array(
+            'pb_player_id' => new MongoId($pb_player_id),
+        ));
+        $results = $this->mongo_db->get('playbasis_player_device');
+        return $results;
     }
 }
