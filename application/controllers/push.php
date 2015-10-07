@@ -1,4 +1,4 @@
-<?php
+​<?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 class Push extends REST2_Controller
@@ -25,7 +25,7 @@ class Push extends REST2_Controller
 
         $this->response($this->resp->setRespond(array('to'=>$to, 'from'=>$from, 'message'=>$message)), 200);
     }
-
+    /*
     public function send_post()
     {
         $required = $this->input->checkParam(array(
@@ -61,7 +61,7 @@ class Push extends REST2_Controller
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
-    }
+    }*/
 
     public function send_goods_post()
     {
@@ -102,5 +102,43 @@ class Push extends REST2_Controller
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
     }
+    public function send_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'message',
+        ));
+        if($required)
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+
+        $cl_player_id = $this->input->post('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+
+
+    }
+    public function deviceRegistration_post()
+    {
+        $player_id =$this->input->post('player_id');
+        if(!$player_id)
+            $this->response($this->error->setError('PARAMETER_MISSING', array(
+                'player_id'
+            )), 200);
+        //get playbasis player id
+        $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
+            'cl_player_id' => $player_id
+        )));
+        $deviceInfo =  array(
+            'pb_player_id' => $pb_player_id ,
+            'device_token' => $this->input->post('device_token') ,
+            'device_description' => $this->input->post('device_description'),
+            'device_name' => $this->input->post('device_name')
+        );
+        $this->player_model->storeDeviceToken($deviceInfo);
+        $this->response($this->resp->setRespond(''), 200);
+    }
+
 }
 ?>
