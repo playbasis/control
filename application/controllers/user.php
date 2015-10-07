@@ -974,9 +974,9 @@ class User extends MY_Controller
                 'last_name' => $data['lastname'],
             ));
             $error = null;
-            if ($status->success) { // register player B successfully
-                $this->_api->engine($data['username'], 'refer'); // send action player B refer
-                $this->_api->engine($player['cl_player_id'], 'referred'); // send action player A was referred
+            if ($status->success) { // register player B successfully (A invite B)
+                $this->_api->engine($data['username'], 'invited'); // send action player B refer A (B invited)
+                $this->_api->engine($player['cl_player_id'], 'invite'); // send action player A was referred (A invite)
             } else {
                 $error = $status->message;
             }
