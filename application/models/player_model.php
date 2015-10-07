@@ -1553,6 +1553,7 @@ class Player_model extends MY_Model
                 'image',
                 'name',
                 'description',
+                'group'
             ));
             $this->mongo_db->select(array(),array('_id'));
             $this->mongo_db->where(array(
@@ -1571,6 +1572,7 @@ class Player_model extends MY_Model
             $goods['description'] = $result['description'];
             $goods['amount'] = $goods['value'];
             unset($goods['value']);
+            $goods['group'] = $result['group'];
         }
         return $goods;
     }
