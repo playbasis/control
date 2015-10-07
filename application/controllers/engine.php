@@ -425,6 +425,7 @@ class Engine extends Quest
 
 				//get class path to precess jigsaw
 				$processor = ($jigsaw_id ? $this->client_model->getJigsawProcessor($jigsaw_id, $site_id) : $jigsaw['id']);
+				if ($processor == 'goods') $processor = 'reward';
 
 				if (!$input["test"])
 					$jigsaw_model = $this->jigsaw_model->$processor($jigsawConfig, $input, $exInfo);
