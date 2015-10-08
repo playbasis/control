@@ -157,12 +157,10 @@ class Merchant_model extends MY_Model
         return $result;
     }
 
-    private function checkPINCodeExisted($client_id, $site_id, $pin_code)
+    private function checkPINCodeExisted($pin_code)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
-        $this->mongo_db->where('client_id', new MongoId($client_id));
-        $this->mongo_db->where('site_id', new MongoId($site_id));
         $this->mongo_db->where('pin_code', $pin_code);
         $this->mongo_db->where('deleted', false);
         $total = $this->mongo_db->count('playbasis_merchant_branch_to_client');
@@ -174,13 +172,14 @@ class Merchant_model extends MY_Model
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $charactersLength = strlen($characters);
-        $randomString = '';
+        $randomString = null;
 
         do {
+            $randomString = '';
             for ($i = 0; $i < PIN_CODE_LENGTH; $i++) {
                 $randomString .= $characters[rand(0, $charactersLength - 1)];
             }
-        } while ($this->checkPINCodeExisted($clientId, $siteId, $randomString));
+        } while ($this->checkPINCodeExisted($randomString));
 
         return $randomString;
     }
