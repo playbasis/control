@@ -54,7 +54,7 @@
             </div>
 
             <div class="pbf-field-group">
-              <label for="company-name">Referral Code</label>
+              <label for="referral-code">Referral Code</label>
               <input type="text" placeholder="Referral Code" value="<?php echo $referral_code; ?>" id="referral-code" readonly>
             </div>
 
