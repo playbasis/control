@@ -19,6 +19,7 @@ class User extends MY_Controller
 //        $this->load->model('Domain_model');
         $this->load->model('App_model');
         $this->load->model('Merchant_model');
+        $this->load->model('Goods_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -1042,7 +1043,7 @@ class User extends MY_Controller
         $client_id = $record['client_id'];
         $site_id = $record['site_id'];
         $merchant = $this->Merchant_model->findMerchantByBranchId($branch_id);
-        $group_list = array_map('index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
+        $group_list = array_map('user_index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = $this->input->post();
             $group = $data['group'];
@@ -1054,10 +1055,35 @@ class User extends MY_Controller
                 }
             }
 
-            // redeemed coupon and not exercised (playbasis_goods_to_player) -> True
-            // redeemed coupon and already exercised (playbasis_merchant_goodsgroup_redeem_log) -> False
-            // not redeemed coupon (playbasis_goods_to_client) -> False
-            // invalid coupon -> False
+            $goods_list = array_map('user_index_goods_id', $this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
+            if (!$goods_list) {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as there is no such coupon for the selected goods'));
+                    exit();
+                }
+            }
+            $goods_list_redeemed = array_map('user_index_goods_id', $this->Goods_model->listRedeemedGoods($goods_list, array('goods_id')));
+            $goods_list_verified = array_map('user_index_goods_id', $this->Goods_model->listVerifiedGoods($goods_list, array('goods_id')));
+            $goods_list_ok = array_diff($goods_list_redeemed, $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
+            if ($goods_list_ok) {
+                // TODO: logic to insert
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'success', 'message' => 'Coupon is valid and redeemed, and never been used before'));
+                    exit();
+                }
+            } else {
+                if ($goods_list_redeemed) {
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid, redeemed and used'));
+                        exit();
+                    }
+                } else {
+                    if ($this->input->post('format') == 'json') {
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid, but not redeemed'));
+                        exit();
+                    }
+                }
+            }
         }
         $this->data['merchant'] = $merchant['name'];
         $this->data['branch'] = $record['branch_name'];
@@ -1303,6 +1329,10 @@ class User extends MY_Controller
 
 }
 
-function index_goods_group($obj) {
+function user_index_goods_group($obj) {
     return $obj['goods_group'];
+}
+
+function user_index_goods_id($obj) {
+    return $obj['goods_id'];
 }
