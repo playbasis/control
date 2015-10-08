@@ -1039,13 +1039,29 @@ class User extends MY_Controller
             return;
         }
         $branch_id = $record['_id'];
+        $client_id = $record['client_id'];
+        $site_id = $record['site_id'];
         $merchant = $this->Merchant_model->findMerchantByBranchId($branch_id);
-        $goods = $this->Merchant_model->findGoodsByBranchId($branch_id);
-        $goods_list = array_map('index_goods_group', $goods);
+        $group_list = array_map('index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $data = $this->input->post();
+            $group = $data['group'];
+            $coupon = $data['coupon'];
+            if (empty($coupon)) {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'fail', 'message' => 'Coupon code is required'));
+                    exit();
+                }
+            }
 
+            // redeemed coupon and not exercised (playbasis_goods_to_player) -> True
+            // redeemed coupon and already exercised (playbasis_merchant_goodsgroup_redeem_log) -> False
+            // not redeemed coupon (playbasis_goods_to_client) -> False
+            // invalid coupon -> False
         }
-        $this->data['merchant'] = $merchant;
+        $this->data['merchant'] = $merchant['name'];
+        $this->data['branch'] = $record['branch_name'];
+        $this->data['group_list'] = $group_list;
         $this->data['main'] = 'partial/merchant';
         $this->load->vars($this->data);
         $this->render_page('template_beforelogin');

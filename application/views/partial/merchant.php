@@ -29,13 +29,27 @@
             <legend>Coupon Validation</legend>
 
             <div class="pbf-field-group pbf-half">
-              <label for="user-name">Goods <span>*</span></label>
-              <input type="text" name="goods" placeholder="Goods" id="goods" required>
+              <label for="group">Goods <span>*</span></label>
+              <select name="group">
+                <?php foreach ($group_list as $group) { ?>
+                <option value="<?php echo $group; ?>"><?php echo $group; ?></option>
+                <?php } ?>
+              </select>
             </div>
 
             <div class="pbf-field-group pbf-half">
               <label for="coupon">Coupon <span>*</span></label>
               <input type="text" name="coupon" placeholder="Coupon" id="coupon" required>
+            </div>
+
+            <div class="pbf-field-group">
+              <label for="merchant-name">Merchant Name</label>
+              <input type="text" placeholder="Merchant Name" value="<?php echo $merchant; ?>" id="merchant-name" readonly>
+            </div>
+
+            <div class="pbf-field-group">
+              <label for="branch-name">Branch Name</label>
+              <input type="text" placeholder="Branch Name" value="<?php echo $branch; ?>" id="branch-name" readonly>
             </div>
 
           </fieldset>
