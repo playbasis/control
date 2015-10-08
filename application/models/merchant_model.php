@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-define('PIN_CODE_LENGTH', 6);
+define('PIN_CODE_LENGTH', 7);
 
 class Merchant_model extends MY_Model
 {
@@ -172,7 +172,7 @@ class Merchant_model extends MY_Model
 
     public function generatePINCode($clientId, $siteId)
     {
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $charactersLength = strlen($characters);
         $randomString = '';
 
