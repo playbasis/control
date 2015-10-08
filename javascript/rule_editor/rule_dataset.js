@@ -54,6 +54,13 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 },
 
                 _inputByType = function(v) {
+                    var template;
+                    switch (v.type)
+                    {
+                        case 'email': template = jsonString_Email; break;
+                        case 'sms': template = jsonString_Sms; break;
+                        case 'push': template = jsonString_Push; break;
+                    }
                     return {
                         'hidden': '<input type="text" class="hide" value="'+v.value+'" />',
 
@@ -103,7 +110,9 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                                 '<span class="edit_goods_type btn btn-info btn-mini"><i class="icon-gift icon-white"></i></span>&nbsp;',
 
                         'select':
-                            '<select name="' + v.param_name + '" placeholder="' + v.placeholder + '" datatype="' + v.type + '">' + generate_select_options(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</select>',
+                            '<select name="' + v.param_name + '" placeholder="' + v.placeholder + '" datatype="' + v.type + '">' + generate_select_options(template, v.value) + '</select>',
+
+                            //'<select name="' + v.param_name + '" placeholder="' + v.placeholder + '" datatype="' + v.type + '">' + generate_select_options(v.type , v.value) + '</select>',
 
                         'boolean':
                             '<input type="checkbox" class="input_boolean boolean" id="bool'+((new Date()).getMilliseconds()+1)+'" name="'+v.value+'" value="'+v.value+'" checked="'+_checkBool(v.value)+'" />',
@@ -178,7 +187,14 @@ DataSet = function(jsonArray, parent_id, json_jigsaw) {
                 }else if(v.field_type == "collection-goods"){
                     ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type  +'">'+GoodsSet.getGoodsImage(v.value)+'</span>');
                 }else if(v.field_type == "select"){
-                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(v.type == 'email' ? jsonString_Email : jsonString_Sms, v.value) + '</span>');
+                    var template;
+                    switch (v.type)
+                    {
+                        case 'email': template = jsonString_Email; break;
+                        case 'sms': template = jsonString_Sms; break;
+                        case 'push': template = jsonString_Push; break;
+                    }
+                    ruleText = $('<span class="pbd_rule_text view_as_' + v.field_type + '">' + get_selected_option_text(template, v.value) + '</span>');
                 }
 
                 dataColumn.append(ruleText);
