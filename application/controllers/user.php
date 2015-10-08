@@ -1063,18 +1063,20 @@ class User extends MY_Controller
                 }
             }
             $goods_list_redeemed = array_map('user_index_goods_id', $this->Goods_model->listRedeemedGoods($goods_list, array('goods_id')));
-            $goods_list_verified = array_map('user_index_goods_id', $this->Goods_model->listVerifiedGoods($goods_list, array('goods_id')));
+            $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list);
+            $goods_list_verified = array_map('user_index_goods_id', $verified_goods_list);
             $goods_list_ok = array_diff($goods_list_redeemed, $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
             if ($goods_list_ok) {
                 // TODO: logic to insert
                 if ($this->input->post('format') == 'json') {
-                    echo json_encode(array('status' => 'success', 'message' => 'Coupon is valid and redeemed, and never been used before'));
+                    echo json_encode(array('status' => 'success', 'message' => 'Coupon is valid and redeemed, and successfully validated'));
                     exit();
                 }
             } else {
                 if ($goods_list_redeemed) {
                     if ($this->input->post('format') == 'json') {
-                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid, redeemed and used'));
+                        $verified_goods_list = $verified_goods_list[0];
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid and redeemed, but it has been used already', 'at' => $verified_goods_list['branch']['b_name'], 'when' => $verified_goods_list['date_added']->sec));
                         exit();
                     }
                 } else {
