@@ -182,5 +182,40 @@ class Push_model extends MY_Model
             ));
         }
     }
+    public function getAndroidSetup($client_id = null)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->where('client_id', $client_id);
+        $results = $this->mongo_db->get("playbasis_push_android");
+
+        return $results ? $results[0] : null;
+    }
+    public function updateAndroid($data)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
+        if($this->getIosSetup($client_id)){
+            $this->mongo_db->where('client_id', $client_id);
+            $this->mongo_db->set('env', $data['push-env']);
+            $this->mongo_db->set('certificate', $data['push-certificate']);
+            $this->mongo_db->set('password', $data['push-password']);
+            $this->mongo_db->set('ca', $data['push-ca']);
+            $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
+            $this->mongo_db->update('playbasis_push_android');
+        }else{
+            $this->mongo_db->insert('playbasis_push_android', array(
+                'client_id' => $client_id,
+                'env' => $data['push-env'],
+                'certificate' => $data['push-certificate'],
+                'password' => $data['push-password'] ,
+                'ca' => $data['push-ca'],
+                'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
+                'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
+            ));
+        }
+
+    }
 }
 ?>

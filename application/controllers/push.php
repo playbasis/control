@@ -8,6 +8,7 @@ class Push extends MY_Controller
         parent::__construct();
 
         $this->load->model('User_model');
+        $this->load->model('User_group_model');
         if(!$this->User_model->isLogged()){
             redirect('/login', 'refresh');
         }
@@ -172,6 +173,8 @@ class Push extends MY_Controller
 
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
+        $group_info = $this->User_group_model->getUserGroupInfo($this->data['user_group_id']);
+        $this->data['user_type'] = $group_info['name'];
 
         $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
 
@@ -331,6 +334,32 @@ class Push extends MY_Controller
                 $postData = $this->input->post();
                 $data = $this->User_model->getClientId() ? array_merge($postData, array('client_id' => $this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId())) : $postData;
                 $this->Push_model->updateIos($data);
+                $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
+            }
+        }
+
+        $this->data['main'] = 'push_setup';
+        $this->load->vars($this->data);
+        $this->render_page('template');
+    }
+    public function android() {
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['title'] = $this->lang->line('title');
+        $this->data['heading_title'] = $this->lang->line('heading_title');
+
+        $this->form_validation->set_rules('push-env', $this->lang->line('push-env'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('push-certificate', $this->lang->line('push-certificate'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('push-password', $this->lang->line('push-password'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('push-ca', $this->lang->line('push-ca'), 'trim|required|xss_clean');
+
+        $setting_group_id = $this->User_model->getAdminGroupID();
+        $this->data['push'] = $this->Push_model->getAndroidSetup($this->User_model->getUserGroupId() != $setting_group_id ? $this->User_model->getClientId() : null);
+
+        if($this->input->post()){
+            if($this->form_validation->run()){
+                $postData = $this->input->post();
+                $data = $this->User_model->getClientId() ? array_merge($postData, array('client_id' => $this->User_model->getClientId(), 'site_id' => $this->User_model->getSiteId())) : $postData;
+                $this->Push_model->updateAndroid($data);
                 $this->session->set_flashdata('success', $this->lang->line('text_success_update'));
             }
         }
