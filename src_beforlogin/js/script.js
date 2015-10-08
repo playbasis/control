@@ -341,6 +341,137 @@ jQuery(document).ready( function($) {
         }
     });
 
+    //==== Merchant Login form=======//
+    $('#merchant_form').validate({
+        submitHandler: function(form) {
+
+            var $_GET = getQueryParams(document.location.search);
+            $.ajax({
+                type:'post',
+                url: baseUrlPath+"merchant",
+                data: $(form).serialize()+'&format=json',
+                dataType: 'json'
+            })
+                .done(function(data) {
+                    if(before_debug)console.log(data);
+                    if(data.message){
+                        var messageAlert = data.message;
+                    }else{
+                        var messageAlert = message_error_default;
+                    }
+
+                    if(data.status == 'fail'){
+                        $('.registration-login').pbAlert({
+                            content: data.message
+                        });
+                    }else{
+                        $('.registration-login').pbAlert({
+                            content: 'Login success!'
+                        });
+                        setTimeout(function() {
+                            location.reload(true);
+                        }, 800);
+                    }
+                })
+                .fail(function(data) {
+                    $('.registration-login').pbAlert({
+                        content: message_error_default
+                    });
+                })
+                .always(function(data){
+                    $(form).find('input').attr('disabled', false);
+                })
+
+            $(form).find('input').attr('disabled', true);
+            return false;
+        }
+    });
+
+    //==== Coupon Validation form=======//
+    $('#coupon_form').validate({
+        submitHandler: function(form) {
+
+            var $_GET = getQueryParams(document.location.search);
+            $.ajax({
+                type:'post',
+                url: baseUrlPath+"merchant",
+                data: $(form).serialize()+'&format=json',
+                dataType: 'json'
+            })
+                .done(function(data) {
+                    if(before_debug)console.log(data);
+                    if(data.message){
+                        var messageAlert = data.message;
+                    }else{
+                        var messageAlert = message_error_default;
+                    }
+
+                    if(data.status == 'fail'){
+                        $('.registration-login').pbAlert({
+                            content: data.message
+                        });
+                    }else{
+                        $('.registration-login').pbAlert({
+                            content: 'Check successfully!'
+                        });
+                        // code to put green or red mark
+                    }
+                })
+                .fail(function(data) {
+                    $('.registration-login').pbAlert({
+                        content: message_error_default
+                    });
+                })
+                .always(function(data){
+                    $(form).find('input').attr('disabled', false);
+                })
+
+            $(form).find('input').attr('disabled', true);
+            return false;
+        }
+    });
+
+    //==== Merchant Logout link =======//
+    $(document).ready(function() {
+        $("#merchant-logout a").click(function() {
+            var $_GET = getQueryParams(document.location.search);
+            $.ajax({
+                type:'post',
+                url: baseUrlPath+"merchant_logout",
+                data: 'format=json',
+                dataType: 'json'
+            })
+                .done(function(data) {
+                    if(before_debug)console.log(data);
+                    if(data.message){
+                        var messageAlert = data.message;
+                    }else{
+                        var messageAlert = message_error_default;
+                    }
+
+                    if(data.status == 'fail'){
+                        $('.registration-login').pbAlert({
+                            content: data.message
+                        });
+                    }else{
+                        $('.registration-login').pbAlert({
+                            content: 'Logout successfully!'
+                        });
+                        setTimeout(function() {
+                            location.reload(true);
+                        }, 800);
+                    }
+                })
+                .fail(function(data) {
+                    $('.registration-login').pbAlert({
+                        content: message_error_default
+                    });
+                })
+
+            return false;
+        });
+    });
+
   //==== Animate form=======//
   $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
     var current_id = $(e.target).attr('href');

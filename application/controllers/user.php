@@ -18,6 +18,7 @@ class User extends MY_Controller
         $this->load->model('Plan_model');
 //        $this->load->model('Domain_model');
         $this->load->model('App_model');
+        $this->load->model('Merchant_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -1001,6 +1002,73 @@ class User extends MY_Controller
         $this->render_page('template_beforelogin');
     }
 
+    public function merchant() {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['form'] = 'merchant';
+        $this->data['title'] = $this->lang->line('title');
+
+        $pin = $this->session->userdata('pin');
+        if (!$pin) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $data = $this->input->post();
+                $pin = $data['pin'];
+                $error = 'Your merchant PIN is invalid';
+                if ($this->Merchant_model->isValidPin($pin)) {
+                    $error = false;
+                    $this->session->set_userdata(array('pin' => $pin));
+                }
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'You successfully log in to merchant page!' : $error));
+                    exit();
+                }
+            }
+            $this->data['main'] = 'partial/merchant_login';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $record = $this->Merchant_model->getByPin($pin);
+        if (!$record) {
+            $this->data['topic_message'] = 'Cannot find branch corresponding to the given PIN code.';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+        $branch_id = $record['_id'];
+        $merchant = $this->Merchant_model->findMerchantByBranchId($branch_id);
+        $goods = $this->Merchant_model->findGoodsByBranchId($branch_id);
+        $goods_list = array_map('index_goods_group', $goods);
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        }
+        $this->data['merchant'] = $merchant;
+        $this->data['main'] = 'partial/merchant';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
+
+    public function merchant_logout() {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['form'] = 'merchant';
+        $this->data['title'] = $this->lang->line('title');
+
+        $this->session->unset_userdata('pin');
+
+        if ($this->input->post('format') == 'json') {
+            echo json_encode(array('status' => 'success', 'message' => 'You successfully log out of merchant page!'));
+            exit();
+        }
+
+        $this->data['main'] = 'partial/merchant_login';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
+
     private function email($to, $subject, $message) {
         $this->amazon_ses->from(EMAIL_FROM, 'Playbasis');
         $this->amazon_ses->to($to);
@@ -1217,4 +1285,8 @@ class User extends MY_Controller
         }
     }
 
+}
+
+function index_goods_group($obj) {
+    return $obj['goods_group'];
 }

@@ -288,4 +288,41 @@ class Merchant_model extends MY_Model
 
         return json_encode($result);
     }
+
+    public function isValidPin($pin_code)
+    {
+        return $this->getByPin($pin_code);
+    }
+
+    public function getByPin($pin_code)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('pin_code', $pin_code);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->limit(1);
+        $record = $this->mongo_db->get('playbasis_merchant_branch_to_client');
+        return $record ? $record[0] : array();
+    }
+
+    public function findMerchantByBranchId($branch_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->where('branches.b_id', $branch_id);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
+        $this->mongo_db->limit(1);
+        $record = $this->mongo_db->get('playbasis_merchant_to_client');
+        return $record ? $record[0] : array();
+    }
+
+    public function findGoodsByBranchId($branch_id)
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $this->mongo_db->select(array('goods_group'));
+        $this->mongo_db->where('branches_allow.b_id', $branch_id);
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
+        return $this->mongo_db->get('playbasis_merchant_goodsgroup_to_client');
+    }
 }
