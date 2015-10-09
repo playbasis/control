@@ -290,7 +290,7 @@ class Merchant_model extends MY_Model
 
     public function isValidPin($pin_code)
     {
-        return $this->getByPin($pin_code);
+        return $this->getBranchByPin($pin_code);
     }
 
     public function getBranchByPin($pin_code)
