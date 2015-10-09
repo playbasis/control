@@ -108,8 +108,8 @@ class Merchant_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('desc', $data['desc']);
         $this->mongo_db->set('status', $data['status']);
-
-        //TODO: to add branches update
+        
+        $this->mongo_db->push(array('branches' => array('$each' => $data['branches'])));
 
         $this->mongo_db->set('date_modified', new MongoDate());
 
@@ -155,6 +155,23 @@ class Merchant_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
 
         return $result;
+    }
+
+    public function retrieveBranchesJSON($client_id, $site_id, $arrBranchID = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('_id','branch_name','pin_code', 'status', 'date_modified'),null);
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+
+        $this->mongo_db->where_in('_id', $arrBranchID);
+
+        $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
+
+        return json_encode($result);
     }
 
     private function checkPINCodeExisted($client_id, $site_id, $pin_code)

@@ -345,6 +345,21 @@ class Merchant extends MY_Controller
         $this->getForm($merchant_id);
     }
 
+    public function updateBranch($branch_id)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->validateModify()) {
+                $this->data['message'] = $this->lang->line('error_permission');
+            }
+            echo "updateBranch";
+        }
+    }
+
     public function page($offset = 0)
     {
 
@@ -447,6 +462,7 @@ class Merchant extends MY_Controller
                     }
 
                     $branches = $this->Merchant_model->retrieveBranches($client_id, $site_id, $tmpArrBranchID);
+                    $branches_json = $this->Merchant_model->retrieveBranchesJSON($client_id, $site_id, $tmpArrBranchID);
                 }
             }
 
@@ -485,6 +501,12 @@ class Merchant extends MY_Controller
             $this->data['branches_list'] = $branches;
         } else {
             $this->data['branches_list'] = '';
+        }
+
+        if (isset($branches_json)) {
+            $this->data['branches_list_json'] = $branches_json;
+        } else {
+            $this->data['branches_list_json'] = '';
         }
 
         $this->load->vars($this->data);
