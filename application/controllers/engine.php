@@ -440,9 +440,9 @@ class Engine extends Quest
 					/* pre-processing in case of 'GROUP' */
 					$break = false;
 					$jigsawName = $input['jigsaw_name'];
-                    $isGroup = false;
+					$isGroup = false;
 					if($jigsawCategory == 'GROUP') {
-                        $isGroup = true;
+						$isGroup = true;
 						$break = $exInfo['break'];
 						$conf = $jigsawConfig['group_container'][$exInfo['index']];
 						$jigsawConfig = $this->normalize_jigsawConfig(array_merge($jigsawConfig, $conf));
