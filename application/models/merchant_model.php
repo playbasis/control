@@ -294,7 +294,7 @@ class Merchant_model extends MY_Model
         return $this->getByPin($pin_code);
     }
 
-    public function getByPin($pin_code)
+    public function getBranchByPin($pin_code)
     {
         $this->set_site_mongodb($this->session->userdata('site_id'));
         $this->mongo_db->where('pin_code', $pin_code);

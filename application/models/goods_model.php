@@ -687,4 +687,13 @@ class Goods_model extends MY_Model
         $this->mongo_db->where_in('goods_id', $goods_id_list);
         return $this->mongo_db->get('playbasis_merchant_goodsgroup_redeem_log');
     }
+
+    public function markAsVerifiedGoods($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $d = new MongoDate();
+        $this->mongo_db->insert('playbasis_merchant_goodsgroup_redeem_log', array_merge($data, array(
+            'date_added' => $d,
+            'date_modified' => $d,
+        )));
+    }
 }

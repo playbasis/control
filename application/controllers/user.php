@@ -1030,8 +1030,8 @@ class User extends MY_Controller
             return;
         }
 
-        $record = $this->Merchant_model->getByPin($pin);
-        if (!$record) {
+        $branch = $this->Merchant_model->getBranchByPin($pin);
+        if (!$branch) {
             $this->data['topic_message'] = 'Cannot find branch corresponding to the given PIN code.';
             $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
@@ -1039,9 +1039,9 @@ class User extends MY_Controller
             $this->render_page('template_beforelogin');
             return;
         }
-        $branch_id = $record['_id'];
-        $client_id = $record['client_id'];
-        $site_id = $record['site_id'];
+        $branch_id = $branch['_id'];
+        $client_id = $branch['client_id'];
+        $site_id = $branch['site_id'];
         $merchant = $this->Merchant_model->findMerchantByBranchId($branch_id);
         $group_list = array_map('user_index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -1064,13 +1064,27 @@ class User extends MY_Controller
                     exit();
                 }
             }
-            $goods_list_redeemed = array_map('user_index_goods_id', $this->Goods_model->listRedeemedGoods($goods_list, array('goods_id')));
-            $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list);
+            $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($goods_list, array('goods_id', 'cl_player_id', 'pb_player_id'));
+            $goods_list_redeemed = array_map('user_index_goods_id', $redeemed_goods_list);
+            $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list, array('goods_id', 'branch', 'date_added'));
             $goods_list_verified = array_map('user_index_goods_id', $verified_goods_list);
             $goods_list_ok = array_diff($goods_list_redeemed, $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
             if ($goods_list_ok) {
                 if ($mark) {
-                    // TODO: logic to insert
+                    $goods_id = $goods_list_ok[0];
+                    $gp = $this->findGoodsToPlayerByGoodsId($goods_id, $redeemed_goods_list);
+                    $this->Goods_model->markAsVerifiedGoods(array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'goods_id' => $goods_id,
+                        'goods_group' => $group,
+                        'cl_player_id' => $gp['cl_player_id'],
+                        'pb_player_id' => $gp['pb_player_id'],
+                        'branch' => array(
+                            'b_id' => $branch_id,
+                            'b_name' => $branch['branch_name'],
+                        ),
+                    ));
                 }
                 if ($this->input->post('format') == 'json') {
                     /* valid, redeemed, NOT used = SUCCESS */
@@ -1095,7 +1109,7 @@ class User extends MY_Controller
             }
         }
         $this->data['merchant'] = $merchant['name'];
-        $this->data['branch'] = $record['branch_name'];
+        $this->data['branch'] = $branch['branch_name'];
         $this->data['group_list'] = $group_list;
         $this->data['main'] = 'partial/merchant';
         $this->load->vars($this->data);
@@ -1118,6 +1132,13 @@ class User extends MY_Controller
         $this->data['main'] = 'partial/merchant_login';
         $this->load->vars($this->data);
         $this->render_page('template_beforelogin');
+    }
+
+    private function findGoodsToPlayerByGoodsId($goods_id, $goods_list) {
+        foreach ($goods_list as $goods) {
+            if ($goods['goods_id'] == $goods_id) return $goods;
+        }
+        throw new Exception('Cannot find goods record given goods_id: '.$goods_id);
     }
 
     private function email($to, $subject, $message) {
