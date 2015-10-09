@@ -408,6 +408,7 @@ jQuery(document).ready( function($) {
                     }
 
                     if(data.status == 'fail'){
+                        if (data.login) location.reload(true); // detect session has expired
                         $('.registration-login').pbAlert({
                             content: data.message
                         });
