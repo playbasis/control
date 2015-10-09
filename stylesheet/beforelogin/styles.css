@@ -307,6 +307,10 @@ input[type="submit"] {
   /* 3 */
 }
 
+input[type="text"].success {
+  border-color: #368e88 !important;
+}
+
 /**
  * Re-set default cursor for disabled elements.
  */
@@ -651,6 +655,7 @@ table {
   background: #44b3ab;
   text-shadow: 0 -1px 0 #368e88;
 }
+
 .pb-alert--success a:focus, .pb-alert--success a:hover {
   border-color: #368e88;
 }

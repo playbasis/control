@@ -410,11 +410,14 @@ jQuery(document).ready( function($) {
                         $('.registration-login').pbAlert({
                             content: data.message
                         });
+                        $('#coupon').addClass('error');
+                        var m = 'Error' + (data.at ? ': verified before at ' + data.at + ' (' + data.when + ')' : '');
+                        $('#coupon').after('<label for="coupon" class="error">'+m+'</label>');
                     }else{
                         $('.registration-login').pbAlert({
-                            content: 'Check successfully!'
+                            content: data.message
                         });
-                        // code to put green or red mark
+                        $('#coupon').addClass('success');
                     }
                 })
                 .fail(function(data) {

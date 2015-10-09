@@ -1076,7 +1076,7 @@ class User extends MY_Controller
                 if ($goods_list_redeemed) {
                     if ($this->input->post('format') == 'json') {
                         $verified_goods_list = $verified_goods_list[0];
-                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid and redeemed, but it has been used already', 'at' => $verified_goods_list['branch']['b_name'], 'when' => $verified_goods_list['date_added']->sec));
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid and redeemed, but it has been used already', 'at' => $verified_goods_list['branch']['b_name'], 'when' => $this->datetimeMongotoReadable($verified_goods_list['date_added'])));
                         exit();
                     }
                 } else {
@@ -1329,6 +1329,19 @@ class User extends MY_Controller
         }
     }
 
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = "0000-00-00 00:00:00";
+        }
+        return $dateTimeMongo;
+    }
 }
 
 function user_index_goods_group($obj) {
