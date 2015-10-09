@@ -1048,6 +1048,7 @@ class User extends MY_Controller
             $data = $this->input->post();
             $group = $data['group'];
             $coupon = $data['coupon'];
+            $mark = isset($data['mark']) && $data['mark'];
             if (empty($coupon)) {
                 if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'fail', 'message' => 'Coupon code is required'));
@@ -1058,7 +1059,8 @@ class User extends MY_Controller
             $goods_list = array_map('user_index_goods_id', $this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
             if (!$goods_list) {
                 if ($this->input->post('format') == 'json') {
-                    echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as there is no such coupon for the selected goods'));
+                    /* invalid = FAIL */
+                    echo json_encode(array('status' => 'fail', 'message' => 'Such coupon code cannot be found for the selected goods'));
                     exit();
                 }
             }
@@ -1067,21 +1069,26 @@ class User extends MY_Controller
             $goods_list_verified = array_map('user_index_goods_id', $verified_goods_list);
             $goods_list_ok = array_diff($goods_list_redeemed, $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
             if ($goods_list_ok) {
-                // TODO: logic to insert
+                if ($mark) {
+                    // TODO: logic to insert
+                }
                 if ($this->input->post('format') == 'json') {
-                    echo json_encode(array('status' => 'success', 'message' => 'Coupon is valid and redeemed, and successfully validated'));
+                    /* valid, redeemed, NOT used = SUCCESS */
+                    echo json_encode(array('status' => 'success', 'message' => 'Coupon is valid'));
                     exit();
                 }
             } else {
                 if ($goods_list_redeemed) {
                     if ($this->input->post('format') == 'json') {
+                        /* valid, redeemed, used = FAIL */
                         $verified_goods_list = $verified_goods_list[0];
-                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid and redeemed, but it has been used already', 'at' => $verified_goods_list['branch']['b_name'], 'when' => $this->datetimeMongotoReadable($verified_goods_list['date_added'])));
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as it has been used already', 'at' => $verified_goods_list['branch']['b_name'], 'when' => $this->datetimeMongotoReadable($verified_goods_list['date_added'])));
                         exit();
                     }
                 } else {
                     if ($this->input->post('format') == 'json') {
-                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is valid, but not redeemed'));
+                        /* valid, NOT redeemed = FAIL */
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as it is not yet redeemed'));
                         exit();
                     }
                 }

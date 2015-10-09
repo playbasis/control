@@ -411,7 +411,7 @@ jQuery(document).ready( function($) {
                             content: data.message
                         });
                         $('#coupon').addClass('error');
-                        var m = 'Error' + (data.at ? ': verified before at ' + data.at + ' (' + data.when + ')' : '');
+                        var m = 'Error' + (data.at ? ': It has been used already at ' + data.at + ' (' + data.when + ')' : '');
                         $('#coupon').after('<label for="coupon" class="error">'+m+'</label>');
                     }else{
                         $('.registration-login').pbAlert({
