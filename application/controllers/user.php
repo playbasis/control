@@ -1046,10 +1046,16 @@ class User extends MY_Controller
         $group_list = array_map('user_index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = $this->input->post();
-            $group = $data['group'];
-            $coupon = $data['coupon'];
+            $group = isset($data['group']) ? $data['group'] : null;
+            $coupon = isset($data['coupon']) ? $data['coupon'] : null;
             $mark = isset($data['mark']) && $data['mark'];
-            if (empty($coupon)) {
+            if (!$group) {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'fail', 'message' => 'Goods group is required'));
+                    exit();
+                }
+            }
+            if (!$coupon) {
                 if ($this->input->post('format') == 'json') {
                     echo json_encode(array('status' => 'fail', 'message' => 'Coupon code is required'));
                     exit();
