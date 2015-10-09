@@ -440,7 +440,9 @@ class Engine extends Quest
 					/* pre-processing in case of 'GROUP' */
 					$break = false;
 					$jigsawName = $input['jigsaw_name'];
+					$isGroup = false;
 					if($jigsawCategory == 'GROUP') {
+						$isGroup = true;
 						$break = $exInfo['break'];
 						$conf = $jigsawConfig['group_container'][$exInfo['index']];
 						$jigsawConfig = $this->normalize_jigsawConfig(array_merge($jigsawConfig, $conf));
@@ -475,7 +477,7 @@ class Engine extends Quest
 								'reward_type' => $jigsawConfig['reward_name'],
 								'value' => $jigsawConfig['quantity']
 							);
-							array_push($apiResult['events'], $event);
+							array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                             if (!$input["test"] && !$anonymousUser) {
                                 $eventMessage = $this->utility->getEventMessage(
@@ -595,7 +597,7 @@ class Engine extends Quest
                                 'event_type' => 'REWARD_RECEIVED',
                                 'reward_type' => $jigsawConfig['reward_name'],
                                 'value' => $jigsawConfig['quantity']);
-                            array_push($apiResult['events'], $event);
+                            array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                             if (!$input["test"]) {
                                 $eventMessage = $this->utility->getEventMessage(
@@ -656,7 +658,7 @@ class Engine extends Quest
                                     'reward_data' => $badgeData,
                                     'value' => $jigsawConfig['quantity']
                                 );
-                                array_push($apiResult['events'], $event);
+                                array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                                 if (!$input["test"]) {
                                     $eventMessage = $this->utility->getEventMessage(
@@ -715,7 +717,7 @@ class Engine extends Quest
                                     'reward_data' => $goodsData,
                                     'value' => $jigsawConfig['quantity']
                                 );
-                                array_push($apiResult['events'], $event);
+                                array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                                 if (!$input["test"] && !$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
 
@@ -747,7 +749,7 @@ class Engine extends Quest
 								'objective_id' => $objId,
 								'objective_name' => $objName
 							);
-							array_push($apiResult['events'], $event);
+							array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                             if (!$input["test"]) {
                                 $eventMessage = $this->utility->getEventMessage(
