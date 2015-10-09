@@ -665,4 +665,35 @@ class Goods_model extends MY_Model
         return $this->mongo_db->get('playbasis_goods_to_client');
     }
 
+    public function listGoodsByGroupAndCode($group, $code, $fields=array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) $this->mongo_db->select($fields);
+        $this->mongo_db->where('group', $group);
+        $this->mongo_db->where('code', $code);
+        return $this->mongo_db->get('playbasis_goods_to_client');
+    }
+
+    public function listRedeemedGoods($goods_id_list, $fields=array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) $this->mongo_db->select($fields);
+        $this->mongo_db->where_in('goods_id', $goods_id_list);
+        $this->mongo_db->where_gt('value', 0);
+        return $this->mongo_db->get('playbasis_goods_to_player');
+    }
+
+    public function listVerifiedGoods($goods_id_list, $fields=array()) {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        if ($fields) $this->mongo_db->select($fields);
+        $this->mongo_db->where_in('goods_id', $goods_id_list);
+        return $this->mongo_db->get('playbasis_merchant_goodsgroup_redeem_log');
+    }
+
+    public function markAsVerifiedGoods($data){
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+        $d = new MongoDate();
+        $this->mongo_db->insert('playbasis_merchant_goodsgroup_redeem_log', array_merge($data, array(
+            'date_added' => $d,
+            'date_modified' => $d,
+        )));
+    }
 }

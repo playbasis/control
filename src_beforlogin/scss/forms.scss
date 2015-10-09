@@ -146,6 +146,10 @@
     margin: 10px;
   }
 
+  input[type="text"].success {
+    border-color: #368e88 !important;
+  }
+
   select {
     border: none;
     height: 40px;
