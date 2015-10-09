@@ -113,31 +113,75 @@ class Engine extends Quest
 		unset($rule['action_id']);
 
 		/* find current state of rule execution of the player */
-		if ($pb_player_id && isset($rule['jigsaw_set'])) {
+		if (isset($rule['jigsaw_set'])) {
 			$input = array(
 				'site_id' => $this->site_id,
-				'pb_player_id' => $pb_player_id,
 				'rule_id' => new MongoId($rule['id']),
 			);
+			if ($pb_player_id) $input = array_merge($input, array('pb_player_id' => $pb_player_id));
 			foreach ($rule['jigsaw_set'] as &$jigsaw) {
-				try {
-					$jigsaw_id = new MongoId($jigsaw['id']);
-				} catch (MongoException $ex) {
-					$jigsaw_id = "";
+				if ($pb_player_id) {
+					try {
+						$jigsaw_id = new MongoId($jigsaw['id']);
+					} catch (MongoException $ex) {
+						$jigsaw_id = "";
+					}
+					$input['jigsaw_id'] = $jigsaw_id;
+					$input['jigsaw_name'] = $jigsaw['name'];
+					$input['jigsaw_category'] = $jigsaw['category'];
+					$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
+					$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
+						'input',
+						'date_added'
+					));
 				}
-				$input['jigsaw_id'] = $jigsaw_id;
-				$input['jigsaw_name'] = $jigsaw['name'];
-				$input['jigsaw_category'] = $jigsaw['category'];
-				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
-				$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
-					'input',
-					'date_added'
-				));
+				$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
 				array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
 			}
 		}
 
 		$this->response($this->resp->setRespond($rule), 200);
+	}
+
+	private function applyBadgeObjGoodsObj($client_id, $site_id, &$config) {
+		if (isset($config['group_container'])) {
+			foreach ($config['group_container'] as $each) {
+				$this->applyBadgeObjGoodsObj($client_id, $site_id, $each);
+			}
+			return;
+		}
+		if (!isset($config['reward_name'])) return;
+		switch ($config['reward_name']) {
+		case 'badge':
+			$config['data'] = $this->findBadgeDetail($client_id, $site_id, new MongoId($config['item_id']));
+			break;
+		case 'goods':
+			$config['data'] = $this->findGoodsDetail($client_id, $site_id, new MongoId($config['item_id']));
+			break;
+		default:
+			break;
+		}
+	}
+
+	private function findBadgeDetail($client_id, $site_id, $item_id) {
+		return $this->client_model->getBadgeById($item_id, $site_id);
+	}
+
+	private function findGoodsDetail($client_id, $site_id, $item_id) {
+		$goodsData = $this->jigsaw_model->getGoods($site_id, $item_id);
+		if (!$goodsData) return null;
+
+		if (isset($goodsData['group'])) {
+			$goodsData = $this->goods_model->getGoodsFromGroup($client_id, $site_id, $goodsData['group'], null, 1);
+			if (!$goodsData) return null;
+		}
+
+		unset($goodsData['_id']);
+		unset($goodsData['redeem']);
+		unset($goodsData['quantity']);
+		$goodsData['goods_id'] = $goodsData['goods_id'].'';
+		$goodsData['image'] = $this->config->item('IMG_PATH') . $goodsData['image'];
+		return $goodsData;
 	}
 
     /*
