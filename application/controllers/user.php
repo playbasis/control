@@ -1006,7 +1006,7 @@ class User extends MY_Controller
     public function merchant() {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['form'] = 'merchant';
+        $this->data['form'] = 'merchant_verify';
         $this->data['title'] = $this->lang->line('title');
 
         $pin = $this->session->userdata('pin');
@@ -1125,7 +1125,7 @@ class User extends MY_Controller
     public function merchant_logout() {
         $this->load->library('parser');
         $this->data['meta_description'] = $this->lang->line('meta_description');
-        $this->data['form'] = 'merchant';
+        $this->data['form'] = 'merchant_verify';
         $this->data['title'] = $this->lang->line('title');
 
         $this->session->unset_userdata('pin');

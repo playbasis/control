@@ -348,7 +348,7 @@ jQuery(document).ready( function($) {
             var $_GET = getQueryParams(document.location.search);
             $.ajax({
                 type:'post',
-                url: baseUrlPath+"merchant",
+                url: baseUrlPath+"merchant_verify",
                 data: $(form).serialize()+'&format=json',
                 dataType: 'json'
             })
@@ -395,7 +395,7 @@ jQuery(document).ready( function($) {
             var $_GET = getQueryParams(document.location.search);
             $.ajax({
                 type:'post',
-                url: baseUrlPath+"merchant",
+                url: baseUrlPath+"merchant_verify",
                 data: $(form).serialize()+'&format=json',
                 dataType: 'json'
             })

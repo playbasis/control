@@ -58,7 +58,7 @@ $route['first_app'] = 'account/first_app';
 $route['domain'] = 'app';
 $route['referral/'.ANY_STRING] = 'user/referral/$1';
 $route['referral'] = 'user/referral';
-$route['merchant'] = 'user/merchant';
+$route['merchant_verify'] = 'user/merchant';
 $route['merchant_logout'] = 'user/merchant_logout';
 
 $route['404_override'] = 'error/error_404';
