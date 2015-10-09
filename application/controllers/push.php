@@ -174,7 +174,8 @@ class Push extends MY_Controller
         $this->data['templates'] = array();
         $this->data['user_group_id'] = $this->User_model->getUserGroupId();
         $group_info = $this->User_group_model->getUserGroupInfo($this->data['user_group_id']);
-        $this->data['user_type'] = $group_info['name'];
+        $admin  =  $group_info['name'] == "Top Administrator" ?true:false;
+        $this->data['admin'] = $admin;
 
         $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
 

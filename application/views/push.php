@@ -20,7 +20,7 @@
             <div id="tabs" class="htabs">
                 <a href="<?php echo site_url('push');?>" class="selected" style="display: inline;"><?php echo $this->lang->line('tab_general'); ?></a>
 
-                <?php if($user_type == "Top Administrator") { ?>
+                <?php if($admin) { ?>
                 <!--?php if($user_type == "Super User") { ?-->
                 <a href="<?php echo site_url('push/ios');?>" style="display: inline;"><?php echo $this->lang->line('tab_ios'); ?></a>
                 <a href="<?php echo site_url('push/android');?>" style="display: inline;"><?php echo $this->lang->line('tab_android'); ?></a>
