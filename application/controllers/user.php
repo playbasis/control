@@ -1013,14 +1013,14 @@ class User extends MY_Controller
         if (!$pin) {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $data = $this->input->post();
-                $pin = $data['pin'];
-                $error = 'Your merchant PIN is invalid';
-                if ($this->Merchant_model->isValidPin($pin)) {
+                $pin = isset($data['pin']) ? $data['pin'] : null;
+                $error = $pin ? 'Your merchant PIN is invalid' : 'PIN is required';
+                if ($pin && $this->Merchant_model->isValidPin($pin)) {
                     $error = false;
                     $this->session->set_userdata(array('pin' => $pin));
                 }
                 if ($this->input->post('format') == 'json') {
-                    echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'You successfully log in to merchant page!' : $error));
+                    echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'You successfully log in to merchant page!' : $error, 'login' => true));
                     exit();
                 }
             }
