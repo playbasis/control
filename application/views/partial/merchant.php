@@ -63,7 +63,7 @@
             </div>
 
             <div class="pbf-field-group pbf-half pbf-link-2-line">
-              <input type="checkbox" name="mark" id="mark-used" checked>
+              <input type="checkbox" name="mark" id="mark-used">
               <label for="mark-used">Mark as used if valid</label><br>
               <span id="merchant-logout"><a href="#" role="tab" data-toggle="tab">Logout?</a></span>
             </div>
