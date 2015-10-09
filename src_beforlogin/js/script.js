@@ -391,6 +391,7 @@ jQuery(document).ready( function($) {
     $('#coupon_form').validate({
         submitHandler: function(form) {
 
+            $('#coupon').removeClass('success');
             var $_GET = getQueryParams(document.location.search);
             $.ajax({
                 type:'post',
