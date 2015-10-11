@@ -94,7 +94,15 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade" id="branches-list">
                                         <div class="row-fluid">
-                                            <table id="branches-table"></table>
+                                            <div id="toolbar">
+                                                <button id="remove" class="btn btn-danger" disabled>
+                                                    <i class="fa fa-remove"></i> Delete
+                                                </button>
+                                            </div>
+                                            <table id="branches-table"
+                                                   data-toolbar="#toolbar"
+                                                   data-search="true">
+                                            </table>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade active in" id="branches-new">
@@ -280,6 +288,12 @@
 
     var merchantGoodsGroupsJSON = <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : "null"; ?>;
 
+    var branchesListJSON = <?php echo isset($branches_list_json) ? $branches_list_json : "null"; ?>;
+
+    var $branchesTable = $('#branches-table'),
+        $remove = $('#remove'),
+        selections = [];
+
     $(function () {
         function init_mc_goodgroups_item_box() {
             $.each(merchantGoodsGroupsJSON, function (index, value) {
@@ -423,34 +437,59 @@
         $("[name='merchant-status']").bootstrapSwitch();
         $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']:not([name*='id'])").bootstrapSwitch();
 
-        var branchesListJSON = <?php echo isset($branches_list_json) ? $branches_list_json : "null"; ?>;
-
-        var $branchesTable = $('#branches-table');
-
         $branchesTable.bootstrapTable({
             idField: '_id',
             columns: [{
+                field: 'state',
+                checkbox: true,
+                align: 'center',
+                valign: 'middle'
+            }, {
                 field: 'branch_name',
                 title: 'Branch Name',
+                align: 'center',
+                valign: 'middle',
                 editable: {
                     placement: 'right',
                     url: baseUrlPath + '/merchant/updateBranch/',
+                    validate: function(value) {
+                        if($.trim(value) == '') {
+                            return 'This field is required';
+                        }
+                    }
                 }
             }, {
                 field: 'pin_code',
                 title: 'PIN Code',
+                align: 'center',
+                valign: 'middle',
                 formatter: pinCodeFormatter
             }, {
                 field: 'status',
                 title: 'Status',
+                align: 'center',
+                valign: 'middle',
                 formatter: statusFormatter,
                 editable: {
                     type: 'select',
                     source: [
                         {value: 'Enabled', text: 'Enabled'},
-                        {value: 'Disabled', text: 'Disable'}
-                    ]
+                        {value: 'Disabled', text: 'Disabled'}
+                    ],
+                    url: baseUrlPath + 'merchant/updateBranch/',
+                    validate: function(value) {
+                        var val = $.trim(value);
+                        if(val != 'Enabled' && val != 'Disabled') {
+                            return 'This field is required';
+                        }
+                    }
                 }
+            }, {
+                field: 'operate',
+                title: 'Item Operate',
+                align: 'center',
+                events: operateEvents,
+                formatter: operateFormatter
             }],
             data: branchesListJSON,
             pagination: true,
@@ -460,45 +499,106 @@
             detailFormatter: detailFormatter
         });
 
-        $branchesTable.on('editable-save.bs.table', function(e){
-            //$('.editable').on('onEditableSave',function(e, params){
-                console.log("SAVE!");
-            //});
+        $branchesTable.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$branchesTable.bootstrapTable('getSelections').length);
+
+            // save your data, here just save the current page
+            selections = getIdSelections();
+            // push or splice the selections if you want to save all data selections
+        });
+        $remove.click(function (e) {
+            e.preventDefault();
+            var ids = getIdSelections();
+            console.log(ids);
+            $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'merchant/removeBranch/',
+                data: {'id': ids}
+            })
+                .done(function (msg) {
+                    console.log("Entry removed: " + msg);
+                    $branchesTable.bootstrapTable('remove', {
+                        field: '_id',
+                        values: ids
+                    });
+                })
+                .fail(function () {
+                    console.log("Error!");
+                });
+            $remove.prop('disabled', true);
         });
 
-        function pinCodeFormatter(value, row) {
-            return '<span class="label" style="font-size: 150%; letter-spacing: 2px;">' + value + '</span>';
-        }
-
-        function statusFormatter(value, row) {
-            return (value ? 'Enabled' : 'Disabled');
-        }
-
-        function detailFormatter(index, row) {
-            var html = [];
-            $.each(row, function (key, value) {
-                switch (key) {
-                    case 'branch_name':
-                        html.push('<p><b>Branch Name:</b> ' + value + '</p>');
-                        break;
-                    case 'pin_code':
-                        html.push('<p><b>PIN Code:</b> <span class="label" style="letter-spacing: 2px;">' + value + '</span></p>');
-                        break;
-                    case 'status':
-                        html.push('<p><b>Status:</b> ' + (value ? 'Enabled' : 'Disabled') + '</p>');
-                        break;
-                    case 'date_modified':
-                        var dateObj = new Date(value.sec * 1000);
-                        html.push('<p><b>Last Modified:</b> ' + dateObj.toLocaleString() + '</p>');
-                        break;
-                    default :
-                        break;
-                }
-            });
-            return html.join('');
-        }
+        $branchesTable.on('editable-save.bs.table', function(e){
+            console.log("SAVE!");
+        });
 
         init_mc_goodgroups_item_box();
         init_mc_goodgroups_event();
     });
+
+    function getIdSelections() {
+        return $.map($branchesTable.bootstrapTable('getSelections'), function (row) {
+            return row._id
+        });
+    }
+
+    function pinCodeFormatter(value, row) {
+        return '<span class="label" style="font-size: 150%; letter-spacing: 2px;">' + value + '</span>';
+    }
+
+    function statusFormatter(value, row) {
+        return (value ? 'Enabled' : 'Disabled');
+    }
+
+    function detailFormatter(index, row) {
+        var html = [];
+        $.each(row, function (key, value) {
+            switch (key) {
+                case 'branch_name':
+                    html.push('<p><b>Branch Name:</b> ' + value + '</p>');
+                    break;
+                case 'pin_code':
+                    html.push('<p><b>PIN Code:</b> <span class="label" style="letter-spacing: 2px;">' + value + '</span></p>');
+                    break;
+                case 'status':
+                    html.push('<p><b>Status:</b> ' + (value ? 'Enabled' : 'Disabled') + '</p>');
+                    break;
+                case 'date_modified':
+                    var dateObj = new Date(value.sec * 1000);
+                    html.push('<p><b>Last Modified:</b> ' + dateObj.toLocaleString() + '</p>');
+                    break;
+                default :
+                    break;
+            }
+        });
+        return html.join('');
+    }
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="remove" href="javascript:void(0)" title="Remove">',
+            '<i class="fa fa-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove': function (e, value, row, index) {
+            $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'merchant/removeBranch/',
+                data: {'id': row._id}
+            })
+                .done(function (msg) {
+                    console.log("Entry removed: " + msg);
+                    $branchesTable.bootstrapTable('remove', {
+                        field: '_id',
+                        values: [row._id]
+                    });
+                })
+                .fail(function () {
+                    console.log("Error!");
+                });
+        }
+    };
 </script>

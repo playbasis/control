@@ -169,9 +169,66 @@ class Merchant_model extends MY_Model
 
         $this->mongo_db->where_in('_id', $arrBranchID);
 
-        $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
+        $results = $this->mongo_db->get('playbasis_merchant_branch_to_client');
 
-        return json_encode($result);
+        foreach($results as &$result)
+            $result['_id'] = $result['_id']."";
+
+        return json_encode($results);
+    }
+
+    public function updateBranchById($_id, $name = null, $status = null)
+    {
+        $this->mongo_db->where('_id', new MongoID($_id));
+
+        if ($name != null) {
+            $this->mongo_db->set('branch_name', $name);
+        }
+
+        if (!empty($status)) {
+            switch ($status) {
+                case 'Enabled':
+                    $this->mongo_db->set('status', true);
+                    break;
+                case 'Disabled':
+                    $this->mongo_db->set('status', false);
+                    break;
+            }
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_merchant_branch_to_client');
+
+        return $update;
+    }
+
+    public function removeBranchById($id)
+    {
+        if (!empty($id)) {
+            $this->mongo_db->where('_id', new MongoId($id));
+            $this->mongo_db->set('deleted', true);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_merchant_branch_to_client');
+
+        return $update;
+    }
+
+    public function removeBranchesByIdArray($id_array)
+    {
+        if (!empty($id_array)) {
+            $this->mongo_db->where_in('_id', $id_array);
+            $this->mongo_db->set('deleted', true);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update_all('playbasis_merchant_branch_to_client');
+
+        return $update;
     }
 
     private function checkPINCodeExisted($client_id, $site_id, $pin_code)
