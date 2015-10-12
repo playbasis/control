@@ -188,6 +188,7 @@ class Merchant extends MY_Controller
         $this->data['heading_title'] = $this->lang->line('heading_title');
         $this->data['text_no_results'] = $this->lang->line('text_no_results');
         $this->data['form'] = 'merchant/update/' . $merchant_id;
+        $this->data['merchant_id'] = $merchant_id;
 
         $client_id = $this->User_model->getClientId();
         $site_id = $this->User_model->getSiteId();
@@ -339,6 +340,43 @@ class Merchant extends MY_Controller
         }
 
         $this->getForm($merchant_id);
+    }
+
+    public function listBranch($merchant_id = null)
+    {
+        if (!$this->validateAccess()) {
+            echo "<script>alert('" . $this->lang->line('error_access') . "'); history.go(-1);</script>";
+            die();
+        }
+
+        if(!empty($merchant_id)){
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $client_id = $this->User_model->getClientId();
+                $site_id = $this->User_model->getSiteId();
+
+                if ($this->User_model->getClientId()) {
+
+                    $merchant_info = $this->Merchant_model->retrieveMerchant($merchant_id);
+
+                    if (!empty($merchant_info['branches'])) {
+                        $tmpArrBranchID = array();
+                        foreach ($merchant_info['branches'] as $branch) {
+                            array_push($tmpArrBranchID, $branch['b_id']);
+                        }
+
+                        $branches = $this->Merchant_model->retrieveBranches($client_id, $site_id, $tmpArrBranchID);
+
+                        foreach($branches as &$branch)
+                            $branch['_id'] = $branch['_id']."";
+
+                        echo json_encode($branches);
+                    }
+                }
+            }
+        }else{
+            $this->output->set_status_header('401');
+            echo json_encode(array('status' => 'error'));
+        }
     }
 
     public function updateBranch()
@@ -509,7 +547,6 @@ class Merchant extends MY_Controller
                     }
 
                     $branches = $this->Merchant_model->retrieveBranches($client_id, $site_id, $tmpArrBranchID);
-                    $branches_json = $this->Merchant_model->retrieveBranchesJSON($client_id, $site_id, $tmpArrBranchID);
                 }
             }
 
@@ -548,12 +585,6 @@ class Merchant extends MY_Controller
             $this->data['branches_list'] = $branches;
         } else {
             $this->data['branches_list'] = '';
-        }
-
-        if (isset($branches_json)) {
-            $this->data['branches_list_json'] = $branches_json;
-        } else {
-            $this->data['branches_list_json'] = '';
         }
 
         $this->load->vars($this->data);

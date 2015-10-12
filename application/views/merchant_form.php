@@ -288,8 +288,6 @@
 
     var merchantGoodsGroupsJSON = <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : "null"; ?>;
 
-    var branchesListJSON = <?php echo isset($branches_list_json) ? $branches_list_json : "null"; ?>;
-
     var $branchesTable = $('#branches-table'),
         $remove = $('#remove'),
         selections = [];
@@ -436,8 +434,9 @@
 
         $("[name='merchant-status']").bootstrapSwitch();
         $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']:not([name*='id'])").bootstrapSwitch();
-
+        <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : "null"; ?>;
         $branchesTable.bootstrapTable({
+            url: baseUrlPath + '/merchant/listBranch/<?php echo isset($merchant_id) ? $merchant_id : '';?>',
             idField: '_id',
             columns: [{
                 field: 'state',
@@ -491,9 +490,11 @@
                 events: operateEvents,
                 formatter: operateFormatter
             }],
-            data: branchesListJSON,
+            //data: branchesListJSON,
+            //resresponseHandler: responseHandler,
             pagination: true,
             search: true,
+            showRefresh: true,
             iconPrefix: 'fa',
             detailView: true,
             detailFormatter: detailFormatter
@@ -535,6 +536,13 @@
         init_mc_goodgroups_item_box();
         init_mc_goodgroups_event();
     });
+
+    function responseHandler(res) {
+        $.each(res.rows, function (i, row) {
+            row.state = $.inArray(row.id, selections) !== -1;
+        });
+        return res;
+    }
 
     function getIdSelections() {
         return $.map($branchesTable.bootstrapTable('getSelections'), function (row) {
