@@ -254,6 +254,8 @@ $route['Email/addBlackList'] = 'email/addBlackList';
 $route['Email/removeBlackList'] = 'email/removeBlackList';
 $route['Email/goods'] = 'email/send_goods';
 $route['Email/recent'] = 'email/recent';
+$route['Email/template/'.ANY_STRING] = 'email/template/$1';
+$route['Email/template'] = 'email/template';
 
 //sms API
 $route['Sms/sendTo'] = 'pb_sms/sendTo';

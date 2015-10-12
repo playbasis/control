@@ -2136,6 +2136,38 @@
                     ]
                 },
                 {
+                    "MethodName": "List Email Template",
+                    "Synopsis": "List email template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Email/template",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                    ]
+                },
+                {
+                    "MethodName": "Get Processed Email Template",
+                    "Synopsis": "Get processed email template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Email/template/:template_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "template_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Send SMS",
                     "Synopsis": "Send SMS to a player.",
                     "HTTPMethod": "POST",
