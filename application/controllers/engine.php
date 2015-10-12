@@ -444,6 +444,7 @@ class Engine extends Quest
 			/* [rule usage] init */
 			$count = 0;
 			$last_jigsaw = null;
+			$last_coupon = null;
 
 			$input['rule_id'] = new MongoId($rule['rule_id']);
 			$input['rule_name'] = $rule['name'];
@@ -761,6 +762,7 @@ class Engine extends Quest
                                     'reward_data' => $goodsData,
                                     'value' => $jigsawConfig['quantity']
                                 );
+                                $last_coupon = $goodsData['code'];
                                 array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                                 if (!$input["test"] && !$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
@@ -774,7 +776,7 @@ class Engine extends Quest
                         }  // close if(isset($exInfo['dynamic']))
                     } elseif($jigsawCategory == 'FEEDBACK') {
                         if (!$input["test"])
-                            $this->processFeedback($jigsawName, $input);
+                            $this->processFeedback($jigsawName, array_merge($input, array('coupon' => $last_coupon)));
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {

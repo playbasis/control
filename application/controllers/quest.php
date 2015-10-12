@@ -1466,6 +1466,7 @@ class Quest extends REST2_Controller
         $to = $email;
         $subject = $input['input']['subject'];
         if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+        if (isset($input['coupon'])) $player['coupon'] = $input['coupon'];
         $message = $this->utility->replace_template_vars($template['body'], $player);
         $response = $this->utility->email($from, $to, $subject, $message);
         $this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
@@ -1506,6 +1507,7 @@ class Quest extends REST2_Controller
         $from = $config['number'];
         $to = $phone;
         if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+        if (isset($input['coupon'])) $player['coupon'] = $input['coupon'];
         $message = $this->utility->replace_template_vars($template['body'], $player);
         $response = $this->twiliomini->sms($from, $to, $message);
         $this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
