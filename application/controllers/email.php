@@ -108,7 +108,8 @@ class Email extends REST2_Controller
 		} else {
 			$message = $this->input->post('message');
 		}
-		$message = $this->utility->replace_template_vars($message, array_merge($player, array('code' => $redeemData['code'])));
+		if (!isset($player['code']) && strpos($message, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
+		$message = $this->utility->replace_template_vars($message, array_merge($player, array('coupon' => $redeemData['code'])));
 
 		/* variables */
 		$email = $player['email'];
@@ -167,6 +168,7 @@ class Email extends REST2_Controller
 		} else {
 			$message = $this->input->post('message');
 		}
+		if (!isset($player['code']) && strpos($message, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
 		$message = $this->utility->replace_template_vars($message, $player);
 
 		/* variables */
@@ -307,6 +309,7 @@ class Email extends REST2_Controller
 				$player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
 				if (!$player)
 					$this->response($this->error->setError('USER_NOT_EXIST'), 200);
+				if (!isset($player['code']) && strpos($result, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
 				$result = $this->utility->replace_template_vars($result, array_merge($player));
 			}
 		} else {

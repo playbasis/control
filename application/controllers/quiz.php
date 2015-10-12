@@ -785,6 +785,7 @@ class Quiz extends REST2_Controller
         $from = EMAIL_FROM;
         $to = $email;
         $subject = $input['subject'];
+        if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
         $message = $this->utility->replace_template_vars($template['body'], $player);
         $response = $this->utility->email($from, $to, $subject, $message);
         $this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
@@ -824,6 +825,7 @@ class Quiz extends REST2_Controller
         $this->load->library('twilio/twiliomini', $config);
         $from = $config['number'];
         $to = $phone;
+        if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
         $message = $this->utility->replace_template_vars($template['body'], $player);
         $response = $this->twiliomini->sms($from, $to, $message);
         $this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
