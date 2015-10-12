@@ -145,7 +145,7 @@ class Engine extends Quest
 
 	private function applyBadgeObjGoodsObj($client_id, $site_id, &$config) {
 		if (isset($config['group_container'])) {
-			foreach ($config['group_container'] as $each) {
+			foreach ($config['group_container'] as &$each) {
 				$this->applyBadgeObjGoodsObj($client_id, $site_id, $each);
 			}
 			return;
