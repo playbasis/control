@@ -191,6 +191,31 @@ class Pb_sms extends REST2_Controller
         $this->response($this->resp->setRespond($results), 200);
     }
 
+    public function template_get($template_id='') {
+        $result = array();
+        if ($template_id) {
+            $template = $this->sms_model->getTemplateByTemplateId($this->site_id, $template_id);
+            if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $template_id), 200);
+            $result = $template['body'];
+            $player_id = $this->input->get('player_id');
+            if ($player_id) {
+                $validToken = array_merge($this->validToken, array(
+                    'cl_player_id' => $player_id
+                ));
+                $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+                if(!$pb_player_id)
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+                if (!$player)
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                $result = $this->utility->replace_template_vars($result, array_merge($player));
+            }
+        } else {
+            $result = $this->sms_model->listTemplates($this->site_id, array('name'), array('_id'));
+        }
+        $this->response($this->resp->setRespond($result), 200);
+    }
+
     private function convert_mongo_date(&$item, $key) {
         if (is_object($item)) {
             if (get_class($item) === 'MongoId') {

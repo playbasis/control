@@ -262,6 +262,8 @@ $route['Sms/sendTo'] = 'pb_sms/sendTo';
 $route['Sms/send'] = 'pb_sms/send';
 $route['Sms/goods'] = 'pb_sms/send_goods';
 $route['Sms/recent'] = 'pb_sms/recent';
+$route['Sms/template/'.ANY_STRING] = 'pb_sms/template/$1';
+$route['Sms/template'] = 'pb_sms/template';
 
 //notification API
 $route['notification/'.ANY_STRING] = 'notification/index/$1';

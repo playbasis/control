@@ -2272,6 +2272,38 @@
                     ]
                 },
                 {
+                    "MethodName": "List SMS Template",
+                    "Synopsis": "List SMS template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Sms/template",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                    ]
+                },
+                {
+                    "MethodName": "Get Processed SMS Template",
+                    "Synopsis": "Get processed SMS template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Sms/template/:template_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "template_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Send Push-Notification",
                     "Synopsis": "Send push notification to a player.",
                     "HTTPMethod": "POST",
