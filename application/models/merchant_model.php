@@ -108,8 +108,8 @@ class Merchant_model extends MY_Model
         $this->mongo_db->set('name', $data['name']);
         $this->mongo_db->set('desc', $data['desc']);
         $this->mongo_db->set('status', $data['status']);
-
-        //TODO: to add branches update
+        
+        $this->mongo_db->push(array('branches' => array('$each' => $data['branches'])));
 
         $this->mongo_db->set('date_modified', new MongoDate());
 
@@ -155,6 +155,80 @@ class Merchant_model extends MY_Model
         $result = $this->mongo_db->get('playbasis_merchant_branch_to_client');
 
         return $result;
+    }
+
+    public function retrieveBranchesJSON($client_id, $site_id, $arrBranchID = array())
+    {
+        $this->set_site_mongodb($this->session->userdata('site_id'));
+
+        $this->mongo_db->select(array('_id','branch_name','pin_code', 'status', 'date_modified'),null);
+
+        $this->mongo_db->where('client_id', new MongoId($client_id));
+        $this->mongo_db->where('site_id', new MongoId($site_id));
+        $this->mongo_db->where('deleted', false);
+
+        $this->mongo_db->where_in('_id', $arrBranchID);
+
+        $results = $this->mongo_db->get('playbasis_merchant_branch_to_client');
+
+        foreach($results as &$result)
+            $result['_id'] = $result['_id']."";
+
+        return json_encode($results);
+    }
+
+    public function updateBranchById($_id, $name = null, $status = null)
+    {
+        $this->mongo_db->where('_id', new MongoID($_id));
+
+        if ($name != null) {
+            $this->mongo_db->set('branch_name', $name);
+        }
+
+        if (!empty($status)) {
+            switch ($status) {
+                case 'Enabled':
+                    $this->mongo_db->set('status', true);
+                    break;
+                case 'Disabled':
+                    $this->mongo_db->set('status', false);
+                    break;
+            }
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_merchant_branch_to_client');
+
+        return $update;
+    }
+
+    public function removeBranchById($id)
+    {
+        if (!empty($id)) {
+            $this->mongo_db->where('_id', new MongoId($id));
+            $this->mongo_db->set('deleted', true);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update('playbasis_merchant_branch_to_client');
+
+        return $update;
+    }
+
+    public function removeBranchesByIdArray($id_array)
+    {
+        if (!empty($id_array)) {
+            $this->mongo_db->where_in('_id', $id_array);
+            $this->mongo_db->set('deleted', true);
+        }
+
+        $this->mongo_db->set('date_modified', new MongoDate());
+
+        $update = $this->mongo_db->update_all('playbasis_merchant_branch_to_client');
+
+        return $update;
     }
 
     private function checkPINCodeExisted($pin_code)
