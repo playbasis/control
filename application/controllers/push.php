@@ -177,21 +177,24 @@ class Push extends MY_Controller
         $admin  =  $group_info['name'] == "Top Administrator" ?true:false;
         $this->data['admin'] = $admin;
 
-        $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
+        if(!$admin) {
+            $paging_data = array('limit' => $per_page, 'start' => $offset, 'sort' => 'sort_order');
 
-        $templates = $this->Push_model->listTemplatesBySiteId($site_id, $paging_data);
-        $total = $this->Push_model->getTotalTemplatesBySiteId($site_id, $paging_data);
+            $templates = $this->Push_model->listTemplatesBySiteId($site_id, $paging_data);
+            $total = $this->Push_model->getTotalTemplatesBySiteId($site_id, $paging_data);
 
-        foreach ($templates as $template) {
-            if(!$template['deleted']){
-                $this->data['templates'][] = array(
-                    '_id' => $template['_id'],
-                    'name' => $template['name'],
-                    'body' => $template['body'],
-                    'status' => $template['status'],
-                    'sort_order'  => $template['sort_order'],
-                    'selected' => ($this->input->post('selected') && in_array($template['_id'], $this->input->post('selected'))),
-                );
+            foreach ($templates as $template) {
+                if (!$template['deleted']) {
+                    $this->data['templates'][] = array(
+                        '_id' => $template['_id'],
+                        'name' => $template['name'],
+                        'body' => $template['body'],
+                        'status' => $template['status'],
+                        'sort_order' => $template['sort_order'],
+                        'selected' => ($this->input->post('selected') && in_array($template['_id'],
+                                $this->input->post('selected'))),
+                    );
+                }
             }
         }
 
@@ -209,39 +212,42 @@ class Push extends MY_Controller
             $this->data['success'] = '';
         }
 
-        $config['total_rows'] = $total;
-        $config['per_page'] = $per_page;
-        $config["uri_segment"] = 3;
+        if(!$admin) {
 
-        $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
+            $config['total_rows'] = $total;
+            $config['per_page'] = $per_page;
+            $config["uri_segment"] = 3;
 
-        $config['next_link'] = 'Next';
-        $config['next_tag_open'] = "<li class='page_index_nav next'>";
-        $config['next_tag_close'] = "</li>";
+            $config['num_links'] = NUMBER_OF_ADJACENT_PAGES;
 
-        $config['prev_link'] = 'Prev';
-        $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
-        $config['prev_tag_close'] = "</li>";
+            $config['next_link'] = 'Next';
+            $config['next_tag_open'] = "<li class='page_index_nav next'>";
+            $config['next_tag_close'] = "</li>";
 
-        $config['num_tag_open'] = '<li class="page_index_number">';
-        $config['num_tag_close'] = '</li>';
+            $config['prev_link'] = 'Prev';
+            $config['prev_tag_open'] = "<li class='page_index_nav prev'>";
+            $config['prev_tag_close'] = "</li>";
 
-        $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
-        $config['cur_tag_close'] = '</a></li>';
+            $config['num_tag_open'] = '<li class="page_index_number">';
+            $config['num_tag_close'] = '</li>';
 
-        $config['first_link'] = 'First';
-        $config['first_tag_open'] = '<li class="page_index_nav next">';
-        $config['first_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="page_index_number active"><a>';
+            $config['cur_tag_close'] = '</a></li>';
 
-        $config['last_link'] = 'Last';
-        $config['last_tag_open'] = '<li class="page_index_nav prev">';
-        $config['last_tag_close'] = '</li>';
+            $config['first_link'] = 'First';
+            $config['first_tag_open'] = '<li class="page_index_nav next">';
+            $config['first_tag_close'] = '</li>';
 
-        $this->pagination->initialize($config);
+            $config['last_link'] = 'Last';
+            $config['last_tag_open'] = '<li class="page_index_nav prev">';
+            $config['last_tag_close'] = '</li>';
 
-        $this->data['pagination_links'] = $this->pagination->create_links();
-        $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
-        $this->data['pagination_total_rows'] = $config["total_rows"];
+            $this->pagination->initialize($config);
+
+            $this->data['pagination_links'] = $this->pagination->create_links();
+            $this->data['pagination_total_pages'] = ceil(floatval($config["total_rows"]) / $config["per_page"]);
+            $this->data['pagination_total_rows'] = $config["total_rows"];
+        }
 
         $this->data['main'] = 'push';
         $this->data['setting_group_id'] = $setting_group_id;
