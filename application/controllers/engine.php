@@ -765,7 +765,7 @@ class Engine extends Quest
                                 $last_coupon = $goodsData['code'];
                                 array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
-                                if (!$input["test"] && !$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
+                                if (!$input["test"] && !$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData, $goodsData);
 
                                 break;
                             default:
@@ -899,7 +899,7 @@ class Engine extends Quest
         }
     }
 
-    private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData) {
+    private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData, $goodsData) {
         $domain_name = $validToken['domain_name'];
 
         $player = array(
@@ -913,11 +913,24 @@ class Engine extends Quest
         $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '', $event['reward_data']['name']);
 
         // log event - reward, goods
-        $this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
+        /*$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
             'reward_id' => $jigsawConfig['reward_id'],
             'reward_name' => $jigsawConfig['reward_name'],
             'item_id' => $jigsawConfig['item_id'],
-            'amount' => $jigsawConfig['quantity'])));
+            'amount' => $jigsawConfig['quantity'])));*/
+
+        // log event - goods
+        $this->tracker_model->trackGoods(array_merge($validToken, array(
+            'pb_player_id' => $input['pb_player_id'],
+            'goods_id' => new MongoId($goodsData['goods_id']),
+            'goods_name' => $goodsData['name'],
+            'is_sponsor' => false,
+            'amount' => $jigsawConfig['quantity'],
+            'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
+            'action_name' => 'redeem_goods',
+            'action_icon' => 'fa-icon-shopping-cart',
+            'message' => $eventMessage
+        )));
 
         // publish - node stream
         $this->node->publish(array_merge($input, array(
