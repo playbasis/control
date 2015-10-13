@@ -506,6 +506,7 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+                                /*
                                 //publish to push notification
                                 $this->sendNotification(array(
                                     'title' => $eventMessage,
@@ -514,6 +515,7 @@ class Engine extends Quest
                                     'value' => $jigsawConfig['quantity'],
                                     'text' => $eventMessage
                                 ),$player,$eventMessage);
+								*/
 
                                 if($lv > 0) {
                                     $eventMessage = $this->levelup($lv, $apiResult, $input);
@@ -530,6 +532,7 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+									/*
                                     //publish to push notification
                                     $this->sendNotification(array(
                                         'title' => $eventMessage,
@@ -538,6 +541,7 @@ class Engine extends Quest
                                         'value' => $lv,
                                         'text' => $eventMessage
                                     ),$player,$eventMessage);
+									*/
                                 }
                             }  // close if (!$input["test"])
                         } else if(is_null($jigsawConfig['item_id']) || $jigsawConfig['item_id'] == '') {
@@ -567,6 +571,7 @@ class Engine extends Quest
                                                 $fbData['facebook_id'],
                                                 $eventMessage,
                                                 '');
+										/*
                                         //publish to push notification
                                         $this->sendNotification(array(
                                             'title' => $eventMessage,
@@ -575,6 +580,7 @@ class Engine extends Quest
                                             'value' => $lv,
                                             'text' => $eventMessage
                                         ),$player,$eventMessage);
+										*/
                                     }
                                 }  // close if (!$input["test"])
                             } else {
@@ -623,6 +629,7 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+								/*
                                 //publish to push notification
                                 $this->sendNotification(array(
                                     'title' => $eventMessage,
@@ -631,6 +638,7 @@ class Engine extends Quest
                                     'value' => $jigsawConfig['quantity'],
                                     'text' => $eventMessage
                                 ),$player,$eventMessage);
+								*/
                             }  // close if (!$input["test"])
                         } else {
                             switch($jigsawConfig['reward_name']) {
@@ -682,6 +690,7 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+									/*
                                     //publish to push notification
                                     $this->sendNotification(array(
                                         'title' => $eventMessage,
@@ -690,6 +699,7 @@ class Engine extends Quest
                                         'value' => $jigsawConfig['quantity'],
                                         'text' => $eventMessage
                                     ),$player,$eventMessage);
+									*/
                                     break;
                                 }  // close if (!$input["test"])
                                 break;
@@ -880,6 +890,7 @@ class Engine extends Quest
         if ($fbData)
             $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
 
+		/*
         // publish - push notification
         $this->sendNotification(array(
             'title' => $eventMessage,
@@ -888,6 +899,7 @@ class Engine extends Quest
             'value' => $jigsawConfig['quantity'],
             'text' => $eventMessage
         ), $player, $eventMessage);
+		*/
     }
 
 	public function test_get()
