@@ -196,21 +196,17 @@ class Push_model extends MY_Model
         $this->set_site_mongodb($this->session->userdata('site_id'));
 
         $client_id = isset($data['client_id']) && !empty($data['client_id']) ? new MongoId($data['client_id']) : null;
-        if($this->getIosSetup($client_id)){
+        if($this->getAndroidSetup($client_id)){
             $this->mongo_db->where('client_id', $client_id);
-            $this->mongo_db->set('env', $data['push-env']);
-            $this->mongo_db->set('certificate', $data['push-certificate']);
-            $this->mongo_db->set('password', $data['push-password']);
-            $this->mongo_db->set('ca', $data['push-ca']);
+            $this->mongo_db->set('api_key', $data['push-key']);
+            $this->mongo_db->set('sender_id', $data['push-sender']);
             $this->mongo_db->set('date_modified', new MongoDate(strtotime(date("Y-m-d H:i:s"))));
             $this->mongo_db->update('playbasis_push_android');
         }else{
             $this->mongo_db->insert('playbasis_push_android', array(
                 'client_id' => $client_id,
-                'env' => $data['push-env'],
-                'certificate' => $data['push-certificate'],
-                'password' => $data['push-password'] ,
-                'ca' => $data['push-ca'],
+                'api_key' => $data['push-key'],
+                'sender_id' => $data['push-sender'],
                 'date_modified' => new MongoDate(strtotime(date("Y-m-d H:i:s"))),
                 'date_added' => new MongoDate(strtotime(date("Y-m-d H:i:s")))
             ));

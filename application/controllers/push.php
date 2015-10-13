@@ -354,10 +354,8 @@ class Push extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
         $this->data['heading_title'] = $this->lang->line('heading_title');
 
-        $this->form_validation->set_rules('push-env', $this->lang->line('push-env'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('push-certificate', $this->lang->line('push-certificate'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('push-password', $this->lang->line('push-password'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('push-ca', $this->lang->line('push-ca'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('push-key', $this->lang->line('push-key'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('push-sender', $this->lang->line('push-sender'), 'trim|required|xss_clean');
 
         $setting_group_id = $this->User_model->getAdminGroupID();
         $this->data['push'] = $this->Push_model->getAndroidSetup($this->User_model->getUserGroupId() != $setting_group_id ? $this->User_model->getClientId() : null);
@@ -371,7 +369,7 @@ class Push extends MY_Controller
             }
         }
 
-        $this->data['main'] = 'push_setup';
+        $this->data['main'] = 'push_android';
         $this->load->vars($this->data);
         $this->render_page('template');
     }
