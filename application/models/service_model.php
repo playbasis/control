@@ -813,10 +813,11 @@ class Service_model extends MY_Model
     }
 
     public function findCountryByDialCode($dialCode) {
+        if ($dialCode == '+1') return 'United States';
         $this->mongo_db->where('d_code', $dialCode);
         $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('countries');
-        return $results ? $results[0] : null;
+        return $results ? $results[0]['name'] : null;
     }
 
     public function countApiUsage($client_id, $from, $to=null) {

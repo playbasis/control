@@ -357,7 +357,7 @@ $email = 'pechpras@playbasis.com';
 				$client['company'],
 				$client['email'],
 				$client['mobile'],
-				$country['name'],
+				$country,
 				datetimeMongotoReadable($client['date_added']), // registration date
 				isset($client['paying_ever']) ? 1 : 0, // paying ever
 				$plan['price'] > 0 || ($plan['price'] <= 0 && $plan_id != FREE_PLAN) ? 1 : 0, // active paying
