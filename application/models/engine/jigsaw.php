@@ -642,7 +642,7 @@ class jigsaw extends MY_Model
 	}
 	public function getGoods($site_id, $goodsId) {
 		$this->set_site_mongodb($site_id);
-		$this->mongo_db->select(array('goods_id', 'name', 'description', 'image', 'per_user', 'quantity', 'group'));
+		$this->mongo_db->select(array('goods_id', 'name', 'description', 'image', 'per_user', 'quantity', 'group', 'code'));
 		$this->mongo_db->where(array(
 			'site_id' => $site_id,
 			'goods_id' => $goodsId,
