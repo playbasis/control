@@ -332,10 +332,12 @@ $email = 'pechpras@playbasis.com';
 		$m0 = date('Y-m-d', strtotime('first day of this month'));
 		$m1 = date('Y-m-d', strtotime('first day of last month'));
 		$m2 = date('Y-m-d', strtotime('first day of -2 month'));
-		$tmpfname = tempnam('/tmp', 'listClientRegistration');
+		$csv1 = tempnam('/tmp', 'list-customers');
+		$csv2 = tempnam('/tmp', 'registration-daily');
+		$csv3 = tempnam('/tmp', 'registration-monthly');
 
-		/* main */
-		$fp = fopen($tmpfname, 'w');
+		/* CSV1 */
+		$fp = fopen($csv1, 'w');
 		$clients = $this->client_model->listAllActiveClients();
 		$cache_c = array();
 		$cache_p = array();
@@ -372,16 +374,62 @@ $email = 'pechpras@playbasis.com';
 		}
 		fclose($fp);
 
+		/* calculate registration frequency */
+		$f_daily = array();
+		$f_monthly = array();
+		foreach ($clients as $client) {
+			$d = $client['date_added']->sec;
+			$k1 = date('Y-m-d', $d);
+			$k2 = date('Y-m', $d);
+			if (!isset($f_daily[$k1])) $f_daily[$k1] = 0;
+			$f_daily[$k1]++;
+			if (!isset($f_monthly[$k2])) $f_monthly[$k2] = 0;
+			$f_monthly[$k2]++;
+		}
+
+		/* CSV 2 */
+		$fp = fopen($csv2, 'w');
+		$cur = min(array_keys($f_daily));
+		$end = date('Y-m-d');
+		$sum = 0;
+		while ($cur <= $end) {
+			$n = isset($f_daily[$cur]) ? $f_daily[$cur] : 0;
+			$sum += $n;
+			fputcsv($fp, array($cur, $n, $sum));
+			$cur = date('Y-m-d', strtotime('+1 day', strtotime($cur)));
+		}
+		fclose($fp);
+
+		/* CSV 3 */
+		$fp = fopen($csv3, 'w');
+		$cur = min(array_keys($f_monthly));
+		$end = date('Y-m');
+		$sum = 0;
+		while ($cur <= $end) {
+			$n = isset($f_monthly[$cur]) ? $f_monthly[$cur] : 0;
+			$sum += $n;
+			$y_m = explode('-', $cur);
+			fputcsv($fp, array($y_m[0], $y_m[1], $n, $sum));
+			$cur = date('Y-m', strtotime('+1 month', strtotime($cur)));
+		}
+		fclose($fp);
+
 		/* email */
 		$from = EMAIL_FROM;
-		$to = array('pechpras@playbasis.com', 'pascal@playbasis.com', 'napada.w@playbasis.com');
+		$to = array('pechpras@playbasis.com');//, 'pascal@playbasis.com', 'napada.w@playbasis.com');
 		$subject = '[Playbasis] Dashboard User Registration';
-		$message = 'The attachment is a CSV file for the data about current user registration (as of '.date('Y-m-d').').';
+		$message = 'The attachment includes 3 CSV files for (1) list of customers (2) statistics of daily registration and (3) statistics of monthly registration (as of '.date('Y-m-d').').';
 		$html = $this->parser->parse('message.html', array('firstname' => 'Playbasis', 'lastname' => 'Team', 'message' => $message), true);
-		$response = $this->utility->email($from, $to, $subject, $html, $message, array($tmpfname => 'user-registration_'.date('Y-m-d').'.csv'));
+		$response = $this->utility->email($from, $to, $subject, $html, $message, array(
+			$csv1 => 'list-customers_'.date('Y-m-d').'.csv',
+			$csv2 => 'registration-daily_'.date('Y-m-d').'.csv',
+			$csv3 => 'registration-monthly_'.date('Y-m-d').'.csv',
+		));
 		$this->email_model->log(EMAIL_TYPE_CLIENT_REGISTRATION, null, null, $response, $from, $to, $subject, $html);
 
-		unlink($tmpfname);
+		unlink($csv1);
+		unlink($csv2);
+		unlink($csv3);
 	}
 
 	public function insertCountries() {
