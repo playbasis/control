@@ -161,12 +161,13 @@ class Push extends REST2_Controller
             'text' => 'description test',//$data['text'],
             'status' => $data['status']
         );*/
+
         foreach($list_device as $device)
         {
             $notificationInfo = array(
                 'device_token' => $device['device_token'],
                 //'messages' => $this->input->post('msg'),
-                'messages' => 'Congratulations',
+                'messages' => $data['message'],
                 'data' => $data,
                 'badge_number' => 1
             );
