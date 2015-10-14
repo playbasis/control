@@ -364,8 +364,17 @@ class Player extends REST2_Controller
 			$timestamp = strtotime($birthdate);
 			$playerInfo['birth_date'] = date('Y-m-d', $timestamp);
 		}
-
+		$referral_code = $this->input->post('code');
 		$anonymous = $this->input->post('anonymous');
+
+		if ($anonymous && $referral_code) $this->response($this->error->setError('ANONYMOUS_CANNOT_REFERRAL'), 200);
+
+		// check referral code
+		$playerA = null;
+		if ($referral_code) {
+			$playerA = $this->player_model->findPlayerByCode($this->validToken["site_id"], $referral_code, array('cl_player_id'));
+			if (!$playerA) $this->response($this->error->setError('REFERRAL_CODE_INVALID'), 200);
+		}
 
 		//check anonymous feature depend on plan
 		if ($anonymous) {
@@ -395,6 +404,47 @@ class Player extends REST2_Controller
 
 		$pb_player_id = $this->player_model->createPlayer(
 			array_merge($this->validToken, $playerInfo), $player_limit);
+
+		/* trigger reward for referral program (if any) */
+		if ($playerA) {
+			$inviteAction = $this->client_model->getAction(array(
+				'client_id' => $this->validToken["client_id"],
+				'site_id' => $this->validToken['site_id'],
+				'action_name' => 'invite',
+			));
+			if(!$inviteAction)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+
+			$invitedAction = $this->client_model->getAction(array(
+				'client_id' => $this->validToken["client_id"],
+				'site_id' => $this->validToken['site_id'],
+				'action_name' => 'invited',
+			));
+			if(!$invitedAction)
+				$this->response($this->error->setError('ACTION_NOT_FOUND'), 200);
+
+			$engine = new Engine();
+
+			// A invite B
+			$input = array_merge($this->validToken, array(
+				'pb_player_id' => $playerA['_id'],
+				'action_id' => $inviteAction['action_id'],
+				'action_name' => 'invite',
+				'url' => $player_id,
+				'test' => false
+			));
+			$engine->processRule($input, $this->validToken, null, null);
+
+			// B invited by A
+			$input = array_merge($this->validToken, array(
+				'pb_player_id' => $pb_player_id,
+				'action_id' => $invitedAction['action_id'],
+				'action_name' => 'invited',
+				'url' => $playerA['cl_player_id'],
+				'test' => false
+			));
+			$engine->processRule($input, $this->validToken, null, null);
+		}
 
 		/* track action=register automatically after creating a new player */
 		$action_name = 'register';

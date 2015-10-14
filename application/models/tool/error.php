@@ -252,8 +252,12 @@ class Error extends CI_Model
             $errorData['error_code'] = '2001';
             break;
         case 'PIN_CODE_INVALID':
-            $errorData['message'] = "PIN Code invalid";
+            $errorData['message'] = "PIN code is invalid";
             $errorData['error_code'] = '2101';
+            break;
+        case 'REFERRAL_CODE_INVALID':
+            $errorData['message'] = "Referral code is invalid";
+            $errorData['error_code'] = '2201';
             break;
         case 'ANONYMOUS_NOT_FOUND':
             $errorData['message'] = "Anonymous not available";
@@ -262,6 +266,10 @@ class Error extends CI_Model
         case 'ANONYMOUS_SESSION_NOT_VALID':
             $errorData['message'] = "Anonymous session not valid";
             $errorData['error_code'] = '1103';
+            break;
+        case 'ANONYMOUS_CANNOT_REFERRAL':
+            $errorData['message'] = "Anonymous cannot use referral code";
+            $errorData['error_code'] = '1104';
             break;
         default:
             $errorData['message'] = "Unknown";

@@ -2253,6 +2253,16 @@ class Player_model extends MY_Model
         return $this->mongo_db->get('playbasis_player');
     }
 
+    public function findPlayerByCode($site_id, $code, $fields) {
+        $this->set_site_mongodb($site_id);
+        if ($fields) $this->mongo_db->select($fields);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
     public function findRecentPlayers($days) {
         $this->set_site_mongodb(0);
         $d = strtotime("-".$days." day");

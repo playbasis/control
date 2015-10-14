@@ -311,6 +311,13 @@
 							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
 						},
 						{
+							"Name": "code",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "referral code of another player for invitation system"
+						},
+						{
 						  "Name": "anonymous",
 						  "Required": "N",
 						  "Default": "",
