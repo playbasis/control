@@ -1087,8 +1087,8 @@
                     ]
                 },
                 {
-                    "MethodName": "Player Unique Code",
-                    "Synopsis": "Returns generated unique code of player",
+                    "MethodName": "Player Referral Code",
+                    "Synopsis": "Returns generated referral code of player",
                     "HTTPMethod": "GET",
                     "URI": "/Player/:id/code",
                     "RequiresOAuth": "N",
