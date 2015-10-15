@@ -128,6 +128,9 @@ define('STRIPE_USER_AGENT', 'Stripe');
 
 define('DEMO_SITE_ID', '52ea1eac8d8c89401c0000e5');
 
+define('GECKO_API_KEY', '5924c09370df5d4dc7a21e45bbb8b397');
+define('GECKO_URL', 'https://push.geckoboard.com/v1/send/');
+
 define('DATE_FREE_ACCOUNT_SHOULD_SETUP_MOBILE', '2015-06-01');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

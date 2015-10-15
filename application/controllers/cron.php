@@ -17,6 +17,15 @@ define('DAYS_TO_BECOME_ACTIVE', 3);
 define('ENERGY_UPDATER_THRESHOLD', 5);
 define('LIMIT_PLAYERS_QUERY', 10000);
 
+define('WIDGET_NUMBER_OF_CUSTOMERS', '162178-2d92d208-ee07-4af5-bace-d00d3afb3f9a');
+define('WIDGET_NUMBER_OF_ACTIVE_USAGE_CUSTOMERS', '162178-cd08d274-2fe1-46bd-b74c-dec97ccc836f');
+define('WIDGET_NUMBER_OF_ACTIVE_PAYING_CUSTOMERS', '162178-9abd1a86-9d14-41b9-913b-f38bfa8f201b');
+define('WIDGET_TOP_COUNTRIES', '162178-7ac54db0-4f14-40b3-a58b-c4a9a2cc7bcb');
+define('WIDGET_DAILY_REGISTRATION', '162178-e6c44900-fa06-4247-bb32-1b3e0b9d0b3d');
+define('WIDGET_MONTHLY_REGISTRATION', '162178-2cfd8982-d2c9-4be2-b8ca-d9cc5974f945');
+define('WIDGET_TOTAL_CUSTOMERS_TREND', '162178-b5410e56-fe32-4eba-b9d3-47d1c5b4ac22');
+define('WIDGET_PERCENT_GROWTH', '162178-0fc4b737-1ee2-41cb-886f-be7d0dc738de');
+
 class Cron extends CI_Controller
 {
 	public function __construct()
@@ -327,6 +336,9 @@ $email = 'pechpras@playbasis.com';
 	}
 
 	public function listClientRegistration() {
+		$this->load->library('RestClient');
+		$this->restclient->initialize(array('server' => GECKO_URL));
+
 		/* init */
 		set_time_limit(0);
 		$m0 = date('Y-m-d', strtotime('first day of this month'));
@@ -335,6 +347,10 @@ $email = 'pechpras@playbasis.com';
 		$csv1 = tempnam('/tmp', 'list-customers');
 		$csv2 = tempnam('/tmp', 'registration-daily');
 		$csv3 = tempnam('/tmp', 'registration-monthly');
+		/* stat */
+		$f_country = array();
+		$c_active_usage = 0;
+		$c_active_paying = 0;
 
 		/* CSV1 */
 		$fp = fopen($csv1, 'w');
@@ -347,12 +363,25 @@ $email = 'pechpras@playbasis.com';
 			$d_code = $mobile[0];
 			if (!isset($cache_c[$d_code])) $cache_c[$d_code] = $this->service_model->findCountryByDialCode($mobile[0]);
 			$country = $cache_c[$d_code];
+			/* stat: country */
+			if ($country) {
+				if (!isset($f_country[$country])) $f_country[$country] = 0;
+				$f_country[$country]++;
+			}
 			/* plan */
 			$record = $this->client_model->getLatestPermissionByClientId($client['_id']);
 			$plan_id = $record['plan_id'];
 			if (!isset($cache_p[$plan_id.""])) $cache_p[$plan_id.""] = $this->client_model->getPlanById($plan_id);
 			$plan = $cache_p[$plan_id.""];
 			$plan['price'] = isset($plan['price']) ? $plan['price'] : DEFAULT_PLAN_PRICE;
+			$active_paying = $plan['price'] > 0 || ($plan['price'] <= 0 && $plan_id != FREE_PLAN) ? 1 : 0;
+			/* stat: active paying */
+			if ($active_paying) $c_active_paying++;
+			$c_m2 = $this->service_model->countApiUsage($client['_id'], $m2, $m1);
+			$c_m1 = $this->service_model->countApiUsage($client['_id'], $m1, $m0);
+			$c_m0 = $this->service_model->countApiUsage($client['_id'], $m0);
+			/* stat: active usage */
+			if ($c_m1 || $c_m0) $c_active_usage++;
 			$data = array(
 				$client['_id']."",
 				$client['first_name'],
@@ -363,17 +392,61 @@ $email = 'pechpras@playbasis.com';
 				$country,
 				datetimeMongotoReadable($client['date_added']), // registration date
 				isset($client['paying_ever']) ? 1 : 0, // paying ever
-				$plan['price'] > 0 || ($plan['price'] <= 0 && $plan_id != FREE_PLAN) ? 1 : 0, // active paying
+				$active_paying, // active paying
 				$plan['name'],
 				$plan['price'],
 				datetimeMongotoReadable($record['date_modified']), // plan subscription date
-				$this->service_model->countApiUsage($client['_id'], $m2, $m1), // API usage for M-2
-				$this->service_model->countApiUsage($client['_id'], $m1, $m0), // API usage for M-1
-				$this->service_model->countApiUsage($client['_id'], $m0), // API usage for M
+				$c_m2, // API usage for M-2
+				$c_m1, // API usage for M-1
+				$c_m0, // API usage for M
 			);
 			fputcsv($fp, $data);
 		}
 		fclose($fp);
+
+		/* stat: customers */
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'item' => array(
+				array(
+					'value' => count($clients),
+					'text' => 'Total customers',
+				)
+			),
+		));
+		$result = $this->restclient->post(WIDGET_NUMBER_OF_CUSTOMERS, json_encode($data), 'json');
+
+		/* stat: active usage customers */
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'item' => array(
+				array(
+					'value' => $c_active_usage,
+					'text' => 'Total active customers',
+				)
+			),
+		));
+		$result = $this->restclient->post(WIDGET_NUMBER_OF_ACTIVE_USAGE_CUSTOMERS, json_encode($data), 'json');
+
+		/* stat: active paying customers */
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'item' => array(
+				array(
+					'value' => $c_active_paying,
+					'text' => 'Total paying customers',
+				)
+			),
+		));
+		$result = $this->restclient->post(WIDGET_NUMBER_OF_ACTIVE_PAYING_CUSTOMERS, json_encode($data), 'json');
+
+		/* stat: top countries */
+		$items = array();
+		arsort($f_country);
+		foreach ($f_country as $country => $f) {
+			$items[] = array('label' => $country, 'value' => $f);
+		}
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'items' => $items,
+		));
+		$result = $this->restclient->post(WIDGET_TOP_COUNTRIES, json_encode($data), 'json');
 
 		/* calculate registration frequency */
 		$f_daily = array();
@@ -390,30 +463,108 @@ $email = 'pechpras@playbasis.com';
 
 		/* CSV 2 */
 		$fp = fopen($csv2, 'w');
-		$cur = min(array_keys($f_daily));
+		$cur = min(min(array_keys($f_daily)), '2013-01-01');
 		$end = date('Y-m-d');
 		$sum = 0;
+		$labels = array();
+		$labels2 = array();
+		$series = array();
+		$series2 = array();
 		while ($cur <= $end) {
 			$n = isset($f_daily[$cur]) ? $f_daily[$cur] : 0;
 			$sum += $n;
+			$labels[] = $cur;
+			$labels2[] = $cur;
+			$series[] = $n;
+			$series2[] = $sum;
 			fputcsv($fp, array($cur, $n, $sum));
 			$cur = date('Y-m-d', strtotime('+1 day', strtotime($cur)));
 		}
 		fclose($fp);
+
+		/* stat: daily registration */
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'x_axis' => array(
+				'labels' => $labels,
+				'type' => 'datetime',
+			),
+			'series' => array(
+				array(
+					'name' => 'Registration',
+					'data' => $series,
+				)
+			)
+		));
+		$result = $this->restclient->post(WIDGET_DAILY_REGISTRATION, json_encode($data), 'json');
+
+		/* stat: total customers trend */
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'x_axis' => array(
+				'labels' => $labels2,
+				'type' => 'datetime',
+			),
+			'series' => array(
+				array(
+					'name' => 'Total Customers',
+					'data' => $series2,
+				)
+			)
+		));
+		$result = $this->restclient->post(WIDGET_TOTAL_CUSTOMERS_TREND, json_encode($data), 'json');
 
 		/* CSV 3 */
 		$fp = fopen($csv3, 'w');
 		$cur = min(array_keys($f_monthly));
 		$end = date('Y-m');
 		$sum = 0;
+		$labels = array();
+		$labels2 = array();
+		$series = array();
+		$series2 = array();
+		$last = 0;
 		while ($cur <= $end) {
 			$n = isset($f_monthly[$cur]) ? $f_monthly[$cur] : 0;
 			$sum += $n;
 			$y_m = explode('-', $cur);
+			$labels[] = $cur;
+			if ($cur >= '2013-06') $labels2[] = $cur;
+			$series[] = $n;
+			if ($cur >= '2013-06') $series2[] = $last != 0 ? ($sum - $last)/$last*100 : 0;
+			$last = $sum;
 			fputcsv($fp, array($y_m[0], $y_m[1], $n, $sum));
 			$cur = date('Y-m', strtotime('+1 month', strtotime($cur)));
 		}
 		fclose($fp);
+
+		/* stat: monthly registration */
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'x_axis' => array(
+				'labels' => $labels,
+				'type' => 'datetime',
+			),
+			'series' => array(
+				array(
+					'name' => 'Registration',
+					'data' => $series,
+				)
+			)
+		));
+		$result = $this->restclient->post(WIDGET_MONTHLY_REGISTRATION, json_encode($data), 'json');
+
+		/* stat: % growth (month over month) */
+		$data = array('api_key' => GECKO_API_KEY, 'data' => array(
+			'x_axis' => array(
+				'labels' => $labels2,
+				'type' => 'datetime',
+			),
+			'series' => array(
+				array(
+					'name' => 'Growth',
+					'data' => $series2,
+				)
+			)
+		));
+		$result = $this->restclient->post(WIDGET_PERCENT_GROWTH, json_encode($data), 'json');
 
 		/* email */
 		$from = EMAIL_FROM;
