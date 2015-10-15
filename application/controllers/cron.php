@@ -352,6 +352,7 @@ $email = 'pechpras@playbasis.com';
 			$plan_id = $record['plan_id'];
 			if (!isset($cache_p[$plan_id.""])) $cache_p[$plan_id.""] = $this->client_model->getPlanById($plan_id);
 			$plan = $cache_p[$plan_id.""];
+			$plan['price'] = isset($plan['price']) ? $plan['price'] : DEFAULT_PLAN_PRICE;
 			$data = array(
 				$client['_id']."",
 				$client['first_name'],
@@ -364,7 +365,7 @@ $email = 'pechpras@playbasis.com';
 				isset($client['paying_ever']) ? 1 : 0, // paying ever
 				$plan['price'] > 0 || ($plan['price'] <= 0 && $plan_id != FREE_PLAN) ? 1 : 0, // active paying
 				$plan['name'],
-				isset($plan['price']) ? $plan['price'] : DEFAULT_PLAN_PRICE,
+				$plan['price'],
 				datetimeMongotoReadable($record['date_modified']), // plan subscription date
 				$this->service_model->countApiUsage($client['_id'], $m2, $m1), // API usage for M-2
 				$this->service_model->countApiUsage($client['_id'], $m1, $m0), // API usage for M-1
