@@ -14,7 +14,7 @@ $lang['text_no_results']				= 'You do not have any template created';
 
 // Tab
 $lang['tab_template']					= 'Template';
-$lang['tab_ios']					= 'iOS';
+$lang['tab_ios']					    = 'iOS';
 $lang['tab_android']					= 'Android';
 
 // Column
