@@ -1,4 +1,4 @@
-​<?php
+<?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once APPPATH . '/libraries/REST2_Controller.php';
 class Push extends REST2_Controller
@@ -7,19 +7,11 @@ class Push extends REST2_Controller
     {
         parent::__construct();
         $this->load->model('auth_model');
-        $this->load->model('goods_model');
         $this->load->model('player_model');
         $this->load->model('push_model');
-        $this->load->model('sms_model');
-        $this->load->model('redeem_model');
-        $this->load->model('tool/error', 'error');
-        $this->load->model('tool/utility', 'utility');
-        $this->load->model('tool/respond', 'resp');
-        $this->load->model('tool/node_stream', 'node');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
-
     private function sendEngine($type, $from, $to, $message)
     {
         // TODO: implement push notification here
@@ -141,8 +133,9 @@ class Push extends REST2_Controller
         $this->player_model->storeDeviceToken($deviceInfo);
         $this->response($this->resp->setRespond(''), 200);
     }
-    public function adhocSend_post($data)
+    public function adhocSend_post()
     {
+
         $player_id =$this->input->post('player_id');
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -162,13 +155,17 @@ class Push extends REST2_Controller
             'status' => $data['status']
         );*/
 
+
         foreach($list_device as $device)
         {
             $notificationInfo = array(
                 'device_token' => $device['device_token'],
                 //'messages' => $this->input->post('msg'),
-                'messages' => $data['message'],
-                'data' => $data,
+                'messages' => $this->input->post('message'),
+                'data' => array(
+                    'client_id' => $this->client_id,
+                    'site_id' => $this->site_id
+                ),
                 'badge_number' => 1
             );
             $this->push_model->initial($notificationInfo,$device['os_type']);
