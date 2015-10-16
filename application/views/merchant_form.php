@@ -436,7 +436,7 @@
         $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']:not([name*='id'])").bootstrapSwitch();
         <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : "null"; ?>;
         $branchesTable.bootstrapTable({
-            url: baseUrlPath + '/merchant/listBranch/<?php echo isset($merchant_id) ? $merchant_id : '';?>',
+            url: baseUrlPath + 'merchant/listBranch/<?php echo isset($merchant_id) ? $merchant_id : '';?>',
             idField: '_id',
             columns: [{
                 field: 'state',
@@ -450,7 +450,7 @@
                 valign: 'middle',
                 editable: {
                     placement: 'right',
-                    url: baseUrlPath + '/merchant/updateBranch/',
+                    url: baseUrlPath + 'merchant/updateBranch/',
                     validate: function(value) {
                         if($.trim(value) == '') {
                             return 'This field is required';
