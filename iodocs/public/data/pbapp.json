@@ -2245,7 +2245,7 @@
 						"Description": "Device model name"
 					  },
 					  {
-						"Name": "device_type",
+						"Name": "os_type",
 						"Required": "Y",
 						"Default": "",
 						"Type": "enumerated",
