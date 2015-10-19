@@ -268,8 +268,8 @@ $route['notification'] = 'notification/index';
 $route['Push/'.ANY_STRING.'/deviceRegistration'] = 'push/deviceRegistration/$1';
 $route['Push/deviceRegistration'] = 'push/deviceRegistration';
 
-$route['Push/'.ANY_STRING.'/adhocSend'] = 'push/send/$1';
-$route['Push/adhocSend'] = 'push/send';
+$route['Push/'.ANY_STRING.'/send'] = 'push/send/$1';
+$route['Push/send'] = 'push/send';
 
 //promo API
 $route['Promo'] = 'promo/list';
