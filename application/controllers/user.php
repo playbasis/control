@@ -18,6 +18,8 @@ class User extends MY_Controller
         $this->load->model('Plan_model');
 //        $this->load->model('Domain_model');
         $this->load->model('App_model');
+        $this->load->model('Merchant_model');
+        $this->load->model('Goods_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -945,12 +947,17 @@ class User extends MY_Controller
         $this->data['title'] = $this->lang->line('title');
 
         if (!$code) {
-            redirect('/login', 'refresh');
+            $this->data['topic_message'] = 'Referral code is required to access this page';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
         }
 
         $player = $this->Player_model->getPlayerByCode($code);
         if (!$player) {
-            $this->data['topic_message'] = 'Your referral code is invalid,';
+            $this->data['topic_message'] = 'Your referral code is invalid.';
             $this->data['message'] = 'Please contact Playbasis.';
             $this->data['main'] = 'partial/something_wrong';
             $this->load->vars($this->data);
@@ -994,6 +1001,150 @@ class User extends MY_Controller
         $this->data['main'] = 'partial/referral_partial';
         $this->load->vars($this->data);
         $this->render_page('template_beforelogin');
+    }
+
+    public function merchant() {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['form'] = 'merchant_verify';
+        $this->data['title'] = $this->lang->line('title');
+
+        $pin = $this->session->userdata('pin');
+        if (!$pin) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $data = $this->input->post();
+                $pin = isset($data['pin']) ? $data['pin'] : null;
+                $error = $pin ? 'Your merchant PIN is invalid' : 'PIN is required';
+                if ($pin && $this->Merchant_model->isValidPin($pin)) {
+                    $error = false;
+                    $this->session->set_userdata(array('pin' => $pin));
+                }
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'You successfully log in to merchant page!' : $error, 'login' => true));
+                    exit();
+                }
+            }
+            $this->data['main'] = 'partial/merchant_login';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+
+        $branch = $this->Merchant_model->getBranchByPin($pin);
+        if (!$branch) {
+            $this->data['topic_message'] = 'Cannot find branch corresponding to the given PIN code.';
+            $this->data['message'] = 'Please contact Playbasis.';
+            $this->data['main'] = 'partial/something_wrong';
+            $this->load->vars($this->data);
+            $this->render_page('template_beforelogin');
+            return;
+        }
+        $branch_id = $branch['_id'];
+        $client_id = $branch['client_id'];
+        $site_id = $branch['site_id'];
+        $merchant = $this->Merchant_model->findMerchantByBranchId($branch_id);
+        $group_list = array_map('user_index_goods_group', $this->Merchant_model->findGoodsByBranchId($branch_id));
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $data = $this->input->post();
+            $group = isset($data['group']) ? $data['group'] : null;
+            $coupon = isset($data['coupon']) ? $data['coupon'] : null;
+            $mark = isset($data['mark']) && $data['mark'];
+            if (!$group) {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'fail', 'message' => 'Goods group is required'));
+                    exit();
+                }
+            }
+            if (!$coupon) {
+                if ($this->input->post('format') == 'json') {
+                    echo json_encode(array('status' => 'fail', 'message' => 'Coupon code is required'));
+                    exit();
+                }
+            }
+
+            $goods_list = array_map('user_index_goods_id', $this->Goods_model->listGoodsByGroupAndCode($group, $coupon, array('goods_id')));
+            if (!$goods_list) {
+                if ($this->input->post('format') == 'json') {
+                    /* invalid = FAIL */
+                    echo json_encode(array('status' => 'fail', 'message' => 'Such coupon code cannot be found for the selected goods'));
+                    exit();
+                }
+            }
+            $redeemed_goods_list = $this->Goods_model->listRedeemedGoods($goods_list, array('goods_id', 'cl_player_id', 'pb_player_id'));
+            $goods_list_redeemed = array_map('user_index_goods_id', $redeemed_goods_list);
+            $verified_goods_list = $this->Goods_model->listVerifiedGoods($goods_list, array('goods_id', 'branch', 'date_added'));
+            $goods_list_verified = array_map('user_index_goods_id', $verified_goods_list);
+            $goods_list_ok = array_diff($goods_list_redeemed, $goods_list_verified); // coupon is redeemed but not yet exercised (found record in "playbasis_goods_to_player", not "playbasis_merchant_goodsgroup_redeem_log")
+            if ($goods_list_ok) {
+                if ($mark) {
+                    $goods_id = $goods_list_ok[0];
+                    $gp = $this->findGoodsToPlayerByGoodsId($goods_id, $redeemed_goods_list);
+                    $this->Goods_model->markAsVerifiedGoods(array(
+                        'client_id' => $client_id,
+                        'site_id' => $site_id,
+                        'goods_id' => $goods_id,
+                        'goods_group' => $group,
+                        'cl_player_id' => $gp['cl_player_id'],
+                        'pb_player_id' => $gp['pb_player_id'],
+                        'branch' => array(
+                            'b_id' => $branch_id,
+                            'b_name' => $branch['branch_name'],
+                        ),
+                    ));
+                }
+                if ($this->input->post('format') == 'json') {
+                    /* valid, redeemed, NOT used = SUCCESS */
+                    echo json_encode(array('status' => 'success', 'message' => 'Coupon is valid'));
+                    exit();
+                }
+            } else {
+                if ($goods_list_redeemed) {
+                    if ($this->input->post('format') == 'json') {
+                        /* valid, redeemed, used = FAIL */
+                        $verified_goods_list = $verified_goods_list[0];
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as it has been used already', 'at' => $verified_goods_list['branch']['b_name'], 'when' => $this->datetimeMongotoReadable($verified_goods_list['date_added'])));
+                        exit();
+                    }
+                } else {
+                    if ($this->input->post('format') == 'json') {
+                        /* valid, NOT redeemed = FAIL */
+                        echo json_encode(array('status' => 'fail', 'message' => 'Coupon is invalid as it is not yet redeemed'));
+                        exit();
+                    }
+                }
+            }
+        }
+        $this->data['merchant'] = $merchant['name'];
+        $this->data['branch'] = $branch['branch_name'];
+        $this->data['group_list'] = $group_list;
+        $this->data['main'] = 'partial/merchant';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
+
+    public function merchant_logout() {
+        $this->load->library('parser');
+        $this->data['meta_description'] = $this->lang->line('meta_description');
+        $this->data['form'] = 'merchant_verify';
+        $this->data['title'] = $this->lang->line('title');
+
+        $this->session->unset_userdata('pin');
+
+        if ($this->input->post('format') == 'json') {
+            echo json_encode(array('status' => 'success', 'message' => 'You successfully log out of merchant page!'));
+            exit();
+        }
+
+        $this->data['main'] = 'partial/merchant_login';
+        $this->load->vars($this->data);
+        $this->render_page('template_beforelogin');
+    }
+
+    private function findGoodsToPlayerByGoodsId($goods_id, $goods_list) {
+        foreach ($goods_list as $goods) {
+            if ($goods['goods_id'] == $goods_id) return $goods;
+        }
+        throw new Exception('Cannot find goods record given goods_id: '.$goods_id);
     }
 
     private function email($to, $subject, $message) {
@@ -1212,4 +1363,25 @@ class User extends MY_Controller
         }
     }
 
+    private function datetimeMongotoReadable($dateTimeMongo)
+    {
+        if ($dateTimeMongo) {
+            if (isset($dateTimeMongo->sec)) {
+                $dateTimeMongo = date("Y-m-d H:i:s", $dateTimeMongo->sec);
+            } else {
+                $dateTimeMongo = $dateTimeMongo;
+            }
+        } else {
+            $dateTimeMongo = "0000-00-00 00:00:00";
+        }
+        return $dateTimeMongo;
+    }
+}
+
+function user_index_goods_group($obj) {
+    return $obj['goods_group'];
+}
+
+function user_index_goods_id($obj) {
+    return $obj['goods_id'];
 }

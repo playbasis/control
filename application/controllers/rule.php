@@ -13,6 +13,7 @@ class Rule extends MY_Controller
         }
 
         $this->load->model('Rule_model');
+        $this->load->model('Push_model');
 
         $lang = get_lang($this->session, $this->config);
         $this->lang->load($lang['name'], $lang['folder']);
@@ -39,6 +40,7 @@ class Rule extends MY_Controller
         $this->load->model('Badge_model');
         $this->load->model('Email_model');
         $this->load->model('Sms_model');
+        $this->load->model('Push_model');
 
         $s_siteId = $this->User_model->getSiteId();
         $s_clientId = $this->User_model->getClientId();
@@ -67,6 +69,7 @@ class Rule extends MY_Controller
         $this->data['feedbackList'] = array();
         $this->data['emailList'] = array();
         $this->data['smsList'] = array();
+        $this->data['pushList'] = array();
 
         if($s_clientId){
             $actionList = $this->Rule_model->getActionJigsawList($site_id, $client_id);
@@ -74,8 +77,10 @@ class Rule extends MY_Controller
             $rewardList = $this->Rule_model->getRewardJigsawList($site_id, $client_id);
             $emailList = $this->Email_model->listTemplatesBySiteId($site_id);
             $smsList = $this->Sms_model->listTemplatesBySiteId($site_id);
-            $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList);
+            $pushList = $this->Push_model->listTemplatesBySiteId($site_id);
+            $feedbackList = $this->Rule_model->getFeedbackJigsawList($site_id, $client_id, $emailList, $smsList,$pushList);
             $groupList = $this->Rule_model->getGroupJigsawList($site_id, $client_id);
+
 
             $this->data['actionList'] = $actionList;
             $this->data['conditionList'] = $conditionList;
@@ -84,6 +89,7 @@ class Rule extends MY_Controller
             $this->data['groupList'] = $groupList;
             $this->data['emailList'] = $emailList;
             $this->data['smsList'] = $smsList;
+            $this->data['pushList'] = $pushList;
         }
 
         $this->data['jsonIcons'] = array();
@@ -122,7 +128,7 @@ class Rule extends MY_Controller
         $actionList = $this->Rule_model->getActionJigsawList($s_siteId, $s_clientId);
         $conditionList = $this->Rule_model->getConditionJigsawList($s_siteId, $s_clientId);
         $rewardList = $this->Rule_model->getRewardJigsawList($s_siteId, $s_clientId);
-
+        $pushList = $this->Push_model->listTemplatesBySiteId($s_siteId);
         $result = $this->Rule_model->getRulesByCombinationId($s_siteId,$s_clientId, array(
             'actionList' => $this->makeListOfId($actionList, 'specific_id'),
             'actionNameDict' => $this->makeDict($actionList, 'specific_id', 'name'),

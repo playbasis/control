@@ -1,7 +1,32 @@
 # Change Log
 
-## [2.2.24](https://github.com/playbasis/control/tree/v2.2.24)
+## [v2.2.25](https://github.com/playbasis/control/tree/v2.2.25)
 
+[Full Changelog](https://github.com/playbasis/control/compare/change_action_of_referral_program...HEAD)
+
+**Implemented enhancements:**
+
+- Rename "code" variable as "coupon" in template description [\#28](https://github.com/playbasis/control/pull/28) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Update merchant branches list table [\#27](https://github.com/playbasis/control/pull/27) ([burachit-playbasis](https://github.com/burachit-playbasis))
+- Feature/impl merchant page for coupon validation [\#26](https://github.com/playbasis/control/pull/26) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- PIN should be unique across client-site [\#25](https://github.com/playbasis/control/pull/25) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+- Increase PIN\_CODE\_LENGTH from 6 to 7 and allow lower-case letters in PIN [\#24](https://github.com/playbasis/control/pull/24) ([thanakij-playbasis](https://github.com/thanakij-playbasis))
+
+**Fixed bugs:**
+
+- Update merchant branches list table [\#27](https://github.com/playbasis/control/pull/27) ([burachit-playbasis](https://github.com/burachit-playbasis))
+
+**Merged pull requests:**
+
+- Feature/push notification [\#29](https://github.com/playbasis/control/pull/29) ([patsita-playbasis](https://github.com/patsita-playbasis))
+
+## [change_action_of_referral_program](https://github.com/playbasis/control/tree/change_action_of_referral_program) (2015-10-07)
+[Full Changelog](https://github.com/playbasis/control/compare/pincode_goodsgroup_status_is_not_save...change_action_of_referral_program)
+
+## [pincode_goodsgroup_status_is_not_save](https://github.com/playbasis/control/tree/pincode_goodsgroup_status_is_not_save) (2015-10-05)
+[Full Changelog](https://github.com/playbasis/control/compare/v2.2.24...pincode_goodsgroup_status_is_not_save)
+
+## [v2.2.24](https://github.com/playbasis/control/tree/v2.2.24) (2015-10-05)
 [Full Changelog](https://github.com/playbasis/control/compare/fix_bug_login_user_didnt_see_menu_of_assigned_plan...v2.2.24)
 
 **Implemented enhancements:**

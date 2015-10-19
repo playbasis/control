@@ -75,15 +75,18 @@
                                                         <td>{{phone_number}}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td align="right"><small>Coupon Code:</small></td>
+                                                        <td align="right"><small>Player Referral Code:</small></td>
                                                         <td>{{code}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Coupon Code:</small></td>
+                                                        <td>{{coupon}}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                         
-
                                 </td>
                             </tr>
                             <tr>

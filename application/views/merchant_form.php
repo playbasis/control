@@ -94,50 +94,20 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade" id="branches-list">
                                         <div class="row-fluid">
-                                            <table data-toggle="table" data-pagination="true">
-                                                <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Branch</th>
-                                                    <th>PIN Code</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <?php
-                                                if (!empty($branches_list)) {
-                                                    $index = 0;
-                                                    foreach ($branches_list as $branch) { ?>
-                                                        <tr>
-                                                            <td><?php echo ++$index; ?></td>
-                                                            <td><?php echo $branch['branch_name']; ?></td>
-                                                            <td><?php echo $branch['pin_code']; ?></td>
-                                                            <td><?php echo $branch['status'] ? 'Enabled' : 'Disabled'; ?></td>
-                                                        </tr>
-                                                    <?php } ?>
-                                                <?php } else { ?>
-                                                    <tr>
-                                                        <td colspan="4" style="text-align: center">No branch found.
-                                                            Create new?
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-                                                </tbody>
+                                            <div id="toolbar">
+                                                <button id="remove" class="btn btn-danger" disabled>
+                                                    <i class="fa fa-remove"></i> Delete
+                                                </button>
+                                            </div>
+                                            <table id="branches-table"
+                                                   data-toolbar="#toolbar"
+                                                   data-search="true">
                                             </table>
                                         </div>
                                     </div>
-                                    <?php //TODO(Rook): Change this to hidden div then us js to populate ?>
                                     <div class="tab-pane fade active in" id="branches-new">
                                         <div class="row-fluid">
-                                            <div class="text-center form-inline">
-                                                <label
-                                                    for="merchant-branch-to-create"><?php echo $this->lang->line('entry_number_to_create'); ?></label>
-                                                <input type="text" class="input-small" id="merchant-branch-to-create">
-                                                <button type="button" id="merchant-branch-to-create-btn" class="btn">Create</button>
-                                            </div>
-                                        </div>
-                                        <div class="row-fluid">
-                                            <table class="table" id="new-branches-table">
+                                            <table class="table table-bordered" id="new-branches-table">
                                                 <thead>
                                                 <tr>
                                                     <th>#</th>
@@ -146,15 +116,22 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr>
-                                                    <td id="branch-index">1</td>
-                                                    <td><input type="text" name="newBranches[0][branchName]" value=""></td>
-                                                    <td><input type="checkbox" name="newBranches[0][status]"
-                                                               data-handle-width="40" checked="checked"></td>
-                                                </tr>
                                                 </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td colspan="3" style="text-align: center">
+                                                        <div class="row-fluid">
+                                                            <div class="offset3 span3">
+                                                                <a class="btn btn-primary btn-block" id="add"><i class="fa fa-plus"></i>&nbsp;Add 1</a>
+                                                            </div>
+                                                            <div class="span3">
+                                                                <a class="btn btn-primary btn-block" id="add5"><i class="fa fa-plus"></i>&nbsp;Add 5</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tfoot>
                                             </table>
-                                            <span class="pull-right"><a class="btn btn-primary" id="add"><i class="fa fa-plus"></i>&nbsp;Add</a></span>
                                         </div>
                                     </div>
                                 </div>
@@ -207,6 +184,15 @@
     </div>
 </div>
 
+<div id="newBranch_emptyElement" class="hide invisible">
+    <table>
+        <tr>
+            <td>{{id}}</td>
+            <td><input type="text" name="newBranches[{{id}}][branchName]" value=""></td>
+            <td><input type="checkbox" name="newBranches[{{id}}][status]" data-handle-width="40" checked="checked"></td>
+        </tr>
+    </table>
+</div>
 <div id="newGoodGroups_emptyElement" class="hide invisible">
     <div class="mc-goodsgroup-item-wrapper" data-mc-goodsgroup-id="{{id}}">
         <div class="box-header box-goodsgroup-header overflow-visible">
@@ -289,8 +275,11 @@
 <link href="<?php echo base_url(); ?>stylesheet/custom/bootstrap-table.min.css" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2.css" rel="stylesheet" type="text/css">
 <link href="<?php echo base_url(); ?>stylesheet/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<?php echo base_url(); ?>javascript/bootstrap/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css">
 <script src="<?php echo base_url(); ?>javascript/custom/bootstrap-switch.min.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/custom/bootstrap-table.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/bootstrap/bootstrap-editable/js/bootstrap-editable.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url(); ?>javascript/custom/bootstrap-table-editable.min.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/select2/select2.min.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/md5.js" type="text/javascript"></script>
 <script src="<?php echo base_url(); ?>javascript/mongoid.js" type="text/javascript"></script>
@@ -298,6 +287,10 @@
     var globalNewIndex = 0;
 
     var merchantGoodsGroupsJSON = <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : "null"; ?>;
+
+    var $branchesTable = $('#branches-table'),
+        $remove = $('#remove'),
+        selections = [];
 
     $(function () {
         function init_mc_goodgroups_item_box() {
@@ -397,57 +390,35 @@
             $('.mc-goodsgroup-item-wrapper>.box-content').hide();
         });
 
-        $("#add").click(function (e) {
-            e.preventDefault();
-            $("input[name^='newBranches'][name$='[status]']:last").bootstrapSwitch("destroy");
-            $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
+        function createBranchTableRow(numToCreate){
+            numToCreate = typeof numToCreate !== 'undefined' ? numToCreate : 1;
 
-            var newIndex = globalNewIndex + 1;
-            var changeIds = function (i, val) {
-                if (val)
-                    return val.replace(globalNewIndex, newIndex);
-            };
-
-            $('#new-branches-table tbody>tr:last input').attr('name', changeIds).attr('id', changeIds);
-
-            var displayIndex = $('#new-branches-table tbody>tr:last #branch-index').text(); //display index start from 1
-            $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex) + 1);
-
-            globalNewIndex++;
-            $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']").bootstrapSwitch();
-            //return false;
-        });
-
-        $("#merchant-branch-to-create-btn").click(function (e) {
-            e.preventDefault();
-
-            var noBranches = $('#merchant-branch-to-create').val();
-
-            if ($.isNumeric(noBranches) && noBranches > 0) {
-                for (i = 0; i < noBranches; i++) {
-                    $("input[name^='newBranches'][name$='[status]']:last").bootstrapSwitch("destroy");
-                    $('#new-branches-table tbody>tr:last').clone(true).insertAfter('#new-branches-table tbody>tr:last');
-
+            if ($.isNumeric(numToCreate) && numToCreate > 0) {
+                for (idx = 0; idx < numToCreate; idx++) {
+                    var tableRowHTML = $('#newBranch_emptyElement').find('tbody').html();
                     var newIndex = globalNewIndex + 1;
-                    var changeIds = function (i, val) {
-                        if (val)
-                            return val.replace(globalNewIndex, newIndex);
-                    };
 
-                    $('#new-branches-table tbody>tr:last input').attr('name', changeIds).attr('id', changeIds);
+                    tableRowHTML = tableRowHTML.replace(new RegExp('{{id}}', 'g'), newIndex);
 
-                    var displayIndex = $('#new-branches-table tbody>tr:last #branch-index').text(); //display index start from 1
-                    $('#new-branches-table tbody>tr:last #branch-index').html(parseInt(displayIndex) + 1);
+                    $('#new-branches-table').find('tbody').append(tableRowHTML);
 
                     globalNewIndex++;
                 }
-                $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']").bootstrapSwitch();
-                //return false;
+                $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']:not([name*='id'])").bootstrapSwitch();
             }
+        }
+
+        $("#add").click(function (e) {
+            e.preventDefault();
+            createBranchTableRow();
+        });
+
+        $("#add5").click(function (e) {
+            e.preventDefault();
+            createBranchTableRow(5);
         });
 
         $("#form-submit-btn").click(function (e) {
-            console.log("newGGfilled? :", isAllGoodsGroupFilled());
             if (isAllGoodsGroupFilled()) {
                 $('#form').submit();
             } else {
@@ -462,9 +433,180 @@
         });
 
         $("[name='merchant-status']").bootstrapSwitch();
-        $("[name^='newBranches'][name$='[status]']").bootstrapSwitch();
+        $(":not(div .bootstrap-switch-container)>input[name^='newBranches'][name$='[status]']:not([name*='id'])").bootstrapSwitch();
+        <?php echo isset($merchantGoodsGroupsJSON) ? $merchantGoodsGroupsJSON : "null"; ?>;
+        $branchesTable.bootstrapTable({
+            url: baseUrlPath + 'merchant/listBranch/<?php echo isset($merchant_id) ? $merchant_id : '';?>',
+            idField: '_id',
+            columns: [{
+                field: 'state',
+                checkbox: true,
+                align: 'center',
+                valign: 'middle'
+            }, {
+                field: 'branch_name',
+                title: 'Branch Name',
+                align: 'center',
+                valign: 'middle',
+                editable: {
+                    placement: 'right',
+                    url: baseUrlPath + 'merchant/updateBranch/',
+                    validate: function(value) {
+                        if($.trim(value) == '') {
+                            return 'This field is required';
+                        }
+                    }
+                }
+            }, {
+                field: 'pin_code',
+                title: 'PIN Code',
+                align: 'center',
+                valign: 'middle',
+                formatter: pinCodeFormatter
+            }, {
+                field: 'status',
+                title: 'Status',
+                align: 'center',
+                valign: 'middle',
+                formatter: statusFormatter,
+                editable: {
+                    type: 'select',
+                    source: [
+                        {value: 'Enabled', text: 'Enabled'},
+                        {value: 'Disabled', text: 'Disabled'}
+                    ],
+                    url: baseUrlPath + 'merchant/updateBranch/',
+                    validate: function(value) {
+                        var val = $.trim(value);
+                        if(val != 'Enabled' && val != 'Disabled') {
+                            return 'This field is required';
+                        }
+                    }
+                }
+            }, {
+                field: 'operate',
+                title: 'Item Operate',
+                align: 'center',
+                events: operateEvents,
+                formatter: operateFormatter
+            }],
+            //data: branchesListJSON,
+            //resresponseHandler: responseHandler,
+            pagination: true,
+            search: true,
+            showRefresh: true,
+            iconPrefix: 'fa',
+            detailView: true,
+            detailFormatter: detailFormatter
+        });
+
+        $branchesTable.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$branchesTable.bootstrapTable('getSelections').length);
+
+            // save your data, here just save the current page
+            selections = getIdSelections();
+            // push or splice the selections if you want to save all data selections
+        });
+        $remove.click(function (e) {
+            e.preventDefault();
+            var ids = getIdSelections();
+            console.log(ids);
+            $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'merchant/removeBranch/',
+                data: {'id': ids}
+            })
+                .done(function (msg) {
+                    console.log("Entry removed: " + msg);
+                    $branchesTable.bootstrapTable('remove', {
+                        field: '_id',
+                        values: ids
+                    });
+                })
+                .fail(function () {
+                    console.log("Error!");
+                });
+            $remove.prop('disabled', true);
+        });
+
+        $branchesTable.on('editable-save.bs.table', function(e){
+            console.log("SAVE!");
+        });
 
         init_mc_goodgroups_item_box();
         init_mc_goodgroups_event();
     });
+
+    function responseHandler(res) {
+        $.each(res.rows, function (i, row) {
+            row.state = $.inArray(row.id, selections) !== -1;
+        });
+        return res;
+    }
+
+    function getIdSelections() {
+        return $.map($branchesTable.bootstrapTable('getSelections'), function (row) {
+            return row._id
+        });
+    }
+
+    function pinCodeFormatter(value, row) {
+        return '<span class="label" style="font-size: 150%; letter-spacing: 2px;">' + value + '</span>';
+    }
+
+    function statusFormatter(value, row) {
+        return (value ? 'Enabled' : 'Disabled');
+    }
+
+    function detailFormatter(index, row) {
+        var html = [];
+        $.each(row, function (key, value) {
+            switch (key) {
+                case 'branch_name':
+                    html.push('<p><b>Branch Name:</b> ' + value + '</p>');
+                    break;
+                case 'pin_code':
+                    html.push('<p><b>PIN Code:</b> <span class="label" style="letter-spacing: 2px;">' + value + '</span></p>');
+                    break;
+                case 'status':
+                    html.push('<p><b>Status:</b> ' + (value ? 'Enabled' : 'Disabled') + '</p>');
+                    break;
+                case 'date_modified':
+                    var dateObj = new Date(value.sec * 1000);
+                    html.push('<p><b>Last Modified:</b> ' + dateObj.toLocaleString() + '</p>');
+                    break;
+                default :
+                    break;
+            }
+        });
+        return html.join('');
+    }
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="remove" href="javascript:void(0)" title="Remove">',
+            '<i class="fa fa-remove"></i>',
+            '</a>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove': function (e, value, row, index) {
+            $.ajax({
+                type: "POST",
+                url: baseUrlPath + 'merchant/removeBranch/',
+                data: {'id': row._id}
+            })
+                .done(function (msg) {
+                    console.log("Entry removed: " + msg);
+                    $branchesTable.bootstrapTable('remove', {
+                        field: '_id',
+                        values: [row._id]
+                    });
+                })
+                .fail(function () {
+                    console.log("Error!");
+                });
+        }
+    };
 </script>

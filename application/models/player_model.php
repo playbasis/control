@@ -1621,6 +1621,7 @@ class Player_model extends MY_Model
     public function getPlayerByCode($code) {
         $this->mongo_db->select(array('client_id','site_id','cl_player_id','email','username','first_name','last_name'));
         $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
         $results = $this->mongo_db->get('playbasis_player');
         return $results ? $results[0] : array();
     }
