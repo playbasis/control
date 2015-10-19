@@ -14,6 +14,7 @@ class Redeem extends REST2_Controller
         $this->load->model('player_model');
         $this->load->model('redeem_model');
         $this->load->model('sms_model');
+        $this->load->model('merchant_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -208,6 +209,72 @@ class Redeem extends REST2_Controller
             }
         }
         $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+    }
+
+    public function merchantGoodsGroup_post()
+    {
+        $required = $this->input->checkParam(array(
+            'player_id',
+            'goods_id',
+            'pincode'
+        ));
+        if ($required) {
+            $this->response($this->error->setError('PARAMETER_MISSING', $required), 200);
+        }
+
+        $cl_player_id = $this->input->post('player_id');
+        $validToken = array_merge($this->validToken, array(
+            'cl_player_id' => $cl_player_id
+        ));
+        $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+        if (!$pb_player_id) {
+            $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+        }
+
+        $goods_id = $this->input->post('goods_id');
+        $goods = $this->player_model->getGoodsByGoodsId($pb_player_id, $this->validToken['site_id'],
+            new MongoId($goods_id));
+
+        if (!empty($goods)) {
+            $merchantRedeem = $this->merchant_model->getMerchantRedeemLogByGoodsId($this->validToken['client_id'],
+                $this->validToken['site_id'], new MongoId($goods_id));
+
+            if (empty($merchantRedeem)) {
+                $merchantGoodsGroups = $this->merchant_model->getMerchantGoodsGroups($this->validToken['client_id'],
+                    $this->validToken['site_id'], $goods['group']);
+                $branches_allow = array();
+                foreach ($merchantGoodsGroups as $merchantGoodsGroup) {
+                    foreach ($merchantGoodsGroup['branches_allow'] as $branch) {
+                        array_push($branches_allow, $branch['b_id']);
+                    }
+                }
+                $pin_code = $this->input->post('pincode');
+                $branch = $this->merchant_model->getMerchantBranchByBranchesAndPinCode($this->validToken['client_id'],
+                    $this->validToken['site_id'], $branches_allow, $pin_code);
+
+                if (!empty($branch)) {
+                    $branch_log_data['b_id'] = $branch['_id'];
+                    $branch_log_data['b_name'] = $branch['branch_name'];
+
+                    $log_result = $this->merchant_model->logMerchantRedeem($this->validToken['client_id'],
+                        $this->validToken['site_id'], new MongoId($goods_id), $goods['group'], $cl_player_id,
+                        $pb_player_id, $branch_log_data);
+                    $this->response($this->resp->setRespond(array("success" => true)), 200);
+                } else {
+                    $this->response($this->error->setError('PIN_CODE_INVALID'), 200);
+                }
+            } else {
+                $resp['success'] = false;
+
+                $details['verified_at'] = $merchantRedeem['branch']['b_name'];
+                $details['verified_date'] = date('r e', $merchantRedeem['date_added']->sec);
+                $resp['details'] = $details;
+
+                $this->response($this->resp->setRespond($resp), 200);
+            }
+        } else {
+            $this->response($this->error->setError('GOODS_NOT_FOUND'), 200);
+        }
     }
 
     public function sponsorGroup_post()

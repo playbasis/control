@@ -19,6 +19,7 @@ class Quest extends REST2_Controller
         $this->load->model('reward_model');
         $this->load->model('email_model');
         $this->load->model('sms_model');
+        $this->load->model('push_model');
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/utility', 'utility');
         $this->load->model('tool/respond', 'resp');
@@ -1426,6 +1427,9 @@ class Quest extends REST2_Controller
         case 'sms':
             $this->processSms($input);
             break;
+        case 'push':
+            $this->processPushNotification($input);
+            break;
         default:
             log_message('error', 'Unknown feedback type: '.$type);
             break;
@@ -1465,6 +1469,8 @@ class Quest extends REST2_Controller
         $from = EMAIL_FROM;
         $to = $email;
         $subject = $input['input']['subject'];
+        if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+        if (isset($input['coupon'])) $player['coupon'] = $input['coupon'];
         $message = $this->utility->replace_template_vars($template['body'], $player);
         $response = $this->utility->email($from, $to, $subject, $message);
         $this->email_model->log(EMAIL_TYPE_USER, $input['client_id'], $input['site_id'], $response, $from, $to, $subject, $message);
@@ -1504,12 +1510,41 @@ class Quest extends REST2_Controller
         $this->load->library('twilio/twiliomini', $config);
         $from = $config['number'];
         $to = $phone;
+        if (!isset($player['code']) && strpos($template['body'], '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($input['pb_player_id']);
+        if (isset($input['coupon'])) $player['coupon'] = $input['coupon'];
         $message = $this->utility->replace_template_vars($template['body'], $player);
         $response = $this->twiliomini->sms($from, $to, $message);
         $this->sms_model->log($input['client_id'], $input['site_id'], 'user', $from, $to, $message, $response);
         return $response->IsError;
     }
 
+    protected function processPushNotification($input)
+    {
+        $where = array(
+            'client_id' => $input['client_id'],
+            'site_id' => $input['site_id'],
+            'pb_player_id' => $input['pb_player_id'],
+        );
+        $this->mongo_db->select('device_token');
+        $this->mongo_db->where($where);
+        $results = $this->mongo_db->get('playbasis_player_device');
+
+        /* check valid template_id */
+        $template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+        if (!$template) return false;
+
+
+        $notificationInfo = array_merge($where, array(
+            'messages' => $template['body'],
+            'badge_number' => 1
+        ));
+            //'data' => $data,
+        foreach($results as $device)
+        {
+            $notificationInfo['device_token'] = $device['device_token'];
+            $this->push_model->initial($notificationInfo, $device['type']);
+        }
+    }
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value

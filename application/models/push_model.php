@@ -12,9 +12,10 @@ class Push_model extends MY_Model
 
     public function initial($data,$type=null)
     {
+        $type = strtolower($type);
         switch ($type) {
             case "ios":
-                $setup = $this->getIosSetup($data['client_id'], $data['site_id']);
+                $setup = $this->getIosSetup();
                 if (!$setup) break; // suppress the error for now
 
                 $f_cert = tmpfile();
@@ -100,18 +101,26 @@ class Push_model extends MY_Model
                 break;
 
             case "android":
-                define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
+                $setup = $this->getAndroidSetup();
+                if (!$setup) break; // suppress the error for now
+
+                $api_access_key = $setup['api_key'];
+
+
+                //define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
                 $registrationIds = $data['device_token'];
                 $msg = array
                 (
-                    'message' 	=> 'here is a message. message',
-                    'title'		=> 'This is a title. title',
-                    'subtitle'	=> 'This is a subtitle. subtitle',
-                    'tickerText'	=> 'Ticker text here...Ticker text here...Ticker text here',
+                    'message' 	=> $data['messages'],
+                    //'title'		=> $data['title'],
+                    //'subtitle'	=> $data['subtitle'],
+                    //'tickerText'	=> $data['description'],
+                    'badge' => $data['badge_number'],
                     'vibrate'	=> 1,
                     'sound'		=> 1,
                     'largeIcon'	=> 'large_icon',
-                    'smallIcon'	=> 'small_icon'
+                    'smallIcon'	=> 'small_icon',
+                    'dataInfo', $data['data']
                 );
 
                 $fields = array
@@ -122,7 +131,7 @@ class Push_model extends MY_Model
 
                 $headers = array
                 (
-                    'Authorization: key=' . API_ACCESS_KEY,
+                    'Authorization: key=' . $api_access_key,
                     'Content-Type: application/json'
                 );
 
@@ -135,7 +144,7 @@ class Push_model extends MY_Model
                 curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
                 $result = curl_exec($ch );
                 curl_close( $ch );
-                echo $result;
+                //echo $result;
                 break;
 
             default:
@@ -196,10 +205,35 @@ class Push_model extends MY_Model
         }
     }
 
-    public function getIosSetup($client_id, $site_id) {
+    public function getIosSetup($client_id = null, $site_id = null) {
         $this->set_site_mongodb($site_id);
-        $this->mongo_db->where('client_id', $client_id);
+        //$this->mongo_db->where('client_id', $client_id);
         $results = $this->mongo_db->get("playbasis_push_ios");
         return $results ? $results[0] : null;
+    }
+    public function getAndroidSetup($client_id = null,$site_id = null)
+    {
+        $this->set_site_mongodb($site_id);
+        //$this->mongo_db->where('client_id', $client_id);
+        $results = $this->mongo_db->get("playbasis_push_android");
+        return $results ? $results[0] : null;
+    }
+
+    public function getTemplateById($site_id, $template_id) {
+        $this->set_site_mongodb($site_id);
+        $this->mongo_db->where('_id', new MongoId($template_id));
+        $this->mongo_db->where('status', true);
+        $this->mongo_db->where('deleted', false);
+        $results = $this->mongo_db->get('playbasis_push_to_client');
+        return $results ? $results[0] : null;
+    }
+    public function listDevice($pb_player_id)
+    {
+        $this->mongo_db->select(null);
+        $this->mongo_db->where(array(
+            'pb_player_id' => new MongoId($pb_player_id),
+        ));
+        $results = $this->mongo_db->get('playbasis_player_device');
+        return $results;
     }
 }

@@ -113,31 +113,75 @@ class Engine extends Quest
 		unset($rule['action_id']);
 
 		/* find current state of rule execution of the player */
-		if ($pb_player_id && isset($rule['jigsaw_set'])) {
+		if (isset($rule['jigsaw_set'])) {
 			$input = array(
 				'site_id' => $this->site_id,
-				'pb_player_id' => $pb_player_id,
 				'rule_id' => new MongoId($rule['id']),
 			);
+			if ($pb_player_id) $input = array_merge($input, array('pb_player_id' => $pb_player_id));
 			foreach ($rule['jigsaw_set'] as &$jigsaw) {
-				try {
-					$jigsaw_id = new MongoId($jigsaw['id']);
-				} catch (MongoException $ex) {
-					$jigsaw_id = "";
+				if ($pb_player_id) {
+					try {
+						$jigsaw_id = new MongoId($jigsaw['id']);
+					} catch (MongoException $ex) {
+						$jigsaw_id = "";
+					}
+					$input['jigsaw_id'] = $jigsaw_id;
+					$input['jigsaw_name'] = $jigsaw['name'];
+					$input['jigsaw_category'] = $jigsaw['category'];
+					$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
+					$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
+						'input',
+						'date_added'
+					));
 				}
-				$input['jigsaw_id'] = $jigsaw_id;
-				$input['jigsaw_name'] = $jigsaw['name'];
-				$input['jigsaw_category'] = $jigsaw['category'];
-				$input['jigsaw_index'] = $jigsaw['jigsaw_index'];
-				$jigsaw['state'] = $this->jigsaw_model->getMostRecentJigsaw($input, array(
-					'input',
-					'date_added'
-				));
+				$this->applyBadgeObjGoodsObj($this->client_id, $this->site_id, $jigsaw['config']);
 				array_walk_recursive($jigsaw, array($this, "convert_mongo_object"));
 			}
 		}
 
 		$this->response($this->resp->setRespond($rule), 200);
+	}
+
+	private function applyBadgeObjGoodsObj($client_id, $site_id, &$config) {
+		if (isset($config['group_container'])) {
+			foreach ($config['group_container'] as &$each) {
+				$this->applyBadgeObjGoodsObj($client_id, $site_id, $each);
+			}
+			return;
+		}
+		if (!isset($config['reward_name'])) return;
+		switch ($config['reward_name']) {
+		case 'badge':
+			$config['data'] = $this->findBadgeDetail($client_id, $site_id, new MongoId($config['item_id']));
+			break;
+		case 'goods':
+			$config['data'] = $this->findGoodsDetail($client_id, $site_id, new MongoId($config['item_id']));
+			break;
+		default:
+			break;
+		}
+	}
+
+	private function findBadgeDetail($client_id, $site_id, $item_id) {
+		return $this->client_model->getBadgeById($item_id, $site_id);
+	}
+
+	private function findGoodsDetail($client_id, $site_id, $item_id) {
+		$goodsData = $this->jigsaw_model->getGoods($site_id, $item_id);
+		if (!$goodsData) return null;
+
+		if (isset($goodsData['group'])) {
+			$goodsData = $this->goods_model->getGoodsFromGroup($client_id, $site_id, $goodsData['group'], null, 1);
+			if (!$goodsData) return null;
+		}
+
+		unset($goodsData['_id']);
+		unset($goodsData['redeem']);
+		unset($goodsData['quantity']);
+		$goodsData['goods_id'] = $goodsData['goods_id'].'';
+		$goodsData['image'] = $this->config->item('IMG_PATH') . $goodsData['image'];
+		return $goodsData;
 	}
 
     /*
@@ -400,6 +444,7 @@ class Engine extends Quest
 			/* [rule usage] init */
 			$count = 0;
 			$last_jigsaw = null;
+			$last_coupon = null;
 
 			$input['rule_id'] = new MongoId($rule['rule_id']);
 			$input['rule_name'] = $rule['name'];
@@ -440,7 +485,9 @@ class Engine extends Quest
 					/* pre-processing in case of 'GROUP' */
 					$break = false;
 					$jigsawName = $input['jigsaw_name'];
+					$isGroup = false;
 					if($jigsawCategory == 'GROUP') {
+						$isGroup = true;
 						$break = $exInfo['break'];
 						$conf = $jigsawConfig['group_container'][$exInfo['index']];
 						$jigsawConfig = $this->normalize_jigsawConfig(array_merge($jigsawConfig, $conf));
@@ -475,7 +522,7 @@ class Engine extends Quest
 								'reward_type' => $jigsawConfig['reward_name'],
 								'value' => $jigsawConfig['quantity']
 							);
-							array_push($apiResult['events'], $event);
+							array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                             if (!$input["test"] && !$anonymousUser) {
                                 $eventMessage = $this->utility->getEventMessage(
@@ -507,6 +554,7 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+                                /*
                                 //publish to push notification
                                 $this->sendNotification(array(
                                     'title' => $eventMessage,
@@ -515,6 +563,7 @@ class Engine extends Quest
                                     'value' => $jigsawConfig['quantity'],
                                     'text' => $eventMessage
                                 ),$player,$eventMessage);
+								*/
 
                                 if($lv > 0) {
                                     $eventMessage = $this->levelup($lv, $apiResult, $input);
@@ -531,6 +580,7 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+									/*
                                     //publish to push notification
                                     $this->sendNotification(array(
                                         'title' => $eventMessage,
@@ -539,6 +589,7 @@ class Engine extends Quest
                                         'value' => $lv,
                                         'text' => $eventMessage
                                     ),$player,$eventMessage);
+									*/
                                 }
                             }  // close if (!$input["test"])
                         } else if(is_null($jigsawConfig['item_id']) || $jigsawConfig['item_id'] == '') {
@@ -568,6 +619,7 @@ class Engine extends Quest
                                                 $fbData['facebook_id'],
                                                 $eventMessage,
                                                 '');
+										/*
                                         //publish to push notification
                                         $this->sendNotification(array(
                                             'title' => $eventMessage,
@@ -576,6 +628,7 @@ class Engine extends Quest
                                             'value' => $lv,
                                             'text' => $eventMessage
                                         ),$player,$eventMessage);
+										*/
                                     }
                                 }  // close if (!$input["test"])
                             } else {
@@ -595,7 +648,7 @@ class Engine extends Quest
                                 'event_type' => 'REWARD_RECEIVED',
                                 'reward_type' => $jigsawConfig['reward_name'],
                                 'value' => $jigsawConfig['quantity']);
-                            array_push($apiResult['events'], $event);
+                            array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                             if (!$input["test"]) {
                                 $eventMessage = $this->utility->getEventMessage(
@@ -624,6 +677,7 @@ class Engine extends Quest
                                         $fbData['facebook_id'],
                                         $eventMessage,
                                         '');
+								/*
                                 //publish to push notification
                                 $this->sendNotification(array(
                                     'title' => $eventMessage,
@@ -632,6 +686,7 @@ class Engine extends Quest
                                     'value' => $jigsawConfig['quantity'],
                                     'text' => $eventMessage
                                 ),$player,$eventMessage);
+								*/
                             }  // close if (!$input["test"])
                         } else {
                             switch($jigsawConfig['reward_name']) {
@@ -656,7 +711,7 @@ class Engine extends Quest
                                     'reward_data' => $badgeData,
                                     'value' => $jigsawConfig['quantity']
                                 );
-                                array_push($apiResult['events'], $event);
+                                array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                                 if (!$input["test"]) {
                                     $eventMessage = $this->utility->getEventMessage(
@@ -683,6 +738,7 @@ class Engine extends Quest
                                             $fbData['facebook_id'],
                                             $eventMessage,
                                             '');
+									/*
                                     //publish to push notification
                                     $this->sendNotification(array(
                                         'title' => $eventMessage,
@@ -691,6 +747,7 @@ class Engine extends Quest
                                         'value' => $jigsawConfig['quantity'],
                                         'text' => $eventMessage
                                     ),$player,$eventMessage);
+									*/
                                     break;
                                 }  // close if (!$input["test"])
                                 break;
@@ -715,9 +772,10 @@ class Engine extends Quest
                                     'reward_data' => $goodsData,
                                     'value' => $jigsawConfig['quantity']
                                 );
-                                array_push($apiResult['events'], $event);
+                                $last_coupon = $goodsData['code'];
+                                array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
-                                if (!$input["test"] && !$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData);
+                                if (!$input["test"] && !$anonymousUser) $this->giveGoods($jigsawConfig, $input, $validToken, $event, $fbData, $goodsData);
 
                                 break;
                             default:
@@ -728,7 +786,7 @@ class Engine extends Quest
                         }  // close if(isset($exInfo['dynamic']))
                     } elseif($jigsawCategory == 'FEEDBACK') {
                         if (!$input["test"])
-                            $this->processFeedback($jigsawName, $input);
+                            $this->processFeedback($jigsawName, array_merge($input, array('coupon' => $last_coupon)));
                     } else {
                         //check for completed objective
                         /*if(isset($exInfo['objective_complete'])) {
@@ -747,7 +805,7 @@ class Engine extends Quest
 								'objective_id' => $objId,
 								'objective_name' => $objName
 							);
-							array_push($apiResult['events'], $event);
+							array_push($apiResult['events'], $isGroup ? array_merge($event, array('index' => $exInfo['index'])) : $event);
 
                             if (!$input["test"]) {
                                 $eventMessage = $this->utility->getEventMessage(
@@ -851,7 +909,7 @@ class Engine extends Quest
         }
     }
 
-    private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData) {
+    private function giveGoods($jigsawConfig, $input, $validToken, $event, $fbData, $goodsData) {
         $domain_name = $validToken['domain_name'];
 
         $player = array(
@@ -865,11 +923,24 @@ class Engine extends Quest
         $eventMessage = $this->utility->getEventMessage($jigsawConfig['reward_name'], '', '', '', '', '', $event['reward_data']['name']);
 
         // log event - reward, goods
-        $this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
+        /*$this->tracker_model->trackEvent('REWARD', $eventMessage, array_merge($input, array(
             'reward_id' => $jigsawConfig['reward_id'],
             'reward_name' => $jigsawConfig['reward_name'],
             'item_id' => $jigsawConfig['item_id'],
-            'amount' => $jigsawConfig['quantity'])));
+            'amount' => $jigsawConfig['quantity'])));*/
+
+        // log event - goods
+        $this->tracker_model->trackGoods(array_merge($validToken, array(
+            'pb_player_id' => $input['pb_player_id'],
+            'goods_id' => new MongoId($goodsData['goods_id']),
+            'goods_name' => $goodsData['name'],
+            'is_sponsor' => false,
+            'amount' => $jigsawConfig['quantity'],
+            'redeem' => null, // cannot pull from goodsData, should pull from "redeem" condition for rule context
+            'action_name' => 'redeem_goods',
+            'action_icon' => 'fa-icon-shopping-cart',
+            'message' => $eventMessage
+        )));
 
         // publish - node stream
         $this->node->publish(array_merge($input, array(
@@ -881,6 +952,7 @@ class Engine extends Quest
         if ($fbData)
             $this->social_model->sendFacebookNotification($validToken['client_id'], $validToken['site_id'], $fbData['facebook_id'], $eventMessage, '');
 
+		/*
         // publish - push notification
         $this->sendNotification(array(
             'title' => $eventMessage,
@@ -889,6 +961,7 @@ class Engine extends Quest
             'value' => $jigsawConfig['quantity'],
             'text' => $eventMessage
         ), $player, $eventMessage);
+		*/
     }
 
 	public function test_get()

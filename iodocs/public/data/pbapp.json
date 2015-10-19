@@ -311,6 +311,13 @@
 							"Description": "date of birth in the format YYYY-MM-DD (ex.1982-09-29)"
 						},
 						{
+							"Name": "code",
+							"Required": "N",
+							"Default": "",
+							"Type": "string",
+							"Description": "referral code of another player for invitation system"
+						},
+						{
 						  "Name": "anonymous",
 						  "Required": "N",
 						  "Default": "",
@@ -1080,8 +1087,8 @@
                     ]
                 },
                 {
-                    "MethodName": "Player Unique Code",
-                    "Synopsis": "Returns generated unique code of player",
+                    "MethodName": "Player Referral Code",
+                    "Synopsis": "Returns generated referral code of player",
                     "HTTPMethod": "GET",
                     "URI": "/Player/:id/code",
                     "RequiresOAuth": "N",
@@ -1902,6 +1909,43 @@
                     ]
                 },
                 {
+                    "MethodName": "Redeem Verification",
+                    "Synopsis": "Redeem verification for merchant using PIN code",
+                    "HTTPMethod": "POST",
+                    "URI": "/Redeem/goodsGroup/verify",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "token",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "access token returned from Auth"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
+                        },
+                        {
+                            "Name": "goods_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "goods id to verify"
+                        },
+                        {
+                            "Name": "pincode",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "merchant PIN Code generated from admin dashboard"
+                        }
+                    ]
+                },
+                {
                     "MethodName": "Redeem Sponsor",
                     "Synopsis": "Redeem Sponsor Goods for a client’s website.",
                     "HTTPMethod": "POST",
@@ -2064,7 +2108,7 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "email message, can use variable {{code}} for the actual code"
+                            "Description": "email message, can use variable {{coupon}} for the actual code"
                         },
                         {
                             "Name": "template_id",
@@ -2095,6 +2139,38 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "'datetime' format supported by strtotime"
+                        }
+                    ]
+                },
+                {
+                    "MethodName": "List Email Template",
+                    "Synopsis": "List email template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Email/template",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                    ]
+                },
+                {
+                    "MethodName": "Get Processed Email Template",
+                    "Synopsis": "Get processed email template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Email/template/:template_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "template_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
                         }
                     ]
                 },
@@ -2168,7 +2244,7 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "SMS message, can use variable {{code}} for the actual code"
+                            "Description": "SMS message, can use variable {{coupon}} for the actual code"
                         },
                         {
                             "Name": "template_id",
@@ -2199,6 +2275,95 @@
                             "Default": "",
                             "Type": "string",
                             "Description": "'datetime' format supported by strtotime"
+                        }
+                    ]
+                },
+			  	{
+					"MethodName": "Device Registration",
+					"Synopsis": "Register for your device ",
+					"HTTPMethod": "POST",
+					"URI": "/Push/deviceRegistration",
+					"RequiresOAuth": "N",
+					"parameters": [
+					  {
+						"Name": "player_id",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "player id"
+					  },
+					  {
+						"Name": "token",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "access token returned from Auth"
+					  },
+					  {
+						"Name": "device_token",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "access token returned from Device"
+					  },
+					  {
+						"Name": "device_description",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "Device model description"
+					  },
+					  {
+						"Name": "device_name",
+						"Required": "Y",
+						"Default": "",
+						"Type": "string",
+						"Description": "Device model name"
+					  },
+					  {
+						"Name": "os_type",
+						"Required": "Y",
+						"Default": "",
+						"Type": "enumerated",
+						"Description": "Choose os type",
+						"EnumeratedList": [
+						  "IOS",
+						  "Android"
+						]
+					  }
+
+
+					]
+				},
+                {
+                    "MethodName": "List SMS Template",
+                    "Synopsis": "List SMS template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Sms/template",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                    ]
+                },
+                {
+                    "MethodName": "Get Processed SMS Template",
+                    "Synopsis": "Get processed SMS template.",
+                    "HTTPMethod": "GET",
+                    "URI": "/Sms/template/:template_id",
+                    "RequiresOAuth": "N",
+                    "parameters": [
+                        {
+                            "Name": "template_id",
+                            "Required": "Y",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "template message"
+                        },
+                        {
+                            "Name": "player_id",
+                            "Required": "N",
+                            "Default": "",
+                            "Type": "string",
+                            "Description": "player id as used in client's website"
                         }
                     ]
                 },
@@ -2272,7 +2437,7 @@
                             "Required": "N",
                             "Default": "",
                             "Type": "string",
-                            "Description": "SMS message, can use variable {{code}} for the actual code"
+                            "Description": "SMS message, can use variable {{coupon}} for the actual code"
                         },
                         {
                             "Name": "template_id",

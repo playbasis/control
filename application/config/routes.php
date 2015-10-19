@@ -184,6 +184,7 @@ $route['Engine/quest']	= 'engine/quest';
 $route['Redeem/goods/'.ANY_STRING] = 'redeem/goods/$1';
 $route['Redeem/goods'] = 'redeem/goods/0';
 $route['Redeem/goodsGroup'] = 'redeem/goodsGroup';
+$route['Redeem/goodsGroup/verify'] = 'redeem/merchantGoodsGroup';
 $route['Redeem/sponsor/'.ANY_STRING] = 'redeem/sponsor/$1';
 $route['Redeem/sponsor'] = 'redeem/sponsor/0';
 $route['Redeem/sponsorGroup'] = 'redeem/sponsorGroup';
@@ -253,16 +254,27 @@ $route['Email/addBlackList'] = 'email/addBlackList';
 $route['Email/removeBlackList'] = 'email/removeBlackList';
 $route['Email/goods'] = 'email/send_goods';
 $route['Email/recent'] = 'email/recent';
+$route['Email/template/'.ANY_STRING] = 'email/template/$1';
+$route['Email/template'] = 'email/template';
 
 //sms API
 $route['Sms/sendTo'] = 'pb_sms/sendTo';
 $route['Sms/send'] = 'pb_sms/send';
 $route['Sms/goods'] = 'pb_sms/send_goods';
 $route['Sms/recent'] = 'pb_sms/recent';
+$route['Sms/template/'.ANY_STRING] = 'pb_sms/template/$1';
+$route['Sms/template'] = 'pb_sms/template';
 
 //notification API
 $route['notification/'.ANY_STRING] = 'notification/index/$1';
 $route['notification'] = 'notification/index';
+
+//push notification
+$route['Push/'.ANY_STRING.'/deviceRegistration'] = 'push/deviceRegistration/$1';
+$route['Push/deviceRegistration'] = 'push/deviceRegistration';
+
+$route['Push/'.ANY_STRING.'/send'] = 'push/send/$1';
+$route['Push/send'] = 'push/send';
 
 //promo API
 $route['Promo'] = 'promo/list';

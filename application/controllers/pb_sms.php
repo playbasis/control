@@ -113,6 +113,7 @@ class Pb_sms extends REST2_Controller
             } else {
                 $message = $this->input->post('message');
             }
+            if (!isset($player['code']) && strpos($message, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
             $message = $this->utility->replace_template_vars($message, $player);
 
             $this->sendEngine('user', $from, $player['phone_number'], $message);
@@ -157,7 +158,8 @@ class Pb_sms extends REST2_Controller
             } else {
                 $message = $this->input->post('message');
             }
-            $message = $this->utility->replace_template_vars($message, array_merge($player, array('code' => $redeemData['code'])));
+            if (!isset($player['code']) && strpos($message, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
+            $message = $this->utility->replace_template_vars($message, array_merge($player, array('coupon' => $redeemData['code'])));
 
             $sms_data = $this->sms_model->getSMSClient($validToken['client_id'], $validToken['site_id']);
 
@@ -189,6 +191,32 @@ class Pb_sms extends REST2_Controller
         $results = $this->sms_model->recent($validToken['site_id'], isset($player['phone_number']) ? $player['phone_number'] : null, $since ? strtotime($since) : null);
         array_walk_recursive($results, array($this, 'convert_mongo_date'));
         $this->response($this->resp->setRespond($results), 200);
+    }
+
+    public function template_get($template_id='') {
+        $result = array();
+        if ($template_id) {
+            $template = $this->sms_model->getTemplateByTemplateId($this->site_id, $template_id);
+            if (!$template) $this->response($this->error->setError('TEMPLATE_NOT_FOUND', $template_id), 200);
+            $result = $template['body'];
+            $player_id = $this->input->get('player_id');
+            if ($player_id) {
+                $validToken = array_merge($this->validToken, array(
+                    'cl_player_id' => $player_id
+                ));
+                $pb_player_id = $this->player_model->getPlaybasisId($validToken);
+                if(!$pb_player_id)
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                $player = $this->player_model->readPlayer($pb_player_id, $validToken['site_id']);
+                if (!$player)
+                    $this->response($this->error->setError('USER_NOT_EXIST'), 200);
+                if (!isset($player['code']) && strpos($result, '{{code}}') !== false) $player['code'] = $this->player_model->generateCode($pb_player_id);
+                $result = $this->utility->replace_template_vars($result, array_merge($player));
+            }
+        } else {
+            $result = $this->sms_model->listTemplates($this->site_id, array('name'), array('_id'));
+        }
+        $this->response($this->resp->setRespond($result), 200);
     }
 
     private function convert_mongo_date(&$item, $key) {

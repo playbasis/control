@@ -1553,6 +1553,7 @@ class Player_model extends MY_Model
                 'image',
                 'name',
                 'description',
+                'group'
             ));
             $this->mongo_db->select(array(),array('_id'));
             $this->mongo_db->where(array(
@@ -1571,6 +1572,7 @@ class Player_model extends MY_Model
             $goods['description'] = $result['description'];
             $goods['amount'] = $goods['value'];
             unset($goods['value']);
+            $goods['group'] = $result['group'];
         }
         return $goods;
     }
@@ -2251,6 +2253,16 @@ class Player_model extends MY_Model
         return $this->mongo_db->get('playbasis_player');
     }
 
+    public function findPlayerByCode($site_id, $code, $fields) {
+        $this->set_site_mongodb($site_id);
+        if ($fields) $this->mongo_db->select($fields);
+        $this->mongo_db->where('site_id', $site_id);
+        $this->mongo_db->where('code', $code);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_player');
+        return $results ? $results[0] : array();
+    }
+
     public function findRecentPlayers($days) {
         $this->set_site_mongodb(0);
         $d = strtotime("-".$days." day");
@@ -2448,6 +2460,35 @@ class Player_model extends MY_Model
         $this->mongo_db->update('playbasis_player');
         return $code;
     }
+	public function storeDeviceToken($data)
+	{
+		$mongoDate = new MongoDate(time());
+
+		$this->mongo_db->select(null);
+		$this->mongo_db->where(array(
+			'pb_player_id' => new MongoId($data['pb_player_id']),
+			'device_token' => $data['device_token']
+		));
+		$this->mongo_db->limit(1);
+		$results = $this->mongo_db->get('playbasis_player_device');
+		if(!$results)
+		{
+			$this->mongo_db->insert('playbasis_player_device', array(
+
+				'pb_player_id' => new MongoId($data['pb_player_id']),
+				'site_id' => new MongoId($data['site_id']),
+				'device_token' => $data['device_token'],
+				'device_description' => $data['device_description'],
+				'device_name' => $data['device_name'],
+				'os_type' => $data['os_type'],
+				'status' => true,
+				'date_added' => $mongoDate,
+				'date_modified' => $mongoDate,
+
+			));
+		}
+
+	}
 }
 
 function index_id($obj) {

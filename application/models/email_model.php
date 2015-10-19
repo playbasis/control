@@ -123,6 +123,16 @@ class Email_model extends MY_Model
 		return $results ? $results[0] : null;
 	}
 
+	public function listTemplates($site_id, $includes=null, $excludes=null) {
+		$this->set_site_mongodb($site_id);
+		if ($includes) $this->mongo_db->select($includes);
+		if ($excludes) $this->mongo_db->select(null, $excludes);
+		$this->mongo_db->where('site_id', $site_id);
+		$this->mongo_db->where('status', true);
+		$this->mongo_db->where('deleted', false);
+		return $this->mongo_db->get('playbasis_email_to_client');
+	}
+
 	public function recent($site_id, $email, $since) {
 		if (!$email) return array();
 		$this->set_site_mongodb($site_id);

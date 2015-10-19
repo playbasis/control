@@ -808,6 +808,52 @@ class Service_model extends MY_Model
         return $result;
     }
 
+    public function insertCountries($countries) {
+        return $this->mongo_db->batch_insert('countries', $countries);
+    }
+
+    public function findCountryByDialCode($dialCode) {
+        if ($dialCode == '+1') return 'United States';
+        $this->mongo_db->where('d_code', $dialCode);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('countries');
+        return $results ? $results[0]['name'] : null;
+    }
+
+    public function countApiUsage($client_id, $from, $to=null) {
+        $record = null;
+        if ($from && $to) {
+            $record = $this->findApiUsageStat($client_id, $from, $to);
+            if ($record) return $record['n'];
+        }
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where_gte('date_added', new MongoDate(strtotime($from.' 00:00:00')));
+        if ($to) $this->mongo_db->where_lt('date_added', new MongoDate(strtotime($to.' 00:00:00')));
+        $n = $this->mongo_db->count('playbasis_web_service_log');
+        if ($from && $to) {
+            $this->saveApiUsageStat($client_id, $from, $to, $n);
+        }
+        return $n;
+    }
+
+    public function findApiUsageStat($client_id, $from, $to) {
+        $this->mongo_db->where('client_id', $client_id);
+        $this->mongo_db->where('from', $from);
+        $this->mongo_db->where('to', $to);
+        $this->mongo_db->limit(1);
+        $results = $this->mongo_db->get('playbasis_web_service_usage');
+        return $results ? $results[0] : array();
+    }
+
+    public function saveApiUsageStat($client_id, $from, $to, $n) {
+        return $this->mongo_db->insert('playbasis_web_service_usage', array(
+            'client_id' => $client_id,
+            'from' => $from,
+            'to' => $to,
+            'n' => $n,
+        ));
+    }
+
     private function change_image_path(&$item, $key)
     {
         if($key === "image"){
