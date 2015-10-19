@@ -269,6 +269,13 @@ $route['Sms/template'] = 'pb_sms/template';
 $route['notification/'.ANY_STRING] = 'notification/index/$1';
 $route['notification'] = 'notification/index';
 
+//push notification
+$route['Push/'.ANY_STRING.'/deviceRegistration'] = 'push/deviceRegistration/$1';
+$route['Push/deviceRegistration'] = 'push/deviceRegistration';
+
+$route['Push/'.ANY_STRING.'/send'] = 'push/send/$1';
+$route['Push/send'] = 'push/send';
+
 //promo API
 $route['Promo'] = 'promo/list';
 $route['Promo/list'] = 'promo/list';
