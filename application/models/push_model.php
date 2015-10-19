@@ -15,7 +15,7 @@ class Push_model extends MY_Model
         $type = strtolower($type);
         switch ($type) {
             case "ios":
-                $setup = $this->getIosSetup($data['client_id'], $data['site_id']);
+                $setup = $this->getIosSetup();
                 if (!$setup) break; // suppress the error for now
 
                 $f_cert = tmpfile();
@@ -101,10 +101,10 @@ class Push_model extends MY_Model
                 break;
 
             case "android":
-                $setup = $this->getAndroidSetup($data['client_id'], $data['site_id']);
+                $setup = $this->getAndroidSetup();
                 if (!$setup) break; // suppress the error for now
 
-                $api_access_key = $setup['api'];
+                $api_access_key = $setup['api_key'];
 
 
                 //define( 'API_ACCESS_KEY', 'AIzaSyCeCZPwysyiPnP4A-PWKFiSgz_QbWYPFtE' );
@@ -112,9 +112,9 @@ class Push_model extends MY_Model
                 $msg = array
                 (
                     'message' 	=> $data['messages'],
-                    'title'		=> $data['title'],
-                    'subtitle'	=> $data['subtitle'],
-                    'tickerText'	=> $data['description'],
+                    //'title'		=> $data['title'],
+                    //'subtitle'	=> $data['subtitle'],
+                    //'tickerText'	=> $data['description'],
                     'badge' => $data['badge_number'],
                     'vibrate'	=> 1,
                     'sound'		=> 1,
@@ -205,13 +205,13 @@ class Push_model extends MY_Model
         }
     }
 
-    public function getIosSetup($client_id, $site_id) {
+    public function getIosSetup($client_id = null, $site_id = null) {
         $this->set_site_mongodb($site_id);
         //$this->mongo_db->where('client_id', $client_id);
         $results = $this->mongo_db->get("playbasis_push_ios");
         return $results ? $results[0] : null;
     }
-    public function getAndroidSetup($client_id,$site_id)
+    public function getAndroidSetup($client_id = null,$site_id = null)
     {
         $this->set_site_mongodb($site_id);
         //$this->mongo_db->where('client_id', $client_id);
