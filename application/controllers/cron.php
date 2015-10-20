@@ -374,7 +374,7 @@ $email = 'pechpras@playbasis.com';
 			if (!isset($cache_p[$plan_id.""])) $cache_p[$plan_id.""] = $this->client_model->getPlanById($plan_id);
 			$plan = $cache_p[$plan_id.""];
 			$plan['price'] = isset($plan['price']) ? $plan['price'] : DEFAULT_PLAN_PRICE;
-			$active_paying = $plan['price'] > 0 || ($plan['price'] <= 0 && $plan_id != FREE_PLAN) ? 1 : 0;
+			$active_paying = $plan['price'] > 0;
 			/* stat: active paying */
 			if ($active_paying) $c_active_paying++;
 			$c_m2 = $this->service_model->countApiUsage($client['_id'], $m2, $m1);
