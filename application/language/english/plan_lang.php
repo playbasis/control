@@ -26,7 +26,7 @@ $lang['tab_feature'] 							= 'Features';
 $lang['tab_action'] 							= 'Actions';
 $lang['tab_clients'] 							= 'Clients in Plan Setting';
 $lang['tab_widget'] 							= 'Widget';
-
+$lang['tab_cms']                                = 'CMS';
 
 // Column
 $lang['column_name_action']            			= 'Actions';
