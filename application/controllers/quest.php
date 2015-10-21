@@ -1465,6 +1465,19 @@ class Quest extends REST2_Controller
         $template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
         if (!$template) return false;
 
+        /* player-2 */
+        if (isset($input['player-2'])) {
+            $player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+            if ($player2) {
+                $player['first_name-2'] = $player2['first_name'];
+                $player['last_name-2'] = $player2['last_name'];
+                $player['cl_player_id-2'] = $player2['cl_player_id'];
+                $player['email-2'] = $player2['email'];
+                $player['phone_number-2'] = $player2['phone_number'];
+                if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+            }
+        }
+
         /* send email */
         $from = EMAIL_FROM;
         $to = $email;
@@ -1501,6 +1514,19 @@ class Quest extends REST2_Controller
         /* check valid template_id */
         $template = $this->sms_model->getTemplateById($input['site_id'], $input['input']['template_id']);
         if (!$template) return false;
+
+        /* player-2 */
+        if (isset($input['player-2'])) {
+            $player2 = $this->player_model->getById($input['site_id'], $input['player-2']);
+            if ($player2) {
+                $player['first_name-2'] = $player2['first_name'];
+                $player['last_name-2'] = $player2['last_name'];
+                $player['cl_player_id-2'] = $player2['cl_player_id'];
+                $player['email-2'] = $player2['email'];
+                $player['phone_number-2'] = $player2['phone_number'];
+                if (!isset($player2['code']) && strpos($template['body'], '{{code-2}}') !== false) $player['code-2'] = $this->player_model->generateCode($input['player-2']);
+            }
+        }
 
         /* send SMS */
         $this->config->load("twilio",TRUE);

@@ -430,7 +430,7 @@ class Player extends REST2_Controller
 				'pb_player_id' => $playerA['_id'],
 				'action_id' => $inviteAction['action_id'],
 				'action_name' => 'invite',
-				'url' => $player_id,
+				'player-2' => $pb_player_id,
 				'test' => false
 			));
 			$engine->processRule($input, $this->validToken, null, null);
@@ -440,7 +440,7 @@ class Player extends REST2_Controller
 				'pb_player_id' => $pb_player_id,
 				'action_id' => $invitedAction['action_id'],
 				'action_name' => 'invited',
-				'url' => $playerA['cl_player_id'],
+				'player-2' => $playerA['_id'],
 				'test' => false
 			));
 			$engine->processRule($input, $this->validToken, null, null);

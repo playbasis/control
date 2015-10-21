@@ -157,7 +157,9 @@ class Utility extends CI_Model
 	}
 
 	public function replace_template_vars($template, $data) {
-		foreach (array('first_name', 'last_name', 'cl_player_id', 'email', 'phone_number', 'code', 'coupon') as $var) {
+		foreach (array('first_name', 'last_name', 'cl_player_id', 'email', 'phone_number', 'code',
+				'first_name-2', 'last_name-2', 'cl_player_id-2', 'email-2', 'phone_number-2', 'code-2',
+				'coupon') as $var) {
 			if (isset($data[$var])) $template = str_replace('{{'.$var.'}}', $data[$var], $template);
 		}
 		return $template;
