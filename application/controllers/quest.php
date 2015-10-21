@@ -1546,31 +1546,25 @@ class Quest extends REST2_Controller
 
     protected function processPushNotification($input)
     {
-        $where = array(
-            'client_id' => $input['client_id'],
-            'site_id' => $input['site_id'],
-            'pb_player_id' => $input['pb_player_id'],
-        );
-        $this->mongo_db->select('device_token');
-        $this->mongo_db->where($where);
-        $results = $this->mongo_db->get('playbasis_player_device');
-
         /* check valid template_id */
         $template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
         if (!$template) return false;
 
-
-        $notificationInfo = array_merge($where, array(
+        $notificationInfo = array(
+            'client_id' => $input['client_id'],
+            'site_id' => $input['site_id'],
+            'pb_player_id' => $input['pb_player_id'],
             'messages' => $template['body'],
             'badge_number' => 1
-        ));
-            //'data' => $data,
-        foreach($results as $device)
-        {
+        );
+
+        $devices = $this->player_model->listDevices($input['client_id'], $input['site_id'], $input['pb_player_id'], array('device_token', 'os_type'));
+        if ($devices) foreach ($devices as $device) {
             $notificationInfo['device_token'] = $device['device_token'];
-            $this->push_model->initial($notificationInfo, $device['type']);
+            $this->push_model->initial($notificationInfo, $device['os_type']);
         }
     }
+
     /**
      * Use with array_walk and array_walk_recursive.
      * Recursive iterable items to modify array's value
