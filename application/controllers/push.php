@@ -12,6 +12,7 @@ class Push extends REST2_Controller
         $this->load->model('tool/error', 'error');
         $this->load->model('tool/respond', 'resp');
     }
+
     private function sendEngine($type, $from, $to, $message)
     {
         // TODO: implement push notification here
@@ -30,22 +31,10 @@ class Push extends REST2_Controller
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
-        $list_device = $this->push_model->listDevice($pb_player_id);
-        /*$data = array(
-            'title' => $data['title'],
-            'reward' => $data['badge'],
-            'type' => 'exp',//$data['type'],
-            'value' => $data['value'],
-            'text' => 'description test',//$data['text'],
-            'status' => $data['status']
-        );*/
-
-
-        foreach($list_device as $device)
-        {
+        $devices = $this->player_model->listDevices($this->client_id, $this->site_id, $pb_player_id, array('device_token', 'os_type'));
+        if ($devices) foreach ($devices as $device) {
             $notificationInfo = array(
                 'device_token' => $device['device_token'],
-                //'messages' => $this->input->post('msg'),
                 'messages' => $this->input->post('message'),
                 'data' => array(
                     'client_id' => $this->client_id,
@@ -55,9 +44,6 @@ class Push extends REST2_Controller
             );
             $this->push_model->initial($notificationInfo,$device['os_type']);
         }
-
-
-
         $this->response($this->resp->setRespond(''), 200);
     }
 
@@ -99,7 +85,8 @@ class Push extends REST2_Controller
         }else{
             $this->response($this->error->setError('USER_PHONE_INVALID'), 200);
         }
-    }/*
+    }
+    /*
     public function send_post()
     {
         $required = $this->input->checkParam(array(
@@ -114,9 +101,8 @@ class Push extends REST2_Controller
             'cl_player_id' => $cl_player_id
         ));
         $pb_player_id = $this->player_model->getPlaybasisId($validToken);
-
-
     }*/
+
     public function deviceRegistration_post()
     {
         $player_id = $this->input->post('player_id');
@@ -128,21 +114,20 @@ class Push extends REST2_Controller
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
-        $deviceInfo =  array(
-            'pb_player_id' => $pb_player_id,
+        $this->player_model->storeDeviceToken(array(
+            'client_id' => $this->client_id,
             'site_id' => $this->site_id,
+            'pb_player_id' => $pb_player_id,
             'device_token' => $this->input->post('device_token'),
             'device_description' => $this->input->post('device_description'),
             'device_name' => $this->input->post('device_name'),
             'os_type' => $this->input->post('os_type')
-        );
-        $this->player_model->storeDeviceToken($deviceInfo);
+        ));
         $this->response($this->resp->setRespond(''), 200);
     }
     /*
     public function adhocSend_post()
     {
-
         $player_id =$this->input->post('player_id');
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
@@ -152,22 +137,10 @@ class Push extends REST2_Controller
         $pb_player_id = $this->player_model->getPlaybasisId(array_merge($this->validToken, array(
             'cl_player_id' => $player_id
         )));
-        $list_device = $this->push_model->listDevice($pb_player_id);
-        /*$data = array(
-            'title' => $data['title'],
-            'reward' => $data['badge'],
-            'type' => 'exp',//$data['type'],
-            'value' => $data['value'],
-            'text' => 'description test',//$data['text'],
-            'status' => $data['status']
-        );*/
-        /*
-
-        foreach($list_device as $device)
-        {
+        $devices = $this->player_model->listDevices($this->client_id, $this->site_id, $pb_player_id, array('device_token', 'os_type'));
+        if ($devices) foreach ($devices as $device) {
             $notificationInfo = array(
                 'device_token' => $device['device_token'],
-                //'messages' => $this->input->post('msg'),
                 'messages' => $this->input->post('message'),
                 'data' => array(
                     'client_id' => $this->client_id,
@@ -177,11 +150,7 @@ class Push extends REST2_Controller
             );
             $this->push_model->initial($notificationInfo,$device['os_type']);
         }
-
-
-
         $this->response($this->resp->setRespond(''), 200);
-
     }*/
 }
 ?>

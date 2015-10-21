@@ -2424,8 +2424,9 @@ class Player_model extends MY_Model
 
 		$this->mongo_db->select(null);
 		$this->mongo_db->where(array(
-			'pb_player_id' => new MongoId($data['pb_player_id']),
+            'client_id' => new MongoId($data['client_id']),
             'site_id' => new MongoId($data['site_id']),
+			'pb_player_id' => new MongoId($data['pb_player_id']),
 			'device_token' => $data['device_token']
 		));
 		$this->mongo_db->limit(1);
@@ -2433,9 +2434,9 @@ class Player_model extends MY_Model
 		if (!$results)
 		{
 			$this->mongo_db->insert('playbasis_player_device', array(
-
+                'client_id' => new MongoId($data['client_id']),
+                'site_id' => new MongoId($data['site_id']),
 				'pb_player_id' => new MongoId($data['pb_player_id']),
-				'site_id' => new MongoId($data['site_id']),
 				'device_token' => $data['device_token'],
 				'device_description' => $data['device_description'],
 				'device_name' => $data['device_name'],
@@ -2446,6 +2447,17 @@ class Player_model extends MY_Model
 			));
 		}
 	}
+
+    public function listDevices($client_id, $site_id, $pb_player_id, $fields=null)
+    {
+        if ($fields) $this->mongo_db->select($fields);
+        $this->mongo_db->where(array(
+            'client_id' => $client_id,
+            'site_id' => $site_id,
+            'pb_player_id' => $pb_player_id,
+        ));
+        return $this->mongo_db->get('playbasis_player_device');
+    }
 }
 
 function index_id($obj) {

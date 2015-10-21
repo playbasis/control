@@ -887,25 +887,21 @@ class Engine extends Quest
 	private function is_reward($category) {
 		return in_array($category, array('REWARD', 'FEEDBACK'));
 	}
+
     public function sendNotification($data,$player,$msg)
     {
-        $where = array(
+        $notificationInfo = array(
             'client_id' => $player['client_id'],
             'site_id' => $player['site_id'],
             'pb_player_id' => $player['pb_player_id'],
-        );
-        $this->mongo_db->select('device_token');
-        $this->mongo_db->where($where);
-        $results = $this->mongo_db->get('playbasis_player_device');
-        $notificationInfo = array_merge($where, array(
             'messages' => $msg,
             'data' => $data,
             'badge_number' => 1
-        ));
-        foreach($results as $device)
-        {
+        );
+        $devices = $this->player_model->listDevices($player['client_id'], $player['site_id'], $player['pb_player_id'], array('device_token', 'os_type'));
+        if ($devices) foreach ($devices as $device) {
             $notificationInfo['device_token'] = $device['device_token'];
-            $this->push_model->initial($notificationInfo, $device['type']);
+            $this->push_model->initial($notificationInfo, $device['os_type']);
         }
     }
 
