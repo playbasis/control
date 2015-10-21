@@ -80,6 +80,30 @@
                                                         <td>{{code}}</td>
                                                     </tr>
                                                     <tr>
+                                                        <td width="50%" align="right"><small>Player (2) First Name:</small></td>
+                                                        <td>{{first_name-2}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Player (2) Last Name:</small></td>
+                                                        <td>{{last_name-2}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Player (2) ID:</small></td>
+                                                        <td>{{cl_player_id-2}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Player (2) Email:</small></td>
+                                                        <td>{{email-2}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Player (2) Phone:</small></td>
+                                                        <td>{{phone_number-2}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="right"><small>Player (2) Referral Code:</small></td>
+                                                        <td>{{code-2}}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <td align="right"><small>Coupon Code:</small></td>
                                                         <td>{{coupon}}</td>
                                                     </tr>
