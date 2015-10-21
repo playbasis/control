@@ -979,14 +979,9 @@ class User extends MY_Controller
             $status = $this->_api->register($data['username'], $data['username'], $data['email'], array(
                 'first_name' => $data['firstname'],
                 'last_name' => $data['lastname'],
+                'code' => $code,
             ));
-            $error = null;
-            if ($status->success) { // register player B successfully (A invite B)
-                $this->_api->engine($data['username'], 'invited'); // send action player B refer A (B invited)
-                $this->_api->engine($player['cl_player_id'], 'invite'); // send action player A was referred (A invite)
-            } else {
-                $error = $status->message;
-            }
+            $error = $status->success ? null : $status->message;
             if ($this->input->post('format') == 'json') {
                 echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'Your registration has been saved!' : $error));
                 exit();
