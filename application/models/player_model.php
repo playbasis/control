@@ -2425,6 +2425,7 @@ class Player_model extends MY_Model
 		$this->mongo_db->select(null);
 		$this->mongo_db->where(array(
 			'pb_player_id' => new MongoId($data['pb_player_id']),
+            'site_id' => new MongoId($data['site_id']),
 			'device_token' => $data['device_token']
 		));
 		$this->mongo_db->limit(1);

@@ -119,7 +119,7 @@ class Push extends REST2_Controller
     }*/
     public function deviceRegistration_post()
     {
-        $player_id =$this->input->post('player_id');
+        $player_id = $this->input->post('player_id');
         if(!$player_id)
             $this->response($this->error->setError('PARAMETER_MISSING', array(
                 'player_id'
@@ -129,8 +129,9 @@ class Push extends REST2_Controller
             'cl_player_id' => $player_id
         )));
         $deviceInfo =  array(
-            'pb_player_id' => $pb_player_id ,
-            'device_token' => $this->input->post('device_token') ,
+            'pb_player_id' => $pb_player_id,
+            'site_id' => $this->site_id,
+            'device_token' => $this->input->post('device_token'),
             'device_description' => $this->input->post('device_description'),
             'device_name' => $this->input->post('device_name'),
             'os_type' => $this->input->post('os_type')
