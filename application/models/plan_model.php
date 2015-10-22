@@ -27,7 +27,7 @@ class Plan_model extends MY_Model
 		$result =  $this->mongo_db->get("playbasis_plan");
 		$result = $result[0];
 
-		return $result['limit_'.$feature_group];
+		return isset($result['limit_'.$feature_group]) != null ? $result['limit_'.$feature_group] : null;
 	}
 
 	public function listDisplayPlans($data)
