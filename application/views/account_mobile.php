@@ -95,8 +95,12 @@
 		                	$('.phone-number').attr('disabled', false);
 		                	$('#form_phonenumber button').text('Resend Code').attr('disabled', false);	
 		                }
-		                
-		            }
+		            },
+                    error:function(jqXHR, err, errorThrown){
+                        $('.phone-number').attr('disabled', false);
+                        $('#form_phonenumber button').text('Resend Code').attr('disabled', false);
+                        alert('Please contact support@playbasis.com with following message: status = ' + jqXHR.status + ', response = ' + jqXHR.responseText);
+                    }
 		        });
 		    
 		});
