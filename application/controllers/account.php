@@ -716,6 +716,7 @@ class Account extends MY_Controller
 		}
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+log_message('error', '[request_code] phone_number = '.$this->input->post('phone_number'));
 			$this->data['message'] = null;
 
 			$this->form_validation->set_rules('phone_number', $this->lang->line('form_phone_number'), 'trim|required');
@@ -726,9 +727,11 @@ class Account extends MY_Controller
 
 			if($this->form_validation->run() && $this->data['message'] == null){
 				$code = get_random_code(5,false,false,true);
+log_message('error', '[request_code] code = '.$code);
 				$this->session->set_userdata('verify-mobile', $mobile);
 				$this->session->set_userdata('verify-code', $code);
 				$ret = $this->sendSMS($mobile, 'Your Playbasis authorization code is: '.$code.'');
+log_message('error', '[request_code] ret = '.$ret);
 				if ($ret) {
 					echo json_encode(array('status' => 'success', 'message' => 'Authorization code has been sent.'));
 				} else {
