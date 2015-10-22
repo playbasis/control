@@ -217,6 +217,10 @@ $route['Service/commentActivityFeed/'.ANY_STRING] = 'service/comment_activity/$1
 $route['Service/commentActivityFeed'] = 'service/comment_activity';
 $route['Service/reset_point'] = 'service/reset_point';
 
+//Internal API
+$route['Internal/listLimitFeature'] = 'internal/listLimitFeature';
+
+
 //Quest
 //$route['quest/testquest'] = 'quest/testQuest';
 $route['Quest/'.ANY_STRING] = 'quest/index/$1';
