@@ -271,6 +271,10 @@ class Error extends CI_Model
             $errorData['message'] = "Anonymous cannot use referral code";
             $errorData['error_code'] = '1104';
             break;
+        case 'PACKAGE_NAME_NOT_MATCH':
+            $errorData['message'] = "Package name is not match";
+            $errorData['error_code'] = '1201';
+            break;
         default:
             $errorData['message'] = "Unknown";
             $errorData['error_code'] = '9999';

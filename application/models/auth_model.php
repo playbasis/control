@@ -8,13 +8,16 @@ class Auth_model extends MY_Model
 		parent::__construct();
 		$this->load->library('mongo_db');
 	}
-	public function getApiInfo($data)
-	{
-		$this->set_site_mongodb(0);
+
+    public function getApiInfo($data)
+    {
+        $this->set_site_mongodb(0);
 
         $this->mongo_db->select(array(
             'site_id',
-            'client_id'
+            'client_id',
+            'platform',
+            'data'
         ));
         $this->mongo_db->where(array(
             'api_key' => $data['key'],
@@ -42,13 +45,15 @@ class Auth_model extends MY_Model
                 $result = $result[0];
                 $result['site_id'] = $result['_id'];
                 $result['platform_id'] = $cl_info[0]['_id'];
+                $result['platform'] = $cl_info[0]['platform'];
+                $result['platform_data'] = $cl_info[0]['data'];
                 unset($result['_id']);
                 return $result;
             }
         }
 
-		return array();
-	}
+        return array();
+    }
 	public function generateToken($data)
 	{
 		$this->set_site_mongodb($data['site_id']);

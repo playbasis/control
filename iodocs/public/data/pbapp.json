@@ -23,6 +23,13 @@
 							"Default": "",
 							"Type": "string",
 							"Description": "api secret issued by Playbasis"
+						},
+						{
+							"Name": "pkg_name",
+							"Required": "n",
+							"Default": "",
+							"Type": "string",
+							"Description": "'Bundle ID' for iOS App or 'Package name' for Android App"
 						}
 					]
 				},
