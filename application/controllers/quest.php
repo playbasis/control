@@ -1567,7 +1567,7 @@ class Quest extends REST2_Controller
         if (!$devices) return false;
 
         /* check valid template_id */
-        $template = $this->email_model->getTemplateById($input['site_id'], $input['input']['template_id']);
+        $template = $this->push_model->getTemplateById($input['site_id'], $input['input']['template_id']);
         if (!$template) return false;
 
         /* player-2 */
