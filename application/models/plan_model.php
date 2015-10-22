@@ -18,6 +18,18 @@ class Plan_model extends MY_Model
 		return $this->getById($plan_id, 'playbasis_plan');
 	}
 
+	public function getLimitPlanByClientId($client_id,$feature_group = null)
+	{
+
+		$plan_id = $this->getPlanIdByClientId(new MongoID($client_id));
+		$this->mongo_db->select(array('limit_'.$feature_group));
+		$this->mongo_db->where('_id', new MongoID($plan_id));
+		$result =  $this->mongo_db->get("playbasis_plan");
+		$result = $result[0];
+
+		return $result['limit_'.$feature_group];
+	}
+
 	public function listDisplayPlans($data)
 	{
 		$this->set_site_mongodb($data['site_id']);
