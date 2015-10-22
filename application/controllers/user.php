@@ -981,7 +981,7 @@ class User extends MY_Controller
                 'last_name' => $data['lastname'],
                 'code' => $code,
             ));
-            $error = $status->success ? null : $status->message;
+            $error = $status && isset($status->success) && $status->success ? null : (isset($status->message) ? $status->message : 'Unknown reason');
             if ($this->input->post('format') == 'json') {
                 echo json_encode(array('status' => !$error ? 'success' : 'fail', 'message' => !$error ? 'Your registration has been saved!' : $error));
                 exit();
