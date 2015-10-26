@@ -447,21 +447,20 @@ class Player extends REST2_Controller
 		}
 
 		/* track action=register automatically after creating a new player */
-		$action_name = 'register';
 		$action = $this->client_model->getAction(array(
 			'client_id' => $this->validToken['client_id'],
 			'site_id' => $this->validToken['site_id'],
-			'action_name' => $action_name
+			'action_name' => 'register'
 		));
 		if ($action) {
-			$this->tracker_model->trackAction(array(
+			$input = array_merge($this->validToken, array(
 				'pb_player_id' => $pb_player_id,
-				'client_id' => $this->validToken['client_id'],
-				'site_id' => $this->validToken['site_id'],
 				'action_id' => $action['action_id'],
-				'action_name' => $action_name,
+				'action_name' => 'register',
 				'url' => null,
+				'test' => false
 			));
+			$engine->processRule($input, $this->validToken, null, null);
 		}
 		if ($pb_player_id) {
 			$this->response($this->resp->setRespond(), 200);
