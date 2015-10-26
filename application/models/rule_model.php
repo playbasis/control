@@ -443,8 +443,7 @@ class Rule_model extends MY_Model
             return array("success" => $msg);
         };
         $this->set_site_mongodb($this->session->userdata('site_id'));
-        //set time
-        $input['date_added'] = $input['date_modified'] = date('Y-m-d H:i:s');
+        $d = new MongoDate();
 
         if($input['rule_id']=='undefined'){
             $res = $this->mongo_db->insert('playbasis_rule', array(
@@ -456,8 +455,8 @@ class Rule_model extends MY_Model
                 'tags' => $input['tags'],
                 'jigsaw_set' => $input['jigsaw_set'],
                 'active_status' => (bool)$input['active_status'],
-                'date_added' => new MongoDate(strtotime($input['date_added'])),
-                'date_modified' => new MongoDate(strtotime($input['date_modified']))
+                'date_added' => $d,
+                'date_modified' => $d
             ));
 
             if($res){
@@ -465,25 +464,21 @@ class Rule_model extends MY_Model
             }else{
                 return $response(false);
             }
-
         }else{
             // check that this rule is from template or not
-            $this->mongo_db->where('_id', new MongoID($input['rule_id']));
-            $rule = $this->mongo_db->get("playbasis_rule");
+            $rule = $this->getById($input['rule_id']);
             if ($rule) {
-                $rule = $rule[0];
-                $this->mongo_db->set('date_modified',
-                    new MongoDate(strtotime($input['date_modified'])));
+                $this->mongo_db->where('_id', new MongoID($input['rule_id']));
+                $this->mongo_db->set('client_id', new MongoID($input['client_id']));
+                $this->mongo_db->set('site_id', new MongoID($input['site_id']));
+                $this->mongo_db->set('action_id', new MongoID($input['action_id']));
+                $this->mongo_db->set('name', $input['name']);
+                $this->mongo_db->set('description', $input['description']);
+                $this->mongo_db->set('tags', $input['tags']);
+                $this->mongo_db->set('jigsaw_set',$input['jigsaw_set']);
+                $this->mongo_db->set('active_status', (bool)$input['active_status']);
+                $this->mongo_db->set('date_modified', $d);
                 if (!$this->isSameRules($rule, $input)) {
-                    $this->mongo_db->where('_id', new MongoID($input['rule_id']));
-                    $this->mongo_db->set('client_id', new MongoID($input['client_id']));
-                    $this->mongo_db->set('site_id', new MongoID($input['site_id']));
-                    $this->mongo_db->set('action_id', new MongoID($input['action_id']));
-                    $this->mongo_db->set('name', $input['name']);
-                    $this->mongo_db->set('description', $input['description']);
-                    $this->mongo_db->set('tags', $input['tags']);
-                    $this->mongo_db->set('jigsaw_set',$input['jigsaw_set']);
-                    $this->mongo_db->set('active_status', (bool)$input['active_status']);
                     $this->mongo_db->unset_field('clone_id');
                 }
                 if($this->mongo_db->update('playbasis_rule'))
