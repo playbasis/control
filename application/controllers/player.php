@@ -453,6 +453,7 @@ class Player extends REST2_Controller
 			'action_name' => 'register'
 		));
 		if ($action) {
+			$engine = new Engine();
 			$input = array_merge($this->validToken, array(
 				'pb_player_id' => $pb_player_id,
 				'action_id' => $action['action_id'],
